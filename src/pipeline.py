@@ -73,7 +73,7 @@ class WorldBuilder:
         blockout_path = self.output_dir / f"blockout_v{version}.png"
         json_path.write_text(plan.model_dump_json(indent=2), encoding="utf-8")
         render_floor_plan_svg(plan, svg_path)
-        render_blockout(plan, blockout_path)
+        render_blockout(plan, blockout_path, self.session.scene_concept)
         self.session.floor_plan_path = str(svg_path)
         self.session.blockout_path = str(blockout_path)
         self.session.floor_plan_approved = False

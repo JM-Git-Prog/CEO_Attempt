@@ -194,14 +194,14 @@ def _conditioned_flux_workflow(prompt: str, image_name: str) -> dict:
         "8": {"class_type": "CLIPTextEncode", "inputs": {"text": positive, "clip": ["2", 0]}},
         "9": {"class_type": "ReferenceLatent", "inputs": {"conditioning": ["8", 0], "latent": ["7", 0]}},
         "10": {"class_type": "CLIPTextEncode", "inputs": {"text": negative, "clip": ["2", 0]}},
-        "11": {"class_type": "EmptyFlux2LatentImage", "inputs": {"width": ["6", 0], "height": ["6", 1], "batch_size": 1}},
         "12": {"class_type": "Flux2Scheduler", "inputs": {"steps": 20, "width": ["6", 0], "height": ["6", 1]}},
         "13": {"class_type": "RandomNoise", "inputs": {"noise_seed": secrets.randbits(63)}},
         "14": {"class_type": "KSamplerSelect", "inputs": {"sampler_name": "euler"}},
         "15": {"class_type": "CFGGuider", "inputs": {"model": ["1", 0], "positive": ["9", 0], "negative": ["10", 0], "cfg": 3.5}},
-        "16": {"class_type": "SamplerCustomAdvanced", "inputs": {"noise": ["13", 0], "guider": ["15", 0], "sampler": ["14", 0], "sigmas": ["12", 0], "latent_image": ["11", 0]}},
+        "16": {"class_type": "SamplerCustomAdvanced", "inputs": {"noise": ["13", 0], "guider": ["15", 0], "sampler": ["14", 0], "sigmas": ["19", 1], "latent_image": ["7", 0]}},
         "17": {"class_type": "VAEDecode", "inputs": {"samples": ["16", 1], "vae": ["3", 0]}},
         "18": {"class_type": "SaveImage", "inputs": {"images": ["17", 0], "filename_prefix": "living_room/conditioned_canon"}},
+        "19": {"class_type": "SplitSigmas", "inputs": {"sigmas": ["12", 0], "step": 4}},
     }
 
 
@@ -227,7 +227,15 @@ async def generate_conditioned_canon(
                 upload.raise_for_status()
                 uploaded = upload.json()
                 image_name = "/".join(part for part in (uploaded.get("subfolder", ""), uploaded.get("name", blockout_path.name)) if part)
-                workflow = _conditioned_flux_workflow(concept.image_prompt, image_name)
+                prompt = (
+                    "MANDATORY VISIBLE FINISH TRANSFORMATION: apply every specified floor, wall, "
+                    "ceiling, furniture, and fixture material; do not retain gray blockout surfaces. "
+                    f"{concept.image_prompt} Architecture and finishes: {concept.architecture_notes}. "
+                    f"Required visible objects: {'; '.join(concept.key_objects)}. "
+                    f"Exact palette: {concept.palette}. Lighting: {concept.lighting_notes}. "
+                    "Preserve every stated count exactly."
+                )
+                workflow = _conditioned_flux_workflow(prompt, image_name)
                 result = await _run_comfy_workflow(client, workflow, output_path, session_id)
             _LAST_PROVIDER[session_id] = "FLUX.2 Klein · blockout conditioned"
             return result

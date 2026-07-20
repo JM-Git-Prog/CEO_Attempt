@@ -75,7 +75,7 @@ def render_floor_plan_svg(plan: FloorPlan, path: Path) -> Path:
     return path
 
 
-def render_blockout(plan: FloorPlan, path: Path) -> Path:
+def render_blockout(plan: FloorPlan, path: Path, concept=None) -> Path:
     canvas = Image.new("RGB", (1024, 768), "#111720")
     draw = ImageDraw.Draw(canvas)
     _draw_gradient(draw)
@@ -95,7 +95,7 @@ def render_blockout(plan: FloorPlan, path: Path) -> Path:
             return None
         return 512 + float(np.dot(relative, right)) * focal / depth, 384 - float(np.dot(relative, up)) * focal / depth, depth
 
-    _draw_room(draw, plan, project)
+    _draw_room(draw, plan, project, concept)
     items = sorted(plan.items, key=lambda item: -_distance(item, camera))
     for item in items:
         _draw_item(draw, item, project)
@@ -113,11 +113,25 @@ def _draw_gradient(draw: ImageDraw.ImageDraw) -> None:
         draw.line((0, y, 1024, y), fill=(value, value + 5, value + 12))
 
 
-def _draw_room(draw: ImageDraw.ImageDraw, plan: FloorPlan, project) -> None:
+def _draw_room(draw: ImageDraw.ImageDraw, plan: FloorPlan, project, concept=None) -> None:
     w, d, h = plan.room.width / 2, plan.room.depth / 2, plan.room.height
     floor = [project((-w, 0, -d)), project((w, 0, -d)), project((w, 0, d)), project((-w, 0, d))]
-    if all(floor):
+    concept_text = " " if concept is None else f"{concept.architecture_notes} {concept.image_prompt}".lower()
+    if "checkerboard" in concept_text:
+        tile = 0.5
+        x_steps, z_steps = math.ceil(plan.room.width / tile), math.ceil(plan.room.depth / tile)
+        for x_index in range(x_steps):
+            for z_index in range(z_steps):
+                x0, x1 = -w + x_index * tile, min(w, -w + (x_index + 1) * tile)
+                z0, z1 = -d + z_index * tile, min(d, -d + (z_index + 1) * tile)
+                corners = [project((x0, 0, z0)), project((x1, 0, z0)), project((x1, 0, z1)), project((x0, 0, z1))]
+                if all(corners):
+                    color = "#ded8c8" if (x_index + z_index) % 2 else "#1b1d20"
+                    draw.polygon([(point[0], point[1]) for point in corners], fill=color, outline="#555b62")
+    elif all(floor):
         draw.polygon([(p[0], p[1]) for p in floor], fill="#343b43", outline="#8d98a6")
+    if all(floor):
+        draw.line([(point[0], point[1]) for point in floor] + [(floor[0][0], floor[0][1])], fill="#8d98a6", width=3)
     edges = [
         ((-w, 0, -d), (-w, h, -d)), ((w, 0, -d), (w, h, -d)),
         ((-w, 0, d), (-w, h, d)), ((w, 0, d), (w, h, d)),
@@ -128,6 +142,28 @@ def _draw_room(draw: ImageDraw.ImageDraw, plan: FloorPlan, project) -> None:
         a, b = project(start), project(end)
         if a and b:
             draw.line((a[0], a[1], b[0], b[1]), fill="#778493", width=3)
+    for opening in plan.openings:
+        low, high = opening.sill_height, opening.sill_height + opening.height
+        half = opening.width / 2
+        if opening.wall == "north":
+            vertices = [(opening.offset-half, low, d), (opening.offset+half, low, d), (opening.offset+half, high, d), (opening.offset-half, high, d)]
+        elif opening.wall == "south":
+            vertices = [(opening.offset+half, low, -d), (opening.offset-half, low, -d), (opening.offset-half, high, -d), (opening.offset+half, high, -d)]
+        elif opening.wall == "east":
+            vertices = [(w, low, opening.offset-half), (w, low, opening.offset+half), (w, high, opening.offset+half), (w, high, opening.offset-half)]
+        else:
+            vertices = [(-w, low, opening.offset+half), (-w, low, opening.offset-half), (-w, high, opening.offset-half), (-w, high, opening.offset+half)]
+        projected = [project(vertex) for vertex in vertices]
+        if all(projected):
+            points = [(point[0], point[1]) for point in projected]
+            fill = "#183a4d" if opening.kind == "window" else "#244236"
+            outline = "#69b9ff" if opening.kind == "window" else "#66d6a6"
+            draw.polygon(points, fill=fill, outline=outline)
+            draw.line(points + [points[0]], fill=outline, width=5)
+            label = "WINDOW" if opening.kind == "window" else "DOOR"
+            anchor_x = sum(point[0] for point in points) / 4
+            anchor_y = sum(point[1] for point in points) / 4
+            draw.text((anchor_x - 24, anchor_y - 7), label, fill="#eef7ff")
 
 
 def _distance(item: PlanItem, camera: np.ndarray) -> float:

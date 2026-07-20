@@ -246,9 +246,16 @@ def _apply_description_layout(plan: FloorPlan, description: str, warnings: list[
             elif "southwest corner" in text and opening.wall in {"west", "east"}:
                 opening.offset = -half_d + opening.width / 2 + 0.2
         elif opening.kind == "window":
-            if "window centered on the south wall" in text or "south-wall storefront window" in text:
+            centered_south = bool(
+                re.search(r"center(?:ed)?\s+(?:one\s+)?(?:large\s+)?(?:storefront\s+)?window\s+on\s+the\s+south\s+wall", text)
+                or re.search(r"(?:storefront\s+)?window.{0,60}center(?:ed)?.{0,40}south\s+wall", text)
+                or "south-wall storefront window" in text
+            )
+            if centered_south:
                 opening.wall = "south"
                 opening.offset = 0.0
+                if "large" in text and "storefront window" in text:
+                    opening.width = min(max(opening.width, plan.room.width * 0.6), plan.room.width - 0.4)
     corners = {
         "southeast corner": (half_w - 0.45, -half_d + 0.45),
         "southwest corner": (-half_w + 0.45, -half_d + 0.45),
