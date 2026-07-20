@@ -5,7 +5,7 @@ const sendBtn = $('#sendBtn');
 const stageBody = $('#stageBody');
 const stageTitle = $('#stageTitle');
 const stageState = $('#stageState');
-const appVersion = Number(window.APP_VERSION || 5);
+const appVersion = Number(window.APP_VERSION || 6);
 const initialParams = new URLSearchParams(window.location.search);
 let sessionId = appVersion >= 4 ? initialParams.get('session') || localStorage.getItem('livingRoomSessionId') : null;
 let busy = false;

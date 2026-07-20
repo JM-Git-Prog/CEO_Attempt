@@ -30,18 +30,33 @@ Inspect Brief, Plan, Blockout, Canon, World, and Compare when a world revision i
 
 ## Failure log
 
+- 2026-07-20 — User session `b68ba004` reported a V5 Canon regression: encoded-blockout partial denoising preserved geometry but retained labels, guide edges, flat surfaces, and a painted-blockout appearance. The user session is preserved. V5 remains pinned to that historical workflow; the photoreal full-generation correction advances to V6.
+- 2026-07-20 — V6 session `37a43c24` passed Plan and Blockout geometry inspection, but its plan-stage snapshot omitted `interface_version` and `workflow_profile_id`. Fixed plan payload provenance fields. Session discarded before Canon and cannot serve as release evidence.
+
 - 2026-07-20 — Session `b1437cfb` rejected at Canon: output drifted from approved blockout/material brief because the conditioned FLUX workflow sampled from an empty latent; candidate fix switched to the encoded blockout latent with partial denoising and enriched prompt details. Session discarded before release evidence.
 - 2026-07-20 — Session `1d19a2a6` rejected at Plan/Blockout/Canon inspection: “center one large storefront window” was normalized to offset `-2.1m`, and the 3D Blockout omitted all opening geometry. Fixed centered-south wording recognition, minimum large-window width, and explicit door/window rendering. Session discarded before World.
 - 2026-07-20 — Session `0622d48f` rejected at Canon: geometry, camera, counts, door, and window passed, but Blockout-like floor/walls/ceiling remained instead of checkerboard linoleum, cream tile, mint paint, and pressed tin. Session reserved only for denoise/prompt probing, then discarded.
 
 ## Clean pass log
 
+- 2026-07-20 — Final release-evidence session `0e7252d6` passed from a brand-new empty V6 state on the exact retained-profile-isolated code through Brief, Plan, Blockout, Canon, and World. Plan/Blockout passed exact dimensions, one 4.2m counter, four stools, three pendants, west door, centered south window, clear aisle, and southeast 55-degree camera. Canon passed local visual QA with exact counts/openings, geometry 8/10, finish quality 9/10, all specified finishes, and no defects. World passed eight scene objects, three lights, one door, one window, nine meshes, Godot project, download, page/static/API routes, and immutable manifest checks. Compare was not applicable.
+
+- 2026-07-20 — Session `86c40bc8` passed from a brand-new empty V6 state through Brief, Plan, Blockout, Canon, and World. Plan/Blockout passed exact 6m × 4m × 2.8m dimensions, one 4.2m counter, four stools, three pendants, west door, centered south window, and the 55-degree southeast camera. Canon passed local visual QA with exact counts/openings, geometry 8/10, finish quality 9/10, every specified finish visible, and no defects. World passed scene, nine mesh, Godot project, download, retained-version page, static JavaScript, readiness, workflow API, and immutable provenance checks. Four full-state snapshots and prepared/completed generation manifests contain the pinned V6 profile, exact graph/seed, and input/output hashes. Compare was not applicable because no World revision was required.
+
 - 2026-07-20 — Session `46452b46` passed from empty state through Brief, Plan, Blockout, Canon, and World on V4. Canon passed exact counts, geometry, camera, and finish checks. World passed scene/mesh/download routes and rendered visibly in the V4 viewer. Compare was not applicable because no World revision was required.
 - 2026-07-20 — Session `71462fa9` passed from empty state through Brief, Plan, Blockout, Canon, and World on logging-enabled V5. Canon passed exact counts, geometry, camera, and finishes. World passed scene/mesh/download routes plus deterministic V5 DOM/WebGL checks. Compare was not applicable. Its log trail covers lifecycle, process, test, `awaiting_description`, `awaiting_plan_approval`, `awaiting_approval`, and `ready`.
 
+## Workflow provenance
+
+- Immutable profile catalog: `GET /api/workflow/profiles`.
+- Per-session mutable index: `GET /api/session/{session_id}/workflow` and `output/{session_id}/workflow_manifest.json`.
+- Immutable full-state records: `output/{session_id}/workflow/snapshot_NNNN_{state}.json`.
+- Immutable Canon lifecycle records: prepared plus completed/failed/skipped manifests containing the pinned profile, complete inputs, exact submitted graph and random seed, provider attempts, model files, artifact hashes, dimensions, and errors.
+- V3 is pinned to `v3-legacy@f982288`; V4 to `v4-reference-full@5069761`; V5 to `v5-reference-partial@964da06`; V6 to `v6-reference-full-r1`. The unreleased V5 full-generation probe remains cataloged as `v5-reference-full-r2` for provenance but is not active.
+
 ## Revision event logs
 
-- Append-only files: `output/logs/v3.jsonl`, `output/logs/v4.jsonl`, and `output/logs/v5.jsonl`.
+- Append-only files: `output/logs/v3.jsonl`, `output/logs/v4.jsonl`, `output/logs/v5.jsonl`, and `output/logs/v6.jsonl`.
 - Events: actionable clicks, stage/work transitions, session lifecycle, session API operations, and validation tests.
 - Fields: UTC timestamp, interface version, session ID when available, event type, action, and sanitized details.
 - Session API records include response status, resulting pipeline state, and latest progress message.
