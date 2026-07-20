@@ -5,7 +5,7 @@ const sendBtn = $('#sendBtn');
 const stageBody = $('#stageBody');
 const stageTitle = $('#stageTitle');
 const stageState = $('#stageState');
-const appVersion = Number(window.APP_VERSION || 6);
+const appVersion = Number(window.APP_VERSION || 7);
 const initialParams = new URLSearchParams(window.location.search);
 let sessionId = appVersion >= 4 ? initialParams.get('session') || localStorage.getItem('livingRoomSessionId') : null;
 let busy = false;
@@ -351,6 +351,94 @@ function material(props = {}, fallback = '#777b84') {
   return new THREE.MeshStandardMaterial({color:color(props.base_color, fallback), roughness:props.roughness ?? .75, metalness:props.metallic ?? 0, side:THREE.DoubleSide});
 }
 
+function initWorkspaceSplitter() {
+  if (appVersion !== 7) return;
+  const workspace = $('#workspace');
+  const splitter = $('#workspaceSplitter');
+  if (!workspace || !splitter) return;
+
+  const storageKey = 'livingRoomV7ChatPanePx';
+  const narrowLayout = window.matchMedia('(max-width: 900px)');
+  let paneWidth = Number(localStorage.getItem(storageKey));
+  let pointerId = null;
+
+  const bounds = () => {
+    const width = workspace.getBoundingClientRect().width;
+    const divider = splitter.getBoundingClientRect().width || 11;
+    const minimum = Math.max(320, width * .25);
+    const maximum = Math.max(minimum, Math.min(width - divider - 360, width * .7));
+    return {width, minimum, maximum};
+  };
+  const applyWidth = (requested, persist = true) => {
+    if (narrowLayout.matches) {
+      workspace.style.removeProperty('--chat-pane');
+      splitter.setAttribute('aria-disabled', 'true');
+      return;
+    }
+    splitter.setAttribute('aria-disabled', 'false');
+    const {width, minimum, maximum} = bounds();
+    const fallback = width * .44;
+    paneWidth = Math.min(maximum, Math.max(minimum, Number.isFinite(requested) && requested > 0 ? requested : fallback));
+    workspace.style.setProperty('--chat-pane', `${Math.round(paneWidth)}px`);
+    const percent = Math.round((paneWidth / Math.max(width, 1)) * 100);
+    splitter.setAttribute('aria-valuemin', String(Math.round((minimum / width) * 100)));
+    splitter.setAttribute('aria-valuemax', String(Math.round((maximum / width) * 100)));
+    splitter.setAttribute('aria-valuenow', String(percent));
+    splitter.setAttribute('aria-valuetext', `${percent}% chat width`);
+    if (persist) localStorage.setItem(storageKey, String(Math.round(paneWidth)));
+  };
+  const finishResize = inputMethod => {
+    const width = workspace.getBoundingClientRect().width;
+    logEvent('click', 'workspace_splitter_resized', {
+      input_method:inputMethod,
+      chat_percent:Math.round((paneWidth / Math.max(width, 1)) * 100),
+    });
+  };
+  const reset = inputMethod => {
+    paneWidth = workspace.getBoundingClientRect().width * .44;
+    applyWidth(paneWidth);
+    finishResize(inputMethod);
+  };
+
+  splitter.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || narrowLayout.matches) return;
+    pointerId = event.pointerId;
+    splitter.setPointerCapture(pointerId);
+    document.body.classList.add('workspace-resizing');
+    event.preventDefault();
+  });
+  splitter.addEventListener('pointermove', event => {
+    if (event.pointerId !== pointerId) return;
+    const left = workspace.getBoundingClientRect().left;
+    applyWidth(event.clientX - left, false);
+  });
+  const endPointerResize = event => {
+    if (event.pointerId !== pointerId) return;
+    if (splitter.hasPointerCapture(pointerId)) splitter.releasePointerCapture(pointerId);
+    pointerId = null;
+    document.body.classList.remove('workspace-resizing');
+    applyWidth(paneWidth);
+    finishResize('pointer');
+  };
+  splitter.addEventListener('pointerup', endPointerResize);
+  splitter.addEventListener('pointercancel', endPointerResize);
+  splitter.addEventListener('keydown', event => {
+    if (narrowLayout.matches) return;
+    const step = event.shiftKey ? 40 : 10;
+    if (event.key === 'ArrowLeft') paneWidth -= step;
+    else if (event.key === 'ArrowRight') paneWidth += step;
+    else if (event.key === 'Home') { event.preventDefault(); reset('keyboard'); return; }
+    else return;
+    event.preventDefault();
+    applyWidth(paneWidth);
+    finishResize('keyboard');
+  });
+  splitter.addEventListener('dblclick', () => reset('pointer'));
+  narrowLayout.addEventListener('change', () => applyWidth(paneWidth));
+  window.addEventListener('resize', () => applyWidth(paneWidth, false));
+  applyWidth(paneWidth);
+}
+
 function buildViewer(graph, downloadUrl) {
   disposeViewer();
   setStage('world');
@@ -454,5 +542,6 @@ Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifac
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);
+initWorkspaceSplitter();
 if (appVersion >= 4) restoreSession();
 input.focus();

@@ -31,7 +31,7 @@ OUTPUT_BASE = Path("output")
 def _infer_legacy_interface_version(session_id: str) -> int:
     """Infer pre-provenance sessions from their earliest revision-log event."""
     earliest: tuple[str, int] | None = None
-    for version in (3, 4, 5, 6):
+    for version in (3, 4, 5, 6, 7):
         log_path = OUTPUT_BASE / "logs" / f"v{version}.jsonl"
         if not log_path.exists():
             continue
@@ -46,13 +46,13 @@ def _infer_legacy_interface_version(session_id: str) -> int:
                 candidate = (timestamp, version)
                 if timestamp and (earliest is None or candidate < earliest):
                     earliest = candidate
-    return earliest[1] if earliest else 6
+    return earliest[1] if earliest else 7
 
 
 class WorldBuilder:
     """Orchestrates the full world-building pipeline."""
 
-    def __init__(self, session_id: Optional[str] = None, interface_version: int = 6):
+    def __init__(self, session_id: Optional[str] = None, interface_version: int = 7):
         resolved_id = session_id or str(uuid.uuid4())[:8]
         self.output_dir = OUTPUT_BASE / resolved_id
         self.output_dir.mkdir(parents=True, exist_ok=True)

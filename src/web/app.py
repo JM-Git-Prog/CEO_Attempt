@@ -21,7 +21,7 @@ from src.web.event_log import append_event
 from src.web.templates import get_index_html
 from src.workflow_provenance import normalize_interface_version, workflow_profiles
 
-app = FastAPI(title="The Living Room", version="0.6.0")
+app = FastAPI(title="The Living Room", version="0.7.0")
 sessions: dict[str, WorldBuilder] = {}
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
 STATIC_DIR = Path(__file__).parent / "static"
@@ -29,7 +29,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 def _request_version(request: Request) -> int:
-    return normalize_interface_version(request.headers.get("x-app-version", "6"))
+    return normalize_interface_version(request.headers.get("x-app-version", "7"))
 
 
 @app.middleware("http")
@@ -38,7 +38,7 @@ async def log_session_api(request: Request, call_next):
     path = request.url.path
     if not path.startswith("/api/session"):
         return await call_next(request)
-    version = request.headers.get("x-app-version", "6")
+    version = request.headers.get("x-app-version", "7")
     parts = path.split("/")
     session_id = parts[3] if len(parts) > 3 else None
     route = path.replace(session_id, "{session_id}") if session_id else path
@@ -149,9 +149,9 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     try:
-        version = int(request.query_params.get("v", "6"))
+        version = int(request.query_params.get("v", "7"))
     except ValueError:
-        version = 6
+        version = 7
     return HTMLResponse(
         get_index_html(version),
         headers={

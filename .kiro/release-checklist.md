@@ -30,6 +30,8 @@ Inspect Brief, Plan, Blockout, Canon, World, and Compare when a world revision i
 
 ## Failure log
 
+- 2026-07-20 — Headless Edge V7 responsive validation found the composer extended 18px below a 1440×500 viewport when the chat pane was persisted at its minimum width. Added a V7-only compact-height layout for intro, messages, and composer; no release session had been created.
+- 2026-07-20 — User reported that resizing the V6 page could move chat outside the visible area and that the image preview pane could not be resized. Root cause: a fixed 72px header assumption, fixed 100vh workspace math, an abrupt stacked breakpoint with fixed pane heights, and no pane-resize control. V6 remains unchanged; the responsive, accessible splitter correction advances to V7.
 - 2026-07-20 — User session `b68ba004` reported a V5 Canon regression: encoded-blockout partial denoising preserved geometry but retained labels, guide edges, flat surfaces, and a painted-blockout appearance. The user session is preserved. V5 remains pinned to that historical workflow; the photoreal full-generation correction advances to V6.
 - 2026-07-20 — V6 session `37a43c24` passed Plan and Blockout geometry inspection, but its plan-stage snapshot omitted `interface_version` and `workflow_profile_id`. Fixed plan payload provenance fields. Session discarded before Canon and cannot serve as release evidence.
 
@@ -38,6 +40,8 @@ Inspect Brief, Plan, Blockout, Canon, World, and Compare when a world revision i
 - 2026-07-20 — Session `0622d48f` rejected at Canon: geometry, camera, counts, door, and window passed, but Blockout-like floor/walls/ceiling remained instead of checkerboard linoleum, cream tile, mint paint, and pressed tin. Session reserved only for denoise/prompt probing, then discarded.
 
 ## Clean pass log
+
+- 2026-07-20 — Final release-evidence session `0500f42f` passed from a brand-new empty V7 state through Brief, Plan, Blockout, Canon, and World. Plan/Blockout passed exact 6m × 4m × 2.8m dimensions, one 4.2m counter, four stools, three pendants, one west door, one centered south window, clear aisle intent, and southeast 55-degree camera. Canon passed local vision QA with exact counts, required openings/materials/lighting, no extras, and confidence 1.0. World passed eight scene objects, three lights, one door, one window, nine meshes, Godot project, download, four immutable snapshots, two Canon manifests, V3–V7 routes, and responsive Edge checks at seven viewport sizes. The splitter passed pointer clamps, keyboard controls, reset, and fresh-session Three.js resizing. Compare was not applicable.
 
 - 2026-07-20 — Final release-evidence session `0e7252d6` passed from a brand-new empty V6 state on the exact retained-profile-isolated code through Brief, Plan, Blockout, Canon, and World. Plan/Blockout passed exact dimensions, one 4.2m counter, four stools, three pendants, west door, centered south window, clear aisle, and southeast 55-degree camera. Canon passed local visual QA with exact counts/openings, geometry 8/10, finish quality 9/10, all specified finishes, and no defects. World passed eight scene objects, three lights, one door, one window, nine meshes, Godot project, download, page/static/API routes, and immutable manifest checks. Compare was not applicable.
 
@@ -52,11 +56,11 @@ Inspect Brief, Plan, Blockout, Canon, World, and Compare when a world revision i
 - Per-session mutable index: `GET /api/session/{session_id}/workflow` and `output/{session_id}/workflow_manifest.json`.
 - Immutable full-state records: `output/{session_id}/workflow/snapshot_NNNN_{state}.json`.
 - Immutable Canon lifecycle records: prepared plus completed/failed/skipped manifests containing the pinned profile, complete inputs, exact submitted graph and random seed, provider attempts, model files, artifact hashes, dimensions, and errors.
-- V3 is pinned to `v3-legacy@f982288`; V4 to `v4-reference-full@5069761`; V5 to `v5-reference-partial@964da06`; V6 to `v6-reference-full-r1`. The unreleased V5 full-generation probe remains cataloged as `v5-reference-full-r2` for provenance but is not active.
+- V3 is pinned to `v3-legacy@f982288`; V4 to `v4-reference-full@5069761`; V5 to `v5-reference-partial@964da06`; V6 to `v6-reference-full-r1`; V7 to `v7-reference-full-r1`. The unreleased V5 full-generation probe remains cataloged as `v5-reference-full-r2` for provenance but is not active.
 
 ## Revision event logs
 
-- Append-only files: `output/logs/v3.jsonl`, `output/logs/v4.jsonl`, `output/logs/v5.jsonl`, and `output/logs/v6.jsonl`.
+- Append-only files: `output/logs/v3.jsonl`, `output/logs/v4.jsonl`, `output/logs/v5.jsonl`, `output/logs/v6.jsonl`, and `output/logs/v7.jsonl`.
 - Events: actionable clicks, stage/work transitions, session lifecycle, session API operations, and validation tests.
 - Fields: UTC timestamp, interface version, session ID when available, event type, action, and sanitized details.
 - Session API records include response status, resulting pipeline state, and latest progress message.

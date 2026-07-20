@@ -89,6 +89,22 @@ _PROFILE_VALUES = (
         "source": "V6 photoreal full-generation workflow",
         "status": "active",
     },
+    {
+        "id": "v7-reference-full-r1",
+        "interface_version": 7,
+        "release_commit": None,
+        "supersedes": "v6-reference-full-r1",
+        "stages": {
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "enriched_concept_and_plan",
+                "latent": "empty",
+                "sigma_schedule": "full",
+            }
+        },
+        "source": "V7 responsive resizable interface; V6 Canon contract retained",
+        "status": "active",
+    },
 )
 _PROFILE_DOCUMENTS = MappingProxyType(
     {value["id"]: json.dumps(value, sort_keys=True) for value in _PROFILE_VALUES}
@@ -99,6 +115,7 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         4: "v4-reference-full@5069761",
         5: "v5-reference-partial@964da06",
         6: "v6-reference-full-r1",
+        7: "v7-reference-full-r1",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -107,22 +124,25 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         4: "v4-reference-full@5069761",
         5: "v5-reference-partial@964da06",
         6: "v6-reference-full-r1",
+        7: "v7-reference-full-r1",
     }
 )
 
 
 def normalize_interface_version(value: int | str | None) -> int:
     try:
-        version = int(value or 6)
+        version = int(value or 7)
     except (TypeError, ValueError):
-        version = 6
+        version = 7
     if version <= 3:
         return 3
     if version == 4:
         return 4
     if version == 5:
         return 5
-    return 6
+    if version == 6:
+        return 6
+    return 7
 
 
 def profile_by_id(profile_id: str) -> dict:

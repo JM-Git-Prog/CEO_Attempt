@@ -166,7 +166,7 @@ class WorldSession(BaseModel):
     """Tracks the state and revision memory of a world-building session."""
 
     session_id: str
-    interface_version: int = 6
+    interface_version: int = 7
     workflow_profile_id: str = ""
     workflow_profile: dict = Field(default_factory=dict)
     workflow_snapshot_count: int = 0
