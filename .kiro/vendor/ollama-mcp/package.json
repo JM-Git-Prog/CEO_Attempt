@@ -1,0 +1,8 @@
+{
+  "name": "kiro-vendored-ollama-mcp",
+  "private": true,
+  "description": "Local vendored + Windows-patched ollama-mcp for Kiro. See PATCH_NOTES.md.",
+  "dependencies": {
+    "ollama-mcp": "2.1.0"
+  }
+}

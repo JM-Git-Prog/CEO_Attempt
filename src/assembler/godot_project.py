@@ -204,7 +204,7 @@ func _physics_process(delta):
         mesh_ext_map = {}
         for obj_id, mesh_path in self.mesh_paths.items():
             ext_id += 1
-            ext_res.append(f'[ext_resource type="ArrayMesh" path="res://assets/meshes/{mesh_path.name}" id="{ext_id}"]')
+            ext_res.append(f'[ext_resource type="PackedScene" path="res://assets/meshes/{mesh_path.name}" id="{ext_id}"]')
             mesh_ext_map[obj_id] = ext_id
 
         # Player scene
@@ -320,7 +320,7 @@ func _physics_process(delta):
             nodes.append(node_str)
 
             if obj.id in mesh_ext_map:
-                nodes.append(f'\n[node name="Mesh" type="MeshInstance3D" parent="{name}"]\nmesh = ExtResource("{mesh_ext_map[obj.id]}")')
+                nodes.append(f'\n[node name="Visual" parent="{name}" instance=ExtResource("{mesh_ext_map[obj.id]}")]')
             if obj.id in obj_shapes:
                 nodes.append(f'\n[node name="Col" type="CollisionShape3D" parent="{name}"]\nshape = SubResource("{obj_shapes[obj.id]}")')
 
@@ -330,7 +330,7 @@ func _physics_process(delta):
             py = door.height / 2
             nodes.append(f'\n[node name="{name}" type="RigidBody3D" parent="."]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {door.position.x}, {py}, {door.position.z})\nmass = {door.physics.mass_kg}')
             if door.id in mesh_ext_map:
-                nodes.append(f'\n[node name="Mesh" type="MeshInstance3D" parent="{name}"]\nmesh = ExtResource("{mesh_ext_map[door.id]}")')
+                nodes.append(f'\n[node name="Visual" parent="{name}" instance=ExtResource("{mesh_ext_map[door.id]}")]')
             if door.id in door_shapes:
                 nodes.append(f'\n[node name="Col" type="CollisionShape3D" parent="{name}"]\nshape = SubResource("{door_shapes[door.id]}")')
 
