@@ -70,6 +70,8 @@ async def approve_image(session_id: str):
         "progress": builder.session.progress_messages,
         "project_path": str(project_path),
         "download_url": f"/api/session/{session_id}/download",
+        "scene_graph": builder.session.scene_graph.model_dump() if builder.session.scene_graph else None,
+        "mesh_urls": {obj_id: f"/api/session/{session_id}/mesh/{obj_id}" for obj_id in mesh_paths},
     }
 
 
@@ -86,6 +88,28 @@ async def reject_image(session_id: str, request: Request):
         "canon_image": f"/api/session/{session_id}/canon_image",
         "progress": builder.session.progress_messages,
     }
+
+
+@app.get("/api/session/{session_id}/mesh/{obj_id}")
+async def get_mesh(session_id: str, obj_id: str):
+    """Serve individual mesh .glb files for the 3D viewer."""
+    if session_id not in sessions:
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+    mesh_path = OUTPUT_DIR / session_id / "meshes" / f"{obj_id}.glb"
+    if not mesh_path.exists():
+        return JSONResponse({"error": "Mesh not found"}, status_code=404)
+    return FileResponse(mesh_path, media_type="model/gltf-binary")
+
+
+@app.get("/api/session/{session_id}/scene_data")
+async def get_scene_data(session_id: str):
+    """Get the scene graph JSON for the 3D viewer."""
+    if session_id not in sessions:
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+    builder = sessions[session_id]
+    if not builder.session.scene_graph:
+        return JSONResponse({"error": "No scene built yet"}, status_code=404)
+    return builder.session.scene_graph.model_dump()
 
 
 @app.get("/api/session/{session_id}/download")
