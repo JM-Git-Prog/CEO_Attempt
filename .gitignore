@@ -4,3 +4,10 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .env
+
+# Vendored MCP dependencies — installed via npm, not committed.
+# The Windows patch is preserved in PATCH_NOTES.md + patched-autoloader.js (both tracked).
+.kiro/vendor/*/node_modules/
+
+# KiroGraph local index (code graph DB + LanceDB embeddings) — machine-local, rebuildable via `kirograph index`.
+.kirograph/
