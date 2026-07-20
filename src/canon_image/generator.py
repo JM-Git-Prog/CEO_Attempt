@@ -8,12 +8,20 @@ import os
 import random
 import secrets
 import time
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
 from PIL import Image, ImageDraw
 
 from src.models import SceneConcept
+from src.workflow_provenance import (
+    artifact_metadata,
+    profile_by_id,
+    profile_for,
+    write_generation_manifest,
+)
 
 COMFYUI_URL = os.getenv("COMFYUI_URL", "http://localhost:8188").rstrip("/")
 COMFYUI_ENABLED = os.getenv("COMFYUI_ENABLED", "1").lower() in {"1", "true", "yes"}
@@ -28,8 +36,104 @@ FLUX_VAE = "flux2-vae.safetensors"
 _LAST_PROVIDER: dict[str, str] = {}
 
 
+@dataclass(frozen=True)
+class CanonGenerationResult:
+    image_path: Path
+    provider: str
+    manifests: tuple[Path, ...]
+
+
 def get_image_provider(session_id: str) -> str:
     return _LAST_PROVIDER.get(session_id, "pending")
+
+
+def _profile_from_context(workflow_context: dict | None) -> dict:
+    context = workflow_context or {}
+    if context.get("workflow_profile"):
+        profile = profile_by_id(context["workflow_profile"]["id"])
+        if context["workflow_profile"] != profile:
+            raise ValueError("Workflow context profile differs from its immutable contract")
+    elif context.get("workflow_profile_id"):
+        profile = profile_by_id(context["workflow_profile_id"])
+    else:
+        profile = profile_for(int(context.get("interface_version", 6)))
+    if context.get("workflow_profile_id") not in {None, "", profile["id"]}:
+        raise ValueError("Workflow profile ID does not match the pinned profile")
+    return profile
+
+
+def _generation_prompt(
+    concept: SceneConcept, profile: dict, *, mode: str = "conditioned"
+) -> str:
+    canon = profile["stages"]["canon"]
+    policy = canon.get("base_prompt", canon["prompt"]) if mode == "base" else canon["prompt"]
+    if policy == "concept.image_prompt":
+        return concept.image_prompt
+    if policy == "enriched_concept_and_plan":
+        if profile["id"] == "v5-reference-partial@964da06":
+            return (
+                "MANDATORY VISIBLE FINISH TRANSFORMATION: apply every specified floor, wall, "
+                "ceiling, furniture, and fixture material; do not retain gray blockout surfaces. "
+                f"{concept.image_prompt} Architecture and finishes: {concept.architecture_notes}. "
+                f"Required visible objects: {'; '.join(concept.key_objects)}. "
+                f"Exact palette: {concept.palette}. Lighting: {concept.lighting_notes}. "
+                "Preserve every stated count exactly."
+            )
+        return (
+            "MANDATORY VISIBLE FINISH TRANSFORMATION: replace every blockout surface with the "
+            "specified finished material; render a polished photorealistic interior, never a "
+            "colored block model. "
+            f"{concept.image_prompt} Architecture and finishes: {concept.architecture_notes}. "
+            f"Required visible objects: {'; '.join(concept.key_objects)}. "
+            f"Exact palette: {concept.palette}. Lighting: {concept.lighting_notes}. "
+            "Preserve every stated count exactly. Remove all blockout labels, guide lines, "
+            "debug edges, flat shading, and placeholder geometry from the final photograph."
+        )
+    raise ValueError(f"Unsupported Canon prompt policy: {policy}")
+
+
+def _generation_manifest(
+    concept: SceneConcept,
+    session_id: str,
+    prompt: str,
+    workflow_context: dict | None,
+    workflow: dict | None,
+    blockout_path: Path | None = None,
+    uploaded_image_name: str | None = None,
+) -> dict:
+    context = workflow_context or {}
+    profile = _profile_from_context(context)
+    return {
+        "recorded_at": datetime.now(timezone.utc).isoformat(),
+        "status": "prepared",
+        "session_id": session_id,
+        "interface_version": profile["interface_version"],
+        "workflow_profile": profile,
+        "workflow_profile_id": profile["id"],
+        "models": {
+            "diffusion": FLUX_MODEL,
+            "text_encoder": FLUX_CLIP,
+            "vae": FLUX_VAE,
+        },
+        "inputs": {
+            "user_description": context.get("user_description", ""),
+            "scene_concept": concept,
+            "floor_plan": context.get("floor_plan"),
+            "plan_revision": context.get("plan_revision"),
+            "generation_prompt": prompt,
+            "blockout": artifact_metadata(blockout_path) if blockout_path else None,
+            "uploaded_image_name": uploaded_image_name,
+        },
+        "workflow_graph": workflow,
+        "provider_attempts": [],
+        "output": None,
+    }
+
+
+def _save_generation(
+    output_dir: Path, attempt: int, mode: str, manifest: dict
+) -> Path:
+    return write_generation_manifest(output_dir, attempt, mode, manifest)
 
 
 async def check_comfyui() -> dict:
@@ -100,58 +204,107 @@ def _flux_workflow(prompt: str) -> dict:
     }
 
 
-async def generate_canon_image(concept: SceneConcept, session_id: str, attempt: int = 1) -> Path:
-    """Generate a canon image, preferring the installed local FLUX.2 stack."""
+async def generate_canon_image(
+    concept: SceneConcept,
+    session_id: str,
+    attempt: int = 1,
+    workflow_context: dict | None = None,
+) -> CanonGenerationResult:
+    """Generate a text-guided Canon and retain immutable lifecycle manifests."""
     output_path = OUTPUT_DIR / session_id / f"canon_v{attempt}.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    if COMFYUI_ENABLED:
+    profile = _profile_from_context(workflow_context)
+    prompt = _generation_prompt(concept, profile, mode="base")
+    mock_only = profile["stages"]["canon"].get("provider_policy") == "mock_only"
+    workflow = None if mock_only else _flux_workflow(prompt)
+    manifest = _generation_manifest(
+        concept, session_id, prompt, workflow_context, workflow
+    )
+    manifests = [
+        _save_generation(output_path.parent, attempt, "base_prepared", manifest)
+    ]
+
+    if COMFYUI_ENABLED and not mock_only:
         try:
-            result = await _generate_with_comfyui(concept.image_prompt, output_path, session_id)
-            _LAST_PROVIDER[session_id] = "FLUX.2 Klein · ComfyUI"
-            return result
+            result = await _generate_with_comfyui(
+                prompt, output_path, session_id, workflow
+            )
+            provider = "FLUX.2 Klein · ComfyUI"
+            _LAST_PROVIDER[session_id] = provider
+            manifest["provider_attempts"].append(
+                {"provider": provider, "status": "completed"}
+            )
+            manifest.update(
+                status="completed",
+                finalized_at=datetime.now(timezone.utc).isoformat(),
+                output=artifact_metadata(result),
+            )
+            manifests.append(
+                _save_generation(output_path.parent, attempt, "base_completed", manifest)
+            )
+            return CanonGenerationResult(result, provider, tuple(manifests))
         except Exception as exc:
+            manifest["provider_attempts"].append(
+                {"provider": "ComfyUI", "status": "failed", "error": str(exc)}
+            )
             print(f"ComfyUI generation failed: {exc}")
-    if IMAGE_API_URL:
+    elif not mock_only:
+        manifest["provider_attempts"].append(
+            {"provider": "ComfyUI", "status": "skipped", "reason": "disabled"}
+        )
+
+    if IMAGE_API_URL and not mock_only:
         try:
-            result = await _generate_with_api(concept.image_prompt, output_path)
-            _LAST_PROVIDER[session_id] = "Image API"
-            return result
+            result = await _generate_with_api(prompt, output_path)
+            provider = "Image API"
+            _LAST_PROVIDER[session_id] = provider
+            manifest["provider_attempts"].append(
+                {"provider": provider, "status": "completed"}
+            )
+            manifest.update(
+                status="completed",
+                finalized_at=datetime.now(timezone.utc).isoformat(),
+                output=artifact_metadata(result),
+            )
+            manifests.append(
+                _save_generation(output_path.parent, attempt, "base_completed", manifest)
+            )
+            return CanonGenerationResult(result, provider, tuple(manifests))
         except Exception as exc:
+            manifest["provider_attempts"].append(
+                {"provider": "Image API", "status": "failed", "error": str(exc)}
+            )
             print(f"Image API generation failed: {exc}")
-    _LAST_PROVIDER[session_id] = "Mock fallback"
-    return _generate_mock(concept.image_prompt, output_path)
+
+    provider = "Mock fallback"
+    _LAST_PROVIDER[session_id] = provider
+    result = _generate_mock(prompt, output_path)
+    manifest["provider_attempts"].append(
+        {"provider": provider, "status": "completed"}
+    )
+    manifest.update(
+        status="completed",
+        finalized_at=datetime.now(timezone.utc).isoformat(),
+        output=artifact_metadata(result),
+    )
+    manifests.append(
+        _save_generation(output_path.parent, attempt, "base_completed", manifest)
+    )
+    return CanonGenerationResult(result, provider, tuple(manifests))
 
 
-async def _generate_with_comfyui(prompt: str, output_path: Path, session_id: str) -> Path:
-    workflow = _flux_workflow(prompt)
+async def _generate_with_comfyui(
+    prompt: str,
+    output_path: Path,
+    session_id: str,
+    workflow: dict | None = None,
+) -> Path:
+    submitted_workflow = workflow or _flux_workflow(prompt)
     timeout = httpx.Timeout(30, read=COMFYUI_TIMEOUT, write=30, pool=30)
     async with httpx.AsyncClient(timeout=timeout) as client:
-        response = await client.post(f"{COMFYUI_URL}/prompt", json={"prompt": workflow, "client_id": f"living-room-{session_id}"})
-        if response.status_code != 200:
-            raise RuntimeError(f"ComfyUI rejected workflow ({response.status_code}): {response.text[:500]}")
-        prompt_id = response.json().get("prompt_id")
-        if not prompt_id:
-            raise RuntimeError("ComfyUI returned no prompt id")
-        started = time.monotonic()
-        while time.monotonic() - started < COMFYUI_TIMEOUT:
-            await asyncio.sleep(0.75)
-            history_response = await client.get(f"{COMFYUI_URL}/history/{prompt_id}")
-            history_response.raise_for_status()
-            entry = history_response.json().get(prompt_id)
-            if not entry:
-                continue
-            status = entry.get("status", {})
-            if status.get("status_str") == "error":
-                raise RuntimeError(f"ComfyUI execution failed: {status}")
-            for output in entry.get("outputs", {}).values():
-                for image in output.get("images", []):
-                    image_response = await client.get(f"{COMFYUI_URL}/view", params={"filename": image["filename"], "subfolder": image.get("subfolder", ""), "type": image.get("type", "output")})
-                    image_response.raise_for_status()
-                    output_path.write_bytes(image_response.content)
-                    return output_path
-            if status.get("completed"):
-                raise RuntimeError("ComfyUI completed without an image")
-    raise TimeoutError(f"ComfyUI did not finish within {COMFYUI_TIMEOUT} seconds")
+        return await _run_comfy_workflow(
+            client, submitted_workflow, output_path, session_id
+        )
 
 
 async def _generate_with_api(prompt: str, output_path: Path) -> Path:
@@ -171,8 +324,10 @@ async def _generate_with_api(prompt: str, output_path: Path) -> Path:
     return output_path
 
 
-def _conditioned_flux_workflow(prompt: str, image_name: str) -> dict:
-    """FLUX.2 reference-latent graph that preserves approved blockout geometry."""
+def _conditioned_flux_workflow(
+    prompt: str, image_name: str, profile: dict
+) -> dict:
+    """Build the exact profile-pinned FLUX.2 reference graph."""
     positive = (
         f"{prompt}. Transform the supplied blockout into a photorealistic interior photograph. "
         "STRICTLY preserve camera position, lens perspective, room proportions, wall openings, "
@@ -183,7 +338,18 @@ def _conditioned_flux_workflow(prompt: str, image_name: str) -> dict:
         "changed layout, changed camera, moved furniture, added furniture, missing furniture, "
         "warped walls, fisheye, panorama, text, watermark, illustration, low quality"
     )
-    return {
+    if profile["interface_version"] >= 6 or profile["id"] == "v5-reference-full-r2":
+        negative = (
+            "changed layout, changed camera, moved furniture, added furniture, missing furniture, "
+            "warped walls, fisheye, panorama, text, watermark, labels, guide lines, debug edges, "
+            "blockout render, flat shading, placeholder materials, illustration, low quality"
+        )
+    canon = profile["stages"]["canon"]
+    latent_mode = canon.get("latent")
+    sigma_schedule = canon.get("sigma_schedule")
+    latent_input = ["11", 0] if latent_mode == "empty" else ["7", 0]
+    sigma_input = ["12", 0]
+    workflow = {
         "1": {"class_type": "UNETLoader", "inputs": {"unet_name": FLUX_MODEL, "weight_dtype": "default"}},
         "2": {"class_type": "CLIPLoader", "inputs": {"clip_name": FLUX_CLIP, "type": "flux2", "device": "default"}},
         "3": {"class_type": "VAELoader", "inputs": {"vae_name": FLUX_VAE}},
@@ -198,11 +364,26 @@ def _conditioned_flux_workflow(prompt: str, image_name: str) -> dict:
         "13": {"class_type": "RandomNoise", "inputs": {"noise_seed": secrets.randbits(63)}},
         "14": {"class_type": "KSamplerSelect", "inputs": {"sampler_name": "euler"}},
         "15": {"class_type": "CFGGuider", "inputs": {"model": ["1", 0], "positive": ["9", 0], "negative": ["10", 0], "cfg": 3.5}},
-        "16": {"class_type": "SamplerCustomAdvanced", "inputs": {"noise": ["13", 0], "guider": ["15", 0], "sampler": ["14", 0], "sigmas": ["19", 1], "latent_image": ["7", 0]}},
+        "16": {"class_type": "SamplerCustomAdvanced", "inputs": {"noise": ["13", 0], "guider": ["15", 0], "sampler": ["14", 0], "sigmas": sigma_input, "latent_image": latent_input}},
         "17": {"class_type": "VAEDecode", "inputs": {"samples": ["16", 1], "vae": ["3", 0]}},
         "18": {"class_type": "SaveImage", "inputs": {"images": ["17", 0], "filename_prefix": "living_room/conditioned_canon"}},
-        "19": {"class_type": "SplitSigmas", "inputs": {"sigmas": ["12", 0], "step": 4}},
     }
+    if latent_mode == "empty":
+        workflow["11"] = {
+            "class_type": "EmptyFlux2LatentImage",
+            "inputs": {"width": ["6", 0], "height": ["6", 1], "batch_size": 1},
+        }
+    elif latent_mode != "encoded_blockout":
+        raise ValueError(f"Unsupported conditioned latent mode: {latent_mode}")
+    if sigma_schedule == "partial_after_step_4":
+        workflow["19"] = {
+            "class_type": "SplitSigmas",
+            "inputs": {"sigmas": ["12", 0], "step": 4},
+        }
+        workflow["16"]["inputs"]["sigmas"] = ["19", 1]
+    elif sigma_schedule != "full":
+        raise ValueError(f"Unsupported sigma schedule: {sigma_schedule}")
+    return workflow
 
 
 async def generate_conditioned_canon(
@@ -210,10 +391,29 @@ async def generate_conditioned_canon(
     blockout_path: Path,
     session_id: str,
     attempt: int = 1,
-) -> Path:
-    """Generate canon appearance from the approved camera-matched blockout."""
+    workflow_context: dict | None = None,
+) -> CanonGenerationResult:
+    """Generate a profile-pinned Canon from the approved camera blockout."""
+    profile = _profile_from_context(workflow_context)
+    canon = profile["stages"]["canon"]
+    if canon.get("conditioning") == "none":
+        return await generate_canon_image(
+            concept, session_id, attempt, workflow_context=workflow_context
+        )
+
     output_path = OUTPUT_DIR / session_id / f"canon_v{attempt}.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    prompt = _generation_prompt(concept, profile)
+    manifest = _generation_manifest(
+        concept,
+        session_id,
+        prompt,
+        workflow_context,
+        None,
+        blockout_path=blockout_path,
+    )
+    manifests: list[Path] = []
+
     if COMFYUI_ENABLED:
         try:
             timeout = httpx.Timeout(30, read=COMFYUI_TIMEOUT, write=30, pool=30)
@@ -226,22 +426,73 @@ async def generate_conditioned_canon(
                     )
                 upload.raise_for_status()
                 uploaded = upload.json()
-                image_name = "/".join(part for part in (uploaded.get("subfolder", ""), uploaded.get("name", blockout_path.name)) if part)
-                prompt = (
-                    "MANDATORY VISIBLE FINISH TRANSFORMATION: apply every specified floor, wall, "
-                    "ceiling, furniture, and fixture material; do not retain gray blockout surfaces. "
-                    f"{concept.image_prompt} Architecture and finishes: {concept.architecture_notes}. "
-                    f"Required visible objects: {'; '.join(concept.key_objects)}. "
-                    f"Exact palette: {concept.palette}. Lighting: {concept.lighting_notes}. "
-                    "Preserve every stated count exactly."
+                image_name = "/".join(
+                    part
+                    for part in (
+                        uploaded.get("subfolder", ""),
+                        uploaded.get("name", blockout_path.name),
+                    )
+                    if part
                 )
-                workflow = _conditioned_flux_workflow(prompt, image_name)
-                result = await _run_comfy_workflow(client, workflow, output_path, session_id)
-            _LAST_PROVIDER[session_id] = "FLUX.2 Klein · blockout conditioned"
-            return result
+                workflow = _conditioned_flux_workflow(prompt, image_name, profile)
+                manifest["inputs"]["uploaded_image_name"] = image_name
+                manifest["workflow_graph"] = workflow
+                manifests.append(
+                    _save_generation(
+                        output_path.parent, attempt, "conditioned_prepared", manifest
+                    )
+                )
+                result = await _run_comfy_workflow(
+                    client, workflow, output_path, session_id
+                )
+            provider = "FLUX.2 Klein · blockout conditioned"
+            _LAST_PROVIDER[session_id] = provider
+            manifest["provider_attempts"].append(
+                {"provider": provider, "status": "completed"}
+            )
+            manifest.update(
+                status="completed",
+                finalized_at=datetime.now(timezone.utc).isoformat(),
+                output=artifact_metadata(result),
+            )
+            manifests.append(
+                _save_generation(
+                    output_path.parent, attempt, "conditioned_completed", manifest
+                )
+            )
+            return CanonGenerationResult(result, provider, tuple(manifests))
         except Exception as exc:
+            manifest["provider_attempts"].append(
+                {"provider": "ComfyUI conditioned", "status": "failed", "error": str(exc)}
+            )
+            manifest.update(
+                status="failed", finalized_at=datetime.now(timezone.utc).isoformat()
+            )
+            manifests.append(
+                _save_generation(
+                    output_path.parent, attempt, "conditioned_failed", manifest
+                )
+            )
             print(f"Conditioned ComfyUI generation failed: {exc}")
-    return await generate_canon_image(concept, session_id, attempt)
+    else:
+        manifest["provider_attempts"].append(
+            {"provider": "ComfyUI conditioned", "status": "skipped", "reason": "disabled"}
+        )
+        manifest.update(
+            status="skipped", finalized_at=datetime.now(timezone.utc).isoformat()
+        )
+        manifests.append(
+            _save_generation(output_path.parent, attempt, "conditioned_skipped", manifest)
+        )
+
+    fallback = await generate_canon_image(
+        concept, session_id, attempt, workflow_context=workflow_context
+    )
+    return CanonGenerationResult(
+        fallback.image_path,
+        fallback.provider,
+        tuple(manifests) + fallback.manifests,
+    )
 
 
 async def _run_comfy_workflow(

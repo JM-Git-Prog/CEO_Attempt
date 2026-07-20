@@ -4,6 +4,7 @@ The Living Room Pipeline - End-to-end world building.
 
 from __future__ import annotations
 
+import json
 import uuid
 from pathlib import Path
 from typing import Optional
@@ -16,25 +17,79 @@ from src.floor_plan.renderer import render_blockout, render_floor_plan_svg
 from src.scene_graph.builder import build_scene_graph
 from src.asset_factory.mesh_generator import generate_all_meshes
 from src.assembler.godot_project import assemble_godot_project
+from src.workflow_provenance import (
+    historical_profile_for,
+    normalize_interface_version,
+    profile_by_id,
+    profile_for,
+    snapshot_session,
+)
 
 OUTPUT_BASE = Path("output")
+
+
+def _infer_legacy_interface_version(session_id: str) -> int:
+    """Infer pre-provenance sessions from their earliest revision-log event."""
+    earliest: tuple[str, int] | None = None
+    for version in (3, 4, 5, 6):
+        log_path = OUTPUT_BASE / "logs" / f"v{version}.jsonl"
+        if not log_path.exists():
+            continue
+        with log_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if f'"session_id":"{session_id}"' not in line:
+                    continue
+                try:
+                    timestamp = str(json.loads(line).get("timestamp", ""))
+                except json.JSONDecodeError:
+                    continue
+                candidate = (timestamp, version)
+                if timestamp and (earliest is None or candidate < earliest):
+                    earliest = candidate
+    return earliest[1] if earliest else 6
 
 
 class WorldBuilder:
     """Orchestrates the full world-building pipeline."""
 
-    def __init__(self, session_id: Optional[str] = None):
+    def __init__(self, session_id: Optional[str] = None, interface_version: int = 6):
         resolved_id = session_id or str(uuid.uuid4())[:8]
         self.output_dir = OUTPUT_BASE / resolved_id
         self.output_dir.mkdir(parents=True, exist_ok=True)
         session_path = self.output_dir / "session.json"
         if session_id and session_path.exists():
-            self.session = WorldSession.model_validate_json(session_path.read_text(encoding="utf-8"))
+            payload = json.loads(session_path.read_text(encoding="utf-8"))
+            version = normalize_interface_version(
+                payload.get("interface_version") or _infer_legacy_interface_version(resolved_id)
+            )
+            profile_id = payload.get("workflow_profile_id")
+            if payload.get("workflow_profile"):
+                profile = profile_by_id(payload["workflow_profile"]["id"])
+                if payload["workflow_profile"] != profile:
+                    raise ValueError("Persisted workflow profile differs from its immutable contract")
+            elif profile_id:
+                profile = profile_by_id(profile_id)
+            else:
+                profile = historical_profile_for(version)
+            payload.update(
+                interface_version=version,
+                workflow_profile_id=profile["id"],
+                workflow_profile=profile,
+            )
+            self.session = WorldSession.model_validate(payload)
         else:
-            self.session = WorldSession(session_id=resolved_id)
+            version = normalize_interface_version(interface_version)
+            profile = profile_for(version)
+            self.session = WorldSession(
+                session_id=resolved_id,
+                interface_version=version,
+                workflow_profile_id=profile["id"],
+                workflow_profile=profile,
+            )
 
     def save_session(self) -> None:
-        """Persist resumable UI and pipeline state for page/server restoration."""
+        """Persist resumable state plus an immutable workflow input/output snapshot."""
+        snapshot_session(self.session, self.output_dir)
         (self.output_dir / "session.json").write_text(
             self.session.model_dump_json(indent=2), encoding="utf-8"
         )
@@ -85,16 +140,36 @@ class WorldBuilder:
         self._progress("Generating plan-conditioned canon image...")
         if not self.session.scene_concept:
             raise RuntimeError("No scene concept")
+        workflow_context = {
+            "interface_version": self.session.interface_version,
+            "workflow_profile_id": self.session.workflow_profile_id,
+            "workflow_profile": self.session.workflow_profile,
+            "user_description": self.session.user_description,
+            "floor_plan": self.session.floor_plan,
+            "plan_revision": self.session.plan_revision,
+        }
         if self.session.floor_plan_approved and self.session.blockout_path:
-            image_path = await generate_conditioned_canon(
+            generation = await generate_conditioned_canon(
                 self.session.scene_concept,
                 Path(self.session.blockout_path),
                 self.session.session_id,
                 attempt,
+                workflow_context=workflow_context,
             )
         else:
-            image_path = await generate_canon_image(self.session.scene_concept, self.session.session_id, attempt)
+            generation = await generate_canon_image(
+                self.session.scene_concept,
+                self.session.session_id,
+                attempt,
+                workflow_context=workflow_context,
+            )
+        image_path = generation.image_path
         self.session.canon_image_path = str(image_path)
+        self.session.canon_provider = generation.provider
+        for manifest in generation.manifests:
+            manifest_path = str(manifest)
+            if manifest_path not in self.session.generation_manifests:
+                self.session.generation_manifests.append(manifest_path)
         self._progress(f"Canon image generated: {image_path.name}")
         return image_path
 

@@ -166,6 +166,12 @@ class WorldSession(BaseModel):
     """Tracks the state and revision memory of a world-building session."""
 
     session_id: str
+    interface_version: int = 6
+    workflow_profile_id: str = ""
+    workflow_profile: dict = Field(default_factory=dict)
+    workflow_snapshot_count: int = 0
+    workflow_records: list[str] = Field(default_factory=list)
+    generation_manifests: list[str] = Field(default_factory=list)
     state: PipelineState = PipelineState.AWAITING_DESCRIPTION
     user_description: str = ""
     scene_concept: Optional[SceneConcept] = None
@@ -174,6 +180,7 @@ class WorldSession(BaseModel):
     blockout_path: Optional[str] = None
     floor_plan_approved: bool = False
     canon_image_path: Optional[str] = None
+    canon_provider: Optional[str] = None
     scene_graph: Optional[SceneGraph] = None
     output_path: Optional[str] = None
     plan_revision: int = 0

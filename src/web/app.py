@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import shutil
 from pathlib import Path
@@ -18,12 +19,17 @@ from src.orchestrator.llm import LLM_MODEL, OLLAMA_URL
 from src.pipeline import WorldBuilder
 from src.web.event_log import append_event
 from src.web.templates import get_index_html
+from src.workflow_provenance import normalize_interface_version, workflow_profiles
 
-app = FastAPI(title="The Living Room", version="0.5.0")
+app = FastAPI(title="The Living Room", version="0.6.0")
 sessions: dict[str, WorldBuilder] = {}
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+def _request_version(request: Request) -> int:
+    return normalize_interface_version(request.headers.get("x-app-version", "6"))
 
 
 @app.middleware("http")
@@ -32,7 +38,7 @@ async def log_session_api(request: Request, call_next):
     path = request.url.path
     if not path.startswith("/api/session"):
         return await call_next(request)
-    version = request.headers.get("x-app-version", "5")
+    version = request.headers.get("x-app-version", "6")
     parts = path.split("/")
     session_id = parts[3] if len(parts) > 3 else None
     route = path.replace(session_id, "{session_id}") if session_id else path
@@ -101,6 +107,9 @@ def _plan_payload(builder: WorldBuilder, plan) -> dict:
         "plan_revision": version,
         "warnings": builder.session.plan_warnings,
         "progress": builder.session.progress_messages,
+        "interface_version": builder.session.interface_version,
+        "workflow_profile_id": builder.session.workflow_profile_id,
+        "workflow_url": f"/api/session/{session_id}/workflow",
     }
 
 
@@ -111,6 +120,9 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
         "state": session.state.value,
         "user_description": session.user_description,
         "progress": session.progress_messages,
+        "interface_version": session.interface_version,
+        "workflow_profile_id": session.workflow_profile_id,
+        "workflow_url": f"/api/session/{session.session_id}/workflow",
     }
     if session.scene_graph and session.output_path:
         return {
@@ -126,7 +138,7 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
             "artifact": "canon",
             "concept": session.scene_concept.model_dump(),
             "canon_image": f"/api/session/{session.session_id}/canon_image?v={attempt}",
-            "provider": get_image_provider(session.session_id),
+            "provider": session.canon_provider or get_image_provider(session.session_id),
             "attempt": attempt,
         }
     if session.floor_plan and session.scene_concept:
@@ -137,9 +149,9 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     try:
-        version = int(request.query_params.get("v", "5"))
+        version = int(request.query_params.get("v", "6"))
     except ValueError:
-        version = 5
+        version = 6
     return HTMLResponse(
         get_index_html(version),
         headers={
@@ -164,12 +176,22 @@ async def readiness():
     return {"api": True, "comfyui": comfy, "ollama": ollama, "image_stack": "FLUX.2 Klein 4B FP8", "mesh_stack": "Procedural now · Hunyuan3D next"}
 
 
+@app.get("/api/workflow/profiles")
+async def get_workflow_profiles():
+    return {"schema_version": 1, "profiles": workflow_profiles()}
+
+
 @app.post("/api/session")
-async def create_session():
-    builder = WorldBuilder()
+async def create_session(request: Request):
+    builder = WorldBuilder(interface_version=_request_version(request))
     sessions[builder.session.session_id] = builder
     builder.save_session()
-    return {"session_id": builder.session.session_id}
+    return {
+        "session_id": builder.session.session_id,
+        "interface_version": builder.session.interface_version,
+        "workflow_profile_id": builder.session.workflow_profile_id,
+        "workflow_url": f"/api/session/{builder.session.session_id}/workflow",
+    }
 
 
 @app.get("/api/session/latest/snapshot")
@@ -193,9 +215,25 @@ async def session_snapshot(session_id: str):
     return _snapshot_payload(builder)
 
 
+@app.get("/api/session/{session_id}/workflow")
+async def session_workflow(session_id: str):
+    builder = _restore_builder(session_id)
+    if not builder:
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+    manifest_path = builder.output_dir / "workflow_manifest.json"
+    if not manifest_path.exists():
+        return JSONResponse({"error": "Workflow manifest not found"}, status_code=404)
+    return JSONResponse(json.loads(manifest_path.read_text(encoding="utf-8")))
+
+
 @app.post("/api/session/{session_id}/describe")
 async def describe(session_id: str, request: Request):
-    builder = sessions.setdefault(session_id, WorldBuilder(session_id=session_id))
+    builder = _restore_builder(session_id)
+    if not builder:
+        builder = WorldBuilder(
+            session_id=session_id, interface_version=_request_version(request)
+        )
+        sessions[session_id] = builder
     try:
         description = str((await request.json()).get("description", "")).strip()
         if not description:
@@ -215,7 +253,7 @@ async def describe(session_id: str, request: Request):
 
 @app.get("/api/session/{session_id}/floor_plan")
 async def get_floor_plan(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     path = Path(builder.session.floor_plan_path) if builder and builder.session.floor_plan_path else None
     if not path or not path.exists():
         return JSONResponse({"error": "No floor plan for this session"}, status_code=404)
@@ -224,7 +262,7 @@ async def get_floor_plan(session_id: str):
 
 @app.get("/api/session/{session_id}/blockout")
 async def get_blockout(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     path = Path(builder.session.blockout_path) if builder and builder.session.blockout_path else None
     if not path or not path.exists():
         return JSONResponse({"error": "No blockout for this session"}, status_code=404)
@@ -233,7 +271,7 @@ async def get_blockout(session_id: str):
 
 @app.post("/api/session/{session_id}/revise_plan")
 async def revise_plan(session_id: str, request: Request):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder or not builder.session.floor_plan:
         return JSONResponse({"error": "Session or plan not found"}, status_code=404)
     try:
@@ -253,7 +291,7 @@ async def revise_plan(session_id: str, request: Request):
 
 @app.post("/api/session/{session_id}/approve_plan")
 async def approve_plan(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder or not builder.session.floor_plan:
         return JSONResponse({"error": "Session or plan not found"}, status_code=404)
     try:
@@ -266,7 +304,7 @@ async def approve_plan(session_id: str):
             "state": builder.session.state.value,
             "concept": builder.session.scene_concept.model_dump(),
             "canon_image": f"/api/session/{session_id}/canon_image?v=1",
-            "provider": get_image_provider(session_id),
+            "provider": builder.session.canon_provider or get_image_provider(session_id),
             "progress": builder.session.progress_messages,
         }
     except Exception as exc:
@@ -275,7 +313,7 @@ async def approve_plan(session_id: str):
 
 @app.get("/api/session/{session_id}/canon_image")
 async def get_canon_image(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder or not builder.session.canon_image_path:
         return JSONResponse({"error": "No canon image for this session"}, status_code=404)
     path = Path(builder.session.canon_image_path)
@@ -286,7 +324,7 @@ async def get_canon_image(session_id: str):
 
 @app.post("/api/session/{session_id}/approve")
 async def approve_image(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder:
         return JSONResponse({"error": "Session not found"}, status_code=404)
     try:
@@ -309,7 +347,7 @@ async def approve_image(session_id: str):
 
 @app.post("/api/session/{session_id}/reject")
 async def reject_image(session_id: str, request: Request):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder or not builder.session.scene_concept:
         return JSONResponse({"error": "Session or concept not found"}, status_code=404)
     try:
@@ -323,7 +361,7 @@ async def reject_image(session_id: str, request: Request):
         await builder.step_generate_image(attempt=attempt)
         builder.session.state = PipelineState.AWAITING_APPROVAL
         builder.save_session()
-        return {"state": builder.session.state.value, "canon_image": f"/api/session/{session_id}/canon_image?v={attempt}", "provider": get_image_provider(session_id), "attempt": attempt, "progress": builder.session.progress_messages}
+        return {"state": builder.session.state.value, "canon_image": f"/api/session/{session_id}/canon_image?v={attempt}", "provider": builder.session.canon_provider or get_image_provider(session_id), "attempt": attempt, "progress": builder.session.progress_messages}
     except ValueError as exc:
         return _error(builder, exc, 400)
     except Exception as exc:
@@ -333,7 +371,7 @@ async def reject_image(session_id: str, request: Request):
 @app.post("/api/session/{session_id}/revise_world")
 async def revise_world(session_id: str, request: Request):
     """Capture feedback as session memory, compare render to canon, and rebuild."""
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder:
         return JSONResponse({"error": "Session not found"}, status_code=404)
     try:
@@ -384,7 +422,7 @@ async def get_mesh(session_id: str, obj_id: str):
 
 @app.get("/api/session/{session_id}/scene_data")
 async def get_scene_data(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder or not builder.session.scene_graph:
         return JSONResponse({"error": "No scene built yet"}, status_code=404)
     return builder.session.scene_graph.model_dump()
@@ -392,7 +430,7 @@ async def get_scene_data(session_id: str):
 
 @app.get("/api/session/{session_id}/download")
 async def download_project(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder or not builder.session.output_path:
         return JSONResponse({"error": "No project yet"}, status_code=404)
     zip_path = OUTPUT_DIR / session_id / "project"
@@ -402,7 +440,7 @@ async def download_project(session_id: str):
 
 @app.get("/api/session/{session_id}/status")
 async def get_status(session_id: str):
-    builder = sessions.get(session_id)
+    builder = _restore_builder(session_id)
     if not builder:
         return JSONResponse({"error": "Session not found"}, status_code=404)
-    return {"session_id": session_id, "state": builder.session.state.value, "progress": builder.session.progress_messages, "error": builder.session.error, "provider": get_image_provider(session_id), "has_image": builder.session.canon_image_path is not None, "has_project": builder.session.output_path is not None}
+    return {"session_id": session_id, "state": builder.session.state.value, "progress": builder.session.progress_messages, "error": builder.session.error, "provider": builder.session.canon_provider or get_image_provider(session_id), "has_image": builder.session.canon_image_path is not None, "has_project": builder.session.output_path is not None, "interface_version": builder.session.interface_version, "workflow_profile_id": builder.session.workflow_profile_id, "workflow_url": f"/api/session/{session_id}/workflow"}
