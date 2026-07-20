@@ -213,10 +213,14 @@ INDEX_HTML = """<!DOCTYPE html>
             const hw = room.width / 2;
             const hh = room.height / 2;
             const hdp = room.depth / 2;
-            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat), {position: new THREE.Vector3(0, hh, hdp+0.075)}));
-            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat), {position: new THREE.Vector3(0, hh, -(hdp+0.075))}));
-            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat), {position: new THREE.Vector3(hw+0.075, hh, 0)}));
-            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat), {position: new THREE.Vector3(-(hw+0.075), hh, 0)}));
+            const wallN = new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat);
+            wallN.position.set(0, hh, hdp+0.075); scene.add(wallN);
+            const wallS = new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat);
+            wallS.position.set(0, hh, -(hdp+0.075)); scene.add(wallS);
+            const wallE = new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat);
+            wallE.position.set(hw+0.075, hh, 0); scene.add(wallE);
+            const wallW = new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat);
+            wallW.position.set(-(hw+0.075), hh, 0); scene.add(wallW);
 
             // Objects
             sceneGraph.objects.forEach(obj => {
