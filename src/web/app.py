@@ -16,6 +16,7 @@ from src.canon_image.generator import check_comfyui, get_image_provider
 from src.models import PipelineState
 from src.orchestrator.llm import LLM_MODEL, OLLAMA_URL
 from src.pipeline import WorldBuilder
+from src.web.event_log import append_event
 from src.web.templates import get_index_html
 
 app = FastAPI(title="The Living Room", version="0.5.0")
@@ -23,6 +24,47 @@ sessions: dict[str, WorldBuilder] = {}
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.middleware("http")
+async def log_session_api(request: Request, call_next):
+    """Log backend session-process operations under the calling UI revision."""
+    path = request.url.path
+    if not path.startswith("/api/session"):
+        return await call_next(request)
+    version = request.headers.get("x-app-version", "5")
+    parts = path.split("/")
+    session_id = parts[3] if len(parts) > 3 else None
+    route = path.replace(session_id, "{session_id}") if session_id else path
+    try:
+        response = await call_next(request)
+    except Exception:
+        await asyncio.to_thread(append_event, OUTPUT_DIR, {
+            "app_version": version, "session_id": session_id, "event_type": "process",
+            "action": f"{request.method} {route}", "details": {"status": 500},
+        })
+        raise
+    details: dict[str, object] = {"status": response.status_code}
+    builder = sessions.get(session_id) if session_id else None
+    if builder:
+        details["state"] = builder.session.state.value
+        if builder.session.progress_messages:
+            details["progress"] = builder.session.progress_messages[-1]
+    await asyncio.to_thread(append_event, OUTPUT_DIR, {
+        "app_version": version, "session_id": session_id, "event_type": "process",
+        "action": f"{request.method} {route}", "details": details,
+    })
+    return response
+
+
+@app.post("/api/events")
+async def record_event(request: Request):
+    """Record a sanitized browser lifecycle, process, click, or test event."""
+    try:
+        record = await asyncio.to_thread(append_event, OUTPUT_DIR, await request.json())
+        return {"logged": True, "timestamp": record["timestamp"], "app_version": record["app_version"]}
+    except (ValueError, TypeError) as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
 
 
 def _restore_builder(session_id: str) -> WorldBuilder | None:

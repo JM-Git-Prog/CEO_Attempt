@@ -5,7 +5,7 @@ const sendBtn = $('#sendBtn');
 const stageBody = $('#stageBody');
 const stageTitle = $('#stageTitle');
 const stageState = $('#stageState');
-const appVersion = Number(window.APP_VERSION || 4);
+const appVersion = Number(window.APP_VERSION || 5);
 const initialParams = new URLSearchParams(window.location.search);
 let sessionId = appVersion >= 4 ? initialParams.get('session') || localStorage.getItem('livingRoomSessionId') : null;
 let busy = false;
@@ -19,13 +19,23 @@ function escapeHtml(value) {
 }
 
 async function fetchJson(url, options = {}) {
-  const response = await fetch(url, options);
+  const headers = new Headers(options.headers || {});
+  headers.set('X-App-Version', String(appVersion));
+  const response = await fetch(url, {...options, headers});
   const text = await response.text();
   let data = {};
   try { data = text ? JSON.parse(text) : {}; }
   catch { data = {error: text || `HTTP ${response.status}`}; }
   if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
   return data;
+}
+
+function logEvent(eventType, action, details = {}) {
+  const payload = {app_version:appVersion, session_id:sessionId, event_type:eventType, action, details};
+  fetch('/api/events', {
+    method:'POST', headers:{'Content-Type':'application/json','X-App-Version':String(appVersion)},
+    body:JSON.stringify(payload), keepalive:true,
+  }).catch(() => {});
 }
 
 function chip(id, label, ready, detail = '') {
@@ -58,6 +68,7 @@ function setStage(name) {
   document.querySelectorAll('.stage-step').forEach(step => {
     step.classList.toggle('active', step.dataset.stage === name);
   });
+  logEvent('process', 'stage_change', {stage:name});
 }
 
 function setBusy(value, label = 'Working') {
@@ -67,6 +78,7 @@ function setBusy(value, label = 'Working') {
   stageState.textContent = value ? 'WORKING' : 'READY';
   stageState.className = `stage-state ${value ? 'working' : 'ready'}`;
   if (value) stageTitle.textContent = label;
+  logEvent('process', value ? 'work_started' : 'work_finished', {label});
 }
 
 function progress(label) {
@@ -98,14 +110,18 @@ function rememberSession(id) {
   if (appVersion < 4) return;
   localStorage.setItem('livingRoomSessionId', id);
   const url = new URL(window.location.href);
-  url.searchParams.set('v', '4');
+  url.searchParams.set('v', String(appVersion));
   url.searchParams.set('session', id);
   history.replaceState({}, '', url);
 }
 
 async function ensureSession() {
-  if (!sessionId) rememberSession((await fetchJson('/api/session', {method:'POST'})).session_id);
-  else rememberSession(sessionId);
+  if (!sessionId) {
+    rememberSession((await fetchJson('/api/session', {method:'POST'})).session_id);
+    logEvent('lifecycle', 'session_created');
+  } else {
+    rememberSession(sessionId);
+  }
   return sessionId;
 }
 
@@ -151,6 +167,7 @@ async function restoreSession({manual = false} = {}) {
     const endpoint = sessionId ? `/api/session/${sessionId}/snapshot` : '/api/session/latest/snapshot';
     const data = await fetchJson(endpoint);
     rememberSession(data.session_id);
+    logEvent('lifecycle', 'session_restored', {artifact:data.artifact, state:data.state, manual});
     currentDescription = data.user_description || currentDescription;
     messages.innerHTML = '';
     if (data.artifact === 'plan') {
@@ -424,7 +441,17 @@ function buildViewer(graph, downloadUrl) {
 
 $('#composer').addEventListener('submit', event => { event.preventDefault(); sendDescription(); });
 input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendDescription(); } });
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld});
+document.addEventListener('click', event => {
+  const target = event.target instanceof Element ? event.target.closest('button,a,[role="button"]') : null;
+  if (!target) return;
+  logEvent('click', 'control_activated', {
+    element:target.tagName.toLowerCase(), element_id:target.id || '',
+    label:(target.textContent || '').trim().slice(0, 80), href:target.getAttribute('href') || '',
+    stage:target.dataset.stage || document.querySelector('.stage-step.active')?.dataset.stage || '',
+  });
+});
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, logEvent});
+logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);
 if (appVersion >= 4) restoreSession();

@@ -37,3 +37,13 @@ Inspect Brief, Plan, Blockout, Canon, World, and Compare when a world revision i
 ## Clean pass log
 
 - 2026-07-20 — Session `46452b46` passed from empty state through Brief, Plan, Blockout, Canon, and World on V4. Canon passed exact counts, geometry, camera, and finish checks. World passed scene/mesh/download routes and rendered visibly in the V4 viewer. Compare was not applicable because no World revision was required.
+- 2026-07-20 — Session `71462fa9` passed from empty state through Brief, Plan, Blockout, Canon, and World on logging-enabled V5. Canon passed exact counts, geometry, camera, and finishes. World passed scene/mesh/download routes plus deterministic V5 DOM/WebGL checks. Compare was not applicable. Its log trail covers lifecycle, process, test, `awaiting_description`, `awaiting_plan_approval`, `awaiting_approval`, and `ready`.
+
+## Revision event logs
+
+- Append-only files: `output/logs/v3.jsonl`, `output/logs/v4.jsonl`, and `output/logs/v5.jsonl`.
+- Events: actionable clicks, stage/work transitions, session lifecycle, session API operations, and validation tests.
+- Fields: UTC timestamp, interface version, session ID when available, event type, action, and sanitized details.
+- Session API records include response status, resulting pipeline state, and latest progress message.
+- User-entered prompt and revision-feedback text are intentionally not logged.
+- Click history before this instrumentation was installed cannot be reconstructed; logging applies from this point forward.
