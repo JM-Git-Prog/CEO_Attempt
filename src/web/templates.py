@@ -61,23 +61,9 @@ INDEX_HTML = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- Three.js via importmap -->
-    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-        }
-    }
-    </script>
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        window.THREE = THREE;
-        window.OrbitControls = OrbitControls;
-        window.threeReady = true;
-    </script>
+    <!-- Three.js bundled (guaranteed to work) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <script>
         let sessionId = null;
@@ -140,12 +126,18 @@ INDEX_HTML = """<!DOCTYPE html>
                     viewerDiv.appendChild(controlsHint);
                     messages.appendChild(viewerDiv);
                     messages.scrollTop = messages.scrollHeight;
-                    // Wait for Three.js module to load then render
-                    function tryBuild() {
-                        if (window.threeReady) { buildInlineViewer(viewerCanvas, data.scene_graph); }
-                        else { setTimeout(tryBuild, 100); }
+                    // Render 3D into this canvas
+                    try {
+                        if (typeof THREE === 'undefined') {
+                            throw new Error('Three.js failed to load from CDN. Check your internet connection.');
+                        }
+                        buildInlineViewer(viewerCanvas, data.scene_graph);
+                    } catch(e) {
+                        const errDiv = document.createElement('div');
+                        errDiv.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ff6b6b;font-size:0.85rem;text-align:center;padding:20px;';
+                        errDiv.textContent = '3D Error: ' + e.message;
+                        viewerDiv.appendChild(errDiv);
                     }
-                    tryBuild();
                 }
             } catch(e) { p.remove(); addMessage('system', 'Error: '+e.message); }
         }
@@ -170,9 +162,15 @@ INDEX_HTML = """<!DOCTYPE html>
         // ========== THREE.JS 3D VIEWER (INLINE) ==========
 
         function buildInlineViewer(canvas, sceneGraph) {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            const w = rect.width || 800;
-            const h = rect.height || 500;
+            const container = canvas.parentElement;
+            const w = container.clientWidth || 800;
+            const h = container.clientHeight || 500;
+            
+            // Set canvas size explicitly
+            canvas.width = w * window.devicePixelRatio;
+            canvas.height = h * window.devicePixelRatio;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
 
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0a0a0f);
@@ -186,11 +184,10 @@ INDEX_HTML = """<!DOCTYPE html>
             rend.setSize(w, h);
             rend.setPixelRatio(window.devicePixelRatio);
             rend.shadowMap.enabled = true;
-            rend.shadowMap.type = THREE.PCFSoftShadowMap;
             rend.toneMapping = THREE.ACESFilmicToneMapping;
-            rend.toneMappingExposure = 1.0;
+            rend.toneMappingExposure = 1.2;
 
-            const ctrl = new window.OrbitControls(cam, canvas);
+            const ctrl = new THREE.OrbitControls(cam, canvas);
             ctrl.enableDamping = true;
             ctrl.dampingFactor = 0.05;
             ctrl.target.set(0, 1, 0);
