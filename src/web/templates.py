@@ -61,10 +61,23 @@ INDEX_HTML = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- Three.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Three.js via importmap -->
+    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        window.THREE = THREE;
+        window.OrbitControls = OrbitControls;
+        window.threeReady = true;
+    </script>
 
     <script>
         let sessionId = null;
@@ -127,8 +140,12 @@ INDEX_HTML = """<!DOCTYPE html>
                     viewerDiv.appendChild(controlsHint);
                     messages.appendChild(viewerDiv);
                     messages.scrollTop = messages.scrollHeight;
-                    // Render 3D into this canvas
-                    buildInlineViewer(viewerCanvas, data.scene_graph);
+                    // Wait for Three.js module to load then render
+                    function tryBuild() {
+                        if (window.threeReady) { buildInlineViewer(viewerCanvas, data.scene_graph); }
+                        else { setTimeout(tryBuild, 100); }
+                    }
+                    tryBuild();
                 }
             } catch(e) { p.remove(); addMessage('system', 'Error: '+e.message); }
         }
@@ -173,7 +190,7 @@ INDEX_HTML = """<!DOCTYPE html>
             rend.toneMapping = THREE.ACESFilmicToneMapping;
             rend.toneMappingExposure = 1.0;
 
-            const ctrl = new THREE.OrbitControls(cam, canvas);
+            const ctrl = new window.OrbitControls(cam, canvas);
             ctrl.enableDamping = true;
             ctrl.dampingFactor = 0.05;
             ctrl.target.set(0, 1, 0);
