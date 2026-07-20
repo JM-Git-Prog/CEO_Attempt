@@ -10,6 +10,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from src.floor_plan.models import FloorPlan
+
 
 # --- Scene Concept (output of Orchestrator) ---
 
@@ -148,24 +150,36 @@ class SceneGraph(BaseModel):
 class PipelineState(str, Enum):
     AWAITING_DESCRIPTION = "awaiting_description"
     GENERATING_CONCEPT = "generating_concept"
+    GENERATING_PLAN = "generating_plan"
+    AWAITING_PLAN_APPROVAL = "awaiting_plan_approval"
     GENERATING_IMAGE = "generating_image"
     AWAITING_APPROVAL = "awaiting_approval"
     BUILDING_SCENE_GRAPH = "building_scene_graph"
     GENERATING_ASSETS = "generating_assets"
     ASSEMBLING_WORLD = "assembling_world"
+    REFINING_WORLD = "refining_world"
     READY = "ready"
     ERROR = "error"
 
 
 class WorldSession(BaseModel):
-    """Tracks the state of a single world-building session."""
+    """Tracks the state and revision memory of a world-building session."""
 
     session_id: str
     state: PipelineState = PipelineState.AWAITING_DESCRIPTION
     user_description: str = ""
     scene_concept: Optional[SceneConcept] = None
+    floor_plan: Optional[FloorPlan] = None
+    floor_plan_path: Optional[str] = None
+    blockout_path: Optional[str] = None
+    floor_plan_approved: bool = False
     canon_image_path: Optional[str] = None
     scene_graph: Optional[SceneGraph] = None
     output_path: Optional[str] = None
+    plan_revision: int = 0
+    plan_warnings: list[str] = Field(default_factory=list)
+    world_revision: int = 0
+    render_paths: list[str] = Field(default_factory=list)
+    revision_history: list[dict] = Field(default_factory=list)
     error: Optional[str] = None
     progress_messages: list[str] = Field(default_factory=list)

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import sys
 
+from src.floor_plan.models import FloorPlan
 from src.models import (
     DoorSpec, MaterialProps, PhysicsBody, PhysicsProps,
     RoomShell, SceneGraph, SceneLight, SceneObject, Vec3, WindowSpec, SceneConcept,
@@ -14,8 +15,9 @@ from src.orchestrator.llm import generate_json
 from src.orchestrator.prompts import SCENE_GRAPH_SYSTEM
 
 
-async def build_scene_graph(concept: SceneConcept) -> SceneGraph:
-    """Generate a complete scene graph from the scene concept."""
+async def build_scene_graph(concept: SceneConcept, floor_plan: FloorPlan | None = None) -> SceneGraph:
+    """Generate appearance/physics while preserving approved plan geometry."""
+    plan_context = floor_plan.model_dump_json() if floor_plan else "No approved plan supplied"
     user_prompt = f"""Build a scene graph for this space:
 
 Era: {concept.era}
@@ -25,10 +27,14 @@ Architecture: {concept.architecture_notes}
 Objects: {', '.join(concept.key_objects)}
 Lighting: {concept.lighting_notes}
 
-Place every object. Assign realistic physics properties. Configure lighting to match the mood."""
+APPROVED FLOOR PLAN (authoritative): {plan_context}
+Use every floor-plan item ID exactly. Room dimensions, item X/Z positions, footprints,
+heights, rotations, doors, and windows must not change. Add materials, physics, and lighting."""
 
     data = await generate_json(system=SCENE_GRAPH_SYSTEM, user=user_prompt)
     scene = _parse_scene_graph(data)
+    if floor_plan:
+        _apply_plan_constraints(scene, floor_plan)
     _validate_scene(scene)
     return scene
 
@@ -125,3 +131,64 @@ def _validate_scene(scene: SceneGraph) -> None:
         print(f"[SceneGraph Validation] {len(errors)} warnings:", file=sys.stderr)
         for e in errors[:5]:
             print(f"  - {e}", file=sys.stderr)
+
+
+def _apply_plan_constraints(scene: SceneGraph, plan: FloorPlan) -> None:
+    """Make approved plan geometry authoritative over LLM-authored scene details."""
+    scene.room.width = plan.room.width
+    scene.room.depth = plan.room.depth
+    scene.room.height = plan.room.height
+    authored = {obj.id: obj for obj in scene.objects}
+    constrained: list[SceneObject] = []
+    palette = {
+        "furniture": "#9b7048",
+        "fixture": "#6b8582",
+        "architectural": "#81769a",
+        "decor": "#6f7e94",
+    }
+    for item in plan.items:
+        obj = authored.get(item.id)
+        if obj is None:
+            obj = SceneObject(
+                id=item.id,
+                name=item.name,
+                object_type=item.category,
+                position=Vec3(),
+                dimensions=Vec3(x=item.width, y=item.height, z=item.depth),
+                physics=PhysicsProps(
+                    body_type=PhysicsBody.STATIC if item.fixed else PhysicsBody.RIGID,
+                    mass_kg=40.0 if item.fixed else 8.0,
+                    can_topple=not item.fixed,
+                ),
+                material=MaterialProps(base_color=palette[item.category]),
+                mesh_type="generated",
+                primitive_shape="box",
+                description=item.description,
+            )
+        obj.name = item.name
+        obj.object_type = item.category
+        obj.position = Vec3(x=item.x, y=item.elevation, z=item.z)
+        obj.rotation = Vec3(x=0.0, y=item.rotation_deg, z=0.0)
+        obj.scale = Vec3(x=1.0, y=1.0, z=1.0)
+        obj.dimensions = Vec3(x=item.width, y=item.height, z=item.depth)
+        obj.description = item.description or obj.description
+        if item.fixed:
+            obj.physics.body_type = PhysicsBody.STATIC
+        constrained.append(obj)
+    scene.objects = constrained
+    scene.doors = []
+    scene.windows = []
+    half_w, half_d = plan.room.width / 2, plan.room.depth / 2
+    for opening in plan.openings:
+        if opening.wall == "north":
+            position = Vec3(x=opening.offset, y=0, z=half_d)
+        elif opening.wall == "south":
+            position = Vec3(x=opening.offset, y=0, z=-half_d)
+        elif opening.wall == "east":
+            position = Vec3(x=half_w, y=0, z=opening.offset)
+        else:
+            position = Vec3(x=-half_w, y=0, z=opening.offset)
+        if opening.kind == "door":
+            scene.doors.append(DoorSpec(id=opening.id, position=position, wall=opening.wall, width=opening.width, height=opening.height))
+        else:
+            scene.windows.append(WindowSpec(id=opening.id, position=position, wall=opening.wall, width=opening.width, height=opening.height, sill_height=opening.sill_height))
