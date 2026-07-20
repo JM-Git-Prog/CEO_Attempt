@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Setup Vendor Folder",
+  "description": "Creating vendor folder for local Three.js",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": ""
+  }
+}

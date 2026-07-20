@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "KiroGraph Wiki Lint",
+      "trigger": "Stop",
+      "action": {
+        "type": "command",
+        "command": "kirograph wiki lint 2>&1 || true"
+      }
+    }
+  ]
+}

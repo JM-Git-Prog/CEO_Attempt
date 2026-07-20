@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "KiroGraph Sync on Agent Stop",
+      "trigger": "Stop",
+      "action": {
+        "type": "command",
+        "command": "kirograph sync --quiet 2>&1 > /dev/null"
+      }
+    }
+  ]
+}
