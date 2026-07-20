@@ -9,7 +9,14 @@
         "OLLAMA_BASE_URL": "http://localhost:11434"
       },
       "disabled": false,
-      "autoApprove": []
+      "autoApprove": [
+        "ollama_chat",
+        "ollama_generate",
+        "ollama_embed",
+        "ollama_list",
+        "ollama_ps",
+        "ollama_show"
+      ]
     },
     "kirograph": {
       "command": "kirograph",
