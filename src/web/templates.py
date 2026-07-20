@@ -1,15 +1,21 @@
 """HTML shell for The Living Room web application."""
 
 
-def get_index_html(version: int = 4) -> str:
-    version = 3 if version <= 3 else 4
+def get_index_html(version: int = 5) -> str:
+    if version <= 3:
+        version = 3
+    elif version == 4:
+        version = 4
+    else:
+        version = 5
     refresh_control = '<button class="refresh-output" onclick="refreshOutput()">REFRESH OUTPUT ↻</button>' if version >= 4 else ""
     plan_attr = ' role="button" tabindex="0" onclick="showPlanArtifact(\'floor\')"' if version >= 4 else ""
     blockout_attr = ' role="button" tabindex="0" onclick="showPlanArtifact(\'blockout\')"' if version >= 4 else ""
     version_nav = (
         f'<nav class="version-nav" aria-label="Interface version">'
         f'<a class="{"selected" if version == 3 else ""}" href="/?v=3">V3 SIMPLE</a>'
-        f'<a class="{"selected" if version == 4 else ""}" href="/?v=4">V4</a></nav>'
+        f'<a class="{"selected" if version == 4 else ""}" href="/?v=4">V4</a>'
+        f'<a class="{"selected" if version == 5 else ""}" href="/?v=5">V5</a></nav>'
     )
     return (
         INDEX_HTML.replace("__VERSION__", str(version))

@@ -18,7 +18,7 @@ from src.orchestrator.llm import LLM_MODEL, OLLAMA_URL
 from src.pipeline import WorldBuilder
 from src.web.templates import get_index_html
 
-app = FastAPI(title="The Living Room", version="0.4.0")
+app = FastAPI(title="The Living Room", version="0.5.0")
 sessions: dict[str, WorldBuilder] = {}
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
 STATIC_DIR = Path(__file__).parent / "static"
@@ -95,9 +95,9 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     try:
-        version = int(request.query_params.get("v", "4"))
+        version = int(request.query_params.get("v", "5"))
     except ValueError:
-        version = 4
+        version = 5
     return HTMLResponse(
         get_index_html(version),
         headers={
