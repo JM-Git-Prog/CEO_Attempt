@@ -14,16 +14,10 @@ INDEX_HTML = """<!DOCTYPE html>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0a0a0f; color: #e0e0e0; height: 100vh; display: flex; flex-direction: column; }
-        .header { padding: 12px 20px; border-bottom: 1px solid #1a1a2e; background: #0d0d14; display: flex; align-items: center; justify-content: space-between; }
+        .header { padding: 12px 20px; border-bottom: 1px solid #1a1a2e; background: #0d0d14; display: flex; align-items: center; }
         .header h1 { font-size: 1.2rem; font-weight: 300; color: #ffb347; }
-        .header .tabs { display: flex; gap: 8px; }
-        .header .tab { padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; background: #1a1a2e; border: 1px solid #2a2a3e; color: #888; }
-        .header .tab.active { background: #2a2a1a; border-color: #ffb347; color: #ffb347; }
         .content { flex: 1; display: flex; overflow: hidden; }
-        .chat-panel { width: 400px; display: flex; flex-direction: column; border-right: 1px solid #1a1a2e; }
-        .viewer-panel { flex: 1; position: relative; display: none; }
-        .viewer-panel.active { display: block; }
-        .chat-panel.fullwidth { width: 100%; max-width: 900px; margin: 0 auto; }
+        .chat-panel { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; }
         .messages { flex: 1; overflow-y: auto; padding: 16px; }
         .message { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; max-width: 90%; line-height: 1.4; font-size: 0.9rem; }
         .message.system { background: #1a1a2e; color: #9090a0; max-width: 100%; border-left: 3px solid #ffb347; }
@@ -51,34 +45,19 @@ INDEX_HTML = """<!DOCTYPE html>
         .scene-info .detail strong { color: #d0d0e0; }
         .loading { display: inline-block; width: 10px; height: 10px; border: 2px solid #ffb347; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        #viewer3d { width: 100%; height: 100%; }
-        .viewer-controls { position: absolute; bottom: 16px; left: 16px; background: rgba(10,10,15,0.85); padding: 10px 14px; border-radius: 6px; font-size: 0.75rem; color: #999; border: 1px solid #2a2a3e; }
-        .viewer-controls b { color: #ffb347; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>The Living Room</h1>
-        <div class="tabs">
-            <div class="tab active" onclick="showTab('chat')">Chat</div>
-            <div class="tab" onclick="showTab('viewer')" id="viewerTab">3D Viewer</div>
-        </div>
-    </div>
+    <div class="header"><h1>The Living Room</h1><p style="font-size:0.8rem;color:#666;margin-left:12px">Describe any interior. Walk into it.</p></div>
     <div class="content">
         <div class="chat-panel fullwidth" id="chatPanel">
             <div class="messages" id="messages">
-                <div class="message system">Describe the room you want to build. Once you approve the canon image, the 3D world will render right here in your browser.</div>
+                <div class="message system">Describe the room you want to build. Once you approve the canon image, the 3D world will render right here in the chat.</div>
             </div>
             <div class="input-area"><div class="input-row">
                 <textarea id="input" placeholder="A 1950s diner counter with four chrome stools, warm pendant lamp, rain on the window..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
                 <button id="sendBtn" onclick="send()">Build</button>
             </div></div>
-        </div>
-        <div class="viewer-panel" id="viewerPanel">
-            <canvas id="viewer3d"></canvas>
-            <div class="viewer-controls">
-                <b>Mouse drag</b> = orbit &nbsp; <b>Scroll</b> = zoom &nbsp; <b>Right-drag</b> = pan
-            </div>
         </div>
     </div>
 
@@ -89,7 +68,6 @@ INDEX_HTML = """<!DOCTYPE html>
 
     <script>
         let sessionId = null;
-        let scene3d = null, camera = null, renderer = null, controls = null;
         const messages = document.getElementById('messages');
         const input = document.getElementById('input');
         const sendBtn = document.getElementById('sendBtn');
@@ -103,22 +81,6 @@ INDEX_HTML = """<!DOCTYPE html>
             return div;
         }
         function addProgress(text) { return addMessage('progress', '<span class="loading"></span>' + text); }
-
-        function showTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            if (tab === 'viewer') {
-                document.getElementById('viewerTab').classList.add('active');
-                document.getElementById('viewerPanel').classList.add('active');
-                document.getElementById('chatPanel').classList.remove('fullwidth');
-                document.getElementById('chatPanel').style.display = 'flex';
-                if (renderer) renderer.setSize(document.getElementById('viewerPanel').clientWidth, document.getElementById('viewerPanel').clientHeight);
-                if (camera) { camera.aspect = document.getElementById('viewerPanel').clientWidth / document.getElementById('viewerPanel').clientHeight; camera.updateProjectionMatrix(); }
-            } else {
-                document.querySelector('.tab').classList.add('active');
-                document.getElementById('viewerPanel').classList.remove('active');
-                document.getElementById('chatPanel').classList.add('fullwidth');
-            }
-        }
 
         async function send() {
             const desc = input.value.trim();
@@ -153,11 +115,20 @@ INDEX_HTML = """<!DOCTYPE html>
                 p.remove();
 
                 if (data.scene_graph) {
-                    addMessage('ai', `<div class="scene-info"><h3>World Built!</h3><div class="detail">${data.scene_graph.objects.length} objects, ${data.scene_graph.lights.length} lights</div><div class="detail">Click the <b>3D Viewer</b> tab to explore, or download the Godot project.</div><a href="${data.download_url}" class="btn-download">Download Godot Project</a></div>`);
-                    // Build the 3D scene
-                    build3DScene(data.scene_graph, data.mesh_urls);
-                    // Auto-switch to viewer
-                    showTab('viewer');
+                    // Build the 3D scene inline - right here in the chat
+                    const viewerDiv = document.createElement('div');
+                    viewerDiv.style.cssText = 'width:100%;height:500px;border-radius:8px;overflow:hidden;margin:12px 0;border:1px solid #2a2a3e;position:relative;';
+                    const viewerCanvas = document.createElement('canvas');
+                    viewerCanvas.style.cssText = 'width:100%;height:100%;display:block;';
+                    viewerDiv.appendChild(viewerCanvas);
+                    const controlsHint = document.createElement('div');
+                    controlsHint.style.cssText = 'position:absolute;bottom:10px;left:10px;background:rgba(10,10,15,0.85);padding:8px 12px;border-radius:5px;font-size:0.7rem;color:#999;border:1px solid #2a2a3e;';
+                    controlsHint.innerHTML = '<b style="color:#ffb347">Drag</b> orbit &nbsp; <b style="color:#ffb347">Scroll</b> zoom &nbsp; <b style="color:#ffb347">Right-drag</b> pan';
+                    viewerDiv.appendChild(controlsHint);
+                    messages.appendChild(viewerDiv);
+                    messages.scrollTop = messages.scrollHeight;
+                    // Render 3D into this canvas
+                    buildInlineViewer(viewerCanvas, data.scene_graph);
                 }
             } catch(e) { p.remove(); addMessage('system', 'Error: '+e.message); }
         }
@@ -179,160 +150,114 @@ INDEX_HTML = """<!DOCTYPE html>
             } catch(e) { p.remove(); addMessage('system', 'Error: '+e.message); }
         }
 
-        // ========== THREE.JS 3D VIEWER ==========
+        // ========== THREE.JS 3D VIEWER (INLINE) ==========
 
-        function initViewer() {
-            const canvas = document.getElementById('viewer3d');
-            const panel = document.getElementById('viewerPanel');
+        function buildInlineViewer(canvas, sceneGraph) {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const w = rect.width || 800;
+            const h = rect.height || 500;
 
-            scene3d = new THREE.Scene();
-            scene3d.background = new THREE.Color(0x0a0a0f);
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0f);
 
-            camera = new THREE.PerspectiveCamera(75, panel.clientWidth / panel.clientHeight, 0.1, 100);
-            camera.position.set(0, 2.5, 6);
-
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer.setSize(panel.clientWidth, panel.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
-
-            controls = new THREE.OrbitControls(camera, canvas);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.target.set(0, 1, 0);
-
-            window.addEventListener('resize', () => {
-                if (panel.classList.contains('active')) {
-                    camera.aspect = panel.clientWidth / panel.clientHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(panel.clientWidth, panel.clientHeight);
-                }
-            });
-
-            animate();
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (controls) controls.update();
-            if (renderer && scene3d && camera) renderer.render(scene3d, camera);
-        }
-
-        function hexToThreeColor(hex) {
-            return new THREE.Color(hex);
-        }
-
-        function build3DScene(sceneGraph, meshUrls) {
-            if (!scene3d) initViewer();
-
-            // Clear existing scene
-            while (scene3d.children.length > 0) scene3d.remove(scene3d.children[0]);
-
+            const cam = new THREE.PerspectiveCamera(75, w / h, 0.1, 100);
             const room = sceneGraph.room;
+            const hd = room.depth / 2;
+            cam.position.set(0, 2.0, hd + 2);
+
+            const rend = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            rend.setSize(w, h);
+            rend.setPixelRatio(window.devicePixelRatio);
+            rend.shadowMap.enabled = true;
+            rend.shadowMap.type = THREE.PCFSoftShadowMap;
+            rend.toneMapping = THREE.ACESFilmicToneMapping;
+            rend.toneMappingExposure = 1.0;
+
+            const ctrl = new THREE.OrbitControls(cam, canvas);
+            ctrl.enableDamping = true;
+            ctrl.dampingFactor = 0.05;
+            ctrl.target.set(0, 1, 0);
 
             // Floor
-            const floorGeo = new THREE.BoxGeometry(room.width, 0.1, room.depth);
-            const floorMat = new THREE.MeshStandardMaterial({ color: hexToThreeColor(room.floor_material.base_color), roughness: room.floor_material.roughness, metalness: room.floor_material.metallic });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
+            const floorMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(room.floor_material.base_color), roughness: room.floor_material.roughness, metalness: room.floor_material.metallic });
+            const floor = new THREE.Mesh(new THREE.BoxGeometry(room.width, 0.1, room.depth), floorMat);
             floor.position.set(0, -0.05, 0);
             floor.receiveShadow = true;
-            scene3d.add(floor);
+            scene.add(floor);
 
             // Ceiling
-            const ceilGeo = new THREE.BoxGeometry(room.width, 0.1, room.depth);
-            const ceilMat = new THREE.MeshStandardMaterial({ color: hexToThreeColor(room.ceiling_material.base_color), roughness: room.ceiling_material.roughness });
-            const ceil = new THREE.Mesh(ceilGeo, ceilMat);
+            const ceilMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(room.ceiling_material.base_color), roughness: room.ceiling_material.roughness });
+            const ceil = new THREE.Mesh(new THREE.BoxGeometry(room.width, 0.1, room.depth), ceilMat);
             ceil.position.set(0, room.height + 0.05, 0);
-            scene3d.add(ceil);
+            scene.add(ceil);
 
             // Walls
-            const wallMat = new THREE.MeshStandardMaterial({ color: hexToThreeColor(room.wall_material.base_color), roughness: room.wall_material.roughness, side: THREE.DoubleSide });
-            const hw = room.width / 2, hd = room.depth / 2, hh = room.height / 2;
-
-            const wallN = new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat);
-            wallN.position.set(0, hh, hd + 0.075); scene3d.add(wallN);
-            const wallS = new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat);
-            wallS.position.set(0, hh, -(hd + 0.075)); scene3d.add(wallS);
-            const wallE = new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat);
-            wallE.position.set(hw + 0.075, hh, 0); scene3d.add(wallE);
-            const wallW = new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat);
-            wallW.position.set(-(hw + 0.075), hh, 0); scene3d.add(wallW);
+            const wallMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(room.wall_material.base_color), roughness: room.wall_material.roughness, side: THREE.DoubleSide });
+            const hw = room.width / 2;
+            const hh = room.height / 2;
+            const hdp = room.depth / 2;
+            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat), {position: new THREE.Vector3(0, hh, hdp+0.075)}));
+            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(room.width, room.height, 0.15), wallMat), {position: new THREE.Vector3(0, hh, -(hdp+0.075))}));
+            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat), {position: new THREE.Vector3(hw+0.075, hh, 0)}));
+            scene.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.15, room.height, room.depth), wallMat), {position: new THREE.Vector3(-(hw+0.075), hh, 0)}));
 
             // Objects
             sceneGraph.objects.forEach(obj => {
                 let geo;
-                if (obj.primitive_shape === 'cylinder') {
-                    geo = new THREE.CylinderGeometry(obj.dimensions.x / 2, obj.dimensions.x / 2, obj.dimensions.y, 16);
-                } else if (obj.primitive_shape === 'sphere') {
-                    geo = new THREE.SphereGeometry(Math.max(obj.dimensions.x, obj.dimensions.y, obj.dimensions.z) / 2, 16, 16);
-                } else {
-                    geo = new THREE.BoxGeometry(obj.dimensions.x, obj.dimensions.y, obj.dimensions.z);
-                }
+                if (obj.primitive_shape === 'cylinder') geo = new THREE.CylinderGeometry(obj.dimensions.x/2, obj.dimensions.x/2, obj.dimensions.y, 16);
+                else if (obj.primitive_shape === 'sphere') geo = new THREE.SphereGeometry(Math.max(obj.dimensions.x,obj.dimensions.y,obj.dimensions.z)/2, 16, 16);
+                else geo = new THREE.BoxGeometry(obj.dimensions.x, obj.dimensions.y, obj.dimensions.z);
 
-                const mat = new THREE.MeshStandardMaterial({
-                    color: hexToThreeColor(obj.material.base_color),
-                    roughness: obj.material.roughness,
-                    metalness: obj.material.metallic
-                });
+                const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(obj.material.base_color), roughness: obj.material.roughness, metalness: obj.material.metallic });
                 const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.set(obj.position.x, obj.position.y + obj.dimensions.y / 2, obj.position.z);
+                mesh.position.set(obj.position.x, obj.position.y + obj.dimensions.y/2, obj.position.z);
                 mesh.rotation.y = (obj.rotation.y || 0) * Math.PI / 180;
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
-                scene3d.add(mesh);
+                scene.add(mesh);
             });
 
             // Doors
-            sceneGraph.doors.forEach(door => {
-                const geo = new THREE.BoxGeometry(door.width, door.height, 0.04);
-                const mat = new THREE.MeshStandardMaterial({ color: 0x644228, roughness: 0.7 });
-                const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.set(door.position.x, door.height / 2, door.position.z);
+            (sceneGraph.doors || []).forEach(door => {
+                const mesh = new THREE.Mesh(new THREE.BoxGeometry(door.width, door.height, 0.04), new THREE.MeshStandardMaterial({color:0x644228, roughness:0.7}));
+                mesh.position.set(door.position.x, door.height/2, door.position.z);
                 mesh.castShadow = true;
-                scene3d.add(mesh);
+                scene.add(mesh);
             });
 
             // Lights
-            const ambient = new THREE.AmbientLight(hexToThreeColor(sceneGraph.ambient_color), sceneGraph.ambient_energy * 2);
-            scene3d.add(ambient);
-
-            sceneGraph.lights.forEach(light => {
+            scene.add(new THREE.AmbientLight(new THREE.Color(sceneGraph.ambient_color), (sceneGraph.ambient_energy || 0.3) * 2));
+            (sceneGraph.lights || []).forEach(light => {
                 let l;
-                if (light.light_type === 'point') {
-                    l = new THREE.PointLight(hexToThreeColor(light.color), light.intensity * 2, light.range_meters);
-                    l.castShadow = light.cast_shadows;
-                    l.position.set(light.position.x, light.position.y, light.position.z);
-                } else if (light.light_type === 'directional') {
-                    l = new THREE.DirectionalLight(hexToThreeColor(light.color), light.intensity);
-                    l.castShadow = light.cast_shadows;
-                    l.position.set(light.position.x, light.position.y, light.position.z);
-                } else if (light.light_type === 'spot') {
-                    l = new THREE.SpotLight(hexToThreeColor(light.color), light.intensity * 2, light.range_meters, (light.spot_angle_deg || 45) * Math.PI / 180);
-                    l.castShadow = light.cast_shadows;
-                    l.position.set(light.position.x, light.position.y, light.position.z);
-                }
-                if (l) scene3d.add(l);
-
-                // Add a small sphere to show light position
-                const bulb = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.05, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: hexToThreeColor(light.color) })
-                );
+                const c = new THREE.Color(light.color);
+                if (light.light_type === 'point') { l = new THREE.PointLight(c, light.intensity*2, light.range_meters); l.castShadow = true; }
+                else if (light.light_type === 'directional') { l = new THREE.DirectionalLight(c, light.intensity); l.castShadow = true; }
+                else if (light.light_type === 'spot') { l = new THREE.SpotLight(c, light.intensity*2, light.range_meters, (light.spot_angle_deg||45)*Math.PI/180); l.castShadow = true; }
+                if (l) { l.position.set(light.position.x, light.position.y, light.position.z); scene.add(l); }
+                // Light bulb indicator
+                const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.06,8,8), new THREE.MeshBasicMaterial({color:c}));
                 bulb.position.set(light.position.x, light.position.y, light.position.z);
-                scene3d.add(bulb);
+                scene.add(bulb);
             });
 
-            // Position camera to see the room
-            camera.position.set(0, 2.0, hd + 2);
-            controls.target.set(0, 1, 0);
-            controls.update();
+            // Animate
+            function loop() {
+                requestAnimationFrame(loop);
+                ctrl.update();
+                rend.render(scene, cam);
+            }
+            loop();
+
+            // Handle resize
+            const ro = new ResizeObserver(() => {
+                const r2 = canvas.parentElement.getBoundingClientRect();
+                cam.aspect = r2.width / r2.height;
+                cam.updateProjectionMatrix();
+                rend.setSize(r2.width, r2.height);
+            });
+            ro.observe(canvas.parentElement);
         }
 
-        // Init viewer on load
-        initViewer();
         input.focus();
     </script>
 </body>
