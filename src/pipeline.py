@@ -158,11 +158,14 @@ class WorldBuilder:
         with self.telemetry.substep("floor_plan", "render_floor_plan_svg"):
             render_floor_plan_svg(plan, svg_path)
         with self.telemetry.substep("floor_plan", "render_blockout"):
+            blockout_detail = (self.session.workflow_profile.get("stages", {})
+                               .get("canon", {}).get("blockout_detail", "primitive"))
             render_blockout(
                 plan,
                 blockout_path,
                 self.session.scene_concept,
                 camera_contract=self.session.camera_contract,
+                blockout_detail=blockout_detail,
             )
         self.session.floor_plan_path = str(svg_path)
         self.session.blockout_path = str(blockout_path)

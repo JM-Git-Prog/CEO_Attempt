@@ -82,6 +82,7 @@ def render_blockout(
     concept=None,
     *,
     camera_contract: CameraContract | None = None,
+    blockout_detail: str = "primitive",
 ) -> Path:
     width = camera_contract.image_width if camera_contract else 1024
     height = camera_contract.image_height if camera_contract else 768
@@ -112,8 +113,9 @@ def render_blockout(
 
     _draw_room(draw, plan, project, concept)
     items = sorted(plan.items, key=lambda item: -_distance(item, camera))
+    draw_fn = _draw_item_articulated if blockout_detail == "articulated" else _draw_item
     for item in items:
-        _draw_item(draw, item, project)
+        draw_fn(draw, item, project, concept)
     draw.rectangle((18, 18, min(520, width - 18), 62), fill="#080c12dd", outline="#3d4858")
     draw.text((32, 30), f"APPROVED BLOCKOUT · {plan.name}", fill="#e8edf4")
     lock_label = "Geometry and camera are locked; canon generation may change only appearance and lighting."
@@ -188,7 +190,7 @@ def _distance(item: PlanItem, camera: np.ndarray) -> float:
     return float(np.linalg.norm(np.array([item.x, item.elevation + item.height / 2, item.z]) - camera))
 
 
-def _draw_item(draw: ImageDraw.ImageDraw, item: PlanItem, project) -> None:
+def _draw_item(draw: ImageDraw.ImageDraw, item: PlanItem, project, concept=None) -> None:
     angle = math.radians(item.rotation_deg)
     cos_a, sin_a = math.cos(angle), math.sin(angle)
     local = [(-item.width/2, -item.depth/2), (item.width/2, -item.depth/2), (item.width/2, item.depth/2), (-item.width/2, item.depth/2)]
@@ -212,6 +214,207 @@ def _draw_item(draw: ImageDraw.ImageDraw, item: PlanItem, project) -> None:
         draw.polygon(points, fill=color, outline="#f0d1a4")
     anchor = projected[4]
     draw.text((anchor[0] + 4, anchor[1] - 14), item.name[:24], fill="#f2f4f7")
+
+
+def _floor_label(item: PlanItem) -> str:
+    text = f"{item.id} {item.name}".lower()
+    suffix = re.search(r"(\d+)$", item.id)
+    number = suffix.group(1) if suffix else ""
+    if "stool" in text:
+        return f"S{number}" if number else "STOOL"
+    if "pendant" in text or "light" in text:
+        return f"P{number}" if number else "LIGHT"
+    if "counter" in text:
+        return f"COUNTER · {item.width:.1f}m"
+    label = item.name.upper()
+    return label if len(label) <= 18 else f"{label[:17]}…"
+
+
+# ---------------------------------------------------------------------------
+# Articulated blockout: sub-part decomposition for denser geometry signal
+# ---------------------------------------------------------------------------
+
+# Palette-mapped flat colors per material zone (derived from canonical prompt)
+_PALETTE = {
+    "chrome": "#c8cdd4",
+    "chrome_highlight": "#e8ecf2",
+    "mint_green": "#a8d5ba",
+    "red_vinyl": "#c0392b",
+    "formica_top": "#f5f0e0",
+    "counter_body": "#3d5c4a",
+    "stool_base": "#8a8f96",
+    "stool_stem": "#b0b5bc",
+    "pendant_canopy": "#9ca3ab",
+    "pendant_shade": "#d4d9e0",
+    "pendant_glow": "#ffb347",
+    "door_frame": "#5a4a3a",
+    "door_panel": "#7a6550",
+    "generic_furniture": "#8b6846",
+    "generic_fixture": "#5fa7a1",
+    "generic_top": "#dba25f",
+    "generic_side": "#a77b4d",
+}
+
+
+def _box_vertices(
+    cx: float, cy: float, cz: float,
+    w: float, h: float, d: float,
+    angle_rad: float = 0.0,
+) -> tuple[list[tuple[float, float, float]], list[tuple[float, float, float]]]:
+    """Return (base_corners, top_corners) for an axis-aligned box rotated around Y."""
+    cos_a, sin_a = math.cos(angle_rad), math.sin(angle_rad)
+    local = [(-w/2, -d/2), (w/2, -d/2), (w/2, d/2), (-w/2, d/2)]
+    base = [(cx + x*cos_a - z*sin_a, cy, cz + x*sin_a + z*cos_a) for x, z in local]
+    top = [(bx, cy + h, bz) for bx, _, bz in base]
+    return base, top
+
+
+def _draw_box(
+    draw: ImageDraw.ImageDraw,
+    project,
+    base: list[tuple[float, float, float]],
+    top: list[tuple[float, float, float]],
+    top_color: str,
+    front_color: str,
+    side_color: str,
+    outline_color: str = "#f0d1a4",
+) -> None:
+    """Draw a projected box with distinct colors per face orientation."""
+    vertices = base + top  # 0-3 base, 4-7 top
+    projected = [project(v) for v in vertices]
+    if not all(projected):
+        return
+    faces = [
+        ([4, 5, 6, 7], top_color),    # top face
+        ([0, 1, 5, 4], front_color),   # front
+        ([1, 2, 6, 5], side_color),    # right side
+        ([2, 3, 7, 6], front_color),   # back (same as front for symmetry)
+        ([3, 0, 4, 7], side_color),    # left side
+    ]
+    ranked = []
+    for indices, color in faces:
+        depth = sum(projected[i][2] for i in indices) / len(indices)
+        ranked.append((depth, indices, color))
+    for _, indices, color in sorted(ranked, reverse=True):
+        points = [(projected[i][0], projected[i][1]) for i in indices]
+        draw.polygon(points, fill=color, outline=outline_color)
+
+
+def _draw_cylinder_top(
+    draw: ImageDraw.ImageDraw,
+    project,
+    cx: float, cy: float, cz: float,
+    radius: float, height: float,
+    body_color: str, top_color: str,
+    segments: int = 12,
+) -> None:
+    """Approximate a cylinder with a polygon body and distinct top disc."""
+    angles = [2 * math.pi * i / segments for i in range(segments)]
+    base_ring = [(cx + radius * math.cos(a), cy, cz + radius * math.sin(a)) for a in angles]
+    top_ring = [(cx + radius * math.cos(a), cy + height, cz + radius * math.sin(a)) for a in angles]
+    base_proj = [project(v) for v in base_ring]
+    top_proj = [project(v) for v in top_ring]
+    if not all(base_proj) or not all(top_proj):
+        return
+    # Draw body quads (back to front)
+    quads = []
+    for i in range(segments):
+        j = (i + 1) % segments
+        quad_proj = [base_proj[i], base_proj[j], top_proj[j], top_proj[i]]
+        depth = sum(p[2] for p in quad_proj) / 4
+        quads.append((depth, quad_proj, body_color))
+    # Top disc
+    top_depth = sum(p[2] for p in top_proj) / len(top_proj)
+    quads.append((top_depth - 0.001, top_proj, top_color))  # slight bias to draw on top
+    for _, pts, color in sorted(quads, reverse=True):
+        points = [(p[0], p[1]) for p in pts]
+        draw.polygon(points, fill=color, outline="#d0c8bc")
+
+
+def _decompose_counter(item: PlanItem) -> list[dict]:
+    """Decompose a counter into top slab, chrome trim, front panel, and body."""
+    angle = math.radians(item.rotation_deg)
+    trim_h = 0.03
+    top_h = 0.05
+    body_h = item.height - top_h - trim_h
+    return [
+        # Main body (dark base)
+        {"cx": item.x, "cy": item.elevation, "cz": item.z,
+         "w": item.width, "h": body_h, "d": item.depth,
+         "angle": angle, "top": _PALETTE["counter_body"], "front": _PALETTE["mint_green"], "side": _PALETTE["counter_body"]},
+        # Chrome trim strip at top of body
+        {"cx": item.x, "cy": item.elevation + body_h, "cz": item.z,
+         "w": item.width + 0.02, "h": trim_h, "d": item.depth + 0.02,
+         "angle": angle, "top": _PALETTE["chrome_highlight"], "front": _PALETTE["chrome"], "side": _PALETTE["chrome"]},
+        # Formica counter top slab
+        {"cx": item.x, "cy": item.elevation + body_h + trim_h, "cz": item.z,
+         "w": item.width, "h": top_h, "d": item.depth,
+         "angle": angle, "top": _PALETTE["formica_top"], "front": _PALETTE["formica_top"], "side": _PALETTE["chrome"]},
+    ]
+
+
+def _decompose_stool(item: PlanItem) -> list[dict]:
+    """Decompose a stool into base disc, chrome stem, and red cushion."""
+    return [
+        {"type": "cylinder", "cx": item.x, "cy": item.elevation, "cz": item.z,
+         "radius": min(item.width, item.depth) / 2 * 0.75, "height": 0.04,
+         "body": _PALETTE["stool_base"], "top": _PALETTE["chrome"]},
+        {"type": "cylinder", "cx": item.x, "cy": item.elevation + 0.04, "cz": item.z,
+         "radius": 0.025, "height": item.height - 0.14,
+         "body": _PALETTE["stool_stem"], "top": _PALETTE["chrome_highlight"]},
+        {"type": "cylinder", "cx": item.x, "cy": item.elevation + item.height - 0.10, "cz": item.z,
+         "radius": min(item.width, item.depth) / 2, "height": 0.10,
+         "body": _PALETTE["red_vinyl"], "top": _PALETTE["red_vinyl"]},
+    ]
+
+
+def _decompose_pendant(item: PlanItem) -> list[dict]:
+    """Decompose a pendant light into canopy disc, cable, shade cone, and glow."""
+    shade_h = item.height * 0.5
+    cable_h = item.height * 0.35
+    canopy_h = item.height * 0.08
+    glow_h = item.height * 0.07
+    base_y = item.elevation
+    return [
+        # Canopy (ceiling mount)
+        {"type": "cylinder", "cx": item.x, "cy": base_y + cable_h + shade_h + glow_h, "cz": item.z,
+         "radius": item.width / 2 * 0.4, "height": canopy_h,
+         "body": _PALETTE["pendant_canopy"], "top": _PALETTE["chrome"]},
+        # Cable/stem
+        {"type": "cylinder", "cx": item.x, "cy": base_y + shade_h + glow_h, "cz": item.z,
+         "radius": 0.012, "height": cable_h,
+         "body": _PALETTE["chrome"], "top": _PALETTE["chrome"]},
+        # Shade (widest part)
+        {"type": "cylinder", "cx": item.x, "cy": base_y + glow_h, "cz": item.z,
+         "radius": item.width / 2, "height": shade_h,
+         "body": _PALETTE["pendant_shade"], "top": _PALETTE["chrome_highlight"]},
+        # Glow aperture (warm emissive at bottom)
+        {"type": "cylinder", "cx": item.x, "cy": base_y, "cz": item.z,
+         "radius": item.width / 2 * 0.7, "height": glow_h,
+         "body": _PALETTE["pendant_glow"], "top": _PALETTE["pendant_glow"]},
+    ]
+
+
+def _draw_item_articulated(draw: ImageDraw.ImageDraw, item: PlanItem, project, concept=None) -> None:
+    """Draw an item decomposed into palette-mapped sub-parts for richer geometry signal."""
+    text = f"{item.id} {item.name}".lower()
+
+    if "counter" in text:
+        for part in _decompose_counter(item):
+            base, top = _box_vertices(part["cx"], part["cy"], part["cz"],
+                                      part["w"], part["h"], part["d"], part["angle"])
+            _draw_box(draw, project, base, top, part["top"], part["front"], part["side"])
+    elif "stool" in text:
+        for part in _decompose_stool(item):
+            _draw_cylinder_top(draw, project, part["cx"], part["cy"], part["cz"],
+                               part["radius"], part["height"], part["body"], part["top"])
+    elif "pendant" in text or "light" in text:
+        for part in _decompose_pendant(item):
+            _draw_cylinder_top(draw, project, part["cx"], part["cy"], part["cz"],
+                               part["radius"], part["height"], part["body"], part["top"])
+    else:
+        # Generic furniture: use original primitive renderer as fallback
+        _draw_item(draw, item, project, concept)
 
 
 def _floor_label(item: PlanItem) -> str:

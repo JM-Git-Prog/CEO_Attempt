@@ -156,6 +156,25 @@ _PROFILE_VALUES = (
         "source": "V9 camera-locked full appearance resynthesis; encoded blockout remains the geometry reference",
         "status": "active",
     },
+    {
+        "id": "v9-camera-locked-photoreal-r3",
+        "interface_version": 9,
+        "release_commit": None,
+        "supersedes": "v9-camera-locked-photoreal-r2",
+        "stages": {
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "enriched_concept_and_plan",
+                "latent": "encoded_blockout",
+                "sigma_schedule": "full",
+                "appearance_transform": "full_photoreal_resynthesis",
+                "camera_contract": "v9-camera-1",
+                "blockout_detail": "articulated",
+            }
+        },
+        "source": "V9 articulated blockout: sub-part decomposition with palette-mapped flat colors for denser geometry signal",
+        "status": "experimental",
+    },
 )
 _PROFILE_DOCUMENTS = MappingProxyType(
     {value["id"]: json.dumps(value, sort_keys=True) for value in _PROFILE_VALUES}
@@ -168,7 +187,7 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         6: "v6-reference-full-r1",
         7: "v7-reference-full-r1",
         8: "v8-reference-full-r1",
-        9: "v9-camera-locked-photoreal-r2",
+        9: "v9-camera-locked-photoreal-r3",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -179,7 +198,7 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         6: "v6-reference-full-r1",
         7: "v7-reference-full-r1",
         8: "v8-reference-full-r1",
-        9: "v9-camera-locked-partial-r1",
+        9: "v9-camera-locked-photoreal-r2",
     }
 )
 
