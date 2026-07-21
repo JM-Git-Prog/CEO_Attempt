@@ -30,7 +30,7 @@ from src.workflow_provenance import (
 
 OUTPUT_BASE = Path("output")
 V8_LLM_STAGE_TIMEOUT_SECONDS = max(
-    1.0, float(os.getenv("V8_LLM_STAGE_TIMEOUT_SECONDS", "30"))
+    1.0, float(os.getenv("V8_LLM_STAGE_TIMEOUT_SECONDS", "90"))
 )
 
 

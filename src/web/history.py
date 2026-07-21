@@ -217,6 +217,10 @@ def _sanitize(value: Any) -> Any:
 def _select_revision(revisions: list[int], revision: Any) -> int:
     requested = _revision(revision)
     if not revisions:
+        if stage == "compare":
+            raise FileNotFoundError(
+                "No revisions to compare yet. Use 'Revise World' to capture a render and get a comparison."
+            )
         raise FileNotFoundError("Stage is not available")
     selected = max(revisions) if requested is None else requested
     if selected not in revisions:

@@ -156,6 +156,7 @@ async def generate_json(
     except TimeoutError:
         from src.orchestrator.mock_llm import mock_generate
 
+        print(f"[LLM] Timeout after {timeout_seconds}s — using deterministic fallback")
         return _parse_json(mock_generate(system, user))
 
 
