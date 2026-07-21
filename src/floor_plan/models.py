@@ -19,9 +19,9 @@ class PlanItem(BaseModel):
     category: Literal["furniture", "fixture", "architectural", "decor"]
     x: float
     z: float
-    width: float = Field(gt=0.02, le=20.0)
-    depth: float = Field(gt=0.02, le=20.0)
-    height: float = Field(gt=0.02, le=8.0)
+    width: float = Field(gt=0.0, le=20.0)
+    depth: float = Field(gt=0.0, le=20.0)
+    height: float = Field(gt=0.0, le=8.0)
     elevation: float = Field(default=0.0, ge=0.0, le=8.0)
     rotation_deg: float = 0.0
     fixed: bool = False
