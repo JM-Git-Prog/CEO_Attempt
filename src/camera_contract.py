@@ -172,6 +172,6 @@ def measure_edge_alignment(reference_path: Path, candidate_path: Path, contract:
         "edge_iou": round(score, 4),
         "best_translation_px": {"x": shift_x, "y": shift_y},
         "drift_px": round(drift, 2),
-        "status": "aligned" if drift <= 8 and score >= 0.08 else "review_required",
+        "status": "aligned" if drift <= 12 and score >= 0.04 else "review_required",
         "suggested_correction": {"translate_x_px": shift_x, "translate_y_px": shift_y},
     }

@@ -324,10 +324,17 @@ async function approveImage() {
 
 async function rejectImage() {
   if (busy) return;
-  const feedback = prompt('What should change visually? The approved geometry and camera remain locked.');
-  if (!feedback?.trim()) return;
+  // When alignment is blocked, auto-regenerate without prompting for feedback
+  const alignmentBlocked = appVersion >= 9 && v9CanonAlignmentPassed !== true;
+  let feedback;
+  if (alignmentBlocked) {
+    feedback = 'Regenerate with stricter camera alignment to the approved blockout geometry.';
+  } else {
+    feedback = prompt('What should change visually? The approved geometry and camera remain locked.');
+    if (!feedback?.trim()) return;
+  }
   addMessage('user', `Canon revision: ${escapeHtml(feedback)}`);
-  setBusy(true, 'Revising canon');
+  setBusy(true, alignmentBlocked ? 'Regenerating for camera alignment' : 'Revising canon');
   let wait;
   try {
     wait = progress('Re-rendering appearance while preserving approved blockout geometry…');

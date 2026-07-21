@@ -65,6 +65,7 @@ def normalize_floor_plan(source: FloorPlan, description: str = "") -> tuple[Floo
             opening.height = min(opening.height, plan.room.height - opening.sill_height)
     _apply_description_layout(plan, description, warnings)
     _distribute_repeated_items(plan, warnings)
+    _resolve_overlaps(plan, warnings)
     plan.camera.x = _clamp(plan.camera.x, -half_w + 0.2, half_w - 0.2)
     plan.camera.z = _clamp(plan.camera.z, -half_d + 0.2, half_d - 0.2)
     plan.camera.y = _clamp(plan.camera.y, 1.2, plan.room.height - 0.2)
@@ -175,6 +176,43 @@ def _distribute_repeated_items(plan: FloorPlan, warnings: list[str]) -> None:
             spacing = max(sample.width * 1.7, 0.75)
             for index, item in enumerate(group):
                 item.x = _clamp((index - (len(group) - 1) / 2) * spacing, -half_w + item.width / 2, half_w - item.width / 2)
+
+
+def _resolve_overlaps(plan: FloorPlan, warnings: list[str]) -> None:
+    """Iteratively nudge overlapping non-fixed items apart within room bounds."""
+    half_w, half_d = plan.room.width / 2, plan.room.depth / 2
+    max_iterations = 20
+
+    for _ in range(max_iterations):
+        moved = False
+        for i, left in enumerate(plan.items):
+            for right in plan.items[i + 1:]:
+                # Skip if no vertical overlap
+                if left.elevation >= right.elevation + right.height - 0.03:
+                    continue
+                if right.elevation >= left.elevation + left.height - 0.03:
+                    continue
+                # Check horizontal overlap
+                overlap_x = (left.width + right.width) / 2 - abs(left.x - right.x)
+                overlap_z = (left.depth + right.depth) / 2 - abs(left.z - right.z)
+                if overlap_x <= 0.03 or overlap_z <= 0.03:
+                    continue
+                # They overlap — nudge the non-fixed item (or the smaller one)
+                if left.fixed and right.fixed:
+                    continue
+                mover = right if (left.fixed or left.width * left.depth >= right.width * right.depth) else left
+                # Push along the axis with less overlap (cheaper to resolve)
+                if overlap_x < overlap_z:
+                    nudge = overlap_x + 0.1
+                    direction = 1.0 if mover.x >= (left.x + right.x) / 2 else -1.0
+                    mover.x = _clamp(mover.x + direction * nudge, -half_w + mover.width / 2, half_w - mover.width / 2)
+                else:
+                    nudge = overlap_z + 0.1
+                    direction = 1.0 if mover.z >= (left.z + right.z) / 2 else -1.0
+                    mover.z = _clamp(mover.z + direction * nudge, -half_d + mover.depth / 2, half_d - mover.depth / 2)
+                moved = True
+        if not moved:
+            break
 
 
 def _place_camera_clear(plan: FloorPlan, warnings: list[str]) -> None:
