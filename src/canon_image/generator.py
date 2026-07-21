@@ -15,6 +15,7 @@ from pathlib import Path
 import httpx
 from PIL import Image, ImageDraw
 
+from src.camera_contract import CameraContract, measure_edge_alignment, normalize_image_frame
 from src.models import SceneConcept
 from src.workflow_provenance import (
     artifact_metadata,
@@ -41,6 +42,7 @@ class CanonGenerationResult:
     image_path: Path
     provider: str
     manifests: tuple[Path, ...]
+    alignment: dict | None = None
 
 
 def get_image_provider(session_id: str) -> str:
@@ -120,6 +122,7 @@ def _generation_manifest(
             "scene_concept": concept,
             "floor_plan": context.get("floor_plan"),
             "plan_revision": context.get("plan_revision"),
+            "camera_contract": context.get("camera_contract"),
             "generation_prompt": prompt,
             "blockout": artifact_metadata(blockout_path) if blockout_path else None,
             "uploaded_image_name": uploaded_image_name,
@@ -325,15 +328,27 @@ async def _generate_with_api(prompt: str, output_path: Path) -> Path:
 
 
 def _conditioned_flux_workflow(
-    prompt: str, image_name: str, profile: dict
+    prompt: str,
+    image_name: str,
+    profile: dict,
+    camera_contract: dict | None = None,
 ) -> dict:
     """Build the exact profile-pinned FLUX.2 reference graph."""
+    canon = profile["stages"]["canon"]
     positive = (
         f"{prompt}. Transform the supplied blockout into a photorealistic interior photograph. "
         "STRICTLY preserve camera position, lens perspective, room proportions, wall openings, "
         "object count, placement, scale, and silhouettes. Change only materials, textures, "
         "lighting, atmosphere, and rendering quality. No people."
     )
+    if canon.get("appearance_transform") == "full_photoreal_resynthesis":
+        positive += (
+            " Use the source only as a geometry and camera guide. Completely resynthesize every "
+            "visible surface with physically plausible materials, microtexture, reflections, "
+            "indirect light, contact shadows, lens response, and photographic depth. The result "
+            "must look like a professionally photographed real interior, never a blockout, game "
+            "viewport, diagram, clay render, flat-shaded model, or painted source image."
+        )
     negative = (
         "changed layout, changed camera, moved furniture, added furniture, missing furniture, "
         "warped walls, fisheye, panorama, text, watermark, illustration, low quality"
@@ -344,7 +359,6 @@ def _conditioned_flux_workflow(
             "warped walls, fisheye, panorama, text, watermark, labels, guide lines, debug edges, "
             "blockout render, flat shading, placeholder materials, illustration, low quality"
         )
-    canon = profile["stages"]["canon"]
     latent_mode = canon.get("latent")
     sigma_schedule = canon.get("sigma_schedule")
     latent_input = ["11", 0] if latent_mode == "empty" else ["7", 0]
@@ -354,7 +368,28 @@ def _conditioned_flux_workflow(
         "2": {"class_type": "CLIPLoader", "inputs": {"clip_name": FLUX_CLIP, "type": "flux2", "device": "default"}},
         "3": {"class_type": "VAELoader", "inputs": {"vae_name": FLUX_VAE}},
         "4": {"class_type": "LoadImage", "inputs": {"image": image_name}},
-        "5": {"class_type": "ImageScaleToTotalPixels", "inputs": {"image": ["4", 0], "upscale_method": "lanczos", "megapixels": 0.8, "resolution_steps": 16}},
+        "5": (
+            {
+                "class_type": "ImageScale",
+                "inputs": {
+                    "image": ["4", 0],
+                    "upscale_method": "lanczos",
+                    "width": int(camera_contract["image_width"]),
+                    "height": int(camera_contract["image_height"]),
+                    "crop": "disabled",
+                },
+            }
+            if profile["interface_version"] >= 9 and camera_contract
+            else {
+                "class_type": "ImageScaleToTotalPixels",
+                "inputs": {
+                    "image": ["4", 0],
+                    "upscale_method": "lanczos",
+                    "megapixels": 0.8,
+                    "resolution_steps": 16,
+                },
+            }
+        ),
         "6": {"class_type": "GetImageSize", "inputs": {"image": ["5", 0]}},
         "7": {"class_type": "VAEEncode", "inputs": {"pixels": ["5", 0], "vae": ["3", 0]}},
         "8": {"class_type": "CLIPTextEncode", "inputs": {"text": positive, "clip": ["2", 0]}},
@@ -375,15 +410,56 @@ def _conditioned_flux_workflow(
         }
     elif latent_mode != "encoded_blockout":
         raise ValueError(f"Unsupported conditioned latent mode: {latent_mode}")
-    if sigma_schedule == "partial_after_step_4":
+    if sigma_schedule in {"partial_after_step_4", "partial_after_step_8"}:
         workflow["19"] = {
             "class_type": "SplitSigmas",
-            "inputs": {"sigmas": ["12", 0], "step": 4},
+            "inputs": {
+                "sigmas": ["12", 0],
+                "step": 8 if sigma_schedule == "partial_after_step_8" else 4,
+            },
         }
         workflow["16"]["inputs"]["sigmas"] = ["19", 1]
     elif sigma_schedule != "full":
         raise ValueError(f"Unsupported sigma schedule: {sigma_schedule}")
     return workflow
+
+
+def _camera_contract_dict(value) -> dict | None:
+    if value is None:
+        return None
+    if hasattr(value, "model_dump"):
+        return value.model_dump(mode="json")
+    return dict(value)
+
+
+def _normalize_v9_canon(path: Path, camera_contract: dict | None) -> dict | None:
+    if not camera_contract:
+        return None
+    return normalize_image_frame(path, CameraContract.model_validate(camera_contract))
+
+
+def _edge_alignment_report(
+    blockout_path: Path, canon_path: Path, camera_contract: dict | None
+) -> dict | None:
+    """Measure structural edge drift after enforcing the camera's exact raster contract."""
+    if not camera_contract:
+        return None
+    contract = CameraContract.model_validate(camera_contract)
+    report = measure_edge_alignment(blockout_path, canon_path, contract)
+    passed = report["status"] == "aligned"
+    return {
+        "camera_contract_id": contract.contract_id,
+        **report,
+        "passed": passed,
+        "correction": (
+            "none"
+            if passed
+            else "regenerate from the encoded blockout and review projected landmarks"
+        ),
+        "reference_landmark_count": len(contract.reference_landmarks),
+        "width": contract.image_width,
+        "height": contract.image_height,
+    }
 
 
 async def generate_conditioned_canon(
@@ -395,6 +471,7 @@ async def generate_conditioned_canon(
 ) -> CanonGenerationResult:
     """Generate a profile-pinned Canon from the approved camera blockout."""
     profile = _profile_from_context(workflow_context)
+    camera_contract = _camera_contract_dict((workflow_context or {}).get("camera_contract"))
     canon = profile["stages"]["canon"]
     if canon.get("conditioning") == "none":
         return await generate_canon_image(
@@ -434,7 +511,9 @@ async def generate_conditioned_canon(
                     )
                     if part
                 )
-                workflow = _conditioned_flux_workflow(prompt, image_name, profile)
+                workflow = _conditioned_flux_workflow(
+                    prompt, image_name, profile, camera_contract
+                )
                 manifest["inputs"]["uploaded_image_name"] = image_name
                 manifest["workflow_graph"] = workflow
                 manifests.append(
@@ -445,6 +524,8 @@ async def generate_conditioned_canon(
                 result = await _run_comfy_workflow(
                     client, workflow, output_path, session_id
                 )
+            _normalize_v9_canon(result, camera_contract)
+            alignment = _edge_alignment_report(blockout_path, result, camera_contract)
             provider = "FLUX.2 Klein · blockout conditioned"
             _LAST_PROVIDER[session_id] = provider
             manifest["provider_attempts"].append(
@@ -454,13 +535,16 @@ async def generate_conditioned_canon(
                 status="completed",
                 finalized_at=datetime.now(timezone.utc).isoformat(),
                 output=artifact_metadata(result),
+                camera_alignment=alignment,
             )
             manifests.append(
                 _save_generation(
                     output_path.parent, attempt, "conditioned_completed", manifest
                 )
             )
-            return CanonGenerationResult(result, provider, tuple(manifests))
+            return CanonGenerationResult(
+                result, provider, tuple(manifests), alignment=alignment
+            )
         except Exception as exc:
             manifest["provider_attempts"].append(
                 {"provider": "ComfyUI conditioned", "status": "failed", "error": str(exc)}
@@ -488,10 +572,13 @@ async def generate_conditioned_canon(
     fallback = await generate_canon_image(
         concept, session_id, attempt, workflow_context=workflow_context
     )
+    _normalize_v9_canon(fallback.image_path, camera_contract)
+    alignment = _edge_alignment_report(blockout_path, fallback.image_path, camera_contract)
     return CanonGenerationResult(
         fallback.image_path,
         fallback.provider,
         tuple(manifests) + fallback.manifests,
+        alignment=alignment,
     )
 
 

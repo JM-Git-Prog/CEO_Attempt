@@ -34,6 +34,8 @@ async def build_floor_plan(
     concept: SceneConcept,
     current: FloorPlan | None = None,
     feedback: str = "",
+    *,
+    timeout_seconds: float | None = None,
 ) -> tuple[FloorPlan, list[str]]:
     """Create or revise a plan, then normalize all authored geometry."""
     context = {
@@ -44,6 +46,10 @@ async def build_floor_plan(
         context["current_plan"] = current.model_dump(mode="json")
         context["revision_requirement"] = feedback
     instruction = "Revise the current plan while preserving unaffected IDs." if current else "Create the first practical plan."
-    raw = await generate_json(PLAN_SYSTEM, f"{instruction}\n{json.dumps(context)}")
+    raw = await generate_json(
+        PLAN_SYSTEM,
+        f"{instruction}\n{json.dumps(context)}",
+        timeout_seconds=timeout_seconds,
+    )
     plan = FloorPlan.model_validate(raw)
     return normalize_floor_plan(plan, description)

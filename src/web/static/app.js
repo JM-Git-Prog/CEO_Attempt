@@ -5,14 +5,19 @@ const sendBtn = $('#sendBtn');
 const stageBody = $('#stageBody');
 const stageTitle = $('#stageTitle');
 const stageState = $('#stageState');
-const appVersion = Number(window.APP_VERSION || 7);
+const appVersion = Number(window.APP_VERSION || 9);
+const historyApiVersion = appVersion >= 9 ? 9 : 8;
 const initialParams = new URLSearchParams(window.location.search);
-let sessionId = appVersion >= 4 ? initialParams.get('session') || localStorage.getItem('livingRoomSessionId') : null;
+let sessionId = appVersion >= 4
+  ? initialParams.get('session') || (appVersion < 8 ? localStorage.getItem('livingRoomSessionId') : null)
+  : null;
 let busy = false;
 let pollTimer = null;
 let activeViewer = null;
 let currentDescription = '';
 let currentPlanData = null;
+let v9CanonAlignmentPassed = null;
+let v9CanonConcept = null;
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
@@ -66,7 +71,10 @@ function addMessage(type, html) {
 
 function setStage(name) {
   document.querySelectorAll('.stage-step').forEach(step => {
-    step.classList.toggle('active', step.dataset.stage === name);
+    const selected = step.dataset.stage === name;
+    step.classList.toggle('active', selected);
+    if (selected) step.setAttribute('aria-current', 'step');
+    else step.removeAttribute('aria-current');
   });
   logEvent('process', 'stage_change', {stage:name});
 }
@@ -78,6 +86,8 @@ function setBusy(value, label = 'Working') {
   stageState.textContent = value ? 'WORKING' : 'READY';
   stageState.className = `stage-state ${value ? 'working' : 'ready'}`;
   if (value) stageTitle.textContent = label;
+  if (appVersion >= 8) applyV8ReadOnlyState();
+  if (appVersion >= 9) restartV8Telemetry();
   logEvent('process', value ? 'work_started' : 'work_finished', {label});
 }
 
@@ -118,6 +128,7 @@ function rememberSession(id) {
 async function ensureSession() {
   if (!sessionId) {
     rememberSession((await fetchJson('/api/session', {method:'POST'})).session_id);
+    if (appVersion >= 9 && busy) restartV8Telemetry();
     logEvent('lifecycle', 'session_created');
   } else {
     rememberSession(sessionId);
@@ -155,8 +166,9 @@ function showPlanArtifact(kind) {
   const title = kind === 'floor' ? 'Authoritative floor plan' : 'Camera-matched blockout';
   const floorLabel = appVersion >= 4 ? '2D PLAN' : 'PLAN';
   const blockoutLabel = appVersion >= 4 ? '3D BLOCKOUT' : 'BLOCKOUT';
+  const cameraClass = appVersion >= 9 && kind === 'blockout' ? ' camera-frame' : '';
   stageTitle.textContent = title;
-  stageBody.innerHTML = `<div class="plan-artifact"><img src="${source}" alt="${title}">
+  stageBody.innerHTML = `<div class="plan-artifact${cameraClass}"><img src="${source}" alt="${title}">
     <div class="plan-tabs"><button class="${kind === 'floor' ? 'selected' : ''}" onclick="showPlanArtifact('floor')">${floorLabel}</button>
     <button class="${kind === 'blockout' ? 'selected' : ''}" onclick="showPlanArtifact('blockout')">${blockoutLabel}</button></div></div>`;
 }
@@ -176,7 +188,7 @@ async function restoreSession({manual = false} = {}) {
       showCanon(data);
     } else if (data.artifact === 'world') {
       addMessage('assistant', '<h3>Restored world</h3>The latest generated world and revision controls are ready.');
-      buildViewer(data.scene_graph, data.download_url);
+      buildViewer(data.scene_graph, data.download_url, {cameraContract:data.camera_contract});
     }
   } catch (error) {
     if (manual) addMessage('error', `<strong>Refresh failed</strong><br>${escapeHtml(error.message)}`);
@@ -189,6 +201,12 @@ async function restoreSession({manual = false} = {}) {
 
 async function refreshOutput() {
   if (busy || appVersion < 4) return;
+  if (appVersion >= 9 && !sessionId) {
+    stageState.textContent = 'IDLE';
+    stageState.className = 'stage-state';
+    addMessage('assistant', '<strong>Nothing to refresh yet.</strong><br>Generate a space plan to create a live session.');
+    return;
+  }
   stageState.textContent = 'REFRESHING';
   stageState.className = 'stage-state working';
   await restoreSession({manual:true});
@@ -209,6 +227,7 @@ async function sendDescription() {
     const data = await fetchJson(`/api/session/${sessionId}/describe`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({description})});
     wait.remove();
     showPlan(data);
+    await refreshV9HistoryMetadata();
   } catch (error) {
     wait?.remove();
     addMessage('error', `<strong>Planning failed</strong><br>${escapeHtml(error.message)}`);
@@ -229,6 +248,7 @@ async function revisePlan() {
     wait = progress('Replanning while preserving unaffected geometry and IDs…');
     const data = await fetchJson(`/api/session/${sessionId}/revise_plan`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({feedback})});
     wait.remove(); showPlan(data);
+    await refreshV9HistoryMetadata();
   } catch (error) {
     wait?.remove(); addMessage('error', `<strong>Plan revision failed</strong><br>${escapeHtml(error.message)}`);
   } finally { stopPolling(); setBusy(false); }
@@ -248,6 +268,7 @@ async function approvePlan() {
     wait = progress('Using the approved blockout and camera as FLUX.2 reference geometry…');
     const data = await fetchJson(`/api/session/${sessionId}/approve_plan`, {method:'POST'});
     wait.remove(); showCanon(data);
+    await refreshV9HistoryMetadata();
   } catch (error) {
     wait?.remove(); addMessage('error', `<strong>Canon generation failed</strong><br>${escapeHtml(error.message)}`);
   } finally { stopPolling(); setBusy(false); }
@@ -255,17 +276,37 @@ async function approvePlan() {
 
 function showCanon(data) {
   setStage('canon');
+  if (data.concept) v9CanonConcept = data.concept;
+  if (appVersion >= 9) v9CanonAlignmentPassed = data.camera_alignment?.passed === true;
   stageTitle.textContent = 'Plan-conditioned canon';
   stageState.textContent = (data.provider || 'image').toUpperCase();
   stageState.className = 'stage-state ready';
-  stageBody.innerHTML = `<div class="canon-wrap"><img src="${data.canon_image}" alt="Generated room concept"><div class="provider-tag">${escapeHtml(data.provider || 'unknown provider')}</div></div>`;
+  const cameraClass = appVersion >= 9 && data.camera_contract ? ' camera-frame' : '';
+  const lockLabel = data.camera_contract ? ` · ${escapeHtml(data.camera_contract.contract_id)}` : '';
+  stageBody.innerHTML = `<div class="canon-wrap${cameraClass}"><img src="${data.canon_image}" alt="Generated room concept"><div class="provider-tag">${escapeHtml(data.provider || 'unknown provider')}${lockLabel}</div></div>`;
+  const alignmentBlocked = appVersion >= 9 && data.camera_alignment?.passed !== true;
+  const alignmentStatus = appVersion >= 9
+    ? `<span><b>Camera alignment</b>${alignmentBlocked ? 'Review required · regenerate before World' : `Passed · ${Number(data.camera_alignment?.drift_px || 0).toFixed(1)}px drift`}</span>`
+    : '';
+  if (alignmentBlocked) {
+    stageState.textContent = 'ALIGNMENT REVIEW';
+    stageState.className = 'stage-state working';
+  }
   addMessage('assistant', `<h3>${escapeHtml(data.concept.era)} · ${escapeHtml(data.concept.mood)}</h3>
-    <div class="concept-grid"><span><b>Palette</b>${escapeHtml(data.concept.palette)}</span><span><b>Lighting</b>${escapeHtml(data.concept.lighting_notes)}</span></div>
-    <div class="actions"><button class="primary" onclick="approveImage()">Approve canon & build world</button><button class="secondary" onclick="rejectImage()">Revise image</button></div>`);
+    <div class="concept-grid"><span><b>Palette</b>${escapeHtml(data.concept.palette)}</span><span><b>Lighting</b>${escapeHtml(data.concept.lighting_notes)}</span>${alignmentStatus}</div>
+    <div class="actions"><button class="primary" data-v9-canon-approve onclick="approveImage()" ${alignmentBlocked ? 'disabled title="Regenerate until the camera alignment gate passes"' : ''}>Approve canon & build world</button><button class="secondary" onclick="rejectImage()">${alignmentBlocked ? 'Regenerate alignment' : 'Revise image'}</button></div>`);
+  applyV8ReadOnlyState();
 }
 
 async function approveImage() {
   if (busy) return;
+  if (appVersion >= 9 && v9CanonAlignmentPassed !== true) {
+    stageState.textContent = 'ALIGNMENT REVIEW';
+    stageState.className = 'stage-state working';
+    applyV8ReadOnlyState();
+    addMessage('error', '<strong>World build blocked</strong><br>Regenerate the Canon until camera alignment passes.');
+    return;
+  }
   setBusy(true, 'Building spatial world');
   setStage('world');
   let wait;
@@ -274,7 +315,8 @@ async function approveImage() {
     const data = await fetchJson(`/api/session/${sessionId}/approve`, {method:'POST'});
     wait.remove();
     addMessage('assistant', `<h3>World ready</h3>${data.scene_graph.objects.length} plan-constrained objects · ${data.scene_graph.lights.length} lights · ${data.scene_graph.doors.length} doors.`);
-    buildViewer(data.scene_graph, data.download_url);
+    buildViewer(data.scene_graph, data.download_url, {cameraContract:data.camera_contract});
+    await refreshV9HistoryMetadata();
   } catch (error) {
     wait?.remove(); addMessage('error', `<strong>World build failed</strong><br>${escapeHtml(error.message)}`);
   } finally { stopPolling(); setBusy(false); }
@@ -291,9 +333,9 @@ async function rejectImage() {
     wait = progress('Re-rendering appearance while preserving approved blockout geometry…');
     const data = await fetchJson(`/api/session/${sessionId}/reject`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({feedback})});
     wait.remove();
+    showCanon({...data, concept:v9CanonConcept || {era:'Canon', mood:`Revision ${data.attempt}`, palette:'Recorded palette', lighting_notes:'Recorded lighting'}});
     stageTitle.textContent = `Canon revision ${data.attempt}`;
-    stageBody.innerHTML = `<div class="canon-wrap"><img src="${data.canon_image}" alt="Revised room concept"><div class="provider-tag">${escapeHtml(data.provider)}</div></div>`;
-    addMessage('assistant', `<h3>Canon revision ${data.attempt} ready</h3><div class="actions"><button class="primary" onclick="approveImage()">Approve & build world</button><button class="secondary" onclick="rejectImage()">Revise again</button></div>`);
+    await refreshV9HistoryMetadata();
   } catch (error) {
     wait?.remove(); addMessage('error', `<strong>Revision failed</strong><br>${escapeHtml(error.message)}`);
   } finally { stopPolling(); setBusy(false); }
@@ -326,7 +368,8 @@ async function reviseWorld() {
     addMessage('assistant', `<h3>World revision ${data.revision} · ${Number(report.similarity_score || 0).toFixed(0)}% similarity</h3>
       <p>${escapeHtml(report.summary || 'World revised')}</p>${changes ? `<ul>${changes}</ul>` : ''}
       <small>This is revision memory, not model-weight training.</small>`);
-    buildViewer(data.scene_graph, data.download_url);
+    buildViewer(data.scene_graph, data.download_url, {cameraContract:data.camera_contract});
+    await refreshV9HistoryMetadata();
   } catch (error) {
     wait?.remove(); addMessage('error', `<strong>World revision failed</strong><br>${escapeHtml(error.message)}`);
     setStage('world');
@@ -352,12 +395,12 @@ function material(props = {}, fallback = '#777b84') {
 }
 
 function initWorkspaceSplitter() {
-  if (appVersion !== 7) return;
+  if (![7, 8, 9].includes(appVersion)) return;
   const workspace = $('#workspace');
   const splitter = $('#workspaceSplitter');
   if (!workspace || !splitter) return;
 
-  const storageKey = 'livingRoomV7ChatPanePx';
+  const storageKey = `livingRoomV${appVersion}ChatPanePx`;
   const narrowLayout = window.matchMedia('(max-width: 900px)');
   let paneWidth = Number(localStorage.getItem(storageKey));
   let pointerId = null;
@@ -439,14 +482,26 @@ function initWorkspaceSplitter() {
   applyWidth(paneWidth);
 }
 
-function buildViewer(graph, downloadUrl) {
+function buildViewer(graph, downloadUrl, options = {}) {
   disposeViewer();
   setStage('world');
   stageTitle.textContent = graph.name || 'Generated world';
   stageState.textContent = '3D READY';
   stageState.className = 'stage-state ready';
-  stageBody.innerHTML = `<canvas class="viewer"></canvas><div class="viewer-hud">DRAG orbit · WHEEL zoom · RIGHT-DRAG pan</div>
-    <button class="revise-world" onclick="reviseWorld()">REVISE WORLD ↻</button><a class="download" href="${downloadUrl}">DOWNLOAD GODOT ↘</a>`;
+  const readOnly = !!options.readOnly || isV8Historical();
+  const cameraContract = options.cameraContract || null;
+  const cameraLocked = appVersion >= 9 && !!cameraContract;
+  const viewerActions = readOnly
+    ? '<button class="revise-world" type="button" disabled>REVISE WORLD ↻</button><a class="download" aria-disabled="true" tabindex="-1">DOWNLOAD GODOT ↘</a>'
+    : `<button class="revise-world" onclick="reviseWorld()">REVISE WORLD ↻</button><a class="download" href="${downloadUrl}">DOWNLOAD GODOT ↘</a>`;
+  const cameraHud = cameraLocked
+    ? `<div class="viewer-hud"><span id="cameraViewState">CANON VIEW · locked initial camera</span><span class="camera-help">ARROWS orbit · +/− zoom · WASD pan</span><button class="reset-camera" type="button" onclick="resetLockedCamera()">RESET CAMERA</button></div>`
+    : '<div class="viewer-hud">DRAG orbit · WHEEL zoom · RIGHT-DRAG pan · ARROWS/+−/WASD keyboard</div>';
+  const canvasLabel = cameraLocked ? `World preview, Canon-aligned camera ${escapeHtml(cameraContract.contract_id)}` : 'Interactive world preview';
+  const canvasMarkup = cameraLocked
+    ? `<div class="locked-viewer-frame"><canvas class="viewer" tabindex="0" aria-label="${canvasLabel}"></canvas></div>`
+    : `<canvas class="viewer" tabindex="0" aria-label="${canvasLabel}"></canvas>`;
+  stageBody.innerHTML = `${canvasMarkup}${cameraHud}${viewerActions}`;
   if (typeof THREE === 'undefined' || !THREE.OrbitControls) {
     stageBody.innerHTML = '<div class="empty-stage"><p>Three.js could not load. Check the browser network console.</p></div>';
     return;
@@ -463,13 +518,33 @@ function buildViewer(graph, downloadUrl) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.25;
   renderer.outputEncoding = THREE.sRGBEncoding;
-  const camera = new THREE.PerspectiveCamera(48, 1, .05, 100);
-  camera.position.set(room.width * .82, room.height * .78, room.depth * 1.12);
+  const camera = cameraLocked
+    ? new THREE.PerspectiveCamera(
+        cameraContract.vertical_fov_deg,
+        cameraContract.aspect_ratio,
+        cameraContract.near_plane || .05,
+        cameraContract.far_plane || 100,
+      )
+    : new THREE.PerspectiveCamera(48, 1, .05, 100);
+  const lockedPosition = cameraLocked
+    ? new THREE.Vector3(cameraContract.position.x, cameraContract.position.y, cameraContract.position.z)
+    : new THREE.Vector3(room.width * .82, room.height * .78, room.depth * 1.12);
+  const lockedTarget = cameraLocked
+    ? new THREE.Vector3(cameraContract.target.x, cameraContract.target.y, cameraContract.target.z)
+    : new THREE.Vector3(0, room.height * .38, 0);
+  camera.up.set(
+    cameraLocked ? cameraContract.up.x : 0,
+    cameraLocked ? cameraContract.up.y : 1,
+    cameraLocked ? cameraContract.up.z : 0,
+  );
+  camera.position.copy(lockedPosition);
+  camera.lookAt(lockedTarget);
   const controls = new THREE.OrbitControls(camera, canvas);
-  controls.target.set(0, room.height * .38, 0);
+  controls.target.copy(lockedTarget);
   controls.enableDamping = true;
   controls.maxDistance = Math.max(room.width, room.depth) * 3;
   controls.minDistance = 1.5;
+  controls.saveState();
   const addBox = (name, size, position, meshMaterial, cast = false) => {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), meshMaterial);
     mesh.name = name; mesh.position.set(...position); mesh.castShadow = cast; mesh.receiveShadow = true; scene.add(mesh); return mesh;
@@ -520,11 +595,427 @@ function buildViewer(graph, downloadUrl) {
     else light = new THREE.PointLight(lightColor,(item.intensity||1)*1.6,item.range_meters||6);
     light.position.set(item.position.x,item.position.y,item.position.z); light.castShadow = !!item.cast_shadows; scene.add(light);
   });
-  const resize = () => { const rect = stageBody.getBoundingClientRect(); camera.aspect = rect.width/Math.max(rect.height,1); camera.updateProjectionMatrix(); renderer.setSize(rect.width,rect.height,false); };
+  const resize = () => {
+    const host = cameraLocked ? stageBody.querySelector('.locked-viewer-frame') : stageBody;
+    if (cameraLocked) {
+      const bounds = stageBody.getBoundingClientRect();
+      const width = Math.min(bounds.width, bounds.height * cameraContract.aspect_ratio);
+      const height = width / cameraContract.aspect_ratio;
+      host.style.width = `${Math.max(1, width)}px`;
+      host.style.height = `${Math.max(1, height)}px`;
+    }
+    const rect = host.getBoundingClientRect();
+    camera.aspect = cameraLocked ? cameraContract.aspect_ratio : rect.width / Math.max(rect.height, 1);
+    camera.updateProjectionMatrix();
+    renderer.setSize(rect.width, rect.height, false);
+  };
   const observer = new ResizeObserver(resize); observer.observe(stageBody); resize();
-  const state = {renderer,controls,observer,scene,camera,frame:0}; activeViewer = state;
+  const updateCameraHud = () => {
+    if (!cameraLocked) return;
+    const canonical = camera.position.distanceTo(lockedPosition) < .001 && controls.target.distanceTo(lockedTarget) < .001;
+    const label = $('#cameraViewState');
+    if (label) label.textContent = canonical ? 'CANON VIEW · locked initial/reset camera' : 'ORBITED VIEW · Canon camera no longer active';
+  };
+  const resetCamera = () => {
+    const damping = controls.enableDamping;
+    controls.enableDamping = false;
+    controls.reset();
+    camera.position.copy(lockedPosition);
+    camera.up.set(
+      cameraLocked ? cameraContract.up.x : 0,
+      cameraLocked ? cameraContract.up.y : 1,
+      cameraLocked ? cameraContract.up.z : 0,
+    );
+    controls.target.copy(lockedTarget);
+    camera.lookAt(lockedTarget);
+    camera.updateProjectionMatrix();
+    controls.update();
+    controls.enableDamping = damping;
+    controls.saveState();
+    updateCameraHud();
+  };
+  const adjustCamera = action => {
+    const offset = camera.position.clone().sub(controls.target);
+    const distance = Math.max(offset.length(), .001);
+    const right = new THREE.Vector3().crossVectors(offset, camera.up).normalize();
+    if (action === 'left' || action === 'right') offset.applyAxisAngle(camera.up, action === 'left' ? .08 : -.08);
+    else if (action === 'up' || action === 'down') offset.applyAxisAngle(right, action === 'up' ? -.06 : .06);
+    else if (action === 'zoom-in' || action === 'zoom-out') offset.multiplyScalar(action === 'zoom-in' ? .9 : 1.1);
+    else {
+      const step = distance * .04;
+      const delta = action === 'pan-left' ? right.clone().multiplyScalar(-step)
+        : action === 'pan-right' ? right.clone().multiplyScalar(step)
+        : camera.up.clone().normalize().multiplyScalar(action === 'pan-up' ? step : -step);
+      camera.position.add(delta);
+      controls.target.add(delta);
+      controls.update();
+      updateCameraHud();
+      return;
+    }
+    camera.position.copy(controls.target).add(offset);
+    camera.lookAt(controls.target);
+    controls.update();
+    updateCameraHud();
+  };
+  canvas.addEventListener('keydown', event => {
+    const action = ({ArrowLeft:'left', ArrowRight:'right', ArrowUp:'up', ArrowDown:'down', '+':'zoom-in', '=':'zoom-in', '-':'zoom-out', w:'pan-up', W:'pan-up', a:'pan-left', A:'pan-left', s:'pan-down', S:'pan-down', d:'pan-right', D:'pan-right'})[event.key];
+    if (!action) return;
+    event.preventDefault();
+    adjustCamera(action);
+  });
+  controls.addEventListener('change', updateCameraHud);
+  const state = {renderer,controls,observer,scene,camera,frame:0,resetCamera,adjustCamera,cameraContract}; activeViewer = state;
+  updateCameraHud();
   const animate = () => { state.frame=requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera); };
   animate();
+}
+
+function resetLockedCamera() {
+  activeViewer?.resetCamera?.();
+}
+
+let v8HistorySessionId = null;
+let v8CurrentStage = 'brief';
+let v8StageMetadata = {};
+let v8TelemetryTimer = null;
+let v9StageRequestToken = 0;
+let v9StageAbortController = null;
+let v9TelemetryRequestToken = 0;
+
+function isV8Historical() {
+  return appVersion >= 8 && !!v8HistorySessionId;
+}
+
+function v8SelectedSessionId() {
+  return v8HistorySessionId || sessionId;
+}
+
+function v8Unwrap(data) {
+  if (data?.payload && typeof data.payload === 'object') return data.payload;
+  if (data?.data && typeof data.data === 'object') return data.data;
+  if (data?.context && typeof data.context === 'object') return {...data, ...data.context};
+  return data || {};
+}
+
+function v8Value(source, keys, fallback = '') {
+  for (const key of keys) {
+    const value = source?.[key];
+    if (value !== undefined && value !== null && value !== '') return value;
+  }
+  return fallback;
+}
+
+function v8Duration(value) {
+  if (typeof value === 'string' && !/^\d+(\.\d+)?$/.test(value)) return value;
+  const seconds = Math.max(0, Number(value));
+  if (!Number.isFinite(seconds)) return '—';
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainder = Math.round(seconds % 60);
+  if (minutes < 60) return `${minutes}m ${remainder}s`;
+  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+}
+
+function v8RevisionEntries(data, stage) {
+  const source = data?.stages ?? data?.stage_revisions ?? data ?? {};
+  let entry;
+  if (Array.isArray(source)) {
+    entry = source.find(item => (item.stage || item.name || item.id) === stage);
+  } else {
+    entry = source[stage];
+  }
+  const revisions = Array.isArray(entry) ? entry : entry?.revisions ?? entry?.history ?? [];
+  return Array.isArray(revisions) ? revisions : [];
+}
+
+function populateV8Revisions(stage, selectedRevision = '') {
+  const select = $('#historyRevision');
+  if (!select) return;
+  const revisions = v8RevisionEntries(v8StageMetadata, stage);
+  select.innerHTML = '<option value="">Latest</option>';
+  revisions.forEach((item, index) => {
+    const revision = typeof item === 'object'
+      ? v8Value(item, ['revision', 'number', 'id'], index + 1)
+      : item;
+    const option = document.createElement('option');
+    option.value = String(revision);
+    option.textContent = `Revision ${revision}`;
+    select.appendChild(option);
+  });
+  select.disabled = !v8SelectedSessionId() || revisions.length === 0;
+  select.value = selectedRevision === undefined || selectedRevision === null ? '' : String(selectedRevision);
+}
+
+function applyV8ReadOnlyState() {
+  if (appVersion < 8) return;
+  const historical = isV8Historical();
+  document.body.classList.toggle('is-historical', historical);
+  const banner = $('#historyBanner');
+  if (banner) banner.hidden = !historical;
+  input.disabled = busy || historical;
+  sendBtn.disabled = busy || historical;
+  document.querySelectorAll('.actions button, .revise-world, .refresh-output').forEach(control => {
+    control.disabled = historical || (appVersion >= 9 && control.hasAttribute('data-v9-canon-approve') && v9CanonAlignmentPassed !== true);
+  });
+  document.querySelectorAll('.download').forEach(link => {
+    link.setAttribute('aria-disabled', String(historical));
+    link.tabIndex = historical ? -1 : 0;
+  });
+}
+
+function renderV8Brief(payload) {
+  const concept = payload.concept || payload.scene_concept || {};
+  const summary = v8Value(payload, ['summary', 'brief_summary', 'user_description', 'description'], 'No brief summary was recorded.');
+  const summaryText = typeof summary === 'string' ? summary : JSON.stringify(summary, null, 2);
+  const facts = [
+    ['Era', concept.era], ['Mood', concept.mood], ['Palette', concept.palette],
+    ['Lighting', concept.lighting_notes || concept.lighting],
+  ].filter(([, value]) => value);
+  stageTitle.textContent = 'Brief summary';
+  stageBody.innerHTML = `<article class="v8-brief"><span class="eyebrow">RECORDED BRIEF</span><h3>${escapeHtml(v8Value(payload, ['title', 'name'], 'Room brief'))}</h3><p>${escapeHtml(summaryText)}</p>${facts.length ? `<dl>${facts.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>` : ''}</article>`;
+}
+
+function renderV8Image(stage, payload) {
+  const keys = {
+    plan:['artifact_url', 'floor_plan_image', 'plan_image', 'image_url', 'url'],
+    blockout:['artifact_url', 'blockout_image', 'blockout_url', 'image_url', 'url'],
+    canon:['artifact_url', 'canon_image', 'canon_url', 'image_url', 'url'],
+  }[stage];
+  const nested = payload.artifact && typeof payload.artifact === 'object' ? payload.artifact : {};
+  const source = v8Value(payload, keys, v8Value(nested, keys));
+  const titles = {plan:'Authoritative floor plan', blockout:'Camera-matched blockout', canon:'Plan-conditioned canon'};
+  stageTitle.textContent = titles[stage];
+  if (!source) {
+    stageBody.innerHTML = `<div class="empty-stage"><p>No ${escapeHtml(stage)} image was recorded for this revision.</p></div>`;
+    return;
+  }
+  const cameraContract = payload.camera_contract || null;
+  const cameraClass = appVersion >= 9 && cameraContract && ['blockout', 'canon'].includes(stage) ? ' camera-frame' : '';
+  const lockLabel = cameraContract ? ` · ${escapeHtml(cameraContract.contract_id)}` : '';
+  stageBody.innerHTML = `<figure class="v8-history-image${cameraClass}"><img src="${escapeHtml(source)}" alt="${titles[stage]}"><figcaption>${titles[stage]}${lockLabel}</figcaption></figure>`;
+}
+
+function renderV8Compare(payload) {
+  const history = payload.revision_history || payload.revisions || payload.history || payload.comparisons || payload.items || [];
+  const entries = Array.isArray(history) ? history : Object.values(history || {});
+  stageTitle.textContent = 'Revision history';
+  if (!entries.length) {
+    stageBody.innerHTML = '<div class="empty-stage"><p>No comparison revisions have been recorded.</p></div>';
+    return;
+  }
+  stageBody.innerHTML = `<div class="v8-compare-list">${entries.map((entry, index) => {
+    const item = typeof entry === 'object' ? entry : {summary:entry};
+    const revision = v8Value(item, ['revision', 'number', 'id'], index + 1);
+    const score = v8Value(item, ['similarity_score', 'score']);
+    const changes = Array.isArray(item.changes) ? item.changes : [];
+    return `<article><header><strong>Revision ${escapeHtml(revision)}</strong>${score !== '' ? `<span>${escapeHtml(score)}% match</span>` : ''}</header><p>${escapeHtml(v8Value(item, ['summary', 'feedback', 'description'], 'Recorded revision'))}</p>${changes.length ? `<ul>${changes.map(change => `<li>${escapeHtml(change)}</li>`).join('')}</ul>` : ''}</article>`;
+  }).join('')}</div>`;
+}
+
+function renderV8Stage(stage, response) {
+  const payload = v8Unwrap(response);
+  disposeViewer();
+  setStage(stage);
+  stageState.textContent = isV8Historical() ? 'HISTORY' : 'RECORDED';
+  stageState.className = 'stage-state ready';
+  if (stage === 'brief') renderV8Brief(payload);
+  else if (['plan', 'blockout', 'canon'].includes(stage)) renderV8Image(stage, payload);
+  else if (stage === 'world') {
+    const graph = payload.scene_graph || payload.world?.scene_graph || payload.graph;
+    if (graph) buildViewer(graph, v8Value(payload, ['download_url'], ''), {
+      readOnly:isV8Historical(),
+      cameraContract:payload.camera_contract || payload.world?.camera_contract,
+    });
+    else {
+      stageTitle.textContent = 'Generated world';
+      stageBody.innerHTML = '<div class="empty-stage"><p>No world scene graph was recorded for this revision.</p></div>';
+    }
+  } else renderV8Compare(payload);
+  applyV8ReadOnlyState();
+}
+
+async function loadV8Stages(id = v8SelectedSessionId()) {
+  if (appVersion < 8 || !id) {
+    v8StageMetadata = {};
+    populateV8Revisions(v8CurrentStage);
+    return;
+  }
+  v8StageMetadata = await fetchJson(`/api/v${historyApiVersion}/session/${encodeURIComponent(id)}/stages`);
+  populateV8Revisions(v8CurrentStage);
+}
+
+async function loadV8Stage(stage, revision = '') {
+  if (appVersion < 8) return;
+  const requestToken = appVersion >= 9 ? ++v9StageRequestToken : 0;
+  if (appVersion >= 9) {
+    v9StageAbortController?.abort();
+    v9StageAbortController = new AbortController();
+  }
+  const id = v8SelectedSessionId();
+  v8CurrentStage = stage;
+  setStage(stage);
+  populateV8Revisions(stage, revision);
+  if (!id) {
+    stageTitle.textContent = 'Waiting for a session';
+    stageState.textContent = 'IDLE';
+    stageState.className = 'stage-state';
+    stageBody.innerHTML = '<div class="empty-stage"><p>Start a live run or select one from history.</p></div>';
+    applyV8ReadOnlyState();
+    return;
+  }
+  stageState.textContent = 'LOADING';
+  stageState.className = 'stage-state working';
+  try {
+    const suffix = revision === '' || revision === undefined || revision === null ? '' : `?revision=${encodeURIComponent(revision)}`;
+    const options = appVersion >= 9 ? {signal:v9StageAbortController.signal} : {};
+    const data = await fetchJson(`/api/v${historyApiVersion}/session/${encodeURIComponent(id)}/stage/${encodeURIComponent(stage)}${suffix}`, options);
+    if (appVersion >= 9 && requestToken !== v9StageRequestToken) return;
+    renderV8Stage(stage, data);
+  } catch (error) {
+    if (appVersion >= 9 && (error.name === 'AbortError' || requestToken !== v9StageRequestToken)) return;
+    stageState.textContent = 'UNAVAILABLE';
+    stageState.className = 'stage-state';
+    stageBody.innerHTML = `<div class="empty-stage"><p>${escapeHtml(error.message)}</p></div>`;
+  }
+}
+
+async function loadV8Sessions() {
+  if (appVersion < 8) return;
+  const select = $('#historyRun');
+  if (!select) return;
+  const selected = v8HistorySessionId || '';
+  try {
+    const data = await fetchJson(`/api/v${historyApiVersion}/sessions`);
+    const sessions = Array.isArray(data) ? data : data.sessions || data.runs || data.items || [];
+    const groups = new Map();
+    sessions.forEach(run => {
+      const version = String(v8Value(run, ['interface_version', 'app_version', 'version'], 'Unknown'));
+      if (!groups.has(version)) groups.set(version, []);
+      groups.get(version).push(run);
+    });
+    select.innerHTML = '<option value="">Live session</option>';
+    [...groups.entries()].sort(([a], [b]) => b.localeCompare(a, undefined, {numeric:true})).forEach(([version, runs]) => {
+      const group = document.createElement('optgroup');
+      group.label = version.toLowerCase().startsWith('v') ? version.toUpperCase() : `V${version}`;
+      runs.forEach(run => {
+        const id = String(v8Value(run, ['session_id', 'id', 'run_id']));
+        if (!id) return;
+        const option = document.createElement('option');
+        option.value = id;
+        const timestamp = v8Value(run, ['updated_at', 'created_at', 'timestamp']);
+        option.textContent = `${v8Value(run, ['title', 'name', 'description'], id.slice(0, 8))}${timestamp ? ` · ${timestamp}` : ''}`;
+        group.appendChild(option);
+      });
+      select.appendChild(group);
+    });
+    select.value = selected;
+  } catch (error) {
+    select.innerHTML = `<option value="">History unavailable · ${escapeHtml(error.message)}</option>`;
+  }
+}
+
+function v8Heartbeat(data) {
+  let age = Number(v8Value(data, ['heartbeat_age_seconds', 'staleness_seconds', 'heartbeat_age'], NaN));
+  if (!Number.isFinite(age)) {
+    const stamp = v8Value(data, ['heartbeat_at', 'last_heartbeat', 'heartbeat']);
+    const parsed = typeof stamp === 'string' ? Date.parse(stamp) : NaN;
+    if (Number.isFinite(parsed)) age = Math.max(0, (Date.now() - parsed) / 1000);
+  }
+  const threshold = Number(v8Value(data, ['stale_after_seconds', 'stale_threshold_seconds'], 30));
+  const stale = data.stale === true || data.is_stale === true || (Number.isFinite(age) && age > threshold);
+  if (!Number.isFinite(age)) return stale ? 'stale' : 'waiting';
+  return `${stale ? 'stale' : 'live'} · ${v8Duration(age)} ago`;
+}
+
+async function updateV8Telemetry() {
+  const id = v8SelectedSessionId();
+  if (appVersion < 8 || !id || (appVersion >= 9 && (isV8Historical() || !busy))) return;
+  const requestToken = appVersion >= 9 ? ++v9TelemetryRequestToken : 0;
+  try {
+    const data = v8Unwrap(await fetchJson(`/api/v${historyApiVersion}/session/${encodeURIComponent(id)}/telemetry`));
+    if (appVersion >= 9 && (requestToken !== v9TelemetryRequestToken || id !== sessionId || !busy || data.status !== 'active')) return;
+    $('#telemetrySubstep').textContent = v8Value(data, ['current_substep', 'substep', 'current_step', 'step'], 'Waiting');
+    $('#telemetryElapsed').textContent = v8Duration(v8Value(data, ['elapsed_seconds', 'elapsed'], NaN));
+    const heartbeat = $('#telemetryHeartbeat');
+    heartbeat.textContent = v8Heartbeat(data);
+    heartbeat.classList.toggle('stale', heartbeat.textContent.startsWith('stale'));
+    const eta = v8Value(data, ['eta_seconds', 'eta'], '');
+    $('#telemetryEta').textContent = eta === '' ? 'collecting timing data' : v8Duration(eta);
+  } catch {
+    $('#telemetryHeartbeat').textContent = 'unavailable';
+  }
+}
+
+function resetV9Telemetry() {
+  if (appVersion < 9) return;
+  v9TelemetryRequestToken += 1;
+  $('#telemetrySubstep').textContent = busy ? 'Starting' : 'Waiting';
+  $('#telemetryElapsed').textContent = '—';
+  $('#telemetryHeartbeat').textContent = '—';
+  $('#telemetryHeartbeat').classList.remove('stale');
+  $('#telemetryEta').textContent = busy ? 'collecting timing data' : 'inactive';
+}
+
+function restartV8Telemetry() {
+  if (v8TelemetryTimer) clearInterval(v8TelemetryTimer);
+  v8TelemetryTimer = null;
+  if (appVersion >= 9) {
+    resetV9Telemetry();
+    if (!sessionId || isV8Historical() || !busy) return;
+  }
+  updateV8Telemetry();
+  v8TelemetryTimer = setInterval(updateV8Telemetry, 2000);
+}
+
+async function refreshV9HistoryMetadata() {
+  if (appVersion < 9 || !sessionId) return;
+  try {
+    await Promise.all([loadV8Sessions(), loadV8Stages(sessionId)]);
+  } catch {}
+}
+
+async function selectV8Run(id) {
+  const wasHistorical = isV8Historical();
+  v8HistorySessionId = id || null;
+  if (appVersion >= 9 && wasHistorical && !v8HistorySessionId) {
+    stageState.textContent = sessionId ? 'READY' : 'IDLE';
+    stageState.className = sessionId ? 'stage-state ready' : 'stage-state';
+    logEvent('lifecycle', 'history_returned_live', {stage:v8CurrentStage});
+  }
+  const bannerText = $('#historyBanner span');
+  if (bannerText && v8HistorySessionId) bannerText.textContent = `Viewing read-only history · ${v8HistorySessionId}`;
+  applyV8ReadOnlyState();
+  try { await loadV8Stages(); }
+  catch (error) { stageBody.innerHTML = `<div class="empty-stage"><p>${escapeHtml(error.message)}</p></div>`; }
+  await loadV8Stage(v8CurrentStage);
+  restartV8Telemetry();
+}
+
+function initV8() {
+  if (appVersion < 8) return;
+  document.querySelectorAll('.stage-step').forEach(step => {
+    step.addEventListener('click', () => loadV8Stage(step.dataset.stage));
+    step.addEventListener('keydown', event => {
+      if (step.tagName !== 'BUTTON' && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        step.click();
+      }
+    });
+  });
+  $('#historyRun').addEventListener('change', event => selectV8Run(event.target.value));
+  $('#historyRevision').addEventListener('change', event => loadV8Stage(v8CurrentStage, event.target.value));
+  $('#returnLiveBtn').addEventListener('click', () => {
+    $('#historyRun').value = '';
+    selectV8Run('');
+  });
+  $('#historyReload').addEventListener('click', async () => {
+    await loadV8Sessions();
+    await loadV8Stages();
+  });
+  applyV8ReadOnlyState();
+  loadV8Sessions();
+  loadV8Stages().catch(() => {});
+  restartV8Telemetry();
 }
 
 $('#composer').addEventListener('submit', event => { event.preventDefault(); sendDescription(); });
@@ -538,10 +1029,11 @@ document.addEventListener('click', event => {
     stage:target.dataset.stage || document.querySelector('.stage-step.active')?.dataset.stage || '',
   });
 });
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, logEvent});
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, resetLockedCamera, logEvent});
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);
 initWorkspaceSplitter();
-if (appVersion >= 4) restoreSession();
+initV8();
+if (appVersion >= 4 && (appVersion < 8 || sessionId)) restoreSession();
 input.focus();

@@ -15,7 +15,13 @@ from src.orchestrator.llm import generate_json
 from src.orchestrator.prompts import SCENE_GRAPH_SYSTEM
 
 
-async def build_scene_graph(concept: SceneConcept, floor_plan: FloorPlan | None = None) -> SceneGraph:
+async def build_scene_graph(
+    concept: SceneConcept,
+    floor_plan: FloorPlan | None = None,
+    *,
+    timeout_seconds: float | None = None,
+    enforce_plan_lights: bool = False,
+) -> SceneGraph:
     """Generate appearance/physics while preserving approved plan geometry."""
     plan_context = floor_plan.model_dump_json() if floor_plan else "No approved plan supplied"
     user_prompt = f"""Build a scene graph for this space:
@@ -31,10 +37,14 @@ APPROVED FLOOR PLAN (authoritative): {plan_context}
 Use every floor-plan item ID exactly. Room dimensions, item X/Z positions, footprints,
 heights, rotations, doors, and windows must not change. Add materials, physics, and lighting."""
 
-    data = await generate_json(system=SCENE_GRAPH_SYSTEM, user=user_prompt)
+    data = await generate_json(
+        system=SCENE_GRAPH_SYSTEM,
+        user=user_prompt,
+        timeout_seconds=timeout_seconds,
+    )
     scene = _parse_scene_graph(data)
     if floor_plan:
-        _apply_plan_constraints(scene, floor_plan)
+        _apply_plan_constraints(scene, floor_plan, enforce_plan_lights=enforce_plan_lights)
     _validate_scene(scene)
     return scene
 
@@ -133,7 +143,9 @@ def _validate_scene(scene: SceneGraph) -> None:
             print(f"  - {e}", file=sys.stderr)
 
 
-def _apply_plan_constraints(scene: SceneGraph, plan: FloorPlan) -> None:
+def _apply_plan_constraints(
+    scene: SceneGraph, plan: FloorPlan, *, enforce_plan_lights: bool = False
+) -> None:
     """Make approved plan geometry authoritative over LLM-authored scene details."""
     scene.room.width = plan.room.width
     scene.room.depth = plan.room.depth
@@ -176,6 +188,28 @@ def _apply_plan_constraints(scene: SceneGraph, plan: FloorPlan) -> None:
             obj.physics.body_type = PhysicsBody.STATIC
         constrained.append(obj)
     scene.objects = constrained
+    if enforce_plan_lights:
+        light_items = [
+            item for item in plan.items
+            if item.category == "fixture"
+            and any(token in f"{item.name} {item.description}".lower() for token in ("light", "lamp", "pendant"))
+        ]
+        scene.lights = [
+            SceneLight(
+                id=item.id,
+                name=item.name,
+                light_type="point",
+                position=Vec3(x=item.x, y=item.elevation, z=item.z),
+                direction=Vec3(x=0.0, y=-1.0, z=0.0),
+                color="#ffb347",
+                color_temperature_k=3000,
+                intensity=2.5,
+                range_meters=5.0,
+                spot_angle_deg=45.0,
+                cast_shadows=True,
+            )
+            for item in light_items
+        ]
     scene.doors = []
     scene.windows = []
     half_w, half_d = plan.room.width / 2, plan.room.depth / 2

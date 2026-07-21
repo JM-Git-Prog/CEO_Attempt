@@ -10,6 +10,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from src.camera_contract import CameraContract
 from src.floor_plan.models import FloorPlan
 
 
@@ -166,7 +167,7 @@ class WorldSession(BaseModel):
     """Tracks the state and revision memory of a world-building session."""
 
     session_id: str
-    interface_version: int = 7
+    interface_version: int = 9
     workflow_profile_id: str = ""
     workflow_profile: dict = Field(default_factory=dict)
     workflow_snapshot_count: int = 0
@@ -176,11 +177,13 @@ class WorldSession(BaseModel):
     user_description: str = ""
     scene_concept: Optional[SceneConcept] = None
     floor_plan: Optional[FloorPlan] = None
+    camera_contract: Optional[CameraContract] = None
     floor_plan_path: Optional[str] = None
     blockout_path: Optional[str] = None
     floor_plan_approved: bool = False
     canon_image_path: Optional[str] = None
     canon_provider: Optional[str] = None
+    canon_alignment: Optional[dict] = None
     scene_graph: Optional[SceneGraph] = None
     output_path: Optional[str] = None
     plan_revision: int = 0

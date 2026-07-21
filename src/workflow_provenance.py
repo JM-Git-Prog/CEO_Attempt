@@ -105,6 +105,57 @@ _PROFILE_VALUES = (
         "source": "V7 responsive resizable interface; V6 Canon contract retained",
         "status": "active",
     },
+    {
+        "id": "v8-reference-full-r1",
+        "interface_version": 8,
+        "release_commit": None,
+        "supersedes": "v7-reference-full-r1",
+        "stages": {
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "enriched_concept_and_plan",
+                "latent": "empty",
+                "sigma_schedule": "full",
+            }
+        },
+        "source": "V8 historical stage replay and truthful telemetry; V7 Canon contract retained",
+        "status": "active",
+    },
+    {
+        "id": "v9-camera-locked-partial-r1",
+        "interface_version": 9,
+        "release_commit": None,
+        "supersedes": "v8-reference-full-r1",
+        "stages": {
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "enriched_concept_and_plan",
+                "latent": "encoded_blockout",
+                "sigma_schedule": "partial_after_step_8",
+                "camera_contract": "v9-camera-1",
+            }
+        },
+        "source": "V9 authoritative vertical-FOV camera shared by Blockout, Canon, and World",
+        "status": "active",
+    },
+    {
+        "id": "v9-camera-locked-photoreal-r2",
+        "interface_version": 9,
+        "release_commit": None,
+        "supersedes": "v9-camera-locked-partial-r1",
+        "stages": {
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "enriched_concept_and_plan",
+                "latent": "encoded_blockout",
+                "sigma_schedule": "full",
+                "appearance_transform": "full_photoreal_resynthesis",
+                "camera_contract": "v9-camera-1",
+            }
+        },
+        "source": "V9 camera-locked full appearance resynthesis; encoded blockout remains the geometry reference",
+        "status": "active",
+    },
 )
 _PROFILE_DOCUMENTS = MappingProxyType(
     {value["id"]: json.dumps(value, sort_keys=True) for value in _PROFILE_VALUES}
@@ -116,6 +167,8 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         5: "v5-reference-partial@964da06",
         6: "v6-reference-full-r1",
         7: "v7-reference-full-r1",
+        8: "v8-reference-full-r1",
+        9: "v9-camera-locked-photoreal-r2",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -125,15 +178,17 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         5: "v5-reference-partial@964da06",
         6: "v6-reference-full-r1",
         7: "v7-reference-full-r1",
+        8: "v8-reference-full-r1",
+        9: "v9-camera-locked-partial-r1",
     }
 )
 
 
 def normalize_interface_version(value: int | str | None) -> int:
     try:
-        version = int(value or 7)
+        version = int(value or 9)
     except (TypeError, ValueError):
-        version = 7
+        version = 9
     if version <= 3:
         return 3
     if version == 4:
@@ -142,7 +197,11 @@ def normalize_interface_version(value: int | str | None) -> int:
         return 5
     if version == 6:
         return 6
-    return 7
+    if version == 7:
+        return 7
+    if version == 8:
+        return 8
+    return 9
 
 
 def profile_by_id(profile_id: str) -> dict:
@@ -255,6 +314,8 @@ def snapshot_session(session, output_dir: Path) -> Path:
         "session_id": session.session_id,
         "interface_version": session.interface_version,
         "workflow_profile": profile,
+        "camera_contract": _jsonable(session.camera_contract),
+        "canon_alignment": _jsonable(session.canon_alignment),
         "session": session.model_dump(mode="json"),
         "artifacts": [artifact_metadata(artifact) for artifact in sorted(artifact_paths)],
     }
@@ -266,6 +327,8 @@ def snapshot_session(session, output_dir: Path) -> Path:
             "session_id": session.session_id,
             "interface_version": session.interface_version,
             "workflow_profile": profile,
+            "camera_contract": _jsonable(session.camera_contract),
+            "canon_alignment": _jsonable(session.canon_alignment),
             "latest_snapshot": str(path),
             "records": list(session.workflow_records),
             "generation_manifests": list(session.generation_manifests),

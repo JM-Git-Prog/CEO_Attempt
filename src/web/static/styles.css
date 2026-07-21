@@ -45,3 +45,113 @@
   .ui-v7 .stage-head{height:auto;min-height:72px;gap:10px}
   .ui-v7 .stage-footer{height:auto;min-height:38px;flex-wrap:wrap}
 }
+
+/* V8: history and telemetry additions are isolated from immutable V3–V7 UI. */
+.ui-v8-scoped{height:100dvh;min-height:0;overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.ui-v8-scoped .topbar{height:auto;min-height:72px}
+.ui-v8-scoped .workspace{--chat-pane:44%;height:auto;min-height:0;grid-template-columns:minmax(320px,var(--chat-pane)) 11px minmax(360px,1fr)}
+.ui-v8-scoped .conversation{min-width:0;min-height:0;border-right:0}
+.ui-v8-scoped .stage{min-width:0;min-height:0}
+.ui-v8-scoped .stage-step{border:0;cursor:pointer}
+.ui-v8-scoped .stage-step:hover,.ui-v8-scoped .stage-step:focus-visible{background:#17202c;color:#d8e0eb;outline:1px solid var(--amber);outline-offset:-1px}
+.ui-v8-scoped .history-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;padding:7px 9px;border:1px solid #75542c;background:#21180e;color:#ffd49c;font:700 10px ui-monospace,monospace}
+.ui-v8-scoped .history-banner[hidden]{display:none!important}
+.ui-v8-scoped .history-banner button{padding:5px 8px;border:1px solid #8b683b;background:#312313;color:#ffd49c;cursor:pointer;font:700 9px ui-monospace,monospace}
+.ui-v8-scoped .history-toolbar{display:grid;grid-template-columns:minmax(150px,1fr) minmax(105px,150px) 32px;gap:7px;margin:0 0 8px}
+.ui-v8-scoped .history-toolbar label{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px;padding-left:8px;border:1px solid var(--line);color:#788395;background:#0b0f15;font:700 8px ui-monospace,monospace}
+.ui-v8-scoped .history-toolbar select{min-width:0;height:30px;border:0;border-left:1px solid var(--line);padding:0 7px;background:#111720;color:#dbe2eb;font:600 9px ui-monospace,monospace;outline:none}
+.ui-v8-scoped .history-toolbar select:focus{box-shadow:inset 0 0 0 1px var(--amber)}
+.ui-v8-scoped .history-toolbar button{border:1px solid #465264;background:#151c26;color:#dce5ef;cursor:pointer}
+.ui-v8-scoped .telemetry-panel{display:grid;grid-template-columns:1.4fr .7fr 1fr 1.2fr;gap:1px;margin:0 0 8px;border:1px solid var(--line);background:var(--line)}
+.ui-v8-scoped .telemetry-panel span{min-width:0;padding:6px 8px;background:#0b0f15}
+.ui-v8-scoped .telemetry-panel b,.ui-v8-scoped .telemetry-panel em{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 8px ui-monospace,monospace}
+.ui-v8-scoped .telemetry-panel b{margin-bottom:3px;color:#586477;letter-spacing:.07em}
+.ui-v8-scoped .telemetry-panel em{color:#9fe0bd;font-style:normal}
+.ui-v8-scoped .telemetry-panel em.stale{color:var(--red)}
+.ui-v8-scoped .v8-brief{height:100%;overflow:auto;padding:28px;max-width:760px;margin:auto;color:#b8c1cd}
+.ui-v8-scoped .v8-brief h3{margin:10px 0 8px;color:var(--text);font-size:20px}
+.ui-v8-scoped .v8-brief p{white-space:pre-wrap;line-height:1.6}
+.ui-v8-scoped .v8-brief dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px}
+.ui-v8-scoped .v8-brief dl div{padding:10px;background:#0e131b;border:1px solid var(--line)}
+.ui-v8-scoped .v8-brief dt{color:#657083;font:700 8px ui-monospace,monospace;text-transform:uppercase}
+.ui-v8-scoped .v8-brief dd{margin:5px 0 0;color:#d9e0e9;font-size:12px}
+.ui-v8-scoped .v8-history-image{position:relative;width:100%;height:100%;margin:0;display:grid;place-items:center}
+.ui-v8-scoped .v8-history-image img{width:100%;height:100%;object-fit:contain}
+.ui-v8-scoped .v8-history-image figcaption{position:absolute;left:12px;bottom:12px;padding:7px 9px;border:1px solid #343c48;background:#080b10df;color:#dce5ef;font:700 9px ui-monospace,monospace}
+.ui-v8-scoped .v8-compare-list{height:100%;overflow:auto;padding:16px;display:grid;align-content:start;gap:9px}
+.ui-v8-scoped .v8-compare-list article{padding:13px;border:1px solid var(--line);background:#0e131b;color:#aeb8c5;font-size:12px}
+.ui-v8-scoped .v8-compare-list header{display:flex;justify-content:space-between;color:var(--amber);font:700 10px ui-monospace,monospace}
+.ui-v8-scoped .v8-compare-list p{margin:8px 0}
+.ui-v8-scoped .v8-compare-list ul{margin:6px 0 0;padding-left:18px}
+.ui-v8-scoped.is-historical .composer{opacity:.48}
+.ui-v8-scoped [aria-disabled=true],.ui-v8-scoped button:disabled{cursor:not-allowed;filter:saturate(.35);opacity:.55}
+.ui-v8-scoped a[aria-disabled=true]{pointer-events:none}
+@media(max-width:900px){
+  .ui-v8-scoped{height:auto;min-height:100dvh;overflow:auto;display:block}
+  .ui-v8-scoped .topbar{align-items:flex-start;padding:16px}
+  .ui-v8-scoped .workspace{height:auto;min-height:0;display:block}
+  .ui-v8-scoped .conversation{height:auto;min-height:calc(100dvh - 110px)}
+  .ui-v8-scoped .messages{min-height:180px}
+  .ui-v8-scoped .stage{height:auto;min-height:max(560px,82dvh)}
+  .ui-v8-scoped .stage-body{min-height:300px}
+  .ui-v8-scoped .telemetry-panel{grid-template-columns:1fr 1fr}
+}
+@media(min-width:901px) and (max-height:720px){
+  .ui-v8-scoped .intro{padding:16px 24px 12px}
+  .ui-v8-scoped .intro h1{margin:6px 0;font-size:24px}
+  .ui-v8-scoped .intro p{line-height:1.35}
+  .ui-v8-scoped .messages{min-height:0;padding:12px 24px}
+  .ui-v8-scoped .composer{padding:10px 24px 12px}
+  .ui-v8-scoped .stage{padding-top:14px;padding-bottom:14px}
+}
+@media(max-width:560px){
+  .ui-v8-scoped .topbar{gap:12px;flex-direction:column}
+  .ui-v8-scoped .status-strip{max-width:none;justify-content:flex-start}
+  .ui-v8-scoped .stage{padding:16px}
+  .ui-v8-scoped .stage-head{height:auto;min-height:72px;gap:10px}
+  .ui-v8-scoped .stage-footer{height:auto;min-height:38px;flex-wrap:wrap}
+  .ui-v8-scoped .history-toolbar{grid-template-columns:1fr 32px}
+  .ui-v8-scoped .history-toolbar label:first-child{grid-column:1/-1}
+  .ui-v8-scoped .v8-brief dl{grid-template-columns:1fr}
+}
+
+
+/* V9: preserve the authoritative 4:3 comparison frame while allowing optional orbiting. */
+.ui-v9-camera .locked-viewer-frame{position:absolute;inset:0;margin:auto;width:min(100%,calc(100vh - 310px));max-width:100%;aspect-ratio:4/3;background:#05070a;box-shadow:0 0 0 1px #344153}
+.ui-v9-camera .locked-viewer-frame .viewer{position:absolute;inset:0;width:100%;height:100%}
+.ui-v9-camera .camera-frame{margin:auto;width:100%;height:100%;aspect-ratio:4/3}
+.ui-v9-camera .camera-frame img{width:100%;height:100%;object-fit:contain}
+.ui-v9-camera .viewer-hud{display:flex;align-items:center;gap:8px;color:#c6d3e3}
+.ui-v9-camera .reset-camera{padding:4px 7px;border:1px solid #8b683b;background:#312313;color:#ffd49c;cursor:pointer;font:700 8px ui-monospace,monospace}
+.ui-v9-camera .reset-camera:hover,.ui-v9-camera .reset-camera:focus-visible{border-color:var(--amber);outline:none}
+@media(max-width:900px){.ui-v9-camera .locked-viewer-frame{width:100%;max-height:100%}}
+
+/* V9: a fixed-aspect camera frame shared by Blockout, Canon, and initial World. */
+.ui-v9-camera .stage-body:has(.camera-frame),.ui-v9-camera .stage-body:has(.locked-viewer-frame){display:grid;place-items:center}
+.ui-v9-camera .camera-frame{width:100%;max-width:100%;aspect-ratio:4/3;max-height:100%;background:#05070a}
+.ui-v9-camera .camera-frame img{width:100%;height:100%;object-fit:contain}
+.ui-v9-camera .locked-viewer-frame{position:relative;overflow:hidden;background:#07090d;box-shadow:0 0 0 1px #35404d}
+.ui-v9-camera .locked-viewer-frame .viewer{width:100%;height:100%;display:block}
+.ui-v9-camera .reset-camera{margin-left:8px;padding:4px 6px;border:1px solid #70583a;background:#21180e;color:var(--amber);cursor:pointer;font:800 8px ui-monospace,monospace}
+.ui-v9-camera .provider-tag{max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* V9: correctness, accessibility, and collision fixes; retained versions remain unchanged. */
+.composer-label{display:block;margin:0 0 6px;color:#dce4ef;font:700 11px ui-monospace,monospace;letter-spacing:.04em}.composer-help{display:block;margin:0 0 8px;color:#9ca8b8;font-size:11px;line-height:1.35}
+.ui-v9-camera .stage-body{container-type:size}
+.ui-v9-camera .stage-body:has(.camera-frame),.ui-v9-camera .stage-body:has(.locked-viewer-frame){display:grid;place-items:center}
+.ui-v9-camera .camera-frame,.ui-v9-camera .locked-viewer-frame{position:relative;inset:auto;margin:auto;width:min(100cqw,calc(100cqh * 4 / 3));height:min(100cqh,calc(100cqw * 3 / 4));max-width:100%;max-height:100%;aspect-ratio:4/3;overflow:hidden;background:#05070a}
+.ui-v9-camera .camera-frame img,.ui-v9-camera .locked-viewer-frame .viewer{display:block;width:100%;height:100%;object-fit:contain}
+.ui-v9-camera .viewer:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+.ui-v9-camera .viewer-hud{right:12px;max-width:calc(100% - 24px);flex-wrap:wrap;line-height:1.35;background:#080b10f2;color:#d5deea}
+.ui-v9-camera .camera-help{color:#aeb9c8}
+.ui-v9-camera .brand small,.ui-v9-camera .intro p,.ui-v9-camera .stage-footer,.ui-v9-camera .stage-step,.ui-v9-camera .version-nav a{color:#9aa6b7}
+.ui-v9-camera .concept-grid b,.ui-v9-camera .telemetry-panel b,.ui-v9-camera .v8-brief dt{color:#8d9aab}
+.ui-v9-camera .message small{color:#9aa6b7}
+@media(max-width:700px){
+  .ui-v9-camera .topbar{gap:10px}.ui-v9-camera .status-strip{width:100%;max-width:none;justify-content:flex-start}.ui-v9-camera .version-nav{max-width:100%;overflow-x:auto}
+  .ui-v9-camera .stage{padding:12px}.ui-v9-camera .stage-head{min-height:88px;flex-wrap:wrap}.ui-v9-camera .stage-tools{width:100%;flex-direction:row;justify-content:space-between;align-items:center}
+  .ui-v9-camera .history-toolbar{grid-template-columns:minmax(0,1fr) 34px}.ui-v9-camera .history-toolbar label:first-child{grid-column:1/-1}.ui-v9-camera .telemetry-panel{grid-template-columns:1fr 1fr}
+  .ui-v9-camera .viewer-hud{left:6px;right:6px;bottom:6px;max-width:none;font-size:8px}.ui-v9-camera .camera-help{flex-basis:100%;order:3}.ui-v9-camera .reset-camera{margin-left:auto}
+  .ui-v9-camera .download{right:6px;bottom:6px}.ui-v9-camera .revise-world{right:6px;bottom:48px}.ui-v9-camera .plan-tabs{left:6px;bottom:6px;max-width:calc(100% - 12px)}
+}
+@media(max-width:430px){.ui-v9-camera .stage-rail{grid-template-columns:repeat(2,1fr)}.ui-v9-camera .actions button{flex:1 1 100%}.ui-v9-camera .telemetry-panel{font-size:8px}.ui-v9-camera .camera-help{display:none}}

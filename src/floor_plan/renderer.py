@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+from src.camera_contract import CameraContract, project_world_point
 from src.floor_plan.models import FloorPlan, PlanItem
 
 COLORS = {
@@ -75,42 +76,59 @@ def render_floor_plan_svg(plan: FloorPlan, path: Path) -> Path:
     return path
 
 
-def render_blockout(plan: FloorPlan, path: Path, concept=None) -> Path:
-    canvas = Image.new("RGB", (1024, 768), "#111720")
+def render_blockout(
+    plan: FloorPlan,
+    path: Path,
+    concept=None,
+    *,
+    camera_contract: CameraContract | None = None,
+) -> Path:
+    width = camera_contract.image_width if camera_contract else 1024
+    height = camera_contract.image_height if camera_contract else 768
+    canvas = Image.new("RGB", (width, height), "#111720")
     draw = ImageDraw.Draw(canvas)
-    _draw_gradient(draw)
+    _draw_gradient(draw, width, height)
     camera = np.array([plan.camera.x, plan.camera.y, plan.camera.z], dtype=float)
-    target = np.array([plan.camera.target_x, plan.camera.target_y, plan.camera.target_z], dtype=float)
-    forward = target - camera
-    forward /= max(np.linalg.norm(forward), 1e-6)
-    right = np.cross(forward, np.array([0.0, 1.0, 0.0]))
-    right /= max(np.linalg.norm(right), 1e-6)
-    up = np.cross(right, forward)
-    focal = 512 / math.tan(math.radians(plan.camera.fov_deg) / 2)
 
-    def project(vertex: tuple[float, float, float]) -> tuple[float, float, float] | None:
-        relative = np.array(vertex) - camera
-        depth = float(np.dot(relative, forward))
-        if depth <= 0.08:
-            return None
-        return 512 + float(np.dot(relative, right)) * focal / depth, 384 - float(np.dot(relative, up)) * focal / depth, depth
+    if camera_contract:
+        def project(vertex: tuple[float, float, float]) -> tuple[float, float, float] | None:
+            x, y, depth, _ = project_world_point(camera_contract, vertex)
+            return None if depth < camera_contract.near else (x, y, depth)
+    else:
+        target = np.array([plan.camera.target_x, plan.camera.target_y, plan.camera.target_z], dtype=float)
+        forward = target - camera
+        forward /= max(np.linalg.norm(forward), 1e-6)
+        right = np.cross(forward, np.array([0.0, 1.0, 0.0]))
+        right /= max(np.linalg.norm(right), 1e-6)
+        up = np.cross(right, forward)
+        focal = 512 / math.tan(math.radians(plan.camera.fov_deg) / 2)
+
+        def project(vertex: tuple[float, float, float]) -> tuple[float, float, float] | None:
+            relative = np.array(vertex) - camera
+            depth = float(np.dot(relative, forward))
+            if depth <= 0.08:
+                return None
+            return 512 + float(np.dot(relative, right)) * focal / depth, 384 - float(np.dot(relative, up)) * focal / depth, depth
 
     _draw_room(draw, plan, project, concept)
     items = sorted(plan.items, key=lambda item: -_distance(item, camera))
     for item in items:
         _draw_item(draw, item, project)
-    draw.rectangle((18, 18, 520, 62), fill="#080c12dd", outline="#3d4858")
+    draw.rectangle((18, 18, min(520, width - 18), 62), fill="#080c12dd", outline="#3d4858")
     draw.text((32, 30), f"APPROVED BLOCKOUT · {plan.name}", fill="#e8edf4")
-    draw.text((20, 730), "Geometry and camera are locked; canon generation may change only appearance and lighting.", fill="#9ea9b7")
+    lock_label = "Geometry and camera are locked; canon generation may change only appearance and lighting."
+    if camera_contract:
+        lock_label = f"CAMERA LOCK {camera_contract.contract_id} · Blockout, Canon, and World share this frame."
+    draw.text((20, height - 38), lock_label, fill="#9ea9b7")
     path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(path, "PNG")
     return path
 
 
-def _draw_gradient(draw: ImageDraw.ImageDraw) -> None:
-    for y in range(768):
-        value = int(13 + y * 15 / 768)
-        draw.line((0, y, 1024, y), fill=(value, value + 5, value + 12))
+def _draw_gradient(draw: ImageDraw.ImageDraw, width: int = 1024, height: int = 768) -> None:
+    for y in range(height):
+        value = int(13 + y * 15 / height)
+        draw.line((0, y, width, y), fill=(value, value + 5, value + 12))
 
 
 def _draw_room(draw: ImageDraw.ImageDraw, plan: FloorPlan, project, concept=None) -> None:

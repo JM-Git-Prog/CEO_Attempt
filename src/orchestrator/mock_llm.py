@@ -27,6 +27,49 @@ MOCK_SCENE_CONCEPT = {
     "image_prompt": "Interior photograph of a 1950s American diner counter at evening. Four chrome stools with red vinyl seats line a formica counter with chrome edge trim. A single industrial pendant lamp hangs low over the counter, casting warm amber light. Through the large storefront window, rain streaks the glass and cool blue-gray evening light filters in. Checkered black and white linoleum floor, cream tile wainscoting, pressed tin ceiling. A glass pie case sits at one end. Photorealistic, moody, cinematic lighting, shot on 35mm film.",
 }
 
+MOCK_FLOOR_PLAN = {
+    "name": "1950s American Diner",
+    "room": {"width": 6.0, "depth": 4.0, "height": 2.8},
+    "items": [
+        {
+            "id": "counter_1", "name": "Formica Counter", "category": "furniture",
+            "x": 0.0, "z": 1.35, "width": 4.2, "depth": 0.8, "height": 1.2,
+            "elevation": 0.0, "rotation_deg": 0.0, "fixed": True,
+            "clearance_m": 0.5, "description": "Chrome-trimmed pale mint-green counter",
+        },
+        *[
+            {
+                "id": f"stool_{index}", "name": "Red Vinyl Chrome Swivel Stool",
+                "category": "furniture", "x": x, "z": 0.3, "width": 0.6,
+                "depth": 0.6, "height": 1.0, "elevation": 0.0,
+                "rotation_deg": 0.0, "fixed": False, "clearance_m": 0.2,
+                "description": "Individual diner stool",
+            }
+            for index, x in enumerate((-1.275, -0.425, 0.425, 1.275), 1)
+        ],
+        *[
+            {
+                "id": f"light_{index}", "name": "Polished Chrome Pendant Light",
+                "category": "fixture", "x": x, "z": 1.35, "width": 0.3,
+                "depth": 0.3, "height": 0.5, "elevation": 2.3,
+                "rotation_deg": 0.0, "fixed": True, "clearance_m": 0.1,
+                "description": "Individual pendant above counter",
+            }
+            for index, x in enumerate((-0.65, 0.0, 0.65), 1)
+        ],
+    ],
+    "openings": [
+        {"id": "opening_1", "kind": "door", "wall": "west", "offset": 1.35,
+         "width": 0.9, "height": 2.0, "sill_height": 0.0},
+        {"id": "opening_2", "kind": "window", "wall": "south", "offset": 0.0,
+         "width": 3.6, "height": 2.5, "sill_height": 0.0},
+    ],
+    "camera": {"x": 2.55, "y": 1.6, "z": -1.55, "target_x": 0.0,
+               "target_y": 1.2, "target_z": 1.35, "fov_deg": 55.0},
+    "circulation_notes": ["Clear circulation aisle behind the stools."],
+    "design_notes": ["Preserve exact counter, stool, pendant, door, and window counts."],
+}
+
 MOCK_SCENE_GRAPH = {
     "name": "fifties_diner_counter",
     "description": "A moody 1950s diner counter scene with warm pendant lighting and rainy evening atmosphere",
@@ -208,6 +251,8 @@ MOCK_SCENE_GRAPH = {
 def mock_generate(system: str, user: str) -> str:
     """Produce mock responses based on what the system prompt is asking for."""
     lower = system.lower()
+    if "space planner" in lower:
+        return json.dumps(MOCK_FLOOR_PLAN, indent=2)
     if "spatial planner" in lower or ("scene graph" in lower and "room" in lower):
         return json.dumps(MOCK_SCENE_GRAPH, indent=2)
     elif "creative director" in lower or ("scene concept" in lower and "image_prompt" in lower):

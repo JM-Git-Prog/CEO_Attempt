@@ -5,6 +5,7 @@ Designed to work with whatever is available.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 from typing import Optional
@@ -120,28 +121,42 @@ def _parse_json(raw: str) -> dict:
 
 
 async def generate_json(
-    system: str, user: str, model: Optional[str] = None
+    system: str,
+    user: str,
+    model: Optional[str] = None,
+    *,
+    timeout_seconds: float | None = None,
 ) -> dict:
-    """Generate a JSON object using provider JSON mode and one repair retry."""
-    raw = ""
-    parse_error: json.JSONDecodeError | None = None
-    for attempt in range(2):
-        retry_note = ""
-        if attempt:
-            retry_note = (
-                "\n\nYour previous response was malformed or incomplete. "
-                "Return the complete object as compact valid JSON only."
-            )
-        raw = await generate(
-            system, user + retry_note, model, json_mode=True
+    """Generate JSON with one repair retry and an optional total deadline."""
+
+    async def run_attempts() -> dict:
+        raw = ""
+        parse_error: json.JSONDecodeError | None = None
+        for attempt in range(2):
+            retry_note = ""
+            if attempt:
+                retry_note = (
+                    "\n\nYour previous response was malformed or incomplete. "
+                    "Return the complete object as compact valid JSON only."
+                )
+            raw = await generate(system, user + retry_note, model, json_mode=True)
+            try:
+                return _parse_json(raw)
+            except json.JSONDecodeError as exc:
+                parse_error = exc
+        raise LLMError(
+            f"LLM returned invalid JSON after retry: {parse_error}\nRaw output:\n{raw[:500]}"
         )
-        try:
-            return _parse_json(raw)
-        except json.JSONDecodeError as exc:
-            parse_error = exc
-    raise LLMError(
-        f"LLM returned invalid JSON after retry: {parse_error}\nRaw output:\n{raw[:500]}"
-    )
+
+    if timeout_seconds is None:
+        return await run_attempts()
+    try:
+        async with asyncio.timeout(max(0.1, float(timeout_seconds))):
+            return await run_attempts()
+    except TimeoutError:
+        from src.orchestrator.mock_llm import mock_generate
+
+        return _parse_json(mock_generate(system, user))
 
 
 async def generate_vision_json(

@@ -1,7 +1,7 @@
 """HTML shell for The Living Room web application."""
 
 
-def get_index_html(version: int = 7) -> str:
+def get_index_html(version: int = 9) -> str:
     if version <= 3:
         version = 3
     elif version == 4:
@@ -10,35 +10,75 @@ def get_index_html(version: int = 7) -> str:
         version = 5
     elif version == 6:
         version = 6
-    else:
+    elif version == 7:
         version = 7
+    elif version == 8:
+        version = 8
+    else:
+        version = 9
     refresh_control = '<button class="refresh-output" onclick="refreshOutput()">REFRESH OUTPUT ↻</button>' if version >= 4 else ""
     plan_attr = ' role="button" tabindex="0" onclick="showPlanArtifact(\'floor\')"' if version >= 4 else ""
     blockout_attr = ' role="button" tabindex="0" onclick="showPlanArtifact(\'blockout\')"' if version >= 4 else ""
+    current_page = lambda selected: 'aria-current="page"' if selected else ""
+    current_step = lambda selected: ' aria-current="step"' if selected else ""
+    telemetry_live = ' aria-live="polite"' if version == 8 else ""
     version_nav = (
         f'<nav class="version-nav" aria-label="Interface version">'
-        f'<a class="{"selected" if version == 3 else ""}" href="/?v=3">V3 SIMPLE</a>'
-        f'<a class="{"selected" if version == 4 else ""}" href="/?v=4">V4</a>'
-        f'<a class="{"selected" if version == 5 else ""}" href="/?v=5">V5</a>'
-        f'<a class="{"selected" if version == 6 else ""}" href="/?v=6">V6</a>'
-        f'<a class="{"selected" if version == 7 else ""}" href="/?v=7">V7</a></nav>'
+        f'<a class="{"selected" if version == 3 else ""}" {current_page(version == 3)} href="/?v=3">V3 SIMPLE</a>'
+        f'<a class="{"selected" if version == 4 else ""}" {current_page(version == 4)} href="/?v=4">V4</a>'
+        f'<a class="{"selected" if version == 5 else ""}" {current_page(version == 5)} href="/?v=5">V5</a>'
+        f'<a class="{"selected" if version == 6 else ""}" {current_page(version == 6)} href="/?v=6">V6</a>'
+        f'<a class="{"selected" if version == 7 else ""}" {current_page(version == 7)} href="/?v=7">V7</a>'
+        f'<a class="{"selected" if version == 8 else ""}" {current_page(version == 8)} href="/?v=8">V8</a>'
+        f'<a class="{"selected" if version == 9 else ""}" {current_page(version == 9)} href="/?v=9">V9</a></nav>'
     )
-    workspace_attr = ' id="workspace"' if version == 7 else ""
+    workspace_attr = ' id="workspace"' if version in (7, 8, 9) else ""
     splitter = (
         '<div id="workspaceSplitter" class="workspace-splitter" role="separator" tabindex="0" '
         'aria-label="Resize chat and preview panes" aria-orientation="vertical" '
         'aria-valuemin="25" aria-valuenow="44" aria-valuemax="70" aria-valuetext="44% chat width">'
         '<span aria-hidden="true"></span></div>'
-        if version == 7 else ""
+        if version in (7, 8, 9) else ""
+    )
+    stage_rail = (
+        '<nav class="stage-rail" aria-label="Build stages">'
+        + ''.join(
+            f'<button type="button" class="stage-step{" active" if stage == "brief" else ""}" '
+            f'data-stage="{stage}"{current_step(stage == "brief")}>{stage.upper()}</button>'
+            for stage in ("brief", "plan", "blockout", "canon", "world", "compare")
+        )
+        + '</nav>'
+        if version >= 8
+        else '<nav class="stage-rail" aria-label="Build stages"><span class="stage-step active" data-stage="brief">BRIEF</span><span class="stage-step" data-stage="plan"__PLAN_STAGE_ATTR__>PLAN</span><span class="stage-step" data-stage="blockout"__BLOCKOUT_STAGE_ATTR__>BLOCKOUT</span><span class="stage-step" data-stage="canon">CANON</span><span class="stage-step" data-stage="world">WORLD</span><span class="stage-step" data-stage="compare">COMPARE</span></nav>'
+    )
+    history_ui = (
+        '<div id="historyBanner" class="history-banner" role="status" hidden>'
+        '<span>Viewing a read-only historical run</span><button id="returnLiveBtn" type="button">Return to live</button></div>'
+        '<div class="history-toolbar" aria-label="Run history">'
+        '<label>Run<select id="historyRun"><option value="">Live session</option></select></label>'
+        '<label>Revision<select id="historyRevision" disabled><option value="">Latest</option></select></label>'
+        '<button id="historyReload" type="button" aria-label="Reload run history">↻</button></div>'
+        f'<section id="telemetryPanel" class="telemetry-panel" aria-label="Build telemetry"{telemetry_live}>'
+        '<span><b>SUBSTEP</b><em id="telemetrySubstep">Waiting</em></span>'
+        '<span><b>ELAPSED</b><em id="telemetryElapsed">—</em></span>'
+        '<span><b>HEARTBEAT</b><em id="telemetryHeartbeat">—</em></span>'
+        '<span><b>ETA</b><em id="telemetryEta">collecting timing data</em></span></section>'
+        if version >= 8 else ""
     )
     return (
         INDEX_HTML.replace("__VERSION__", str(version))
         .replace("__REFRESH_CONTROL__", refresh_control)
+        .replace("__STAGE_RAIL__", stage_rail)
         .replace("__PLAN_STAGE_ATTR__", plan_attr)
         .replace("__BLOCKOUT_STAGE_ATTR__", blockout_attr)
         .replace("__VERSION_NAV__", version_nav)
         .replace("__WORKSPACE_ATTR__", workspace_attr)
         .replace("__WORKSPACE_SPLITTER__", splitter)
+        .replace("__V8_HISTORY_UI__", history_ui)
+        .replace(
+            "__V8_SCOPE__",
+            " ui-v8-scoped ui-v9-camera" if version == 9 else " ui-v8-scoped" if version == 8 else "",
+        )
     )
 
 
@@ -49,9 +89,19 @@ INDEX_HTML = """<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#090b10">
   <title>The Living Room · World Builder</title>
+  <script>
+    (() => {
+      const url = new URL(window.location.href);
+      const requested = url.searchParams.get('v');
+      if (requested === null || !/^-?\d+$/.test(requested)) {
+        url.searchParams.set('v', '9');
+        window.location.replace(url);
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="/static/styles.css?v=__VERSION__">
 </head>
-<body class="ui-v__VERSION__">
+<body class="ui-v__VERSION____V8_SCOPE__">
   <header class="topbar">
     <div class="brand"><span class="brand-mark">LR</span><div><strong>The Living Room</strong><small>Describe any interior. Walk into it.</small></div></div>
     <div class="status-strip">__VERSION_NAV__<span class="chip" id="apiChip">API · checking</span><span class="chip" id="llmChip">Ollama · checking</span><span class="chip" id="imageChip">FLUX.2 · checking</span><span class="chip" id="gpuChip">GPU · checking</span></div>
@@ -60,12 +110,13 @@ INDEX_HTML = """<!doctype html>
     <section class="conversation">
       <div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD</span><h1>Build a room you can enter.</h1><p>Describe one interior. Approve its metric layout and camera first, then render a plan-conditioned canon and build the world.</p></div>
       <div id="messages" class="messages" aria-live="polite"></div>
-      <form id="composer" class="composer"><textarea id="input" rows="3" placeholder="A sunken 1970s lounge with walnut walls, amber lamps and rain against a wide window…"></textarea><button id="sendBtn" type="submit">Generate space plan <span>↗</span></button></form>
+      <form id="composer" class="composer"><label class="composer-label" for="input">Describe your room</label><span class="composer-help" id="inputHelp">Include layout, era, materials, lighting, and openings. Enter submits; Shift+Enter adds a line.</span><textarea id="input" rows="3" aria-describedby="inputHelp" placeholder="A sunken 1970s lounge with walnut walls, amber lamps and rain against a wide window…"></textarea><button id="sendBtn" type="submit">Generate space plan <span>↗</span></button></form>
     </section>
     __WORKSPACE_SPLITTER__
     <aside class="stage">
-      <div class="stage-head"><div><span class="eyebrow">LIVE OUTPUT · V__VERSION__</span><h2 id="stageTitle">Waiting for a description</h2></div><div class="stage-tools">__REFRESH_CONTROL__<span class="stage-state" id="stageState">IDLE</span></div></div>
-      <nav class="stage-rail" aria-label="Build stages"><span class="stage-step active" data-stage="brief">BRIEF</span><span class="stage-step" data-stage="plan"__PLAN_STAGE_ATTR__>PLAN</span><span class="stage-step" data-stage="blockout"__BLOCKOUT_STAGE_ATTR__>BLOCKOUT</span><span class="stage-step" data-stage="canon">CANON</span><span class="stage-step" data-stage="world">WORLD</span><span class="stage-step" data-stage="compare">COMPARE</span></nav>
+      <div class="stage-head"><div><span class="eyebrow">LIVE OUTPUT · V__VERSION__</span><h2 id="stageTitle">Waiting for a description</h2></div><div class="stage-tools">__REFRESH_CONTROL__<span class="stage-state" id="stageState" role="status" aria-live="polite" aria-atomic="true">IDLE</span></div></div>
+      __V8_HISTORY_UI__
+      __STAGE_RAIL__
       <div id="stageBody" class="stage-body"><div class="empty-stage"><div class="wire-room"><i></i><i></i><i></i></div><p>Your plan, canon, and world preview will appear here.</p></div></div>
       <div id="stageFooter" class="stage-footer"><span>Orbit preview</span><span>Godot 4 export</span><span>Physics metadata</span></div>
     </aside>
