@@ -443,6 +443,60 @@ def test_step_assemble_waits_for_human_qa_instead_of_marking_ready(builder, monk
     assert instance.session.output_path == str(project)
 
 
+def test_failing_camera_pose_repro_prioritizes_real_provider_failure(tmp_path):
+    """Regression for qualification session 16969259 (5/5 identical failures)."""
+    from src.canon_image.generator import _edge_alignment_report, _generate_mock
+    from src.floor_plan.renderer import render_blockout
+    from src.orchestrator.mock_llm import _mock_floor_plan_v11
+    from src.workflow_provenance import profile_for
+    from tools import v11_e2e_adapter as adapter
+
+    raw = _mock_floor_plan_v11()
+    positions = {
+        "counter_1": (0.0, 1.55),
+        "stool_1": (-1.2, 0.25),
+        "stool_2": (-0.4, 0.25),
+        "stool_3": (0.4, 0.25),
+        "stool_4": (1.2, 0.25),
+        "light_1": (-0.6, 1.55),
+        "light_2": (0.0, 1.55),
+        "light_3": (0.6, 1.55),
+    }
+    for item in raw["items"]:
+        item["x"], item["z"] = positions[item["id"]]
+    raw["camera"] = {
+        "x": 2.78, "y": 1.6, "z": -1.78,
+        "target_x": -1.0, "target_y": 0.6, "target_z": 3.55,
+        "fov_deg": 55.0,
+    }
+    plan = FloorPlan.model_validate(raw)
+    contract = camera_contract_for_plan(plan)
+    assert contract.contract_id == "camera-40c7674e75755279"
+
+    blockout = render_blockout(
+        plan, tmp_path / "blockout.png", camera_contract=contract,
+        blockout_detail="articulated",
+    )
+    canon = _generate_mock(
+        "MANDATORY VISIBLE FINISH TRANSFORMATION: replace every blockout surface "
+        "with the specified finished material; render a polished photorealistic interior",
+        tmp_path / "canon.png",
+    )
+    report = _edge_alignment_report(
+        blockout, canon, contract.model_dump(mode="json"),
+        {"workflow_profile": profile_for(11), "plan_revision": 1},
+    )
+
+    assert report["best_translation_px"] == {"x": 20, "y": -20}
+    assert report["drift_px"] == pytest.approx(28.28)
+    assert report["reasons"] == ["translation_exceeds_aligned_limit"]
+    stage = {
+        "status": "failed", "provider": "Mock fallback",
+        "reason": "real_provider_unavailable", "alignment": report,
+    }
+    assert adapter._failure_rule_detail("canon", stage) == ("provider", "mock_fallback")
+
+
 def test_v11_canon_profile_has_complete_bounded_alignment_policy():
     from src.workflow_provenance import profile_for
 
