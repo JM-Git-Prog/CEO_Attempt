@@ -53,7 +53,72 @@ def test_evidence_store_is_append_only_and_atomic(tmp_path):
     assert json.loads(store.latest.read_text(encoding="utf-8"))["iteration_id"] == "two"
     assert (tmp_path / "one" / "summary.json").is_file()
     assert (tmp_path / "two" / "report.md").is_file()
+    assert (tmp_path / "scoreboard.json").is_file()
+    assert (tmp_path / "NEXT.md").is_file()
     assert not list(tmp_path.rglob("*.tmp"))
+
+
+def test_scoreboard_is_keyed_by_fingerprint_and_lane_with_conservative_verdict(tmp_path):
+    store = qualification.EvidenceStore(tmp_path)
+    fingerprint = "f" * 64
+
+    def full_iteration(index: int, passed: bool) -> qualification.IterationEvidence:
+        failure = None if passed else "plan/validation/item_out_of_bounds:sofa_1"
+        stages = {
+            "plan": {"status": "passed" if passed else "failed"},
+            "canon": {"status": "passed" if passed else "incomplete"},
+        }
+        return qualification.IterationEvidence(
+            iteration_id=f"trial-{index}", mode="full",
+            started_at_epoch=float(index), finished_at_epoch=float(index + 1),
+            duration_seconds=1.0,
+            source_fingerprint_before=fingerprint,
+            source_fingerprint_after=fingerprint,
+            stale=False, changed_files=(),
+            commands=(
+                _command("compileall"), _command("node-check"),
+                _command("full-tests"), _command("mock-v11-e2e"),
+                _command("fresh-v11-e2e", passed=passed),
+            ),
+            mock_e2e_result={"passed": True, "session_id": f"mock-{index}"},
+            e2e_result={
+                "passed": passed,
+                "session_id": f"real-{index}",
+                "lane": "local-default",
+                "stages": stages,
+                "failure_signature": failure,
+            },
+            regression_delta={}, passed=passed,
+        )
+
+    for index, passed in enumerate((True, True, True, True, False), start=1):
+        store.write(full_iteration(index, passed))
+        scoreboard = json.loads(store.scoreboard.read_text(encoding="utf-8"))
+        assert scoreboard["verdict"] == (
+            "INDETERMINATE" if index < qualification.MIN_RATCHET_TRIALS else "KEEP"
+        )
+
+    lane = scoreboard["fingerprints"][fingerprint]["lanes"]["local-default"]
+    assert lane["trials"] == 5 and lane["passes"] == 4 and lane["pass_rate"] == 0.8
+    assert lane["top_signatures"] == [["plan/validation/item_out_of_bounds:sofa_1", 1]]
+    assert scoreboard["best"] == {
+        "fingerprint": fingerprint,
+        "lane": "local-default",
+        "pass_rate": 0.8,
+        "trials": 5,
+    }
+    assert "Collect" not in store.next.read_text(encoding="utf-8")
+    assert "Keep this fingerprint" in store.next.read_text(encoding="utf-8")
+
+    deterministic_failure = full_iteration(6, False).model_copy(update={
+        "source_fingerprint_before": "e" * 64,
+        "source_fingerprint_after": "e" * 64,
+        "commands": (_command("compileall", passed=False),),
+        "mock_e2e_result": None,
+        "e2e_result": None,
+    })
+    store.write(deterministic_failure)
+    assert json.loads(store.scoreboard.read_text(encoding="utf-8"))["verdict"] == "REVERT"
 
 
 def test_process_lock_serializes_and_recovers_stale_owner(tmp_path):
@@ -168,6 +233,73 @@ def test_modes_and_fresh_adapter_never_accept_a_reused_session(tmp_path):
     assert all(name != "focused-tests" for name, _ in full)
     assert all(name not in {"mock-v11-e2e", "fresh-v11-e2e"} for name, _ in tests_only)
     assert [name for name, _ in e2e_only] == ["fresh-v11-e2e"]
+
+
+def test_mock_runtime_stages_mark_only_expected_vision_unavailability_not_applicable():
+    from tools import v11_e2e_adapter as adapter
+
+    qa_entry = {
+        "decision": "human_required",
+        "screening": {
+            "status": "failed",
+            "diagnostic": "vision screening failed: connection refused",
+        },
+    }
+    payload = {
+        "compiler_manifests": ["prepared.json", "terminal.json"],
+        "runtime_details": {"compiler": {
+            "status": "fallback_success",
+            "execution": "declared_fallback",
+            "target": "godot",
+            "capability": {"available": False},
+        }},
+        "parity_report": {"passed": True},
+        "runtime_smoke_report": None,
+        "qa_evidence": [qa_entry],
+    }
+
+    assert adapter._runtime_stages(payload, mock_qualification=True)["qa"] == {
+        "status": "not_applicable",
+        "entries": [qa_entry],
+        "reason": "deterministic_mock_vision_unavailable",
+    }
+    assert adapter._runtime_stages(payload, mock_qualification=False)["qa"]["status"] == "failed"
+
+
+def test_adapter_failure_signatures_are_stable_and_fail_closed():
+    from tools import v11_e2e_adapter as adapter
+
+    stages = {name: {"status": "passed"} for name in adapter.EXPECTED_STAGES}
+    stages["plan"] = {
+        "status": "failed",
+        "validation": {"blockers": [{
+            "code": "item_out_of_bounds", "item_ids": ["sofa_1"],
+        }]},
+    }
+    result = {"stages": stages, "passed": True}
+
+    adapter._finalize_result(result)
+
+    assert result["passed"] is False
+    assert result["failure_signature"] == "plan/validation/item_out_of_bounds:sofa_1"
+    assert result["failure_signatures"] == [{
+        "stage": "plan",
+        "rule": "validation",
+        "detail": "item_out_of_bounds:sofa_1",
+        "signature": "plan/validation/item_out_of_bounds:sofa_1",
+    }]
+
+    incomplete = {
+        "stages": {"interface": {"status": "passed"}},
+        "exception": {"type": "RuntimeError", "message": "volatile detail"},
+    }
+    adapter._finalize_result(incomplete)
+    assert incomplete["passed"] is False
+    assert incomplete["failure_signature"] == "adapter/exception/runtimeerror"
+    assert any(
+        item["signature"] == "plan/incomplete/not_recorded"
+        for item in incomplete["failure_signatures"]
+    )
 
 
 def test_cli_defaults_to_bounded_once_mode():

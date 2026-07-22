@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -21,6 +22,11 @@ from test_iteration import CANONICAL_PROMPT
 
 HEADERS = {"X-App-Version": "11"}
 PASSING = {"passed", "not_applicable"}
+EXPECTED_STAGES = (
+    "interface", "readiness", "fresh_session", "brief", "plan", "blockout",
+    "canon", "world", "compare", "compiler_manifests", "compiler", "fallback",
+    "parity", "runtime", "qa", "downloads",
+)
 MOCK_QUALIFICATION = os.getenv("QUALIFICATION_MOCK_E2E") == "1"
 
 
@@ -40,6 +46,110 @@ def _atomic_json(path: Path, payload: dict) -> None:
 
 def _stage(status: str, **evidence: Any) -> dict:
     return {"status": status, **evidence}
+
+
+def _signature_component(value: Any, fallback: str) -> str:
+    normalized = re.sub(r"[^a-z0-9._:-]+", "_", str(value).strip().lower()).strip("_:")
+    return (normalized or fallback)[:160]
+
+
+def _nested_reason(value: Any) -> str | None:
+    if isinstance(value, str) and value.strip():
+        return value
+    if isinstance(value, dict):
+        for key in ("reason_code", "code", "reason", "detail", "message", "status"):
+            candidate = value.get(key)
+            if isinstance(candidate, (str, int, float)) and str(candidate).strip():
+                return str(candidate)
+        for key in ("primary_failure", "failure", "diagnostic", "failures", "diagnostics"):
+            candidate = _nested_reason(value.get(key))
+            if candidate:
+                return candidate
+    if isinstance(value, list):
+        for item in value:
+            candidate = _nested_reason(item)
+            if candidate:
+                return candidate
+    return None
+
+
+def _failure_rule_detail(stage: str, evidence: dict) -> tuple[str, str]:
+    validation = evidence.get("validation") or {}
+    blockers = validation.get("blockers") or []
+    if blockers:
+        blocker = blockers[0]
+        reason = _nested_reason(blocker) or "blocked"
+        item_ids = blocker.get("item_ids") if isinstance(blocker, dict) else None
+        subject = item_ids[0] if item_ids else None
+        detail = f"{reason}:{subject}" if subject else reason
+        return "validation", _signature_component(detail, "blocked")
+
+    alignment = evidence.get("alignment") or {}
+    if alignment:
+        reasons = alignment.get("reasons") or []
+        reason = reasons[0] if reasons else _nested_reason(alignment)
+        return "camera_alignment", _signature_component(reason, "failed")
+
+    if stage == "downloads":
+        failed = [item for item in evidence.get("records", []) if item.get("status") != "passed"]
+        return "artifact_integrity", _signature_component(
+            _nested_reason(failed) or "download_failed", "download_failed"
+        )
+
+    if stage == "qa":
+        entries = evidence.get("entries") or []
+        return "vision_screening", _signature_component(
+            _nested_reason(entries) or "qa_not_accepted", "qa_not_accepted"
+        )
+
+    http_status = evidence.get("http_status")
+    if isinstance(http_status, int) and http_status >= 400:
+        reason = _nested_reason(evidence.get("response")) or f"status_{http_status}"
+        return "http_status", _signature_component(
+            f"{http_status}:{reason}", f"status_{http_status}"
+        )
+
+    reason = _nested_reason(evidence.get("evidence")) or _nested_reason(evidence)
+    return "stage_status", _signature_component(reason, "failed")
+
+
+def _signature_record(stage: str, rule: str, detail: str) -> dict[str, str]:
+    stage_value = _signature_component(stage, "adapter")
+    rule_value = _signature_component(rule, "stage_status")
+    detail_value = _signature_component(detail, "failed")
+    return {
+        "stage": stage_value,
+        "rule": rule_value,
+        "detail": detail_value,
+        "signature": f"{stage_value}/{rule_value}/{detail_value}",
+    }
+
+
+def _finalize_result(result: dict) -> None:
+    signatures: list[dict[str, str]] = []
+    exception = result.get("exception")
+    if exception:
+        signatures.append(_signature_record(
+            "adapter", "exception", exception.get("type", "unknown_exception")
+        ))
+
+    stages = result.get("stages") or {}
+    for stage in EXPECTED_STAGES:
+        evidence = stages.get(stage)
+        if evidence is None:
+            signatures.append(_signature_record(stage, "incomplete", "not_recorded"))
+        elif evidence.get("status") not in PASSING:
+            rule, detail = _failure_rule_detail(stage, evidence)
+            signatures.append(_signature_record(stage, rule, detail))
+    for stage in sorted(set(stages) - set(EXPECTED_STAGES)):
+        evidence = stages[stage]
+        if evidence.get("status") not in PASSING:
+            rule, detail = _failure_rule_detail(stage, evidence)
+            signatures.append(_signature_record(stage, rule, detail))
+
+    result["failure_signatures"] = signatures
+    result["failure_signature"] = signatures[0]["signature"] if signatures else None
+    result["passed"] = not signatures
 
 
 def _artifact(path: Path) -> dict:
@@ -73,7 +183,9 @@ def _download_verdict(client: TestClient, records: list[dict]) -> dict:
     )
 
 
-def _runtime_stages(status_payload: dict) -> dict[str, dict]:
+def _runtime_stages(
+    status_payload: dict, *, mock_qualification: bool = MOCK_QUALIFICATION
+) -> dict[str, dict]:
     runtime = status_payload.get("runtime_details", {})
     compiler = runtime.get("compiler", {})
     compiler_status = compiler.get("status")
@@ -86,6 +198,18 @@ def _runtime_stages(status_payload: dict) -> dict[str, dict]:
         entry.get("decision") in {"auto_accepted", "human_approved", "passed"}
         or (entry.get("pass") is True and float(entry.get("confidence", 0.0)) >= 0.8)
         for entry in qa
+    )
+    mock_qa_not_applicable = (
+        mock_qualification
+        and bool(qa)
+        and all(
+            entry.get("decision") == "human_required"
+            and (entry.get("screening") or {}).get("status") == "failed"
+            and str((entry.get("screening") or {}).get("diagnostic", "")).startswith(
+                "vision screening failed:"
+            )
+            for entry in qa
+        )
     )
     fallback_truthful = (
         fallback
@@ -113,7 +237,11 @@ def _runtime_stages(status_payload: dict) -> dict[str, dict]:
         ),
         "parity": _stage("passed" if parity.get("passed") is True else "failed", evidence=parity),
         "runtime": _stage("passed" if runtime_ok else "failed", evidence=smoke),
-        "qa": _stage("passed" if qa_pass else "failed", entries=qa),
+        "qa": _stage(
+            "not_applicable" if mock_qa_not_applicable else "passed" if qa_pass else "failed",
+            entries=qa,
+            reason="deterministic_mock_vision_unavailable" if mock_qa_not_applicable else None,
+        ),
     }
 
 
@@ -127,6 +255,8 @@ def run_once(result_path: Path) -> dict:
         "qualification_mode": "mock" if MOCK_QUALIFICATION else "real",
         "session_id": None,
         "stages": {},
+        "failure_signature": None,
+        "failure_signatures": [],
         "passed": False,
     }
     session_id: str | None = None
@@ -274,9 +404,7 @@ def run_once(result_path: Path) -> dict:
     finally:
         result["finished_at_epoch"] = time.time()
         result["duration_seconds"] = round(result["finished_at_epoch"] - started, 3)
-        result["passed"] = bool(result["stages"]) and all(
-            stage.get("status") in PASSING for stage in result["stages"].values()
-        )
+        _finalize_result(result)
         if session_id:
             result["session_artifacts"] = _artifact(ROOT / "output" / session_id / "session.json")
         _atomic_json(result_path, result)

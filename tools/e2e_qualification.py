@@ -39,6 +39,9 @@ MOCK_E2E_ENV = {
     "IMAGE_API_URL": "",
     "IMAGE_API_KEY": "",
 }
+DEFAULT_LANE = "local-default"
+MIN_RATCHET_TRIALS = 5
+PASSING_STAGE_STATUSES = {"passed", "not_applicable"}
 
 
 class FrozenModel(BaseModel):
@@ -250,11 +253,200 @@ def command_plan(mode: str, e2e_result_path: Path) -> list[tuple[str, list[str]]
     return commands
 
 
+def _tier_statuses(evidence: IterationEvidence) -> dict[str, str]:
+    commands = {command.name: command for command in evidence.commands}
+    tier_zero_names = ("compileall", "node-check", "full-tests")
+    present = [commands.get(name) for name in tier_zero_names]
+    if not any(present):
+        tier_zero = "not_run"
+    elif all(command is not None and command.passed for command in present):
+        tier_zero = "pass"
+    else:
+        tier_zero = "fail"
+
+    if evidence.mode != "full":
+        tier_one = "not_run"
+    else:
+        mock_command = commands.get("mock-v11-e2e")
+        tier_one = "pass" if (
+            mock_command is not None
+            and mock_command.passed
+            and evidence.mock_e2e_result
+            and evidence.mock_e2e_result.get("passed") is True
+        ) else "fail"
+    return {"t0": tier_zero, "t1": tier_one}
+
+
+def _empty_scoreboard() -> dict:
+    return {
+        "schema_version": "qualification-scoreboard/v1",
+        "best": None,
+        "current": None,
+        "fingerprints": {},
+        "verdict": "INDETERMINATE",
+    }
+
+
+def _load_scoreboard(path: Path) -> dict:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return _empty_scoreboard()
+    if not isinstance(value, dict) or value.get("schema_version") != "qualification-scoreboard/v1":
+        return _empty_scoreboard()
+    value.setdefault("fingerprints", {})
+    value.setdefault("best", None)
+    return value
+
+
+def _record_lane_trial(
+    lane: dict, evidence: IterationEvidence, result: dict, evidence_path: Path
+) -> None:
+    iteration_ids = lane.setdefault("iteration_ids", [])
+    if evidence.iteration_id in iteration_ids:
+        return
+    iteration_ids.append(evidence.iteration_id)
+    lane["trials"] = int(lane.get("trials", 0)) + 1
+    lane["passes"] = int(lane.get("passes", 0)) + int(result.get("passed") is True)
+    lane["pass_rate"] = round(lane["passes"] / lane["trials"], 4)
+    lane.setdefault("evidence_paths", []).append(str(evidence_path))
+
+    stage_counts = lane.setdefault("stage_counts", {})
+    for stage, stage_result in (result.get("stages") or {}).items():
+        counts = stage_counts.setdefault(stage, {"trials": 0, "passes": 0})
+        counts["trials"] += 1
+        counts["passes"] += int(stage_result.get("status") in PASSING_STAGE_STATUSES)
+    lane["stage_pass"] = {
+        stage: round(counts["passes"] / counts["trials"], 4)
+        for stage, counts in sorted(stage_counts.items())
+    }
+
+    if result.get("passed") is not True:
+        signature = result.get("failure_signature") or "adapter/result/unsigned_failure"
+        failures = lane.setdefault("signature_counts", {})
+        failures[signature] = int(failures.get(signature, 0)) + 1
+    lane["top_signatures"] = sorted(
+        lane.get("signature_counts", {}).items(), key=lambda item: (-item[1], item[0])
+    )
+
+
+def _ratchet_verdict(scoreboard: dict, current: dict, stale: bool) -> str:
+    tiers = current["tiers"]
+    if stale:
+        return "INDETERMINATE"
+    if "fail" in tiers.values():
+        return "REVERT"
+    lanes = current["lanes"]
+    if tiers != {"t0": "pass", "t1": "pass"} or not lanes:
+        return "INDETERMINATE"
+    candidate_lane, candidate = max(
+        lanes.items(), key=lambda item: (item[1].get("pass_rate", 0.0), item[1].get("trials", 0))
+    )
+    if candidate.get("trials", 0) < MIN_RATCHET_TRIALS:
+        return "INDETERMINATE"
+    best = scoreboard.get("best")
+    if best and candidate.get("pass_rate", 0.0) < best.get("pass_rate", 0.0):
+        return "REVERT"
+    scoreboard["best"] = {
+        "fingerprint": current["fingerprint"],
+        "lane": candidate_lane,
+        "pass_rate": candidate["pass_rate"],
+        "trials": candidate["trials"],
+    }
+    return "KEEP"
+
+
+def _next_markdown(scoreboard: dict) -> str:
+    current = scoreboard["current"]
+    lanes = current["lanes"]
+    lane_name = "none"
+    lane = {}
+    if lanes:
+        lane_name, lane = max(
+            lanes.items(), key=lambda item: (item[1].get("pass_rate", 0.0), item[1].get("trials", 0))
+        )
+    top = lane.get("top_signatures") or []
+    top_signature = top[0][0] if top else "none"
+    evidence_paths = lane.get("evidence_paths") or []
+    evidence_path = evidence_paths[-1] if evidence_paths else "none"
+    verdict = scoreboard["verdict"]
+    if verdict == "REVERT" and "fail" in current["tiers"].values():
+        action = "Fix or revert the deterministic Tier 0/1 defect before sampling."
+    elif verdict == "REVERT":
+        action = "Revert the source change or fix the regressed top failure signature."
+    elif verdict == "KEEP":
+        action = "Keep this fingerprint and continue toward the formal trigger."
+    elif lane:
+        remaining = max(0, MIN_RATCHET_TRIALS - lane.get("trials", 0))
+        action = f"Collect {remaining} more fresh trial(s) for this fingerprint and lane."
+    else:
+        action = "Run a full iteration to collect a fresh real-lane trial."
+    lines = [
+        "# Ratchet NEXT",
+        f"- Fingerprint: `{current['fingerprint']}`",
+        f"- Verdict: `{verdict}`",
+        f"- Tier 0: `{current['tiers']['t0']}`",
+        f"- Tier 1: `{current['tiers']['t1']}`",
+        f"- Lane: `{lane_name}`",
+        f"- Pass rate: `{lane.get('pass_rate', 0.0)}` ({lane.get('passes', 0)}/{lane.get('trials', 0)})",
+        f"- Top failure: `{top_signature}`",
+        f"- Evidence: `{evidence_path}`",
+        "",
+        "## Next action",
+        action,
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def _update_ratchet_files(
+    scoreboard_path: Path, next_path: Path, root: Path, evidence: IterationEvidence
+) -> None:
+    scoreboard = _load_scoreboard(scoreboard_path)
+    fingerprint = evidence.source_fingerprint_before
+    fingerprint_entry = scoreboard["fingerprints"].setdefault(
+        fingerprint, {"tiers": {}, "lanes": {}, "latest_iteration": None}
+    )
+    fingerprint_entry["tiers"] = _tier_statuses(evidence)
+    fingerprint_entry["latest_iteration"] = evidence.iteration_id
+    if evidence.e2e_result is not None:
+        lane_name = str(evidence.e2e_result.get("lane") or DEFAULT_LANE)
+        lane = fingerprint_entry["lanes"].setdefault(
+            lane_name,
+            {
+                "trials": 0,
+                "passes": 0,
+                "pass_rate": 0.0,
+                "stage_counts": {},
+                "stage_pass": {},
+                "signature_counts": {},
+                "top_signatures": [],
+                "iteration_ids": [],
+                "evidence_paths": [],
+            },
+        )
+        _record_lane_trial(
+            lane, evidence, evidence.e2e_result,
+            root / evidence.iteration_id / "v11-e2e.json",
+        )
+    current = {
+        "fingerprint": fingerprint,
+        "tiers": fingerprint_entry["tiers"],
+        "lanes": fingerprint_entry["lanes"],
+    }
+    scoreboard["current"] = current
+    scoreboard["verdict"] = _ratchet_verdict(scoreboard, current, evidence.stale)
+    scoreboard["updated_at_epoch"] = evidence.finished_at_epoch
+    _atomic_write(scoreboard_path, json.dumps(scoreboard, indent=2, sort_keys=True) + "\n")
+    _atomic_write(next_path, _next_markdown(scoreboard))
+
+
 class EvidenceStore:
     def __init__(self, root: Path):
         self.root = root
         self.events = root / "events.jsonl"
         self.latest = root / "latest.json"
+        self.scoreboard = root / "scoreboard.json"
+        self.next = root / "NEXT.md"
 
     def previous(self) -> dict | None:
         try:
@@ -301,6 +493,7 @@ class EvidenceStore:
             ])
         _atomic_write(iteration_dir / "report.md", "\n".join(lines) + "\n")
         _atomic_write(self.latest, json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        _update_ratchet_files(self.scoreboard, self.next, self.root, evidence)
         return json_path
 
 
