@@ -5,8 +5,8 @@ const sendBtn = $('#sendBtn');
 const stageBody = $('#stageBody');
 const stageTitle = $('#stageTitle');
 const stageState = $('#stageState');
-const appVersion = Number(window.APP_VERSION || 9);
-const historyApiVersion = appVersion >= 9 ? 9 : 8;
+const appVersion = Number(window.APP_VERSION || 11);
+const historyApiVersion = appVersion >= 11 ? 11 : appVersion >= 10 ? 10 : appVersion >= 9 ? 9 : 8;
 const initialParams = new URLSearchParams(window.location.search);
 let sessionId = appVersion >= 4
   ? initialParams.get('session') || (appVersion < 8 ? localStorage.getItem('livingRoomSessionId') : null)
@@ -145,13 +145,19 @@ function showPlan(data) {
   showPlanArtifact('floor');
   const plan = data.floor_plan;
   const warnings = (data.warnings || []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+  const validation = appVersion >= 10 ? data.validation_report : null;
+  const blockers = (validation?.blockers || []).map(issue =>
+    `<li><b>${escapeHtml(issue.code)}</b> · ${escapeHtml(issue.message)}</li>`
+  ).join('');
+  const approvalBlocked = appVersion >= 10 && validation?.valid === false;
   addMessage('assistant', `<h3>Spatial plan ready · ${plan.room.width.toFixed(1)} × ${plan.room.depth.toFixed(1)}m</h3>
     <div class="concept-grid"><span><b>Style brief</b>${escapeHtml(data.concept.era)} · ${escapeHtml(data.concept.mood)}</span>
     <span><b>Layout</b>${plan.items.length} placed items · ${plan.openings.length} openings</span>
     <span><b>Canon camera</b>${plan.camera.fov_deg.toFixed(0)}° field of view</span>
     <span><b>Authority</b>Plan locks geometry; canon controls appearance</span></div>
     ${warnings ? `<ul class="plan-warnings">${warnings}</ul>` : ''}
-    <div class="actions"><button class="primary" onclick="approvePlan()">Approve plan & render canon</button>
+    ${blockers ? `<div class="plan-validation" role="alert"><strong>Approval blocked · unresolved geometry</strong><ul class="plan-warnings">${blockers}</ul><small>Revise the plan to clear every blocker.</small></div>` : ''}
+    <div class="actions"><button class="primary" onclick="approvePlan()" ${approvalBlocked ? 'disabled title="Resolve all geometry blockers before approval"' : ''}>Approve plan & render canon</button>
     ${appVersion >= 4 ? `<button class="secondary artifact-button" onclick="showPlanArtifact('floor')">View 2D plan</button>
     <button class="secondary artifact-button" onclick="showPlanArtifact('blockout')">View 3D blockout</button>` : ''}
     <button class="secondary" onclick="revisePlan()">Revise plan</button><button class="secondary" onclick="editDescription()">Edit brief</button>
@@ -187,7 +193,7 @@ async function restoreSession({manual = false} = {}) {
     } else if (data.artifact === 'canon') {
       showCanon(data);
     } else if (data.artifact === 'world') {
-      addMessage('assistant', '<h3>Restored world</h3>The latest generated world and revision controls are ready.');
+      addMessage('assistant', `<h3>Restored world</h3>The latest generated world and revision controls are ready.${v11RuntimeDetails(data)}`);
       buildViewer(data.scene_graph, data.download_url, {cameraContract:data.camera_contract});
     }
   } catch (error) {
@@ -261,6 +267,12 @@ function editDescription() {
 
 async function approvePlan() {
   if (busy) return;
+  if (appVersion >= 10 && currentPlanData?.validation_report?.valid === false) {
+    stageState.textContent = 'PLAN BLOCKED';
+    stageState.className = 'stage-state working';
+    addMessage('error', '<strong>Plan approval blocked</strong><br>Revise the plan until every geometry blocker is cleared.');
+    return;
+  }
   setBusy(true, 'Rendering plan-conditioned canon');
   setStage('canon');
   let wait;
@@ -298,6 +310,72 @@ function showCanon(data) {
   applyV8ReadOnlyState();
 }
 
+function v11RuntimeDetails(data) {
+  if (appVersion < 11) return '';
+  const details = data.runtime_details || {};
+  const compiler = details.compiler || data.compiler_result || {};
+  const capability = compiler.capability || {};
+  const versions = compiler.versions || {};
+  const parity = details.parity ?? data.parity_report;
+  const runtime = details.runtime ?? data.runtime_smoke_report;
+  const qa = details.qa || data.qa_evidence || [];
+  const exports = details.exports || data.export_results || {};
+  const artifacts = details.artifacts || data.artifact_downloads || [];
+  const failures = compiler.failures || [];
+  const target = compiler.target || 'not compiled';
+  const execution = compiler.execution || 'not_started';
+  const versionText = [versions.product, versions.product_version, versions.compiler_version]
+    .filter(Boolean).join(' · ') || 'not recorded';
+  const qaEntries = Array.isArray(qa) ? qa : [qa];
+  const qaLatest = qaEntries.at(-1) || {};
+  const exportSummary = Object.entries(exports).map(([name, result]) =>
+    `${escapeHtml(name)}: ${escapeHtml(result?.status || 'recorded')}`
+  ).join(' · ') || 'none recorded';
+  const failureMarkup = failures.length
+    ? `<details><summary>${failures.length} compiler diagnostic${failures.length === 1 ? '' : 's'}</summary><ul>${failures.map(item => `<li>${escapeHtml(item.message || item.stderr_tail || item.reason_code || item.code || 'Recorded compiler failure')}</li>`).join('')}</ul></details>`
+    : '<span><b>Failures</b>None recorded</span>';
+  const artifactMarkup = artifacts.length
+    ? `<ul>${artifacts.map(item => `<li><a class="download" href="${escapeHtml(item.download_url)}">${escapeHtml(item.role)} · ${escapeHtml(item.filename)}</a> <small>${escapeHtml(item.integrity)} · ${escapeHtml(item.sha256)}</small></li>`).join('')}</ul>`
+    : '<p>No compiler/export artifacts recorded yet.</p>';
+  const qaActions = qaLatest.decision === 'human_required'
+    ? '<div class="actions"><button class="primary" onclick="adjudicateV11QA(\'approved\')">Approve QA evidence</button><button class="secondary" onclick="adjudicateV11QA(\'rejected\')">Reject QA evidence</button></div>'
+    : '';
+  return `<section class="v11-runtime-details" aria-label="V11 compiler and quality evidence">
+    <h4>UPBGE primary · declared Godot fallback</h4>
+    <div class="concept-grid">
+      <span><b>Compiler</b>${escapeHtml(target)} · ${escapeHtml(compiler.status || 'not_started')} · ${escapeHtml(execution)}</span>
+      <span><b>Capability</b>${capability.compatible === true ? 'verified compatible' : escapeHtml(capability.reason_code || 'not recorded')}</span>
+      <span><b>Versions</b>${escapeHtml(versionText)}</span>
+      <span><b>Parity gate</b>${parity ? (parity.passed === true ? 'passed' : 'failed') : 'not run'}</span>
+      <span><b>Runtime smoke</b>${runtime ? escapeHtml(runtime.status || (runtime.passed ? 'passed' : 'failed')) : 'not applicable / not run'}</span>
+      <span><b>QA</b>${escapeHtml(qaLatest.decision || qaLatest.status || 'not recorded')}</span>
+      <span><b>Exports</b>${exportSummary}</span>
+      <span><b>Manifests</b>${Number((compiler.manifests || data.compiler_manifests || []).length)} recorded</span>
+      ${failureMarkup}
+    </div>
+    <h4>Verified compiler/export artifacts</h4>${artifactMarkup}${qaActions}
+  </section>`;
+}
+
+async function adjudicateV11QA(verdict) {
+  if (appVersion < 11 || !sessionId || busy) return;
+  const rationale = prompt(`Why should this world be ${verdict}?`);
+  if (!rationale?.trim()) return;
+  setBusy(true, `Recording ${verdict} QA verdict`);
+  try {
+    const data = await fetchJson(`/api/session/${sessionId}/qa`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({reviewer_id:'user', verdict, rationale:rationale.trim()}),
+    });
+    addMessage('assistant', `<h3>QA ${escapeHtml(verdict)}</h3>${v11RuntimeDetails(data)}`);
+    stageState.textContent = data.state === 'ready' ? '3D READY' : 'QA REJECTED';
+    stageState.className = `stage-state ${data.state === 'ready' ? 'ready' : 'working'}`;
+  } catch (error) {
+    addMessage('error', `<strong>QA adjudication failed</strong><br>${escapeHtml(error.message)}`);
+  } finally { setBusy(false); }
+}
+
+
 async function approveImage() {
   if (busy) return;
   if (appVersion >= 9 && v9CanonAlignmentPassed !== true) {
@@ -311,10 +389,12 @@ async function approveImage() {
   setStage('world');
   let wait;
   try {
-    wait = progress('Applying the approved plan to scene graph, meshes, physics, and Godot…');
+    wait = progress(appVersion >= 11
+      ? 'Compiling the WorldContract with UPBGE primary and the declared Godot fallback policy…'
+      : 'Applying the approved plan to scene graph, meshes, physics, and Godot…');
     const data = await fetchJson(`/api/session/${sessionId}/approve`, {method:'POST'});
     wait.remove();
-    addMessage('assistant', `<h3>World ready</h3>${data.scene_graph.objects.length} plan-constrained objects · ${data.scene_graph.lights.length} lights · ${data.scene_graph.doors.length} doors.`);
+    addMessage('assistant', `<h3>World ready</h3>${data.scene_graph.objects.length} plan-constrained objects · ${data.scene_graph.lights.length} lights · ${data.scene_graph.doors.length} doors.${v11RuntimeDetails(data)}`);
     buildViewer(data.scene_graph, data.download_url, {cameraContract:data.camera_contract});
     await refreshV9HistoryMetadata();
   } catch (error) {
@@ -402,7 +482,7 @@ function material(props = {}, fallback = '#777b84') {
 }
 
 function initWorkspaceSplitter() {
-  if (![7, 8, 9].includes(appVersion)) return;
+  if (![7, 8, 9, 10, 11].includes(appVersion)) return;
   const workspace = $('#workspace');
   const splitter = $('#workspaceSplitter');
   if (!workspace || !splitter) return;
@@ -1036,7 +1116,7 @@ document.addEventListener('click', event => {
     stage:target.dataset.stage || document.querySelector('.stage-step.active')?.dataset.stage || '',
   });
 });
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, resetLockedCamera, logEvent});
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent});
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);

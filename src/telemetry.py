@@ -54,6 +54,20 @@ def _sanitized_event(payload: object) -> dict | None:
         event["monotonic_elapsed_seconds"] = 0.0
     if payload.get("error_type"):
         event["error_type"] = _safe_name(payload["error_type"])
+    for field in (
+        "compilation_id", "target", "producing_adapter", "manifest_sha256",
+        "parity_status", "runtime_status",
+    ):
+        if payload.get(field) is not None:
+            event[field] = _safe_name(payload[field])
+    roles = payload.get("artifact_roles")
+    if isinstance(roles, list):
+        event["artifact_roles"] = [_safe_name(role) for role in roles[:64]]
+    if payload.get("artifact_count") is not None:
+        try:
+            event["artifact_count"] = max(0, int(payload["artifact_count"]))
+        except (TypeError, ValueError):
+            event["artifact_count"] = 0
     return event
 
 
@@ -160,6 +174,47 @@ class TelemetryRecorder:
                 if self._active is token:
                     self._active = None
                 self._write_state("failed", token, elapsed, type(error).__name__)
+        except Exception:
+            pass
+
+    def record_compiler_event(
+        self,
+        *,
+        phase: str,
+        compilation_id: str,
+        target: str,
+        status: str,
+        manifest_sha256: str,
+        producing_adapter: str | None = None,
+        artifact_roles: tuple[str, ...] = (),
+        parity_status: str | None = None,
+        runtime_status: str | None = None,
+    ) -> None:
+        """Append content-free compiler provenance without affecting control flow."""
+        if not self.enabled:
+            return
+        try:
+            payload = {
+                "schema_version": TELEMETRY_SCHEMA_VERSION,
+                "event": f"compiler_{_safe_name(phase)}",
+                "status": _safe_name(status),
+                "stage": "assemble",
+                "substep": "compile_world_contract",
+                "timestamp": _utc_now(),
+                "monotonic_elapsed_seconds": 0.0,
+                "compilation_id": _safe_name(compilation_id),
+                "target": _safe_name(target),
+                "producing_adapter": (
+                    _safe_name(producing_adapter) if producing_adapter else None
+                ),
+                "manifest_sha256": _safe_name(manifest_sha256),
+                "artifact_count": len(artifact_roles),
+                "artifact_roles": [_safe_name(role) for role in artifact_roles],
+                "parity_status": _safe_name(parity_status) if parity_status else None,
+                "runtime_status": _safe_name(runtime_status) if runtime_status else None,
+            }
+            with self._lock:
+                self._append_json_line(self.events_path, payload)
         except Exception:
             pass
 

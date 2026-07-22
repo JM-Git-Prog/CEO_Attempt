@@ -11,7 +11,8 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from src.camera_contract import CameraContract
-from src.floor_plan.models import FloorPlan
+from src.compiler_manifest import CanonicalDocument
+from src.floor_plan.models import FloorPlan, FloorPlanV11, PlanValidationReport
 
 
 # --- Scene Concept (output of Orchestrator) ---
@@ -158,6 +159,7 @@ class PipelineState(str, Enum):
     BUILDING_SCENE_GRAPH = "building_scene_graph"
     GENERATING_ASSETS = "generating_assets"
     ASSEMBLING_WORLD = "assembling_world"
+    AWAITING_QA = "awaiting_qa"
     REFINING_WORLD = "refining_world"
     READY = "ready"
     ERROR = "error"
@@ -167,17 +169,19 @@ class WorldSession(BaseModel):
     """Tracks the state and revision memory of a world-building session."""
 
     session_id: str
-    interface_version: int = 9
+    interface_version: int = 11
     workflow_profile_id: str = ""
     workflow_profile: dict = Field(default_factory=dict)
     workflow_snapshot_count: int = 0
     workflow_records: list[str] = Field(default_factory=list)
     generation_manifests: list[str] = Field(default_factory=list)
+    compiler_manifests: list[str] = Field(default_factory=list)
     state: PipelineState = PipelineState.AWAITING_DESCRIPTION
     user_description: str = ""
     scene_concept: Optional[SceneConcept] = None
-    floor_plan: Optional[FloorPlan] = None
+    floor_plan: Optional[FloorPlanV11 | FloorPlan] = None
     camera_contract: Optional[CameraContract] = None
+    composition_evidence: Optional[dict] = None
     floor_plan_path: Optional[str] = None
     blockout_path: Optional[str] = None
     floor_plan_approved: bool = False
@@ -185,9 +189,23 @@ class WorldSession(BaseModel):
     canon_provider: Optional[str] = None
     canon_alignment: Optional[dict] = None
     scene_graph: Optional[SceneGraph] = None
+    world_contract: Optional[dict] = None
+    relationship_solver_report: Optional[dict] = None
+    semantic_command_records: list[dict] = Field(default_factory=list)
+    conditioning_metadata: dict = Field(default_factory=dict)
+    conditioning_records: tuple[CanonicalDocument, ...] = ()
+    compiler_result: Optional[dict] = None
+    compiler_attempt_records: tuple[CanonicalDocument, ...] = ()
+    export_results: dict = Field(default_factory=dict)
+    parity_report: Optional[dict] = None
+    runtime_smoke_report: Optional[dict] = None
+    qa_evidence: list[dict] = Field(default_factory=list)
     output_path: Optional[str] = None
     plan_revision: int = 0
     plan_warnings: list[str] = Field(default_factory=list)
+    plan_validation: PlanValidationReport = Field(default_factory=PlanValidationReport)
+    canon_attempt: int = 0
+    canon_alignment_reviews: list[dict] = Field(default_factory=list)
     world_revision: int = 0
     render_paths: list[str] = Field(default_factory=list)
     revision_history: list[dict] = Field(default_factory=list)

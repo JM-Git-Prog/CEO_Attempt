@@ -1,0 +1,143 @@
+{
+  "fixture_version": "current-runtime-characterization/v1",
+  "requirements": [1, 7, 8, 9, 12],
+  "plan": {
+    "name": "Characterization Diner",
+    "room": {"width": 6.0, "depth": 4.0, "height": 3.0},
+    "items": [
+      {
+        "id": "table_1", "name": "Diner Table", "category": "furniture",
+        "mount": "floor", "x": 0.5, "z": -0.25, "width": 2.0,
+        "depth": 1.0, "height": 0.9, "elevation": 0.0,
+        "rotation_deg": 30.0, "fixed": true, "clearance_m": 0.75,
+        "description": "A fixed table"
+      },
+      {
+        "id": "pendant_1", "name": "Pendant Light", "category": "fixture",
+        "mount": "ceiling", "x": 0.0, "z": 0.0, "width": 0.4,
+        "depth": 0.4, "height": 0.5, "elevation": 2.4,
+        "rotation_deg": 0.0, "fixed": true, "clearance_m": 0.0,
+        "description": "A ceiling fixture"
+      }
+    ],
+    "openings": [
+      {"id": "door_south", "kind": "door", "wall": "south", "offset": -1.0, "width": 0.9, "height": 2.1, "sill_height": 0.0},
+      {"id": "window_east", "kind": "window", "wall": "east", "offset": 0.5, "width": 1.2, "height": 1.0, "sill_height": 0.9}
+    ],
+    "camera": {
+      "x": 2.5, "y": 1.7, "z": -2.8,
+      "target_x": 0.0, "target_y": 1.1, "target_z": 0.0, "fov_deg": 55.0
+    },
+    "circulation_notes": ["Keep the south door clear"],
+    "design_notes": ["Characterization input only"]
+  },
+  "camera_contract": {
+    "contract_id": "camera-5e799c8fc8dd0ec6",
+    "schema_version": "camera-lock/v1",
+    "coordinate_system": "right-handed-x-right-y-up-z-depth",
+    "projection": "perspective",
+    "aspect_ratio": 1.3333333333333333,
+    "image_width": 1024,
+    "image_height": 768,
+    "near_plane": 0.05,
+    "far_plane": 100.0,
+    "landmark_ids": ["room_floor_1", "room_floor_2", "room_floor_3", "room_floor_4", "table_1", "pendant_1"]
+  }
+,
+  "scene_graph": {
+    "name": "Characterization Diner",
+    "description": "Current adapter characterization scene",
+    "room": {
+      "width": 6.0, "depth": 4.0, "height": 3.0,
+      "floor_material": {"base_color": "#664422", "metallic": 0.0, "roughness": 0.7, "emission_color": null, "emission_strength": 0.0},
+      "wall_material": {"base_color": "#DDCCBB", "metallic": 0.0, "roughness": 0.8, "emission_color": null, "emission_strength": 0.0},
+      "ceiling_material": {"base_color": "#EEEEEE", "metallic": 0.0, "roughness": 0.9, "emission_color": null, "emission_strength": 0.0}
+    },
+    "objects": [
+      {
+        "id": "table_1", "name": "Diner Table", "object_type": "furniture",
+        "position": {"x": 0.5, "y": 0.0, "z": -0.25},
+        "rotation": {"x": 0.0, "y": 30.0, "z": 0.0},
+        "scale": {"x": 1.0, "y": 1.0, "z": 1.0},
+        "dimensions": {"x": 2.0, "y": 0.9, "z": 1.0},
+        "physics": {"body_type": "rigid", "mass_kg": 12.0, "friction": 0.5, "restitution": 0.1, "can_topple": false},
+        "material": {"base_color": "#805522", "metallic": 0.0, "roughness": 0.6, "emission_color": null, "emission_strength": 0.0},
+        "mesh_type": "primitive", "primitive_shape": "box", "description": "A table"
+      }
+    ],
+    "lights": [
+      {
+        "id": "pendant_1", "name": "Pendant Light", "light_type": "point",
+        "position": {"x": 0.0, "y": 2.7, "z": 0.0},
+        "direction": {"x": 0.0, "y": -1.0, "z": 0.0},
+        "color": "#FFE0B0", "color_temperature_k": 3000, "intensity": 2.5,
+        "range_meters": 5.0, "spot_angle_deg": 45.0, "cast_shadows": true
+      }
+    ],
+    "doors": [
+      {
+        "id": "door_south", "position": {"x": -1.0, "y": 0.0, "z": -2.0},
+        "wall": "south", "width": 0.9, "height": 2.1, "swing_direction": "inward",
+        "physics": {"body_type": "rigid", "mass_kg": 15.0, "friction": 0.5, "restitution": 0.1, "can_topple": false}
+      }
+    ],
+    "windows": [
+      {"id": "window_east", "position": {"x": 3.0, "y": 0.9, "z": 0.5}, "wall": "east", "width": 1.2, "height": 1.0, "sill_height": 0.9}
+    ],
+    "ambient_color": "#1A1A2E",
+    "ambient_energy": 0.3
+  }
+,
+  "godot_assembler": {
+    "generated_files": ["main.tscn", "player.gd", "player.tscn", "project.godot"],
+    "main_scene_snippets": [
+      "[node name=\"World\" type=\"Node3D\"]",
+      "[node name=\"Floor\" type=\"StaticBody3D\" parent=\".\"]",
+      "[node name=\"Ceiling\" type=\"StaticBody3D\" parent=\".\"]",
+      "[node name=\"Wall_south\" type=\"StaticBody3D\" parent=\".\"]",
+      "[node name=\"Diner_Table\" type=\"RigidBody3D\" parent=\".\"]",
+      "Transform3D(0.8660, 0, 0.5000, 0, 1, 0, -0.5000, 0, 0.8660, 0.5, 0.45, -0.25)",
+      "[node name=\"Door_door_south\" type=\"RigidBody3D\" parent=\".\"]",
+      "[node name=\"Pendant_Light\" type=\"OmniLight3D\" parent=\".\"]",
+      "[node name=\"Player\" parent=\".\" instance=ExtResource(\"1\")]"
+    ],
+    "player_scene_snippets": ["fov = 75.0", "target_position = Vector3(0, 0, -3)"],
+    "known_representation": {
+      "walls": "four opaque full-wall boxes",
+      "doors": "separate rigid bodies; no wall aperture",
+      "windows": "not emitted",
+      "camera_contract": "not consumed; player camera is fixed at 75 degrees"
+    }
+  },
+  "blender_prototype": {
+    "input": "session.json floor_plan",
+    "runner_command_tail": ["--background", "--factory-startup", "--python", "blender_scene.py", "--", "SESSION_DIR"],
+    "runner_options_not_forwarded": ["render_blockout", "export_gltf"],
+    "source_markers": [
+      "create_room(room[\"width\"], room[\"depth\"], room[\"height\"])",
+      "bpy.ops.mesh.primitive_cube_add(size=1, location=loc)",
+      "text = f\"{item_id} {name}\".lower()",
+      "obj.rigid_body = None  # Will set up in game properties",
+      "render_blockout(blockout_path)",
+      "bpy.ops.wm.save_as_mainfile(filepath=blend_path)",
+      "export_gltf(gltf_path)"
+    ],
+    "known_representation": {
+      "room": "floor, ceiling, and four planes",
+      "openings": "opaque cube panels rather than apertures",
+      "geometry_selection": "name-keyword inference",
+      "physics": "placeholder only",
+      "lighting": "ambient sun plus one point light per ceiling-mounted plan item",
+      "outputs": "render, blend, and GLB are always attempted"
+    }
+  },
+  "provenance": {
+    "schema_version": 1,
+    "artifact_content": "characterization evidence\n",
+    "artifact_bytes": 26,
+    "artifact_sha256": "9b8e72fa27ba7cdf81e24e43d7c9dc11c4a99469a5fafa9b68237199befe4273",
+    "snapshot_pattern": "workflow/snapshot_0001_awaiting_description.json",
+    "manifest_pattern": "workflow/canon_v1_prepared.json",
+    "collision_manifest_pattern": "workflow/canon_v1_prepared_2.json"
+  }
+}

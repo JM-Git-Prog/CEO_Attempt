@@ -15,7 +15,12 @@ from pathlib import Path
 import httpx
 from PIL import Image, ImageDraw
 
-from src.camera_contract import CameraContract, measure_edge_alignment, normalize_image_frame
+from src.camera_contract import (
+    CameraContract,
+    camera_contract_coverage,
+    measure_edge_alignment,
+    normalize_image_frame,
+)
 from src.models import SceneConcept
 from src.workflow_provenance import (
     artifact_metadata,
@@ -65,19 +70,28 @@ def _profile_from_context(workflow_context: dict | None) -> dict:
 
 
 def _generation_prompt(
-    concept: SceneConcept, profile: dict, *, mode: str = "conditioned"
+    concept: SceneConcept,
+    profile: dict,
+    *,
+    mode: str = "conditioned",
+    plan_conditioning: tuple[str, ...] = (),
 ) -> str:
     canon = profile["stages"]["canon"]
     policy = canon.get("base_prompt", canon["prompt"]) if mode == "base" else canon["prompt"]
     if policy == "concept.image_prompt":
         return concept.image_prompt
-    if policy == "enriched_concept_and_plan":
+    if policy in {"enriched_concept_and_plan", "immutable-plan-conditioning/v1"}:
+        required_objects = (
+            plan_conditioning
+            if policy == "immutable-plan-conditioning/v1" and plan_conditioning
+            else tuple(concept.key_objects)
+        )
         if profile["id"] == "v5-reference-partial@964da06":
             return (
                 "MANDATORY VISIBLE FINISH TRANSFORMATION: apply every specified floor, wall, "
                 "ceiling, furniture, and fixture material; do not retain gray blockout surfaces. "
                 f"{concept.image_prompt} Architecture and finishes: {concept.architecture_notes}. "
-                f"Required visible objects: {'; '.join(concept.key_objects)}. "
+                f"Required visible objects: {'; '.join(required_objects)}. "
                 f"Exact palette: {concept.palette}. Lighting: {concept.lighting_notes}. "
                 "Preserve every stated count exactly."
             )
@@ -86,7 +100,7 @@ def _generation_prompt(
             "specified finished material; render a polished photorealistic interior, never a "
             "colored block model. "
             f"{concept.image_prompt} Architecture and finishes: {concept.architecture_notes}. "
-            f"Required visible objects: {'; '.join(concept.key_objects)}. "
+            f"Required visible objects: {'; '.join(required_objects)}. "
             f"Exact palette: {concept.palette}. Lighting: {concept.lighting_notes}. "
             "Preserve every stated count exactly. Remove all blockout labels, guide lines, "
             "debug edges, flat shading, and placeholder geometry from the final photograph."
@@ -123,6 +137,10 @@ def _generation_manifest(
             "floor_plan": context.get("floor_plan"),
             "plan_revision": context.get("plan_revision"),
             "camera_contract": context.get("camera_contract"),
+            "canon_attempt": context.get("canon_attempt"),
+            "retry_mode": context.get("retry_mode"),
+            "generation_feedback": context.get("generation_feedback", ""),
+            "plan_conditioning": context.get("plan_conditioning"),
             "generation_prompt": prompt,
             "blockout": artifact_metadata(blockout_path) if blockout_path else None,
             "uploaded_image_name": uploaded_image_name,
@@ -212,12 +230,19 @@ async def generate_canon_image(
     session_id: str,
     attempt: int = 1,
     workflow_context: dict | None = None,
+    *,
+    plan_conditioning: tuple[str, ...] = (),
 ) -> CanonGenerationResult:
     """Generate a text-guided Canon and retain immutable lifecycle manifests."""
     output_path = OUTPUT_DIR / session_id / f"canon_v{attempt}.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     profile = _profile_from_context(workflow_context)
-    prompt = _generation_prompt(concept, profile, mode="base")
+    prompt = _generation_prompt(
+        concept, profile, mode="base", plan_conditioning=plan_conditioning
+    )
+    feedback = str((workflow_context or {}).get("generation_feedback", "")).strip()
+    if profile["interface_version"] >= 10 and feedback:
+        prompt = f"{prompt} Attempt-specific revision: {feedback}"
     mock_only = profile["stages"]["canon"].get("provider_policy") == "mock_only"
     workflow = None if mock_only else _flux_workflow(prompt)
     manifest = _generation_manifest(
@@ -351,14 +376,11 @@ def _conditioned_flux_workflow(
         )
     negative = (
         "changed layout, changed camera, moved furniture, added furniture, missing furniture, "
-        "warped walls, fisheye, panorama, text, watermark, illustration, low quality"
+        "extra furniture, duplicate objects, extra lights, extra chairs, extra stools, "
+        "more objects than shown in reference, additional items not in blockout, "
+        "warped walls, fisheye, panorama, text, watermark, labels, guide lines, debug edges, "
+        "blockout render, flat shading, placeholder materials, illustration, low quality"
     )
-    if profile["interface_version"] >= 6 or profile["id"] == "v5-reference-full-r2":
-        negative = (
-            "changed layout, changed camera, moved furniture, added furniture, missing furniture, "
-            "warped walls, fisheye, panorama, text, watermark, labels, guide lines, debug edges, "
-            "blockout render, flat shading, placeholder materials, illustration, low quality"
-        )
     latent_mode = canon.get("latent")
     sigma_schedule = canon.get("sigma_schedule")
     latent_input = ["11", 0] if latent_mode == "empty" else ["7", 0]
@@ -439,22 +461,88 @@ def _normalize_v9_canon(path: Path, camera_contract: dict | None) -> dict | None
 
 
 def _edge_alignment_report(
-    blockout_path: Path, canon_path: Path, camera_contract: dict | None
+    blockout_path: Path,
+    canon_path: Path,
+    camera_contract: dict | None,
+    workflow_context: dict | None = None,
+    attempt: int = 1,
 ) -> dict | None:
-    """Measure structural edge drift after enforcing the camera's exact raster contract."""
+    """Return a profile-bound, explainable camera-alignment report."""
     if not camera_contract:
         return None
+    context = workflow_context or {}
+    profile = _profile_from_context(context)
     contract = CameraContract.model_validate(camera_contract)
     report = measure_edge_alignment(blockout_path, canon_path, contract)
-    passed = report["status"] == "aligned"
+    if profile["interface_version"] < 10:
+        passed = report["status"] == "aligned"
+        return {
+            "camera_contract_id": contract.contract_id,
+            **report,
+            "passed": passed,
+            "correction": (
+                "none"
+                if passed
+                else "regenerate from the encoded blockout and review projected landmarks"
+            ),
+            "reference_landmark_count": len(contract.reference_landmarks),
+            "width": contract.image_width,
+            "height": contract.image_height,
+        }
+
+    policy = profile["stages"]["canon"]["alignment_policy"]
+    drift = float(report["drift_px"])
+    edge_iou = float(report["edge_iou"])
+    aligned = (
+        drift <= float(policy["aligned_max_drift_px"])
+        and edge_iou >= float(policy["aligned_min_edge_iou"])
+    )
+    confidently_misaligned = (
+        drift > float(policy["misaligned_max_drift_px"])
+        or (
+            drift > float(policy["aligned_max_drift_px"])
+            and edge_iou < float(policy["misaligned_max_edge_iou"])
+        )
+    )
+    status = "aligned" if aligned else "misaligned" if confidently_misaligned else "inconclusive"
+    retries_used = max(0, attempt - 1)
+    max_retries = int(policy["max_retries"])
+    output = artifact_metadata(canon_path)
+    coverage = camera_contract_coverage(contract)
+    reasons = []
+    if drift > float(policy["aligned_max_drift_px"]):
+        reasons.append("translation_exceeds_aligned_limit")
+    if edge_iou < float(policy["aligned_min_edge_iou"]):
+        reasons.append("cross_domain_edge_overlap_is_low")
+    if coverage["status"] != "valid":
+        reasons.append("camera_landmark_coverage_is_incomplete")
+    if status == "inconclusive":
+        reasons.append("photoreal_edges_are_not_a_confident_pose_verdict")
     return {
         "camera_contract_id": contract.contract_id,
         **report,
-        "passed": passed,
+        "method": policy["method"],
+        "status": status,
+        "passed": status == "aligned",
+        "decision": status,
+        "reasons": reasons,
+        "camera_coverage": coverage,
+        "binding": {
+            "plan_revision": context.get("plan_revision"),
+            "contract_id": contract.contract_id,
+            "canon_sha256": output.get("sha256"),
+            "attempt": attempt,
+        },
+        "retry_policy": {
+            "max_retries": max_retries,
+            "retries_used": retries_used,
+            "retries_remaining": max(0, max_retries - retries_used),
+            "manual_review_allowed": status == "inconclusive" and retries_used >= max_retries,
+        },
         "correction": (
-            "none"
-            if passed
-            else "regenerate from the encoded blockout and review projected landmarks"
+            "none" if status == "aligned" else
+            "revise the approved Plan/Camera" if status == "misaligned" else
+            "retry within the bounded policy, then explicitly review"
         ),
         "reference_landmark_count": len(contract.reference_landmarks),
         "width": contract.image_width,
@@ -468,6 +556,8 @@ async def generate_conditioned_canon(
     session_id: str,
     attempt: int = 1,
     workflow_context: dict | None = None,
+    *,
+    plan_conditioning: tuple[str, ...] = (),
 ) -> CanonGenerationResult:
     """Generate a profile-pinned Canon from the approved camera blockout."""
     profile = _profile_from_context(workflow_context)
@@ -475,12 +565,21 @@ async def generate_conditioned_canon(
     canon = profile["stages"]["canon"]
     if canon.get("conditioning") == "none":
         return await generate_canon_image(
-            concept, session_id, attempt, workflow_context=workflow_context
+            concept,
+            session_id,
+            attempt,
+            workflow_context=workflow_context,
+            plan_conditioning=plan_conditioning,
         )
 
     output_path = OUTPUT_DIR / session_id / f"canon_v{attempt}.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    prompt = _generation_prompt(concept, profile)
+    prompt = _generation_prompt(
+        concept, profile, plan_conditioning=plan_conditioning
+    )
+    feedback = str((workflow_context or {}).get("generation_feedback", "")).strip()
+    if profile["interface_version"] >= 10 and feedback:
+        prompt = f"{prompt} Attempt-specific revision: {feedback}"
     manifest = _generation_manifest(
         concept,
         session_id,
@@ -525,7 +624,13 @@ async def generate_conditioned_canon(
                     client, workflow, output_path, session_id
                 )
             _normalize_v9_canon(result, camera_contract)
-            alignment = _edge_alignment_report(blockout_path, result, camera_contract)
+            alignment = _edge_alignment_report(
+                blockout_path,
+                result,
+                camera_contract,
+                workflow_context=workflow_context,
+                attempt=attempt,
+            )
             provider = "FLUX.2 Klein · blockout conditioned"
             _LAST_PROVIDER[session_id] = provider
             manifest["provider_attempts"].append(
@@ -570,10 +675,20 @@ async def generate_conditioned_canon(
         )
 
     fallback = await generate_canon_image(
-        concept, session_id, attempt, workflow_context=workflow_context
+        concept,
+        session_id,
+        attempt,
+        workflow_context=workflow_context,
+        plan_conditioning=plan_conditioning,
     )
     _normalize_v9_canon(fallback.image_path, camera_contract)
-    alignment = _edge_alignment_report(blockout_path, fallback.image_path, camera_contract)
+    alignment = _edge_alignment_report(
+        blockout_path,
+        fallback.image_path,
+        camera_contract,
+        workflow_context=workflow_context,
+        attempt=attempt,
+    )
     return CanonGenerationResult(
         fallback.image_path,
         fallback.provider,

@@ -1,0 +1,35 @@
+{
+  "fixture_version": "known-failure/v1",
+  "fixture_id": "blocked-openings-v1",
+  "defect_type": "blocked_openings",
+  "requirements": [1, 7, 8, 9, 12],
+  "capture": {
+    "kind": "synthetic-regression-seed",
+    "source_component": "room shell opening inventory",
+    "data_only": true
+  },
+  "authority": {
+    "opening_id": "door_south",
+    "kind": "door",
+    "keep_clear_aabb": {"min": [-0.45, 0.0, -2.1], "max": [0.45, 2.1, -1.9]},
+    "traversable": true
+  },
+  "observed": {
+    "opaque_geometry": [
+      {
+        "stable_id": "wall_south_full",
+        "aabb": {"min": [-3.0, 0.0, -2.1], "max": [3.0, 3.0, -1.9]}
+      },
+      {
+        "stable_id": "door_south_panel",
+        "aabb": {"min": [-0.45, 0.0, -2.05], "max": [0.45, 2.1, -1.95]}
+      }
+    ],
+    "traversable": false
+  },
+  "oracle": {
+    "reason_code": "opening_blocked",
+    "blocking_ids": ["wall_south_full", "door_south_panel"],
+    "expected_detection": true
+  }
+}

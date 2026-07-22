@@ -1,0 +1,41 @@
+{
+  "fixture_version": "known-failure/v1",
+  "fixture_id": "camera-drift-v1",
+  "defect_type": "camera_drift",
+  "requirements": [1, 7, 8, 9, 12],
+  "capture": {
+    "kind": "synthetic-regression-seed",
+    "source_component": "camera contract parity",
+    "data_only": true
+  },
+  "authority": {
+    "contract_id": "camera-fixture-authority",
+    "position": [2.55, 1.6, -1.55],
+    "target": [0.0, 1.2, 1.35],
+    "up": [0.0, 1.0, 0.0],
+    "vertical_fov_deg": 55.0,
+    "aspect_ratio": 1.3333333333333333,
+    "near_plane": 0.05,
+    "far_plane": 100.0,
+    "raster": [1024, 768],
+    "landmarks_px": {"counter_1": [512.0, 420.0], "door_south": [244.0, 506.0]}
+  },
+  "observed": {
+    "contract_id": null,
+    "position": [2.55, 1.6, -1.55],
+    "target": [0.0, 0.9, 0.0],
+    "up": [0.0, 1.0, 0.0],
+    "vertical_fov_deg": 75.0,
+    "aspect_ratio": 1.3333333333333333,
+    "near_plane": 0.05,
+    "far_plane": 100.0,
+    "raster": [1024, 768],
+    "landmarks_px": {"counter_1": [532.0, 420.0], "door_south": [264.0, 518.0]}
+  },
+  "oracle": {
+    "reason_code": "camera_contract_drift",
+    "max_translation_px": 12.0,
+    "drifted_fields": ["contract_id", "target", "vertical_fov_deg", "landmarks_px"],
+    "expected_detection": true
+  }
+}

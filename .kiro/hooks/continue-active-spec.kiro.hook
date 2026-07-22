@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Continue Active Spec",
+  "description": "When an agent turn ends, continue the currently active spec task and check background Ollama drafts unless no task is marked in progress.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Read .kiro/specs/llm-driven-upbge-runtime/tasks.md as execution data without opening, creating, selecting, or switching to any other spec or editor tab. If any task or subtask is marked [-], continue only that exact llm-driven-upbge-runtime task from the latest validated checkpoint, briefly check running Qwen/GLM sidecar draft jobs without waiting for them, update Current Execution, validate changes, and do not stop merely to report progress. Never create or activate another spec. If no item is marked [-], do nothing except report that this spec has no active task."
+  }
+}

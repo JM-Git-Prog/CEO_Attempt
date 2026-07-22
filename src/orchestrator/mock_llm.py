@@ -248,9 +248,62 @@ MOCK_SCENE_GRAPH = {
 }
 
 
+def _mock_floor_plan_v11() -> dict:
+    """Return deterministic typed Plan intent without changing retained mock bytes."""
+    payload = json.loads(json.dumps(MOCK_FLOOR_PLAN))
+    payload["schema_version"] = "floor-plan/v11"
+    for item in payload["items"]:
+        item["mount"] = "ceiling" if item["id"].startswith("light_") else "floor"
+    payload["relationships"] = [
+        {
+            "subject_id": "counter_1", "kind": "against_wall", "wall": "north",
+            "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.05},
+        },
+        *[
+            {
+                "subject_id": f"stool_{index}", "kind": "south_of",
+                "target_id": "counter_1", "parameters_m": {
+                    "gap_m": 0.2, "distribution_index": float(index - 1),
+                    "distribution_count": 4.0, "distribution_span_m": 3.0,
+                },
+            }
+            for index in range(1, 5)
+        ],
+        *[
+            {
+                "subject_id": f"light_{index}", "kind": "above",
+                "target_id": "counter_1", "parameters_m": {
+                    "distribution_index": float(index - 1),
+                    "distribution_count": 3.0, "distribution_span_m": 1.3,
+                },
+            }
+            for index in range(1, 4)
+        ],
+    ]
+    payload["opening_intents"] = [
+        {
+            "opening_id": "opening_1", "wall": "west",
+            "placement": "near_corner", "corner": "northwest", "margin_m": 0.1,
+        },
+        {
+            "opening_id": "opening_2", "wall": "south",
+            "placement": "centered", "margin_m": 0.1,
+        },
+    ]
+    payload["camera_intent"] = {
+        "corner": "southeast", "target_id": "counter_1", "inset_m": 0.45,
+        "eye_height_m": 1.6, "target_height_m": 1.2, "fov_deg": 55.0,
+    }
+    return payload
+
+
 def mock_generate(system: str, user: str) -> str:
     """Produce mock responses based on what the system prompt is asking for."""
     lower = system.lower()
+    if "v11 explicit-intent extension" in lower:
+        return json.dumps(_mock_floor_plan_v11(), indent=2)
+    if "llm director" in lower and "semantic world edits" in lower:
+        return json.dumps({"commands": []})
     if "space planner" in lower:
         return json.dumps(MOCK_FLOOR_PLAN, indent=2)
     if "spatial planner" in lower or ("scene graph" in lower and "room" in lower):

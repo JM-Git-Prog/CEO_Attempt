@@ -175,3 +175,39 @@ def measure_edge_alignment(reference_path: Path, candidate_path: Path, contract:
         "status": "aligned" if drift <= 12 and score >= 0.04 else "review_required",
         "suggested_correction": {"translate_x_px": shift_x, "translate_y_px": shift_y},
     }
+
+
+def camera_contract_coverage(contract: CameraContract, margin_ratio: float = 0.03) -> dict:
+    """Summarize whether projected authority landmarks provide usable frame evidence."""
+    margin_x = contract.image_width * margin_ratio
+    margin_y = contract.image_height * margin_ratio
+    ids: list[str] = []
+    in_frame: list[str] = []
+    off_frame: list[str] = []
+    for landmark in contract.reference_landmarks:
+        landmark_id = str(landmark.get("id", ""))
+        ids.append(landmark_id)
+        screen = landmark.get("screen_px") or {}
+        x, y = screen.get("x"), screen.get("y")
+        if (
+            isinstance(x, (int, float))
+            and isinstance(y, (int, float))
+            and margin_x <= x <= contract.image_width - margin_x
+            and margin_y <= y <= contract.image_height - margin_y
+        ):
+            in_frame.append(landmark_id)
+        else:
+            off_frame.append(landmark_id)
+    duplicate_ids = sorted({value for value in ids if value and ids.count(value) > 1})
+    total = len(ids)
+    ratio = len(in_frame) / max(total, 1)
+    usable = not duplicate_ids and len(in_frame) >= min(3, total) and ratio >= 0.4
+    return {
+        "status": "valid" if usable else "incomplete",
+        "total_landmarks": total,
+        "in_frame_landmarks": len(in_frame),
+        "in_frame_ratio": round(ratio, 4),
+        "off_frame_ids": off_frame,
+        "duplicate_ids": duplicate_ids,
+        "margin_ratio": margin_ratio,
+    }

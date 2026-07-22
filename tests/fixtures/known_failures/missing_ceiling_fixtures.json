@@ -1,0 +1,25 @@
+{
+  "fixture_version": "known-failure/v1",
+  "fixture_id": "missing-ceiling-fixtures-v1",
+  "defect_type": "missing_ceiling_fixtures",
+  "requirements": [1, 7, 8, 9, 12],
+  "capture": {
+    "kind": "synthetic-regression-seed",
+    "source_component": "compiled fixture and light inventory",
+    "data_only": true
+  },
+  "authority": {
+    "ceiling_fixture_ids": ["pendant_1", "pendant_2", "pendant_3"],
+    "associated_light_ids": ["pendant_1", "pendant_2", "pendant_3"]
+  },
+  "observed": {
+    "ceiling_fixture_ids": ["pendant_1", "pendant_2"],
+    "associated_light_ids": ["pendant_1", "pendant_2"]
+  },
+  "oracle": {
+    "reason_code": "ceiling_fixture_missing",
+    "missing_fixture_ids": ["pendant_3"],
+    "missing_light_ids": ["pendant_3"],
+    "expected_detection": true
+  }
+}

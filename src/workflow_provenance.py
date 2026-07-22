@@ -175,6 +175,107 @@ _PROFILE_VALUES = (
         "source": "V9 articulated blockout: sub-part decomposition with palette-mapped flat colors for denser geometry signal",
         "status": "experimental",
     },
+    {
+        "id": "v10-bounded-review-r1",
+        "interface_version": 10,
+        "release_commit": None,
+        "supersedes": "v9-camera-locked-photoreal-r3",
+        "stages": {
+            "plan": {
+                "validation": "bounded-sat-placement-v1",
+                "block_on_unresolved_geometry": True,
+            },
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "enriched_concept_and_plan",
+                "latent": "encoded_blockout",
+                "sigma_schedule": "partial_after_step_8",
+                "appearance_transform": "full_photoreal_resynthesis",
+                "camera_contract": "v10-camera-1",
+                "blockout_detail": "articulated",
+                "alignment_policy": {
+                    "method": "bounded-camera-review-v1",
+                    "aligned_min_edge_iou": 0.04,
+                    "aligned_max_drift_px": 12.0,
+                    "misaligned_max_drift_px": 20.0,
+                    "misaligned_max_edge_iou": 0.015,
+                    "max_retries": 2,
+                    "manual_review_for_inconclusive": True,
+                },
+            },
+        },
+        "source": "V10 bounded geometry validation and explainable Canon alignment review",
+        "status": "experimental",
+    },
+    {
+        "id": "v11-upbge-contract-r1",
+        "interface_version": 11,
+        "release_commit": None,
+        "supersedes": "v10-bounded-review-r1",
+        "stages": {
+            "plan": {
+                "validation": "relationship-solver/v1",
+                "placement": "explicit-semantic-relations/v1",
+                "block_on_unresolved_geometry": True,
+                "composition_policy": {
+                    "method": "full-rotated-bounds/v1",
+                    "image_width": 1024,
+                    "image_height": 768,
+                    "safe_margin_ratio": 0.005,
+                    "minimum_inset_m": 0.001,
+                    "inset_offsets_m": [-0.449, -0.4, -0.35, -0.3, -0.2, 0.0],
+                    "target_x_offsets_m": [0.0, -0.5, 0.5, -1.0, -1.5, -2.0],
+                    "target_y_offsets_m": [0.0, -0.3, 0.3, -0.6, 0.6, -0.9, -1.2],
+                    "target_z_offsets_m": [0.0, 0.5, 1.0, 1.5, 2.0],
+                    "require_openings": False,
+                },
+            },
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "immutable-plan-conditioning/v1",
+                "latent": "encoded_blockout",
+                "sigma_schedule": "partial_after_step_8",
+                "appearance_transform": "full_photoreal_resynthesis",
+                "camera_contract": "v11-camera-1",
+                "blockout_detail": "articulated",
+                "alignment_policy": {
+                    "method": "bounded-camera-review-v1",
+                    "aligned_min_edge_iou": 0.04,
+                    "aligned_max_drift_px": 12.0,
+                    "misaligned_max_drift_px": 20.0,
+                    "misaligned_max_edge_iou": 0.015,
+                    "max_retries": 2,
+                    "manual_review_for_inconclusive": True,
+                },
+                "qa": "qwen2.5vl-seven-category/v1",
+            },
+            "world": {
+                "contract": "world-contract/v1",
+                "commands": "semantic-command/v1",
+                "primary_adapter": "upbge",
+                "fallback_adapter": "godot",
+                "fallback_triggers": [
+                    "unavailable", "incompatible", "timeout", "process_failure",
+                    "unsupported_required_feature"
+                ],
+                "outputs": {
+                    "render": True,
+                    "blend": True,
+                    "glb": True,
+                    "runtime": True,
+                    "godot": True,
+                    "three_js": True,
+                },
+                "runtime_required_for_native": True,
+                "qa_required": True,
+                "compiler": "upbge-compiler-plan/v1",
+                "runtime": "upbge-runtime/v1",
+                "parity": "structural-parity-report/v1",
+            },
+        },
+        "source": "V11 engine-neutral contract with isolated UPBGE compiler and explicit Godot fallback",
+        "status": "experimental",
+    },
 )
 _PROFILE_DOCUMENTS = MappingProxyType(
     {value["id"]: json.dumps(value, sort_keys=True) for value in _PROFILE_VALUES}
@@ -188,6 +289,8 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         7: "v7-reference-full-r1",
         8: "v8-reference-full-r1",
         9: "v9-camera-locked-photoreal-r3",
+        10: "v10-bounded-review-r1",
+        11: "v11-upbge-contract-r1",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -199,28 +302,33 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         7: "v7-reference-full-r1",
         8: "v8-reference-full-r1",
         9: "v9-camera-locked-photoreal-r2",
+        10: "v10-bounded-review-r1",
+        11: "v11-upbge-contract-r1",
     }
 )
 
 
+LATEST_INTERFACE_VERSION = 11
+
+
+class UnsupportedInterfaceVersion(ValueError):
+    """Raised when a request names an unregistered interface version."""
+
+
 def normalize_interface_version(value: int | str | None) -> int:
+    if value is None or value == "":
+        return LATEST_INTERFACE_VERSION
     try:
-        version = int(value or 9)
-    except (TypeError, ValueError):
-        version = 9
+        version = int(value)
+    except (TypeError, ValueError) as exc:
+        raise UnsupportedInterfaceVersion(f"Invalid interface version: {value!r}") from exc
     if version <= 3:
         return 3
-    if version == 4:
-        return 4
-    if version == 5:
-        return 5
-    if version == 6:
-        return 6
-    if version == 7:
-        return 7
-    if version == 8:
-        return 8
-    return 9
+    if version not in _ACTIVE_PROFILE_IDS:
+        raise UnsupportedInterfaceVersion(
+            f"Unsupported interface version {version}; supported versions are 3-{LATEST_INTERFACE_VERSION}"
+        )
+    return version
 
 
 def profile_by_id(profile_id: str) -> dict:
@@ -335,6 +443,18 @@ def snapshot_session(session, output_dir: Path) -> Path:
         "workflow_profile": profile,
         "camera_contract": _jsonable(session.camera_contract),
         "canon_alignment": _jsonable(session.canon_alignment),
+        "world_contract": _jsonable(session.world_contract),
+        "semantic_command_records": _jsonable(session.semantic_command_records),
+        "relationship_solver_report": _jsonable(session.relationship_solver_report),
+        "conditioning_metadata": _jsonable(session.conditioning_metadata),
+        "conditioning_records": _jsonable(session.conditioning_records),
+        "compiler_manifests": list(session.compiler_manifests),
+        "compiler_attempt_records": _jsonable(session.compiler_attempt_records),
+        "compiler_result": _jsonable(session.compiler_result),
+        "export_results": _jsonable(session.export_results),
+        "structural_parity_report": _jsonable(session.parity_report),
+        "runtime_smoke_report": _jsonable(session.runtime_smoke_report),
+        "qa_evidence": _jsonable(session.qa_evidence),
         "session": session.model_dump(mode="json"),
         "artifacts": [artifact_metadata(artifact) for artifact in sorted(artifact_paths)],
     }
@@ -351,6 +471,17 @@ def snapshot_session(session, output_dir: Path) -> Path:
             "latest_snapshot": str(path),
             "records": list(session.workflow_records),
             "generation_manifests": list(session.generation_manifests),
+            "compiler_manifests": list(session.compiler_manifests),
+            "world_contract": _jsonable(session.world_contract),
+            "semantic_command_records": _jsonable(session.semantic_command_records),
+            "conditioning_metadata": _jsonable(session.conditioning_metadata),
+            "conditioning_records": _jsonable(session.conditioning_records),
+            "compiler_attempt_records": _jsonable(session.compiler_attempt_records),
+            "compiler_result": _jsonable(session.compiler_result),
+            "export_results": _jsonable(session.export_results),
+            "structural_parity_report": _jsonable(session.parity_report),
+            "runtime_smoke_report": _jsonable(session.runtime_smoke_report),
+            "qa_evidence": _jsonable(session.qa_evidence),
         },
     )
     return path

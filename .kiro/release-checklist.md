@@ -2,6 +2,10 @@
 
 Every release starts with a brand-new empty session. Never restore an old session as release evidence.
 
+- 2026-07-22 — V11 session `eedf4d68` was discarded at Plan. The fresh zero-state adapter reached live V11 planning, but strict rotation-aware validation rejected the generated counter and all four stools as extending beyond the room boundary. The pipeline previously raised before retaining the invalid Plan, so it now persists the rejected Plan and structured validation report before returning the error. This session is diagnostic evidence only and must never be restored or used for release qualification.
+
+- 2026-07-22 — V11 session `c3dd343b` was discarded after Canon phase 1. Brief, typed Plan, Blockout, and edge alignment passed (IoU `0.5876`, zero translation/drift), but independent deterministic composition inspection found only 5/11 center landmarks in frame; `stool_1`, `stool_3`, `stool_4`, and `pendant_3` were required and off-frame. The Plan had spread both repeated rows across the counter's full `4.2m` span, and the accepted center-landmark gate did not evaluate rotation-aware 3D bounds. This session is diagnostic evidence only and must never be restored or used for release qualification.
+
 ## Step 1 — Canonical prompt
 
 ```text
@@ -29,6 +33,23 @@ Do not add people, booths, tables, extra stools, extra lights, extra doors, extr
 Inspect Brief, Plan, Blockout, Canon, World, and Compare when a world revision is needed. Validate the page, API routes, and static JavaScript. If any defect appears, record it, delete that test session, fix it, and restart from another empty session.
 
 ## Failure log
+
+- 2026-07-22 — V11 session `fdfeb11d` was discarded at Plan because the bounded `llama3.1` repair changed relation semantics and still omitted required walls/targets (`against_wall` without `wall`, `above` without `target_id`). Deterministic code correctly refused to infer those authorities. V11 typed planning and repair now use the stronger installed local `gpt-oss:20b` by default through configurable `V11_PLAN_MODEL`; retained profiles keep their historical model routing, and unavailable models retain the existing local deterministic fallback. This failed session is diagnostic evidence only.
+
+- 2026-07-22 — V11 session `e2c4e86b` was discarded at Plan because the bounded local repair preserved valid opening placement intent but emitted `id` instead of `opening_id` and omitted redundant `wall` values already present in authoritative openings. V11 base completion now deterministically normalizes that alias and copies the matching opening wall without inferring geometry. This failed session is diagnostic evidence only.
+
+- 2026-07-22 — V11 session `a645995d` was discarded at Plan because Pydantic model-validator errors included a `ValueError` object in `ctx`, and the bounded repair context attempted to serialize `exc.errors()` directly. Repair diagnostics now round-trip through Pydantic's JSON encoder before entering the prompt, with regression coverage for model-level validation errors. This failed session is diagnostic evidence only.
+
+- 2026-07-22 — V11 session `1372a80a` was discarded at Plan because the first schema-repair implementation embedded the full FloorPlanV11 JSON Schema; the local model returned a schema-like object after a long retry instead of a plan. Missing redundant base fields are now completed deterministically from typed room/camera intent, while the bounded model repair receives only validation errors, prior intent, and a concise required-field list. This failed session is diagnostic evidence only.
+
+- 2026-07-22 — V11 session `11dde31b` was discarded at Plan because the local structured model returned parseable JSON that omitted mandatory base fields `name` and `camera` while adding V11 intent fields. V11 prompting now explicitly requires the complete base schema, and one bounded schema-aware repair attempt preserves valid semantic intent while supplying Pydantic validation errors and the exact FloorPlanV11 schema. This failed session is diagnostic evidence only.
+
+- 2026-07-22 — V11 session `8f24afd0` was discarded at Plan because immutable profile `v11-upbge-contract-r1` selected `explicit-semantic-relations/v1` while the Plan builder allowlisted only the older shorthand `explicit-relations-v1`. The builder now accepts the exact V11 policy value without invoking retained keyword placement; a focused regression test passes. This failed session is diagnostic evidence only.
+- 2026-07-22 — V11 session `8b5057d3` was discarded at Canon after Brief and Plan passed because the V11 Canon profile omitted the bounded `alignment_policy` required by camera-alignment classification. V11 now declares the complete retained bounded-review thresholds explicitly, with a regression assertion; V10 and earlier profiles are unchanged. This failed session is diagnostic evidence only.
+- 2026-07-22 — V11 session `473caae9` was discarded after Canon despite exact counts, a Qwen pass, edge IoU 0.6192, and zero drift: independent machine inspection found the collision-valid Plan semantically mirrored the counter/row, placed the west door toward the wrong corner, offset the storefront window, and failed the southeast-corner camera intent. Root cause was that the V11 “explicit” Plan path carried only LLM coordinates and deferred typed relations until after Canon. The local vision result is screening evidence only and did not override the authority defect.
+
+
+
 
 - 2026-07-20 — V9 session `24b98066` was discarded at retained Blockout because the browser harness inspected the preceding Plan SVG before the asynchronous Blockout artifact had loaded. The gate now requires the stage-specific Blockout URL; this incomplete session is not release evidence.
 - 2026-07-20 — V9 sessions `baa24c2a` and `ebd22cd3` were discarded after the physical World orbit/reset check exposed a residual OrbitControls damping delta of about 0.0001m. Reset now disables damping while clearing orbit state, reapplies the exact contract transform, updates projection, and restores damping.

@@ -214,7 +214,7 @@ def _sanitize(value: Any) -> Any:
     return value
 
 
-def _select_revision(revisions: list[int], revision: Any) -> int:
+def _select_revision(revisions: list[int], revision: Any, stage: str = "") -> int:
     requested = _revision(revision)
     if not revisions:
         if stage == "compare":
@@ -280,7 +280,7 @@ def get_stage_evidence(
     """Return sanitized JSON evidence and an opaque URL for any file artifact."""
     directory, session = _session(output_dir, session_id)
     stage = _stage(stage)
-    selected = _select_revision(_stage_revisions(directory, session, stage), revision)
+    selected = _select_revision(_stage_revisions(directory, session, stage), revision, stage)
     interface_version = int(session.get("interface_version") or 8)
     artifact_url: str | None = None
     if stage == "brief":
@@ -355,7 +355,7 @@ def resolve_verified_artifact(
     stage = _stage(stage)
     if stage not in _MEDIA_TYPES:
         raise FileNotFoundError(f"Stage {stage} has embedded evidence, not a file artifact")
-    selected = _select_revision(_stage_revisions(directory, session, stage), revision)
+    selected = _select_revision(_stage_revisions(directory, session, stage), revision, stage)
     if stage == "plan":
         candidate = directory / f"floor_plan_v{selected}.svg"
     elif stage == "compare":

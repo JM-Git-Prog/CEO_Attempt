@@ -7,13 +7,34 @@ from __future__ import annotations
 import math
 import shutil
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from src.models import DoorSpec, LightType, PhysicsBody, SceneGraph, SceneLight, SceneObject
+from src.models import (
+    DoorSpec, LightType, PhysicsBody, SceneGraph, SceneLight, SceneObject, Vec3,
+)
+
+if TYPE_CHECKING:
+    from src.world_contract import WorldContract
 
 
-def assemble_godot_project(scene: SceneGraph, output_dir: Path, mesh_paths: dict[str, Path]) -> Path:
-    """Main entry point: assemble a complete Godot project."""
-    builder = GodotProjectBuilder(scene, output_dir, mesh_paths)
+def assemble_godot_project(
+    scene: SceneGraph,
+    output_dir: Path,
+    mesh_paths: dict[str, Path],
+    *,
+    contract_mode: bool = False,
+    camera: object | None = None,
+    world_contract: "WorldContract | None" = None,
+) -> Path:
+    """Assemble a Godot project; omitted contract mode preserves retained output."""
+    builder = GodotProjectBuilder(
+        scene,
+        output_dir,
+        mesh_paths,
+        contract_mode=contract_mode,
+        camera=camera,
+        world_contract=world_contract,
+    )
     return builder.build()
 
 
@@ -28,11 +49,54 @@ def _hex_to_floats(hex_color: str) -> tuple[float, float, float]:
     return (0.5, 0.5, 0.5)
 
 
+def _look_transform(position: object, target: object, up: object) -> str:
+    """Return a Godot camera/light transform using -Z as the authored forward axis."""
+    forward = (
+        float(target.x) - float(position.x),
+        float(target.y) - float(position.y),
+        float(target.z) - float(position.z),
+    )
+    length = math.sqrt(sum(value * value for value in forward))
+    if length <= 1e-9:
+        raise ValueError("look transform position and target must differ")
+    forward = tuple(value / length for value in forward)
+    authored_up = (float(up.x), float(up.y), float(up.z))
+    right = (
+        forward[1] * authored_up[2] - forward[2] * authored_up[1],
+        forward[2] * authored_up[0] - forward[0] * authored_up[2],
+        forward[0] * authored_up[1] - forward[1] * authored_up[0],
+    )
+    right_length = math.sqrt(sum(value * value for value in right))
+    if right_length <= 1e-9:
+        raise ValueError("look transform forward and up vectors are collinear")
+    right = tuple(value / right_length for value in right)
+    corrected_up = (
+        right[1] * forward[2] - right[2] * forward[1],
+        right[2] * forward[0] - right[0] * forward[2],
+        right[0] * forward[1] - right[1] * forward[0],
+    )
+    back = tuple(-value for value in forward)
+    values = (*right, *corrected_up, *back, float(position.x), float(position.y), float(position.z))
+    return "Transform3D(" + ", ".join(f"{value:.9g}" for value in values) + ")"
+
+
 class GodotProjectBuilder:
-    def __init__(self, scene: SceneGraph, output_dir: Path, mesh_paths: dict[str, Path]):
+    def __init__(
+        self,
+        scene: SceneGraph,
+        output_dir: Path,
+        mesh_paths: dict[str, Path],
+        *,
+        contract_mode: bool = False,
+        camera: object | None = None,
+        world_contract: "WorldContract | None" = None,
+    ):
         self.scene = scene
         self.project_dir = output_dir / "godot_project"
         self.mesh_paths = mesh_paths
+        self.contract_mode = contract_mode
+        self.world_contract = world_contract
+        self.camera = world_contract.camera if world_contract is not None else camera
 
     def build(self) -> Path:
         self.project_dir.mkdir(parents=True, exist_ok=True)
@@ -129,6 +193,8 @@ enabled = true
 [node name="GrabPoint" type="Marker3D" parent="Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 '''
+        if self.contract_mode:
+            content = content.replace("current = true\nfov = 75.0", "current = false\nfov = 75.0")
         (self.project_dir / "player.tscn").write_text(content)
 
     def _write_player_script(self):
@@ -276,7 +342,14 @@ func _physics_process(delta):
 
         # --- Nodes ---
         nodes = []
-        nodes.append('[node name="World" type="Node3D"]')
+        world_node = '[node name="World" type="Node3D"]'
+        if self.contract_mode and self.world_contract is not None:
+            world_node += (
+                f'\nmetadata/_kiro_world_contract_hash = "{self.world_contract.content_hash()}"'
+                '\nmetadata/_kiro_length_unit = "meter"'
+                '\nmetadata/_kiro_coordinate_system = "right-handed-x-right-y-up-z-depth"'
+            )
+        nodes.append(world_node)
 
         # Environment
         nodes.append(f'\n[node name="Environment" type="WorldEnvironment" parent="."]\nenvironment = SubResource("{env_id}")')
@@ -291,30 +364,88 @@ func _physics_process(delta):
         nodes.append(f'\n[node name="Mesh" type="MeshInstance3D" parent="Ceiling"]\nmesh = SubResource("{ceil_mesh}")\nsurface_material_override/0 = SubResource("{ceil_mat}")')
         nodes.append(f'\n[node name="Col" type="CollisionShape3D" parent="Ceiling"]\nshape = SubResource("{ceil_shape}")')
 
-        # Walls
+        # Walls. V11 contract mode uses CSG subtraction so openings are physical gaps;
+        # retained profiles keep their byte-compatible full-wall output.
         half_w, half_d = w / 2, d / 2
         wall_pos = {"north": f"0, {h/2}, {half_d+0.1}", "south": f"0, {h/2}, {-(half_d+0.1)}",
                     "east": f"{half_w+0.1}, {h/2}, 0", "west": f"{-(half_w+0.1)}, {h/2}, 0"}
-        for wname, pos in wall_pos.items():
-            nodes.append(f'\n[node name="Wall_{wname}" type="StaticBody3D" parent="."]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {pos})')
-            nodes.append(f'\n[node name="Mesh" type="MeshInstance3D" parent="Wall_{wname}"]\nmesh = SubResource("{wall_data[wname]["mesh"]}")\nsurface_material_override/0 = SubResource("{wall_mat}")')
-            nodes.append(f'\n[node name="Col" type="CollisionShape3D" parent="Wall_{wname}"]\nshape = SubResource("{wall_data[wname]["shape"]}")')
+        if self.contract_mode:
+            openings = [*self.scene.doors, *self.scene.windows]
+            for wname, pos in wall_pos.items():
+                size = f"{w}, {h}, 0.2" if wname in {"north", "south"} else f"0.2, {h}, {d}"
+                nodes.append(f'\n[node name="Wall_{wname}" type="CSGCombiner3D" parent="."]')
+                nodes.append(
+                    f'\n[node name="Solid" type="CSGBox3D" parent="Wall_{wname}"]'
+                    f'\nsize = Vector3({size})\nposition = Vector3({pos})'
+                    f'\nmaterial = SubResource("{wall_mat}")\nuse_collision = true'
+                )
+                for opening in (item for item in openings if item.wall == wname):
+                    center_y = getattr(opening, "sill_height", 0.0) + opening.height / 2
+                    thickness = 0.4
+                    opening_size = (
+                        f"{opening.width}, {opening.height}, {thickness}"
+                        if wname in {"north", "south"}
+                        else f"{thickness}, {opening.height}, {opening.width}"
+                    )
+                    opening_pos = f"{opening.position.x}, {center_y}, {opening.position.z}"
+                    nodes.append(
+                        f'\n[node name="Aperture_{_safe_name(opening.id)}" type="CSGBox3D" parent="Wall_{wname}"]'
+                        f'\noperation = 2\nsize = Vector3({opening_size})'
+                        f'\nposition = Vector3({opening_pos})'
+                        f'\nmetadata/_kiro_stable_id = "{opening.id}"'
+                    )
+        else:
+            for wname, pos in wall_pos.items():
+                nodes.append(f'\n[node name="Wall_{wname}" type="StaticBody3D" parent="."]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {pos})')
+                nodes.append(f'\n[node name="Mesh" type="MeshInstance3D" parent="Wall_{wname}"]\nmesh = SubResource("{wall_data[wname]["mesh"]}")\nsurface_material_override/0 = SubResource("{wall_mat}")')
+                nodes.append(f'\n[node name="Col" type="CollisionShape3D" parent="Wall_{wname}"]\nshape = SubResource("{wall_data[wname]["shape"]}")')
 
         # Objects
+        contract_physics = (
+            {item.subject_id: item for item in self.world_contract.physics.intents}
+            if self.world_contract is not None else {}
+        )
+        contract_instances = (
+            {item.id: item for item in self.world_contract.instances}
+            if self.world_contract is not None else {}
+        )
         for obj in self.scene.objects:
-            body = "StaticBody3D" if obj.physics.body_type == PhysicsBody.STATIC else "RigidBody3D"
+            authored_physics = contract_physics.get(obj.id)
+            if self.contract_mode and authored_physics is not None:
+                body = {
+                    "static": "StaticBody3D",
+                    "dynamic": "RigidBody3D",
+                    "kinematic": "AnimatableBody3D",
+                    "trigger": "Area3D",
+                }[authored_physics.body_mode.value]
+            else:
+                body = "StaticBody3D" if obj.physics.body_type == PhysicsBody.STATIC else "RigidBody3D"
             px, pz = obj.position.x, obj.position.z
             py = obj.position.y + obj.dimensions.y / 2
-            name = _safe_name(obj.name)
+            name = _safe_name(obj.id if self.contract_mode else obj.name)
             ry = math.radians(obj.rotation.y)
 
-            if abs(obj.rotation.y) > 0.1:
-                c, s = math.cos(ry), math.sin(ry)
-                t = f"Transform3D({c:.4f}, 0, {s:.4f}, 0, 1, 0, {-s:.4f}, 0, {c:.4f}, {px}, {py}, {pz})"
+            if self.contract_mode:
+                authored = contract_instances.get(obj.id)
+                node_str = (
+                    f'\n[node name="{name}" type="{body}" parent="."]'
+                    f'\nposition = Vector3({obj.position.x}, {obj.position.y}, {obj.position.z})'
+                    f'\nrotation_degrees = Vector3({obj.rotation.x}, {obj.rotation.y}, {obj.rotation.z})'
+                    f'\nscale = Vector3({obj.scale.x}, {obj.scale.y}, {obj.scale.z})'
+                    f'\nmetadata/_kiro_stable_id = "{obj.id}"'
+                )
+                if authored is not None:
+                    node_str += (
+                        f'\nmetadata/_kiro_material_id = "{authored.material_id}"'
+                        f'\nmetadata/_kiro_mount = "{authored.mount.value}"'
+                    )
             else:
-                t = f"Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {px}, {py}, {pz})"
-
-            node_str = f'\n[node name="{name}" type="{body}" parent="."]\ntransform = {t}'
+                if abs(obj.rotation.y) > 0.1:
+                    c, s = math.cos(ry), math.sin(ry)
+                    t = f"Transform3D({c:.4f}, 0, {s:.4f}, 0, 1, 0, {-s:.4f}, 0, {c:.4f}, {px}, {py}, {pz})"
+                else:
+                    t = f"Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {px}, {py}, {pz})"
+                node_str = f'\n[node name="{name}" type="{body}" parent="."]\ntransform = {t}'
             if body == "RigidBody3D":
                 node_str += f"\nmass = {obj.physics.mass_kg}"
             nodes.append(node_str)
@@ -328,7 +459,23 @@ func _physics_process(delta):
         for door in self.scene.doors:
             name = _safe_name("Door_" + door.id)
             py = door.height / 2
-            nodes.append(f'\n[node name="{name}" type="RigidBody3D" parent="."]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {door.position.x}, {py}, {door.position.z})\nmass = {door.physics.mass_kg}')
+            authored_physics = contract_physics.get(door.id)
+            door_body = (
+                {
+                    "static": "StaticBody3D", "dynamic": "RigidBody3D",
+                    "kinematic": "AnimatableBody3D", "trigger": "Area3D",
+                }[authored_physics.body_mode.value]
+                if self.contract_mode and authored_physics is not None else "RigidBody3D"
+            )
+            door_node = (
+                f'\n[node name="{name}" type="{door_body}" parent="."]'
+                f'\nposition = Vector3({door.position.x}, {py}, {door.position.z})'
+            )
+            if door_body == "RigidBody3D":
+                door_node += f'\nmass = {door.physics.mass_kg}'
+            if self.contract_mode:
+                door_node += f'\nmetadata/_kiro_stable_id = "{door.id}"'
+            nodes.append(door_node)
             if door.id in mesh_ext_map:
                 nodes.append(f'\n[node name="Visual" parent="{name}" instance=ExtResource("{mesh_ext_map[door.id]}")]')
             if door.id in door_shapes:
@@ -338,12 +485,50 @@ func _physics_process(delta):
         for light in self.scene.lights:
             r, g, b = _hex_to_floats(light.color)
             px, py, pz = light.position.x, light.position.y, light.position.z
-            name = _safe_name(light.name)
+            name = _safe_name(light.id if self.contract_mode else light.name)
+            metadata = (
+                f'\nmetadata/_kiro_stable_id = "{light.id}"' if self.contract_mode else ""
+            )
+            target = Vec3(
+                x=px + light.direction.x,
+                y=py + light.direction.y,
+                z=pz + light.direction.z,
+            )
+            light_up = (
+                Vec3(x=0, y=0, z=1)
+                if abs(light.direction.x) + abs(light.direction.z) <= 1e-9
+                else Vec3(x=0, y=1, z=0)
+            )
+            direction_transform = _look_transform(light.position, target, light_up)
 
             if light.light_type == LightType.POINT:
                 nodes.append(f'\n[node name="{name}" type="OmniLight3D" parent="."]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {px}, {py}, {pz})\nlight_color = Color({r}, {g}, {b}, 1)\nlight_energy = {light.intensity}\nomni_range = {light.range_meters}\nshadow_enabled = {"true" if light.cast_shadows else "false"}')
+            elif light.light_type == LightType.SPOT:
+                nodes.append(f'\n[node name="{name}" type="SpotLight3D" parent="."]\ntransform = {direction_transform}\nlight_color = Color({r}, {g}, {b}, 1)\nlight_energy = {light.intensity}\nspot_range = {light.range_meters}\nspot_angle = {light.spot_angle_deg}\nshadow_enabled = {"true" if light.cast_shadows else "false"}{metadata}')
             elif light.light_type == LightType.DIRECTIONAL:
-                nodes.append(f'\n[node name="{name}" type="DirectionalLight3D" parent="."]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {px}, {py}, {pz})\nlight_color = Color({r}, {g}, {b}, 1)\nlight_energy = {light.intensity}\nshadow_enabled = {"true" if light.cast_shadows else "false"}')
+                nodes.append(f'\n[node name="{name}" type="DirectionalLight3D" parent="."]\ntransform = {direction_transform}\nlight_color = Color({r}, {g}, {b}, 1)\nlight_energy = {light.intensity}\nshadow_enabled = {"true" if light.cast_shadows else "false"}{metadata}')
+            if self.contract_mode and light.light_type == LightType.POINT:
+                nodes.append(
+                    f'\n[node name="Evidence_{name}" type="Node3D" parent="."]'
+                    f'\nmetadata/_kiro_stable_id = "{light.id}"'
+                )
+
+        # V11 records the exact immutable Canon camera separately from the player camera.
+        if self.contract_mode and self.camera is not None:
+            camera_transform = _look_transform(
+                self.camera.position_m, self.camera.target_m, self.camera.up,
+            )
+            nodes.append(
+                f'\n[node name="{_safe_name(self.camera.id)}" type="Camera3D" parent="."]'
+                f'\ntransform = {camera_transform}'
+                '\ncurrent = true\nkeep_aspect = 1'
+                f'\nfov = {self.camera.vertical_fov_deg}'
+                f'\nnear = {self.camera.near_plane_m}\nfar = {self.camera.far_plane_m}'
+                f'\nmetadata/_kiro_stable_id = "{self.camera.id}"'
+                f'\nmetadata/_kiro_aspect_ratio = {self.camera.aspect_ratio}'
+                f'\nmetadata/_kiro_raster_width = {self.camera.image_width_px}'
+                f'\nmetadata/_kiro_raster_height = {self.camera.image_height_px}'
+            )
 
         # Player
         nodes.append(f'\n[node name="Player" parent="." instance=ExtResource("{player_ext_id}")]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, {half_d - 0.5})')

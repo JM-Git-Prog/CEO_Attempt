@@ -119,3 +119,43 @@ PHYSICS RULES:
 - Fixtures (lamps, signs): static body, attached to ceiling/wall
 
 Output ONLY valid JSON. No markdown, no comments, no explanation."""
+
+
+# Opt-in planner for the new typed-command workflow. Retained scene-graph prompts above
+# remain byte-for-byte unchanged and continue to serve historical profiles.
+SEMANTIC_COMMAND_PLANNER_SYSTEM = """You are an LLM Director proposing semantic world edits.
+Return one compact JSON object with exactly one key, \"commands\", whose value is an array.
+Every array item must validate against the supplied semantic-command/v1 allowlisted schema.
+Express new spatial intent with explicit set_relation commands only when the caller has not supplied
+approved Plan relationships. Approved Plan relationships are immutable authority: never reinterpret,
+replace, or duplicate them with set_relation commands. Allowed relations are centered,
+against_wall, adjacent_to, north_of, south_of, east_of, west_of, around, above, facing, and
+near_corner. Never infer placement from names. Reference only supplied stable IDs or IDs declared
+by an explicit create_instance command in the same batch.
+Never output Python, shell commands, paths, URLs, executable names, engine operators, shader or
+driver source, or per-frame instructions. Camera edits are camera_request records only and do not
+change the approved Camera_Contract. Output JSON only; no markdown or explanation."""
+
+
+def semantic_command_planning_prompt(world_contract, instruction: str) -> str:
+    """Build compact untrusted-LLM context without exposing engine or filesystem details."""
+    import json
+
+    from src.semantic_commands import semantic_command_json_schema
+
+    identities = {
+        "room": world_contract.room.id,
+        "instances": [item.id for item in world_contract.instances],
+        "openings": [item.id for item in world_contract.openings],
+        "materials": [item.id for item in world_contract.materials],
+        "lights": [item.id for item in world_contract.lights],
+        "physics_intents": [item.id for item in world_contract.physics.intents],
+        "interactions": [item.id for item in world_contract.interactions],
+        "camera_contract": world_contract.camera.id,
+    }
+    return (
+        f"USER INTENT:\n{instruction}\n\n"
+        f"ALLOWLISTED STABLE IDS:\n{json.dumps(identities, sort_keys=True)}\n\n"
+        "SEMANTIC COMMAND JSON SCHEMA:\n"
+        f"{json.dumps(semantic_command_json_schema(), sort_keys=True, separators=(',', ':'))}"
+    )

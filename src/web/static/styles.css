@@ -155,3 +155,16 @@
   .ui-v9-camera .download{right:6px;bottom:6px}.ui-v9-camera .revise-world{right:6px;bottom:48px}.ui-v9-camera .plan-tabs{left:6px;bottom:6px;max-width:calc(100% - 12px)}
 }
 @media(max-width:430px){.ui-v9-camera .stage-rail{grid-template-columns:repeat(2,1fr)}.ui-v9-camera .actions button{flex:1 1 100%}.ui-v9-camera .telemetry-panel{font-size:8px}.ui-v9-camera .camera-help{display:none}}
+
+
+/* V10: bounded geometry validation and explainable Canon alignment review. */
+.ui-v10-bounded .plan-blockers{margin:10px 0 0;padding:10px 14px;border:1px solid #633638;background:#211315;color:#ffc2c2;font-size:11px;line-height:1.55}
+.ui-v10-bounded .plan-blockers strong{display:block;margin-bottom:5px;color:var(--red);font:700 9px ui-monospace,monospace}
+.ui-v10-bounded .plan-blockers ul{margin:5px 0 0;padding-left:18px}
+.ui-v10-bounded .alignment-detail{margin:8px 0;padding:9px 12px;border:1px solid var(--line);background:#0d1117;font:11px/1.5 ui-monospace,monospace;color:#b8c1cd}
+.ui-v10-bounded .alignment-detail b{color:#8d9aab;font-size:8px;letter-spacing:.06em;text-transform:uppercase}
+.ui-v10-bounded .alignment-detail .status-aligned{color:var(--green)}
+.ui-v10-bounded .alignment-detail .status-misaligned{color:var(--red)}
+.ui-v10-bounded .alignment-detail .status-inconclusive{color:var(--amber)}
+.ui-v10-bounded .accept-alignment{padding:8px 11px;border:1px solid #8b683b;background:#312313;color:#ffd49c;cursor:pointer;font:700 9px ui-monospace,monospace}
+.ui-v10-bounded .accept-alignment:hover{border-color:var(--amber);color:var(--amber)}

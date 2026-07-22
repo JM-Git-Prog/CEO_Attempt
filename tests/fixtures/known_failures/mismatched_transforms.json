@@ -1,0 +1,33 @@
+{
+  "fixture_version": "known-failure/v1",
+  "fixture_id": "mismatched-transforms-v1",
+  "defect_type": "mismatched_transforms",
+  "requirements": [1, 7, 8, 9, 12],
+  "capture": {
+    "kind": "synthetic-regression-seed",
+    "source_component": "cross-adapter transform parity",
+    "data_only": true
+  },
+  "authority": {
+    "stable_id": "counter_1",
+    "coordinate_system": "right-handed-x-right-y-up-z-depth",
+    "position": [1.25, 0.9, -2.0],
+    "rotation_deg_xyz": [0.0, 30.0, 0.0]
+  },
+  "adapter_contract": {
+    "coordinate_system": "upbge-x-right-y-depth-z-up",
+    "mapping": "domain-x-y-z-to-upbge-x-z-y",
+    "expected_position": [1.25, -2.0, 0.9],
+    "tolerance_m": 0.0001
+  },
+  "observed": {
+    "stable_id": "counter_1",
+    "position": [1.25, 0.9, -2.0],
+    "rotation_deg_xyz": [0.0, 30.0, 0.0]
+  },
+  "oracle": {
+    "reason_code": "transform_mismatch",
+    "maximum_axis_error_m": 2.9,
+    "expected_detection": true
+  }
+}

@@ -42,16 +42,31 @@ def render_floor_plan_svg(plan: FloorPlan, path: Path) -> Path:
     for item in plan.items:
         x, y = point(item.x, item.z)
         item_w, item_d = item.width * scale, item.depth * scale
-        label = html.escape(_floor_label(item))
         full_label = html.escape(item.name)
-        label_class = "label tiny" if min(item_w, item_d) < 58 else "label"
+        dim_label = f"{item.width:.1f}×{item.depth:.1f}m"
+        mount_badge = ""
+        if item.mount == "ceiling":
+            mount_badge = " ▼CEIL"
+        elif item.mount == "wall":
+            mount_badge = " ◧WALL"
+        # Use full name + dimensions for clarity
+        primary = html.escape(item.name[:20])
+        secondary = f"{dim_label}{mount_badge}"
+        is_small = min(item_w, item_d) < 50
+        label_class = "label" if not is_small else "label"
+        # Item rectangle with ID annotation
         parts.append(
             f'<g transform="translate({x:.1f} {y:.1f}) rotate({-item.rotation_deg:.1f})">'
-            f'<title>{full_label}</title>'
+            f'<title>{full_label} ({dim_label}, {item.category}, {item.mount})</title>'
             f'<rect x="{-item_w/2:.1f}" y="{-item_d/2:.1f}" width="{item_w:.1f}" height="{item_d:.1f}" rx="4" '
             f'fill="{COLORS[item.category]}" fill-opacity=".72" stroke="#f3f6fa" stroke-opacity=".65"/>'
-            f'<text class="{label_class}" text-anchor="middle" dominant-baseline="middle">{label}</text></g>'
         )
+        if not is_small:
+            parts.append(f'<text class="label" text-anchor="middle" dominant-baseline="middle" y="-6">{primary}</text>')
+            parts.append(f'<text class="note" text-anchor="middle" dominant-baseline="middle" y="10">{html.escape(secondary)}</text>')
+        else:
+            parts.append(f'<text class="label" text-anchor="middle" dominant-baseline="middle" style="font-size:10px">{html.escape(item.id)}</text>')
+        parts.append('</g>')
     for opening in plan.openings:
         color = "#66d6a6" if opening.kind == "door" else "#69b9ff"
         half = opening.width * scale / 2
@@ -65,10 +80,32 @@ def render_floor_plan_svg(plan: FloorPlan, path: Path) -> Path:
             parts.append(f'<line x1="{x:.1f}" y1="{y-half:.1f}" x2="{x:.1f}" y2="{y+half:.1f}" stroke="{color}" stroke-width="10"/>')
     cx, cy = point(plan.camera.x, plan.camera.z)
     tx, ty = point(plan.camera.target_x, plan.camera.target_z)
+    # Legend with colored swatches instead of unicode symbols
+    item_count = len(plan.items)
+    ceiling_count = sum(1 for i in plan.items if i.mount == "ceiling")
+    floor_count = sum(1 for i in plan.items if i.mount == "floor")
+    opening_count = len(plan.openings)
+    legend_y = height - 70
     parts.extend([
         f'<line x1="{cx:.1f}" y1="{cy:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" stroke="#ffcb70" stroke-width="3" stroke-dasharray="8 6"/>',
-        f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="11" fill="#ffcb70"/><text x="{cx+16:.1f}" y="{cy-12:.1f}" class="label">CANON CAMERA</text>',
-        '<text x="86" y="730" class="note">AMBER furniture · TEAL fixed fixtures · GREEN doors · BLUE windows · dashed line canon view</text>',
+        f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="11" fill="#ffcb70"/><text x="{cx+16:.1f}" y="{cy-12:.1f}" class="label">CAM {plan.camera.fov_deg:.0f}deg</text>',
+        # Legend row 1: item categories
+        f'<rect x="86" y="{legend_y}" width="12" height="12" fill="{COLORS["furniture"]}" rx="2"/>',
+        f'<text x="102" y="{legend_y+10}" class="note">furniture</text>',
+        f'<rect x="170" y="{legend_y}" width="12" height="12" fill="{COLORS["fixture"]}" rx="2"/>',
+        f'<text x="186" y="{legend_y+10}" class="note">fixture</text>',
+        f'<rect x="240" y="{legend_y}" width="12" height="12" fill="{COLORS["architectural"]}" rx="2"/>',
+        f'<text x="256" y="{legend_y+10}" class="note">architectural</text>',
+        f'<rect x="340" y="{legend_y}" width="12" height="12" fill="{COLORS["decor"]}" rx="2"/>',
+        f'<text x="356" y="{legend_y+10}" class="note">decor</text>',
+        f'<rect x="410" y="{legend_y}" width="20" height="12" fill="#66d6a6" rx="2"/>',
+        f'<text x="434" y="{legend_y+10}" class="note">door</text>',
+        f'<rect x="475" y="{legend_y}" width="20" height="12" fill="#69b9ff" rx="2"/>',
+        f'<text x="499" y="{legend_y+10}" class="note">window</text>',
+        f'<circle cx="560" cy="{legend_y+6}" r="6" fill="#ffcb70"/>',
+        f'<text x="570" y="{legend_y+10}" class="note">camera</text>',
+        # Legend row 2: counts
+        f'<text x="86" y="{legend_y+28}" class="note">{item_count} items ({floor_count} floor, {ceiling_count} ceiling) | {opening_count} openings | Room {plan.room.width:.1f} x {plan.room.depth:.1f} x {plan.room.height:.1f}m</text>',
         '</svg>',
     ])
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -118,10 +155,20 @@ def render_blockout(
         draw_fn(draw, item, project, concept)
     draw.rectangle((18, 18, min(520, width - 18), 62), fill="#080c12dd", outline="#3d4858")
     draw.text((32, 30), f"APPROVED BLOCKOUT · {plan.name}", fill="#e8edf4")
+    # Burn object count summary into the blockout so FLUX can read it
+    from collections import Counter
+    import re as _re
+    base_names = Counter(
+        _re.sub(r'\s*\d+$', '', item.name).strip() for item in plan.items
+    )
+    count_text = " | ".join(f"{count}x {name}" for name, count in base_names.items())
+    draw.rectangle((18, height - 60, min(width - 18, 18 + len(count_text) * 7 + 20), height - 18), fill="#080c12dd", outline="#3d4858")
+    draw.text((28, height - 52), f"EXACT CONTENTS: {count_text}", fill="#e8edf4")
+    draw.text((28, height - 34), "NO EXTRA OBJECTS. Match counts precisely.", fill="#ffcb70")
     lock_label = "Geometry and camera are locked; canon generation may change only appearance and lighting."
     if camera_contract:
         lock_label = f"CAMERA LOCK {camera_contract.contract_id} · Blockout, Canon, and World share this frame."
-    draw.text((20, height - 38), lock_label, fill="#9ea9b7")
+    draw.text((20, height - 80), lock_label, fill="#9ea9b7")
     path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(path, "PNG")
     return path
@@ -201,9 +248,9 @@ def _draw_item(draw: ImageDraw.ImageDraw, item: PlanItem, project, concept=None)
     if not all(projected):
         return
     faces = [
-        ([4, 5, 6, 7], "#dba25f"), ([0, 1, 5, 4], "#8b6846"),
-        ([1, 2, 6, 5], "#a77b4d"), ([2, 3, 7, 6], "#765b42"),
-        ([3, 0, 4, 7], "#947052"),
+        ([4, 5, 6, 7], "#b0b0b0"), ([0, 1, 5, 4], "#787878"),
+        ([1, 2, 6, 5], "#8a8a8a"), ([2, 3, 7, 6], "#686868"),
+        ([3, 0, 4, 7], "#808080"),
     ]
     ranked = []
     for indices, color in faces:
@@ -234,25 +281,27 @@ def _floor_label(item: PlanItem) -> str:
 # Articulated blockout: sub-part decomposition for denser geometry signal
 # ---------------------------------------------------------------------------
 
-# Palette-mapped flat colors per material zone (derived from canonical prompt)
+# Neutral grayscale palette for blockout — communicates shape without imposing color.
+# FLUX should interpret geometry from the blockout and materials from the text prompt.
+# Different luminance values distinguish parts without color bias.
 _PALETTE = {
-    "chrome": "#c8cdd4",
-    "chrome_highlight": "#e8ecf2",
-    "mint_green": "#a8d5ba",
-    "red_vinyl": "#c0392b",
-    "formica_top": "#f5f0e0",
-    "counter_body": "#3d5c4a",
-    "stool_base": "#8a8f96",
-    "stool_stem": "#b0b5bc",
-    "pendant_canopy": "#9ca3ab",
-    "pendant_shade": "#d4d9e0",
-    "pendant_glow": "#ffb347",
-    "door_frame": "#5a4a3a",
-    "door_panel": "#7a6550",
-    "generic_furniture": "#8b6846",
-    "generic_fixture": "#5fa7a1",
-    "generic_top": "#dba25f",
-    "generic_side": "#a77b4d",
+    "chrome": "#b8b8b8",
+    "chrome_highlight": "#d8d8d8",
+    "mint_green": "#909090",
+    "red_vinyl": "#686868",
+    "formica_top": "#c8c8c8",
+    "counter_body": "#585858",
+    "stool_base": "#707070",
+    "stool_stem": "#989898",
+    "pendant_canopy": "#a0a0a0",
+    "pendant_shade": "#c0c0c0",
+    "pendant_glow": "#e8e8e8",
+    "door_frame": "#484848",
+    "door_panel": "#606060",
+    "generic_furniture": "#787878",
+    "generic_fixture": "#8a8a8a",
+    "generic_top": "#b0b0b0",
+    "generic_side": "#686868",
 }
 
 
