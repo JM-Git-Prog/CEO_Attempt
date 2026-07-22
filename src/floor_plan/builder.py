@@ -61,11 +61,20 @@ V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not
 - Add relationships with EXACTLY one typed placement for every item. Each entry has subject_id,
   kind, optional target_id/wall, and parameters_m. Never encode placement intent only in names.
 - Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+  wall_gap_m is distance from wall surface to nearest item edge; ensure depth/2 + wall_gap_m < half_room_depth.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
 - Repeated rows use a directional/above relation plus zero-based distribution_index,
   distribution_count, and distribution_span_m. Keep every repeated instance separate.
 - Repeated rows must be compact rather than stretched across the complete target. Unless the user
   gives an exact spacing, use 0.5m center spacing for floor seating and 0.6m center spacing for
-  ceiling pendants (for example spans 1.5m for four stools and 1.2m for three pendants).
+  ceiling pendants. distribution_span_m = (count - 1) * spacing (e.g. 1.5m for four stools, 1.2m for three pendants).
 - Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
 - Add opening_intents with exactly one entry per opening. placement is centered or near_corner;
   near_corner also declares northwest/northeast/southwest/southeast.
@@ -161,9 +170,11 @@ async def build_floor_plan(
         from src.floor_plan.solver import solve_explicit_plan
 
         raw = _complete_v11_base_fields(raw, concept)
+        schema_repair_used = False
         try:
             plan = FloorPlanV11.model_validate(raw)
         except ValidationError as exc:
+            schema_repair_used = True
             repair_context = {
                 "instruction": (
                     "Repair the previous response into one complete FloorPlanV11 object. "
@@ -191,6 +202,97 @@ async def build_floor_plan(
         )
         resolved = solve_explicit_plan(FloorPlanV11.model_validate(normalized))
         report = validate_floor_plan(resolved, warnings)
+
+        # Bounded semantic repair: if schema was valid but deterministic validation
+        # fails (e.g. wrong relation kinds placing items outside room), use the one
+        # remaining repair budget to ask the model to fix typed relation semantics.
+        if not report.valid and not schema_repair_used:
+            semantic_repair_context = {
+                "original_user_description": description,
+                "instruction": (
+                    "The Plan below is schema-valid but fails deterministic geometry validation. "
+                    "Fix ONLY blocker-subject relationships to resolve all blockers while preserving "
+                    "every explicit constraint in original_user_description. Do not change any "
+                    "non-blocker relationship. For against_wall or near_corner anchors, preserve "
+                    "kind, wall, and target; adjust only parameters_m. Do NOT change room "
+                    "dimensions, item counts, item dimensions, openings, opening_intents, or "
+                    "camera_intent. Return the complete repaired FloorPlanV11 JSON."
+                ),
+                "blockers": [
+                    {"code": b.code, "message": b.message, "item_ids": b.item_ids}
+                    for b in report.blockers
+                ],
+                "relation_semantics": {
+                    "adjacent_to": "Places subject EAST of target (x + width/2 + gap). Do NOT use for a row south of a surface.",
+                    "east_of": "Same as adjacent_to — places subject east of target.",
+                    "west_of": "Places subject WEST of target.",
+                    "south_of": "Places subject SOUTH of target (z - depth/2 - gap). Use for seating rows south of a counter.",
+                    "north_of": "Places subject NORTH of target.",
+                    "above": "Places subject directly above target (same x via distribution, z = target.z). Use for ceiling pendants above a counter.",
+                    "against_wall": "Places subject flat against the named wall. wall_gap_m=0 means item edge touches wall — ensure rotated bounds still fit inside room.",
+                    "around": "Distributes subjects in a circle around target at radius_m.",
+                    "centered": "Places subject at room center with optional offsets.",
+                },
+                "compact_row_rules": (
+                    "For repeated floor seating (stools/chairs): use distribution_span_m = (count-1) * 0.5. "
+                    "For repeated ceiling pendants: use distribution_span_m = (count-1) * 0.6. "
+                    "Never use target width as the span unless user explicitly specifies it."
+                ),
+                "wall_gap_rule": (
+                    "wall_gap_m is the distance from the wall surface to the nearest item edge. "
+                    "The item's full rotated depth must fit: item center z = half_room_depth - depth/2 - wall_gap_m. "
+                    "If wall_gap_m=0, ensure depth/2 < half_room_depth."
+                ),
+                "previous_plan": plan.model_dump(mode="json"),
+            }
+            repaired_raw = await generate_json(
+                V11_PLAN_SYSTEM,
+                json.dumps(semantic_repair_context),
+                model=V11_PLAN_MODEL,
+                timeout_seconds=timeout_seconds,
+            )
+            try:
+                model_repair = FloorPlanV11.model_validate(
+                    _complete_v11_base_fields(repaired_raw, concept)
+                )
+                blocker_codes: dict[str, set[str]] = {}
+                item_ids = {item.id for item in plan.items}
+                for blocker in report.blockers:
+                    for item_id in blocker.item_ids:
+                        if item_id in item_ids:
+                            blocker_codes.setdefault(item_id, set()).add(blocker.code)
+                proposed_by_subject = {
+                    relation.subject_id: relation
+                    for relation in model_repair.relationships
+                }
+                authorized_relationships = []
+                for original in plan.relationships:
+                    proposed = proposed_by_subject.get(original.subject_id, original)
+                    if original.subject_id not in blocker_codes:
+                        authorized = original
+                    elif original.kind in {"against_wall", "near_corner"}:
+                        authorized = original.model_copy(update={
+                            "parameters_m": proposed.parameters_m,
+                        })
+                    else:
+                        authorized = proposed
+                    authorized_relationships.append(authorized)
+                repaired_plan = plan.model_copy(
+                    deep=True,
+                    update={"relationships": authorized_relationships},
+                )
+                solved2 = solve_explicit_plan(repaired_plan)
+                normalized2, warnings2, _ = normalize_floor_plan(
+                    solved2, "", strict=strict_validation, infer_text_placement=False
+                )
+                resolved2 = solve_explicit_plan(FloorPlanV11.model_validate(normalized2))
+                report2 = validate_floor_plan(resolved2, warnings2)
+                # Accept the repair only if it actually improved things
+                if report2.valid or len(report2.blockers) < len(report.blockers):
+                    return resolved2, warnings2, report2
+            except (ValidationError, ValueError, KeyError, TypeError):
+                pass  # Repair failed schema/solve — fall through with original
+
         return resolved, warnings, report
 
     plan = FloorPlan.model_validate(raw)

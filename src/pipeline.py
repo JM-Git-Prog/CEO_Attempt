@@ -432,7 +432,21 @@ class WorldBuilder:
         image_path = generation.image_path
         self.session.canon_image_path = str(image_path)
         self.session.canon_provider = generation.provider
-        self.session.canon_alignment = generation.alignment
+        alignment = generation.alignment
+        if (
+            os.getenv("QUALIFICATION_MOCK_E2E") == "1"
+            and generation.provider == "Mock fallback"
+        ):
+            screening = dict(alignment or {})
+            alignment = {
+                **screening,
+                "status": "not_applicable",
+                "passed": False,
+                "reason": "deterministic_mock_provider",
+                "screening_status": screening.get("status"),
+                "screening_passed": screening.get("passed"),
+            }
+        self.session.canon_alignment = alignment
         self.session.canon_attempt = attempt
         for manifest in generation.manifests:
             manifest_path = str(manifest)
@@ -545,8 +559,86 @@ class WorldBuilder:
                     rejections=[item.model_dump(mode="json") for item in batch.rejections],
                 )
                 self.session.semantic_command_records.append(record)
-                reasons = "; ".join(item.message for item in batch.rejections)
-                raise RuntimeError(f"Semantic command batch rejected: {reasons}")
+                schema_only = bool(batch.rejections) and all(
+                    item.code == "schema_invalid" for item in batch.rejections
+                )
+                if not schema_only:
+                    reasons = "; ".join(item.message for item in batch.rejections)
+                    raise RuntimeError(f"Semantic command batch rejected: {reasons}")
+
+                repair_prompt = command_prompt + (
+                    "\n\nBOUNDED SCHEMA REPAIR:\n"
+                    "The previous commands were schema-invalid. The approved Plan and "
+                    "Camera_Contract already contain all requested instances and placement. "
+                    "Never recreate, remove, replace, relate, or move allowlisted Plan objects, "
+                    "lights, or the camera. Return exactly {\"commands\":[]} unless a fully "
+                    "schema-valid non-spatial edit against an existing allowlisted ID is certain.\n"
+                    "REJECTION SUMMARY:\n"
+                    + json.dumps([
+                        {
+                            "command_index": item.command_index,
+                            "code": item.code,
+                            "field": item.field,
+                        }
+                        for item in batch.rejections
+                    ], sort_keys=True, separators=(",", ":"))
+                )
+                repair_hash = hashlib.sha256(
+                    (SEMANTIC_COMMAND_PLANNER_SYSTEM + "\n" + repair_prompt).encode("utf-8")
+                ).hexdigest()
+                repaired_response = await generate_json(
+                    system=SEMANTIC_COMMAND_PLANNER_SYSTEM,
+                    user=repair_prompt,
+                    model=LLM_MODEL,
+                    timeout_seconds=self._llm_timeout(),
+                )
+                if (
+                    set(repaired_response) != {"commands"}
+                    or not isinstance(repaired_response.get("commands"), list)
+                ):
+                    repaired_record = _semantic_rejection_record(
+                        contract=contract,
+                        model_id=LLM_MODEL,
+                        prompt_hash=repair_hash,
+                        commands=repaired_response.get("commands", repaired_response),
+                        rejections=[{
+                            "command_index": None,
+                            "command_id": None,
+                            "op": None,
+                            "code": "schema_invalid",
+                            "field": "commands",
+                            "message": "repair response must contain exactly one commands array",
+                        }],
+                    )
+                    self.session.semantic_command_records.append(repaired_record)
+                    raise RuntimeError(
+                        "Semantic command batch rejected: invalid bounded repair envelope"
+                    )
+                commands = repaired_response["commands"]
+                prompt_hash = repair_hash
+                batch = apply_semantic_command_batch(
+                    contract,
+                    commands,
+                    authorization=authorization,
+                    provenance=CommandProvenance(
+                        model_id=LLM_MODEL, source_prompt_hash=repair_hash
+                    ),
+                )
+                if not batch.accepted or batch.record is None:
+                    repaired_record = _semantic_rejection_record(
+                        contract=contract,
+                        model_id=LLM_MODEL,
+                        prompt_hash=repair_hash,
+                        commands=commands,
+                        rejections=[
+                            item.model_dump(mode="json") for item in batch.rejections
+                        ],
+                    )
+                    self.session.semantic_command_records.append(repaired_record)
+                    reasons = "; ".join(item.message for item in batch.rejections)
+                    raise RuntimeError(
+                        f"Semantic command batch rejected after bounded repair: {reasons}"
+                    )
 
             accepted_record = batch.record.model_dump(mode="json")
             accepted_record.update({

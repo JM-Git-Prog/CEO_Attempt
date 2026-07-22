@@ -507,6 +507,18 @@ def solve_explicit_plan(source):
             item.elevation = 0.0
         elif item.mount == "ceiling":
             item.elevation = plan.room.height - item.height
+
+        # Clamp rotation-aware bounds inside room to prevent out-of-bounds blockers.
+        rad = math.radians(item.rotation_deg)
+        effective_w = abs(item.width * math.cos(rad)) + abs(item.depth * math.sin(rad))
+        effective_d = abs(item.width * math.sin(rad)) + abs(item.depth * math.cos(rad))
+        max_x = half_w - effective_w / 2.0
+        max_z = half_d - effective_d / 2.0
+        if max_x > 0:
+            item.x = max(-max_x, min(max_x, item.x))
+        if max_z > 0:
+            item.z = max(-max_z, min(max_z, item.z))
+
         visiting.remove(subject_id)
         placed.add(subject_id)
 

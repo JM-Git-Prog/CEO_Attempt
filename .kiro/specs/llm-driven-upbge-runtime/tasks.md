@@ -7,9 +7,9 @@ Implement the engine-neutral contract and safety boundary first, then add UPBGE 
 ## Current Execution
 
 - **Overall task:** `13. Complete release qualification` — **IN PROGRESS**
-- **Current subtask:** `13.5.2` — **LIVE** in persistent qualification watch terminal `14`; finish only the minimum reusable E2E loop needed to qualify the V11 MVP, then immediately return to fresh-session release qualification.
+- **Current subtask:** `13.5.2` — **LIVE** in persistent qualification watch terminal `1`; finish only the minimum reusable E2E loop needed to qualify the V11 MVP, then immediately return to fresh-session release qualification.
 - **MVP guardrail:** Deliver a usable end-to-end MVP within 6–8 active coding hours; timebox deep work and defer anything not blocking the clean V11 pass.
-- **Latest validated checkpoint:** `c3dd343b` and fresh Plan failure `eedf4d68` are discarded diagnostics; V11 composition gate and reusable qualification loop are implemented. Latest loop passed compileall, Node syntax, 80 focused tests, and 197 full tests. Zero-state E2E now reaches live V11 planning; current repair persists exact invalid Plan/validation evidence before retrying.
+- **Latest validated checkpoint:** Discarded sessions remain diagnostics only. Root cause of `b355bccc` Canon rejection was the V11 profile's unsafe `minimum_inset_m: 0.001`; current profile/default require 0.22 m, keeping the deterministic camera footprint inside the room. Diagnostics are clean; focused tests pass 26/26, full suite 200/200, compileall and Node syntax pass. Terminal `1` is running a brand-new zero-state V11 iteration.
 
 ## Tasks
 
@@ -117,8 +117,15 @@ Implement the engine-neutral contract and safety boundary first, then add UPBGE 
   - [ ] 13.4 Inspect Brief, Plan, Blockout, Canon, World, Compare, manifests, parity, runtime, and QA evidence.
   - [-] 13.5 If any defect appears, record and fix it, discard the session, and restart from another new empty session.
     - [x] 13.5.1 Record/discard `c3dd343b` and add V11-only full rotation-aware bounds composition qualification before Camera_Contract approval.
-    - [-] 13.5.2 Implement a reusable serialized qualification loop with startup/watch modes, source fingerprints, fresh-session E2E, deterministic stage gates, immutable evidence, and no session reuse.
-    - [ ] 13.5.3 Validate the loop, rerun focused/full/static checks, and restart `13.3` with another brand-new empty session.
+    - [-] 13.5.2 Implement the tiered Ratchet Loop from `ratchet-loop-design.md` with immutable evidence and fresh sessions only.
+      - [x] 13.5.2.1 Remove the phantom focused-test pass; Tier 0 runs compileall, Node syntax, and the full suite once.
+      - [ ] 13.5.2.2 Add deterministic environment-forced mock E2E with mock-only alignment `not_applicable` when required.
+      - [ ] 13.5.2.3 Normalize adapter failures to stable `stage/rule/detail` signatures.
+      - [ ] 13.5.2.4 Write atomic `scoreboard.json` and `NEXT.md` keyed by fingerprint × lane with KEEP/REVERT/INDETERMINATE.
+      - [ ] 13.5.2.5 Add K=2 parallel fresh-session sampling, N=5 early stop, and GPU-busy guard.
+      - [ ] 13.5.2.6 Add `lanes.json` with all remote/spend lanes disabled by default and capped.
+      - [ ] 13.5.2.7 Add the 0.8 rolling formal trigger, serialized Tier 3, QUALIFIED, STUCK, and BUDGET stops.
+    - [ ] 13.5.3 Validate the loop, rerun full/static checks, and restart `13.3` with another brand-new empty session.
   - [ ] 13.6 Only after one clean pass, stage relevant files and prepare the required release record; do not commit unless explicitly requested.
   - _Requirements: 10, 11, 12_
 

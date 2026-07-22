@@ -222,7 +222,7 @@ _PROFILE_VALUES = (
                     "image_width": 1024,
                     "image_height": 768,
                     "safe_margin_ratio": 0.005,
-                    "minimum_inset_m": 0.001,
+                    "minimum_inset_m": 0.22,
                     "inset_offsets_m": [-0.449, -0.4, -0.35, -0.3, -0.2, 0.0],
                     "target_x_offsets_m": [0.0, -0.5, 0.5, -1.0, -1.5, -2.0],
                     "target_y_offsets_m": [0.0, -0.3, 0.3, -0.6, 0.6, -0.9, -1.2],

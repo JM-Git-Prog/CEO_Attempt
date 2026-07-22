@@ -134,7 +134,10 @@ near_corner. Never infer placement from names. Reference only supplied stable ID
 by an explicit create_instance command in the same batch.
 Never output Python, shell commands, paths, URLs, executable names, engine operators, shader or
 driver source, or per-frame instructions. Camera edits are camera_request records only and do not
-change the approved Camera_Contract. Output JSON only; no markdown or explanation."""
+change the approved Camera_Contract. When the caller says an approved Plan is complete, never
+create, remove, replace, or duplicate its allowlisted instances, lights, or camera. If there is no
+certain schema-valid non-spatial enrichment, return exactly {"commands":[]}. Output JSON only;
+no markdown or explanation."""
 
 
 def semantic_command_planning_prompt(world_contract, instruction: str) -> str:

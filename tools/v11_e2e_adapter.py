@@ -21,6 +21,7 @@ from test_iteration import CANONICAL_PROMPT
 
 HEADERS = {"X-App-Version": "11"}
 PASSING = {"passed", "not_applicable"}
+MOCK_QUALIFICATION = os.getenv("QUALIFICATION_MOCK_E2E") == "1"
 
 
 def _sha256(data: bytes) -> str:
@@ -123,6 +124,7 @@ def run_once(result_path: Path) -> dict:
         "started_at_epoch": started,
         "canonical_prompt": CANONICAL_PROMPT,
         "canonical_prompt_sha256": _sha256(CANONICAL_PROMPT.encode()),
+        "qualification_mode": "mock" if MOCK_QUALIFICATION else "real",
         "session_id": None,
         "stages": {},
         "passed": False,
@@ -209,14 +211,22 @@ def run_once(result_path: Path) -> dict:
             approved = client.post(f"/api/session/{session_id}/approve_plan", headers=HEADERS)
             canon_payload = approved.json()
             alignment = canon_payload.get("camera_alignment") or {}
+            provider = canon_payload.get("provider")
+            mock_alignment_na = (
+                MOCK_QUALIFICATION
+                and provider == "Mock fallback"
+                and alignment.get("status") == "not_applicable"
+                and alignment.get("reason") == "deterministic_mock_provider"
+            )
             canon_ok = (
                 approved.status_code == 200
-                and alignment.get("passed") is True
+                and (alignment.get("passed") is True or mock_alignment_na)
                 and (output / "canon_v1.png").is_file()
             )
             result["stages"]["canon"] = _stage(
-                "passed" if canon_ok else "failed",
+                "not_applicable" if mock_alignment_na else "passed" if canon_ok else "failed",
                 http_status=approved.status_code,
+                provider=provider,
                 alignment=alignment,
                 artifact=_artifact(output / "canon_v1.png"),
                 response=canon_payload if approved.status_code != 200 else None,

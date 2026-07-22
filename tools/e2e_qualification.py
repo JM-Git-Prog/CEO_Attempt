@@ -26,6 +26,19 @@ SAFE_ENV = {
     "USERPROFILE", "HOME", "LOCALAPPDATA", "APPDATA", "PYTHONUTF8",
     "PYTHONIOENCODING", "OLLAMA_HOST", "COMFYUI_URL", "NO_PROXY",
 }
+SAFE_OVERRIDE_ENV = {
+    "QUALIFICATION_MOCK_E2E", "OLLAMA_URL", "OPENAI_API_URL", "OPENAI_API_KEY",
+    "LLM_MODEL", "COMFYUI_ENABLED", "IMAGE_API_URL", "IMAGE_API_KEY",
+}
+MOCK_E2E_ENV = {
+    "QUALIFICATION_MOCK_E2E": "1",
+    "OLLAMA_URL": "http://127.0.0.1:9",
+    "OPENAI_API_URL": "",
+    "OPENAI_API_KEY": "",
+    "COMFYUI_ENABLED": "0",
+    "IMAGE_API_URL": "",
+    "IMAGE_API_KEY": "",
+}
 
 
 class FrozenModel(BaseModel):
@@ -56,6 +69,7 @@ class IterationEvidence(FrozenModel):
     stale: bool
     changed_files: tuple[str, ...]
     commands: tuple[CommandEvidence, ...]
+    mock_e2e_result: dict | None
     e2e_result: dict | None
     regression_delta: dict
     passed: bool
@@ -155,14 +169,23 @@ class ProcessLock:
         self.path.unlink(missing_ok=True)
 
 
-def _sanitized_environment() -> dict[str, str]:
+def _sanitized_environment(overrides: dict[str, str] | None = None) -> dict[str, str]:
     environment = {key: value for key, value in os.environ.items() if key.upper() in SAFE_ENV}
+    for key, value in (overrides or {}).items():
+        if key.upper() not in SAFE_OVERRIDE_ENV:
+            raise ValueError(f"Unsafe qualification environment override: {key}")
+        environment[key] = value
     environment["PYTHONUTF8"] = "1"
     environment["PYTHONIOENCODING"] = "utf-8"
     return environment
 
 
-def run_command(name: str, argv: list[str], timeout: float) -> CommandEvidence:
+def run_command(
+    name: str,
+    argv: list[str],
+    timeout: float,
+    env_overrides: dict[str, str] | None = None,
+) -> CommandEvidence:
     started = time.time()
     returncode: int | None = None
     timed_out = False
@@ -172,7 +195,7 @@ def run_command(name: str, argv: list[str], timeout: float) -> CommandEvidence:
         completed = subprocess.run(
             argv,
             cwd=ROOT,
-            env=_sanitized_environment(),
+            env=_sanitized_environment(env_overrides),
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -202,19 +225,6 @@ def run_command(name: str, argv: list[str], timeout: float) -> CommandEvidence:
     )
 
 
-def _focused_tests() -> list[str]:
-    requested = [
-        "tests/test_composition_sidecar.py", "tests/test_floor_plan_builder.py",
-        "tests/test_world_contract.py", "tests/test_relationship_solver.py",
-        "tests/test_compiler_manifest.py", "tests/test_upbge_capability.py",
-        "tests/test_upbge_compiler.py", "tests/test_export_adapters.py",
-        "tests/test_structural_parity.py", "tests/test_runtime_smoke.py",
-        "tests/test_glb_reload.py", "tests/test_v11_pipeline.py",
-        "tests/test_v11_web.py", "tests/test_qa_evidence.py",
-    ]
-    return [value for value in requested if (ROOT / value).exists()]
-
-
 def command_plan(mode: str, e2e_result_path: Path) -> list[tuple[str, list[str]]]:
     python = sys.executable
     commands: list[tuple[str, list[str]]] = []
@@ -222,9 +232,16 @@ def command_plan(mode: str, e2e_result_path: Path) -> list[tuple[str, list[str]]
         commands.extend([
             ("compileall", [python, "-m", "compileall", "-q", "src", "tools"]),
             ("node-check", ["node", "--check", "src/web/static/app.js"]),
-            ("focused-tests", [python, "-m", "pytest", *_focused_tests(), "-q"]),
             ("full-tests", [python, "-m", "pytest", "tests", "-q"]),
         ])
+    if mode == "full":
+        commands.append((
+            "mock-v11-e2e",
+            [
+                python, "tools/v11_e2e_adapter.py", "--result",
+                str(e2e_result_path.parent / "mock-v11-e2e.json"),
+            ],
+        ))
     if mode != "tests-only":
         commands.append((
             "fresh-v11-e2e",
@@ -270,6 +287,12 @@ class EvidenceStore:
             f"({command.duration_seconds}s, exit={command.returncode}, timeout={command.timed_out})"
             for command in evidence.commands
         )
+        if evidence.mock_e2e_result:
+            lines.extend([
+                "", "## Deterministic Mock V11 E2E",
+                f"- Session: `{evidence.mock_e2e_result.get('session_id')}`",
+                f"- Verdict: `{'PASS' if evidence.mock_e2e_result.get('passed') else 'FAIL'}`",
+            ])
         if evidence.e2e_result:
             lines.extend([
                 "", "## Fresh V11 E2E",
@@ -281,8 +304,15 @@ class EvidenceStore:
         return json_path
 
 
-def _regression_delta(previous: dict | None, commands: list[CommandEvidence], e2e: dict | None) -> dict:
+def _regression_delta(
+    previous: dict | None,
+    commands: list[CommandEvidence],
+    mock_e2e: dict | None,
+    e2e: dict | None,
+) -> dict:
     current_failures = sorted(command.name for command in commands if not command.passed)
+    if mock_e2e and not mock_e2e.get("passed"):
+        current_failures.append("mock-v11-e2e-evidence")
     if e2e and not e2e.get("passed"):
         current_failures.append("fresh-v11-e2e-evidence")
     previous_failures = []
@@ -290,6 +320,9 @@ def _regression_delta(previous: dict | None, commands: list[CommandEvidence], e2
         previous_failures = sorted(
             command["name"] for command in previous.get("commands", []) if not command.get("passed")
         )
+        prior_mock = previous.get("mock_e2e_result")
+        if prior_mock and not prior_mock.get("passed"):
+            previous_failures.append("mock-v11-e2e-evidence")
         prior_e2e = previous.get("e2e_result")
         if prior_e2e and not prior_e2e.get("passed"):
             previous_failures.append("fresh-v11-e2e-evidence")
@@ -311,6 +344,7 @@ def run_iteration(
     iteration_id = f"{_safe_timestamp()}-{fingerprint_before[:10]}"
     iteration_dir = store.root / iteration_id
     e2e_path = iteration_dir / "v11-e2e.json"
+    mock_e2e_path = iteration_dir / "mock-v11-e2e.json"
     commands: list[CommandEvidence] = []
     print(
         f"[qualification] START iteration={iteration_id} mode={mode} "
@@ -319,7 +353,12 @@ def run_iteration(
     )
     for name, argv in command_plan(mode, e2e_path):
         print(f"[qualification] START command={name}", flush=True)
-        evidence = run_command(name, argv, timeout)
+        evidence = run_command(
+            name,
+            argv,
+            timeout,
+            env_overrides=MOCK_E2E_ENV if name == "mock-v11-e2e" else None,
+        )
         commands.append(evidence)
         print(
             f"[qualification] {'PASS' if evidence.passed else 'FAIL'} "
@@ -329,12 +368,16 @@ def run_iteration(
         )
         if not evidence.passed:
             break
-    e2e_result = None
-    if e2e_path.exists():
+    def read_result(path: Path) -> dict | None:
+        if not path.exists():
+            return None
         try:
-            e2e_result = json.loads(e2e_path.read_text(encoding="utf-8"))
+            return json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            e2e_result = {"passed": False, "error": f"invalid E2E JSON: {exc}"}
+            return {"passed": False, "error": f"invalid E2E JSON: {exc}"}
+
+    mock_e2e_result = read_result(mock_e2e_path)
+    e2e_result = read_result(e2e_path)
     fingerprint_after = source_fingerprint()
     stale = fingerprint_before != fingerprint_after
     previous = store.previous()
@@ -356,8 +399,11 @@ def run_iteration(
         stale=stale,
         changed_files=changed_files,
         commands=tuple(commands),
+        mock_e2e_result=mock_e2e_result,
         e2e_result=e2e_result,
-        regression_delta=_regression_delta(previous, commands, e2e_result),
+        regression_delta=_regression_delta(
+            previous, commands, mock_e2e_result, e2e_result
+        ),
         passed=passed,
     )
     store.write(result)

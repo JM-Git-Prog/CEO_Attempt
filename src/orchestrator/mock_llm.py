@@ -254,6 +254,9 @@ def _mock_floor_plan_v11() -> dict:
     payload["schema_version"] = "floor-plan/v11"
     for item in payload["items"]:
         item["mount"] = "ceiling" if item["id"].startswith("light_") else "floor"
+        if item["id"].startswith("stool_"):
+            item["width"] = 0.4
+            item["depth"] = 0.4
     payload["relationships"] = [
         {
             "subject_id": "counter_1", "kind": "against_wall", "wall": "north",
@@ -264,7 +267,7 @@ def _mock_floor_plan_v11() -> dict:
                 "subject_id": f"stool_{index}", "kind": "south_of",
                 "target_id": "counter_1", "parameters_m": {
                     "gap_m": 0.2, "distribution_index": float(index - 1),
-                    "distribution_count": 4.0, "distribution_span_m": 3.0,
+                    "distribution_count": 4.0, "distribution_span_m": 2.4,
                 },
             }
             for index in range(1, 5)
@@ -274,7 +277,7 @@ def _mock_floor_plan_v11() -> dict:
                 "subject_id": f"light_{index}", "kind": "above",
                 "target_id": "counter_1", "parameters_m": {
                     "distribution_index": float(index - 1),
-                    "distribution_count": 3.0, "distribution_span_m": 1.3,
+                    "distribution_count": 3.0, "distribution_span_m": 1.2,
                 },
             }
             for index in range(1, 4)

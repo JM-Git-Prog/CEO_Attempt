@@ -43,12 +43,17 @@ def test_v11_semantic_relation_policy_solves_typed_authority(monkeypatch):
     assert counter.z > 0.0
 
     stools = [by_id[f"stool_{index}"] for index in range(1, 5)]
-    assert [item.x for item in stools] == pytest.approx([-1.5, -0.5, 0.5, 1.5])
+    assert [item.x for item in stools] == pytest.approx([-1.2, -0.4, 0.4, 1.2])
+    assert all(
+        right.x - left.x
+        == pytest.approx(left.width / 2 + left.clearance_m + right.width / 2 + right.clearance_m)
+        for left, right in zip(stools, stools[1:])
+    )
     assert len({item.z for item in stools}) == 1
     assert stools[0].z < counter.z
 
     lights = [by_id[f"light_{index}"] for index in range(1, 4)]
-    assert [item.x for item in lights] == pytest.approx([-0.65, 0.0, 0.65])
+    assert [item.x for item in lights] == pytest.approx([-0.6, 0.0, 0.6])
     assert all(item.mount == "ceiling" for item in lights)
     assert all(item.z == pytest.approx(counter.z) for item in lights)
     assert all(item.elevation == pytest.approx(2.3) for item in lights)
@@ -144,3 +149,128 @@ def test_v11_invalid_semantic_intent_gets_one_bounded_repair(monkeypatch):
     assert "validation_errors" in calls[1]
     assert "previous_response" in calls[1]
     assert report.valid
+
+
+def test_v11_semantic_geometry_repair_fixes_wrong_relation_kinds(monkeypatch):
+    """Regression for session 19344743: schema-valid Plan uses adjacent_to (east)
+    instead of south_of for stools, placing them outside the room. The bounded
+    semantic repair corrects relation kinds without a schema ValidationError."""
+    import json as _json
+
+    correct = _mock_floor_plan_v11()
+
+    # Build a bad Plan that uses adjacent_to with oversized spans — schema valid but
+    # will place stools east of the counter (outside room for a 6m-wide room).
+    bad = _json.loads(_json.dumps(correct))
+    bad["relationships"] = [
+        {
+            "subject_id": "counter_1", "kind": "against_wall", "wall": "north",
+            "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.0},
+        },
+        *[
+            {
+                "subject_id": f"stool_{index}", "kind": "adjacent_to",
+                "target_id": "counter_1", "parameters_m": {
+                    "gap_m": 0.2, "distribution_index": float(index - 1),
+                    "distribution_count": 4.0, "distribution_span_m": 4.2,
+                },
+            }
+            for index in range(1, 5)
+        ],
+        *[
+            {
+                "subject_id": f"light_{index}", "kind": "above",
+                "target_id": "counter_1", "parameters_m": {
+                    "distribution_index": float(index - 1),
+                    "distribution_count": 3.0, "distribution_span_m": 4.2,
+                },
+            }
+            for index in range(1, 4)
+        ],
+    ]
+
+    repair = _json.loads(_json.dumps(correct))
+    repair["relationships"][0] = {
+        "subject_id": "counter_1",
+        "kind": "centered",
+        "parameters_m": {},
+    }
+
+    calls: list[str] = []
+
+    async def fake_generate(system, user, **kwargs):
+        calls.append(user)
+        if len(calls) == 1:
+            return bad  # First call: returns schema-valid but geometrically wrong
+        # Repair fixes stools but wrongly tries to move the wall anchor; deterministic
+        # authorization must preserve the original against_wall north authority.
+        return repair
+
+    monkeypatch.setattr("src.floor_plan.builder.generate_json", fake_generate)
+    concept = SceneConcept(
+        era="1950s", mood="warm", palette="mint and chrome",
+        architecture_notes="diner", key_objects=["counter"],
+        lighting_notes="pendants", image_prompt="A diner interior.",
+    )
+
+    plan, _warnings, report = asyncio.run(build_floor_plan(
+        "A typed semantic layout", concept,
+        placement_policy="explicit-semantic-relations/v1",
+        strict_validation=True,
+    ))
+
+    # Must have called model exactly twice: initial + semantic repair
+    assert len(calls) == 2
+    # The second call must include blocker information and relation semantics
+    assert "blockers" in calls[1]
+    assert "relation_semantics" in calls[1]
+    assert "original_user_description" in calls[1]
+    assert "south_of" in calls[1]
+    # Result must be valid (from the corrected authorized relationships)
+    assert report.valid
+    counter_relation = next(
+        relation for relation in plan.relationships
+        if relation.subject_id == "counter_1"
+    )
+    assert counter_relation.kind == "against_wall"
+    assert counter_relation.wall == "north"
+    # Stools must be south of counter, not east
+    by_id = {item.id: item for item in plan.items}
+    counter = by_id["counter_1"]
+    for i in range(1, 5):
+        assert by_id[f"stool_{i}"].z < counter.z
+
+
+def test_v11_semantic_repair_not_used_when_schema_repair_already_consumed(monkeypatch):
+    """If schema repair was used (ValidationError), no semantic repair is attempted
+    even if the result has blockers — total budget is one repair."""
+    import json as _json
+
+    correct = _mock_floor_plan_v11()
+    # First response: missing required fields → triggers schema repair
+    bad_schema = {"room": {"width": 6, "depth": 4, "height": 2.8}, "items": []}
+    calls: list[str] = []
+
+    async def fake_generate(system, user, **kwargs):
+        calls.append(user)
+        if len(calls) == 1:
+            return bad_schema  # Will fail schema validation
+        # Schema repair returns a valid Plan (even if it has blockers,
+        # no second repair should fire)
+        return correct
+
+    monkeypatch.setattr("src.floor_plan.builder.generate_json", fake_generate)
+    concept = SceneConcept(
+        era="1950s", mood="warm", palette="mint and chrome",
+        architecture_notes="diner", key_objects=["counter"],
+        lighting_notes="pendants", image_prompt="A diner interior.",
+    )
+
+    _plan, _warnings, _report = asyncio.run(build_floor_plan(
+        "A typed semantic layout", concept,
+        placement_policy="explicit-semantic-relations/v1",
+        strict_validation=True,
+    ))
+
+    # Exactly two calls: initial + schema repair. No third semantic repair.
+    assert len(calls) == 2

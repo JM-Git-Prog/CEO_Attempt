@@ -100,6 +100,64 @@ def test_semantic_noop_records_model_prompt_hash_and_non_null_log(builder, monke
     assert instance.session.world_contract is not None
 
 
+def test_schema_invalid_semantic_batch_gets_one_bounded_noop_repair(
+    builder, monkeypatch
+):
+    instance, scene = builder
+    from src import pipeline
+
+    async def fake_scene(*args, **kwargs):
+        return scene
+
+    responses = [
+        {"commands": [{
+            "version": "semantic-command/v1",
+            "command_id": "duplicate-existing-table",
+            "op": "create_instance",
+            "instance": {"id": "table_1", "name": "Duplicate table"},
+        }]},
+        {"commands": []},
+    ]
+    calls: list[str] = []
+
+    async def fake_json(**kwargs):
+        calls.append(kwargs["user"])
+        return responses[len(calls) - 1]
+
+    monkeypatch.setattr(pipeline, "build_scene_graph", fake_scene)
+    monkeypatch.setattr(pipeline, "generate_json", fake_json)
+    monkeypatch.setattr(
+        pipeline,
+        "solve_relationships",
+        lambda contract: SimpleNamespace(
+            contract=contract,
+            report=SimpleNamespace(
+                success=True,
+                model_dump=lambda **kwargs: {
+                    "schema_version": "relationship-solver-report/v1",
+                    "success": True,
+                    "relations": [],
+                    "hard_constraints": [],
+                    "unsatisfied_constraints": [],
+                },
+            ),
+        ),
+    )
+
+    asyncio.run(instance.step_build_scene_graph())
+
+    assert len(calls) == 2
+    assert "BOUNDED SCHEMA REPAIR" in calls[1]
+    assert len(instance.session.semantic_command_records) == 2
+    rejected, accepted = instance.session.semantic_command_records
+    assert rejected["accepted"] is False
+    assert rejected["before_hash"] == rejected["after_hash"]
+    assert {item["code"] for item in rejected["rejections"]} == {"schema_invalid"}
+    assert accepted["accepted"] is True
+    assert accepted["command_log_hash"] == hashlib.sha256(b"[]").hexdigest()
+    assert instance.session.world_contract is not None
+
+
 def test_semantic_rejection_is_atomic_persisted_and_raised(builder, monkeypatch):
     instance, scene = builder
     from src import pipeline
@@ -388,7 +446,8 @@ def test_step_assemble_waits_for_human_qa_instead_of_marking_ready(builder, monk
 def test_v11_canon_profile_has_complete_bounded_alignment_policy():
     from src.workflow_provenance import profile_for
 
-    policy = profile_for(11)["stages"]["canon"]["alignment_policy"]
+    profile = profile_for(11)
+    policy = profile["stages"]["canon"]["alignment_policy"]
     assert policy == {
         "method": "bounded-camera-review-v1",
         "aligned_min_edge_iou": 0.04,
@@ -398,6 +457,7 @@ def test_v11_canon_profile_has_complete_bounded_alignment_policy():
         "max_retries": 2,
         "manual_review_for_inconclusive": True,
     }
+    assert profile["stages"]["plan"]["composition_policy"]["minimum_inset_m"] >= 0.22
 
 
 def test_v11_canon_conditioning_does_not_mutate_persisted_concept(builder, monkeypatch):
@@ -430,6 +490,50 @@ def test_v11_canon_conditioning_does_not_mutate_persisted_concept(builder, monke
     assert instance.session.conditioning_metadata["schema_version"] == "canon-conditioning/v1"
     assert len(instance.session.conditioning_records) == 1
     assert instance.session.conditioning_records[0].value() == instance.session.conditioning_metadata
+
+
+@pytest.mark.parametrize(
+    ("marker", "provider", "expected_status"),
+    [
+        ("1", "Mock fallback", "not_applicable"),
+        (None, "Mock fallback", "misaligned"),
+        ("1", "FLUX.2 Klein · ComfyUI", "misaligned"),
+    ],
+)
+def test_mock_alignment_is_not_applicable_only_for_explicit_mock_qualification(
+    builder, monkeypatch, marker, provider, expected_status
+):
+    instance, _scene = builder
+    from src import pipeline
+
+    blockout = instance.output_dir / "blockout.png"
+    generated = instance.output_dir / "generated.png"
+    Image.new("RGB", (16, 16), "white").save(blockout)
+    Image.new("RGB", (16, 16), "gray").save(generated)
+    instance.session.blockout_path = str(blockout)
+    instance.session.floor_plan_approved = True
+    if marker is None:
+        monkeypatch.delenv("QUALIFICATION_MOCK_E2E", raising=False)
+    else:
+        monkeypatch.setenv("QUALIFICATION_MOCK_E2E", marker)
+
+    async def fake_generate(*args, **kwargs):
+        return SimpleNamespace(
+            image_path=generated,
+            provider=provider,
+            alignment={"status": "misaligned", "passed": False},
+            manifests=(),
+        )
+
+    monkeypatch.setattr(pipeline, "generate_conditioned_canon", fake_generate)
+    asyncio.run(instance.step_generate_image())
+
+    assert instance.session.canon_alignment["status"] == expected_status
+    if expected_status == "not_applicable":
+        assert instance.session.canon_alignment["reason"] == "deterministic_mock_provider"
+        assert instance.session.canon_alignment["screening_status"] == "misaligned"
+    else:
+        assert "reason" not in instance.session.canon_alignment
 
 
 def test_v10_retained_assembly_branch_is_unchanged(tmp_path, monkeypatch, approved_inputs):

@@ -36,6 +36,7 @@ def _iteration(identity: str, passed: bool = True) -> qualification.IterationEvi
         stale=False,
         changed_files=(),
         commands=(_command(passed=passed),),
+        mock_e2e_result=None,
         e2e_result=None,
         regression_delta={},
         passed=passed,
@@ -96,6 +97,28 @@ def test_run_command_is_bounded_and_argv_only():
     assert timed_out.timed_out and not timed_out.passed
 
 
+def test_run_command_applies_allowlisted_child_env_without_leaking_or_mutating_parent(monkeypatch):
+    monkeypatch.delenv("QUALIFICATION_MOCK_E2E", raising=False)
+    evidence = qualification.run_command(
+        "mock-env",
+        [
+            sys.executable, "-c",
+            "import os; assert 'QUALIFICATION_MOCK_E2E' in os.environ",
+        ],
+        timeout=5,
+        env_overrides={"QUALIFICATION_MOCK_E2E": "mock-secret-value"},
+    )
+
+    assert evidence.passed
+    assert "mock-secret-value" not in evidence.model_dump_json()
+    assert "QUALIFICATION_MOCK_E2E" not in qualification.os.environ
+    with pytest.raises(ValueError, match="Unsafe qualification environment override"):
+        qualification.run_command(
+            "unsafe", [sys.executable, "-c", "pass"], 5,
+            env_overrides={"UNSAFE_SECRET": "value"},
+        )
+
+
 def test_changes_during_iteration_mark_evidence_stale(tmp_path, monkeypatch):
     fingerprints = iter(("a" * 64, "b" * 64))
     monkeypatch.setattr(qualification, "source_fingerprint", lambda: next(fingerprints))
@@ -104,7 +127,9 @@ def test_changes_during_iteration_mark_evidence_stale(tmp_path, monkeypatch):
         "command_plan",
         lambda mode, path: [("focused", [sys.executable, "-c", "pass"])],
     )
-    monkeypatch.setattr(qualification, "run_command", lambda *args: _command("focused"))
+    monkeypatch.setattr(
+        qualification, "run_command", lambda *args, **kwargs: _command("focused")
+    )
 
     result = qualification.run_iteration(
         qualification.EvidenceStore(tmp_path), "tests-only", 5, ("src/a.py",)
@@ -131,10 +156,17 @@ def test_modes_and_fresh_adapter_never_accept_a_reused_session(tmp_path):
     tests_only = qualification.command_plan("tests-only", e2e)
     e2e_only = qualification.command_plan("e2e-only", e2e)
 
+    mock = next(argv for name, argv in full if name == "mock-v11-e2e")
     fresh = next(argv for name, argv in full if name == "fresh-v11-e2e")
+    assert "tools/v11_e2e_adapter.py" in mock
     assert "tools/v11_e2e_adapter.py" in fresh
-    assert "--session-id" not in fresh
-    assert all(name != "fresh-v11-e2e" for name, _ in tests_only)
+    assert "--session-id" not in mock and "--session-id" not in fresh
+    assert mock[-1] != fresh[-1]
+    assert [name for name, _ in tests_only] == [
+        "compileall", "node-check", "full-tests",
+    ]
+    assert all(name != "focused-tests" for name, _ in full)
+    assert all(name not in {"mock-v11-e2e", "fresh-v11-e2e"} for name, _ in tests_only)
     assert [name for name, _ in e2e_only] == ["fresh-v11-e2e"]
 
 

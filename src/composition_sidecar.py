@@ -216,7 +216,7 @@ def qualify_v11_composition(
     required_ids = tuple(value[0] for value in required)
     summaries: list[CandidateSummary] = []
     detailed: list[CandidateEvidence] = []
-    minimum_inset = float(settings.get("minimum_inset_m", 0.05))
+    minimum_inset = float(settings.get("minimum_inset_m", 0.22))
     maximum_inset = min(plan.room.width, plan.room.depth) / 2.0 - 0.05
 
     for index, values in enumerate(itertools.product(inset_offsets, x_offsets, y_offsets, z_offsets)):

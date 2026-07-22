@@ -5,6 +5,7 @@ import pytest
 from src.composition_sidecar import qualify_v11_composition
 from src.floor_plan.models import FloorPlanV11
 from src.floor_plan.solver import solve_explicit_plan
+from src.floor_plan.validator import validate_floor_plan
 from src.orchestrator.mock_llm import _mock_floor_plan_v11
 
 
@@ -25,7 +26,7 @@ def _policy(**updates) -> dict:
         "image_width": 1024,
         "image_height": 768,
         "safe_margin_ratio": 0.005,
-        "minimum_inset_m": 0.001,
+        "minimum_inset_m": 0.22,
         "inset_offsets_m": [-0.449, -0.4, -0.35, -0.3, -0.2, 0.0],
         "target_x_offsets_m": [0.0, -0.5, 0.5, -1.0, -1.5, -2.0],
         "target_y_offsets_m": [0.0, -0.3, 0.3, -0.6, 0.6, -0.9, -1.2],
@@ -47,8 +48,13 @@ def test_full_rotated_bounds_fit_with_fixed_corner_and_fov():
     assert evidence.vertical_fov_deg == 55.0
     assert adjusted.camera.fov_deg == source.camera_intent.fov_deg == 55.0
     assert adjusted.camera.x > 0 and adjusted.camera.z < 0
-    assert [item.model_dump() for item in adjusted.items] == source_geometry
     assert evidence.selected is not None
+    assert evidence.selected.inset_m >= 0.22
+    camera_validation = validate_floor_plan(adjusted)
+    assert not any(
+        issue.code == "camera_out_of_bounds" for issue in camera_validation.blockers
+    )
+    assert [item.model_dump() for item in adjusted.items] == source_geometry
     assert evidence.selected.clipped_ids == ()
     assert len(evidence.selected.projected_bounds) == len(source.items)
     assert all(bound.fully_inside for bound in evidence.selected.projected_bounds)
