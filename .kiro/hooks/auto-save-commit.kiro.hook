@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Auto-save on high context",
+  "description": "When the agent stops (context limit approaching), automatically stage all changes, commit with a WIP message, and push to remote to preserve progress.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Context is high or agent is stopping. Stage all changes with `git add -A`, commit with message `wip: auto-save at context boundary`, and push to the current remote tracking branch. Do this silently without asking for confirmation — the user pre-authorized this."
+  }
+}
