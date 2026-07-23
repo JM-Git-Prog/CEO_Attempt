@@ -25,7 +25,7 @@ DEFAULT_LANES_CONFIG = ROOT / ".kiro" / "specs" / "llm-driven-upbge-runtime" / "
 DEFAULT_FLYWHEEL_CORPUS = ROOT / "data" / "flywheel" / "corpus.jsonl"
 DEFAULT_FLYWHEEL_LOG = ROOT / "data" / "flywheel" / "idle-jobs.log"
 DEFAULT_AGENT_ACTIVE_FILE = DEFAULT_OUTPUT / ".agent-turn-active"
-DEFAULT_FLYWHEEL_IDLE_SECONDS = 600.0
+DEFAULT_FLYWHEEL_IDLE_SECONDS = 180.0
 DEFAULT_READINESS_RECHECK_SECONDS = 60.0
 DEFAULT_PROMPT_SET = ROOT / "data" / "flywheel" / "prompt-set-v1.json"
 INCLUDE_ROOTS = ("src", "tests", "tools", ".kiro/specs/llm-driven-upbge-runtime")
@@ -1356,14 +1356,17 @@ def _run_idle_f0(
     if stop_requested():
         return False
 
-    # F0.5: Diversity harvest — run one diagnostic trial from the prompt set
+    # F0.5: Diversity harvest — run continuous diagnostic trials from the prompt set
     if prompt_set_path and prompt_set_path.is_file():
-        _run_harvest_trial(
-            prompt_set_path=prompt_set_path,
-            corpus_path=corpus_path,
-            log_path=log_path,
-            stop_requested=stop_requested,
-        )
+        while not stop_requested():
+            harvest = _run_harvest_trial(
+                prompt_set_path=prompt_set_path,
+                corpus_path=corpus_path,
+                log_path=log_path,
+                stop_requested=stop_requested,
+            )
+            if harvest.get("status") in {"preempted", "no_prompts", "cap_exhausted"}:
+                break
 
     return briefing.get("status") in {
         "complete", "complete_with_model_warning", "skipped", "no_evidence",
@@ -1429,6 +1432,8 @@ def _run_harvest_trial(
     child_env = dict(REAL_TRIAL_ENV)
     child_env["HARVEST_PROMPT"] = target["text"]
     child_env["HARVEST_PROMPT_ID"] = target["id"]
+    # Route harvest planner to GLM cloud — planning overlaps local image generation
+    child_env["LLM_MODEL"] = "glm-5.2:cloud"
 
     print(
         f"[qualification] HARVEST prompt_id={target['id']} "
@@ -1466,14 +1471,27 @@ def _run_harvest_trial(
             stop_requested=stop_requested,
         )
 
+    # Detect Ollama Pro cap exhaustion (pause rather than burn retries)
+    cap_exhausted = False
+    stages = trial_result.get("stages") or {}
+    for stage_data in stages.values():
+        response = stage_data.get("response") or {}
+        error_text = str(response.get("error", ""))
+        if any(cap_word in error_text.lower() for cap_word in (
+            "rate limit", "quota", "cap exhausted", "too many requests",
+        )):
+            cap_exhausted = True
+            break
+
     harvest_result = {
         "job": "harvest",
-        "status": "complete",
+        "status": "cap_exhausted" if cap_exhausted else "complete",
         "prompt_id": target["id"],
         "passed": trial_result.get("passed", False),
         "failure_signature": trial_result.get("failure_signature"),
         "duration_seconds": command.duration_seconds,
         "evidence_path": str(result_path),
+        "lane": "glm-5.2:cloud",
     }
     _log_idle(log_path, harvest_result)
     print(

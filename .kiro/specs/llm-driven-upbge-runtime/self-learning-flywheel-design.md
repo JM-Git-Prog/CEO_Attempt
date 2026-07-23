@@ -3,8 +3,7 @@
 ## Overview
 
 **North star (John, 2026-07-22):** the engine continuously learns from itself until a local
-SLM/LLM is near-perfect at ONE task — converting a user's scene description into a walkable,
-playable 3D world.
+SLM/LLM is near-perfect at ONE task — converting a user's scene description into a walkable, playable 3D game world - physics, doors, interactions included.
 
 **Why this is credible, not hype:** this pipeline already contains the two hard parts of
 self-training — a *generator* (the qualification loop mass-produces attempts) and a *free,
@@ -29,15 +28,24 @@ Only Phase F0 runs before `QUALIFIED.md` exists. Idle resources only — the loo
   exists, the warehouse is nearly empty. Volume arrives as the loop runs at scale.
 
 ### F0.5 · Diversity harvest (idle-GPU, pre-QUALIFIED permitted)
-- After F0 extraction and briefing complete, the watch's idle callback runs one diagnostic
-  trial from `data/flywheel/prompt-set-v1.json`, cycling least-sampled-first.
+- After F0 extraction and briefing complete, the watch's idle callback runs **continuous**
+  diagnostic trials from `data/flywheel/prompt-set-v1.json`, cycling least-sampled-first,
+  back-to-back until preempted by a qualification round, source change, or agent activity.
+- Idle threshold lowered to **3 minutes** (harvest only — qualification config unchanged).
 - Every gate verdict is banked to the corpus via the normal extractor.
 - Harvest sessions are marked `qualification_mode: "harvest"` — they are NEVER
   qualification evidence and NEVER release evidence.
+- **Planner lane:** `glm-5.2:cloud` (Ollama Pro, pause-on-cap-exhaustion) so planning
+  overlaps local ComfyUI image generation. The local GPU handles only FLUX renders and
+  qwen2.5vl:7b vision QA during harvest.
 - Qualification rounds always preempt harvest immediately via the same `stop_requested`
   callback (source change, agent activity, or active qualification lock).
 - This phase requires ComfyUI + Ollama availability (same as Tier 2 trials) but uses
   the existing single watch process and lock — no second loop or lock contention.
+- **VRAM headroom (measured 2026-07-23):** RTX 4090 24 GB total. Harvest peak is
+  ComfyUI FLUX (~10 GB) + qwen2.5vl (~7 GB) = ~17 GB, leaving ~7 GB margin. K=2
+  workers is safe; K=3 is borderline (OOM risk if vision QA and render fully overlap).
+  Recommend K=2 until explicit under-load measurement confirms K=3 headroom.
 - Purpose: build corpus volume across diverse prompts while awaiting a model-quality
   improvement that unblocks the canonical prompt's 0% pass rate.
 

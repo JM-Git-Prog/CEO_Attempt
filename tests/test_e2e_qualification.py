@@ -807,7 +807,7 @@ def test_cli_defaults_to_bounded_once_mode():
     assert args.trial_workers == 2
     assert args.trials_per_lane == 5
     assert args.budget_hours == 8.0
-    assert args.flywheel_idle_seconds == 600.0
+    assert args.flywheel_idle_seconds == 180.0
     assert args.flywheel_corpus == qualification.DEFAULT_FLYWHEEL_CORPUS
     assert args.lanes_config == qualification.DEFAULT_LANES_CONFIG
     assert args.enable_lane == []
