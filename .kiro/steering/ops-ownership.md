@@ -36,7 +36,7 @@ is layered ownership. Every session must respect it:
 - Driver-lane policy: cheap session models (Qwen3 Coder Next 0.05x) for stewardship
   and bounded mechanical work only; escalate to a strong model for cross-layer
   debugging. Record lane verdicts in the ratchet design doc's wake log.
-- A failed test session is diagnostic evidence, never release evidence. No commits
-  without John's explicit request (tasks.md 13.6).
+- A failed test session is diagnostic evidence, never release evidence.
+- **Commit policy (John's ruling 2026-07-23):** WIP commits and pushes on the feature branch are welcome at any green moment (tests passing). The auto-save hook's behavior is correct. The ONLY commit that requires John's explicit request is the final 13.6 release record after a clean qualification pass.
 
 - Harvest trials (F0.5) run inside the single managed watch's idle callback and their evidence is DIAGNOSTIC only — never qualification evidence, never release evidence.
