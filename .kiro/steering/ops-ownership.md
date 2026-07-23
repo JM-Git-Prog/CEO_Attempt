@@ -38,3 +38,5 @@ is layered ownership. Every session must respect it:
   debugging. Record lane verdicts in the ratchet design doc's wake log.
 - A failed test session is diagnostic evidence, never release evidence. No commits
   without John's explicit request (tasks.md 13.6).
+
+- Harvest trials (F0.5) run inside the single managed watch's idle callback and their evidence is DIAGNOSTIC only — never qualification evidence, never release evidence.

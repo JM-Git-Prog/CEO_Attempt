@@ -28,6 +28,10 @@ EXPECTED_STAGES = (
     "parity", "runtime", "qa", "downloads",
 )
 MOCK_QUALIFICATION = os.getenv("QUALIFICATION_MOCK_E2E") == "1"
+HARVEST_PROMPT = os.getenv("HARVEST_PROMPT")
+HARVEST_PROMPT_ID = os.getenv("HARVEST_PROMPT_ID")
+ACTIVE_PROMPT = HARVEST_PROMPT or CANONICAL_PROMPT
+QUALIFICATION_MODE = "harvest" if HARVEST_PROMPT else ("mock" if MOCK_QUALIFICATION else "real")
 
 
 def _sha256(data: bytes) -> str:
@@ -257,9 +261,10 @@ def run_once(result_path: Path) -> dict:
     result: dict[str, Any] = {
         "schema_version": "v11-e2e-result/v1",
         "started_at_epoch": started,
-        "canonical_prompt": CANONICAL_PROMPT,
-        "canonical_prompt_sha256": _sha256(CANONICAL_PROMPT.encode()),
-        "qualification_mode": "mock" if MOCK_QUALIFICATION else "real",
+        "canonical_prompt": ACTIVE_PROMPT,
+        "canonical_prompt_sha256": _sha256(ACTIVE_PROMPT.encode()),
+        "qualification_mode": QUALIFICATION_MODE,
+        "prompt_id": HARVEST_PROMPT_ID,
         "session_id": None,
         "stages": {},
         "failure_signature": None,
@@ -307,7 +312,7 @@ def run_once(result_path: Path) -> dict:
 
             described = client.post(
                 f"/api/session/{session_id}/describe",
-                json={"description": CANONICAL_PROMPT},
+                json={"description": ACTIVE_PROMPT},
                 headers=HEADERS,
             )
             description_payload = described.json()

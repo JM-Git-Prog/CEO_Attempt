@@ -28,6 +28,19 @@ Only Phase F0 runs before `QUALIFIED.md` exists. Idle resources only — the loo
 - Honest inventory at design time: ~35 iterations, only ~2 accepted plans — the factory
   exists, the warehouse is nearly empty. Volume arrives as the loop runs at scale.
 
+### F0.5 · Diversity harvest (idle-GPU, pre-QUALIFIED permitted)
+- After F0 extraction and briefing complete, the watch's idle callback runs one diagnostic
+  trial from `data/flywheel/prompt-set-v1.json`, cycling least-sampled-first.
+- Every gate verdict is banked to the corpus via the normal extractor.
+- Harvest sessions are marked `qualification_mode: "harvest"` — they are NEVER
+  qualification evidence and NEVER release evidence.
+- Qualification rounds always preempt harvest immediately via the same `stop_requested`
+  callback (source change, agent activity, or active qualification lock).
+- This phase requires ComfyUI + Ollama availability (same as Tier 2 trials) but uses
+  the existing single watch process and lock — no second loop or lock contention.
+- Purpose: build corpus volume across diverse prompts while awaiting a model-quality
+  improvement that unblocks the canonical prompt's 0% pass rate.
+
 ### F1 · Exemplar mining (after QUALIFIED.md; zero training)
 - Mine the best gate-passing plans into few-shot exemplars for the V11 prompts.
 - A/B through the existing lane ladder; keep only if measured pass-rate rises.

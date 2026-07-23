@@ -126,6 +126,8 @@ def build_record(path: Path, root: Path = ROOT) -> dict:
         "source_evidence_path": evidence_path,
         "source_evidence_sha256": hashlib.sha256(evidence_bytes).hexdigest(),
         "session_id": session_id,
+        "prompt_id": raw.get("prompt_id"),
+        "qualification_mode": raw.get("qualification_mode", "real"),
         "description": raw.get("canonical_prompt"),
         "plan": plan,
         "world_contract": session.get("world_contract"),

@@ -27,6 +27,7 @@ DEFAULT_FLYWHEEL_LOG = ROOT / "data" / "flywheel" / "idle-jobs.log"
 DEFAULT_AGENT_ACTIVE_FILE = DEFAULT_OUTPUT / ".agent-turn-active"
 DEFAULT_FLYWHEEL_IDLE_SECONDS = 600.0
 DEFAULT_READINESS_RECHECK_SECONDS = 60.0
+DEFAULT_PROMPT_SET = ROOT / "data" / "flywheel" / "prompt-set-v1.json"
 INCLUDE_ROOTS = ("src", "tests", "tools", ".kiro/specs/llm-driven-upbge-runtime")
 INCLUDE_SUFFIXES = {".py", ".js", ".css", ".html", ".json", ".md", ".toml"}
 EXCLUDED_PARTS = {".git", ".kirograph", "output", "__pycache__", ".pytest_cache", ".hypothesis"}
@@ -1323,6 +1324,7 @@ def _run_idle_f0(
     corpus_path: Path,
     log_path: Path,
     agent_active_file: Path,
+    prompt_set_path: Path | None = None,
 ) -> bool:
     if _agent_turn_active(agent_active_file):
         return False
@@ -1351,9 +1353,144 @@ def _run_idle_f0(
         log_path=log_path,
         stop_requested=stop_requested,
     )
+    if stop_requested():
+        return False
+
+    # F0.5: Diversity harvest — run one diagnostic trial from the prompt set
+    if prompt_set_path and prompt_set_path.is_file():
+        _run_harvest_trial(
+            prompt_set_path=prompt_set_path,
+            corpus_path=corpus_path,
+            log_path=log_path,
+            stop_requested=stop_requested,
+        )
+
     return briefing.get("status") in {
         "complete", "complete_with_model_warning", "skipped", "no_evidence",
     }
+
+
+def _load_prompt_set(path: Path) -> list[dict]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload.get("prompts", [])
+    except (OSError, json.JSONDecodeError, ValueError):
+        return []
+
+
+def _harvest_sample_counts(corpus_path: Path, prompts: list[dict]) -> dict[str, int]:
+    """Count how many corpus records exist per prompt_id."""
+    counts: dict[str, int] = {prompt["id"]: 0 for prompt in prompts}
+    if not corpus_path.is_file():
+        return counts
+    try:
+        with corpus_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                    pid = record.get("prompt_id")
+                    if pid in counts:
+                        counts[pid] += 1
+                except (json.JSONDecodeError, ValueError):
+                    continue
+    except OSError:
+        pass
+    return counts
+
+
+def _run_harvest_trial(
+    *,
+    prompt_set_path: Path,
+    corpus_path: Path,
+    log_path: Path,
+    stop_requested: Callable[[], bool],
+) -> dict:
+    """Run one diagnostic trial from the least-sampled prompt. Never qualification evidence."""
+    prompts = _load_prompt_set(prompt_set_path)
+    if not prompts:
+        return {"job": "harvest", "status": "no_prompts"}
+    if stop_requested():
+        return {"job": "harvest", "status": "preempted"}
+
+    counts = _harvest_sample_counts(corpus_path, prompts)
+    # Pick least-sampled prompt
+    target = min(prompts, key=lambda p: counts.get(p["id"], 0))
+
+    if stop_requested():
+        return {"job": "harvest", "status": "preempted"}
+
+    harvest_dir = ROOT / "output" / "qualification" / "harvest"
+    harvest_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
+    result_path = harvest_dir / f"{target['id']}-{timestamp}.json"
+
+    child_env = dict(REAL_TRIAL_ENV)
+    child_env["HARVEST_PROMPT"] = target["text"]
+    child_env["HARVEST_PROMPT_ID"] = target["id"]
+
+    print(
+        f"[qualification] HARVEST prompt_id={target['id']} "
+        f"samples={counts.get(target['id'], 0)} total_prompts={len(prompts)}",
+        flush=True,
+    )
+
+    command = run_command(
+        f"harvest:{target['id']}",
+        [sys.executable, "tools/v11_e2e_adapter.py", "--result", str(result_path)],
+        timeout=600.0,
+        env_overrides=child_env,
+    )
+
+    if stop_requested():
+        result = {"job": "harvest", "status": "preempted", "prompt_id": target["id"]}
+        _log_idle(log_path, result)
+        return result
+
+    # Append to corpus
+    trial_result = {}
+    if result_path.is_file():
+        try:
+            trial_result = json.loads(result_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            pass
+
+    if trial_result.get("schema_version") == "v11-e2e-result/v1":
+        from tools.flywheel_corpus import extract_corpus
+        extract_corpus(
+            root=ROOT,
+            corpus_path=corpus_path,
+            log_path=log_path,
+            max_records=1,
+            stop_requested=stop_requested,
+        )
+
+    harvest_result = {
+        "job": "harvest",
+        "status": "complete",
+        "prompt_id": target["id"],
+        "passed": trial_result.get("passed", False),
+        "failure_signature": trial_result.get("failure_signature"),
+        "duration_seconds": command.duration_seconds,
+        "evidence_path": str(result_path),
+    }
+    _log_idle(log_path, harvest_result)
+    print(
+        f"[qualification] HARVEST complete prompt_id={target['id']} "
+        f"passed={trial_result.get('passed')} sig={trial_result.get('failure_signature')}",
+        flush=True,
+    )
+    return harvest_result
+
+
+def _log_idle(log_path: Path, payload: dict) -> None:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    line = json.dumps({**payload, "at_epoch": time.time()}, sort_keys=True, default=str)
+    with log_path.open("a", encoding="utf-8", newline="\n") as handle:
+        handle.write(line + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
 
 
 def _scheduler_waits_for_comfyui(evidence: IterationEvidence) -> bool:
@@ -1494,6 +1631,7 @@ def run_loop(args: argparse.Namespace) -> int:
                 corpus_path=args.flywheel_corpus.resolve(),
                 log_path=args.flywheel_log.resolve(),
                 agent_active_file=args.agent_active_file.resolve(),
+                prompt_set_path=args.prompt_set.resolve() if args.prompt_set else None,
             ),
         )
         pending = new_fingerprint != baseline
@@ -1520,6 +1658,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--flywheel-corpus", type=Path, default=DEFAULT_FLYWHEEL_CORPUS)
     parser.add_argument("--flywheel-log", type=Path, default=DEFAULT_FLYWHEEL_LOG)
     parser.add_argument("--agent-active-file", type=Path, default=DEFAULT_AGENT_ACTIVE_FILE)
+    parser.add_argument("--prompt-set", type=Path, default=DEFAULT_PROMPT_SET)
     parser.add_argument(
         "--flywheel-idle-seconds", type=float, default=DEFAULT_FLYWHEEL_IDLE_SECONDS,
     )
