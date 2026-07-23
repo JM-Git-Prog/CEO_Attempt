@@ -7,9 +7,9 @@ Implement the engine-neutral contract and safety boundary first, then add UPBGE 
 ## Current Execution
 
 - **Overall task:** `13. Complete release qualification` — **IN PROGRESS**
-- **Current subtask:** `13.5.2.4` — add atomic `scoreboard.json` and `NEXT.md` keyed by fingerprint × lane with KEEP/REVERT/INDETERMINATE; the watch is stopped before qualification-source edits and will be restarted after the step is green.
+- **Current subtask:** `13.5.3` — fix the fresh QA response-shape defect without weakening the seven-category gate, validate the new source fingerprint, and let the Windows-owned Ratchet keepalive restart fresh-session sampling before restarting `13.3`.
 - **MVP guardrail:** Deliver a usable end-to-end MVP within 6–8 active coding hours; timebox deep work and defer anything not blocking the clean V11 pass.
-- **Latest validated checkpoint:** Ratchet Step 3 is green. Fresh deterministic mock session `ce6d188f` passed with no failure signatures; adapter failures now emit stable `stage/rule/detail` records and exceptions/incomplete stage sets fail closed. Focused tests pass 28/28; compileall passes. Step-2 full suite remains 205/205. Failed sessions remain diagnostic only; no watch process is currently running while Step 4 edits begin.
+- **Latest validated checkpoint:** Ratchet Steps 1–7 and flywheel F0 are implemented. Focused QA/pipeline validation passed 26/26, the full suite passed 228/228, compileall and static JavaScript checks passed. Source-stable K=2/N=5 round `20260723T013634_548205Z-91b39e3d5b` persisted five fresh diagnostic sessions: one reached World/compiler/parity/runtime/downloads and failed only because qwen emitted the seven QA categories as a keyed object instead of the required array; another confirmed the bounded semantic repair runs and fails closed on a second invalid model response. The QA boundary now normalizes only that representation before applying the unchanged strict seven-category validator. Windows Scheduled Task + `WATCH-KEEPALIVE.bat` own the watch process; agents own code/judgment and must verify lock plus fresh-iteration revival after surgery. No diagnostic session is release evidence.
 
 ## Tasks
 
@@ -121,10 +121,11 @@ Implement the engine-neutral contract and safety boundary first, then add UPBGE 
       - [x] 13.5.2.1 Remove the phantom focused-test pass; Tier 0 runs compileall, Node syntax, and the full suite once.
       - [x] 13.5.2.2 Add deterministic environment-forced mock E2E with mock-only alignment `not_applicable` when required.
       - [x] 13.5.2.3 Normalize adapter failures to stable `stage/rule/detail` signatures.
-      - [ ] 13.5.2.4 Write atomic `scoreboard.json` and `NEXT.md` keyed by fingerprint × lane with KEEP/REVERT/INDETERMINATE.
-      - [ ] 13.5.2.5 Add K=2 parallel fresh-session sampling, N=5 early stop, and GPU-busy guard.
-      - [ ] 13.5.2.6 Add `lanes.json` with all remote/spend lanes disabled by default and capped.
-      - [ ] 13.5.2.7 Add the 0.8 rolling formal trigger, serialized Tier 3, QUALIFIED, STUCK, and BUDGET stops.
+      - [x] 13.5.2.4 Write atomic `scoreboard.json` and `NEXT.md` keyed by fingerprint × lane with KEEP/REVERT/INDETERMINATE.
+      - [x] 13.5.2.5 Add K=2 parallel fresh-session sampling, N=5 early stop, and GPU-busy guard.
+      - [x] 13.5.2.6 Add `lanes.json` with all remote/spend lanes disabled by default and capped.
+      - [x] 13.5.2.7 Add the 0.8 rolling formal trigger, serialized Tier 3, QUALIFIED, STUCK, and BUDGET stops.
+      - [x] 13.5.2.8 Add passive flywheel F0 corpus backfill and idle/preemptible extraction; keep F1+ blocked on `QUALIFIED.md`.
     - [ ] 13.5.3 Validate the loop, rerun full/static checks, and restart `13.3` with another brand-new empty session.
   - [ ] 13.6 Only after one clean pass, stage relevant files and prepare the required release record; do not commit unless explicitly requested.
   - _Requirements: 10, 11, 12_

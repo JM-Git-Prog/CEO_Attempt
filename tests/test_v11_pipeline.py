@@ -147,7 +147,7 @@ def test_schema_invalid_semantic_batch_gets_one_bounded_noop_repair(
     asyncio.run(instance.step_build_scene_graph())
 
     assert len(calls) == 2
-    assert "BOUNDED SCHEMA REPAIR" in calls[1]
+    assert "BOUNDED REPAIR" in calls[1]
     assert len(instance.session.semantic_command_records) == 2
     rejected, accepted = instance.session.semantic_command_records
     assert rejected["accepted"] is False
@@ -158,9 +158,74 @@ def test_schema_invalid_semantic_batch_gets_one_bounded_noop_repair(
     assert instance.session.world_contract is not None
 
 
+def test_semantic_authority_rejection_gets_one_bounded_noop_repair(
+    builder, monkeypatch
+):
+    instance, scene = builder
+    from src import pipeline
+
+    async def fake_scene(*args, **kwargs):
+        return scene
+
+    responses = [
+        {"commands": [
+            {
+                "version": "semantic-command/v1", "command_id": "set_style",
+                "op": "set_style", "material_id": "material:instance:opening_1",
+                "style": {"roughness": 0.2},
+            },
+            {
+                "version": "semantic-command/v1", "command_id": "set_style",
+                "op": "set_style", "material_id": "material:instance:opening_2",
+                "style": {"roughness": 0.3},
+            },
+        ]},
+        {"commands": []},
+    ]
+    calls = []
+
+    async def fake_json(**kwargs):
+        calls.append(kwargs["user"])
+        return responses[len(calls) - 1]
+
+    monkeypatch.setattr(pipeline, "build_scene_graph", fake_scene)
+    monkeypatch.setattr(pipeline, "generate_json", fake_json)
+    monkeypatch.setattr(
+        pipeline,
+        "solve_relationships",
+        lambda contract: SimpleNamespace(
+            contract=contract,
+            report=SimpleNamespace(
+                success=True,
+                model_dump=lambda **kwargs: {
+                    "schema_version": "relationship-solver-report/v1",
+                    "success": True,
+                    "relations": [],
+                    "hard_constraints": [],
+                    "unsatisfied_constraints": [],
+                },
+            ),
+        ),
+    )
+
+    asyncio.run(instance.step_build_scene_graph())
+
+    assert len(calls) == 2
+    assert "BOUNDED REPAIR" in calls[1]
+    rejected, accepted = instance.session.semantic_command_records[-2:]
+    assert rejected["accepted"] is False
+    assert {item["code"] for item in rejected["rejections"]} == {
+        "immutable_authority", "duplicate_identity", "dangling_reference",
+    }
+    assert accepted["accepted"] is True
+    assert accepted["command_log_hash"] == hashlib.sha256(b"[]").hexdigest()
+    assert instance.session.world_contract is not None
+
+
 def test_semantic_rejection_is_atomic_persisted_and_raised(builder, monkeypatch):
     instance, scene = builder
     from src import pipeline
+    from src.pipeline import SemanticBatchRejectedError
 
     async def fake_scene(*args, **kwargs):
         return scene
@@ -174,7 +239,7 @@ def test_semantic_rejection_is_atomic_persisted_and_raised(builder, monkeypatch)
 
     monkeypatch.setattr(pipeline, "build_scene_graph", fake_scene)
     monkeypatch.setattr(pipeline, "generate_json", fake_json)
-    with pytest.raises(RuntimeError, match="Semantic command batch rejected"):
+    with pytest.raises(SemanticBatchRejectedError, match="Semantic command batch rejected"):
         asyncio.run(instance.step_build_scene_graph())
 
     record = instance.session.semantic_command_records[-1]
@@ -473,8 +538,34 @@ def test_failing_camera_pose_repro_prioritizes_real_provider_failure(tmp_path):
     contract = camera_contract_for_plan(plan)
     assert contract.contract_id == "camera-40c7674e75755279"
 
+    concept = SceneConcept(
+        era="1950s",
+        mood="warm and nostalgic, rainy evening atmosphere",
+        palette="chrome silver, red vinyl, cream tile, warm amber light, cool blue-gray from outside",
+        architecture_notes=(
+            "Cream ceramic tile wainscoting on lower walls, painted plaster upper walls in soft cream. "
+            "Black and white checkered linoleum floor. Pressed tin ceiling tiles painted cream. "
+            "Chrome trim throughout."
+        ),
+        key_objects=[
+            "formica counter with chrome edge trim",
+            "chrome diner stool with red vinyl seat",
+            "chrome diner stool with red vinyl seat",
+            "chrome diner stool with red vinyl seat",
+            "chrome diner stool with red vinyl seat",
+            "industrial pendant lamp",
+            "pie display case with glass doors",
+            "chrome napkin dispenser on counter",
+            "coffee mug",
+        ],
+        lighting_notes=(
+            "Primary: warm industrial pendant lamp over counter (~3000K). Secondary: cool blue-gray "
+            "ambient light from rain-streaked storefront window. Strong warm/cool contrast. Deep shadows in corners."
+        ),
+        image_prompt="Interior photograph of a 1950s American diner counter at evening.",
+    )
     blockout = render_blockout(
-        plan, tmp_path / "blockout.png", camera_contract=contract,
+        plan, tmp_path / "blockout.png", concept=concept, camera_contract=contract,
         blockout_detail="articulated",
     )
     canon = _generate_mock(
@@ -487,8 +578,8 @@ def test_failing_camera_pose_repro_prioritizes_real_provider_failure(tmp_path):
         {"workflow_profile": profile_for(11), "plan_revision": 1},
     )
 
-    assert report["best_translation_px"] == {"x": 20, "y": -20}
-    assert report["drift_px"] == pytest.approx(28.28)
+    assert report["best_translation_px"] == {"x": 16, "y": -20}
+    assert report["drift_px"] == pytest.approx(25.61)
     assert report["reasons"] == ["translation_exceeds_aligned_limit"]
     stage = {
         "status": "failed", "provider": "Mock fallback",

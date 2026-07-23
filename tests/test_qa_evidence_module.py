@@ -57,9 +57,30 @@ def test_qwen_strict_seven_category_result_auto_passes_only_at_threshold(tmp_pat
     assert screening.automatic_pass is True
     assert "1) Floor Plan, 2) Blockout, 3) Canon" in prompts[0]
     assert "A warm 1950s diner" in prompts[0]
+    assert "Categories must be a JSON array" in prompts[0]
     assert all(category.value in prompts[0] for category in ALL_QA_CATEGORIES)
     assert create_vision_evidence(_binding(), screening).decision == QADecision.AUTO_ACCEPTED
     assert create_vision_evidence(_binding(), below).decision == QADecision.HUMAN_REQUIRED
+
+
+def test_keyed_category_mapping_is_normalized_then_strictly_validated(tmp_path):
+    image = tmp_path / "canon.png"
+    image.write_bytes(b"image")
+    keyed = _payload()
+    keyed["categories"] = {
+        item["category"]: {
+            key: value for key, value in item.items() if key != "category"
+        }
+        for item in keyed["categories"]
+    }
+
+    screening = run_qwen_screening(
+        (image,), invoker=lambda prompt, paths: keyed,
+    )
+
+    assert screening.status == "completed"
+    assert screening.automatic_pass is True
+    assert tuple(item.category for item in screening.categories) == ALL_QA_CATEGORIES
 
 
 def test_malformed_or_inconsistent_vision_output_fails_closed_to_human_review(tmp_path):

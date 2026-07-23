@@ -36,6 +36,9 @@ _UNSAFE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
 )
 
 
+_PROSE_ONLY_FIELDS = frozenset({"rationale"})
+
+
 def _validate_safe_value(value: Any, field: str = "command") -> None:
     if isinstance(value, BaseModel):
         value = value.model_dump(mode="json")
@@ -52,6 +55,10 @@ def _validate_safe_value(value: Any, field: str = "command") -> None:
         return
     if any(ord(character) < 32 and character not in "\t\n\r" for character in value):
         raise ValueError(f"unsafe content in {field}: control character")
+    # Prose-only fields (rationale) are never executed — check length/control only.
+    field_leaf = field.rsplit(".", 1)[-1] if "." in field else field
+    if field_leaf in _PROSE_ONLY_FIELDS:
+        return
     for label, pattern in _UNSAFE_PATTERNS:
         if pattern.search(value):
             raise ValueError(f"unsafe content in {field}: {label} is prohibited")

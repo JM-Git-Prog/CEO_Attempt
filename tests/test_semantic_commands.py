@@ -218,6 +218,22 @@ def test_camera_changes_remain_requests_and_do_not_mutate_camera_authority():
     assert result.camera_requests == (CameraRequestCommand.model_validate(command),)
 
 
+def test_trial_05_camera_rationale_is_safe_display_prose():
+    command = {
+        "command_id": "camera-01e370c1ad51af1d",
+        "op": "camera_request",
+        "rationale": "Capture the counter and stools from a cinematic angle.",
+        "target_m": {"x": 0.0, "y": -2.8, "z": 3.5},
+        "up": {"x": 0.0, "y": 1.0, "z": 0.0},
+        "vertical_fov_deg": 55,
+    }
+
+    parsed = parse_semantic_command(command)
+
+    assert isinstance(parsed, CameraRequestCommand)
+    assert parsed.rationale == command["rationale"]
+
+
 @pytest.mark.parametrize("unsafe", [
     "import os; os.system('whoami')",
     "powershell -Command Get-ChildItem",
@@ -232,8 +248,33 @@ def test_every_free_text_field_rejects_code_paths_engine_operators_and_frame_con
         "version": "semantic-command/v1", "op": "camera_request", "command_id": "unsafe-request",
         "vertical_fov_deg": 60.0, "rationale": unsafe,
     }
+    # Rationale is prose-only — these MUST still be rejected in non-prose fields.
+    # Test using a non-prose field (light name) to prove strict screening continues.
+    light_payload = {
+        "version": "semantic-command/v1", "op": "set_light_intent", "command_id": "unsafe-light",
+        "light": {"id": "pendant_1", "name": unsafe, "light_type": "point",
+                  "color": "#FFFFFF", "position_m": {"x": 0.0, "y": 2.8, "z": 0.0}},
+    }
     with pytest.raises(ValidationError, match="unsafe content"):
-        parse_semantic_command(payload)
+        parse_semantic_command(light_payload)
+
+
+def test_rationale_rejects_control_characters_but_allows_ordinary_prose():
+    good = {
+        "version": "semantic-command/v1", "op": "camera_request", "command_id": "prose-ok",
+        "vertical_fov_deg": 55.0,
+        "rationale": "Camera placed in southeast corner from a cinematic angle to capture counter and stools",
+    }
+    parsed = parse_semantic_command(good)
+    assert parsed.rationale == good["rationale"]
+
+    bad = {
+        "version": "semantic-command/v1", "op": "camera_request", "command_id": "ctrl-bad",
+        "vertical_fov_deg": 55.0,
+        "rationale": "some\x00evil content",
+    }
+    with pytest.raises(ValidationError, match="unsafe content"):
+        parse_semantic_command(bad)
 
 
 def test_authority_reference_limit_and_relation_cycle_failures_are_structured_and_atomic():

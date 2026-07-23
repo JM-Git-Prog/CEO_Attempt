@@ -1,0 +1,49 @@
+{
+  "schema_version": "qualification-lanes/v1",
+  "pass_threshold": 0.8,
+  "plateau_trials": 5,
+  "lanes": [
+    {
+      "name": "local-llama31",
+      "rank": 1,
+      "enabled": true,
+      "remote": false,
+      "provider": "ollama-local",
+      "cost": "free-local",
+      "env": {"LLM_MODEL": "llama3.1"}
+    },
+    {
+      "name": "local-gpt-oss-20b",
+      "rank": 2,
+      "enabled": true,
+      "remote": false,
+      "provider": "ollama-local",
+      "cost": "free-local",
+      "env": {"LLM_MODEL": "gpt-oss:20b"}
+    },
+    {
+      "name": "ollama-pro-glm-5-2",
+      "rank": 3,
+      "enabled": false,
+      "remote": true,
+      "provider": "ollama-pro",
+      "cost": "ollama-pro-zero-marginal-within-caps",
+      "env": {"LLM_MODEL": "glm-5.2:cloud"},
+      "authorization": {
+        "approved": true,
+        "approved_by": "John",
+        "approved_on": "2026-07-22",
+        "scope": "Ollama cloud qualification lanes only; no other paid APIs"
+      },
+      "caps": {
+        "estimated_dollars_per_trial": 0.0,
+        "estimated_dollars_per_batch": 0.0,
+        "estimated_requests_per_trial": 4,
+        "max_requests_per_batch": 20,
+        "max_requests_per_run": 20,
+        "max_dollars_per_run": 0.0,
+        "pause_on_session_or_weekly_cap": true
+      }
+    }
+  ]
+}

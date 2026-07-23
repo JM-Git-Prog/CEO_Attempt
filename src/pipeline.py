@@ -110,6 +110,14 @@ class _V11CompilationError(RuntimeError):
         self.code = code
 
 
+class SemanticBatchRejectedError(RuntimeError):
+    """Typed semantic command rejection — mapped to HTTP 422, not 500."""
+
+    def __init__(self, message: str, *, rejections: list[dict]) -> None:
+        super().__init__(message)
+        self.rejections = rejections
+
+
 def _semantic_rejection_record(
     *,
     contract: WorldContract,
@@ -527,7 +535,14 @@ class WorldBuilder:
                     }],
                 )
                 self.session.semantic_command_records.append(record)
-                raise RuntimeError("Semantic command batch rejected: invalid commands envelope")
+                raise SemanticBatchRejectedError(
+                    "Semantic command batch rejected: invalid commands envelope",
+                    rejections=[{
+                        "command_index": None, "command_id": None, "op": None,
+                        "code": "schema_invalid", "field": "commands",
+                        "message": "planner response must contain exactly one commands array",
+                    }],
+                )
 
             authorization = CommandAuthorization(
                 principal_id=f"pipeline:{self.session.session_id}",
@@ -559,21 +574,14 @@ class WorldBuilder:
                     rejections=[item.model_dump(mode="json") for item in batch.rejections],
                 )
                 self.session.semantic_command_records.append(record)
-                schema_only = bool(batch.rejections) and all(
-                    item.code == "schema_invalid" for item in batch.rejections
-                )
-                if not schema_only:
-                    reasons = "; ".join(item.message for item in batch.rejections)
-                    raise RuntimeError(f"Semantic command batch rejected: {reasons}")
-
                 repair_prompt = command_prompt + (
-                    "\n\nBOUNDED SCHEMA REPAIR:\n"
-                    "The previous commands were schema-invalid. The approved Plan and "
-                    "Camera_Contract already contain all requested instances and placement. "
-                    "Never recreate, remove, replace, relate, or move allowlisted Plan objects, "
-                    "lights, or the camera. Return exactly {\"commands\":[]} unless a fully "
-                    "schema-valid non-spatial edit against an existing allowlisted ID is certain.\n"
-                    "REJECTION SUMMARY:\n"
+                    "\n\nBOUNDED REPAIR:\n"
+                    "The previous optional semantic commands were rejected. The approved "
+                    "Plan and Camera_Contract already contain all requested instances and "
+                    "placement. Never recreate, remove, replace, relate, or move allowlisted "
+                    "Plan objects, lights, or the camera. Return exactly {\"commands\":[]} "
+                    "unless a fully valid non-spatial edit against an existing mutable ID is "
+                    "certain.\nREJECTION SUMMARY:\n"
                     + json.dumps([
                         {
                             "command_index": item.command_index,
@@ -611,8 +619,13 @@ class WorldBuilder:
                         }],
                     )
                     self.session.semantic_command_records.append(repaired_record)
-                    raise RuntimeError(
-                        "Semantic command batch rejected: invalid bounded repair envelope"
+                    raise SemanticBatchRejectedError(
+                        "Semantic command batch rejected: invalid bounded repair envelope",
+                        rejections=[{
+                            "command_index": None, "command_id": None, "op": None,
+                            "code": "schema_invalid", "field": "commands",
+                            "message": "repair response must contain exactly one commands array",
+                        }],
                     )
                 commands = repaired_response["commands"]
                 prompt_hash = repair_hash
@@ -636,8 +649,11 @@ class WorldBuilder:
                     )
                     self.session.semantic_command_records.append(repaired_record)
                     reasons = "; ".join(item.message for item in batch.rejections)
-                    raise RuntimeError(
-                        f"Semantic command batch rejected after bounded repair: {reasons}"
+                    raise SemanticBatchRejectedError(
+                        f"Semantic command batch rejected after bounded repair: {reasons}",
+                        rejections=[
+                            item.model_dump(mode="json") for item in batch.rejections
+                        ],
                     )
 
             accepted_record = batch.record.model_dump(mode="json")

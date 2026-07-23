@@ -1,0 +1,27 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "ratchet-keepalive-on-sessionstart",
+      "description": "Every new Kiro session: revive the OS-owned watch if down (free command, no agent turns) and inject the current NEXT.md into session context so the agent wakes up informed.",
+      "trigger": "SessionStart",
+      "action": {
+        "type": "command",
+        "command": "cmd /c call \"C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\WATCH-KEEPALIVE.bat\" & type \"C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\qualification\\NEXT.md\""
+      },
+      "timeout": 30,
+      "enabled": true
+    },
+    {
+      "name": "ratchet-keepalive-on-stop",
+      "description": "After every agent turn: revive the OS-owned watch if the turn's surgery left it down. Free command action - zero credits.",
+      "trigger": "Stop",
+      "action": {
+        "type": "command",
+        "command": "cmd /c call \"C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\WATCH-KEEPALIVE.bat\""
+      },
+      "timeout": 30,
+      "enabled": true
+    }
+  ]
+}

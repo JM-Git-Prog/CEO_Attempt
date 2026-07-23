@@ -1,0 +1,45 @@
+{"appended": 28, "at_epoch": 1784760892.7949262, "duration_seconds": 0.095, "errors": 0, "skipped": 0, "status": "complete"}
+{"appended": 1, "at_epoch": 1784760927.3179896, "duration_seconds": 0.025, "errors": 0, "skipped": 28, "status": "complete"}
+{"appended": 2, "at_epoch": 1784761895.9569597, "duration_seconds": 0.036, "errors": 0, "skipped": 29, "status": "complete"}
+{"appended": 0, "at_epoch": 1784761915.0172777, "duration_seconds": 0.025, "errors": 0, "skipped": 31, "status": "complete"}
+{"appended": 0, "at_epoch": 1784762197.9428406, "duration_seconds": 0.025, "errors": 0, "skipped": 31, "status": "complete"}
+{"at_epoch": 1784766452.404913, "duration_seconds": 0.22, "status": "complete"}
+{"at_epoch": 1784766452.4207902, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784766535.5169232, "duration_seconds": 0.092, "status": "complete"}
+{"at_epoch": 1784766535.5238702, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784767177.6007564, "duration_seconds": 0.071, "status": "complete"}
+{"at_epoch": 1784767177.604703, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768090.2558067, "duration_seconds": 0.07, "status": "complete"}
+{"at_epoch": 1784768090.2612357, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768095.5316584, "duration_seconds": 0.068, "status": "complete"}
+{"at_epoch": 1784768095.5355678, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768145.3359902, "duration_seconds": 0.071, "status": "complete"}
+{"at_epoch": 1784768145.3399582, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768151.053578, "duration_seconds": 0.07, "status": "complete"}
+{"at_epoch": 1784768151.057333, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768184.0444887, "duration_seconds": 0.068, "status": "complete"}
+{"at_epoch": 1784768184.0489442, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768195.4056494, "duration_seconds": 0.077, "status": "complete"}
+{"at_epoch": 1784768195.4104297, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768201.7004445, "duration_seconds": 0.071, "status": "complete"}
+{"at_epoch": 1784768201.7045205, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768252.6381466, "duration_seconds": 0.068, "status": "complete"}
+{"at_epoch": 1784768252.642005, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768258.7844868, "duration_seconds": 0.069, "status": "complete"}
+{"at_epoch": 1784768258.7886715, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768264.647461, "duration_seconds": 0.068, "status": "complete"}
+{"at_epoch": 1784768264.6520488, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768270.5643852, "duration_seconds": 0.069, "status": "complete"}
+{"at_epoch": 1784768270.5685403, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768278.6922884, "duration_seconds": 0.068, "status": "complete"}
+{"at_epoch": 1784768278.6965165, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768285.3058739, "duration_seconds": 0.065, "status": "complete"}
+{"at_epoch": 1784768285.3103485, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784768428.0630646, "duration_seconds": 0.0, "status": "preempted"}
+{"at_epoch": 1784769247.2675643, "duration_seconds": 401.756, "iteration_id": "20260723T002500_236504Z-255118a9f3", "job": "briefing", "status": "complete_with_model_warning", "warnings": ["timeout", "timeout"]}
+{"at_epoch": 1784769699.1861434, "duration_seconds": 136.394, "iteration_id": "20260723T002500_236504Z-255118a9f3", "job": "briefing", "status": "complete_with_model_warning", "warnings": ["failed", "failed"]}
+{"appended": 11, "at_epoch": 1784770383.7284083, "duration_seconds": 0.067, "errors": 0, "skipped": 31, "status": "complete"}
+{"at_epoch": 1784770544.1399128, "duration_seconds": 135.856, "iteration_id": "20260723T002500_236504Z-255118a9f3", "job": "briefing", "status": "complete_with_model_warning", "warnings": ["failed"]}
+{"appended": 0, "at_epoch": 1784771233.8897536, "duration_seconds": 0.0, "errors": 0, "skipped": 0, "status": "preempted"}
+{"appended": 5, "at_epoch": 1784771282.5028887, "duration_seconds": 0.053, "errors": 0, "skipped": 42, "status": "complete"}
+{"at_epoch": 1784771658.427075, "duration_seconds": 363.517, "iteration_id": "20260723T013634_548205Z-91b39e3d5b", "job": "briefing", "status": "complete_with_model_warning", "warnings": ["timeout", "timeout"]}

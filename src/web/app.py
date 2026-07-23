@@ -22,7 +22,7 @@ from src.canon_image.generator import check_comfyui, get_image_provider
 from src.floor_plan.validator import validate_floor_plan
 from src.models import PipelineState
 from src.orchestrator.llm import LLM_MODEL, OLLAMA_URL
-from src.pipeline import WorldBuilder
+from src.pipeline import SemanticBatchRejectedError, WorldBuilder
 from src.telemetry import read_telemetry
 from src.web.event_log import append_event
 from src.web.history import (
@@ -744,6 +744,8 @@ async def approve_image(session_id: str, request: Request):
             "mesh_urls": {obj_id: f"/api/session/{session_id}/mesh/{obj_id}" for obj_id in mesh_paths},
             **_v11_runtime_payload(builder),
         }
+    except SemanticBatchRejectedError as exc:
+        return _error(builder, exc, status_code=422)
     except Exception as exc:
         return _error(builder, exc)
 

@@ -74,6 +74,9 @@ def _nested_reason(value: Any) -> str | None:
 
 
 def _failure_rule_detail(stage: str, evidence: dict) -> tuple[str, str]:
+    if stage == "canon" and evidence.get("reason") == "real_provider_unavailable":
+        return "provider", "mock_fallback"
+
     validation = evidence.get("validation") or {}
     blockers = validation.get("blockers") or []
     if blockers:
@@ -103,6 +106,10 @@ def _failure_rule_detail(stage: str, evidence: dict) -> tuple[str, str]:
         )
 
     http_status = evidence.get("http_status")
+    if isinstance(http_status, int) and http_status == 422:
+        error_text = str((evidence.get("response") or {}).get("error", ""))
+        if "Semantic command batch rejected" in error_text:
+            return "semantic_command", "batch_rejected"
     if isinstance(http_status, int) and http_status >= 400:
         reason = _nested_reason(evidence.get("response")) or f"status_{http_status}"
         return "http_status", _signature_component(
@@ -348,8 +355,12 @@ def run_once(result_path: Path) -> dict:
                 and alignment.get("status") == "not_applicable"
                 and alignment.get("reason") == "deterministic_mock_provider"
             )
+            real_provider_unavailable = (
+                not MOCK_QUALIFICATION and provider == "Mock fallback"
+            )
             canon_ok = (
                 approved.status_code == 200
+                and not real_provider_unavailable
                 and (alignment.get("passed") is True or mock_alignment_na)
                 and (output / "canon_v1.png").is_file()
             )
@@ -357,6 +368,7 @@ def run_once(result_path: Path) -> dict:
                 "not_applicable" if mock_alignment_na else "passed" if canon_ok else "failed",
                 http_status=approved.status_code,
                 provider=provider,
+                reason="real_provider_unavailable" if real_provider_unavailable else None,
                 alignment=alignment,
                 artifact=_artifact(output / "canon_v1.png"),
                 response=canon_payload if approved.status_code != 200 else None,
