@@ -388,12 +388,13 @@ def solve_relationships(contract: WorldContract) -> RelationshipSolveResult:
                 group = around_groups[relation.target_id]
                 around = (group.index(item.id), len(group))
             proposal = _candidate(working, relation, contract, resolved, around)
-            obstacles = [
-                candidate for identity, candidate in resolved.items()
-                if identity != item.id and (
-                    identity not in relation_subjects or identity in processed or candidate.fixed
-                )
-            ]
+            obstacles = sorted(
+                (candidate for identity, candidate in resolved.items()
+                 if identity != item.id and (
+                     identity not in relation_subjects or identity in processed or candidate.fixed
+                 )),
+                key=lambda candidate: candidate.id,
+            )
             issues = _hard_issues(proposal, contract, obstacles)
             if not primary_set and not issues:
                 working = proposal
@@ -446,7 +447,10 @@ def solve_relationships(contract: WorldContract) -> RelationshipSolveResult:
     # Final whole-world safety check catches overlap between independently resolved items.
     for item in contract.instances:
         solved = resolved[item.id]
-        obstacles = [candidate for identity, candidate in resolved.items() if identity != item.id]
+        obstacles = sorted(
+            (candidate for identity, candidate in resolved.items() if identity != item.id),
+            key=lambda candidate: candidate.id,
+        )
         issues = _hard_issues(solved, contract, obstacles)
         if issues:
             hard_results.extend(issues)
@@ -472,7 +476,11 @@ def solve_relationships(contract: WorldContract) -> RelationshipSolveResult:
     if not success:
         repair_fixed = 0
         repair_notes: list[str] = []
-        instances = list(resolved.values())
+        # Use post-greedy positions as starting points (greedy got most items right;
+        # repair fixes only the residual overlaps/bounds violations).
+        # Process in contract.instances order to match proven solver_proof behavior,
+        # then sort output by ID for deterministic final ordering.
+        instances = [resolved[item.id] for item in contract.instances]
         by_id = {item.id: item for item in instances}
         for item in instances:
             if getattr(item, "fixed", False):
@@ -516,7 +524,10 @@ def solve_relationships(contract: WorldContract) -> RelationshipSolveResult:
             hard_results = []
             for item in contract.instances:
                 solved = resolved[item.id]
-                obstacles = [candidate for identity, candidate in resolved.items() if identity != item.id]
+                obstacles = sorted(
+                    (candidate for identity, candidate in resolved.items() if identity != item.id),
+                    key=lambda candidate: candidate.id,
+                )
                 issues = _hard_issues(solved, contract, obstacles)
                 hard_results.extend(issues)
 
@@ -554,7 +565,9 @@ def solve_relationships(contract: WorldContract) -> RelationshipSolveResult:
             unsatisfied_constraints=unsatisfied or tuple(hard_results),
         )
         return RelationshipSolveResult(contract=None, report=report)
-    candidate = contract.model_copy(update={"instances": tuple(resolved.values())})
+    candidate = contract.model_copy(update={"instances": tuple(
+        sorted(resolved.values(), key=lambda item: item.id)
+    )})
     validated = WorldContract.model_validate(candidate.model_dump(mode="json"))
     return RelationshipSolveResult(
         contract=validated,
