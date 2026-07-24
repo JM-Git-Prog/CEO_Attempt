@@ -49,21 +49,37 @@ def census_done() -> bool:
     return (time.time() - newest.stat().st_mtime) > 90 * 60  # stale = give up waiting
 
 
+def free_comfyui_vram() -> None:
+    """Ask ComfyUI to unload its models (it reloads on the next render).
+    Without this, ~23 GB stays resident even when idle and training OOMs."""
+    import urllib.request
+    for port in (8188, 8191, 8190):
+        try:
+            req = urllib.request.Request(
+                f"http://127.0.0.1:{port}/free",
+                data=b'{"unload_models": true, "free_memory": true}',
+                headers={"Content-Type": "application/json"}, method="POST")
+            urllib.request.urlopen(req, timeout=10)
+            log(f"asked ComfyUI :{port} to free VRAM")
+        except Exception:
+            pass  # port not up - nothing to free
+
+
 def main() -> int:
-    log("chain started - waiting for census completion + quiet GPU")
-    quiet = 0
+    log("chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)")
+    recent = []
     while True:
         done, util = census_done(), gpu_util()
-        if done and util < 25:
-            quiet += 1
-            log(f"quiet check {quiet}/3 (gpu {util}%)")
-            if quiet >= 3:
-                break
-        else:
-            quiet = 0
-            log(f"waiting (census done={done}, gpu {util}%)")
+        recent = (recent + [util])[-3:]
+        quiet_votes = sum(1 for u in recent if u < 35)
+        if done and len(recent) == 3 and quiet_votes >= 2:
+            log(f"claiming the GPU (recent utils {recent}) - renders will queue behind training")
+            break
+        log(f"waiting (census done={done}, gpu {util}%, quiet votes {quiet_votes}/3)")
         time.sleep(60)
 
+    free_comfyui_vram()
+    time.sleep(5)
     log("GPU is ours - building training set")
     r1 = subprocess.run([sys.executable, str(ROOT / "bench" / "make_training_set.py")])
     if r1.returncode != 0:

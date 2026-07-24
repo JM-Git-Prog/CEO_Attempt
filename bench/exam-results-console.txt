@@ -1,0 +1,68 @@
+
+=== LANE llama3.1 — 30 prompts ===
+  p041: blocked  (82.0s) physical_overlap,physical_overlap
+  p042: legal    (37.8s) 
+  p043: blocked  (30.0s) physical_overlap,physical_overlap,physical_overlap
+  p044: blocked  (43.5s) physical_overlap
+  p045: blocked  (47.8s) out_of_bounds,physical_overlap,out_of_bounds
+  p046: blocked  (36.7s) out_of_bounds
+  p047: legal    (20.6s) 
+  p048: timeout  (120.0s) 
+  p049: blocked  (53.6s) physical_overlap,out_of_bounds,physical_overlap
+  p050: error    (61.9s) 
+  p051: blocked  (67.9s) physical_overlap,physical_overlap,physical_overlap
+  p052: error    (36.0s) 
+  p053: blocked  (49.6s) physical_overlap,physical_overlap,physical_overlap
+  p054: error    (41.2s) 
+  p055: error    (27.8s) 
+  p056: blocked  (52.0s) physical_overlap,physical_overlap,physical_overlap
+  p057: legal    (27.2s) 
+  p058: blocked  (88.3s) out_of_bounds
+  p059: error    (39.5s) 
+  p060: legal    (26.0s) 
+  p061: legal    (47.8s) 
+  p062: blocked  (41.7s) out_of_bounds
+  p063: error    (33.8s) 
+  p064: legal    (21.1s) 
+  p065: blocked  (75.7s) out_of_bounds,opening_blocked
+  p066: blocked  (70.2s) physical_overlap,physical_overlap,physical_overlap
+  p067: blocked  (64.0s) physical_overlap,physical_overlap,physical_overlap
+  p068: blocked  (81.7s) out_of_bounds,opening_blocked
+  p069: error    (32.2s) 
+  p070: error    (26.9s) 
+  LANE RESULT: 6/30 legal plans (20%)
+
+=== LANE planner-probe-v1 — 30 prompts ===
+  p041: blocked  (60.3s) physical_overlap
+  p042: blocked  (41.9s) opening_blocked
+  p043: blocked  (80.6s) physical_overlap,physical_overlap,physical_overlap
+  p044: legal    (30.1s) 
+  p045: error    (48.5s) 
+  p046: blocked  (35.0s) opening_blocked
+  p047: legal    (31.2s) 
+  p048: blocked  (64.7s) physical_overlap,physical_overlap,physical_overlap
+  p049: error    (22.8s) 
+  p050: error    (36.4s) 
+  p051: legal    (25.8s) 
+  p052: blocked  (53.6s) physical_overlap,physical_overlap,physical_overlap
+  p053: blocked  (55.1s) out_of_bounds,out_of_bounds,out_of_bounds
+  p054: error    (34.8s) 
+  p055: error    (21.3s) 
+  p056: blocked  (70.4s) physical_overlap,physical_overlap,physical_overlap
+  p057: legal    (24.8s) 
+  p058: legal    (26.9s) 
+  p059: error    (33.7s) 
+  p060: blocked  (58.9s) physical_overlap,out_of_bounds,opening_blocked
+  p061: error    (76.2s) 
+  p062: legal    (31.9s) 
+  p063: error    (23.3s) 
+  p064: legal    (22.1s) 
+  p065: blocked  (49.9s) out_of_bounds
+  p066: blocked  (61.5s) physical_overlap,physical_overlap,physical_overlap
+  p067: blocked  (77.6s) physical_overlap,physical_overlap,physical_overlap
+  p068: blocked  (74.7s) physical_overlap,physical_overlap,physical_overlap
+  p069: error    (44.3s) 
+  p070: error    (24.7s) 
+  LANE RESULT: 7/30 legal plans (23%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T115356.json

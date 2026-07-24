@@ -1,0 +1,1140 @@
+{
+ "contracts": 71,
+ "greedy_ok": 11,
+ "solved_by_repair": 59,
+ "still_unsat": 1,
+ "errors": 0,
+ "rows": [
+  {
+   "record": "59866bd9a612f418581de961a5d861b1eee7b6561a9eac2018793c79ac2443e8",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "2af70ae5f96668c748777940da17296015ff23cfd30c0d07143f7847df0c9757",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "e9ba5ed09db0c86eddc61f8e4aa745d11c0a3222be66175ca58265eaff84e0df",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "a8f932c7c86c6a409667ccf3b063637d031220ca53537a65000b129a37a92b6e",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "17605ad2f0bc49d9351535c598a9535122a97515146b4adb202aa185e9afe327",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "1549d02953b78605be0ea81ddd9941856508230977b750ed07a7389d7eaf7350",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "89352af4544d7acea98f97778d124a6dfe783a9aac2e62a5da4695031c6508b8",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "c040dccbe553500270ef1c518f87dccef53a0feac9ada17195a691db166f71c8",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "bc3c3fd465cddbc355a223078d6dc5d6860c9c5fddbc2115605331dd5497caa5",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "5ece8d5061d6669a83d0ed56854b8bd2f0c3ac85710069eef736e57d1adf4aea",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "c4eff8c535f61dc3d3156652e21447ba7c5098c0e0a105f40871090f4ca00fdf",
+   "greedy_success": true,
+   "greedy_blocked": 0,
+   "greedy_blocked_codes": [],
+   "VERDICT": "greedy-ok",
+   "seconds": 0.001
+  },
+  {
+   "record": "variant-00",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.50 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-01",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.30 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.009
+  },
+  {
+   "record": "variant-02",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.01
+  },
+  {
+   "record": "variant-03",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.004
+  },
+  {
+   "record": "variant-04",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.90 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.011
+  },
+  {
+   "record": "variant-05",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-06",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.00 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.011
+  },
+  {
+   "record": "variant-07",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-08",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=1.90 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-09",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-10",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.004
+  },
+  {
+   "record": "variant-11",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-12",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 1,
+   "repair_notes": [
+    "stool_1: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: UNREPAIRABLE within search budget (['physical_overlap'])",
+    "stool_4: repaired at r=1.00 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "STILL-UNSAT",
+   "seconds": 0.017
+  },
+  {
+   "record": "variant-13",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.002
+  },
+  {
+   "record": "variant-14",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.30 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.003
+  },
+  {
+   "record": "variant-15",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.50 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-16",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.00 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.019
+  },
+  {
+   "record": "variant-17",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.00 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.009
+  },
+  {
+   "record": "variant-18",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-19",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_4: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.004
+  },
+  {
+   "record": "variant-20",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.30 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.002
+  },
+  {
+   "record": "variant-21",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=1.90 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-22",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.30 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.30 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.003
+  },
+  {
+   "record": "variant-23",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=0.30 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.002
+  },
+  {
+   "record": "variant-24",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=1.90 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-25",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "camera_occupancy",
+    "physical_overlap"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.30 rot=0 (was ['camera_occupancy'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.013
+  },
+  {
+   "record": "variant-26",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_4: repaired at r=0.30 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-27",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.01
+  },
+  {
+   "record": "variant-28",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.005
+  },
+  {
+   "record": "variant-29",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.004
+  },
+  {
+   "record": "variant-30",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-31",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.005
+  },
+  {
+   "record": "variant-32",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-33",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.30 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-34",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=1.00 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.009
+  },
+  {
+   "record": "variant-35",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.40 rot=0 (was ['physical_overlap', 'opening_keep_clear'])",
+    "stool_4: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.01
+  },
+  {
+   "record": "variant-36",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.00 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.008
+  },
+  {
+   "record": "variant-37",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-38",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.30 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.005
+  },
+  {
+   "record": "variant-39",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.30 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-40",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.30 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.50 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=1.90 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.017
+  },
+  {
+   "record": "variant-41",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_4: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-42",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.001
+  },
+  {
+   "record": "variant-43",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_4: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.013
+  },
+  {
+   "record": "variant-44",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.002
+  },
+  {
+   "record": "variant-45",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.004
+  },
+  {
+   "record": "variant-46",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.006
+  },
+  {
+   "record": "variant-47",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.004
+  },
+  {
+   "record": "variant-48",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.90 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-49",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.011
+  },
+  {
+   "record": "variant-50",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=1.00 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.50 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.014
+  },
+  {
+   "record": "variant-51",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.15 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=1.90 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-52",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 4,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_2: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.30 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.015
+  },
+  {
+   "record": "variant-53",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=0.15 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.00 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_4: repaired at r=1.00 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.01
+  },
+  {
+   "record": "variant-54",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.005
+  },
+  {
+   "record": "variant-55",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 1,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_3: repaired at r=1.40 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  },
+  {
+   "record": "variant-56",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.50 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_2: repaired at r=1.40 rot=0 (was ['physical_overlap'])",
+    "stool_4: repaired at r=0.75 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.012
+  },
+  {
+   "record": "variant-57",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 3,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_2: repaired at r=1.00 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.40 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_4: repaired at r=1.00 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.015
+  },
+  {
+   "record": "variant-58",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "physical_overlap"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.75 rot=0 (was ['physical_overlap', 'physical_overlap'])",
+    "stool_3: repaired at r=0.15 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.005
+  },
+  {
+   "record": "variant-59",
+   "greedy_success": false,
+   "greedy_blocked": 1,
+   "greedy_blocked_codes": [
+    "opening_keep_clear",
+    "physical_overlap",
+    "rotation_aware_bounds"
+   ],
+   "repair_fixed": 2,
+   "repair_unfixed": 0,
+   "repair_notes": [
+    "stool_1: repaired at r=0.50 rot=0 (was ['physical_overlap'])",
+    "stool_3: repaired at r=1.00 rot=0 (was ['physical_overlap'])"
+   ],
+   "VERDICT": "SOLVED-BY-REPAIR",
+   "seconds": 0.007
+  }
+ ]
+}

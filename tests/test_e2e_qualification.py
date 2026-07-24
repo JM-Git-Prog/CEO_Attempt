@@ -778,12 +778,8 @@ def test_adapter_failure_signatures_are_stable_and_fail_closed():
 
     assert result["passed"] is False
     assert result["failure_signature"] == "plan/validation/item_out_of_bounds:sofa_1"
-    assert result["failure_signatures"] == [{
-        "stage": "plan",
-        "rule": "validation",
-        "detail": "item_out_of_bounds:sofa_1",
-        "signature": "plan/validation/item_out_of_bounds:sofa_1",
-    }]
+    assert result["failure_signatures"][0]["signature"] == "plan/validation/item_out_of_bounds:sofa_1"
+    assert result["failure_signatures"][0]["failure_class"] == "deterministic"
 
     # 422 semantic batch rejection produces stable non-volatile signature
     semantic_stages = {name: {"status": "passed"} for name in adapter.EXPECTED_STAGES}

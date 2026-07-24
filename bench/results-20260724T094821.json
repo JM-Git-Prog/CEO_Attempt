@@ -1,0 +1,2916 @@
+{
+ "started": "2026-07-24 09:48:21",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 6,
+   "total": 15,
+   "legal_rate": 0.4,
+   "violation_census": {
+    "physical_overlap": 19,
+    "out_of_bounds": 5,
+    "error:ValidationError": 5,
+    "opening_blocked": 1
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "out_of_bounds"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 4,
+     "seconds": 48.5,
+     "plan": {
+      "name": "Hunting Lodge Den",
+      "room": {
+       "width": 6.0,
+       "depth": 5.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "couch_1",
+        "name": "Leather Couch",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.95,
+        "width": 2.5,
+        "depth": 1.0,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Large leather couch against the south wall."
+       },
+       {
+        "id": "rug_1",
+        "name": "Bearskin Rug",
+        "category": "decor",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.05,
+        "width": 3.0,
+        "depth": 2.0,
+        "height": 0.05,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Soft bearskin rug centered under the couch."
+       },
+       {
+        "id": "fireplace_1",
+        "name": "Stone Fireplace",
+        "category": "architectural",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 2.1500000000000004,
+        "width": 1.8,
+        "depth": 0.6,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Stone fireplace against the north wall."
+       },
+       {
+        "id": "chandelier_1",
+        "name": "Antler Chandelier",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 2.1,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 0.4,
+        "elevation": 2.4,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Antler chandelier hanging above the fireplace."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 1.65,
+        "width": 1.5,
+        "height": 1.2,
+        "sill_height": 0.8
+       }
+      ],
+      "camera": {
+       "x": -2.5,
+       "y": 1.6,
+       "z": -2.0,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": -1.95,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear 0.8m path from west door to couch and fireplace.",
+       "No furniture within 1.0m of doors or windows."
+      ],
+      "design_notes": [
+       "Contemporary hunting lodge den with leather couch, bearskin rug, stone fireplace, antler chandelier.",
+       "Natural daylight through east window.",
+       "Neutral palette with rustic accents."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "couch_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "rug_1",
+        "kind": "north_of",
+        "target_id": "couch_1",
+        "wall": null,
+        "parameters_m": {
+         "offset_z": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fireplace_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chandelier_1",
+        "kind": "above",
+        "target_id": "fireplace_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "near_corner",
+        "corner": "northeast",
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southwest",
+       "target_id": "couch_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p046"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 9,
+     "seconds": 35.5,
+     "plan": {
+      "name": "Sushi Bar Floor Plan",
+      "room": {
+       "width": 8.0,
+       "depth": 6.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "chef_counter",
+        "name": "Chef Counter",
+        "category": "architectural",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 2.3000000000000003,
+        "width": 4.0,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_1",
+        "name": "Bar Stool 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.0,
+        "z": 0.2000000000000004,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_2",
+        "name": "Bar Stool 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.5,
+        "z": 0.2000000000000004,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_3",
+        "name": "Bar Stool 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.2000000000000004,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_4",
+        "name": "Bar Stool 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.5,
+        "z": 0.2000000000000004,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_5",
+        "name": "Bar Stool 5",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.0,
+        "z": 0.2000000000000004,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -0.6,
+        "z": 2.3000000000000003,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_2",
+        "name": "Pendant Light 2",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 2.3000000000000003,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_3",
+        "name": "Pendant Light 3",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.6,
+        "z": 2.3000000000000003,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.8,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -3.55,
+       "y": 1.6,
+       "z": 2.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 2.3000000000000003,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from east door to seating area with at least 0.8m clearance.",
+       "Stools positioned south of counter, allowing unobstructed movement around the bar."
+      ],
+      "design_notes": [
+       "Contemporary sushi bar with a chef counter and integrated display case.",
+       "Five stools provide seating along the counter\u2019s south face.",
+       "Three pendant lights above the counter deliver cool, clean illumination."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "chef_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "south_of",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "south_of",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "south_of",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "south_of",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_5",
+        "kind": "south_of",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 4.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_1",
+        "kind": "above",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_2",
+        "kind": "above",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_3",
+        "kind": "above",
+        "target_id": "chef_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "chef_counter",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p047"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 11,
+     "seconds": 104.4,
+     "plan": {
+      "name": "1970s Recording Studio Live Room",
+      "room": {
+       "width": 12.0,
+       "depth": 15.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "drum_kit",
+        "name": "Drum Kit",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -5.0,
+        "z": -6.2,
+        "width": 2.0,
+        "depth": 2.0,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Drum kit positioned against south and west walls"
+       },
+       {
+        "id": "amp_stack_1",
+        "name": "Amp Stack 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.5,
+        "z": 6.95,
+        "width": 0.8,
+        "depth": 0.5,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "First amp stack against north wall"
+       },
+       {
+        "id": "amp_stack_2",
+        "name": "Amp Stack 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.5,
+        "z": 6.95,
+        "width": 0.8,
+        "depth": 0.5,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Second amp stack against north wall"
+       },
+       {
+        "id": "mic_stand_1",
+        "name": "Mic Stand 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Mic stand on east side"
+       },
+       {
+        "id": "mic_stand_2",
+        "name": "Mic Stand 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Mic stand on east side"
+       },
+       {
+        "id": "mic_stand_3",
+        "name": "Mic Stand 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Mic stand on east side"
+       },
+       {
+        "id": "panel_1",
+        "name": "Acoustic Panel 1",
+        "category": "decor",
+        "mount": "wall",
+        "x": -4.0,
+        "z": 7.175,
+        "width": 1.5,
+        "depth": 0.05,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Panel on north wall"
+       },
+       {
+        "id": "panel_2",
+        "name": "Acoustic Panel 2",
+        "category": "decor",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 7.175,
+        "width": 1.5,
+        "depth": 0.05,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Panel on north wall"
+       },
+       {
+        "id": "panel_3",
+        "name": "Acoustic Panel 3",
+        "category": "decor",
+        "mount": "wall",
+        "x": 4.0,
+        "z": 7.175,
+        "width": 1.5,
+        "depth": 0.05,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Panel on north wall"
+       },
+       {
+        "id": "panel_4",
+        "name": "Acoustic Panel 4",
+        "category": "decor",
+        "mount": "wall",
+        "x": 5.675,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 0.05,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Panel on east wall"
+       },
+       {
+        "id": "panel_5",
+        "name": "Acoustic Panel 5",
+        "category": "decor",
+        "mount": "wall",
+        "x": -5.675,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 0.05,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Panel on west wall"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 4.9,
+        "width": 2.0,
+        "height": 2.5,
+        "sill_height": 0.3
+       }
+      ],
+      "camera": {
+       "x": -5.5,
+       "y": 1.6,
+       "z": 7.0,
+       "target_x": -5.0,
+       "target_y": 1.2,
+       "target_z": -6.2,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from south door to all zones with at least 0.8m clearance.",
+       "No furniture within 1.0m of the door swing arc."
+      ],
+      "design_notes": [
+       "Acoustic panels mounted on north, east, and west walls for sound absorption.",
+       "Drum kit positioned in southwest corner against south and west walls.",
+       "Two amp stacks placed along north wall with equal spacing.",
+       "Three mic stands located on east side to provide balanced coverage."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "drum_kit",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": -5.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "amp_stack_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "amp_stack_2",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": -2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "mic_stand_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x": 5.3,
+         "offset_z": -4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "mic_stand_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x": 5.3,
+         "offset_z": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "mic_stand_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x": 5.3,
+         "offset_z": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "panel_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": -4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "panel_2",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "panel_3",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "panel_4",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "panel_5",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "wall_gap_m": 0.3,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "near_corner",
+        "corner": "northeast",
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "drum_kit",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p048"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Daycar...ht_m=0.4, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 32.9,
+     "prompt_id": "p049"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='1900 G...ht_m=0.9, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 54.6,
+     "prompt_id": "p050"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 11,
+     "seconds": 40.5,
+     "plan": {
+      "name": "Laundromat Floor Plan",
+      "room": {
+       "width": 10.0,
+       "depth": 8.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "washing_machine_1",
+        "name": "Washing Machine 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.5500000000000003,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "washing_machine_2",
+        "name": "Washing Machine 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.5500000000000003,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "washing_machine_3",
+        "name": "Washing Machine 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.5500000000000003,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "washing_machine_4",
+        "name": "Washing Machine 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.5500000000000003,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "washing_machine_5",
+        "name": "Washing Machine 5",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.5500000000000003,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "washing_machine_6",
+        "name": "Washing Machine 6",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.5500000000000003,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "folding_table",
+        "name": "Folding Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 1.0,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_1",
+        "name": "Plastic Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.5,
+        "z": -2.2,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_2",
+        "name": "Plastic Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -2.2,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_3",
+        "name": "Plastic Chair 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.5,
+        "z": -2.2,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "fluorescent_light",
+        "name": "Fluorescent Light Fixture",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.0,
+        "depth": 0.1,
+        "height": 0.05,
+        "elevation": 2.95,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_west",
+        "kind": "door",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -4.5,
+       "y": 1.6,
+       "z": 3.5,
+       "target_x": 0.0,
+       "target_y": 0.75,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path of at least 0.8m from door to each washing machine and folding table."
+      ],
+      "design_notes": [
+       "Washing machines aligned along north wall with equal spacing.",
+       "Folding table centered; chairs positioned south of the table.",
+       "Fluorescent light mounted above the folding table area."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "washing_machine_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 6.0,
+         "distribution_span_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "washing_machine_2",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 6.0,
+         "distribution_span_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "washing_machine_3",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 6.0,
+         "distribution_span_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "washing_machine_4",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 6.0,
+         "distribution_span_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "washing_machine_5",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "distribution_index": 4.0,
+         "distribution_count": 6.0,
+         "distribution_span_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "washing_machine_6",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "distribution_index": 5.0,
+         "distribution_count": 6.0,
+         "distribution_span_m": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "folding_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "south_of",
+        "target_id": "folding_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 1.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "south_of",
+        "target_id": "folding_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 1.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_3",
+        "kind": "south_of",
+        "target_id": "folding_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 1.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fluorescent_light",
+        "kind": "above",
+        "target_id": "folding_table",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_west",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "folding_table",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.75,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p051"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 7,
+     "seconds": 53.9,
+     "plan": {
+      "name": "1950s Doctor's Waiting Room",
+      "room": {
+       "width": 8.0,
+       "depth": 6.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "desk_1",
+        "name": "Reception Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -2.125,
+        "width": 3.0,
+        "depth": 0.75,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Large reception desk against the south wall."
+       },
+       {
+        "id": "coatstand_1",
+        "name": "Coat Stand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.5,
+        "z": -2.25,
+        "width": 1.0,
+        "depth": 0.5,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Freestanding coat stand near the entrance."
+       },
+       {
+        "id": "chair_east_1",
+        "name": "Waiting Chair East 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.25,
+        "z": -0.75,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Chair along the east wall."
+       },
+       {
+        "id": "chair_east_2",
+        "name": "Waiting Chair East 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.25,
+        "z": -2.05,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Chair adjacent to East 1."
+       },
+       {
+        "id": "chair_west_1",
+        "name": "Waiting Chair West 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -3.25,
+        "z": 0.75,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Chair along the west wall."
+       },
+       {
+        "id": "chair_west_2",
+        "name": "Waiting Chair West 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -3.25,
+        "z": -0.55,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Chair adjacent to West 1."
+       },
+       {
+        "id": "chair_north_1",
+        "name": "Waiting Chair North",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 2.25,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Chair along the north wall."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -3.4499999999999997,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 1.8,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": -3.5,
+       "y": 1.6,
+       "z": 2.5,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": -2.125,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from south door to reception desk and coat stand.",
+       "At least 0.8m clearance around all chairs.",
+       "No furniture within 1.0m of the south door swing arc."
+      ],
+      "design_notes": [
+       "Neutral palette with muted 1950s tones.",
+       "Frosted window provides diffused daylight.",
+       "Five waiting chairs evenly spaced along walls for balanced seating."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "desk_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "wall_gap_m": 0.5,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "coatstand_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "wall_gap_m": 0.5,
+         "along_offset_m": -2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_east_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "wall_gap_m": 0.5,
+         "along_offset_m": -0.75
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_east_2",
+        "kind": "south_of",
+        "target_id": "chair_east_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_west_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "wall_gap_m": 0.5,
+         "along_offset_m": 0.75
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_west_2",
+        "kind": "south_of",
+        "target_id": "chair_west_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_north_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.5,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "desk_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p052"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Spaces...t_m=0.75, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 28.4,
+     "prompt_id": "p053"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 7,
+     "seconds": 57.1,
+     "plan": {
+      "name": "Wine Cellar Tasting Room",
+      "room": {
+       "width": 6.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "table_1",
+        "name": "tasting table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -0.95,
+        "width": 2.0,
+        "depth": 1.5,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Long tasting table against the south wall."
+       },
+       {
+        "id": "stool_1",
+        "name": "stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.75,
+        "z": 1.5,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Stool positioned north of the table."
+       },
+       {
+        "id": "stool_2",
+        "name": "stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.25,
+        "z": 1.5,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Stool positioned north of the table."
+       },
+       {
+        "id": "stool_3",
+        "name": "stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.25,
+        "z": 1.5,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Stool positioned north of the table."
+       },
+       {
+        "id": "stool_4",
+        "name": "stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.75,
+        "z": 1.5,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Stool positioned north of the table."
+       },
+       {
+        "id": "sconce_1",
+        "name": "candle warm sconce",
+        "category": "fixture",
+        "mount": "wall",
+        "x": -2.0,
+        "z": 1.65,
+        "width": 0.2,
+        "depth": 0.1,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Sconce on the north wall near the west corner."
+       },
+       {
+        "id": "sconce_2",
+        "name": "candle warm sconce",
+        "category": "fixture",
+        "mount": "wall",
+        "x": 2.5,
+        "z": 1.65,
+        "width": 0.2,
+        "depth": 0.1,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Sconce on the north wall near the east corner."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -2.5,
+       "y": 1.6,
+       "z": 1.5,
+       "target_x": 0.0,
+       "target_y": 0.75,
+       "target_z": -0.95,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from east door to tasting table.",
+       "Stools positioned with at least 0.8m clearance from walls."
+      ],
+      "design_notes": [
+       "Stone-look wall on the north side provides a rustic backdrop.",
+       "Tasting table against south wall maximizes natural light from the east window.",
+       "Four stools evenly spaced along the north face of the table.",
+       "Two candle-warm sconces flank the stone wall."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "table_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "sconce_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": -2.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "sconce_2",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 2.5,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "table_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.75,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p054"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='1990s ...ht_m=1.2, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 26.8,
+     "prompt_id": "p055"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 10,
+     "seconds": 68.3,
+     "plan": {
+      "name": "Airport Gate Corner Plan",
+      "room": {
+       "width": 12.0,
+       "depth": 10.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "gate_desk_1",
+        "name": "Gate Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.95,
+        "width": 2.0,
+        "depth": 1.5,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Standard gate desk against the north wall."
+       },
+       {
+        "id": "standing_sign_1",
+        "name": "Standing Sign",
+        "category": "fixture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 4.85,
+        "width": 0.5,
+        "depth": 0.3,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Vertical sign positioned in front of the desk."
+       },
+       {
+        "id": "seat_1",
+        "name": "Seat 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.4000000000000004,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "First seat in the front row."
+       },
+       {
+        "id": "seat_2",
+        "name": "Seat 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.1,
+        "z": 1.4000000000000004,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Second seat in the front row."
+       },
+       {
+        "id": "seat_3",
+        "name": "Seat 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.199999999999999,
+        "z": 1.4000000000000004,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Third seat in the front row."
+       },
+       {
+        "id": "seat_4",
+        "name": "Seat 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 5.7,
+        "z": 1.4000000000000004,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Fourth seat in the front row."
+       },
+       {
+        "id": "seat_5",
+        "name": "Seat 5",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -0.6999999999999997,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "First seat in the back row."
+       },
+       {
+        "id": "seat_6",
+        "name": "Seat 6",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.1,
+        "z": -0.6999999999999997,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Second seat in the back row."
+       },
+       {
+        "id": "seat_7",
+        "name": "Seat 7",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.199999999999999,
+        "z": -0.6999999999999997,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Third seat in the back row."
+       },
+       {
+        "id": "seat_8",
+        "name": "Seat 8",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 5.7,
+        "z": -0.6999999999999997,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Fourth seat in the back row."
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 3.0,
+        "height": 2.0,
+        "sill_height": 0.9
+       },
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -5.5,
+       "y": 1.6,
+       "z": 4.5,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 3.95,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear 0.8m path from the south door to all seats.",
+       "No furniture within 1.0m of any door swing arc.",
+       "Seats are spaced 0.5m center-to-center for comfortable circulation."
+      ],
+      "design_notes": [
+       "Gate desk positioned against the north wall with a 0.3m clearance from the wall.",
+       "Standing sign placed directly in front of the desk to provide clear signage.",
+       "Two rows of four linked seats are arranged south of the desk, forming a compact seating area.",
+       "Large window on the north wall provides daylight and views."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "gate_desk_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "standing_sign_1",
+        "kind": "north_of",
+        "target_id": "gate_desk_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_1",
+        "kind": "south_of",
+        "target_id": "gate_desk_1",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.7
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_2",
+        "kind": "east_of",
+        "target_id": "seat_1",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_3",
+        "kind": "east_of",
+        "target_id": "seat_2",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_4",
+        "kind": "east_of",
+        "target_id": "seat_3",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_5",
+        "kind": "south_of",
+        "target_id": "seat_1",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.7
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_6",
+        "kind": "east_of",
+        "target_id": "seat_5",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_7",
+        "kind": "east_of",
+        "target_id": "seat_6",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_8",
+        "kind": "east_of",
+        "target_id": "seat_7",
+        "wall": null,
+        "parameters_m": {
+         "distance_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.3
+       },
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.3
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "gate_desk_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p056"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 22.7,
+     "plan": {
+      "name": "Wartime Map Room",
+      "room": {
+       "width": 12.0,
+       "depth": 10.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "table_1",
+        "name": "Central Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 4.0,
+        "depth": 3.0,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Huge central table for map layout"
+       },
+       {
+        "id": "desk_north",
+        "name": "North Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 4.4,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Desk station against north wall"
+       },
+       {
+        "id": "desk_east",
+        "name": "East Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 5.4,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Desk station against east wall"
+       },
+       {
+        "id": "desk_west",
+        "name": "West Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -5.4,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Desk station against west wall"
+       },
+       {
+        "id": "lamp_1",
+        "name": "Low Cone Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.0,
+        "elevation": 2.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Low-hung cone lamp over central table"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -5.5,
+       "y": 1.6,
+       "z": 4.5,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear 0.8m path from door to each desk and table",
+       "No furniture within 1.0m of door swing arc"
+      ],
+      "design_notes": [
+       "Central table is focal point",
+       "Desks positioned against walls for map work",
+       "Low cone lamp provides ambient lighting"
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_north",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_east",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_west",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lamp_1",
+        "kind": "above",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "table_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p057"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 1,
+     "items": 6,
+     "seconds": 19.7,
+     "plan": {
+      "name": "Pet Grooming Salon Plan",
+      "room": {
+       "width": 10.0,
+       "depth": 12.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "groom_table",
+        "name": "Grooming Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Freestanding grooming table with 0.9m high top."
+       },
+       {
+        "id": "wash_counter",
+        "name": "Wash Tub Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 4.4,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Built\u2011in wash tub counter along east wall."
+       },
+       {
+        "id": "kennel_bank",
+        "name": "Kennel Bank",
+        "category": "furniture",
+        "mount": "wall",
+        "x": -4.45,
+        "z": 0.0,
+        "width": 4.0,
+        "depth": 0.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Built\u2011in kennel shelving along west wall."
+       },
+       {
+        "id": "task_light_groom",
+        "name": "Task Light Grooming Table",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.5,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Pendant light above grooming table."
+       },
+       {
+        "id": "task_light_wash",
+        "name": "Task Light Wash Counter",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 4.4,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.5,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Pendant light above wash counter."
+       },
+       {
+        "id": "task_light_kennel",
+        "name": "Task Light Kennel Bank",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -4.45,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.5,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Pendant light above kennel bank."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_north",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.8,
+        "height": 1.2,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -4.5,
+       "y": 1.6,
+       "z": -5.5,
+       "target_x": 0.0,
+       "target_y": 0.9,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clearance of at least 0.8m from door to all zones.",
+       "Door swing arc unobstructed with 1.0m clearance inward.",
+       "Window clearance of 0.3m maintained."
+      ],
+      "design_notes": [
+       "Contemporary neutral palette, bright task lighting over key workstations.",
+       "Kennel bank along west wall for easy pet access.",
+       "Wash counter on east wall with integrated tub."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "wash_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "kennel_bank",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "groom_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_light_groom",
+        "kind": "above",
+        "target_id": "groom_table",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_light_wash",
+        "kind": "above",
+        "target_id": "wash_counter",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_light_kennel",
+        "kind": "above",
+        "target_id": "kennel_bank",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_north",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southwest",
+       "target_id": "groom_table",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.9,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p058"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='1960s ...ht_m=1.2, fov_deg=60.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 16.9,
+     "prompt_id": "p059"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 4,
+     "seconds": 18.1,
+     "plan": {
+      "name": "Wizard's Study Plan",
+      "room": {
+       "width": 6.0,
+       "depth": 5.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "desk_1",
+        "name": "Cluttered Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.2,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 1.0,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Large desk with scattered scrolls and potions."
+       },
+       {
+        "id": "bookshelf_1",
+        "name": "Tall Bookshelf",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.9999999999999998,
+        "width": 1.5,
+        "depth": 0.4,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.8,
+        "description": "Vertical shelf for spellbooks and jars."
+       },
+       {
+        "id": "cauldron_1",
+        "name": "Cauldron Corner",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Large cauldron for brewing."
+       },
+       {
+        "id": "orb_lamp_1",
+        "name": "Glowing Orb Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 2.2,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.5,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Suspended orb providing ambient light."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.8,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -2.55,
+       "y": 1.6,
+       "z": 2.05,
+       "target_x": 2.2,
+       "target_y": 0.75,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear 0.8m path from door to desk, bookshelf, and cauldron.",
+       "No furniture within 1.0m of door swing arc.",
+       "All windows have at least 0.3m clearance."
+      ],
+      "design_notes": [
+       "Desk placed against east wall with 0.3m gap for access.",
+       "Bookshelf centered on north wall with 0.3m clearance.",
+       "Cauldron positioned in southwest corner using centered offset.",
+       "Orb lamp hung directly above desk center."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "desk_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "bookshelf_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "cauldron_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x_offset": -2.4,
+         "z_offset": -1.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "orb_lamp_1",
+        "kind": "above",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "desk_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.75,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p060"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-24 09:58:50"
+}

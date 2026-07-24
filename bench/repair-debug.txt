@@ -1,0 +1,5 @@
+variant: variant-00
+initial dirty: [('counter_1', ['rotation_aware_bounds', 'physical_overlap', 'physical_overlap']), ('light_2', ['physical_overlap']), ('light_3', ['physical_overlap']), ('stool_2', ['physical_overlap', 'physical_overlap']), ('stool_3', ['physical_overlap', 'physical_overlap'])]
+round 1: moved=2 unrepaired=0 dirty_after=[('counter_1', ['rotation_aware_bounds']), ('light_2', ['physical_overlap']), ('light_3', ['physical_overlap'])]
+round 2: moved=0 unrepaired=0 dirty_after=[('counter_1', ['rotation_aware_bounds']), ('light_2', ['physical_overlap']), ('light_3', ['physical_overlap'])]
+STUCK - nothing movable helps

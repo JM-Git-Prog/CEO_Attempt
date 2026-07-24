@@ -124,6 +124,22 @@ def _failure_rule_detail(stage: str, evidence: dict) -> tuple[str, str]:
     return "stage_status", _signature_component(reason, "failed")
 
 
+def _failure_class(stage: str, rule: str) -> str:
+    """Classify a failure as model-quality, deterministic-gate, or infrastructure."""
+    infra_rules = {"http_status", "incomplete", "provider"}
+    deterministic_rules = {"validation", "camera_alignment", "artifact_integrity", "stage_status"}
+    model_stages = {"brief", "plan", "world"}
+    if rule in infra_rules:
+        return "infra"
+    if rule in deterministic_rules:
+        return "deterministic"
+    if stage in model_stages and rule in {"semantic_command", "vision_screening"}:
+        return "model"
+    if stage in model_stages:
+        return "model"
+    return "deterministic"
+
+
 def _signature_record(stage: str, rule: str, detail: str) -> dict[str, str]:
     stage_value = _signature_component(stage, "adapter")
     rule_value = _signature_component(rule, "stage_status")
@@ -133,6 +149,7 @@ def _signature_record(stage: str, rule: str, detail: str) -> dict[str, str]:
         "rule": rule_value,
         "detail": detail_value,
         "signature": f"{stage_value}/{rule_value}/{detail_value}",
+        "failure_class": _failure_class(stage_value, rule_value),
     }
 
 

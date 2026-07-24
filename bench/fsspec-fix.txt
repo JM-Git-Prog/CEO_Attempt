@@ -1,0 +1,9 @@
+Collecting fsspec==2025.9.0
+  Using cached fsspec-2025.9.0-py3-none-any.whl.metadata (10 kB)
+Using cached fsspec-2025.9.0-py3-none-any.whl (199 kB)
+Installing collected packages: fsspec
+  Attempting uninstall: fsspec
+    Found existing installation: fsspec 2026.4.0
+    Uninstalling fsspec-2026.4.0:
+      Successfully uninstalled fsspec-2026.4.0
+Successfully installed fsspec-2025.9.0

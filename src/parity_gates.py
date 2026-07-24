@@ -1058,3 +1058,122 @@ def validate_godot_project(
         artifact_accepted=passed, tolerances=tolerance, issues=tuple(issues),
         compared_counts=report.compared_counts,
     )
+
+
+# --- Capsule-walk advisory gate (Marble §2: circulation flood-fill) ---
+
+class CapsuleWalkReport(GateModel):
+    """Advisory walkability check: can a person-capsule reach every door from every other door?"""
+
+    schema_version: Literal["capsule-walk-report/v1"] = "capsule-walk-report/v1"
+    walkable: bool
+    connected_components: int = 1
+    unreachable_doors: tuple[str, ...] = ()
+    person_radius_m: float = 0.228  # 18-inch person disk radius
+    grid_cell_m: float = 0.1
+    diagnostic: str = ""
+
+
+def check_capsule_walk(
+    contract: WorldContract,
+    *,
+    person_radius_m: float = 0.228,
+    grid_cell_m: float = 0.1,
+) -> CapsuleWalkReport:
+    """Flood-fill walkability: dilate all footprints by person_radius, check door connectivity.
+
+    This is an ADVISORY gate — it informs but does not block compilation.
+    """
+    import numpy as np
+    from src.floor_plan.geometry import footprint_corners
+
+    room = contract.room.dimensions
+    half_w, half_d = room.width_m / 2, room.depth_m / 2
+    nx = max(1, int(room.width_m / grid_cell_m))
+    nz = max(1, int(room.depth_m / grid_cell_m))
+
+    # Build occupancy grid: True = free
+    grid = np.ones((nz, nx), dtype=bool)
+
+    class _Vol:
+        def __init__(self, x, z, w, d, h, elev, rot):
+            self.x, self.z, self.width, self.depth = x, z, w, d
+            self.height, self.elevation, self.rotation_deg = h, elev, rot
+
+    # Mark floor-level obstacles (items with elevation near 0 and height > person clearance)
+    person_height = 1.8
+    for instance in contract.instances:
+        if instance.transform.position_m.y > person_height:
+            continue  # above head — no obstruction
+        if instance.transform.position_m.y + instance.dimensions.height_m < 0.05:
+            continue  # flat on floor below ankle — no obstruction
+        vol = _Vol(
+            instance.transform.position_m.x, instance.transform.position_m.z,
+            instance.dimensions.width_m + 2 * person_radius_m,
+            instance.dimensions.depth_m + 2 * person_radius_m,
+            instance.dimensions.height_m, instance.transform.position_m.y,
+            instance.transform.rotation_deg.y,
+        )
+        corners = footprint_corners(vol)
+        # Rasterize the dilated AABB into the grid
+        xs = [c[0] for c in corners]
+        zs = [c[1] for c in corners]
+        min_x, max_x = min(xs), max(xs)
+        min_z, max_z = min(zs), max(zs)
+        gi_min = max(0, int((min_x + half_w) / grid_cell_m))
+        gi_max = min(nx - 1, int((max_x + half_w) / grid_cell_m))
+        gj_min = max(0, int((min_z + half_d) / grid_cell_m))
+        gj_max = min(nz - 1, int((max_z + half_d) / grid_cell_m))
+        grid[gj_min:gj_max + 1, gi_min:gi_max + 1] = False
+
+    # Find door cells
+    door_cells: list[tuple[str, int, int]] = []
+    for opening in contract.openings:
+        if opening.kind != "door":
+            continue
+        # Door center in world coords
+        if opening.wall in ("north", "south"):
+            ox = opening.offset_m
+            oz = (half_d - 0.3) if opening.wall == "north" else (-half_d + 0.3)
+        else:
+            ox = (half_w - 0.3) if opening.wall == "east" else (-half_w + 0.3)
+            oz = opening.offset_m
+        gi = min(nx - 1, max(0, int((ox + half_w) / grid_cell_m)))
+        gj = min(nz - 1, max(0, int((oz + half_d) / grid_cell_m)))
+        # Ensure door cell is free (doors are openings, not obstacles)
+        grid[gj, gi] = True
+        door_cells.append((opening.id, gi, gj))
+
+    if len(door_cells) < 2:
+        return CapsuleWalkReport(
+            walkable=True, connected_components=1,
+            person_radius_m=person_radius_m, grid_cell_m=grid_cell_m,
+            diagnostic="fewer than 2 doors — trivially walkable",
+        )
+
+    # BFS flood-fill from first door
+    visited = np.zeros_like(grid, dtype=bool)
+    start = (door_cells[0][1], door_cells[0][2])
+    queue = [start]
+    visited[start[1], start[0]] = True
+    while queue:
+        cx, cz = queue.pop(0)
+        for dx, dz in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            nx2, nz2 = cx + dx, cz + dz
+            if 0 <= nx2 < nx and 0 <= nz2 < nz and not visited[nz2, nx2] and grid[nz2, nx2]:
+                visited[nz2, nx2] = True
+                queue.append((nx2, nz2))
+
+    unreachable = [
+        door_id for door_id, gi, gj in door_cells[1:]
+        if not visited[gj, gi]
+    ]
+
+    return CapsuleWalkReport(
+        walkable=not unreachable,
+        connected_components=1 if not unreachable else 2,
+        unreachable_doors=tuple(unreachable),
+        person_radius_m=person_radius_m,
+        grid_cell_m=grid_cell_m,
+        diagnostic="" if not unreachable else f"doors unreachable: {', '.join(unreachable)}",
+    )

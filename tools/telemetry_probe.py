@@ -32,6 +32,8 @@ GROUPS = [
     ("dashboard", "Dashboard server :8123", r"http\.server\s+8123"),
     ("anythingllm", "AnythingLLM (research)", r"anythingllm"),
     ("probe", "This telemetry probe", r"telemetry_probe"),
+    ("training", "Training (LoRA night school)", r"train_probe|run_chain|venv-train"),
+    ("benchfactory", "Bench factory (plan grading)", r"plan_bench|bench_loop"),
 ]
 
 try:

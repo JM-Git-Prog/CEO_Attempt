@@ -1,1 +1,242 @@
 [06:30:33] bench loop up - waiting for training chain to finish first
+[09:00:33] chain log stale 2.0h - assuming chain dead, proceeding
+[09:00:33] GPU turn acquired - continuous benching begins
+[09:00:33] batch: prompts 0..14 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p001: timeout  (120.0s) 
+  p002: blocked  (60.1s) out_of_bounds,out_of_bounds,physical_overlap
+  p003: error    (21.5s) 
+  p004: error    (26.9s) 
+  p005: legal    (34.6s) 
+  p006: legal    (61.3s) 
+  p007: blocked  (59.8s) out_of_bounds,camera_inside_geometry
+  p008: error    (42.6s) 
+  p009: blocked  (35.6s) out_of_bounds,out_of_bounds,out_of_bounds
+  p010: error    (51.9s) 
+  p011: blocked  (39.2s) physical_overlap,opening_blocked
+  p012: blocked  (88.5s) physical_overlap,physical_overlap
+  p013: blocked  (57.0s) physical_overlap,physical_overlap,out_of_bounds
+  p014: blocked  (112.1s) physical_overlap
+  p015: blocked  (85.2s) out_of_bounds,out_of_bounds,out_of_bounds
+  LANE RESULT: 2/15 legal plans (13%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T090033.json
+[09:15:29] bench batch rc=0
+[09:15:29] ingest: ingest: +10 records | 0 already banked | 141 plan-less rows skipped
+[09:16:59] batch: prompts 15..29 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p016: blocked  (65.0s) opening_blocked
+  p017: error    (34.8s) 
+  p018: error    (69.2s) 
+  p019: error    (29.8s) 
+  p020: blocked  (86.4s) out_of_bounds,out_of_bounds,opening_blocked
+  p021: blocked  (37.6s) physical_overlap,out_of_bounds
+  p022: timeout  (120.0s) 
+  p023: error    (50.1s) 
+  p024: legal    (40.1s) 
+  p025: blocked  (56.3s) out_of_bounds,out_of_bounds,opening_blocked
+  p026: blocked  (48.4s) out_of_bounds
+  p027: blocked  (69.6s) out_of_bounds,out_of_bounds
+  p028: error    (44.4s) 
+  p029: blocked  (89.8s) physical_overlap,physical_overlap,physical_overlap
+  p030: legal    (22.4s) 
+  LANE RESULT: 2/15 legal plans (13%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T091659.json
+[09:31:23] bench batch rc=0
+[09:31:23] ingest: ingest: +9 records | 10 already banked | 147 plan-less rows skipped
+[09:32:53] batch: prompts 30..44 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p031: blocked  (65.9s) physical_overlap,physical_overlap,physical_overlap
+  p032: error    (23.8s) 
+  p033: error    (78.1s) 
+  p034: blocked  (53.9s) physical_overlap,physical_overlap,physical_overlap
+  p035: error    (69.2s) 
+  p036: blocked  (57.8s) out_of_bounds,out_of_bounds
+  p037: blocked  (36.2s) physical_overlap,physical_overlap,physical_overlap
+  p038: blocked  (41.7s) out_of_bounds
+  p039: blocked  (47.0s) physical_overlap
+  p040: blocked  (51.6s) physical_overlap
+  p041: blocked  (46.7s) out_of_bounds
+  p042: blocked  (81.1s) opening_blocked
+  p043: blocked  (46.1s) opening_blocked
+  p044: legal    (39.1s) 
+  p045: blocked  (98.9s) physical_overlap,physical_overlap,physical_overlap
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T093254.json
+[09:46:51] bench batch rc=0
+[09:46:51] ingest: ingest: +12 records | 19 already banked | 150 plan-less rows skipped
+[09:48:21] batch: prompts 45..59 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p046: blocked  (48.5s) physical_overlap,out_of_bounds
+  p047: legal    (35.5s) 
+  p048: blocked  (104.4s) out_of_bounds,physical_overlap,physical_overlap
+  p049: error    (32.9s) 
+  p050: error    (54.6s) 
+  p051: blocked  (40.5s) physical_overlap,physical_overlap,physical_overlap
+  p052: legal    (53.9s) 
+  p053: error    (28.4s) 
+  p054: legal    (57.1s) 
+  p055: error    (26.8s) 
+  p056: blocked  (68.3s) out_of_bounds,out_of_bounds,out_of_bounds
+  p057: legal    (22.7s) 
+  p058: legal    (19.7s) 
+  p059: error    (16.9s) 
+  p060: legal    (18.1s) 
+  LANE RESULT: 6/15 legal plans (40%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T094821.json
+[09:58:50] bench batch rc=0
+[09:58:50] ingest: ingest: +10 records | 31 already banked | 155 plan-less rows skipped
+[10:00:20] batch: prompts 60..74 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p061: blocked  (86.2s) out_of_bounds,out_of_bounds
+  p062: legal    (24.1s) 
+  p063: error    (24.2s) 
+  p064: legal    (38.6s) 
+  p065: legal    (44.7s) 
+  p066: blocked  (62.2s) physical_overlap,physical_overlap,physical_overlap
+  p067: blocked  (85.0s) physical_overlap,physical_overlap,out_of_bounds
+  p068: legal    (25.1s) 
+  p069: error    (37.3s) 
+  p070: error    (20.9s) 
+  p071: legal    (24.1s) 
+  p072: error    (23.9s) 
+  p073: blocked  (71.4s) physical_overlap,physical_overlap,out_of_bounds
+  p074: error    (40.3s) 
+  p075: error    (24.6s) 
+  LANE RESULT: 5/15 legal plans (33%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T100020.json
+[10:10:53] bench batch rc=0
+[10:10:53] ingest: ingest: +9 records | 41 already banked | 161 plan-less rows skipped
+[10:12:23] batch: prompts 75..89 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p076: blocked  (99.6s) physical_overlap,physical_overlap,physical_overlap
+  p077: error    (23.0s) 
+  p078: timeout  (120.0s) 
+  p079: legal    (72.4s) 
+  p080: error    (28.6s) 
+  p081: blocked  (60.0s) physical_overlap,physical_overlap
+  p082: blocked  (60.0s) physical_overlap
+  p083: blocked  (80.0s) physical_overlap,physical_overlap,physical_overlap
+  p084: timeout  (120.0s) 
+  p085: error    (35.7s) 
+  p086: error    (51.8s) 
+  p087: blocked  (64.0s) physical_overlap
+  p088: timeout  (120.0s) 
+  p089: error    (69.4s) 
+  p090: error    (88.0s) 
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T101223.json
+[10:30:36] bench batch rc=0
+[10:30:36] ingest: ingest: +6 records | 50 already banked | 170 plan-less rows skipped
+[10:32:06] batch: prompts 90..4 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p091: blocked  (84.1s) out_of_bounds,physical_overlap,out_of_bounds
+  p092: error    (55.7s) 
+  p093: error    (61.4s) 
+  p094: blocked  (61.7s) physical_overlap,physical_overlap,physical_overlap
+  p095: error    (42.0s) 
+  p096: legal    (33.8s) 
+  p097: error    (33.4s) 
+  p098: legal    (31.7s) 
+  p099: error    (31.1s) 
+  p100: legal    (69.4s) 
+  p001: error    (56.9s) 
+  p002: legal    (21.6s) 
+  p003: error    (45.6s) 
+  p004: error    (31.6s) 
+  p005: blocked  (31.3s) physical_overlap,physical_overlap,out_of_bounds
+  LANE RESULT: 4/15 legal plans (27%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260724T103206.json
+[10:43:38] bench batch rc=0
+[10:43:38] ingest: ingest: +7 records | 56 already banked | 178 plan-less rows skipped
+[10:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[10:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[10:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:10:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:15:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:20:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:25:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:30:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:35:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:40:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[11:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:10:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:15:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:20:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:25:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:30:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:35:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:40:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[12:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:10:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:15:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:20:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:25:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:30:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:35:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:40:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[13:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:10:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:15:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:20:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:25:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:30:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:35:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:40:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[14:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:10:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:15:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:20:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:25:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:30:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:35:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:40:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[15:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:10:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:15:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:20:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:25:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:30:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:35:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:40:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:45:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:50:08] PAUSE-BENCH.txt present - sleeping 5 min
+[16:55:08] PAUSE-BENCH.txt present - sleeping 5 min
+[17:00:08] PAUSE-BENCH.txt present - sleeping 5 min
+[17:05:08] PAUSE-BENCH.txt present - sleeping 5 min
+[17:10:08] PAUSE-BENCH.txt present - sleeping 5 min

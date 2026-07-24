@@ -12,3 +12,8 @@ __pycache__/
 
 # KiroGraph local index (code graph DB + LanceDB embeddings) — machine-local, rebuildable via `kirograph index`.
 .kirograph/
+
+# Large model binaries (tracked outside git)
+bench/trained/**/*.safetensors
+bench/trained/**/*.gguf
+unsloth_compiled_cache/

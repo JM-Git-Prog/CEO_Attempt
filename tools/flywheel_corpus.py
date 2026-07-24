@@ -263,3 +263,103 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# --- Bench ingestion (writes to corpus-bench.jsonl, same record_id formula as bench/ingest_bench_to_corpus.py) ---
+
+BENCH_CORPUS_PATH = ROOT / "data" / "flywheel" / "corpus-bench.jsonl"
+BENCH_DIR = ROOT / "bench"
+PROMPT_SET_PATH = ROOT / "data" / "flywheel" / "prompt-set-v1.json"
+
+
+def _bench_prompt_texts() -> dict[str, str]:
+    try:
+        doc = json.loads(PROMPT_SET_PATH.read_text(encoding="utf-8"))
+        raw = doc.get("prompts") if isinstance(doc, dict) else doc
+        return {
+            p.get("id", f"p{i+1:03d}"): p.get("prompt") or p.get("description") or p.get("text", "")
+            for i, p in enumerate(raw) if isinstance(p, dict)
+        }
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def ingest_bench(
+    *,
+    root: Path = ROOT,
+    corpus_path: Path | None = None,
+    log_path: Path = IDLE_LOG_PATH,
+    stop_requested: Callable[[], bool] = lambda: False,
+) -> dict:
+    """Ingest bench/results-*.json into corpus-bench.jsonl.
+
+    Uses the same record_id = sha256(results-file|lane|prompt_id)[:24] as
+    bench/ingest_bench_to_corpus.py so both writers dedup against each other.
+    """
+    corpus_path = corpus_path or (root / "data" / "flywheel" / "corpus-bench.jsonl")
+    started = time.time()
+    texts = _bench_prompt_texts()
+    corpus_path.parent.mkdir(parents=True, exist_ok=True)
+
+    existing: set[str] = set()
+    if corpus_path.is_file():
+        for line in corpus_path.read_text(encoding="utf-8").splitlines():
+            try:
+                existing.add(json.loads(line).get("record_id", ""))
+            except (json.JSONDecodeError, ValueError):
+                continue
+
+    bench_dir = root / "bench"
+    results_files = sorted(bench_dir.glob("results-*.json"))
+    appended = skipped = errors = 0
+    buf: list[str] = []
+
+    for rf in results_files:
+        if stop_requested():
+            break
+        try:
+            doc = json.loads(rf.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            errors += 1
+            continue
+        for lane, lane_data in (doc.get("lanes") or {}).items():
+            for row in lane_data.get("rows") or []:
+                pid = row.get("prompt_id", "?")
+                rid = hashlib.sha256(f"{rf.name}|{lane}|{pid}".encode()).hexdigest()[:24]
+                if rid in existing:
+                    skipped += 1
+                    continue
+                if not isinstance(row.get("plan"), (dict, list)):
+                    continue  # error/timeout rows carry no plan
+                legal = row.get("status") == "legal"
+                record = json.dumps({
+                    "schema_version": "flywheel-corpus/bench-v1",
+                    "record_id": rid,
+                    "description": texts.get(pid, ""),
+                    "prompt_id": pid,
+                    "plan": row["plan"],
+                    "per_gate_verdicts": {"plan": "passed" if legal else "failed"},
+                    "failure_signatures": [f"plan/validator/{c}" for c in row.get("blockers", [])],
+                    "model_lane": lane,
+                    "qualification_mode": "bench",
+                    "pipeline_era": "pre-inversion",
+                    "timestamps": {"extracted_at": time.strftime("%Y-%m-%dT%H:%M:%S")},
+                    "source_results_file": rf.name,
+                }, separators=(",", ":"), sort_keys=True)
+                buf.append(record)
+                existing.add(rid)
+                appended += 1
+
+    if buf:
+        with corpus_path.open("a", encoding="utf-8", newline="\n") as handle:
+            handle.write("\n".join(buf) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+
+    result = {
+        "job": "ingest_bench", "status": "complete", "appended": appended,
+        "skipped": skipped, "errors": errors,
+        "duration_seconds": round(time.time() - started, 3),
+    }
+    _log(log_path, {**result, "at_epoch": time.time()})
+    return result
