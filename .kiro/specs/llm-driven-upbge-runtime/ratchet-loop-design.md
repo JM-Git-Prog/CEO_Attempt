@@ -145,7 +145,39 @@ Steps 1–4 alone already convert the loop from "one noisy sample per change" to
 - Whether Tier 1 needs the alignment `not_applicable` change is unverified until the first mock run.
 - If every local lane plateaus well below threshold, the finding is "the local model is the ceiling" — that decision (bigger local model vs. spend-gated remote lane for the one clean pass) belongs to John, and the scoreboard will state it plainly.
 
+## 7. Failure classes and the deterministic freeze (added 2026-07-23, approved by John)
+
+Every recorded failure belongs to one of three classes, and the scheduler treats them
+differently:
+
+- **`model`** — the LLM emitted something invalid (schema failure, invalid plan,
+  `validation.valid != True`). This is the ONLY class where sampling more models or
+  escalating the lane ladder is rational.
+- **`deterministic`** — the model did its job (`validation.valid == True`) and a
+  deterministic gate rejected the result (e.g. `composition.status == "rejected"`).
+  Same input ⇒ same output: sampling cannot change the verdict. After
+  `EARLY_STOP_FAILURES` (3) such failures on one signature, the lane reports
+  `non_planner_blocked`, `_select_lane` refuses to escalate ANY further lane for the
+  fingerprint, and NEXT.md carries a `DETERMINISTIC GATE DEFECT` line naming the gate.
+  The freeze releases only when the source fingerprint changes.
+- **`infra`** — transport/service failures (brief-400s from a dead endpoint, world-500s,
+  ComfyUI unavailable). Retry with backoff; never charge these against a model lane.
+
+Why this exists: on 2026-07-23 the history showed 42 trials burned against the
+composition gate while every plan was valid (`stool_4` clipped by 3.77 px — a geometry
+defect, later fixed by the FOV ladder in `composition_sidecar.py`). The scheduler's job
+is to notice "models are innocent" after 3 counts, not 42.
+
+Implementation: `_record_lane_trial` computes `deterministic_gate` per trial and
+accumulates `deterministic_gate_counts` per signature; `_lane_state` returns
+`non_planner_blocked` when the top signature has ≥3 deterministic counts;
+`_next_markdown` names the defect. Verified 2026-07-23 in an offline harness: freeze
+engages on 3 deterministic failures; genuine model failures still escalate the ladder.
+
 ## Wake log
+- 2026-07-23 (Claude/Fable session) — Deterministic-freeze scheduler change + composition
+  FOV ladder landed together; this edit intentionally changes the source fingerprint so
+  the watch retests the canonical prompt against the repaired composition gate.
 - 2026-07-22 17:49 CDT — ComfyUI restored (Comfy Desktop local instance relaunched); this edit intentionally changes the source fingerprint to wake the watch for the first trial round on the new fingerprint.
 - 2026-07-22 18:31 CDT — John transferred sole process/service custody to Kiro. The watch now holds unavailable/busy GPU tiers, rechecks local ComfyUI every 60 seconds while remaining source-responsive, and resumes the same fingerprint automatically when readiness returns; no source change is required.
 - 2026-07-22 19:38 CDT — DRIVER-LANE VERDICT (per the record-per-lane-winner rule): Qwen3 Coder Next (0.05x) as Kiro session driver — GOOD for bounded single-file edits, diagnosis narration, and cheap stewardship (34 min ≈ 14 credits); FAILS at multi-layer debugging (hanging pytest + shell + module-constant injection — circular retries, 3 tmp scratch dirs). John escalated to GPT 5.6 Sol for the surgery. Standing policy: cheap driver for stewardship/watch-keeping only; escalate to a strong driver for any cross-layer debugging, per NEEDS-JUDGMENT discipline.

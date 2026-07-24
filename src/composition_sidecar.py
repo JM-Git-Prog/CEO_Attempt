@@ -156,6 +156,7 @@ def _candidate_camera(
     plan: FloorPlanV11,
     inset_m: float,
     target_offset: tuple[float, float, float],
+    fov_deg: float,
 ) -> PlanCamera:
     intent = plan.camera_intent
     half_width, half_depth = plan.room.width / 2.0, plan.room.depth / 2.0
@@ -169,7 +170,7 @@ def _candidate_camera(
         target_x=target.x + target_offset[0],
         target_y=min(plan.room.height, max(0.0, intent.target_height_m + target_offset[1])),
         target_z=target.z + target_offset[2],
-        fov_deg=intent.fov_deg,
+        fov_deg=fov_deg,
     )
 
 
@@ -187,7 +188,12 @@ def qualify_v11_composition(
     plan: FloorPlanV11,
     policy: dict | None = None,
 ) -> tuple[FloorPlanV11, CompositionEvidence]:
-    """Select one bounded camera candidate without mutating Plan geometry or FOV."""
+    """Select one bounded camera candidate without mutating Plan geometry.
+
+    FOV: the intent FOV is tried first with the full candidate grid; only if no
+    candidate is accepted does the ladder widen FOV in small policy-bounded steps
+    (default +3/+5/+7 deg, capped at 62). Geometry is never mutated.
+    """
     settings = policy or {}
     width = int(settings.get("image_width", 1024))
     height = int(settings.get("image_height", 768))
@@ -218,39 +224,54 @@ def qualify_v11_composition(
     detailed: list[CandidateEvidence] = []
     minimum_inset = float(settings.get("minimum_inset_m", 0.22))
     maximum_inset = min(plan.room.width, plan.room.depth) / 2.0 - 0.05
+    fov_offsets = tuple(float(value) for value in settings.get(
+        "fov_offsets_deg", (0.0, 3.0, 5.0, 7.0)
+    ))
+    maximum_fov = float(settings.get("maximum_fov_deg", 62.0))
 
-    for index, values in enumerate(itertools.product(inset_offsets, x_offsets, y_offsets, z_offsets)):
-        inset_delta, offset_x, offset_y, offset_z = values
-        inset = min(maximum_inset, max(minimum_inset, plan.camera_intent.inset_m + inset_delta))
-        target_offset = (offset_x, offset_y, offset_z)
-        camera = _candidate_camera(plan, inset, target_offset)
-        candidate_plan = plan.model_copy(update={"camera": camera})
-        contract = camera_contract_for_plan(candidate_plan, width=width, height=height)
-        bounds = tuple(
-            _project_bounds(contract, instance_id, kind, points, margin)
-            for instance_id, kind, points in required
+    selected: CandidateEvidence | None = None
+    index = 0
+    tried_fovs: list[float] = []
+    for fov_offset in fov_offsets:
+        fov = min(plan.camera_intent.fov_deg + fov_offset, maximum_fov)
+        if fov in tried_fovs:
+            continue
+        tried_fovs.append(fov)
+        for values in itertools.product(inset_offsets, x_offsets, y_offsets, z_offsets):
+            inset_delta, offset_x, offset_y, offset_z = values
+            inset = min(maximum_inset, max(minimum_inset, plan.camera_intent.inset_m + inset_delta))
+            target_offset = (offset_x, offset_y, offset_z)
+            camera = _candidate_camera(plan, inset, target_offset, fov)
+            candidate_plan = plan.model_copy(update={"camera": camera})
+            contract = camera_contract_for_plan(candidate_plan, width=width, height=height)
+            bounds = tuple(
+                _project_bounds(contract, instance_id, kind, points, margin)
+                for instance_id, kind, points in required
+            )
+            clipped = tuple(value.instance_id for value in bounds if not value.fully_inside)
+            adjustment = abs(inset_delta) + abs(offset_x) + abs(offset_y) + abs(offset_z)
+            base = {
+                "index": index,
+                "inset_m": round(inset, 6),
+                "target_offset_m": target_offset,
+                "covered_instances": len(required) - len(clipped),
+                "required_instances": len(required),
+                "clipped_ids": clipped,
+                "minimum_margin_px": round(_minimum_margin(bounds, width, height), 6),
+                "adjustment_cost": round(adjustment, 6),
+            }
+            summaries.append(CandidateSummary(**base))
+            detailed.append(CandidateEvidence(**base, camera=camera, projected_bounds=bounds))
+            index += 1
+        accepted = [value for value in detailed if not value.clipped_ids]
+        selected = max(
+            accepted,
+            key=lambda value: (value.minimum_margin_px, -value.adjustment_cost, -value.index),
+            default=None,
         )
-        clipped = tuple(value.instance_id for value in bounds if not value.fully_inside)
-        adjustment = abs(inset_delta) + abs(offset_x) + abs(offset_y) + abs(offset_z)
-        base = {
-            "index": index,
-            "inset_m": round(inset, 6),
-            "target_offset_m": target_offset,
-            "covered_instances": len(required) - len(clipped),
-            "required_instances": len(required),
-            "clipped_ids": clipped,
-            "minimum_margin_px": round(_minimum_margin(bounds, width, height), 6),
-            "adjustment_cost": round(adjustment, 6),
-        }
-        summaries.append(CandidateSummary(**base))
-        detailed.append(CandidateEvidence(**base, camera=camera, projected_bounds=bounds))
+        if selected is not None:
+            break
 
-    accepted = [value for value in detailed if not value.clipped_ids]
-    selected = max(
-        accepted,
-        key=lambda value: (value.minimum_margin_px, -value.adjustment_cost, -value.index),
-        default=None,
-    )
     best_rejected = None if selected else max(
         detailed,
         key=lambda value: (

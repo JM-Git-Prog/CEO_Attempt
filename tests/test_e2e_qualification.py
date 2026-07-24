@@ -503,11 +503,21 @@ def test_full_iteration_records_scheduler_health_without_claiming_sample_qualifi
 def test_lane_ladder_is_cheapest_first_and_cloud_requires_explicit_enable():
     config = qualification._load_lanes_config(qualification.DEFAULT_LANES_CONFIG)
     assert [lane["env"]["LLM_MODEL"] for lane in config["lanes"]] == [
-        "llama3.1", "gpt-oss:20b", "glm-5.2:cloud",
+        # Roster change 2026-07-23: kimi-k2.6:cloud added at John's direction
+        # (authorization recorded in lanes.json). Ships disabled like all
+        # remote lanes; enabled only via --enable-lane at launch.
+        # Roster change 2026-07-23 (later, 500-plan harvest, John's "yes for all"):
+        # gpt-oss:120b-cloud, qwen3-coder:480b-cloud and deepseek-v3.1:671b-cloud
+        # added; harvest caps raised to 400 requests/run on all remote lanes
+        # (authorization recorded per lane in lanes.json).
+        "llama3.1", "gpt-oss:20b", "glm-5.2:cloud", "kimi-k2.6:cloud",
+        "gpt-oss:120b-cloud", "qwen3-coder:480b-cloud", "deepseek-v3.1:671b-cloud",
     ]
-    assert config["lanes"][-1]["enabled"] is False
-    assert config["lanes"][-1]["authorization"]["approved"] is True
-    assert config["lanes"][-1]["caps"]["max_requests_per_run"] == 20
+    for lane in config["lanes"]:
+        if lane.get("remote"):
+            assert lane["enabled"] is False
+            assert lane["authorization"]["approved"] is True
+            assert lane["caps"]["max_requests_per_run"] == 400
 
     fingerprint = "f" * 64
     scoreboard = {"fingerprints": {fingerprint: {"lanes": {}}}}

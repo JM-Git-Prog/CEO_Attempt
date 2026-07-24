@@ -386,6 +386,11 @@ def _lane_state(lane: dict, plateau_trials: int, threshold: float) -> str:
     if pass_rate >= threshold:
         return "threshold_met"
     top_signature = str(top[0][0]) if top else ""
+    deterministic_hits = int((lane.get("deterministic_gate_counts") or {}).get(top_signature, 0))
+    if top_signature and deterministic_hits >= EARLY_STOP_FAILURES:
+        # Models emitted valid plans; a deterministic gate rejected them. Sampling
+        # more models cannot change the outcome — freeze until the code changes.
+        return "non_planner_blocked"
     if top_signature and not top_signature.startswith(("brief/", "plan/")):
         return "non_planner_blocked"
     return "plateaued"
@@ -443,6 +448,12 @@ def _record_lane_trial(
         lane.get("cap_exhausted") or result.get("remote_cap_exhausted")
     )
     lane.setdefault("evidence_paths", []).append(str(evidence_path))
+    plan_stage = (result.get("stages") or {}).get("plan") or {}
+    deterministic_gate = bool(
+        result.get("passed") is not True
+        and (plan_stage.get("validation") or {}).get("valid") is True
+        and (plan_stage.get("composition") or {}).get("status") == "rejected"
+    )
     history = lane.setdefault("history", [])
     history.append({
         "passed": result.get("passed") is True,
@@ -450,6 +461,7 @@ def _record_lane_trial(
         "evidence_path": str(evidence_path),
         "session_id": result.get("session_id"),
         "formal": result.get("formal") is True,
+        "deterministic_gate": deterministic_gate,
     })
     lane["history"] = history[-ROLLING_WINDOW:]
     lane["rolling_pass_rate"] = round(
@@ -473,6 +485,9 @@ def _record_lane_trial(
         signature = result.get("failure_signature") or "adapter/result/unsigned_failure"
         failures = lane.setdefault("signature_counts", {})
         failures[signature] = int(failures.get(signature, 0)) + 1
+        if deterministic_gate:
+            gates = lane.setdefault("deterministic_gate_counts", {})
+            gates[signature] = int(gates.get(signature, 0)) + 1
     lane["top_signatures"] = sorted(
         lane.get("signature_counts", {}).items(), key=lambda item: (-item[1], item[0])
     )
@@ -534,7 +549,14 @@ def _next_markdown(scoreboard: dict) -> str:
             f"{scheduler.get('next_lane')} for this batch if its Pro caps remain available."
         )
     elif scheduler.get("status") == "lane_escalation_blocked":
-        action = "Fix the non-planner failure before escalating the planner model lane."
+        if int((lane.get("deterministic_gate_counts") or {}).get(top_signature, 0)) >= 1:
+            action = (
+                "DETERMINISTIC GATE DEFECT: models emitted valid plans but a deterministic "
+                f"gate rejected them ({top_signature}). Fix code, not models; sampling stays "
+                "frozen for this fingerprint until the source changes."
+            )
+        else:
+            action = "Fix the non-planner failure before escalating the planner model lane."
     elif scheduler.get("status") == "cloud_cap_exhausted":
         action = "Pause the Ollama Pro lane; keep local deterministic work responsive."
     elif scheduler.get("status") == "lane_threshold_met":
@@ -1331,7 +1353,14 @@ def _run_idle_f0(
     gpu_state = _comfyui_gpu_state()
     if gpu_state.get("status") == "model_download":
         return False
-    from tools.flywheel_corpus import extract_corpus
+    try:
+        from tools.flywheel_corpus import extract_corpus
+    except ModuleNotFoundError:
+        # Launched as `python tools\ratchet_loop.py`: sys.path[0] is tools/,
+        # not the repo root, so import the sibling module directly. This path
+        # only fires at idle, which is why it survived until the first truly
+        # quiet window (post-reboot) - 2026-07-23 crash-loop fix.
+        from flywheel_corpus import extract_corpus
 
     stop_requested = lambda: (
         source_fingerprint() != baseline or _agent_turn_active(agent_active_file)
