@@ -86,8 +86,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any set of sessions (even with identical descriptions), verify unique UUIDs, exclusive output directories, no cross-session file references
     - **Validates: Requirements 12.2, 12.5**
 
-- [~] 6. Smoke Validator
-  - [ ] 6.1 Implement Smoke Validator module (`src/smoke_validator.py`)
+- [x] 6. Smoke Validator
+  - [x] 6.1 Implement Smoke Validator module (`src/smoke_validator.py`)
     - Create `smoke_probe.py` script that runs inside UPBGE_Editor `--background` mode
     - Implement 4 structural checks via bpy: (1) player controller text datablock exists and is non-empty, (2) at least one object has Character physics type, (3) logic brick controllers are wired to target objects, (4) scene loads without bpy errors
     - `run_structural_smoke(capability, blend_path, runtime_plan, timeout_s=15.0)` → invoke UPBGE_Editor with `--background blend_path --python smoke_probe.py`, parse JSON result from stdout
