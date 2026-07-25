@@ -1598,6 +1598,23 @@ class WorldBuilder:
         model_used = ""
         attempts = 0
 
+        # --- Input Validation Gate (Req 1.6) ---
+        input_failure = validate_input(description)
+        if input_failure is not None:
+            return MVPPipelineResult(
+                success=False,
+                artifact_path=None,
+                launch_result=None,
+                quality_label="parity_only",
+                warnings=[],
+                failure_stage=input_failure.stage,
+                failure_reason_code=input_failure.reason_code,
+                failure_diagnostic=input_failure.diagnostic,
+                duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
+                model_used="",
+                attempts=0,
+            )
+
         try:
             # --- Stage 1: Interpret ---
             self._emit_sse("interpreting")
