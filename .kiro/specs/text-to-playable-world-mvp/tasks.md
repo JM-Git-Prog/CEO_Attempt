@@ -153,8 +153,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
 - [x] 9. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 10. Serialization and Contract Integrity
-  - [~] 10.1 Implement canonical JSON serialization constraints
+- [x] 10. Serialization and Contract Integrity
+  - [x] 10.1 Implement canonical JSON serialization constraints
     - Ensure serializer rejects non-finite numbers (NaN, Infinity, -Infinity)
     - Enforce sorted keys, no-whitespace separators (`,` and `:`), UTF-8 encoding
     - Ensure deserialization raises validation error on non-conforming input (missing fields, unknown fields, type mismatches) identifying the first bad element
