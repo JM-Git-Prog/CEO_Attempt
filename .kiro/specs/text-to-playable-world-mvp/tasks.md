@@ -95,8 +95,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Does NOT enter game mode, does NOT open a visible window, does NOT launch blenderplayer
     - _Requirements: 8.3, 8.4, 8.5_
 
-- [~] 7. Auto-Launcher
-  - [ ] 7.1 Implement Auto-Launcher module (`src/auto_launch.py`)
+- [x] 7. Auto-Launcher
+  - [x] 7.1 Implement Auto-Launcher module (`src/auto_launch.py`)
     - `auto_launch_game(capability, blend_path, fullscreen=True, timeout_s=10.0)` → verify blend_path exists + non-zero, discover blenderplayer from `capability.blenderplayer_path`
     - Construct launch command: `blenderplayer -f 0 0 path/to/file.blend` (fullscreen) or `blenderplayer path/to/file.blend` (windowed)
     - Start subprocess non-blocking, wait up to timeout_s for process to NOT exit (confirms running)

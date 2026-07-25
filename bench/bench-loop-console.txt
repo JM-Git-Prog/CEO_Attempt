@@ -652,3 +652,6 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T134932.json
 [13:55:40] bench batch rc=0
 [13:55:40] ingest: ingest: +6 records | 270 already banked | 295 plan-less rows skipped
+[13:57:10] batch: prompts 25..39 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
