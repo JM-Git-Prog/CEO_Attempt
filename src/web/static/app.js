@@ -1116,7 +1116,187 @@ document.addEventListener('click', event => {
     stage:target.dataset.stage || document.querySelector('.stage-step.active')?.dataset.stage || '',
   });
 });
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent});
+// ─── MVP Pipeline Mode ─────────────────────────────────────────────────────
+// Implements Req 9.4, 9.5, 1.4, 1.8: SSE-driven pipeline progress,
+// structured failure display, download links, and launch fallback.
+// This is additive — existing V3-V11 full-mode behavior is unchanged.
+
+const MVP_STAGES = ['interpreting', 'planning', 'building_scene', 'compiling', 'validating', 'launching'];
+
+let mvpEventSource = null;
+
+function mvpStageLabel(stage) {
+  const labels = {
+    interpreting: 'Interpreting',
+    planning: 'Planning',
+    building_scene: 'Building Scene',
+    compiling: 'Compiling',
+    validating: 'Validating',
+    launching: 'Launching',
+    done: 'Complete',
+  };
+  return labels[stage] || stage;
+}
+
+function renderMvpProgress(currentStage, elapsed) {
+  const steps = MVP_STAGES.map(s => {
+    const active = s === currentStage;
+    const done = MVP_STAGES.indexOf(s) < MVP_STAGES.indexOf(currentStage);
+    const cls = active ? 'mvp-step active' : done ? 'mvp-step done' : 'mvp-step';
+    return `<span class="${cls}" data-stage="${escapeHtml(s)}">${mvpStageLabel(s)}</span>`;
+  }).join('');
+  const elapsedText = elapsed ? ` · ${escapeHtml(elapsed)}s` : '';
+  return `<div class="mvp-progress-bar">${steps}</div><div class="mvp-progress-status"><span class="spinner"></span> <strong>${mvpStageLabel(currentStage)}</strong>${elapsedText}</div>`;
+}
+
+function renderMvpSuccess(data) {
+  const downloadUrl = escapeHtml(data.download_url || '');
+  const qualityLabel = data.quality_label ? `<span class="mvp-quality">${escapeHtml(data.quality_label)}</span>` : '';
+  return `<div class="mvp-result mvp-success">
+    <div class="mvp-result-icon">&#x2714;</div>
+    <h3>Game Running</h3>
+    <p>Your world is alive and running in UPBGE. ${qualityLabel}</p>
+    ${downloadUrl ? `<a class="mvp-download-link secondary-action" href="${downloadUrl}" download>Download .blend file</a>` : ''}
+  </div>`;
+}
+
+function renderMvpLaunchFallback(data) {
+  const downloadUrl = escapeHtml(data.download_url || '');
+  const instructions = data.fallback_instructions || 'Open the .blend file in UPBGE blenderplayer or Blender with the game engine enabled.';
+  return `<div class="mvp-result mvp-launch-fallback">
+    <div class="mvp-result-icon">&#x26A0;</div>
+    <h3>Compilation Succeeded — Auto-Launch Failed</h3>
+    <p>Your game was compiled successfully but could not be launched automatically.</p>
+    ${downloadUrl ? `<a class="mvp-download-link primary-action" href="${downloadUrl}" download>Download .blend file</a>` : ''}
+    <div class="mvp-instructions-box">
+      <strong>Manual Launch Instructions</strong>
+      <p>${escapeHtml(instructions)}</p>
+    </div>
+  </div>`;
+}
+
+function renderMvpFailure(data) {
+  const failureStage = data.failure_stage || 'unknown';
+  const reason = data.error || 'An unspecified error occurred.';
+  const reasonCode = data.reason_code || '';
+  return `<div class="mvp-result mvp-failure">
+    <div class="mvp-result-icon">&#x2718;</div>
+    <h3>Pipeline Failed at: ${escapeHtml(mvpStageLabel(failureStage))}</h3>
+    <p class="mvp-failure-reason">${escapeHtml(reason)}</p>
+    ${reasonCode ? `<span class="mvp-reason-code">${escapeHtml(reasonCode)}</span>` : ''}
+  </div>`;
+}
+
+function closeMvpEventSource() {
+  if (mvpEventSource) {
+    mvpEventSource.close();
+    mvpEventSource = null;
+  }
+}
+
+async function sendDescriptionMvp() {
+  const description = input.value.trim();
+  if (!description || busy) return;
+  currentDescription = description;
+  addMessage('user', escapeHtml(description));
+  input.value = '';
+  setBusy(true, 'MVP Pipeline');
+  logEvent('process', 'mvp_pipeline_started', {description: description.slice(0, 120)});
+
+  let progressElement = null;
+  try {
+    await ensureSession();
+
+    // POST to MVP describe endpoint
+    const data = await fetchJson(`/api/session/${sessionId}/describe_mvp`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({description, mode: 'mvp'}),
+    });
+
+    // Show initial progress
+    progressElement = addMessage('progress', renderMvpProgress('interpreting', ''));
+
+    // Connect to SSE events endpoint
+    closeMvpEventSource();
+    const eventsUrl = data.events_url || `/api/session/${sessionId}/events`;
+    mvpEventSource = new EventSource(eventsUrl);
+
+    mvpEventSource.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+
+        if (payload.stage === 'done') {
+          // Terminal event — pipeline finished
+          closeMvpEventSource();
+
+          if (progressElement) progressElement.remove();
+          progressElement = null;
+
+          if (payload.state === 'ready') {
+            if (payload.launch_failed) {
+              // Req 1.8, 9.4: auto-launch failed, show download + instructions
+              addMessage('assistant', renderMvpLaunchFallback(payload));
+              stageState.textContent = 'LAUNCH FAILED';
+              stageState.className = 'stage-state working';
+              logEvent('process', 'mvp_launch_failed', {download_url: payload.download_url});
+            } else {
+              // Req 1.4: full success — game running
+              addMessage('assistant', renderMvpSuccess(payload));
+              stageState.textContent = 'GAME RUNNING';
+              stageState.className = 'stage-state ready';
+              logEvent('process', 'mvp_success', {quality_label: payload.quality_label});
+            }
+          } else if (payload.state === 'error') {
+            // Req 9.5: pipeline failure — show stage + reason, NOT generic error
+            addMessage('error', renderMvpFailure(payload));
+            stageState.textContent = 'PIPELINE FAILED';
+            stageState.className = 'stage-state working';
+            logEvent('process', 'mvp_pipeline_failed', {
+              failure_stage: payload.failure_stage,
+              reason_code: payload.reason_code,
+            });
+          }
+
+          setBusy(false);
+          input.focus();
+        } else {
+          // Progress event — update the stage indicator
+          if (progressElement) {
+            progressElement.innerHTML = renderMvpProgress(payload.stage, payload.elapsed);
+          }
+          logEvent('process', 'mvp_stage_progress', {stage: payload.stage, elapsed: payload.elapsed});
+        }
+      } catch (parseError) {
+        // Silently ignore malformed SSE payloads
+      }
+    };
+
+    mvpEventSource.onerror = () => {
+      closeMvpEventSource();
+      if (progressElement) progressElement.remove();
+      progressElement = null;
+      addMessage('error', '<strong>Connection lost</strong><br>The real-time pipeline connection was interrupted. Check the session status.');
+      stageState.textContent = 'DISCONNECTED';
+      stageState.className = 'stage-state working';
+      setBusy(false);
+      input.focus();
+    };
+
+  } catch (error) {
+    closeMvpEventSource();
+    if (progressElement) progressElement.remove();
+    addMessage('error', `<strong>MVP pipeline failed to start</strong><br>${escapeHtml(error.message)}`);
+    stageState.textContent = 'ERROR';
+    stageState.className = 'stage-state working';
+    setBusy(false);
+    input.focus();
+  }
+}
+
+// ─── End MVP Pipeline Mode ────────────────────────────────────────────────────
+
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp});
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);

@@ -4,7 +4,7 @@
  "lanes": {
   "llama3.1": {
    "legal": 0,
-   "total": 11,
+   "total": 13,
    "legal_rate": 0.0,
    "violation_census": {},
    "rows": [
@@ -62,6 +62,16 @@
      "status": "timeout",
      "seconds": 120.0,
      "prompt_id": "p041"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p042"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p043"
     }
    ]
   }

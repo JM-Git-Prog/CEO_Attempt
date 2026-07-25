@@ -168,3 +168,42 @@
 .ui-v10-bounded .alignment-detail .status-inconclusive{color:var(--amber)}
 .ui-v10-bounded .accept-alignment{padding:8px 11px;border:1px solid #8b683b;background:#312313;color:#ffd49c;cursor:pointer;font:700 9px ui-monospace,monospace}
 .ui-v10-bounded .accept-alignment:hover{border-color:var(--amber);color:var(--amber)}
+
+
+/* MVP Pipeline: progress, success, failure, and launch fallback display (Req 9.4, 9.5, 1.4, 1.8) */
+.mvp-progress-bar{display:flex;gap:2px;margin:0 0 10px;border:1px solid var(--line);background:var(--line)}
+.mvp-step{flex:1;padding:7px 4px;text-align:center;background:#0c1016;color:#576171;font:700 8px ui-monospace,monospace;letter-spacing:.04em;transition:background .2s,color .2s}
+.mvp-step.active{background:#221b12;color:var(--amber)}
+.mvp-step.done{background:#0d1a14;color:var(--green)}
+.mvp-progress-status{color:#ffd49c;font-size:12px;line-height:1.4}
+.mvp-progress-status .spinner{vertical-align:middle}
+
+.mvp-result{padding:20px;text-align:center}
+.mvp-result-icon{font-size:36px;margin-bottom:8px}
+.mvp-result h3{margin:0 0 8px;font-size:15px}
+.mvp-result p{margin:0 0 12px;color:#b8c1cd;font-size:12px;line-height:1.5}
+
+.mvp-success{border:1px solid #28523d;background:#0d1a14}
+.mvp-success .mvp-result-icon{color:var(--green)}
+.mvp-success h3{color:var(--green)}
+.mvp-quality{display:inline-block;margin-left:6px;padding:3px 7px;border:1px solid #28523d;background:#0b1610;color:var(--green);font:700 9px ui-monospace,monospace}
+
+.mvp-launch-fallback{border:1px solid #5d482d;background:#1d1811}
+.mvp-launch-fallback .mvp-result-icon{color:var(--amber)}
+.mvp-launch-fallback h3{color:var(--amber)}
+
+.mvp-failure{border:1px solid #633638;background:#211315}
+.mvp-failure .mvp-result-icon{color:var(--red)}
+.mvp-failure h3{color:var(--red)}
+.mvp-failure-reason{color:#ffc2c2;font-size:13px}
+.mvp-reason-code{display:inline-block;margin-top:6px;padding:4px 8px;border:1px solid #5c3030;background:#1d1112;color:#ff9999;font:700 9px ui-monospace,monospace}
+
+.mvp-download-link{display:inline-block;margin:8px 0;padding:10px 16px;text-decoration:none;font:800 11px ui-monospace,monospace;border-radius:2px}
+.mvp-download-link.primary-action{background:var(--amber);color:#17120c;border:1px solid var(--amber)}
+.mvp-download-link.primary-action:hover{filter:brightness(1.1)}
+.mvp-download-link.secondary-action{background:#202733;color:#c8d0dc;border:1px solid #343d4b}
+.mvp-download-link.secondary-action:hover{border-color:var(--amber);color:var(--amber)}
+
+.mvp-instructions-box{margin:12px auto 0;max-width:480px;padding:12px 16px;border:1px solid #5d482d;background:#1a1308;text-align:left;font-size:12px;line-height:1.55;color:#e8d5b5}
+.mvp-instructions-box strong{display:block;margin-bottom:6px;color:var(--amber);font:700 10px ui-monospace,monospace;letter-spacing:.04em}
+.mvp-instructions-box p{margin:0;color:#d1bc96}
