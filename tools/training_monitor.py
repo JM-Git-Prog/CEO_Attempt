@@ -36,6 +36,8 @@ EXAM_BAT = ROOT / "RUN-PROBE-EXAM.bat"
 FLYWHEEL_BAT = ROOT / "START-FLYWHEEL-LOOP.bat"
 FLYWHEEL_LOG = ROOT / "bench" / "flywheel-log.txt"
 FLYWHEEL_STATE = ROOT / "bench" / "flywheel-state.json"
+PROMPT_EXPERIMENT_BAT = ROOT / "RUN-PROMPT-EXPERIMENT.bat"
+HPARAM_SWEEP_BAT = ROOT / "RUN-HPARAM-SWEEP.bat"
 
 POLL_MS = 1500
 HISTORY_REFRESH_S = 15
@@ -241,7 +243,7 @@ class TrainingMonitor(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Training Monitor - The Living Room")
-        self.geometry("920x980")
+        self.geometry("920x1040")
         self.configure(bg="#191d27")
         self._last_history = 0.0
         self._build_ui()
@@ -298,6 +300,19 @@ class TrainingMonitor(tk.Tk):
         tk.Label(btn_row, textvariable=self.updated_var, font=("Segoe UI", 9),
                  bg="#191d27", fg="#6f7a90").pack(side="right")
 
+        exp_row = tk.Frame(self, bg="#191d27")
+        exp_row.pack(fill="x", padx=14, pady=(0, 4))
+        tk.Label(exp_row, text="Experiments:", font=("Segoe UI", 9, "bold"),
+                 bg="#191d27", fg="#7f8ba3").pack(side="left")
+        self.prompt_exp_btn = tk.Button(
+            exp_row, text="Run prompt experiment (Stage A)", command=self._start_prompt_experiment,
+            bg="#2a3140", fg="#e8eaf0", activebackground="#37405a", relief="flat", padx=10, pady=4)
+        self.prompt_exp_btn.pack(side="left", padx=(8, 0))
+        self.hparam_sweep_btn = tk.Button(
+            exp_row, text="Run hyperparameter sweep (Stage C)", command=self._start_hparam_sweep,
+            bg="#2a3140", fg="#e8eaf0", activebackground="#37405a", relief="flat", padx=10, pady=4)
+        self.hparam_sweep_btn.pack(side="left", padx=(8, 0))
+
         self.exam_status_var = tk.StringVar(value="")
         tk.Label(self, textvariable=self.exam_status_var, font=("Segoe UI", 9),
                  bg="#191d27", fg="#7f8ba3", wraplength=860, justify="left").pack(
@@ -305,6 +320,11 @@ class TrainingMonitor(tk.Tk):
 
         self.flywheel_status_var = tk.StringVar(value="")
         tk.Label(self, textvariable=self.flywheel_status_var, font=("Segoe UI", 9),
+                 bg="#191d27", fg="#7f8ba3", wraplength=860, justify="left").pack(
+            fill="x", padx=14, pady=(0, 4))
+
+        self.experiment_status_var = tk.StringVar(value="")
+        tk.Label(self, textvariable=self.experiment_status_var, font=("Segoe UI", 9),
                  bg="#191d27", fg="#7f8ba3", wraplength=860, justify="left").pack(
             fill="x", padx=14, pady=(0, 4))
 
@@ -388,6 +408,25 @@ class TrainingMonitor(tk.Tk):
         self.flywheel_status_var.set(
             "Launched START-FLYWHEEL-LOOP.bat - runs minimized, forever, until you pause it "
             "(create bench\\PAUSE-FLYWHEEL.txt to stop it).")
+
+    def _start_prompt_experiment(self):
+        if not PROMPT_EXPERIMENT_BAT.exists():
+            self.experiment_status_var.set(f"Can't find {PROMPT_EXPERIMENT_BAT.name} in the project folder.")
+            return
+        subprocess.Popen(["cmd", "/c", "start", "", str(PROMPT_EXPERIMENT_BAT)], cwd=str(ROOT))
+        self.experiment_status_var.set(
+            "Launched RUN-PROMPT-EXPERIMENT.bat - 3 prompt variants x 15 prompts, same model "
+            "throughout so only the wording is being tested. Leaderboard in its own window.")
+
+    def _start_hparam_sweep(self):
+        if not HPARAM_SWEEP_BAT.exists():
+            self.experiment_status_var.set(f"Can't find {HPARAM_SWEEP_BAT.name} in the project folder.")
+            return
+        subprocess.Popen(["cmd", "/c", "start", "", str(HPARAM_SWEEP_BAT)], cwd=str(ROOT))
+        self.experiment_status_var.set(
+            "Launched RUN-HPARAM-SWEEP.bat - trains 5 hyperparameter combos under their own "
+            "model names (slow - several full training runs). Only overwrites the live "
+            "default if one actually beats it on the holdout set.")
 
     # ---- polling ----
     def _tick(self):

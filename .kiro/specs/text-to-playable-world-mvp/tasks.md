@@ -76,7 +76,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Pre-compilation stages (interpret, plan, validate, scene graph) can proceed concurrently; only sidecar compilation is serialized
     - _Requirements: 12.1_
 
-  - [~] 5.3 Write property test for FIFO queue ordering (Property 19)
+  - [x] 5.3 Write property test for FIFO queue ordering (Property 19)
     - **Property 19: FIFO Queue Ordering**
     - For any sequence of session submissions arriving while a compilation is active, verify FIFO ordering is preserved
     - **Validates: Requirements 12.1**

@@ -4,11 +4,11 @@
  "lanes": {
   "llama3.1": {
    "legal": 0,
-   "total": 12,
+   "total": 15,
    "legal_rate": 0.0,
    "violation_census": {
+    "error:ValidationError": 10,
     "physical_overlap": 9,
-    "error:ValidationError": 7,
     "out_of_bounds": 6,
     "opening_blocked": 6,
     "camera_inside_geometry": 3
@@ -1026,8 +1026,30 @@
       }
      },
      "prompt_id": "p007"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Barber Shop', '...: 2.0, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 27.8,
+     "prompt_id": "p008"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, dangling Plan relation target north_wall [type=value_error, input_value={'name': 'Rustic Cabin Bu...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 18.1,
+     "prompt_id": "p009"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Yoga Studio', '...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 19.8,
+     "prompt_id": "p010"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-25 13:48:01"
 }
