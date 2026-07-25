@@ -15,12 +15,12 @@ from pathlib import Path
 
 import httpx
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.canon_image.generator import check_comfyui, get_image_provider
 from src.floor_plan.validator import validate_floor_plan
-from src.models import PipelineState
+from src.models import PipelineState, SessionMode
 from src.orchestrator.llm import LLM_MODEL, OLLAMA_URL
 from src.pipeline import SemanticBatchRejectedError, WorldBuilder
 from src.telemetry import read_telemetry
@@ -473,11 +473,29 @@ async def v8_telemetry(session_id: str):
 
 @app.post("/api/session")
 async def create_session(request: Request):
+    # Parse optional mode from request body (default: "mvp" per Req 10.4)
+    mode = SessionMode.MVP
+    try:
+        body = await request.json()
+        raw_mode = str(body.get("mode", "mvp")).strip().lower()
+        if raw_mode == "full":
+            mode = SessionMode.FULL
+        elif raw_mode != "mvp":
+            return JSONResponse(
+                {"error": f"Unsupported mode: {raw_mode!r}; expected 'mvp' or 'full'"},
+                status_code=400,
+            )
+    except Exception:
+        # No body or unparseable body → default to MVP
+        pass
+
     builder = WorldBuilder(interface_version=_request_version(request))
+    builder.session.mode = mode
     sessions[builder.session.session_id] = builder
     builder.save_session()
     return {
         "session_id": builder.session.session_id,
+        "mode": builder.session.mode.value,
         "interface_version": builder.session.interface_version,
         "workflow_profile_id": builder.session.workflow_profile_id,
         "workflow_url": f"/api/session/{builder.session.session_id}/workflow",
@@ -938,3 +956,282 @@ async def get_status(session_id: str):
     if not builder:
         return JSONResponse({"error": "Session not found"}, status_code=404)
     return {"session_id": session_id, "state": builder.session.state.value, "progress": builder.session.progress_messages, "error": builder.session.error, "provider": builder.session.canon_provider or get_image_provider(session_id), "has_image": builder.session.canon_image_path is not None, "has_project": builder.session.output_path is not None, "interface_version": builder.session.interface_version, "workflow_profile_id": builder.session.workflow_profile_id, "workflow_url": f"/api/session/{session_id}/workflow", **_v11_runtime_payload(builder)}
+
+# --- MVP Mode Endpoints (Requirements 9.1, 9.2, 9.3, 9.4, 9.5) ---
+
+# Track background MVP pipeline tasks per session
+_mvp_tasks: dict[str, asyncio.Task] = {}
+
+
+def _parse_structured_error(error: str | None) -> dict:
+    """Parse session.error into structured failure info for web display.
+
+    If the error is JSON-parseable with stage/reason_code/message, use those.
+    Otherwise treat as a plain string message with unknown stage/reason.
+    Implements Requirements 9.4, 9.5.
+    """
+    if not error:
+        return {"stage": "unknown", "reason_code": "unknown", "message": "Unknown error"}
+    try:
+        parsed = json.loads(error)
+        if isinstance(parsed, dict) and "stage" in parsed:
+            return {
+                "stage": parsed.get("stage", "unknown"),
+                "reason_code": parsed.get("reason_code", "unknown"),
+                "message": parsed.get("message", error),
+            }
+    except (json.JSONDecodeError, TypeError):
+        pass
+    # Plain string error — extract reason_code from prefix if present (e.g. "parity_failed: ...")
+    if ":" in error:
+        parts = error.split(":", 1)
+        return {
+            "stage": "unknown",
+            "reason_code": parts[0].strip(),
+            "message": parts[1].strip() if len(parts) > 1 else error,
+        }
+    return {"stage": "unknown", "reason_code": "unknown", "message": error}
+
+
+@app.post("/api/session/{session_id}/describe_mvp")
+async def describe_mvp(session_id: str, request: Request):
+    """MVP-mode describe endpoint — kicks off the full pipeline as a background task.
+
+    Accepts a mode parameter (default: "mvp"). When mode="mvp", invokes
+    builder.run_mvp(description) as an async background task and returns
+    immediately so the client can stream progress via the SSE /events endpoint.
+
+    Implements Requirements 9.1, 9.2, 9.3.
+    """
+    builder = _restore_builder(session_id)
+    if not builder:
+        builder = WorldBuilder(
+            session_id=session_id, interface_version=_request_version(request)
+        )
+        sessions[session_id] = builder
+
+    try:
+        body = await request.json()
+        description = str(body.get("description", "")).strip()
+        mode = str(body.get("mode", "mvp")).strip().lower()
+
+        if not description:
+            raise ValueError("Describe a room before generating")
+
+        if mode != "mvp":
+            # Fall through to existing full-mode behavior via the standard describe endpoint
+            builder.session.error = None
+            builder.session.progress_messages.clear()
+            await builder.step_interpret(description)
+            plan = await builder.step_build_floor_plan()
+            builder.session.state = PipelineState.AWAITING_PLAN_APPROVAL
+            builder.save_session()
+            return _plan_payload(builder, plan)
+
+        # MVP mode: start pipeline in background, return immediately
+        builder.session.error = None
+        builder.session.progress_messages.clear()
+        builder.session.mode = SessionMode.MVP
+        builder.session.state = PipelineState.GENERATING_CONCEPT
+        builder.save_session()
+
+        async def _run_mvp_pipeline():
+            try:
+                result = await builder.run_mvp(description)
+                # Store result summary in session for later retrieval
+                builder.session.error = None
+                if not result.success:
+                    builder.session.state = PipelineState.ERROR
+                    # Store structured failure info as JSON for web layer parsing
+                    builder.session.error = json.dumps({
+                        "stage": result.failure_stage or "unknown",
+                        "reason_code": result.failure_reason_code or "unknown",
+                        "message": result.failure_diagnostic or result.failure_reason_code or "Pipeline failed",
+                    })
+                else:
+                    # Store launch fallback info if launch failed but pipeline succeeded
+                    if result.launch_result and not result.launch_result.success:
+                        builder.session.launch_fallback = {
+                            "launch_failed": True,
+                            "reason_code": result.launch_result.reason_code,
+                            "diagnostics": result.launch_result.diagnostics,
+                            "fallback_instructions": result.launch_result.fallback_instructions,
+                        }
+                builder.save_session()
+            except Exception as exc:
+                builder.session.state = PipelineState.ERROR
+                builder.session.error = json.dumps({
+                    "stage": "unknown",
+                    "reason_code": "unhandled_exception",
+                    "message": str(exc),
+                })
+                builder.save_session()
+
+        task = asyncio.create_task(_run_mvp_pipeline())
+        _mvp_tasks[session_id] = task
+
+        return {
+            "session_id": session_id,
+            "mode": "mvp",
+            "state": builder.session.state.value,
+            "events_url": f"/api/session/{session_id}/events",
+            "message": "MVP pipeline started. Connect to events_url for SSE progress.",
+        }
+    except ValueError as exc:
+        return _error(builder, exc, 400)
+    except Exception as exc:
+        return _error(builder, exc)
+
+
+@app.get("/api/session/{session_id}/events")
+async def session_events(session_id: str):
+    """SSE endpoint delivering real-time stage progress for MVP pipeline.
+
+    Streams stage transitions (interpreting, planning, building_scene, compiling,
+    validating, launching, game_running) within 2 seconds of occurrence (Req 9.1).
+
+    Each event is a JSON object with 'stage' and 'elapsed' fields.
+    Terminal event has stage='done' with final state and result summary.
+    """
+    builder = _restore_builder(session_id)
+    if not builder:
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+
+    async def event_generator():
+        last_seen = 0
+        while True:
+            messages = builder.session.progress_messages[last_seen:]
+            for msg in messages:
+                if msg.startswith("sse:"):
+                    parts = msg.split(":")
+                    stage = parts[1] if len(parts) > 1 else ""
+                    elapsed = parts[2] if len(parts) > 2 else ""
+                    yield f"data: {json.dumps({'stage': stage, 'elapsed': elapsed})}\n\n"
+                last_seen += 1
+
+            # Check terminal conditions
+            if builder.session.state in (PipelineState.READY, PipelineState.ERROR):
+                # Build terminal payload
+                terminal: dict = {
+                    "stage": "done",
+                    "state": builder.session.state.value,
+                }
+                if builder.session.state == PipelineState.READY:
+                    terminal["game_running"] = builder.session.game_pid is not None
+                    terminal["download_url"] = f"/api/session/{session_id}/download_blend"
+                    if builder.session.quality_label:
+                        terminal["quality_label"] = builder.session.quality_label
+                    # Include launch fallback info if auto-launch failed (Req 1.8)
+                    if builder.session.launch_fallback:
+                        terminal["launch_failed"] = True
+                        terminal["fallback_instructions"] = (
+                            builder.session.launch_fallback.get("fallback_instructions")
+                        )
+                elif builder.session.state == PipelineState.ERROR:
+                    # Structured failure display (Req 9.4, 9.5)
+                    failure_info = _parse_structured_error(builder.session.error)
+                    terminal["error"] = failure_info["message"]
+                    terminal["failure_stage"] = failure_info["stage"]
+                    terminal["reason_code"] = failure_info["reason_code"]
+                yield f"data: {json.dumps(terminal)}\n\n"
+                break
+
+            await asyncio.sleep(0.5)
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@app.get("/api/session/{session_id}/download_blend")
+async def download_blend(session_id: str):
+    """Serve the compiled .blend artifact for download (Req 9.3).
+
+    Returns the Playable_Artifact .blend file produced by the MVP pipeline.
+    """
+    builder = _restore_builder(session_id)
+    if not builder:
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+
+    if not builder.session.output_path:
+        return JSONResponse(
+            {"error": "No compiled artifact available for this session"},
+            status_code=404,
+        )
+
+    blend_path = Path(builder.session.output_path)
+    if not blend_path.exists() or not blend_path.is_file():
+        return JSONResponse(
+            {"error": "Compiled .blend file no longer exists on disk"},
+            status_code=404,
+        )
+
+    return FileResponse(
+        blend_path,
+        media_type="application/x-blender",
+        filename=f"game_{session_id}.blend",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@app.get("/api/session/{session_id}/mvp_result")
+async def mvp_result(session_id: str):
+    """Return the MVP pipeline result summary for a completed session.
+
+    Provides the full result payload including success status, quality label,
+    game running state, artifact download URL, and any failure info.
+    """
+    builder = _restore_builder(session_id)
+    if not builder:
+        return JSONResponse({"error": "Session not found"}, status_code=404)
+
+    if builder.session.state not in (PipelineState.READY, PipelineState.ERROR):
+        return JSONResponse(
+            {
+                "session_id": session_id,
+                "state": builder.session.state.value,
+                "complete": False,
+                "message": "Pipeline still in progress. Use /events for real-time updates.",
+            },
+            status_code=202,
+        )
+
+    result: dict = {
+        "session_id": session_id,
+        "state": builder.session.state.value,
+        "complete": True,
+        "success": builder.session.state == PipelineState.READY,
+        "mode": builder.session.mode.value if builder.session.mode else "mvp",
+        "quality_label": builder.session.quality_label,
+        "game_running": builder.session.game_pid is not None,
+        "game_pid": builder.session.game_pid,
+    }
+
+    if builder.session.output_path:
+        result["download_url"] = f"/api/session/{session_id}/download_blend"
+        result["artifact_path"] = builder.session.output_path
+
+    if builder.session.state == PipelineState.ERROR:
+        # Structured failure info (Req 9.4, 9.5) — not generic error
+        failure_info = _parse_structured_error(builder.session.error)
+        result["error"] = failure_info["message"]
+        result["failure_stage"] = failure_info["stage"]
+        result["reason_code"] = failure_info["reason_code"]
+
+    # Launch fallback: pipeline succeeded but auto-launch failed (Req 1.4, 1.8)
+    if builder.session.launch_fallback:
+        result["launch_failed"] = True
+        result["fallback_instructions"] = (
+            builder.session.launch_fallback.get("fallback_instructions")
+        )
+        # Ensure download_url is always present when launch fails
+        if "download_url" not in result and builder.session.output_path:
+            result["download_url"] = f"/api/session/{session_id}/download_blend"
+
+    return result

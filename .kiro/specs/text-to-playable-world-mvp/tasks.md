@@ -185,8 +185,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Non-conforming bytes raise validation error with identified element, never silently coerce
     - **Validates: Requirements 11.5**
 
-- [~] 11. Web Interface — SSE Progress and Auto-Launch Trigger
-  - [~] 11.1 Add MVP mode endpoints and SSE progress
+- [x] 11. Web Interface — SSE Progress and Auto-Launch Trigger
+  - [x] 11.1 Add MVP mode endpoints and SSE progress
     - Modify `/describe` endpoint in `src/web/app.py` to accept `mode` parameter (default: `"mvp"`)
     - Implement SSE event stream delivering stage transitions within 2 seconds of occurrence
     - Stage events: `interpreting`, `planning`, `building_scene`, `compiling`, `validating`, `launching`, `game_running`
@@ -194,13 +194,13 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On game running: display "Game Running" status with "Download .blend" secondary action
     - _Requirements: 9.1, 9.2, 9.3_
 
-  - [~] 11.2 Implement failure display and launch fallback in web interface
+  - [x] 11.2 Implement failure display and launch fallback in web interface
     - On pipeline failure: display failed stage name and human-readable reason (not generic error)
     - On auto-launch failure: present download link with platform-specific manual launch instructions
     - Provide download link for successful compilations as secondary action
     - _Requirements: 9.4, 9.5, 1.4, 1.8_
 
-  - [~] 11.3 Preserve existing V3-V10 interface behavior
+  - [x] 11.3 Preserve existing V3-V10 interface behavior
     - Ensure all existing routes and behavior for non-MVP sessions remain unchanged
     - Default to MVP mode when no mode specified at session creation (Req 10.4)
     - Full mode (existing V11) remains selectable via mode parameter

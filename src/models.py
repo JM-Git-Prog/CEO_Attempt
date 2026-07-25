@@ -269,3 +269,4 @@ class WorldSession(BaseModel):
     revision_history: list[dict] = Field(default_factory=list)
     error: Optional[str] = None
     progress_messages: list[str] = Field(default_factory=list)
+    launch_fallback: Optional[dict] = None  # Stores launch failure info when pipeline succeeded but auto-launch failed
