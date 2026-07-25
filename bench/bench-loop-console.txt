@@ -570,3 +570,53 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p070: error    (29.2s) 
   p071: blocked  (62.1s) out_of_bounds
   p072: error    (29.8s) 
+  p073: blocked  (67.4s) out_of_bounds,out_of_bounds
+  p074: error    (34.7s) 
+  p075: error    (23.1s) 
+  p076: legal    (37.2s) 
+  p077: error    (51.9s) 
+  p078: legal    (31.2s) 
+  p079: legal    (18.3s) 
+  p080: error    (36.8s) 
+  LANE RESULT: 5/15 legal plans (33%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T132109.json
+[13:31:24] bench batch rc=0
+[13:31:24] ingest: ingest: +8 records | 246 already banked | 272 plan-less rows skipped
+[13:32:54] batch: prompts 80..94 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p081: blocked  (58.3s) physical_overlap,camera_inside_geometry
+  p082: legal    (36.4s) 
+  p083: legal    (20.7s) 
+  p084: legal    (18.4s) 
+  p085: legal    (19.6s) 
+  p086: legal    (21.8s) 
+  p087: blocked  (46.3s) out_of_bounds
+  p088: error    (41.4s) 
+  p089: error    (17.0s) 
+  p090: blocked  (37.3s) out_of_bounds,out_of_bounds,out_of_bounds
+  p091: legal    (26.5s) 
+  p092: error    (25.0s) 
+  p093: error    (32.8s) 
+  p094: legal    (27.0s) 
+  p095: blocked  (51.1s) opening_blocked
+  LANE RESULT: 7/15 legal plans (47%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T133254.json
+[13:40:54] bench batch rc=0
+[13:40:54] ingest: ingest: +11 records | 254 already banked | 276 plan-less rows skipped
+[13:42:24] batch: prompts 95..9 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p096: error    (36.6s) 
+  p097: error    (17.8s) 
+  p098: blocked  (25.8s) physical_overlap,physical_overlap,physical_overlap
+  p099: error    (24.2s) 
+  p100: error    (21.8s) 
+  p001: error    (18.6s) 
+  p002: blocked  (25.4s) out_of_bounds,physical_overlap,out_of_bounds
+  p003: error    (19.2s) 
+  p004: blocked  (17.2s) out_of_bounds
+  p005: blocked  (18.8s) physical_overlap,opening_blocked,opening_blocked
+  p006: error    (26.6s) 

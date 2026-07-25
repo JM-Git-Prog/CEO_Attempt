@@ -62,31 +62,31 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
 - [x] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Session Manager and FIFO Queue
-  - [ ] 5.1 Implement Session Manager (`src/session_manager.py`)
+- [-] 5. Session Manager and FIFO Queue
+  - [x] 5.1 Implement Session Manager (`src/session_manager.py`)
     - `create_session(description, mode)` → generates UUID, creates isolated output directory under `output/sessions/{uuid}/` with `input/`, `output/`, `tmp/` subdirectories
     - `mark_failed_on_restart()` → on startup, mark any incomplete sessions as failed with `reason_code: "server_restart"`
     - Enforce unique session IDs (random UUID), never reuse directories even for identical descriptions
     - _Requirements: 12.2, 12.4, 12.5, 12.6_
 
-  - [ ] 5.2 Implement FIFO compilation queue
+  - [x] 5.2 Implement FIFO compilation queue
     - `SessionQueue` class with asyncio lock: max 1 active UPBGE compilation at a time
     - `enqueue(session)` → start immediately if no active compilation, else append to deque
     - `complete(session_id)` → mark done, start next pending session from deque
     - Pre-compilation stages (interpret, plan, validate, scene graph) can proceed concurrently; only sidecar compilation is serialized
     - _Requirements: 12.1_
 
-  - [ ]* 5.3 Write property test for FIFO queue ordering (Property 19)
+  - [~] 5.3 Write property test for FIFO queue ordering (Property 19)
     - **Property 19: FIFO Queue Ordering**
     - For any sequence of session submissions arriving while a compilation is active, verify FIFO ordering is preserved
     - **Validates: Requirements 12.1**
 
-  - [ ]* 5.4 Write property test for session isolation (Property 18)
+  - [~] 5.4 Write property test for session isolation (Property 18)
     - **Property 18: Session Isolation Invariant**
     - For any set of sessions (even with identical descriptions), verify unique UUIDs, exclusive output directories, no cross-session file references
     - **Validates: Requirements 12.2, 12.5**
 
-- [ ] 6. Smoke Validator
+- [~] 6. Smoke Validator
   - [ ] 6.1 Implement Smoke Validator module (`src/smoke_validator.py`)
     - Create `smoke_probe.py` script that runs inside UPBGE_Editor `--background` mode
     - Implement 4 structural checks via bpy: (1) player controller text datablock exists and is non-empty, (2) at least one object has Character physics type, (3) logic brick controllers are wired to target objects, (4) scene loads without bpy errors
@@ -95,7 +95,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Does NOT enter game mode, does NOT open a visible window, does NOT launch blenderplayer
     - _Requirements: 8.3, 8.4, 8.5_
 
-- [ ] 7. Auto-Launcher
+- [~] 7. Auto-Launcher
   - [ ] 7.1 Implement Auto-Launcher module (`src/auto_launch.py`)
     - `auto_launch_game(capability, blend_path, fullscreen=True, timeout_s=10.0)` → verify blend_path exists + non-zero, discover blenderplayer from `capability.blenderplayer_path`
     - Construct launch command: `blenderplayer -f 0 0 path/to/file.blend` (fullscreen) or `blenderplayer path/to/file.blend` (windowed)
@@ -104,7 +104,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On failure: generate `fallback_instructions` with platform-specific manual launch instructions
     - _Requirements: 1.1, 1.2, 1.8, 9.2_
 
-- [ ] 8. Pipeline Orchestrator — MVP Branch
+- [~] 8. Pipeline Orchestrator — MVP Branch
   - [ ] 8.1 Implement `run_mvp()` method in Pipeline Orchestrator
     - Add MVP mode branch to `src/pipeline.py`
     - Implement shortened pipeline: interpret → plan (lane ladder) → scene graph → WorldContract → CompilerPlan+RuntimePlan → sidecar compile → parity gate → smoke validator → auto-launch
@@ -114,46 +114,46 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Integrate FIFO queue — serialize only the sidecar compilation stage
     - _Requirements: 1.1, 1.3, 2.4, 10.1, 10.2_
 
-  - [ ] 8.2 Implement input validation gate
+  - [~] 8.2 Implement input validation gate
     - Reject empty strings, strings < 3 characters, strings > 500 characters with descriptive validation error BEFORE invoking any LLM stage
     - _Requirements: 1.6_
 
-  - [ ]* 8.3 Write property test for input length validation (Property 1)
+  - [~] 8.3 Write property test for input length validation (Property 1)
     - **Property 1: Input Length Validation**
     - For any string input, verify rejection iff char count < 3 or > 500, and no LLM invocation occurs on rejection
     - **Validates: Requirements 1.6**
 
-  - [ ] 8.4 Implement parity gate check
+  - [~] 8.4 Implement parity gate check
     - Verify scene inventory JSON contains all expected object IDs from CompilerPlan with no missing IDs
     - Verify total object count matches expected count
     - On failure: list each discrepancy (missing IDs, count mismatch) — hard stop
     - _Requirements: 8.1, 8.2_
 
-  - [ ]* 8.5 Write property test for parity gate ID verification (Property 10)
+  - [~] 8.5 Write property test for parity gate ID verification (Property 10)
     - **Property 10: Parity Gate ID Verification**
     - For any CompilerPlan with expected IDs E and inventory with actual IDs A, parity passes iff E ⊆ A AND |A| == |E|; failure lists E \ A
     - **Validates: Requirements 8.1, 8.2**
 
-  - [ ]* 8.6 Write property test for quality label determination (Property 11)
+  - [~] 8.6 Write property test for quality label determination (Property 11)
     - **Property 11: Quality Label Determination**
     - For any (parity_passed, smoke_passed) combination, verify correct quality label assignment
     - **Validates: Requirements 8.5**
 
-  - [ ] 8.7 Implement structured error reporting and graceful degradation
+  - [~] 8.7 Implement structured error reporting and graceful degradation
     - Every stage returns success result or `StageFailure` — no exceptions that corrupt session state
     - On pipeline failure: report stage name, reason_code, diagnostic message to web interface
     - Graceful degradation chain: smoke fails → proceed with `smoke_skipped`; launch fails → download link fallback; parity fails → hard stop
     - _Requirements: 1.5, 1.8, 9.5_
 
-  - [ ]* 8.8 Write property test for pipeline error reporting (Property 17)
+  - [~] 8.8 Write property test for pipeline error reporting (Property 17)
     - **Property 17: Pipeline Error Reporting Preserves Session State**
     - For any stage failure, verify result contains stage name + reason_code + diagnostic, and session state remains uncorrupted
     - **Validates: Requirements 1.5**
 
-- [ ] 9. Checkpoint — Ensure all tests pass
+- [~] 9. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Serialization and Contract Integrity
+- [~] 10. Serialization and Contract Integrity
   - [ ] 10.1 Implement canonical JSON serialization constraints
     - Ensure serializer rejects non-finite numbers (NaN, Infinity, -Infinity)
     - Enforce sorted keys, no-whitespace separators (`,` and `:`), UTF-8 encoding
@@ -185,8 +185,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Non-conforming bytes raise validation error with identified element, never silently coerce
     - **Validates: Requirements 11.5**
 
-- [ ] 11. Web Interface — SSE Progress and Auto-Launch Trigger
-  - [ ] 11.1 Add MVP mode endpoints and SSE progress
+- [~] 11. Web Interface — SSE Progress and Auto-Launch Trigger
+  - [~] 11.1 Add MVP mode endpoints and SSE progress
     - Modify `/describe` endpoint in `src/web/app.py` to accept `mode` parameter (default: `"mvp"`)
     - Implement SSE event stream delivering stage transitions within 2 seconds of occurrence
     - Stage events: `interpreting`, `planning`, `building_scene`, `compiling`, `validating`, `launching`, `game_running`
@@ -194,19 +194,19 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On game running: display "Game Running" status with "Download .blend" secondary action
     - _Requirements: 9.1, 9.2, 9.3_
 
-  - [ ] 11.2 Implement failure display and launch fallback in web interface
+  - [~] 11.2 Implement failure display and launch fallback in web interface
     - On pipeline failure: display failed stage name and human-readable reason (not generic error)
     - On auto-launch failure: present download link with platform-specific manual launch instructions
     - Provide download link for successful compilations as secondary action
     - _Requirements: 9.4, 9.5, 1.4, 1.8_
 
-  - [ ] 11.3 Preserve existing V3-V10 interface behavior
+  - [~] 11.3 Preserve existing V3-V10 interface behavior
     - Ensure all existing routes and behavior for non-MVP sessions remain unchanged
     - Default to MVP mode when no mode specified at session creation (Req 10.4)
     - Full mode (existing V11) remains selectable via mode parameter
     - _Requirements: 10.2, 10.3, 10.4, 9.6_
 
-- [ ] 12. Player Controller and Door Interaction (RuntimePlan validation)
+- [~] 12. Player Controller and Door Interaction (RuntimePlan validation)
   - [ ] 12.1 Implement player controller math utilities
     - Movement speed normalization: diagonal input (two keys) produces normalized direction vector so combined speed ≤ max_speed
     - Vertical look angle clamping to ±85°
@@ -228,7 +228,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any room geometry with obstructed default spawn, repositioning produces a valid in-bounds, non-intersecting point
     - **Validates: Requirements 4.7**
 
-  - [ ] 12.5 Implement door interaction parameter validation in RuntimePlan builder
+  - [~] 12.5 Implement door interaction parameter validation in RuntimePlan builder
     - Validate door interaction intents: `open_angle_deg` within [-180, 180] non-zero, `speed_deg_s` within (0, 720], `initially_open` boolean
     - Reject WorldContract with structured error if door subject lacks explicit physics intent or uses trigger body mode
     - _Requirements: 5.1, 5.5_

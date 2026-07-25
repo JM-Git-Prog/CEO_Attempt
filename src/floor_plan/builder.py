@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 
 from pydantic import ValidationError
 
@@ -12,7 +13,39 @@ from src.floor_plan.validator import normalize_floor_plan, validate_floor_plan
 from src.models import SceneConcept
 from src.orchestrator.llm import generate_json
 
-V11_PLAN_MODEL = os.getenv("V11_PLAN_MODEL", "gpt-oss:20b")
+def _v11_plan_model() -> str:
+    """Model for the v11 explicit-relations planning path.
+
+    Read fresh on every call - NOT frozen at import. A frozen module-level
+    constant here used to silently defeat every bench/exam lane switch:
+    plan_bench.py sets os.environ["LLM_MODEL"] = lane per lane, but this
+    path always passed a literal model= string into generate_json(), so
+    generate()'s own "model or LLM_MODEL" fallback never ran - every lane
+    (llama3.1, planner-probe-v1, cloud lanes, whatever) silently queried
+    the same frozen default instead of the one actually being tested.
+    LLM_MODEL (what plan_bench.py sets) wins when present; V11_PLAN_MODEL
+    remains available as an independent pin for callers outside the bench
+    harness that want v11 planning on one fixed model regardless of lane;
+    "gpt-oss:20b" is the unchanged default when neither is set.
+    """
+    return os.getenv("LLM_MODEL") or os.getenv("V11_PLAN_MODEL", "gpt-oss:20b")
+
+
+def _v11_plan_system() -> str:
+    """System prompt for the v11 planning call - production text unless a
+    Stage A prompt-variant experiment (bench/prompt_experiment.py) points
+    V11_PLAN_SYSTEM_FILE at an alternate file. Unset by default, so this is
+    a no-op for every normal caller. Repair calls deliberately keep using
+    V11_PLAN_SYSTEM directly (not this override) so an experiment only
+    changes the ONE variable it's testing - the initial planning prompt.
+    """
+    override = os.getenv("V11_PLAN_SYSTEM_FILE")
+    if override:
+        try:
+            return Path(override).read_text(encoding="utf-8")
+        except OSError:
+            pass
+    return V11_PLAN_SYSTEM
 
 PLAN_SYSTEM = """You are an expert interior space planner creating a practical, buildable floor plan.
 
@@ -159,11 +192,11 @@ async def build_floor_plan(
     explicit_v11 = placement_policy == "explicit-semantic-relations/v1"
     if explicit_v11:
         context["floor_plan_v11_json_schema"] = FloorPlanV11.model_json_schema()
-    system_prompt = V11_PLAN_SYSTEM if explicit_v11 else PLAN_SYSTEM
+    system_prompt = _v11_plan_system() if explicit_v11 else PLAN_SYSTEM
     raw = await generate_json(
         system_prompt,
         f"{instruction}\n{json.dumps(context)}",
-        model=V11_PLAN_MODEL if explicit_v11 else None,
+        model=_v11_plan_model() if explicit_v11 else None,
         timeout_seconds=timeout_seconds,
     )
     if explicit_v11:
@@ -190,7 +223,7 @@ async def build_floor_plan(
             repaired = await generate_json(
                 V11_PLAN_SYSTEM,
                 json.dumps(repair_context),
-                model=V11_PLAN_MODEL,
+                model=_v11_plan_model(),
                 timeout_seconds=timeout_seconds,
             )
             plan = FloorPlanV11.model_validate(
@@ -248,7 +281,7 @@ async def build_floor_plan(
             repaired_raw = await generate_json(
                 V11_PLAN_SYSTEM,
                 json.dumps(semantic_repair_context),
-                model=V11_PLAN_MODEL,
+                model=_v11_plan_model(),
                 timeout_seconds=timeout_seconds,
             )
             try:

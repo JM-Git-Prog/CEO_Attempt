@@ -159,6 +159,16 @@ def main() -> int:
         return 1
     log("ollama create OK - planner-probe-v1 registered")
 
+    log("running the fast holdout check (Stage B - rows this model never trained on)")
+    try:
+        r_h = subprocess.run([sys.executable, str(ROOT / "bench" / "holdout_eval.py"),
+                              "--lane", "planner-probe-v1"], timeout=20 * 60)
+        log(f"holdout check finished rc={r_h.returncode} (informational - does not gate the exam)")
+    except subprocess.TimeoutExpired:
+        log("holdout check exceeded its 20min timeout - skipping, continuing to the exam anyway")
+    except Exception as exc:
+        log(f"holdout check failed to launch: {exc} - skipping, continuing to the exam anyway")
+
     lanes = _decide_exam_lanes()
     log(f"launching the exam - lanes: {lanes}")
     try:

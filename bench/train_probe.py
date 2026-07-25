@@ -10,6 +10,7 @@ and gives a baseline delta. Gains, if any, will be format-tightening.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -17,17 +18,33 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data" / "flywheel" / "training" / "probe-v1.jsonl"
-OUT = ROOT / "bench" / "trained" / time.strftime("probe-v1-%Y%m%dT%H%M%S")
 
 BASE_MODEL = "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"  # ~6 GB download, 4-bit
 MAX_SEQ = 4096
-EPOCHS = 3
-LR = 2e-4
+
+# Hyperparameter defaults. bench/best-hparams.json - written by Stage C's
+# sweep (bench/hparam_sweep.py) once a candidate beats the current default
+# on the holdout set - overrides these automatically; explicit CLI flags
+# override both. A plain run with no file and no flags trains exactly like
+# it always has.
+DEFAULTS = {"rank": 16, "alpha": 16, "dropout": 0.0, "epochs": 3, "lr": 2e-4,
+            "model_name": "planner-probe-v1"}
+BEST_HPARAMS_FILE = ROOT / "bench" / "best-hparams.json"
 
 # Live status for the Training Monitor desktop app - one small JSON file,
 # overwritten as training moves. Only ever written from real trainer
 # callbacks and real stage transitions below - never fabricated.
 PROGRESS = ROOT / "bench" / "training-progress.json"
+
+
+def _load_defaults() -> dict:
+    cfg = dict(DEFAULTS)
+    if BEST_HPARAMS_FILE.exists():
+        try:
+            cfg.update(json.loads(BEST_HPARAMS_FILE.read_text(encoding="utf-8")))
+        except Exception:
+            pass
+    return cfg
 
 
 def _write_progress(**fields) -> None:
@@ -38,6 +55,24 @@ def main() -> int:
     if not DATA.exists():
         print(f"Missing {DATA} - run make_training_set.py first.")
         return 1
+
+    cfg = _load_defaults()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--rank", type=int, default=cfg["rank"])
+    ap.add_argument("--alpha", type=int, default=cfg["alpha"])
+    ap.add_argument("--dropout", type=float, default=cfg["dropout"])
+    ap.add_argument("--epochs", type=int, default=cfg["epochs"])
+    ap.add_argument("--lr", type=float, default=cfg["lr"])
+    ap.add_argument("--model-name", dest="model_name", default=cfg["model_name"],
+                     help="Ollama registration name - use a distinct name for "
+                          "sweep candidates so the live default is never overwritten")
+    ap.add_argument("--run-name", dest="run_name", default="",
+                     help="optional label folded into the output folder name")
+    args = ap.parse_args()
+
+    out_stamp = time.strftime("%Y%m%dT%H%M%S")
+    out_label = f"probe-v1-{args.run_name}-{out_stamp}" if args.run_name else f"probe-v1-{out_stamp}"
+    out = ROOT / "bench" / "trained" / out_label
 
     from datasets import Dataset
     from unsloth import FastLanguageModel
@@ -58,15 +93,17 @@ def main() -> int:
                                  epoch=round(state.epoch or 0, 3), loss=logs["loss"])
 
     rows = [json.loads(l) for l in DATA.read_text(encoding="utf-8").splitlines() if l.strip()]
-    print(f"Training rows: {len(rows)} | base: {BASE_MODEL}")
-    run_id = OUT.name
+    print(f"Training rows: {len(rows)} | base: {BASE_MODEL} | "
+          f"rank={args.rank} alpha={args.alpha} dropout={args.dropout} "
+          f"epochs={args.epochs} lr={args.lr} -> {args.model_name}")
+    run_id = out.name
     _write_progress(stage="loading_model", run_id=run_id, rows=len(rows))
 
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=BASE_MODEL, max_seq_length=MAX_SEQ, load_in_4bit=True,
     )
     model = FastLanguageModel.get_peft_model(
-        model, r=16, lora_alpha=16, lora_dropout=0.0,
+        model, r=args.rank, lora_alpha=args.alpha, lora_dropout=args.dropout,
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
                         "gate_proj", "up_proj", "down_proj"],
     )
@@ -80,30 +117,32 @@ def main() -> int:
         model=model, tokenizer=tokenizer, train_dataset=ds,
         dataset_text_field="text", max_seq_length=MAX_SEQ,
         args=TrainingArguments(
-            output_dir=str(OUT / "checkpoints"),
+            output_dir=str(out / "checkpoints"),
             per_device_train_batch_size=1, gradient_accumulation_steps=4,
-            num_train_epochs=EPOCHS, learning_rate=LR, logging_steps=5,
+            num_train_epochs=args.epochs, learning_rate=args.lr, logging_steps=5,
             save_strategy="no", bf16=True, report_to=[], seed=13,
         ),
         callbacks=[ProgressCallback()],
     )
     trainer.train()
 
-    OUT.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     _write_progress(stage="saving_gguf", run_id=run_id, rows=len(rows))
     print("Saving merged GGUF (q4_k_m) - takes a few minutes...")
-    model.save_pretrained_gguf(str(OUT), tokenizer, quantization_method="q4_k_m")
+    model.save_pretrained_gguf(str(out), tokenizer, quantization_method="q4_k_m")
 
-    gguf = next(OUT.glob("*.gguf"), None)
-    modelfile = OUT / "Modelfile"
+    gguf = next(out.glob("*.gguf"), None)
+    modelfile = out / "Modelfile"
     modelfile.write_text(f"FROM {gguf}\n", encoding="utf-8")
-    ollama_cmd = f'ollama create planner-probe-v1 -f "{modelfile}"'
+    ollama_cmd = f'ollama create {args.model_name} -f "{modelfile}"'
     _write_progress(stage="done", run_id=run_id, rows=len(rows), ollama_cmd=ollama_cmd,
-                     modelfile=str(modelfile))
+                     modelfile=str(modelfile), model_name=args.model_name,
+                     hparams={"rank": args.rank, "alpha": args.alpha, "dropout": args.dropout,
+                              "epochs": args.epochs, "lr": args.lr})
     print("\n=== DONE - register the lane ===")
     print(ollama_cmd)
     print('then bench it:')
-    print('python bench\\plan_bench.py --lanes "llama3.1,planner-probe-v1" --prompts 30')
+    print(f'python bench\\plan_bench.py --lanes "llama3.1,{args.model_name}" --prompts 30')
     return 0
 
 

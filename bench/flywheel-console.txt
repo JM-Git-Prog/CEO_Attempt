@@ -74,3 +74,5 @@ ModuleNotFoundError: No module named 'datasets'
 [13:20:59] resumed the llama3.1 harvester
 [13:20:59] cycle done - corpus now at 371 rows
 [13:20:59] waiting: 0/50 new corpus rows since last cycle (371 total)
+[13:30:59] waiting: 0/50 new corpus rows since last cycle (371 total)
+[13:40:59] waiting: 19/50 new corpus rows since last cycle (390 total)

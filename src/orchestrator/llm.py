@@ -82,7 +82,11 @@ async def generate(
     json_mode: bool = False,
 ) -> str:
     """Generate a response, preferring local Ollama and retaining mock fallback."""
-    model = model or LLM_MODEL
+    # Fresh lookup, not the frozen LLM_MODEL constant above - a caller that
+    # flips os.environ["LLM_MODEL"] per-call (plan_bench.py's lane loop)
+    # needs this fallback to see the current value, not whatever it was
+    # the first time this module got imported in the process.
+    model = model or os.getenv("LLM_MODEL", "llama3.1")
     if OLLAMA_URL:
         try:
             return await _call_ollama(system, user, model, json_mode=json_mode)
