@@ -16,3 +16,15 @@
   p011: blocked  (100.9s) out_of_bounds,out_of_bounds,camera_inside_geometry
   p012: legal    (42.7s) 
   p013: legal    (66.1s) 
+  p014: blocked  (95.5s) out_of_bounds,out_of_bounds
+  p015: blocked  (85.0s) out_of_bounds,out_of_bounds,out_of_bounds
+  LANE RESULT: 3/15 legal plans (20%)
+
+=== LANE kimi-k2.6:cloud — 15 prompts ===
+  p001: blocked  (85.5s) out_of_bounds,out_of_bounds,out_of_bounds
+  p002: legal    (44.1s) 
+  p003: error    (47.8s) 
+  p004: error    (22.9s) 
+  p005: blocked  (70.3s) opening_blocked,camera_inside_geometry
+  p006: legal    (54.4s) 
+  p007: timeout  (120.0s) 

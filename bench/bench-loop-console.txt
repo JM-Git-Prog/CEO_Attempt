@@ -508,3 +508,23 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p032: error    (39.6s) 
   p033: error    (57.0s) 
   p034: legal    (67.5s) 
+  p035: error    (106.6s) 
+  LANE RESULT: 6/15 legal plans (40%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T123010.json
+[12:51:17] bench batch rc=0
+[12:51:17] ingest: ingest: +17 records | 192 already banked | 255 plan-less rows skipped
+[12:52:47] batch: prompts 35..49 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p036: blocked  (80.0s) out_of_bounds
+  p037: legal    (22.6s) 
+  p038: error    (62.9s) 
+  p039: legal    (50.1s) 
+  p040: legal    (44.1s) 
+  p041: legal    (33.0s) 
+  p042: legal    (56.8s) 
+  p043: error    (47.9s) 
+  p044: blocked  (55.0s) opening_blocked
+  p045: legal    (39.7s) 
+  p046: legal    (45.7s) 

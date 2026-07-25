@@ -112,12 +112,22 @@ def _newest_results_file() -> Path | None:
 def _scan_history() -> list[dict]:
     """Match each trained generation to the exam that graded it.
 
-    Baseline (llama3.1) is no longer in every exam - run_chain.py now only
-    refreshes it every 5th cycle or right after a solver/pipeline change
-    (see _decide_exam_lanes there). So a generation's own result file may
-    carry ONLY its trained lane; pair it with the most recent COMPLETE
-    baseline seen in ANY results file up to that point, instead of
-    requiring both lanes to land in the same file."""
+    Two other things now write results-*.json besides a real exam: the
+    llama3.1 harvester's routine batches and the flywheel's cloud-lane
+    top-up - both 15 prompts, neither a real llama3.1-vs-probe comparison.
+    So this has to be specific about what it trusts:
+      - trained-lane data: only the literal "planner-probe-v1" lane counts -
+        a glm-5.2:cloud or kimi-k2.6:cloud top-up file is NOT a probe result
+        just because it isn't llama3.1 either.
+      - baseline data: only a llama3.1 lane from a real, full-size exam
+        (>=20 prompts) counts - a 15-prompt harvester/top-up batch contains
+        llama3.1 too but isn't a comparable baseline reading.
+    Baseline is no longer in every exam - run_chain.py now only refreshes it
+    every 5th cycle or right after a solver/pipeline change (see
+    _decide_exam_lanes there). So a generation's own result file may carry
+    ONLY its trained lane; pair it with the most recent valid baseline seen
+    in ANY results file up to that point, instead of requiring both lanes
+    to land in the same file."""
     if not TRAINED_DIR.exists():
         return []
     runs = []
@@ -149,8 +159,10 @@ def _scan_history() -> list[dict]:
                 continue
             base = data["lanes"].get("llama3.1")
             total = data.get("prompts")
-            if not base or (total and base.get("total") != total):
-                continue
+            if not base or not total or total < 20:
+                continue  # a real comparison exam, not a 15-prompt harvester/top-up batch
+            if base.get("total") != total:
+                continue  # still in progress
             if best is None or ts > best[0]:
                 best = (ts, base)
         return best[1] if best else None
@@ -163,7 +175,7 @@ def _scan_history() -> list[dict]:
             data = _read_json(rf)
             if not data or "lanes" not in data:
                 continue
-            trained_lane = next((v for k, v in data["lanes"].items() if k != "llama3.1"), None)
+            trained_lane = data["lanes"].get("planner-probe-v1")  # the ONLY lane that IS the probe
             total = data.get("prompts")
             # Only a FULLY FINISHED trained-lane result counts - an exam
             # still in progress must never bump a complete older result off
@@ -190,11 +202,46 @@ def _scan_history() -> list[dict]:
     return list(reversed(runs))
 
 
+CORPUS_FILES = (ROOT / "data" / "flywheel" / "corpus.jsonl",
+                ROOT / "data" / "flywheel" / "corpus-bench.jsonl")
+
+
+def _corpus_composition() -> dict:
+    """Organic (harvested from the llama3.1 loop) vs synthetic (cloud-lane
+    top-up) rows in the corpus right now, and how many actually pass
+    validation - the SAME passed/failed check make_training_set.py uses, so
+    this always matches what training really sees, never a separate guess."""
+    organic = synthetic = other = accepted = 0
+    for p in CORPUS_FILES:
+        if not p.exists():
+            continue
+        for line in p.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                d = json.loads(line)
+            except Exception:
+                continue
+            lane = d.get("model_lane") or ""
+            if lane == "llama3.1":
+                organic += 1
+            elif "cloud" in lane:
+                synthetic += 1
+            else:
+                other += 1
+            verdict = (d.get("per_gate_verdicts") or {}).get("plan")
+            status = verdict.get("status") if isinstance(verdict, dict) else verdict
+            if status in ("passed", "pass"):
+                accepted += 1
+    return {"organic": organic, "synthetic": synthetic, "other": other,
+            "accepted": accepted, "total": organic + synthetic + other}
+
+
 class TrainingMonitor(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Training Monitor - The Living Room")
-        self.geometry("900x680")
+        self.geometry("920x920")
         self.configure(bg="#191d27")
         self._last_history = 0.0
         self._build_ui()
@@ -261,6 +308,25 @@ class TrainingMonitor(tk.Tk):
             tk.Label(row, textvariable=val, bg="#1b2029", fg="#e8eaf0",
                      font=("Segoe UI", 9)).pack(side="left")
             self.machine_bars[key] = (bar, val)
+
+        chart_frame = tk.LabelFrame(
+            self, text="Plan-legality rate by generation (the loop's real, measured metric)",
+            font=("Segoe UI", 10, "bold"), bg="#1b2029", fg="#c6d0e2", bd=1)
+        chart_frame.pack(fill="x", **pad)
+        self.chart = tk.Canvas(chart_frame, width=860, height=170, bg="#191d27", highlightthickness=0)
+        self.chart.pack(padx=10, pady=(8, 2))
+        tk.Label(chart_frame,
+                 text="Green = trained probe. Gray dashed = llama3.1 baseline (only re-checked "
+                      "every 5th cycle, so some points won't have one yet). This is the loop's "
+                      "real metric: does a plan pass validation? It does NOT measure rendering, "
+                      "walking, or the playable game itself - that's the separate 3D World "
+                      "pipeline at localhost:5173, not something this training loop touches.",
+                 font=("Segoe UI", 8), bg="#1b2029", fg="#7f8ba3", wraplength=840,
+                 justify="left").pack(padx=10, pady=(0, 6), anchor="w")
+        self.composition_var = tk.StringVar(value="")
+        tk.Label(chart_frame, textvariable=self.composition_var, font=("Segoe UI", 9),
+                 bg="#1b2029", fg="#aab2c5", wraplength=840, justify="left").pack(
+            padx=10, pady=(0, 8), anchor="w")
 
         hist_frame = tk.LabelFrame(self, text="Trained generations vs. plain llama3.1",
                                     font=("Segoe UI", 10, "bold"), bg="#1b2029", fg="#c6d0e2", bd=1)
@@ -417,10 +483,68 @@ class TrainingMonitor(tk.Tk):
         stale = "  (no update in 15+ min - may be paused or stopped)" if age > 900 else ""
         self.flywheel_status_var.set(f"Flywheel loop: {body}{stale}")
 
+    def _draw_chart(self, runs: list[dict]) -> None:
+        c = self.chart
+        c.delete("all")
+        w, h = int(c["width"]), int(c["height"])
+        pad_l, pad_r, pad_t, pad_b = 42, 16, 14, 22
+        plot_w, plot_h = w - pad_l - pad_r, h - pad_t - pad_b
+
+        for pct in (0, 25, 50, 75, 100):
+            y = pad_t + plot_h * (1 - pct / 100)
+            c.create_line(pad_l, y, w - pad_r, y, fill="#2a3140")
+            c.create_text(pad_l - 6, y, text=f"{pct}%", fill="#7f8ba3",
+                          font=("Segoe UI", 8), anchor="e")
+        c.create_line(pad_l, pad_t, pad_l, h - pad_b, fill="#3a4358")
+        c.create_line(pad_l, h - pad_b, w - pad_r, h - pad_b, fill="#3a4358")
+
+        points = [r for r in reversed(runs) if r.get("exam")]  # chronological, left -> right
+        if not points:
+            c.create_text(w / 2, h / 2, text="No benched generations yet",
+                          fill="#7f8ba3", font=("Segoe UI", 9))
+            return
+
+        n = len(points)
+        xs = [pad_l + (plot_w * i / max(n - 1, 1)) for i in range(n)]
+
+        def y_of(rate):
+            return pad_t + plot_h * (1 - max(0.0, min(1.0, rate)))
+
+        prev = None
+        for x, r in zip(xs, points):
+            exam = r["exam"]
+            if exam["baseline_rate"] is not None:
+                y = y_of(exam["baseline_rate"])
+                if prev:
+                    c.create_line(prev[0], prev[1], x, y, fill="#7f8ba3", dash=(3, 2))
+                c.create_oval(x - 3, y - 3, x + 3, y + 3, outline="#7f8ba3", fill="#191d27")
+                prev = (x, y)
+            else:
+                prev = None
+
+        prev = None
+        for x, r in zip(xs, points):
+            y = y_of(r["exam"]["trained_rate"])
+            if prev:
+                c.create_line(prev[0], prev[1], x, y, fill="#3ddc84", width=2)
+            c.create_oval(x - 4, y - 4, x + 4, y + 4, fill="#3ddc84", outline="")
+            prev = (x, y)
+
+        for x, r in zip(xs, points):
+            label = time.strftime("%m/%d", time.localtime(r["trained_epoch"]))
+            c.create_text(x, h - pad_b + 10, text=label, fill="#7f8ba3", font=("Segoe UI", 8))
+
     def _update_history(self):
         for row in self.tree.get_children():
             self.tree.delete(row)
         runs = _scan_history()
+        self._draw_chart(runs)
+        comp = _corpus_composition()
+        self.composition_var.set(
+            f"Corpus right now: {comp['organic']} organic (llama3.1 harvester) + "
+            f"{comp['synthetic']} synthetic (cloud top-up) + {comp['other']} from earlier "
+            f"pipeline runs = {comp['total']} rows -> {comp['accepted']} pass validation "
+            f"and become trainable exemplars.")
         if not runs:
             self.tree.insert("", "end", values=("No trained generations yet", "", "", "", ""))
             return
