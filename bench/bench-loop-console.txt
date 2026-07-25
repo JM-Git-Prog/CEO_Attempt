@@ -706,3 +706,4 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p058: blocked  (20.7s) physical_overlap,out_of_bounds,physical_overlap
   p059: error    (19.9s) 
   p060: blocked  (16.2s) physical_overlap,physical_overlap,physical_overlap
+  p061: error    (79.6s) 

@@ -129,7 +129,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On failure: list each discrepancy (missing IDs, count mismatch) — hard stop
     - _Requirements: 8.1, 8.2_
 
-  - [~] 8.5 Write property test for parity gate ID verification (Property 10)
+  - [x] 8.5 Write property test for parity gate ID verification (Property 10)
     - **Property 10: Parity Gate ID Verification**
     - For any CompilerPlan with expected IDs E and inventory with actual IDs A, parity passes iff E ⊆ A AND |A| == |E|; failure lists E \ A
     - **Validates: Requirements 8.1, 8.2**
