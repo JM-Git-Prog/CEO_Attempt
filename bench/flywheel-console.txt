@@ -28,3 +28,7 @@
   p005: blocked  (70.3s) opening_blocked,camera_inside_geometry
   p006: legal    (54.4s) 
   p007: timeout  (120.0s) 
+  p008: blocked  (101.0s) opening_blocked
+  p009: legal    (42.5s) 
+  p010: error    (53.0s) 
+  p011: blocked  (73.9s) out_of_bounds,out_of_bounds

@@ -166,3 +166,7 @@
 [12:29:51] training probe starting (QLoRA, this is the long part)
 [12:38:55] train_probe finished rc=0
 [12:38:55] SUCCESS - next: ollama create + bench (commands printed above)
+[13:08:48] chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)
+[13:08:48] waiting (census done=True, gpu 83%, quiet votes 0/3)
+[13:09:49] waiting (census done=False, gpu 86%, quiet votes 0/3)
+[13:10:49] waiting (census done=False, gpu 89%, quiet votes 0/3)

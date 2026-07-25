@@ -3,9 +3,9 @@
  "prompts": 15,
  "lanes": {
   "llama3.1": {
-   "legal": 10,
-   "total": 14,
-   "legal_rate": 0.71,
+   "legal": 11,
+   "total": 15,
+   "legal_rate": 0.73,
    "violation_census": {
     "error:ValidationError": 2,
     "out_of_bounds": 1,
@@ -3380,8 +3380,272 @@
       }
      },
      "prompt_id": "p049"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 7,
+     "seconds": 42.3,
+     "plan": {
+      "name": "1900 General Store Floor Plan",
+      "room": {
+       "width": 10.0,
+       "depth": 15.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Wooden Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 6.9,
+        "width": 8.0,
+        "depth": 0.6,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Long wooden counter against the north wall."
+       },
+       {
+        "id": "barrel_1",
+        "name": "Barrel A",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.75,
+        "z": 0.0,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Freestanding barrel display."
+       },
+       {
+        "id": "barrel_2",
+        "name": "Barrel B",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.75,
+        "z": 9.184850993605148e-17,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Freestanding barrel display."
+       },
+       {
+        "id": "barrel_3",
+        "name": "Barrel C",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.5000000000000001,
+        "z": 0.8660254037844386,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Freestanding barrel display."
+       },
+       {
+        "id": "barrel_4",
+        "name": "Barrel D",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.7,
+        "depth": 0.8,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Freestanding barrel display."
+       },
+       {
+        "id": "shelf_unit_1",
+        "name": "Shelving Unit",
+        "category": "architectural",
+        "mount": "wall",
+        "x": 4.55,
+        "z": 0.0,
+        "width": 1.0,
+        "depth": 0.3,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Built\u2011in shelf wall along the east side."
+       },
+       {
+        "id": "oil_lamp_1",
+        "name": "Oil Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 6.9,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Single oil lamp hanging above the counter."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": -6.4,
+        "width": 1.2,
+        "height": 1.5,
+        "sill_height": 0.8
+       }
+      ],
+      "camera": {
+       "x": -4.55,
+       "y": 1.6,
+       "z": 7.05,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 6.9,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path of at least 0.8\u202fm from the west door to all zones.",
+       "Barrel displays positioned with 0.5\u202fm clearance between barrels and counter."
+      ],
+      "design_notes": [
+       "Counter against north wall, centered.",
+       "Shelving unit fixed to east wall.",
+       "Oil lamp directly above counter center."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barrel_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barrel_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barrel_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barrel_4",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shelf_unit_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "oil_lamp_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.5
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p050"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-25 13:06:17"
 }

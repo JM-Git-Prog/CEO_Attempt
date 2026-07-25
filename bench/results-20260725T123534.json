@@ -2527,13 +2527,13 @@
    ]
   },
   "kimi-k2.6:cloud": {
-   "legal": 3,
-   "total": 11,
-   "legal_rate": 0.27,
+   "legal": 5,
+   "total": 15,
+   "legal_rate": 0.33,
    "violation_census": {
-    "out_of_bounds": 5,
-    "opening_blocked": 3,
-    "error:ValidationError": 3,
+    "out_of_bounds": 7,
+    "opening_blocked": 5,
+    "error:ValidationError": 4,
     "camera_inside_geometry": 1
    },
    "rows": [
@@ -3945,8 +3945,890 @@
       }
      },
      "prompt_id": "p011"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 13,
+     "seconds": 47.8,
+     "plan": {
+      "name": "CoffeeShopCorner",
+      "room": {
+       "width": 10.0,
+       "depth": 8.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Service Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 3.5,
+        "width": 4.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 1.0,
+        "description": "Counter along the north wall serving coffee."
+       },
+       {
+        "id": "table_1",
+        "name": "Cafe Table 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.0,
+        "z": 1.3000000000000003,
+        "width": 1.5,
+        "depth": 0.8,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Small cafe table with two chairs."
+       },
+       {
+        "id": "chair_left_1",
+        "name": "Chair Left 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.32500000000000007,
+        "z": 1.9495190528383293,
+        "width": 0.4,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chair on the west side of Table 1."
+       },
+       {
+        "id": "chair_right_1",
+        "name": "Chair Right 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.049999999999999996,
+        "z": 2.0500000000000003,
+        "width": 0.4,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chair on the east side of Table 1."
+       },
+       {
+        "id": "table_2",
+        "name": "Cafe Table 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.3000000000000003,
+        "width": 1.5,
+        "depth": 0.8,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Central cafe table with two chairs."
+       },
+       {
+        "id": "chair_left_2",
+        "name": "Chair Left 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.325,
+        "z": 1.9495190528383293,
+        "width": 0.4,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chair on the west side of Table 2."
+       },
+       {
+        "id": "chair_right_2",
+        "name": "Chair Right 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.95,
+        "z": 2.0500000000000003,
+        "width": 0.4,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chair on the east side of Table 2."
+       },
+       {
+        "id": "table_3",
+        "name": "Cafe Table 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.0,
+        "z": 1.3000000000000003,
+        "width": 1.5,
+        "depth": 0.8,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Rightmost cafe table with two chairs."
+       },
+       {
+        "id": "chair_left_3",
+        "name": "Chair Left 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.45,
+        "z": 1.3000000000000003,
+        "width": 0.4,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chair on the west side of Table 3."
+       },
+       {
+        "id": "chair_right_3",
+        "name": "Chair Right 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.95,
+        "z": 1.3000000000000003,
+        "width": 0.4,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chair on the east side of Table 3."
+       },
+       {
+        "id": "pendant_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -2.0,
+        "z": 3.5,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.4,
+        "elevation": 2.6,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Pendant light over the left section of the counter."
+       },
+       {
+        "id": "pendant_2",
+        "name": "Pendant Light 2",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 3.5,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.4,
+        "elevation": 2.6,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Pendant light over the center of the counter."
+       },
+       {
+        "id": "pendant_3",
+        "name": "Pendant Light 3",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 2.0,
+        "z": 3.5,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.4,
+        "elevation": 2.6,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Pendant light over the right section of the counter."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "west",
+        "offset": -3.3,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -4.5,
+       "y": 1.6,
+       "z": 3.5,
+       "target_x": 0.0,
+       "target_y": 0.9,
+       "target_z": 3.5,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear 0.8m path from door to each table.",
+       "No furniture within 1m of the door swing arc."
+      ],
+      "design_notes": [
+       "Contemporary coffee shop corner with service counter, three cafe tables and pendant lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.2,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_left_1",
+        "kind": "adjacent_to",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_right_1",
+        "kind": "adjacent_to",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_2",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_left_2",
+        "kind": "adjacent_to",
+        "target_id": "table_2",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_right_2",
+        "kind": "adjacent_to",
+        "target_id": "table_2",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_3",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_left_3",
+        "kind": "adjacent_to",
+        "target_id": "table_3",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_right_3",
+        "kind": "adjacent_to",
+        "target_id": "table_3",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_2",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_3",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "west",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.2
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "counter_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.9,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p012"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1980s Arcade Ro...ance for easy access.']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 47.2,
+     "prompt_id": "p013"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 14.7,
+     "plan": {
+      "name": "Victorian Parlor Plan",
+      "room": {
+       "width": 6.0,
+       "depth": 5.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "chaise_lounge",
+        "name": "Chaise Lounge",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.7,
+        "width": 2.5,
+        "depth": 1.0,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Victorian chaise lounge against north wall"
+       },
+       {
+        "id": "tea_table",
+        "name": "Tea Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.2,
+        "depth": 0.6,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Central tea table"
+       },
+       {
+        "id": "wingback_chair_east",
+        "name": "Wingback Chair East",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.5,
+        "z": 0.0,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Wingback chair facing tea table"
+       },
+       {
+        "id": "wingback_chair_west",
+        "name": "Wingback Chair West",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.5,
+        "z": 0.0,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Wingback chair facing tea table"
+       },
+       {
+        "id": "chandelier",
+        "name": "Chandelier",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Central chandelier above tea table"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_west",
+        "kind": "window",
+        "wall": "west",
+        "offset": -1.65,
+        "width": 1.5,
+        "height": 1.8,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -2.55,
+       "y": 1.6,
+       "z": 2.05,
+       "target_x": 0.0,
+       "target_y": 0.75,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear 0.8m path from south door to chaise lounge and tea table",
+       "No furniture within 1.0m of any door swing arc",
+       "All windows have at least 0.3m clearance"
+      ],
+      "design_notes": [
+       "Victorian parlor with neutral palette, classic furnishings",
+       "Chandelier provides focal lighting over central tea table"
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "chaise_lounge",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "tea_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "wingback_chair_east",
+        "kind": "east_of",
+        "target_id": "tea_table",
+        "wall": null,
+        "parameters_m": {
+         "spacing_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "wingback_chair_west",
+        "kind": "west_of",
+        "target_id": "tea_table",
+        "wall": null,
+        "parameters_m": {
+         "spacing_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chandelier",
+        "kind": "above",
+        "target_id": "tea_table",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_west",
+        "wall": "west",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "tea_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.75,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p014"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 81.1,
+     "plan": {
+      "name": "Hotel Room Plan",
+      "room": {
+       "width": 4.0,
+       "depth": 5.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "bed_1",
+        "name": "Queen Bed",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.45,
+        "width": 1.6,
+        "depth": 2.0,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Queen size bed against north wall"
+       },
+       {
+        "id": "nightstand_left",
+        "name": "Nightstand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.75,
+        "z": 1.45,
+        "width": 0.5,
+        "depth": 0.4,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Nightstand on west side of bed"
+       },
+       {
+        "id": "nightstand_right",
+        "name": "Nightstand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.75,
+        "z": 1.45,
+        "width": 0.5,
+        "depth": 0.4,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Nightstand on east side of bed"
+       },
+       {
+        "id": "bench_luggage",
+        "name": "Luggage Bench",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -2.25,
+        "width": 1.5,
+        "depth": 0.4,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Bench against south wall"
+       },
+       {
+        "id": "desk_main",
+        "name": "Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.65,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 0.6,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Desk against east wall"
+       },
+       {
+        "id": "chair_desk",
+        "name": "Desk Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.65,
+        "z": -2.05,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Chair in front of desk"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_east",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.8,
+        "sill_height": 0.6
+       }
+      ],
+      "camera": {
+       "x": -1.55,
+       "y": 1.6,
+       "z": 2.05,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 1.45,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from south door to bed and desk.",
+       "At least 0.8m clearance around all furniture.",
+       "No obstruction within 1.0m of door swing."
+      ],
+      "design_notes": [
+       "Blackout curtains on east window.",
+       "Neutral contemporary palette.",
+       "Daylight lighting with simple fixtures."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "bed_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "nightstand_left",
+        "kind": "west_of",
+        "target_id": "bed_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "nightstand_right",
+        "kind": "east_of",
+        "target_id": "bed_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "bench_luggage",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_main",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_desk",
+        "kind": "south_of",
+        "target_id": "desk_main",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_east",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "bed_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p015"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-25 13:08:48"
 }

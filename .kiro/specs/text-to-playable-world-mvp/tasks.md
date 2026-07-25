@@ -44,7 +44,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - When MVP tolerance accepts a plan with warnings, record each warning (type, affected_id, measured_deviation) in the `Compiler_Manifest` output
     - _Requirements: 2.5_
 
-  - [ ] 2.4 Write property test for warnings recorded in manifest (Property 3)
+  - [x] 2.4 Write property test for warnings recorded in manifest (Property 3)
     - **Property 3: Warnings Recorded in Manifest**
     - For any plan accepted under MVP tolerance with warnings, verify every warning appears in the manifest
     - **Validates: Requirements 2.5**

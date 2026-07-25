@@ -241,7 +241,7 @@ class TrainingMonitor(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Training Monitor - The Living Room")
-        self.geometry("920x920")
+        self.geometry("920x980")
         self.configure(bg="#191d27")
         self._last_history = 0.0
         self._build_ui()
@@ -251,6 +251,21 @@ class TrainingMonitor(tk.Tk):
     # ---- UI ----
     def _build_ui(self):
         pad = {"padx": 14, "pady": 8}
+
+        objective_frame = tk.Frame(self, bg="#12151d")
+        objective_frame.pack(fill="x")
+        tk.Label(objective_frame, text="Training Monitor: Our Current Objective",
+                 font=("Segoe UI", 11, "bold"), bg="#12151d", fg="#3ddc84").pack(
+            anchor="w", padx=14, pady=(10, 0))
+        tk.Label(objective_frame,
+                 text="Build a model capable of producing a room layout that passes validation "
+                      "- meaning every piece of furniture fits fully inside the room's walls, "
+                      "nothing occupies the same space as anything else, and nothing blocks a "
+                      "door or window. A physically real, buildable room, not just words that "
+                      "sound right. That's what the 0-100% below measures.",
+                 font=("Segoe UI", 9), bg="#12151d", fg="#c6d0e2", wraplength=880,
+                 justify="left").pack(anchor="w", padx=14, pady=(2, 10))
+
         header = tk.Frame(self, bg="#191d27")
         header.pack(fill="x", **pad)
         tk.Label(header, text="Planner training (LoRA fine-tune)", font=("Segoe UI", 14, "bold"),
@@ -317,10 +332,10 @@ class TrainingMonitor(tk.Tk):
         self.chart.pack(padx=10, pady=(8, 2))
         tk.Label(chart_frame,
                  text="Green = trained probe. Gray dashed = llama3.1 baseline (only re-checked "
-                      "every 5th cycle, so some points won't have one yet). This is the loop's "
-                      "real metric: does a plan pass validation? It does NOT measure rendering, "
-                      "walking, or the playable game itself - that's the separate 3D World "
-                      "pipeline at localhost:5173, not something this training loop touches.",
+                      "every 5th cycle, so some points won't have one yet). This tracks progress "
+                      "on the objective above. Turning a passing plan into the actual walkable "
+                      "game is the separate 3D World pipeline (localhost:5173) - not part of "
+                      "this loop.",
                  font=("Segoe UI", 8), bg="#1b2029", fg="#7f8ba3", wraplength=840,
                  justify="left").pack(padx=10, pady=(0, 6), anchor="w")
         self.composition_var = tk.StringVar(value="")
