@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This specification defines the minimum viable path from the existing "Living Room" pipeline to a working "type a sentence → play a 3D game" experience. The user types a natural-language room description into the browser, and the system returns a launchable UPBGE game with first-person controls, collision, gravity, interactive doors, and object grabbing — all running locally on the user's machine without cloud dependencies.
+This specification defines the minimum viable path to a working "type a sentence → get a playable 3D game" experience. The user types a natural-language room description, and the system **launches a playable 3D game** — not a file to download, not a project to open in an editor, not a rendered image. The game starts. The user is inside the room they described. They walk around with WASD, look with the mouse, open doors, pick up objects. That is the deliverable.
 
-The MVP leverages existing pipeline stages (LLM interpretation, floor plan generation, scene graph construction, world contract, UPBGE compiler planning) and focuses on making the UPBGE compilation script produce a real playable `.blend` file, relaxing overly-strict validation gates for "good enough" plans, and delivering the playable artifact back to the user through the web interface.
+The MVP leverages existing pipeline stages (LLM interpretation, floor plan generation, scene graph construction, world contract, UPBGE compiler) and focuses on: (1) making the UPBGE compilation script produce a real playable runtime, (2) relaxing overly-strict validation gates so LLM plans actually pass, (3) auto-launching the compiled game so the user never touches a file manually.
 
 ## Glossary
 
@@ -21,24 +21,26 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 - **Smoke_Runner**: The bounded process that launches a Runtime_Candidate and verifies basic gameplay behaviors (load, spawn, movement, collision)
 - **Plan_Validation**: The deterministic quality checks on LLM-generated floor plans (geometry bounds, overlap detection, opening placement)
 - **MVP_Tolerance**: A relaxed validation mode that accepts plans with non-critical warnings rather than rejecting them outright
-- **Playable_Artifact**: The final published `.blend` file that a user can double-click to launch UPBGE in game mode, or download from the web interface
-- **Web_Interface**: The FastAPI-served browser application where users type descriptions and receive results
+- **Playable_Artifact**: The compiled `.blend` file containing the 3D world plus embedded game logic — the system auto-launches this in UPBGE game mode so the user is immediately playing
+- **Auto_Launch**: The system's ability to invoke UPBGE in game mode on the compiled artifact without user intervention — the user types a sentence and the game window opens
+- **Web_Interface**: The FastAPI-served browser application where users type descriptions, see progress, and trigger game launch
 - **Session**: A stateful pipeline execution identified by a unique ID, tracking all stages from description input to playable output
 
 ## Requirements
 
-### Requirement 1: End-to-End Pipeline Execution
+### Requirement 1: End-to-End Pipeline — Sentence In, Game Running
 
-**User Story:** As a user, I want to type a single sentence describing a room and receive a playable 3D game world, so that I can immediately walk around and interact with the environment I described.
+**User Story:** As a user, I want to type a single sentence describing a room and have a playable 3D game launch automatically, so that I immediately walk around inside the world I described without downloading files, opening editors, or running commands.
 
 #### Acceptance Criteria
 
-1. WHEN a user submits a text description (between 3 and 500 characters) via the Web_Interface, THE Pipeline SHALL produce a Playable_Artifact within 120 seconds on the target hardware (RTX 4090, local Ollama, local UPBGE)
-2. WHEN the Pipeline completes successfully, THE Playable_Artifact SHALL be a non-zero-byte `.blend` file that loads without error in the discovered UPBGE executable and contains at minimum: a room shell with floor, walls, and ceiling geometry; a player spawn object; an embedded player controller script; and game physics configured on all collision-bearing objects
-3. WHEN the Pipeline completes successfully, THE Web_Interface SHALL present a download link for the Playable_Artifact and display a "Launch Game" action that invokes the local UPBGE executable in game mode
+1. WHEN a user submits a text description (between 3 and 500 characters) via the Web_Interface, THE Pipeline SHALL produce a Playable_Artifact and Auto_Launch it in UPBGE game mode within 120 seconds on the target hardware (RTX 4090, local Ollama, local UPBGE)
+2. WHEN Auto_Launch succeeds, THE user SHALL see a full-screen game window with first-person controls active — no file dialogs, no editor UI, no manual steps between typing a sentence and being inside the game
+3. WHEN the Pipeline completes successfully, THE Web_Interface SHALL additionally present a download link for the Playable_Artifact for users who want to replay or share the game later
 4. IF any pipeline stage fails, THEN THE Pipeline SHALL report the failure stage name, a machine-readable reason code, and a human-readable diagnostic message to the Web_Interface without terminating the server process or corrupting the session state
 5. IF the user submits an empty string, a string shorter than 3 characters, or a string longer than 500 characters, THEN THE Pipeline SHALL reject the input with a descriptive validation error before invoking any LLM stage
 6. THE Pipeline SHALL execute all stages locally without requiring cloud API calls for the core path (LLM via local Ollama, UPBGE via local executable, no external image generation required for MVP)
+7. IF Auto_Launch fails (UPBGE process cannot start), THEN THE Pipeline SHALL fall back to presenting the download link with launch instructions rather than reporting the entire pipeline as failed
 
 ### Requirement 2: LLM Plan Generation with MVP Tolerance
 
@@ -131,17 +133,18 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 4. IF the Smoke_Runner cannot verify interactive behaviors (movement, collision) within 30 seconds of successful load, THEN THE Pipeline SHALL still publish the artifact with a "smoke_partial" quality label rather than blocking delivery
 5. WHILE in MVP mode, THE Pipeline SHALL treat parity pass + successful load as sufficient for publishing the Playable_Artifact (full interactive smoke is desirable but not blocking)
 
-### Requirement 9: Web Interface Delivery
+### Requirement 9: Web Interface — Progress and Auto-Launch
 
-**User Story:** As a user, I want to see my game's progress and download the result from the same browser page where I typed my description, so that the experience is seamless.
+**User Story:** As a user, I want to see my game being built in real-time and have it launch automatically when ready, so the experience feels like magic — I type, I wait briefly, I'm playing.
 
 #### Acceptance Criteria
 
-1. WHILE the Pipeline is executing, THE Web_Interface SHALL display stage progress updates (interpreting, planning, building scene, compiling, validating, ready) within 2 seconds of each stage transition
-2. WHEN the Pipeline produces a Playable_Artifact, THE Web_Interface SHALL present a download button that serves the `.blend` file
-3. WHEN the Pipeline produces a Playable_Artifact, THE Web_Interface SHALL display launch instructions explaining how to open the file in UPBGE game mode (double-click or `upbge --game <file>`)
-4. IF the Pipeline fails at any stage, THEN THE Web_Interface SHALL display the failed stage name and a human-readable reason rather than a generic error
-5. THE Web_Interface SHALL preserve existing V3-V10 interface behavior and routing for non-MVP sessions
+1. WHILE the Pipeline is executing, THE Web_Interface SHALL display stage progress updates (interpreting, planning, building scene, compiling, validating, launching) within 2 seconds of each stage transition
+2. WHEN the Pipeline produces a Playable_Artifact, THE Web_Interface SHALL automatically trigger Auto_Launch (invoke UPBGE in game mode) without requiring user interaction beyond the initial "Generate" action
+3. WHEN the game is running, THE Web_Interface SHALL display a "Game Running" status with a "Download .blend" secondary action for later replay
+4. IF Auto_Launch fails, THEN THE Web_Interface SHALL present the download link with platform-specific instructions for manual launch
+5. IF the Pipeline fails at any stage, THEN THE Web_Interface SHALL display the failed stage name and a human-readable reason rather than a generic error
+6. THE Web_Interface SHALL preserve existing V3-V10 interface behavior and routing for non-MVP sessions
 
 ### Requirement 10: Existing Pipeline Preservation
 
