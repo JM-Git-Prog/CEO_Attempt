@@ -32,3 +32,24 @@
   p009: legal    (42.5s) 
   p010: error    (53.0s) 
   p011: blocked  (73.9s) out_of_bounds,out_of_bounds
+  p012: legal    (47.8s) 
+  p013: error    (47.2s) 
+  p014: legal    (14.7s) 
+  p015: blocked  (81.1s) out_of_bounds,out_of_bounds,opening_blocked
+  LANE RESULT: 5/15 legal plans (33%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T123534.json
+ingest: +3 records | 231 already banked | 262 plan-less rows skipped
+[13:08:48] ingest rc=0
+[13:08:48] pausing the llama3.1 harvester for the training window
+[13:08:48] launching the training chain (make_training_set -> train -> register -> exam)
+[13:08:48] chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)
+[13:08:48] waiting (census done=True, gpu 83%, quiet votes 0/3)
+[13:09:49] waiting (census done=False, gpu 86%, quiet votes 0/3)
+[13:10:49] waiting (census done=False, gpu 89%, quiet votes 0/3)
+[13:11:49] waiting (census done=False, gpu 87%, quiet votes 0/3)
+[13:12:49] waiting (census done=False, gpu 88%, quiet votes 0/3)
+[13:13:49] waiting (census done=False, gpu 86%, quiet votes 0/3)
+[13:14:49] waiting (census done=False, gpu 88%, quiet votes 0/3)
+[13:15:49] waiting (census done=False, gpu 87%, quiet votes 0/3)
+[13:16:49] waiting (census done=False, gpu 81%, quiet votes 0/3)

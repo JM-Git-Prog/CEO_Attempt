@@ -531,3 +531,23 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p047: legal    (58.9s) 
   p048: legal    (106.5s) 
   p049: legal    (64.0s) 
+  p050: legal    (42.3s) 
+  LANE RESULT: 11/15 legal plans (73%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T125247.json
+[13:06:17] bench batch rc=0
+[13:06:17] ingest: ingest: +22 records | 209 already banked | 261 plan-less rows skipped
+[13:07:47] batch: prompts 50..64 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p051: legal    (76.8s) 
+  p052: blocked  (78.8s) out_of_bounds
+  p053: blocked  (41.8s) opening_blocked
+  p054: blocked  (59.4s) out_of_bounds
+  p055: error    (27.3s) 
+  p056: blocked  (63.5s) camera_inside_geometry
+  p057: legal    (21.7s) 
+  p058: legal    (31.8s) 
+  p059: error    (43.2s) 
+  p060: legal    (47.8s) 
+  p061: legal    (51.8s) 

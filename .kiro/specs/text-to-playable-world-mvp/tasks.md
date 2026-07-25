@@ -49,8 +49,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any plan accepted under MVP tolerance with warnings, verify every warning appears in the manifest
     - **Validates: Requirements 2.5**
 
-- [ ] 3. Lane Ladder — Model Routing
-  - [ ] 3.1 Implement Lane Ladder module (`src/lane_ladder.py`)
+- [x] 3. Lane Ladder — Model Routing
+  - [x] 3.1 Implement Lane Ladder module (`src/lane_ladder.py`)
     - Define `LANE_LADDER` list: `planner-probe-v1:latest` (priority 1, 20s), `gpt-oss:20b` (priority 2, 25s), `qwen3.6:27b` (priority 3, 30s)
     - Define `CLOUD_FALLBACK` list (only used after all local lanes exhaust)
     - Implement `generate_plan_with_ladder()` async function: attempt primary lane, on structural rejection retry same model with simplified prompt, then escalate to next lane
