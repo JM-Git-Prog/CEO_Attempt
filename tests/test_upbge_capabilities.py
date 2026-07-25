@@ -150,3 +150,165 @@ def test_discovery_distinguishes_absent_from_incompatible_engine(tmp_path, monke
     assert incompatible.available and not incompatible.compatible
     assert incompatible.reason_code == "regular_blender_rejected"
     assert incompatible.attempts[0].status == "rejected"
+
+
+# ─── blenderplayer discovery and probing ─────────────────────────────────────
+
+
+def test_discover_blenderplayer_finds_exe_alongside_editor_on_windows(tmp_path, monkeypatch):
+    """discover_blenderplayer returns the player path when it exists next to the editor."""
+    monkeypatch.setattr(capabilities, "sys_platform", lambda: "win32")
+    editor = tmp_path / "upbge.exe"
+    player = tmp_path / "blenderplayer.exe"
+    editor.write_bytes(b"fake")
+    player.write_bytes(b"fake")
+
+    result = capabilities.discover_blenderplayer(editor)
+    assert result is not None
+    assert result.name == "blenderplayer.exe"
+
+
+def test_discover_blenderplayer_finds_binary_alongside_editor_on_linux(tmp_path, monkeypatch):
+    """discover_blenderplayer returns the player path on non-Windows platforms."""
+    monkeypatch.setattr(capabilities, "sys_platform", lambda: "linux")
+    editor = tmp_path / "upbge"
+    player = tmp_path / "blenderplayer"
+    editor.write_bytes(b"fake")
+    player.write_bytes(b"fake")
+
+    result = capabilities.discover_blenderplayer(editor)
+    assert result is not None
+    assert result.name == "blenderplayer"
+
+
+def test_discover_blenderplayer_returns_none_when_player_absent(tmp_path, monkeypatch):
+    """discover_blenderplayer returns None when blenderplayer isn't alongside editor."""
+    monkeypatch.setattr(capabilities, "sys_platform", lambda: "win32")
+    editor = tmp_path / "upbge.exe"
+    editor.write_bytes(b"fake")
+
+    result = capabilities.discover_blenderplayer(editor)
+    assert result is None
+
+
+def test_discover_blenderplayer_returns_none_when_editor_path_is_none():
+    """discover_blenderplayer returns None for None editor path."""
+    result = capabilities.discover_blenderplayer(None)
+    assert result is None
+
+
+def test_probe_blenderplayer_verified_on_clean_exit(tmp_path, monkeypatch):
+    """probe_blenderplayer returns verified=True when process exits 0."""
+    player = tmp_path / "blenderplayer.exe"
+    player.write_bytes(b"fake")
+
+    monkeypatch.setattr(capabilities, "_bounded_process", lambda *args, **kwargs:
+        capabilities._ProcessCapture(0, "UPBGE blenderplayer 0.36", "", False, False, 5))
+
+    verified, reason, diags = capabilities.probe_blenderplayer(player)
+    assert verified is True
+    assert reason == "blenderplayer_verified"
+    assert diags == ()
+
+
+def test_probe_blenderplayer_fails_on_timeout(tmp_path, monkeypatch):
+    """probe_blenderplayer reports timeout when process exceeds time limit."""
+    player = tmp_path / "blenderplayer.exe"
+    player.write_bytes(b"fake")
+
+    monkeypatch.setattr(capabilities, "_bounded_process", lambda *args, **kwargs:
+        capabilities._ProcessCapture(None, "", "", True, False, 5000))
+
+    verified, reason, diags = capabilities.probe_blenderplayer(player)
+    assert verified is False
+    assert reason == "blenderplayer_timeout"
+
+
+def test_probe_blenderplayer_detects_gpu_errors(tmp_path, monkeypatch):
+    """probe_blenderplayer rejects on GPU error indicators in output."""
+    player = tmp_path / "blenderplayer.exe"
+    player.write_bytes(b"fake")
+
+    monkeypatch.setattr(capabilities, "_bounded_process", lambda *args, **kwargs:
+        capabilities._ProcessCapture(0, "GPU Error: failed to init", "", False, False, 5))
+
+    verified, reason, diags = capabilities.probe_blenderplayer(player)
+    assert verified is False
+    assert reason == "blenderplayer_gpu_error"
+
+
+def test_probe_blenderplayer_not_found_for_missing_path(tmp_path):
+    """probe_blenderplayer returns not_found for a path that doesn't exist."""
+    nonexistent = tmp_path / "no_such_player.exe"
+    verified, reason, diags = capabilities.probe_blenderplayer(nonexistent)
+    assert verified is False
+    assert reason == "blenderplayer_not_found"
+
+
+def test_discover_upbge_populates_blenderplayer_fields_when_player_present(tmp_path, monkeypatch):
+    """discover_upbge enriches the report with blenderplayer fields when player is alongside editor."""
+    editor = tmp_path / "upbge.exe"
+    player = tmp_path / "blenderplayer.exe"
+    editor.write_bytes(b"fake")
+    player.write_bytes(b"fake")
+
+    monkeypatch.setattr(capabilities, "sys_platform", lambda: "win32")
+    monkeypatch.setattr(capabilities, "_bounded_process", lambda cmd, **kwargs:
+        capabilities._ProcessCapture(0, "UPBGE blenderplayer 0.36", "", False, False, 5)
+        if "blenderplayer" in str(cmd[0])
+        else _capture({
+            "product": "UPBGE", "product_version": "0.36", "blender_api_version": "3.6",
+            "python_version": "3.10", "supports_game_runtime": True,
+            "supports_eevee": True, "supports_gltf": True,
+        })
+    )
+
+    report = discover_upbge(
+        explicit_path=editor, known_locations=(), environment={"PATH": ""}
+    )
+
+    assert report.compatible
+    assert report.blenderplayer_available is True
+    assert report.blenderplayer_verified is True
+    assert report.blenderplayer_reason_code == "blenderplayer_verified"
+    assert report.blenderplayer_path is not None
+    assert "blenderplayer" in report.blenderplayer_path
+
+
+def test_discover_upbge_reports_blenderplayer_absent_when_only_editor_present(tmp_path, monkeypatch):
+    """discover_upbge sets blenderplayer_available=False when player file doesn't exist."""
+    editor = tmp_path / "upbge.exe"
+    editor.write_bytes(b"fake")
+    # No blenderplayer.exe alongside editor
+
+    monkeypatch.setattr(capabilities, "sys_platform", lambda: "win32")
+    monkeypatch.setattr(capabilities, "_bounded_process", lambda cmd, **kwargs:
+        _capture({
+            "product": "UPBGE", "product_version": "0.36", "blender_api_version": "3.6",
+            "python_version": "3.10", "supports_game_runtime": True,
+            "supports_eevee": True, "supports_gltf": True,
+        })
+    )
+
+    report = discover_upbge(
+        explicit_path=editor, known_locations=(), environment={"PATH": ""}
+    )
+
+    assert report.compatible
+    assert report.blenderplayer_available is False
+    assert report.blenderplayer_verified is False
+    assert report.blenderplayer_reason_code == "blenderplayer_not_found"
+    assert report.blenderplayer_path is None
+
+
+def test_discover_upbge_editor_absent_does_not_probe_blenderplayer(monkeypatch):
+    """When no editor is found, blenderplayer fields remain at defaults."""
+    monkeypatch.setattr(capabilities.shutil, "which", lambda *args, **kwargs: None)
+
+    report = discover_upbge(known_locations=(), environment={"PATH": ""})
+
+    assert report.reason_code == "upbge_not_found"
+    assert report.blenderplayer_available is False
+    assert report.blenderplayer_verified is False
+    assert report.blenderplayer_reason_code == "not_probed"
+    assert report.blenderplayer_path is None

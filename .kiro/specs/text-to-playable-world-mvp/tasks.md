@@ -8,8 +8,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
 
 ## Tasks
 
-- [ ] 1. Core data models and interfaces
-  - [ ] 1.1 Create MVP data models and enums
+- [x] 1. Core data models and interfaces
+  - [x] 1.1 Create MVP data models and enums
     - Add `SessionMode` enum (`mvp`, `full`) to session models
     - Create `LaunchResult` frozen dataclass in `src/auto_launch.py`
     - Create `MVPPipelineResult` frozen dataclass
@@ -20,14 +20,14 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Extend `WorldSession` model with `mode`, `quality_label`, `game_pid` fields
     - _Requirements: 1.5, 8.5, 10.1, 12.5_
 
-  - [ ] 1.2 Extend `UPBGECapabilityReport` with blenderplayer fields
+  - [x] 1.2 Extend `UPBGECapabilityReport` with blenderplayer fields
     - Add `blenderplayer_path: str | None`, `blenderplayer_available: bool`, `blenderplayer_verified: bool`, `blenderplayer_reason_code: str`, `blenderplayer_diagnostics: tuple[str, ...]` to the existing capability report dataclass in `src/upbge_capabilities.py`
     - Implement blenderplayer discovery logic: look alongside editor executable, probe with `--version` or minimal .blend test file, confirm clean exit
     - Handle states: editor+player present, editor present+player absent, editor absent
     - _Requirements: 7.1, 1.8_
 
 - [ ] 2. MVP Tolerance — Plan Validation
-  - [ ] 2.1 Implement MVP tolerance mode in Plan Validator
+  - [~] 2.1 Implement MVP tolerance mode in Plan Validator
     - Modify `validate_floor_plan()` in `src/floor_plan/validator.py` to accept a `tolerance: Literal["strict", "mvp"] | None` parameter
     - Implement threshold logic: accept overlaps ≤0.1m, relationship offsets ≤0.2m, clearance violations ≤0.15m as warnings (not rejections)
     - Maintain structural impossibility rejections: vertex outside room bounds, zero-dimension room, missing dimensions, duplicate stable IDs
@@ -40,7 +40,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Generate floor plans with Hypothesis: plans with only non-critical violations must pass; plans with structural impossibilities must reject
     - **Validates: Requirements 2.2**
 
-  - [ ] 2.3 Implement warnings recording in Compiler Manifest
+  - [~] 2.3 Implement warnings recording in Compiler Manifest
     - When MVP tolerance accepts a plan with warnings, record each warning (type, affected_id, measured_deviation) in the `Compiler_Manifest` output
     - _Requirements: 2.5_
 
@@ -50,7 +50,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - **Validates: Requirements 2.5**
 
 - [ ] 3. Lane Ladder — Model Routing
-  - [ ] 3.1 Implement Lane Ladder module (`src/lane_ladder.py`)
+  - [~] 3.1 Implement Lane Ladder module (`src/lane_ladder.py`)
     - Define `LANE_LADDER` list: `planner-probe-v1:latest` (priority 1, 20s), `gpt-oss:20b` (priority 2, 25s), `qwen3.6:27b` (priority 3, 30s)
     - Define `CLOUD_FALLBACK` list (only used after all local lanes exhaust)
     - Implement `generate_plan_with_ladder()` async function: attempt primary lane, on structural rejection retry same model with simplified prompt, then escalate to next lane
@@ -59,17 +59,17 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Integrate with local Ollama for all local lanes
     - _Requirements: 2.3, 1.7, 10.1_
 
-- [ ] 4. Checkpoint — Ensure all tests pass
+- [~] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Session Manager and FIFO Queue
-  - [ ] 5.1 Implement Session Manager (`src/session_manager.py`)
+  - [~] 5.1 Implement Session Manager (`src/session_manager.py`)
     - `create_session(description, mode)` → generates UUID, creates isolated output directory under `output/sessions/{uuid}/` with `input/`, `output/`, `tmp/` subdirectories
     - `mark_failed_on_restart()` → on startup, mark any incomplete sessions as failed with `reason_code: "server_restart"`
     - Enforce unique session IDs (random UUID), never reuse directories even for identical descriptions
     - _Requirements: 12.2, 12.4, 12.5, 12.6_
 
-  - [ ] 5.2 Implement FIFO compilation queue
+  - [~] 5.2 Implement FIFO compilation queue
     - `SessionQueue` class with asyncio lock: max 1 active UPBGE compilation at a time
     - `enqueue(session)` → start immediately if no active compilation, else append to deque
     - `complete(session_id)` → mark done, start next pending session from deque
@@ -87,7 +87,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - **Validates: Requirements 12.2, 12.5**
 
 - [ ] 6. Smoke Validator
-  - [ ] 6.1 Implement Smoke Validator module (`src/smoke_validator.py`)
+  - [~] 6.1 Implement Smoke Validator module (`src/smoke_validator.py`)
     - Create `smoke_probe.py` script that runs inside UPBGE_Editor `--background` mode
     - Implement 4 structural checks via bpy: (1) player controller text datablock exists and is non-empty, (2) at least one object has Character physics type, (3) logic brick controllers are wired to target objects, (4) scene loads without bpy errors
     - `run_structural_smoke(capability, blend_path, runtime_plan, timeout_s=15.0)` → invoke UPBGE_Editor with `--background blend_path --python smoke_probe.py`, parse JSON result from stdout
@@ -96,7 +96,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - _Requirements: 8.3, 8.4, 8.5_
 
 - [ ] 7. Auto-Launcher
-  - [ ] 7.1 Implement Auto-Launcher module (`src/auto_launch.py`)
+  - [~] 7.1 Implement Auto-Launcher module (`src/auto_launch.py`)
     - `auto_launch_game(capability, blend_path, fullscreen=True, timeout_s=10.0)` → verify blend_path exists + non-zero, discover blenderplayer from `capability.blenderplayer_path`
     - Construct launch command: `blenderplayer -f 0 0 path/to/file.blend` (fullscreen) or `blenderplayer path/to/file.blend` (windowed)
     - Start subprocess non-blocking, wait up to timeout_s for process to NOT exit (confirms running)
@@ -105,7 +105,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - _Requirements: 1.1, 1.2, 1.8, 9.2_
 
 - [ ] 8. Pipeline Orchestrator — MVP Branch
-  - [ ] 8.1 Implement `run_mvp()` method in Pipeline Orchestrator
+  - [~] 8.1 Implement `run_mvp()` method in Pipeline Orchestrator
     - Add MVP mode branch to `src/pipeline.py`
     - Implement shortened pipeline: interpret → plan (lane ladder) → scene graph → WorldContract → CompilerPlan+RuntimePlan → sidecar compile → parity gate → smoke validator → auto-launch
     - Skip canon image generation and composition validation stages in MVP mode (Req 2.4)
@@ -114,7 +114,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Integrate FIFO queue — serialize only the sidecar compilation stage
     - _Requirements: 1.1, 1.3, 2.4, 10.1, 10.2_
 
-  - [ ] 8.2 Implement input validation gate
+  - [~] 8.2 Implement input validation gate
     - Reject empty strings, strings < 3 characters, strings > 500 characters with descriptive validation error BEFORE invoking any LLM stage
     - _Requirements: 1.6_
 
@@ -123,7 +123,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any string input, verify rejection iff char count < 3 or > 500, and no LLM invocation occurs on rejection
     - **Validates: Requirements 1.6**
 
-  - [ ] 8.4 Implement parity gate check
+  - [~] 8.4 Implement parity gate check
     - Verify scene inventory JSON contains all expected object IDs from CompilerPlan with no missing IDs
     - Verify total object count matches expected count
     - On failure: list each discrepancy (missing IDs, count mismatch) — hard stop
@@ -139,7 +139,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any (parity_passed, smoke_passed) combination, verify correct quality label assignment
     - **Validates: Requirements 8.5**
 
-  - [ ] 8.7 Implement structured error reporting and graceful degradation
+  - [~] 8.7 Implement structured error reporting and graceful degradation
     - Every stage returns success result or `StageFailure` — no exceptions that corrupt session state
     - On pipeline failure: report stage name, reason_code, diagnostic message to web interface
     - Graceful degradation chain: smoke fails → proceed with `smoke_skipped`; launch fails → download link fallback; parity fails → hard stop
@@ -150,11 +150,11 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any stage failure, verify result contains stage name + reason_code + diagnostic, and session state remains uncorrupted
     - **Validates: Requirements 1.5**
 
-- [ ] 9. Checkpoint — Ensure all tests pass
+- [~] 9. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Serialization and Contract Integrity
-  - [ ] 10.1 Implement canonical JSON serialization constraints
+  - [~] 10.1 Implement canonical JSON serialization constraints
     - Ensure serializer rejects non-finite numbers (NaN, Infinity, -Infinity)
     - Enforce sorted keys, no-whitespace separators (`,` and `:`), UTF-8 encoding
     - Ensure deserialization raises validation error on non-conforming input (missing fields, unknown fields, type mismatches) identifying the first bad element
@@ -186,7 +186,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - **Validates: Requirements 11.5**
 
 - [ ] 11. Web Interface — SSE Progress and Auto-Launch Trigger
-  - [ ] 11.1 Add MVP mode endpoints and SSE progress
+  - [~] 11.1 Add MVP mode endpoints and SSE progress
     - Modify `/describe` endpoint in `src/web/app.py` to accept `mode` parameter (default: `"mvp"`)
     - Implement SSE event stream delivering stage transitions within 2 seconds of occurrence
     - Stage events: `interpreting`, `planning`, `building_scene`, `compiling`, `validating`, `launching`, `game_running`
@@ -194,20 +194,20 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On game running: display "Game Running" status with "Download .blend" secondary action
     - _Requirements: 9.1, 9.2, 9.3_
 
-  - [ ] 11.2 Implement failure display and launch fallback in web interface
+  - [~] 11.2 Implement failure display and launch fallback in web interface
     - On pipeline failure: display failed stage name and human-readable reason (not generic error)
     - On auto-launch failure: present download link with platform-specific manual launch instructions
     - Provide download link for successful compilations as secondary action
     - _Requirements: 9.4, 9.5, 1.4, 1.8_
 
-  - [ ] 11.3 Preserve existing V3-V10 interface behavior
+  - [~] 11.3 Preserve existing V3-V10 interface behavior
     - Ensure all existing routes and behavior for non-MVP sessions remain unchanged
     - Default to MVP mode when no mode specified at session creation (Req 10.4)
     - Full mode (existing V11) remains selectable via mode parameter
     - _Requirements: 10.2, 10.3, 10.4, 9.6_
 
 - [ ] 12. Player Controller and Door Interaction (RuntimePlan validation)
-  - [ ] 12.1 Implement player controller math utilities
+  - [~] 12.1 Implement player controller math utilities
     - Movement speed normalization: diagonal input (two keys) produces normalized direction vector so combined speed ≤ max_speed
     - Vertical look angle clamping to ±85°
     - Spawn repositioning: spiral search outward from floor center in 0.5m increments (up to 8 attempts), fallback to ceiling_height - 0.5m drop
@@ -228,7 +228,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any room geometry with obstructed default spawn, repositioning produces a valid in-bounds, non-intersecting point
     - **Validates: Requirements 4.7**
 
-  - [ ] 12.5 Implement door interaction parameter validation in RuntimePlan builder
+  - [~] 12.5 Implement door interaction parameter validation in RuntimePlan builder
     - Validate door interaction intents: `open_angle_deg` within [-180, 180] non-zero, `speed_deg_s` within (0, 720], `initially_open` boolean
     - Reject WorldContract with structured error if door subject lacks explicit physics intent or uses trigger body mode
     - _Requirements: 5.1, 5.5_
@@ -243,18 +243,18 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Per-frame step advances toward target without overshooting; step = min(|target - current|, speed_deg_s / frame_rate)
     - **Validates: Requirements 5.3**
 
-- [ ] 13. Checkpoint — Ensure all tests pass
+- [~] 13. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Integration wiring and final verification
-  - [ ] 14.1 Wire all components into the pipeline orchestrator
+  - [~] 14.1 Wire all components into the pipeline orchestrator
     - Connect session manager → FIFO queue → lane ladder → MVP validator → scene graph → contract → sidecar → parity → smoke → auto-launch → web SSE
     - Ensure each stage builds on the previous, no orphaned code
     - Verify `run_mvp()` calls all components in correct order with proper data flow
     - Verify `run_full()` (existing V11) remains unchanged and operational
     - _Requirements: 1.1, 10.1, 10.2_
 
-  - [ ] 14.2 Implement session cleanup with configurable TTL
+  - [~] 14.2 Implement session cleanup with configurable TTL
     - Background task (hourly) scans session directories
     - Remove .blend artifacts after 7 days, intermediate compiler inputs after 24 hours, temporary files immediately on session complete
     - _Requirements: 12.3_
@@ -269,7 +269,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any invalid sidecar state, verify `SidecarResult` with `success=False`, non-empty reason_code, and captured output for process failures
     - **Validates: Requirements 7.2, 7.4, 7.7**
 
-- [ ] 15. Final checkpoint — Ensure all tests pass
+- [~] 15. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -5,14 +5,69 @@ These are the contracts between every component in the pipeline.
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional
 
 from pydantic import BaseModel, Field
 
 from src.camera_contract import CameraContract
 from src.compiler_manifest import CanonicalDocument
 from src.floor_plan.models import FloorPlan, FloorPlanV11, PlanValidationReport
+
+if TYPE_CHECKING:
+    from src.auto_launch import LaunchResult
+
+
+# --- MVP Mode ---
+
+
+class SessionMode(str, Enum):
+    """Pipeline execution mode: MVP (shortened, relaxed) or FULL (V11 strict)."""
+
+    MVP = "mvp"
+    FULL = "full"
+
+
+# --- MVP Pipeline Data Models ---
+
+
+@dataclass(frozen=True)
+class PlanValidationWarning:
+    """A non-fatal validation warning from MVP-tolerant plan checks."""
+
+    warning_type: str  # "overlap", "relationship_offset", "clearance"
+    affected_id: str
+    measured_deviation: float
+    threshold: float
+
+
+@dataclass(frozen=True)
+class StageFailure:
+    """Structured error propagation for pipeline stage failures."""
+
+    stage: str  # e.g. "planning", "compiling", "validating"
+    reason_code: str
+    diagnostic: str
+    recoverable: bool = False
+
+
+@dataclass(frozen=True)
+class MVPPipelineResult:
+    """Immutable result of a complete MVP pipeline execution."""
+
+    success: bool
+    artifact_path: Path | None
+    launch_result: LaunchResult | None
+    quality_label: str  # "smoke_structural", "smoke_skipped", "parity_only"
+    warnings: list[PlanValidationWarning] = field(default_factory=list)
+    failure_stage: str | None = None
+    failure_reason_code: str | None = None
+    failure_diagnostic: str | None = None
+    duration_ms: int = 0
+    model_used: str = ""  # Which lane produced the accepted plan
+    attempts: int = 0  # How many plan generation attempts were needed
 
 
 # --- Scene Concept (output of Orchestrator) ---
@@ -169,6 +224,9 @@ class WorldSession(BaseModel):
     """Tracks the state and revision memory of a world-building session."""
 
     session_id: str
+    mode: SessionMode = SessionMode.MVP  # default to MVP per Req 10.4
+    quality_label: str | None = None  # "smoke_structural", "smoke_skipped", "parity_only"
+    game_pid: int | None = None  # PID of launched blenderplayer process
     interface_version: int = 11
     workflow_profile_id: str = ""
     workflow_profile: dict = Field(default_factory=dict)

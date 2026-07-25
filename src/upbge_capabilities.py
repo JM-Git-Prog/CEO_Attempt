@@ -51,6 +51,11 @@ class UPBGECapabilityReport:
     reason_code: str = "not_probed"
     diagnostics: tuple[str, ...] = ()
     attempts: tuple[CapabilityAttempt, ...] = ()
+    blenderplayer_path: str | None = None
+    blenderplayer_available: bool = False
+    blenderplayer_verified: bool = False
+    blenderplayer_reason_code: str = "not_probed"
+    blenderplayer_diagnostics: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -264,6 +269,112 @@ def probe_upbge_executable(
     )
 
 
+_BLENDERPLAYER_PROBE_TIMEOUT_S = 5.0
+
+
+def discover_blenderplayer(editor_executable: str | os.PathLike[str] | None) -> Path | None:
+    """Derive the expected blenderplayer path from the editor executable location.
+
+    Looks alongside the editor executable for ``blenderplayer.exe`` (Windows)
+    or ``blenderplayer`` (Linux/macOS).  Returns the path if the file exists,
+    otherwise None.
+    """
+    if editor_executable is None:
+        return None
+    editor_path = Path(editor_executable)
+    try:
+        editor_dir = editor_path.resolve(strict=True).parent
+    except (OSError, RuntimeError):
+        # Editor path doesn't actually exist on disk — can't derive player location
+        return None
+
+    if sys_platform() == "win32" or sys_platform() == "cygwin":
+        candidate = editor_dir / "blenderplayer.exe"
+    else:
+        candidate = editor_dir / "blenderplayer"
+
+    if candidate.is_file():
+        return candidate
+    return None
+
+
+def probe_blenderplayer(
+    player_path: str | os.PathLike[str],
+    *,
+    timeout_s: float = _BLENDERPLAYER_PROBE_TIMEOUT_S,
+    output_limit: int = _DEFAULT_OUTPUT_LIMIT,
+    environment: Mapping[str, str] | None = None,
+) -> tuple[bool, str, tuple[str, ...]]:
+    """Lightweight probe of a blenderplayer executable.
+
+    Attempts to run ``blenderplayer --version`` (or bare invocation) and confirms
+    a clean exit (returncode 0, no crash/GPU errors, completes within timeout).
+
+    Returns a tuple of:
+      - verified: bool — True if the player started and exited cleanly
+      - reason_code: str — machine-readable outcome
+      - diagnostics: tuple[str, ...] — any diagnostic messages
+    """
+    path = Path(player_path)
+    try:
+        resolved = path.resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        return (False, "blenderplayer_not_found", (str(exc),))
+
+    if not resolved.is_file():
+        return (False, "blenderplayer_not_a_file", (str(resolved),))
+
+    env = _sanitized_probe_environment(environment)
+
+    # Try --version first — lightweight, no GPU needed
+    try:
+        capture = _bounded_process(
+            [str(resolved), "--version"],
+            timeout_s=timeout_s,
+            output_limit=output_limit,
+            env=env,
+        )
+    except OSError as exc:
+        return (False, "blenderplayer_start_failed", (str(exc),))
+
+    if capture.timed_out:
+        return (False, "blenderplayer_timeout", ("Probe timed out",))
+
+    if capture.output_exceeded:
+        return (False, "blenderplayer_output_limit", ("Output limit exceeded",))
+
+    # blenderplayer --version may return 0 (prints version info) or may not support
+    # --version and exit with non-zero. Accept returncode 0 as verified.
+    # Also accept returncode 1 with version-like output (some builds print version then exit 1).
+    stdout_lower = capture.stdout.lower()
+    stderr_lower = capture.stderr.lower()
+    combined_output = capture.stdout + capture.stderr
+
+    # Check for GPU crash indicators
+    gpu_error_indicators = ("gpu error", "opengl error", "segfault", "access violation")
+    for indicator in gpu_error_indicators:
+        if indicator in stdout_lower or indicator in stderr_lower:
+            return (
+                False,
+                "blenderplayer_gpu_error",
+                (f"GPU/crash indicator detected: {indicator}",),
+            )
+
+    if capture.returncode == 0:
+        return (True, "blenderplayer_verified", ())
+
+    # Some blenderplayer builds exit with 1 on --version but still produce output
+    # indicating they started correctly. Accept if we see version-like text.
+    version_indicators = ("blender", "upbge", "version")
+    has_version_output = any(ind in stdout_lower or ind in stderr_lower for ind in version_indicators)
+    if has_version_output and capture.returncode is not None and capture.returncode <= 1:
+        return (True, "blenderplayer_verified", ())
+
+    # Non-zero exit without version output — player may be broken
+    detail = combined_output[-500:] if combined_output else f"exit code {capture.returncode}"
+    return (False, "blenderplayer_probe_failed", (detail,))
+
+
 def approved_upbge_locations(environment: Mapping[str, str] | None = None) -> tuple[Path, ...]:
     """Return deterministic, application-approved installation locations."""
     env = os.environ if environment is None else environment
@@ -324,6 +435,47 @@ def _candidate_paths(
     return unique
 
 
+def _enrich_with_blenderplayer(
+    report: UPBGECapabilityReport,
+    *,
+    environment: Mapping[str, str] | None = None,
+) -> UPBGECapabilityReport:
+    """Probe blenderplayer alongside the editor and return an enriched report.
+
+    Since UPBGECapabilityReport is frozen, this constructs a new instance with
+    blenderplayer fields populated.
+    """
+    player_path = discover_blenderplayer(report.executable_path)
+
+    if player_path is None:
+        # Editor found but blenderplayer absent
+        base = report.to_dict()
+        base["blenderplayer_path"] = None
+        base["blenderplayer_available"] = False
+        base["blenderplayer_verified"] = False
+        base["blenderplayer_reason_code"] = "blenderplayer_not_found"
+        base["blenderplayer_diagnostics"] = (
+            f"No blenderplayer found alongside editor at {report.executable_path}",
+        )
+        # Preserve attempts as CapabilityAttempt instances (asdict converts them to dicts)
+        base["attempts"] = report.attempts
+        return UPBGECapabilityReport(**base)
+
+    # blenderplayer file exists — probe it
+    verified, reason_code, diagnostics = probe_blenderplayer(
+        player_path, environment=environment
+    )
+    base = report.to_dict()
+    base["blenderplayer_path"] = str(player_path)
+    base["blenderplayer_available"] = True
+    base["blenderplayer_verified"] = verified
+    base["blenderplayer_reason_code"] = reason_code
+    base["blenderplayer_diagnostics"] = diagnostics
+    # Preserve attempts as CapabilityAttempt instances (asdict converts them to dicts)
+    base["attempts"] = report.attempts
+    return UPBGECapabilityReport(**base)
+
+
 def discover_upbge(
     *,
     explicit_path: str | os.PathLike[str] | None = None,
@@ -337,6 +489,8 @@ def discover_upbge(
     ``UPBGE_PRODUCT_VERSION`` and ``UPBGE_BLENDER_API_VERSION`` are optional exact
     pins. A discovered UPBGE build that does not match either configured pin is
     reported truthfully as incompatible and discovery continues.
+
+    Also probes blenderplayer alongside the discovered editor executable.
     """
     settings = config or {}
     required_product_version = settings.get("UPBGE_PRODUCT_VERSION")
@@ -369,18 +523,26 @@ def discover_upbge(
             detail="; ".join(report.diagnostics),
         ))
         if report.compatible:
-            return UPBGECapabilityReport(
-                **{key: value for key, value in report.to_dict().items() if key != "attempts"},
-                attempts=tuple(attempts),
+            enriched = _enrich_with_blenderplayer(
+                UPBGECapabilityReport(
+                    **{k: v for k, v in report.to_dict().items() if k != "attempts"},
+                    attempts=tuple(attempts),
+                ),
+                environment=environment,
             )
+            return enriched
     if reports:
         # Preserve real incompatible-engine evidence instead of collapsing it into
         # an indistinguishable "not found" result.
         best = next((item for item in reports if item.available), reports[0])
-        return UPBGECapabilityReport(
-            **{key: value for key, value in best.to_dict().items() if key != "attempts"},
-            attempts=tuple(attempts),
+        enriched = _enrich_with_blenderplayer(
+            UPBGECapabilityReport(
+                **{k: v for k, v in best.to_dict().items() if k != "attempts"},
+                attempts=tuple(attempts),
+            ),
+            environment=environment,
         )
+        return enriched
     return UPBGECapabilityReport(
         reason_code="upbge_not_found",
         diagnostics=(
