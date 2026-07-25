@@ -59,7 +59,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Integrate with local Ollama for all local lanes
     - _Requirements: 2.3, 1.7, 10.1_
 
-- [ ] 4. Checkpoint — Ensure all tests pass
+- [x] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Session Manager and FIFO Queue
