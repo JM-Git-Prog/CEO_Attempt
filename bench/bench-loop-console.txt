@@ -688,3 +688,13 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p048: error    (22.8s) 
   p049: error    (23.1s) 
   p050: error    (8.5s) 
+  p051: error    (31.2s) 
+  p052: error    (29.6s) 
+  p053: blocked  (24.7s) opening_blocked
+  p054: error    (22.1s) 
+  p055: error    (17.1s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T140457.json
+[14:12:34] bench batch rc=0
+[14:12:34] ingest: ingest: +4 records | 277 already banked | 320 plan-less rows skipped

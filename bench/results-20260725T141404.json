@@ -1,0 +1,23 @@
+{
+ "started": "2026-07-25 14:14:04",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 1,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:ValidationError": 1
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.2\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'gate_desk...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 18.8,
+     "prompt_id": "p056"
+    }
+   ]
+  }
+ }
+}

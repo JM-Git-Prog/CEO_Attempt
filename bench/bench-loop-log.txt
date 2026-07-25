@@ -358,3 +358,4 @@
 [14:04:57] batch: prompts 40..54 (llama3.1)
 [14:12:34] bench batch rc=0
 [14:12:34] ingest: ingest: +4 records | 277 already banked | 320 plan-less rows skipped
+[14:14:04] batch: prompts 55..69 (llama3.1)
