@@ -9,10 +9,12 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 ### Environment Assumptions
 
 - **Local desktop with GPU and display.** The MVP assumes a Windows workstation with an RTX 4090, a connected display, and UPBGE installed locally. It will NOT work on headless servers, cloud GPU instances without virtual framebuffers, or machines without a window manager.
+- **Co-located browser and game.** The user accesses the Web_Interface via a browser on the same machine that runs the Pipeline and blenderplayer. The "magic moment" (type → game window opens) requires both the browser and the game to be on the same desktop. Remote access via SSH tunnel or similar will produce a game window on the server's display, not the user's.
 - **Single-user, single-session-at-a-time.** Only one UPBGE compilation may run at any given time. Concurrent requests queue behind the active compilation.
 - **Audio is out of scope.** No sound effects, ambient audio, or spatial audio in MVP.
 - **Textures are out of scope.** Materials use flat Principled BSDF parameters (base_color, metallic, roughness, emission) only. No procedural textures, no image textures.
 - **Object grab interaction is a stretch goal.** The core MVP delivers walking + collision + doors. Grab is included as a Phase 2 requirement that ships only if time permits after the core path is stable.
+- **Runtime smoke testing (blenderplayer frame-loop verification) is deferred to Phase 2.** MVP validates structural correctness only (parity gate + bpy-based inspection). No second game window is opened during the user's play session.
 
 ## Glossary
 
@@ -28,12 +30,10 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 - **Sidecar**: The bounded subprocess orchestrator that invokes UPBGE in background mode to execute the First_Party_Script
 - **Capability_Report**: The verified evidence from probing BOTH the UPBGE_Editor executable (for compilation) AND the blenderplayer executable (for game launch). Each is discovered and probed independently. Reports product identity, version, Blender API version for the editor, and game-mode launch success for blenderplayer. A system may have the editor without blenderplayer (compilation works, launch unavailable) or vice versa.
 - **Parity_Gate**: A validation step that checks the compiled output matches the WorldContract's structural expectations (object inventory, object count, physics bindings)
-- **Smoke_Runner**: The bounded process that launches a Runtime_Candidate and verifies basic gameplay behaviors (load, spawn, movement, collision). Runs ASYNCHRONOUSLY — does not block Auto_Launch.
+- **Smoke_Validator**: A compile-time structural check that opens the Runtime_Candidate in the UPBGE_Editor (headless, via `bpy`) and verifies that logic bricks are wired, player controller text datablocks are present, physics bodies are configured, and the scene loads without error. Does NOT enter game mode, does NOT open a visible window, does NOT launch blenderplayer. Runtime smoke (actually entering the game loop via blenderplayer) is deferred to Phase 2.
 - **Workflow_Profile**: An immutable version-specific generation and compilation contract persisted with a session (pre-existing concept from V9+ pipeline versions)
 - **Compiler_Manifest**: Immutable record binding inputs, versions, hashes, timings, and diagnostics to a compilation run (pre-existing provenance concept)
 - **Interface_Version**: A query-versioned identifier (V3 through V11) controlling which pipeline behavior and UI a session uses. V3-V10 are retained historical versions; V11 is the current full-quality version; MVP mode is a new execution path within V11.
-- **Parity_Gate**: A validation step that checks the compiled output matches the WorldContract's structural expectations (object inventory, positions, physics bindings)
-- **Smoke_Runner**: The bounded process that launches a Runtime_Candidate and verifies basic gameplay behaviors (load, spawn, movement, collision)
 - **Plan_Validation**: The deterministic quality checks on LLM-generated floor plans (geometry bounds, overlap detection, opening placement)
 - **MVP_Tolerance**: A relaxed validation mode that accepts plans with non-critical warnings rather than rejecting them outright
 - **Playable_Artifact**: The compiled `.blend` file containing the 3D world plus embedded game logic. The compiler wires an "Always" sensor → Python controller that calls `bge.logic.startGame()`, which means the same .blend works in BOTH contexts: blenderplayer direct launch AND editor P-key launch. This is a deliberate design property — blenderplayer is the user-facing launch path, editor P-key is the development/debugging path.
@@ -49,9 +49,9 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 
 #### Acceptance Criteria
 
-1. WHEN a user submits a text description (between 3 and 500 characters) via the Web_Interface, THE Pipeline SHALL produce a Playable_Artifact and Auto_Launch it via blenderplayer in fullscreen game mode within 180 seconds on the target hardware (RTX 4090, local Ollama, local UPBGE). The budget breakdown is: LLM stages ≤60s, compilation ≤60s, parity ≤5s, launch ≤10s, with 45s margin for overhead and retries.
+1. WHEN a user submits a text description (between 3 and 500 characters) via the Web_Interface, THE Pipeline SHALL produce a Playable_Artifact and Auto_Launch it via blenderplayer in fullscreen game mode. Target: 180 seconds on the happy path (first plan attempt succeeds). When retries are needed (Req 2.3), the pipeline MAY take up to 240 seconds. The budget breakdown is: LLM per-attempt ≤20s × up to 3 attempts = ≤60s, compilation ≤60s, parity ≤5s, launch ≤10s, with remaining time as margin.
 2. WHEN Auto_Launch succeeds, THE user SHALL see a full-screen game window with first-person controls active — no file dialogs, no editor UI, no manual steps between typing a sentence and being inside the game
-3. THE Pipeline SHALL Auto_Launch the game IMMEDIATELY after the Parity_Gate passes, WITHOUT waiting for the Smoke_Runner to complete. The Smoke_Runner runs asynchronously in the background and reports its result to the session record without blocking the user's play experience.
+3. THE Pipeline SHALL Auto_Launch the game IMMEDIATELY after the Parity_Gate and Smoke_Validator pass. The structural smoke check (bpy-based, headless) runs BEFORE launch and does not open a visible window. The user's game launch is the final step — no second game window is ever opened.
 4. WHEN the Pipeline completes successfully, THE Web_Interface SHALL additionally present a download link for the Playable_Artifact for users who want to replay or share the game later
 5. IF any pipeline stage fails, THEN THE Pipeline SHALL report the failure stage name, a machine-readable reason code, and a human-readable diagnostic message to the Web_Interface without terminating the server process or corrupting the session state
 6. IF the user submits an empty string, a string shorter than 3 characters, or a string longer than 500 characters, THEN THE Pipeline SHALL reject the input with a descriptive validation error before invoking any LLM stage
@@ -90,7 +90,7 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 
 #### Acceptance Criteria
 
-1. WHEN the Playable_Artifact is launched in UPBGE game mode, THE player controller SHALL spawn the player at the geometric center of the floor bounds at 1.7m elevation (eye height) with gravity of 9.81 m/s² enabled, using a capsule collider of 1.8m height and 0.3m radius
+1. WHEN the Playable_Artifact is launched in UPBGE game mode, THE player controller SHALL spawn the player at the geometric center of the floor bounds at 1.7m elevation (eye height) with gravity of 9.81 m/s² enabled, using the Character physics body type with a capsule collider of 1.8m height and 0.3m radius
 2. WHILE the game is running, THE player controller SHALL move the player in response to WASD keys at a configurable speed (default 4.0 m/s, range 1.0–10.0 m/s) with diagonal input normalized so combined speed does not exceed the configured maximum
 3. WHILE the game is running, THE player controller SHALL rotate the camera view in response to mouse movement with configurable sensitivity, bounded vertical look angle of ±85°, and unlimited horizontal rotation
 4. THE player controller SHALL enforce collision detection between the player capsule and all static and kinematic physics bodies including walls, floor, ceiling, and furniture such that the capsule cannot pass through or overlap any collision surface
@@ -138,18 +138,18 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 6. THE Sidecar SHALL pass the CompilerPlan with `runtime=True` flag to produce a Runtime_Candidate rather than a static .blend. The Runtime_Candidate SHALL be a valid input to both blenderplayer (for user launch) and the UPBGE_Editor P-key (for developer debugging).
 7. IF the UPBGE_Editor process exits with a non-zero code, THEN THE Sidecar SHALL capture up to 2MB of process output and return a structured failure result containing the exit code and captured output
 
-### Requirement 8: Parity Gate and Async Smoke Validation
+### Requirement 8: Parity Gate and Structural Smoke Validation
 
-**User Story:** As a developer, I want lightweight validation that confirms the compiled game is structurally correct, without blocking the user from playing.
+**User Story:** As a developer, I want lightweight validation that confirms the compiled game is structurally correct, without opening a second game window or interfering with the user's play experience.
 
 #### Acceptance Criteria
 
 1. WHEN the Sidecar produces a Runtime_Candidate, THE Parity_Gate SHALL verify that: (a) the scene inventory JSON contains all expected object IDs from the CompilerPlan with no missing IDs, AND (b) the total object count in the inventory matches the expected count from the CompilerPlan (catches spurious extra objects)
 2. IF the Parity_Gate detects missing object IDs or a count mismatch, THEN THE Pipeline SHALL reject the Runtime_Candidate and return a structured failure listing each discrepancy
-3. WHEN the Parity_Gate passes, THE Pipeline SHALL IMMEDIATELY proceed to Auto_Launch without waiting for the Smoke_Runner
-4. THE Smoke_Runner SHALL run ASYNCHRONOUSLY after Auto_Launch is triggered — it launches a SEPARATE blenderplayer process (the same executable used for Auto_Launch) to verify load success (process starts, loads .blend without crash, reaches game-mode frame loop within 30 seconds) and records its result to the session without blocking the user
-5. IF the async Smoke_Runner reports a load failure, THE Web_Interface SHALL display a warning ("smoke test failed — game may have issues") but SHALL NOT terminate the already-running game
-6. THE session record SHALL include the smoke result with quality label: "smoke_full" (load + frame loop confirmed), "smoke_partial" (load confirmed, frame loop unverified), or "smoke_skipped" (async runner not yet complete)
+3. WHEN the Parity_Gate passes, THE Smoke_Validator SHALL open the Runtime_Candidate in the UPBGE_Editor (headless, via `bpy`) — NOT blenderplayer — and verify structural correctness: (a) the player controller text datablock exists and is non-empty, (b) at least one object has Character physics type configured, (c) all RuntimePlan-referenced logic brick controllers are wired to their target objects, (d) the scene loads without `bpy` errors. This does NOT enter game mode and does NOT open a visible window.
+4. WHEN the Smoke_Validator passes, THE Pipeline SHALL IMMEDIATELY proceed to Auto_Launch
+5. THE session record SHALL include the validation result with quality label: "smoke_structural" (all bpy checks passed), "smoke_skipped" (validator unavailable or timed out — proceed anyway), or "parity_only" (parity passed but structural smoke was not run)
+6. Runtime smoke testing (launching blenderplayer to verify the game loop actually runs) is deferred to Phase 2. For MVP, Req 3.6 (valid .blend loadable by bpy) + Req 8.1 (parity) + Req 8.3 (structural smoke) provide sufficient confidence that the game will load in blenderplayer.
 
 ### Requirement 9: Web Interface — Progress and Auto-Launch
 
@@ -196,7 +196,7 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 
 1. THE Pipeline SHALL enforce a maximum of ONE active UPBGE compilation at any time. IF a new session requests compilation while another is in progress, THEN the new request SHALL queue behind the active compilation (FIFO) rather than failing immediately or running concurrently.
 2. EACH session SHALL have an isolated output directory. Intermediate files (compiler plan JSON, scene inventory, temporary .blend artifacts) SHALL be written exclusively within the session's output directory and SHALL NOT reference or modify files in other sessions' directories.
-3. WHEN a session completes (success or failure), THE Pipeline SHALL retain the final Playable_Artifact and session metadata (session.json) but MAY clean up intermediate compiler inputs (canonical contract bytes, compiler plan JSON) after a configurable retention period (default: 24 hours).
+3. WHEN a session completes (success or failure), THE Pipeline SHALL retain the final Playable_Artifact and session metadata (session.json) for a configurable retention period (default: 7 days for .blend artifacts, 24 hours for intermediate compiler inputs such as canonical contract bytes and compiler plan JSON). After the retention period, files MAY be cleaned up automatically.
 4. IF a user submits a new description while their previous session's game is still running, THE Pipeline SHALL start a new session independently — the previous game process is NOT terminated (the user can close it manually).
 5. THE Pipeline SHALL assign unique session IDs using random UUIDs and SHALL NOT reuse session output directories even if a previous session with the same description exists.
 6. IF the server process restarts, THE Pipeline SHALL NOT resume in-progress compilations. Sessions that were mid-compilation at shutdown SHALL be marked as failed with reason_code "server_restart" and the user may retry.
