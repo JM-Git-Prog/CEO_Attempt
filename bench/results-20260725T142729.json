@@ -4,10 +4,14 @@
  "lanes": {
   "llama3.1": {
    "legal": 0,
-   "total": 7,
+   "total": 15,
    "legal_rate": 0.0,
    "violation_census": {
-    "error:ValidationError": 7
+    "error:ValidationError": 14,
+    "physical_overlap": 6,
+    "out_of_bounds": 3,
+    "opening_blocked": 1,
+    "camera_inside_geometry": 1
    },
    "rows": [
     {
@@ -58,8 +62,287 @@
      "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
      "seconds": 19.2,
      "prompt_id": "p092"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1980s Roller Ri...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 16.8,
+     "prompt_id": "p093"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Succulents Shop...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 18.0,
+     "prompt_id": "p094"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Gas St...ht_m=1.2, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 8.7,
+     "prompt_id": "p095"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Courtroom Corne...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 26.8,
+     "prompt_id": "p096"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Dragon-Themed T...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 16.1,
+     "prompt_id": "p097"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 22.4,
+     "plan": {
+      "name": "Data Center Aisle Room",
+      "room": {
+       "width": 10.0,
+       "depth": 12.0,
+       "height": 3.2
+      },
+      "items": [
+       {
+        "id": "rack_1",
+        "name": "Server Rack",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 4.45,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "rack_2",
+        "name": "Server Rack",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.5,
+        "z": 4.45,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "rack_3",
+        "name": "Server Rack",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.0,
+        "z": 4.45,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "rack_4",
+        "name": "Server Rack",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.0,
+        "z": 4.45,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "crash_cart",
+        "name": "Crash Cart Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.0,
+        "z": 5.0,
+        "width": 1.5,
+        "depth": 2.0,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light",
+        "name": "Cold Blue Panel Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 4.0,
+        "z": 5.0,
+        "width": 1.8,
+        "depth": 0.6,
+        "height": 0.3,
+        "elevation": 2.9000000000000004,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 5.55,
+       "target_x": 0.0,
+       "target_y": 2.9,
+       "target_z": 4.45,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "The room is designed for a data center aisle with four server racks in a row, a crash cart desk, and cold blue panel light."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "rack_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "rack_2",
+        "kind": "adjacent_to",
+        "target_id": "rack_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "rack_3",
+        "kind": "adjacent_to",
+        "target_id": "rack_2",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "rack_4",
+        "kind": "adjacent_to",
+        "target_id": "rack_3",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "crash_cart",
+        "kind": "north_of",
+        "target_id": "rack_4",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light",
+        "kind": "above",
+        "target_id": "crash_cart",
+        "wall": null,
+        "parameters_m": {
+         "height": 2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "rack_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.9,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p098"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'pizza_ove...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 39.4,
+     "prompt_id": "p099"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'potting_s...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nrelationships.2\n  Valu",
+     "seconds": 20.1,
+     "prompt_id": "p100"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-25 14:32:37"
 }

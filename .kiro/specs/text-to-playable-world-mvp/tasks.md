@@ -104,7 +104,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On failure: generate `fallback_instructions` with platform-specific manual launch instructions
     - _Requirements: 1.1, 1.2, 1.8, 9.2_
 
-- [-] 8. Pipeline Orchestrator — MVP Branch
+- [x] 8. Pipeline Orchestrator — MVP Branch
   - [x] 8.1 Implement `run_mvp()` method in Pipeline Orchestrator
     - Add MVP mode branch to `src/pipeline.py`
     - Implement shortened pipeline: interpret → plan (lane ladder) → scene graph → WorldContract → CompilerPlan+RuntimePlan → sidecar compile → parity gate → smoke validator → auto-launch
@@ -145,7 +145,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Graceful degradation chain: smoke fails → proceed with `smoke_skipped`; launch fails → download link fallback; parity fails → hard stop
     - _Requirements: 1.5, 1.8, 9.5_
 
-  - [~] 8.8 Write property test for pipeline error reporting (Property 17)
+  - [x] 8.8 Write property test for pipeline error reporting (Property 17)
     - **Property 17: Pipeline Error Reporting Preserves Session State**
     - For any stage failure, verify result contains stage name + reason_code + diagnostic, and session state remains uncorrupted
     - **Validates: Requirements 1.5**
