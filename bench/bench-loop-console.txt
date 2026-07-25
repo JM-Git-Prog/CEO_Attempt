@@ -551,3 +551,15 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p059: error    (43.2s) 
   p060: legal    (47.8s) 
   p061: legal    (51.8s) 
+  p062: legal    (24.9s) 
+  p063: error    (28.6s) 
+  p064: blocked  (52.8s) camera_inside_geometry
+  p065: blocked  (58.3s) opening_blocked
+  LANE RESULT: 6/15 legal plans (40%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T130747.json
+[13:19:36] bench batch rc=0
+[13:19:38] ingest: ingest: +12 records | 234 already banked | 265 plan-less rows skipped
+[13:21:08] batch: prompts 65..79 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===

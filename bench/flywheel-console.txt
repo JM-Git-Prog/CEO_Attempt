@@ -53,3 +53,24 @@ ingest: +3 records | 231 already banked | 262 plan-less rows skipped
 [13:14:49] waiting (census done=False, gpu 88%, quiet votes 0/3)
 [13:15:49] waiting (census done=False, gpu 87%, quiet votes 0/3)
 [13:16:49] waiting (census done=False, gpu 81%, quiet votes 0/3)
+[13:17:49] waiting (census done=False, gpu 85%, quiet votes 0/3)
+[13:18:49] waiting (census done=False, gpu 86%, quiet votes 0/3)
+[13:19:49] waiting (census done=True, gpu 26%, quiet votes 1/3)
+[13:20:49] claiming the GPU (recent utils [86, 26, 7]) - renders will queue behind training
+[13:20:49] asked ComfyUI :8188 to free VRAM
+[13:20:59] GPU is ours - building training set
+TRAINING SET: 122 train / 30 holdout -> C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\data\flywheel\training\probe-v1.jsonl
+Honest note: this is a SMALL probe set. The goal is a working training loop and a baseline delta, not a miracle model.
+[13:20:59] training probe starting (QLoRA, this is the long part)
+Traceback (most recent call last):
+  File "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\train_probe.py", line 111, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\train_probe.py", line 42, in main
+    from datasets import Dataset
+ModuleNotFoundError: No module named 'datasets'
+[13:20:59] train_probe finished rc=1
+[13:20:59] training chain finished rc=1
+[13:20:59] resumed the llama3.1 harvester
+[13:20:59] cycle done - corpus now at 371 rows
+[13:20:59] waiting: 0/50 new corpus rows since last cycle (371 total)
