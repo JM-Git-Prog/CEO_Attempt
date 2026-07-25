@@ -150,7 +150,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any stage failure, verify result contains stage name + reason_code + diagnostic, and session state remains uncorrupted
     - **Validates: Requirements 1.5**
 
-- [x] 9. Checkpoint — Ensure all tests pass
+- [-] 9. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 10. Serialization and Contract Integrity
