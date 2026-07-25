@@ -3,11 +3,14 @@
  "prompts": 15,
  "lanes": {
   "llama3.1": {
-   "legal": 0,
-   "total": 1,
-   "legal_rate": 0.0,
+   "legal": 1,
+   "total": 5,
+   "legal_rate": 0.2,
    "violation_census": {
-    "error:ValidationError": 1
+    "physical_overlap": 5,
+    "opening_blocked": 3,
+    "error:ValidationError": 2,
+    "out_of_bounds": 2
    },
    "rows": [
     {
@@ -16,6 +19,566 @@
      "error": "1 validation error for FloorPlanV11\nrelationships.2\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'gate_desk...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
      "seconds": 18.8,
      "prompt_id": "p056"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 8.7,
+     "plan": {
+      "name": "Wartime Map Room",
+      "room": {
+       "width": 10.0,
+       "depth": 8.0,
+       "height": 2.5
+      },
+      "items": [
+       {
+        "id": "central_table_1",
+        "name": "Central Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.5,
+        "depth": 2.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "desk_station_1",
+        "name": "Desk Station 1",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 4.5,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 0.9,
+        "height": 2.3,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "desk_station_2",
+        "name": "Desk Station 2",
+        "category": "furniture",
+        "mount": "wall",
+        "x": -4.5,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 0.9,
+        "height": 2.3,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "desk_station_3",
+        "name": "Desk Station 3",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": -3.5,
+        "width": 1.8,
+        "depth": 0.9,
+        "height": 2.3,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "cone_lamp_1",
+        "name": "Cone Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.2,
+        "elevation": 1.3,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 2.3,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 1.2m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "central_table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_station_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_station_2",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_station_3",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "cone_lamp_1",
+        "kind": "above",
+        "target_id": "central_table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "central_table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.3,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p057"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 20.7,
+     "plan": {
+      "name": "Pet Grooming Salon",
+      "room": {
+       "width": 10.0,
+       "depth": 12.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "grooming_table_1",
+        "name": "Grooming Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 4.0,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "wash_tub_counter_1",
+        "name": "Wash Tub Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 5.05,
+        "width": 3.0,
+        "depth": 1.8,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "kennel_bank_1",
+        "name": "Kennel Bank",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 3.0,
+        "z": 0.0,
+        "width": 4.0,
+        "depth": 2.0,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 5.05,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 1.8,
+        "elevation": 0.9999999999999998,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_light_2",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 3.0,
+        "z": 0.0,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 1.8,
+        "elevation": 0.9999999999999998,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 5.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight lighting to create a clean and neutral atmosphere."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "grooming_table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "wash_tub_counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "kennel_bank_1",
+        "kind": "adjacent_to",
+        "target_id": "grooming_table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "above",
+        "target_id": "wash_tub_counter_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_2",
+        "kind": "above",
+        "target_id": "kennel_bank_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "grooming_table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p058"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Motel Room', 'r...: 2.8, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 19.9,
+     "prompt_id": "p059"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 4,
+     "seconds": 16.2,
+     "plan": {
+      "name": "Wizard's Study",
+      "room": {
+       "width": 5.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "desk_1",
+        "name": "Cluttered Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "bookshelf_1",
+        "name": "Tall Bookshelf",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 0.75,
+        "width": 0.8,
+        "depth": 2.4,
+        "height": 2.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "cauldron_1",
+        "name": "Cauldron Corner",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.4393398282201786,
+        "z": 0.0,
+        "width": 1.2,
+        "depth": 1.8,
+        "height": 1.4,
+        "elevation": 0.0,
+        "rotation_deg": 45.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lamp_1",
+        "name": "Glowing Orb Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.75,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.8,
+        "elevation": 0.9999999999999998,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.05,
+       "y": 1.6,
+       "z": 1.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "desk_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "bookshelf_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "cauldron_1",
+        "kind": "adjacent_to",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lamp_1",
+        "kind": "above",
+        "target_id": "bookshelf_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "desk_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p060"
     }
    ]
   }

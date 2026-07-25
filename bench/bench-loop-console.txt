@@ -698,3 +698,11 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T140457.json
 [14:12:34] bench batch rc=0
 [14:12:34] ingest: ingest: +4 records | 277 already banked | 320 plan-less rows skipped
+[14:14:04] batch: prompts 55..69 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p056: error    (18.8s) 
+  p057: legal    (8.7s) 
+  p058: blocked  (20.7s) physical_overlap,out_of_bounds,physical_overlap
+  p059: error    (19.9s) 
+  p060: blocked  (16.2s) physical_overlap,physical_overlap,physical_overlap
