@@ -134,7 +134,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any CompilerPlan with expected IDs E and inventory with actual IDs A, parity passes iff E ⊆ A AND |A| == |E|; failure lists E \ A
     - **Validates: Requirements 8.1, 8.2**
 
-  - [~] 8.6 Write property test for quality label determination (Property 11)
+  - [x] 8.6 Write property test for quality label determination (Property 11)
     - **Property 11: Quality Label Determination**
     - For any (parity_passed, smoke_passed) combination, verify correct quality label assignment
     - **Validates: Requirements 8.5**
