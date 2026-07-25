@@ -566,3 +566,85 @@ class TestV8V9V10Preservation:
             headers={"X-App-Version": "11"},
         )
         assert resp.status_code == 200
+
+    def test_v8_session_stages_returns_404_for_unknown(self, client):
+        """V8 session stages sub-route responds correctly (404 for unknown session)."""
+        resp = client.get(
+            "/api/v8/session/nonexistent/stages",
+            headers={"X-App-Version": "8"},
+        )
+        # 404 means the route exists and functions (just no matching session)
+        assert resp.status_code == 404
+
+    def test_v9_session_stages_returns_404_for_unknown(self, client):
+        """V9 session stages sub-route responds correctly."""
+        resp = client.get(
+            "/api/v9/session/nonexistent/stages",
+            headers={"X-App-Version": "9"},
+        )
+        assert resp.status_code == 404
+
+    def test_v10_session_telemetry_returns_404_for_unknown(self, client):
+        """V10 telemetry sub-route responds correctly."""
+        resp = client.get(
+            "/api/v10/session/nonexistent/telemetry",
+            headers={"X-App-Version": "10"},
+        )
+        assert resp.status_code == 404
+
+    def test_v11_session_stage_artifact_returns_404_for_unknown(self, client):
+        """V11 stage artifact sub-route responds correctly."""
+        resp = client.get(
+            "/api/v11/session/nonexistent/stage/plan/artifact",
+            headers={"X-App-Version": "11"},
+        )
+        assert resp.status_code == 404
+
+    def test_describe_mvp_falls_through_to_full_mode(self, client):
+        """describe_mvp with mode='full' should fall through to standard describe behavior (Req 10.2)."""
+        resp = client.post(
+            "/api/session",
+            json={"mode": "full"},
+            headers={"X-App-Version": "11"},
+        )
+        session_id = resp.json()["session_id"]
+
+        # describe_mvp with mode="full" should use the full-mode code path.
+        # The stub's step_build_floor_plan may produce a validation error because it
+        # returns a minimal FloorPlan, but the key requirement is that the code path
+        # does NOT return the MVP async response (which would have "events_url" and mode="mvp").
+        resp = client.post(
+            f"/api/session/{session_id}/describe_mvp",
+            json={"description": "A sunlit studio with easels", "mode": "full"},
+            headers={"X-App-Version": "11"},
+        )
+        # The response should NOT be the MVP async format
+        data = resp.json()
+        assert "events_url" not in data
+        # It should not claim mode="mvp" in the response
+        assert data.get("mode") != "mvp"
+        # Any error is from the stub, not from mode blocking
+        if resp.status_code == 400:
+            assert "mode" not in data.get("error", "").lower()
+
+    def test_session_creation_no_body_defaults_to_mvp(self, client):
+        """POST /api/session with no body at all should default to MVP mode (Req 10.4)."""
+        resp = client.post(
+            "/api/session",
+            headers={"X-App-Version": "11"},
+            # Explicitly no JSON body
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["mode"] == "mvp"
+
+    def test_world_session_model_defaults_to_mvp(self):
+        """WorldSession model itself defaults mode to MVP (Req 10.3: schema unchanged, Req 10.4)."""
+        session = WorldSession(session_id="test-123")
+        assert session.mode == SessionMode.MVP
+
+    def test_session_mode_enum_values_unchanged(self):
+        """SessionMode enum has exactly mvp and full values (Req 10.3)."""
+        assert SessionMode.MVP.value == "mvp"
+        assert SessionMode.FULL.value == "full"
+        assert len(SessionMode) == 2

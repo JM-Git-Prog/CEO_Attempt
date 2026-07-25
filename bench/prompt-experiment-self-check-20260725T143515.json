@@ -4,7 +4,7 @@
  "lanes": {
   "planner-probe-v1": {
    "legal": 0,
-   "total": 11,
+   "total": 13,
    "legal_rate": 0.0,
    "violation_census": {},
    "rows": [
@@ -62,6 +62,16 @@
      "status": "timeout",
      "seconds": 120.0,
      "prompt_id": "p011"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p012"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p013"
     }
    ]
   }
