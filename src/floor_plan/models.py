@@ -61,6 +61,28 @@ class PlanValidationReport(BaseModel):
     valid: bool = True
     blockers: list[PlanValidationIssue] = Field(default_factory=list)
     warnings: list[PlanValidationIssue] = Field(default_factory=list)
+    tolerance_warnings: list[dict] = Field(default_factory=list)
+    """Structured MVP tolerance warnings: each dict has keys
+    warning_type, affected_id, measured_deviation, threshold."""
+
+    @property
+    def mvp_warnings(self) -> list:
+        """Return tolerance warnings as PlanValidationWarning frozen dataclass instances.
+
+        Defers the import to avoid circular dependency (src.models imports this module).
+        Used by the compiler manifest recorder (task 2.3) for structured provenance.
+        """
+        from src.models import PlanValidationWarning
+
+        return [
+            PlanValidationWarning(
+                warning_type=w["warning_type"],
+                affected_id=w["affected_id"],
+                measured_deviation=w["measured_deviation"],
+                threshold=w["threshold"],
+            )
+            for w in self.tolerance_warnings
+        ]
 
 
 class FloorPlan(BaseModel):

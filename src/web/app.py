@@ -639,7 +639,7 @@ async def approve_plan(session_id: str):
                 status_code=409,
             )
     if builder.session.interface_version >= 10:
-        validation = validate_floor_plan(builder.session.floor_plan)
+        validation = validate_floor_plan(builder.session.floor_plan, tolerance="strict")
         builder.session.plan_validation = validation
         if not validation.valid:
             builder.save_session()

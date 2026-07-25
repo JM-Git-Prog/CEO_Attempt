@@ -396,6 +396,64 @@ def _resolve_remaining_overlaps(placed: list[PlacedItem], plan: FloorPlan) -> No
             break
 
 
+def _resolve_overlaps_explicit(plan) -> None:
+    """Final safety pass for solve_explicit_plan().
+
+    Each item there is placed relative to its OWN single anchor (e.g. "stool,
+    south of counter"), so two items with different anchors can land on top of
+    each other and nothing catches it - the #1 measured failure reason
+    ("physical_overlap", 68 hits in the 2026-07-24 exam, more than double the
+    runner-up). This mirrors the spiral-search repair already proven in
+    src/solver_repair.py (59/60 stress-test failures rescued), adapted to
+    FloorPlanV11's PlanItem. Fixed/architectural items are never relocated.
+    """
+    half_w, half_d = plan.room.width / 2.0, plan.room.depth / 2.0
+    items = plan.items
+    radii = (0.15, 0.3, 0.5, 0.75, 1.0, 1.4, 1.9, 2.6)
+    angle_steps = 12
+
+    def footprint(item):
+        rad = math.radians(item.rotation_deg)
+        return (abs(item.width * math.cos(rad)) + abs(item.depth * math.sin(rad)),
+                abs(item.width * math.sin(rad)) + abs(item.depth * math.cos(rad)))
+
+    def clashes(item, other):
+        if item.elevation != other.elevation:
+            return False
+        aw, ad = footprint(item)
+        bw, bd = footprint(other)
+        return (abs(item.x - other.x) < (aw + bw) / 2 - 0.03
+                and abs(item.z - other.z) < (ad + bd) / 2 - 0.03)
+
+    for _round in range(4):
+        moved_any = False
+        for i, item in enumerate(items):
+            if getattr(item, "fixed", False):
+                continue
+            others = [o for j, o in enumerate(items) if j != i]
+            if not any(clashes(item, o) for o in others):
+                continue
+            x0, z0 = item.x, item.z
+            resolved = False
+            for radius in radii:
+                for step in range(angle_steps):
+                    angle = 2.0 * math.pi * step / angle_steps
+                    cx = x0 + radius * math.cos(angle)
+                    cz = z0 + radius * math.sin(angle)
+                    ew, ed = footprint(item)
+                    if abs(cx) + ew / 2 > half_w - 0.02 or abs(cz) + ed / 2 > half_d - 0.02:
+                        continue
+                    item.x, item.z = cx, cz
+                    if not any(clashes(item, o) for o in others):
+                        resolved = moved_any = True
+                        break
+                    item.x, item.z = x0, z0
+                if resolved:
+                    break
+        if not moved_any:
+            break
+
+
 def solve_explicit_plan(source):
     """Resolve a FloorPlanV11 only from persisted typed intent, never item text."""
     from src.floor_plan.models import FloorPlanV11
@@ -524,6 +582,8 @@ def solve_explicit_plan(source):
 
     for identity in sorted(items):
         place(identity)
+
+    _resolve_overlaps_explicit(plan)
 
     openings = {opening.id: opening for opening in plan.openings}
     for intent in plan.opening_intents:

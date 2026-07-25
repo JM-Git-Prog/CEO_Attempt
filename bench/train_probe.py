@@ -98,7 +98,8 @@ def main() -> int:
     modelfile = OUT / "Modelfile"
     modelfile.write_text(f"FROM {gguf}\n", encoding="utf-8")
     ollama_cmd = f'ollama create planner-probe-v1 -f "{modelfile}"'
-    _write_progress(stage="done", run_id=run_id, rows=len(rows), ollama_cmd=ollama_cmd)
+    _write_progress(stage="done", run_id=run_id, rows=len(rows), ollama_cmd=ollama_cmd,
+                     modelfile=str(modelfile))
     print("\n=== DONE - register the lane ===")
     print(ollama_cmd)
     print('then bench it:')

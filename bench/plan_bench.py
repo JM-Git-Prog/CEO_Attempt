@@ -122,16 +122,19 @@ def main() -> int:
                 census[f"error:{row.get('error_type')}"] = census.get(f"error:{row.get('error_type')}", 0) + 1
             print(f"  {p['id']}: {row['status']:8s} ({row['seconds']}s) "
                   f"{','.join(row.get('blockers', [])[:3])}", flush=True)
-        legal = sum(1 for r in lane_rows if r["status"] == "legal")
-        results["lanes"][lane] = {
-            "legal": legal, "total": len(lane_rows),
-            "legal_rate": round(legal / max(1, len(lane_rows)), 2),
-            "violation_census": dict(sorted(census.items(), key=lambda x: -x[1])),
-            "rows": lane_rows,
-        }
+            # Save + refine the tally after EVERY prompt, not just once per
+            # lane - live progress, and a kill mid-run only loses the one
+            # in-flight prompt instead of the whole 30.
+            legal = sum(1 for r in lane_rows if r["status"] == "legal")
+            results["lanes"][lane] = {
+                "legal": legal, "total": len(lane_rows),
+                "legal_rate": round(legal / max(1, len(lane_rows)), 2),
+                "violation_census": dict(sorted(census.items(), key=lambda x: -x[1])),
+                "rows": lane_rows,
+            }
+            out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")
         print(f"  LANE RESULT: {legal}/{len(lane_rows)} legal plans "
               f"({round(100*legal/max(1,len(lane_rows)))}%)", flush=True)
-        out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")  # save as we go
 
     results["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
     out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")

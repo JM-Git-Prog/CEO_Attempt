@@ -32,6 +32,10 @@ PROGRESS = ROOT / "bench" / "training-progress.json"
 TRAINED_DIR = ROOT / "bench" / "trained"
 BENCH_DIR = ROOT / "bench"
 RUN_CHAIN_BAT = ROOT / "RUN-TRAINING-CHAIN.bat"
+EXAM_BAT = ROOT / "RUN-PROBE-EXAM.bat"
+FLYWHEEL_BAT = ROOT / "START-FLYWHEEL-LOOP.bat"
+FLYWHEEL_LOG = ROOT / "bench" / "flywheel-log.txt"
+FLYWHEEL_STATE = ROOT / "bench" / "flywheel-state.json"
 
 POLL_MS = 1500
 HISTORY_REFRESH_S = 15
@@ -93,8 +97,27 @@ def _coarse_stage(last_line: str | None) -> str:
     return body
 
 
+def _newest_results_file() -> Path | None:
+    best = None
+    for rf in BENCH_DIR.glob("results-*.json"):
+        m = TIMESTAMP_RE.search(rf.name)
+        if not m:
+            continue
+        ts = time.mktime(time.strptime(m.group(1), "%Y%m%dT%H%M%S"))
+        if best is None or ts > best[0]:
+            best = (ts, rf)
+    return best[1] if best else None
+
+
 def _scan_history() -> list[dict]:
-    """Match each trained generation to the exam that graded it."""
+    """Match each trained generation to the exam that graded it.
+
+    Baseline (llama3.1) is no longer in every exam - run_chain.py now only
+    refreshes it every 5th cycle or right after a solver/pipeline change
+    (see _decide_exam_lanes there). So a generation's own result file may
+    carry ONLY its trained lane; pair it with the most recent COMPLETE
+    baseline seen in ANY results file up to that point, instead of
+    requiring both lanes to land in the same file."""
     if not TRAINED_DIR.exists():
         return []
     runs = []
@@ -114,27 +137,56 @@ def _scan_history() -> list[dict]:
             continue
         ts = time.mktime(time.strptime(m.group(1), "%Y%m%dT%H%M%S"))
         parsed_results.append((ts, rf))
+    parsed_results.sort()
 
-    for run in runs:
+    def latest_baseline_at_or_before(ts_cutoff):
         best = None
         for ts, rf in parsed_results:
-            if ts >= run["trained_epoch"] and (best is None or ts < best[0]):
-                best = (ts, rf)
+            if ts > ts_cutoff:
+                continue
+            data = _read_json(rf)
+            if not data or "lanes" not in data:
+                continue
+            base = data["lanes"].get("llama3.1")
+            total = data.get("prompts")
+            if not base or (total and base.get("total") != total):
+                continue
+            if best is None or ts > best[0]:
+                best = (ts, base)
+        return best[1] if best else None
+
+    for run in runs:
+        best_trained = None  # (ts, trained_lane_dict)
+        for ts, rf in parsed_results:
+            if ts < run["trained_epoch"] or (best_trained is not None and ts <= best_trained[0]):
+                continue
+            data = _read_json(rf)
+            if not data or "lanes" not in data:
+                continue
+            trained_lane = next((v for k, v in data["lanes"].items() if k != "llama3.1"), None)
+            total = data.get("prompts")
+            # Only a FULLY FINISHED trained-lane result counts - an exam
+            # still in progress must never bump a complete older result off
+            # the table. Once this generation gets re-benched to completion
+            # it wins on recency automatically.
+            if not trained_lane:
+                continue
+            if total and trained_lane.get("total") != total:
+                continue
+            best_trained = (ts, trained_lane)
+
         run["exam"] = None
-        if best:
-            data = _read_json(best[1])
-            if data and "lanes" in data:
-                base = data["lanes"].get("llama3.1")
-                trained_lane = next((v for k, v in data["lanes"].items() if k != "llama3.1"), None)
-                if base and trained_lane:
-                    run["exam"] = {
-                        "baseline_rate": base.get("legal_rate", 0.0),
-                        "baseline_legal": base.get("legal", 0),
-                        "baseline_total": base.get("total", 0),
-                        "trained_rate": trained_lane.get("legal_rate", 0.0),
-                        "trained_legal": trained_lane.get("legal", 0),
-                        "trained_total": trained_lane.get("total", 0),
-                    }
+        if best_trained:
+            ts, trained_lane = best_trained
+            base = latest_baseline_at_or_before(ts)
+            run["exam"] = {
+                "baseline_rate": base.get("legal_rate") if base else None,
+                "baseline_legal": base.get("legal") if base else None,
+                "baseline_total": base.get("total") if base else None,
+                "trained_rate": trained_lane.get("legal_rate", 0.0),
+                "trained_legal": trained_lane.get("legal", 0),
+                "trained_total": trained_lane.get("total", 0),
+            }
     return list(reversed(runs))
 
 
@@ -142,7 +194,7 @@ class TrainingMonitor(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Training Monitor - The Living Room")
-        self.geometry("760x640")
+        self.geometry("900x680")
         self.configure(bg="#191d27")
         self._last_history = 0.0
         self._build_ui()
@@ -172,9 +224,27 @@ class TrainingMonitor(tk.Tk):
                                     command=self._start_training, bg="#2d6cdf", fg="white",
                                     activebackground="#254070", relief="flat", padx=12, pady=6)
         self.start_btn.pack(side="left")
+        self.exam_btn = tk.Button(btn_row, text="Run exam now (llama3.1 vs probe)",
+                                   command=self._start_exam, bg="#2a3140", fg="#e8eaf0",
+                                   activebackground="#37405a", relief="flat", padx=12, pady=6)
+        self.exam_btn.pack(side="left", padx=(8, 0))
+        self.flywheel_btn = tk.Button(btn_row, text="Start flywheel loop (auto train+exam)",
+                                       command=self._start_flywheel, bg="#2a3140", fg="#e8eaf0",
+                                       activebackground="#37405a", relief="flat", padx=12, pady=6)
+        self.flywheel_btn.pack(side="left", padx=(8, 0))
         self.updated_var = tk.StringVar(value="")
         tk.Label(btn_row, textvariable=self.updated_var, font=("Segoe UI", 9),
                  bg="#191d27", fg="#6f7a90").pack(side="right")
+
+        self.exam_status_var = tk.StringVar(value="")
+        tk.Label(self, textvariable=self.exam_status_var, font=("Segoe UI", 9),
+                 bg="#191d27", fg="#7f8ba3", wraplength=860, justify="left").pack(
+            fill="x", padx=14, pady=(0, 4))
+
+        self.flywheel_status_var = tk.StringVar(value="")
+        tk.Label(self, textvariable=self.flywheel_status_var, font=("Segoe UI", 9),
+                 bg="#191d27", fg="#7f8ba3", wraplength=860, justify="left").pack(
+            fill="x", padx=14, pady=(0, 4))
 
         gpu_frame = tk.LabelFrame(self, text="Your machine, right now", font=("Segoe UI", 10, "bold"),
                                    bg="#1b2029", fg="#c6d0e2", bd=1)
@@ -220,10 +290,30 @@ class TrainingMonitor(tk.Tk):
         subprocess.Popen(["cmd", "/c", "start", "", str(RUN_CHAIN_BAT)], cwd=str(ROOT))
         self.stage_var.set("Launched RUN-TRAINING-CHAIN.bat - it waits for a quiet GPU on its own.")
 
+    def _start_exam(self):
+        if not EXAM_BAT.exists():
+            self.exam_status_var.set(f"Can't find {EXAM_BAT.name} in the project folder.")
+            return
+        subprocess.Popen(["cmd", "/c", "start", "", str(EXAM_BAT)], cwd=str(ROOT))
+        self.exam_status_var.set(
+            "Launched RUN-PROBE-EXAM.bat - 30 prompts x 2 lanes, roughly 30-60 minutes. "
+            "The table above updates on its own when the new result lands.")
+
+    def _start_flywheel(self):
+        if not FLYWHEEL_BAT.exists():
+            self.flywheel_status_var.set(f"Can't find {FLYWHEEL_BAT.name} in the project folder.")
+            return
+        subprocess.Popen(["cmd", "/c", "start", "", str(FLYWHEEL_BAT)], cwd=str(ROOT))
+        self.flywheel_status_var.set(
+            "Launched START-FLYWHEEL-LOOP.bat - runs minimized, forever, until you pause it "
+            "(create bench\\PAUSE-FLYWHEEL.txt to stop it).")
+
     # ---- polling ----
     def _tick(self):
         self._update_stage()
         self._update_machine()
+        self._update_exam()
+        self._update_flywheel()
         if time.time() - self._last_history > HISTORY_REFRESH_S:
             self._update_history()
             self._last_history = time.time()
@@ -288,6 +378,45 @@ class TrainingMonitor(tk.Tk):
             bar["value"] = max(0, min(100, pct))
             val.set(text)
 
+    def _update_exam(self):
+        """Live exam progress - now possible because plan_bench.py saves
+        after every prompt, not just once per 30-prompt lane. Only touches
+        exam_status_var when there's real fresh data to show; otherwise
+        leaves whatever message (e.g. the just-launched one) already there."""
+        rf = _newest_results_file()
+        if not rf or not rf.exists():
+            return
+        data = _read_json(rf)
+        if not data:
+            return
+        age = time.time() - rf.stat().st_mtime
+        if "finished" in data:
+            if age < 60:
+                self.exam_status_var.set(f"Exam finished ({rf.name}) - see the table below.")
+            return
+        if age > 300:
+            return  # stale/abandoned run - don't overwrite the last real message
+        total = data.get("prompts", "?")
+        parts = [f"{lane}: {v.get('total', 0)}/{total} done ({v.get('legal', 0)} legal so far)"
+                 for lane, v in data.get("lanes", {}).items()]
+        if parts:
+            self.exam_status_var.set("Exam running - " + " | ".join(parts))
+
+    def _update_flywheel(self):
+        """Live status for the continuous train<->exam loop, if it's running."""
+        if not FLYWHEEL_LOG.exists():
+            self.flywheel_status_var.set("Flywheel loop: not started yet.")
+            return
+        last = _tail_last_line(FLYWHEEL_LOG)
+        if not last:
+            self.flywheel_status_var.set("Flywheel loop: not started yet.")
+            return
+        m = CHAIN_LINE_RE.match(last)
+        body = m.group(2) if m else last
+        age = time.time() - FLYWHEEL_LOG.stat().st_mtime
+        stale = "  (no update in 15+ min - may be paused or stopped)" if age > 900 else ""
+        self.flywheel_status_var.set(f"Flywheel loop: {body}{stale}")
+
     def _update_history(self):
         for row in self.tree.get_children():
             self.tree.delete(row)
@@ -301,8 +430,11 @@ class TrainingMonitor(tk.Tk):
             if not exam:
                 self.tree.insert("", "end", values=(run["name"], trained_at, "not benched yet", "-", "-"))
                 continue
-            base_txt = f"{exam['baseline_legal']}/{exam['baseline_total']} ({exam['baseline_rate']*100:.0f}%)"
             trained_txt = f"{exam['trained_legal']}/{exam['trained_total']} ({exam['trained_rate']*100:.0f}%)"
+            if exam["baseline_rate"] is None:
+                self.tree.insert("", "end", values=(run["name"], trained_at, "no baseline yet", trained_txt, "-"))
+                continue
+            base_txt = f"{exam['baseline_legal']}/{exam['baseline_total']} ({exam['baseline_rate']*100:.0f}%)"
             delta = exam["trained_rate"] - exam["baseline_rate"]
             verdict = "improved" if delta > 0.03 else ("about the same" if delta > -0.03 else "worse")
             self.tree.insert("", "end", values=(run["name"], trained_at, base_txt, trained_txt, verdict))

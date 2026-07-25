@@ -268,3 +268,70 @@
 [07:00:11] PAUSE-BENCH.txt present - sleeping 5 min
 [07:05:11] PAUSE-BENCH.txt present - sleeping 5 min
 [07:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:15:11] batch: prompts 5..19 (llama3.1)
+[12:28:40] bench batch rc=0
+[12:28:40] ingest: ingest: +129 records | 63 already banked | 244 plan-less rows skipped
+[12:30:10] batch: prompts 20..34 (llama3.1)
+[12:51:17] bench batch rc=0
+[12:51:17] ingest: ingest: +17 records | 192 already banked | 255 plan-less rows skipped
+[12:52:47] batch: prompts 35..49 (llama3.1)

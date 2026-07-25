@@ -127,3 +127,66 @@ def test_binding_rejects_world_contract_hash_or_version_drift():
     payload["world_contract_hash"] = "0" * 64
     with pytest.raises(ValueError, match="world contract document"):
         ManifestBinding.model_validate(payload)
+
+
+def test_plan_validation_warnings_recorded_and_propagated_to_terminal(tmp_path):
+    """Requirement 2.5: warnings are recorded in prepared manifest and survive into terminal."""
+    warnings = [
+        {
+            "warning_type": "overlap",
+            "affected_id": "sofa,table",
+            "measured_deviation": 0.08,
+            "threshold": 0.1,
+        },
+        {
+            "warning_type": "clearance",
+            "affected_id": "chair",
+            "measured_deviation": 0.12,
+            "threshold": 0.15,
+        },
+        {
+            "warning_type": "relationship_offset",
+            "affected_id": "lamp,desk",
+            "measured_deviation": 0.18,
+            "threshold": 0.2,
+        },
+    ]
+    store = CompilerManifestStore(tmp_path / "manifests")
+    prepared, prepared_path = store.prepare(
+        binding=_binding(), compiler=_compiler(), configuration={"seed": 1},
+        input_bytes=INPUT_BYTES,
+        plan_validation_warnings=warnings,
+    )
+
+    # Verify warnings stored on prepared manifest
+    assert len(prepared.plan_validation_warnings) == 3
+    assert prepared.plan_validation_warnings[0]["warning_type"] == "overlap"
+    assert prepared.plan_validation_warnings[1]["affected_id"] == "chair"
+    assert prepared.plan_validation_warnings[2]["measured_deviation"] == 0.18
+
+    # Verify round-trip through serialization
+    from src.compiler_manifest import read_prepared_manifest
+    restored_prepared = read_prepared_manifest(prepared_path)
+    assert restored_prepared.plan_validation_warnings == prepared.plan_validation_warnings
+
+    # Verify propagation to terminal manifest
+    terminal, terminal_path = store.terminate(prepared, status="completed")
+    assert terminal.plan_validation_warnings == prepared.plan_validation_warnings
+    assert len(terminal.plan_validation_warnings) == 3
+
+    # Verify terminal round-trip through serialization
+    restored_terminal = read_terminal_manifest(terminal_path)
+    assert restored_terminal.plan_validation_warnings == terminal.plan_validation_warnings
+
+
+def test_plan_validation_warnings_default_empty(tmp_path):
+    """Backward compatibility: no warnings provided means empty tuple."""
+    store = CompilerManifestStore(tmp_path / "manifests")
+    prepared, _ = store.prepare(
+        binding=_binding(), compiler=_compiler(), configuration={"seed": 1},
+        input_bytes=INPUT_BYTES,
+    )
+    assert prepared.plan_validation_warnings == ()
+
+    terminal, _ = store.terminate(prepared, status="completed")
+    assert terminal.plan_validation_warnings == ()

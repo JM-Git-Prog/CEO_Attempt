@@ -1486,7 +1486,7 @@ class WorldBuilder:
             await self.step_build_floor_plan()
             if (
                 self.session.interface_version >= 10
-                and not validate_floor_plan(self.session.floor_plan).valid
+                and not validate_floor_plan(self.session.floor_plan, tolerance="strict").valid
             ):
                 raise RuntimeError("Plan has unresolved geometry blockers and cannot be approved")
             if self.session.interface_version >= 11 and (

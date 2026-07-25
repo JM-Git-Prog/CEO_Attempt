@@ -201,7 +201,7 @@ async def build_floor_plan(
             solved, "", strict=strict_validation, infer_text_placement=False
         )
         resolved = solve_explicit_plan(FloorPlanV11.model_validate(normalized))
-        report = validate_floor_plan(resolved, warnings)
+        report = validate_floor_plan(resolved, warnings, tolerance="strict")
 
         # Bounded semantic repair: if schema was valid but deterministic validation
         # fails (e.g. wrong relation kinds placing items outside room), use the one
@@ -286,7 +286,7 @@ async def build_floor_plan(
                     solved2, "", strict=strict_validation, infer_text_placement=False
                 )
                 resolved2 = solve_explicit_plan(FloorPlanV11.model_validate(normalized2))
-                report2 = validate_floor_plan(resolved2, warnings2)
+                report2 = validate_floor_plan(resolved2, warnings2, tolerance="strict")
                 # Accept the repair only if it actually improved things
                 if report2.valid or len(report2.blockers) < len(report.blockers):
                     return resolved2, warnings2, report2

@@ -8,6 +8,7 @@ Everything logs to bench/chain-log.txt (survives window closes).
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import subprocess
 import sys
@@ -16,6 +17,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LOG = ROOT / "bench" / "chain-log.txt"
+PROGRESS = ROOT / "bench" / "training-progress.json"
+CADENCE_STATE = ROOT / "bench" / "exam-cadence-state.json"
+SOLVER_FILES = (
+    "src/floor_plan/solver.py",
+    "src/constraint_solver.py",
+    "src/solver_repair.py",
+    "src/floor_plan/builder.py",
+)
 
 
 def log(msg: str) -> None:
@@ -65,6 +74,41 @@ def free_comfyui_vram() -> None:
             pass  # port not up - nothing to free
 
 
+def _solver_signature() -> str:
+    """Cheap fingerprint of the files that decide plan legality - lets the
+    exam know when a fresh baseline (llama3.1) run is worth paying for again,
+    because a pipeline fix can move the baseline's own score (it did: 6/30 ->
+    8/30 in one afternoon with zero model change)."""
+    parts = []
+    for rel in SOLVER_FILES:
+        p = ROOT / rel
+        try:
+            st = p.stat()
+            parts.append(f"{rel}:{st.st_mtime_ns}:{st.st_size}")
+        except FileNotFoundError:
+            parts.append(f"{rel}:missing")
+    return hashlib.sha256("|".join(parts).encode()).hexdigest()[:16]
+
+
+def _decide_exam_lanes() -> str:
+    """Baseline (llama3.1) lane only every 5th exam, or right after the
+    solver/pipeline code changes - otherwise probe-solo, since harvesting
+    and routine exams don't need to re-prove what's already established."""
+    state = {"cycle": 0, "last_baseline_sig": ""}
+    if CADENCE_STATE.exists():
+        try:
+            state.update(json.loads(CADENCE_STATE.read_text(encoding="utf-8")))
+        except Exception:
+            pass
+    state["cycle"] = state.get("cycle", 0) + 1
+    sig = _solver_signature()
+    include_baseline = (sig != state.get("last_baseline_sig")) or (state["cycle"] % 5 == 0)
+    if include_baseline:
+        state["last_baseline_sig"] = sig
+    CADENCE_STATE.write_text(json.dumps(state), encoding="utf-8")
+    return "llama3.1,planner-probe-v1" if include_baseline else "planner-probe-v1"
+
+
 def main() -> int:
     log("chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)")
     recent = []
@@ -89,9 +133,43 @@ def main() -> int:
     log("training probe starting (QLoRA, this is the long part)")
     r2 = subprocess.run([sys.executable, str(ROOT / "bench" / "train_probe.py")])
     log(f"train_probe finished rc={r2.returncode}")
-    if r2.returncode == 0:
-        log("SUCCESS - next: ollama create + bench (commands printed above)")
-    return r2.returncode
+    if r2.returncode != 0:
+        return r2.returncode
+
+    progress = {}
+    try:
+        progress = json.loads(PROGRESS.read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    modelfile = progress.get("modelfile")
+    if progress.get("stage") != "done" or not modelfile:
+        log("training-progress.json has no modelfile after a successful run - "
+            "stopping before ollama create (register it by hand)")
+        return 1
+
+    log(f"registering the model: ollama create planner-probe-v1 -f {modelfile}")
+    try:
+        r3 = subprocess.run(["ollama", "create", "planner-probe-v1", "-f", modelfile], timeout=600)
+    except Exception as exc:
+        log(f"ollama create FAILED to launch: {exc} - stopping before exam")
+        return 1
+    if r3.returncode != 0:
+        log(f"ollama create FAILED rc={r3.returncode} - stopping before exam "
+            f"(the old model lane would score stale otherwise)")
+        return 1
+    log("ollama create OK - planner-probe-v1 registered")
+
+    lanes = _decide_exam_lanes()
+    log(f"launching the exam - lanes: {lanes}")
+    try:
+        r4 = subprocess.run([sys.executable, str(ROOT / "bench" / "plan_bench.py"),
+                             "--lanes", lanes, "--prompts", "30"], timeout=3 * 3600)
+        log(f"exam finished rc={r4.returncode}")
+    except subprocess.TimeoutExpired:
+        log("exam exceeded its 3h timeout - killed, results file still has whatever it saved")
+        return 1
+    log("SUCCESS - full cycle done (train -> register -> exam)")
+    return r4.returncode
 
 
 if __name__ == "__main__":

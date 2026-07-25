@@ -1,0 +1,18 @@
+[12:35:34] flywheel loop up - waiting for corpus growth before the first cycle
+[12:35:34] threshold met (317 new rows, 317 total) - starting a cycle
+[12:35:34] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: timeout  (120.0s) 
+  p002: blocked  (61.3s) opening_blocked
+  p003: error    (70.9s) 
+  p004: blocked  (50.0s) out_of_bounds
+  p005: blocked  (57.4s) out_of_bounds
+  p006: legal    (97.3s) 
+  p007: blocked  (61.9s) out_of_bounds,physical_overlap
+  p008: error    (69.3s) 
+  p009: blocked  (63.4s) opening_blocked
+  p010: error    (45.9s) 
+  p011: blocked  (100.9s) out_of_bounds,out_of_bounds,camera_inside_geometry
+  p012: legal    (42.7s) 
+  p013: legal    (66.1s) 

@@ -408,3 +408,103 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 [07:00:11] PAUSE-BENCH.txt present - sleeping 5 min
 [07:05:11] PAUSE-BENCH.txt present - sleeping 5 min
 [07:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[07:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[08:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[09:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[10:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:15:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:20:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:25:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:30:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:35:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:40:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:45:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:50:11] PAUSE-BENCH.txt present - sleeping 5 min
+[11:55:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:00:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:05:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:10:11] PAUSE-BENCH.txt present - sleeping 5 min
+[12:15:11] batch: prompts 5..19 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p006: timeout  (120.0s) 
+  p007: blocked  (51.5s) out_of_bounds,camera_inside_geometry
+  p008: error    (35.3s) 
+  p009: blocked  (55.4s) out_of_bounds,opening_blocked
+  p010: error    (49.3s) 
+  p011: blocked  (50.0s) camera_inside_geometry
+  p012: legal    (84.4s) 
+  p013: legal    (42.5s) 
+  p014: legal    (19.1s) 
+  p015: timeout  (120.0s) 
+  p016: legal    (36.7s) 
+  p017: error    (15.7s) 
+  p018: error    (52.6s) 
+  p019: error    (43.6s) 
+  p020: blocked  (31.7s) out_of_bounds
+  LANE RESULT: 4/15 legal plans (27%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T121511.json
+[12:28:40] bench batch rc=0
+[12:28:40] ingest: ingest: +129 records | 63 already banked | 244 plan-less rows skipped
+[12:30:10] batch: prompts 20..34 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p021: legal    (33.2s) 
+  p022: legal    (104.4s) 
+  p023: timeout  (120.0s) 
+  p024: timeout  (120.0s) 
+  p025: legal    (101.2s) 
+  p026: legal    (57.4s) 
+  p027: blocked  (103.4s) out_of_bounds,out_of_bounds
+  p028: error    (99.5s) 
+  p029: legal    (52.9s) 
+  p030: blocked  (84.6s) out_of_bounds
+  p031: timeout  (120.0s) 
+  p032: error    (39.6s) 
+  p033: error    (57.0s) 
+  p034: legal    (67.5s) 

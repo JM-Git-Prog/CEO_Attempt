@@ -26,8 +26,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Handle states: editor+player present, editor present+player absent, editor absent
     - _Requirements: 7.1, 1.8_
 
-- [ ] 2. MVP Tolerance — Plan Validation
-  - [~] 2.1 Implement MVP tolerance mode in Plan Validator
+- [x] 2. MVP Tolerance — Plan Validation
+  - [x] 2.1 Implement MVP tolerance mode in Plan Validator
     - Modify `validate_floor_plan()` in `src/floor_plan/validator.py` to accept a `tolerance: Literal["strict", "mvp"] | None` parameter
     - Implement threshold logic: accept overlaps ≤0.1m, relationship offsets ≤0.2m, clearance violations ≤0.15m as warnings (not rejections)
     - Maintain structural impossibility rejections: vertex outside room bounds, zero-dimension room, missing dimensions, duplicate stable IDs
@@ -40,7 +40,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Generate floor plans with Hypothesis: plans with only non-critical violations must pass; plans with structural impossibilities must reject
     - **Validates: Requirements 2.2**
 
-  - [~] 2.3 Implement warnings recording in Compiler Manifest
+  - [x] 2.3 Implement warnings recording in Compiler Manifest
     - When MVP tolerance accepts a plan with warnings, record each warning (type, affected_id, measured_deviation) in the `Compiler_Manifest` output
     - _Requirements: 2.5_
 

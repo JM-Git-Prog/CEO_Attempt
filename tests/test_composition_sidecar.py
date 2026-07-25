@@ -50,7 +50,7 @@ def test_full_rotated_bounds_fit_with_fixed_corner_and_fov():
     assert adjusted.camera.x > 0 and adjusted.camera.z < 0
     assert evidence.selected is not None
     assert evidence.selected.inset_m >= 0.22
-    camera_validation = validate_floor_plan(adjusted)
+    camera_validation = validate_floor_plan(adjusted, tolerance="strict")
     assert not any(
         issue.code == "camera_out_of_bounds" for issue in camera_validation.blockers
     )

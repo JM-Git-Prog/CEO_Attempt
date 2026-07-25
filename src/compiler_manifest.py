@@ -149,6 +149,7 @@ class PreparedCompilerManifest(ManifestModel):
     compiler: CompilerVersions
     configuration: CanonicalDocument
     input_bytes: int = Field(ge=0)
+    plan_validation_warnings: tuple[dict, ...] = ()
 
     @model_validator(mode="after")
     def exact_input_size(self) -> "PreparedCompilerManifest":
@@ -172,6 +173,7 @@ class TerminalCompilerManifest(ManifestModel):
     timings: tuple[TimingRecord, ...] = ()
     diagnostics: tuple[CompilerDiagnostic, ...] = ()
     artifacts: tuple[ArtifactMetadata, ...] = ()
+    plan_validation_warnings: tuple[dict, ...] = ()
 
     @model_validator(mode="after")
     def unique_artifacts(self) -> "TerminalCompilerManifest":
@@ -228,12 +230,14 @@ def create_prepared_manifest(
     configuration: CanonicalDocument | Mapping[str, Any],
     input_bytes: int,
     prepared_at: datetime | None = None,
+    plan_validation_warnings: Sequence[dict] = (),
 ) -> PreparedCompilerManifest:
     config = configuration if isinstance(configuration, CanonicalDocument) else CanonicalDocument.from_value(configuration)
     return PreparedCompilerManifest(
         manifest_id=f"{compilation_id}:prepared", compilation_id=compilation_id,
         prepared_at=prepared_at or _utc_now(), binding=binding, compiler=compiler,
         configuration=config, input_bytes=input_bytes,
+        plan_validation_warnings=tuple(plan_validation_warnings),
     )
 
 
@@ -254,6 +258,7 @@ def create_terminal_manifest(
         terminated_at=terminated_at or _utc_now(), binding=prepared.binding,
         compiler=prepared.compiler, configuration=prepared.configuration,
         timings=tuple(timings), diagnostics=tuple(diagnostics), artifacts=tuple(artifacts),
+        plan_validation_warnings=prepared.plan_validation_warnings,
     )
 
 
@@ -306,11 +311,13 @@ class CompilerManifestStore:
         configuration: CanonicalDocument | Mapping[str, Any],
         input_bytes: int,
         prepared_at: datetime | None = None,
+        plan_validation_warnings: Sequence[dict] = (),
     ) -> tuple[PreparedCompilerManifest, Path]:
         compilation_id = self.allocate_recompile_id(binding.session_id)
         manifest = create_prepared_manifest(
             compilation_id=compilation_id, binding=binding, compiler=compiler,
             configuration=configuration, input_bytes=input_bytes, prepared_at=prepared_at,
+            plan_validation_warnings=plan_validation_warnings,
         )
         return manifest, self.write_prepared(manifest)
 

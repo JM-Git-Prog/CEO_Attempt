@@ -69,6 +69,35 @@ def footprints_intersect(
     return True
 
 
+def footprint_overlap_depth(
+    left: SpatialVolume,
+    right: SpatialVolume,
+    *,
+    left_padding: float = 0.0,
+    right_padding: float = 0.0,
+) -> float:
+    """Return the minimum penetration depth (meters) between two footprints.
+
+    Returns 0.0 if the footprints do not overlap. A positive value indicates
+    the smallest translation along any separating axis that would separate
+    the two footprints.
+    """
+    if not vertical_intersects(left, right, tolerance=0.0):
+        return 0.0
+    left_corners = footprint_corners(left, left_padding)
+    right_corners = footprint_corners(right, right_padding)
+    min_penetration = float("inf")
+    for axis in (*footprint_axes(left), *footprint_axes(right)):
+        left_min, left_max = _projection(left_corners, axis)
+        right_min, right_max = _projection(right_corners, axis)
+        # Overlap on this axis
+        overlap = min(left_max - right_min, right_max - left_min)
+        if overlap <= 0.0:
+            return 0.0  # Separated on this axis — no intersection
+        min_penetration = min(min_penetration, overlap)
+    return min_penetration if min_penetration != float("inf") else 0.0
+
+
 def inside_room(volume: SpatialVolume, width: float, depth: float, margin: float = 0.03) -> bool:
     half_w, half_d = width / 2, depth / 2
     return all(

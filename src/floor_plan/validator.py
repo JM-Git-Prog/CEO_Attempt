@@ -5,9 +5,11 @@ from __future__ import annotations
 import math
 import re
 from dataclasses import dataclass
+from typing import Literal
 
 from src.floor_plan.geometry import (
     fit_center_inside,
+    footprint_overlap_depth,
     footprints_intersect,
     inside_room,
 )
@@ -118,7 +120,7 @@ def normalize_floor_plan(
         plan.camera.target_x = 0.0
         plan.camera.target_y = min(1.2, plan.room.height / 2)
         plan.camera.target_z = 0.0
-    report = validate_floor_plan(plan, warnings)
+    report = validate_floor_plan(plan, warnings, strict=strict)
     if strict:
         warnings.extend(
             issue.message for issue in report.warnings
@@ -472,11 +474,74 @@ def _place_camera_clear_bounded(plan: FloorPlan, warnings: list[str]) -> None:
 
 
 def validate_floor_plan(
-    plan: FloorPlan, normalization_warnings: list[str] | None = None
+    plan: FloorPlan,
+    normalization_warnings: list[str] | None = None,
+    *,
+    tolerance: Literal["strict", "mvp"] | None = None,
+    strict: bool = False,
 ) -> PlanValidationReport:
-    """Return structured blockers from the same SAT model used for placement."""
+    """Return structured blockers from the same SAT model used for placement.
+
+    Parameters
+    ----------
+    tolerance : "strict" | "mvp" | None
+        Explicit validation mode.  When provided, takes precedence over *strict*.
+    strict : bool
+        Legacy flag.  Equivalent to ``tolerance="strict"`` when *tolerance* is None.
+
+    MVP tolerance thresholds (non-critical → warning, not blocker):
+      - Physical overlap ≤ 0.1 m
+      - Clearance violation ≤ 0.15 m
+      - Relationship offset ≤ 0.2 m (detected from clearance padding interactions)
+
+    Structural impossibilities are ALWAYS rejected regardless of mode:
+      - Non-finite geometry
+      - Vertex outside room bounds
+      - Zero-dimension room (caught by Pydantic model, but validated here too)
+      - Missing dimensions (caught by Pydantic model)
+      - Duplicate stable IDs
+    """
+    # --- Determine effective mode ---
+    if tolerance is not None:
+        effective_mode = tolerance
+    elif strict:
+        effective_mode = "strict"
+    else:
+        effective_mode = "mvp"
+
+    # MVP thresholds
+    MVP_OVERLAP_THRESHOLD = 0.1  # meters
+    MVP_CLEARANCE_THRESHOLD = 0.15  # meters
+    MVP_RELATIONSHIP_OFFSET_THRESHOLD = 0.2  # meters
+
     blockers: list[PlanValidationIssue] = []
     advisory: list[PlanValidationIssue] = []
+    tolerance_warnings: list[dict] = []
+
+    # --- Structural: duplicate stable IDs ---
+    seen_ids: set[str] = set()
+    for item_entry in plan.items:
+        if item_entry.id in seen_ids:
+            blockers.append(PlanValidationIssue(
+                code="duplicate_stable_id",
+                message=f"Duplicate stable ID: {item_entry.id}",
+                item_ids=[item_entry.id],
+            ))
+        seen_ids.add(item_entry.id)
+
+    # --- Structural: zero-dimension room ---
+    if plan.room.width <= 0 or plan.room.depth <= 0 or plan.room.height <= 0:
+        blockers.append(PlanValidationIssue(
+            code="zero_dimension_room",
+            message="Room has a zero or negative dimension",
+            item_ids=[],
+            details={
+                "width": plan.room.width,
+                "depth": plan.room.depth,
+                "height": plan.room.height,
+            },
+        ))
+
     for index, left in enumerate(plan.items):
         if not math.isfinite(
             left.x + left.z + left.width + left.depth + left.height + left.elevation
@@ -487,6 +552,8 @@ def validate_floor_plan(
                 item_ids=[left.id],
             ))
             continue
+
+        # Structural: vertex outside room bounds — always reject
         if not inside_room(left, plan.room.width, plan.room.depth):
             blockers.append(PlanValidationIssue(
                 code="out_of_bounds",
@@ -494,14 +561,13 @@ def validate_floor_plan(
                 item_ids=[left.id],
                 details={"mount": left.mount, "rotation_deg": left.rotation_deg},
             ))
+
         for right in plan.items[index + 1:]:
             physical = footprints_intersect(left, right)
             if physical:
                 # Different mount types with minor vertical overlap are advisories, not blockers.
-                # e.g. ceiling pendants above a floor counter, or wall shelves under ceiling lights.
                 mixed_mount = left.mount != right.mount and {left.mount, right.mount} != {"floor", "floor"}
                 if mixed_mount:
-                    # Determine which is higher
                     if left.elevation >= right.elevation:
                         upper, lower = left, right
                     else:
@@ -522,6 +588,35 @@ def validate_floor_plan(
                             },
                         ))
                         continue
+
+                # --- MVP tolerance: measure overlap depth ---
+                if effective_mode == "mvp":
+                    overlap_depth = footprint_overlap_depth(left, right)
+                    if overlap_depth <= MVP_OVERLAP_THRESHOLD:
+                        # Non-critical: downgrade to warning
+                        advisory.append(PlanValidationIssue(
+                            code="physical_overlap",
+                            message=(
+                                f"Minor overlap ({overlap_depth:.3f}m ≤ {MVP_OVERLAP_THRESHOLD}m): "
+                                f"{left.name} / {right.name} [MVP tolerated]"
+                            ),
+                            item_ids=[left.id, right.id],
+                            details={
+                                "fixed_pair": left.fixed and right.fixed,
+                                "mounts": [left.mount, right.mount],
+                                "overlap_m": round(overlap_depth, 4),
+                                "mvp_tolerated": True,
+                            },
+                        ))
+                        tolerance_warnings.append({
+                            "warning_type": "overlap",
+                            "affected_id": f"{left.id},{right.id}",
+                            "measured_deviation": round(overlap_depth, 4),
+                            "threshold": MVP_OVERLAP_THRESHOLD,
+                        })
+                        continue
+
+                # Strict mode (or MVP with overlap > threshold): blocker
                 blockers.append(PlanValidationIssue(
                     code="physical_overlap",
                     message=f"Unresolved overlap: {left.name} / {right.name}",
@@ -538,41 +633,86 @@ def validate_floor_plan(
                 right_padding=_clearance_padding(right),
                 tolerance=0.0,
             ):
+                # Clearance conflict detected
+                if effective_mode == "mvp":
+                    # Measure the clearance violation depth
+                    # The violation is the depth of intersection when padded
+                    clearance_depth = footprint_overlap_depth(
+                        left,
+                        right,
+                        left_padding=_clearance_padding(left),
+                        right_padding=_clearance_padding(right),
+                    )
+                    if clearance_depth <= MVP_CLEARANCE_THRESHOLD:
+                        # Non-critical: downgrade to warning
+                        advisory.append(PlanValidationIssue(
+                            code="clearance_conflict",
+                            message=(
+                                f"Minor clearance violation ({clearance_depth:.3f}m ≤ "
+                                f"{MVP_CLEARANCE_THRESHOLD}m): {left.name} / {right.name} "
+                                f"[MVP tolerated]"
+                            ),
+                            item_ids=[left.id, right.id],
+                            details={
+                                "clearance_violation_m": round(clearance_depth, 4),
+                                "mvp_tolerated": True,
+                            },
+                        ))
+                        tolerance_warnings.append({
+                            "warning_type": "clearance",
+                            "affected_id": f"{left.id},{right.id}",
+                            "measured_deviation": round(clearance_depth, 4),
+                            "threshold": MVP_CLEARANCE_THRESHOLD,
+                        })
+                        continue
+
+                # Strict mode (or MVP with violation > threshold)
                 advisory.append(PlanValidationIssue(
                     code="clearance_conflict",
                     message=f"Requested clearance is tight: {left.name} / {right.name}",
                     item_ids=[left.id, right.id],
                 ))
+
+    # --- Opening blocked checks (structural — always reject) ---
     for opening_volume in _opening_volumes(plan):
-        for item in plan.items:
-            if footprints_intersect(item, opening_volume):
+        for item_entry in plan.items:
+            if footprints_intersect(item_entry, opening_volume):
                 blockers.append(PlanValidationIssue(
                     code="opening_blocked",
-                    message=f"{item.name} obstructs {opening_volume.name}",
-                    item_ids=[item.id, opening_volume.id],
+                    message=f"{item_entry.name} obstructs {opening_volume.name}",
+                    item_ids=[item_entry.id, opening_volume.id],
                     details={"opening_id": opening_volume.id},
                 ))
-    camera = _camera_probe(plan)
-    if not inside_room(camera, plan.room.width, plan.room.depth):
-        blockers.append(PlanValidationIssue(
-            code="camera_out_of_bounds",
-            message="Canon camera footprint extends beyond the room boundary",
-            item_ids=[],
-        ))
-    else:
-        for obstacle in [*plan.items, *_opening_volumes(plan)]:
-            if footprints_intersect(camera, obstacle):
-                blockers.append(PlanValidationIssue(
-                    code="camera_inside_geometry",
-                    message=f"Canon camera intersects {obstacle.name}",
-                    item_ids=[] if obstacle.id == "canon_camera" else [obstacle.id],
-                ))
-                break
+
+    # --- Camera checks: skip entirely in MVP mode (MVP skips canon image generation) ---
+    if effective_mode == "strict":
+        camera = _camera_probe(plan)
+        if not inside_room(camera, plan.room.width, plan.room.depth):
+            blockers.append(PlanValidationIssue(
+                code="camera_out_of_bounds",
+                message="Canon camera footprint extends beyond the room boundary",
+                item_ids=[],
+            ))
+        else:
+            for obstacle in [*plan.items, *_opening_volumes(plan)]:
+                if footprints_intersect(camera, obstacle):
+                    blockers.append(PlanValidationIssue(
+                        code="camera_inside_geometry",
+                        message=f"Canon camera intersects {obstacle.name}",
+                        item_ids=[] if obstacle.id == "canon_camera" else [obstacle.id],
+                    ))
+                    break
+
     advisory.extend(
         PlanValidationIssue(code="normalization", message=message)
         for message in dict.fromkeys(normalization_warnings or [])
     )
-    return PlanValidationReport(valid=not blockers, blockers=blockers, warnings=advisory)
+    return PlanValidationReport(
+        valid=not blockers,
+        blockers=blockers,
+        warnings=advisory,
+        tolerance_warnings=tolerance_warnings,
+    )
 
 
 def _resolve_overlaps_legacy(plan: FloorPlan, warnings: list[str]) -> None:
