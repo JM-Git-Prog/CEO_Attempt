@@ -62,7 +62,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
 - [x] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 5. Session Manager and FIFO Queue
+- [x] 5. Session Manager and FIFO Queue
   - [x] 5.1 Implement Session Manager (`src/session_manager.py`)
     - `create_session(description, mode)` → generates UUID, creates isolated output directory under `output/sessions/{uuid}/` with `input/`, `output/`, `tmp/` subdirectories
     - `mark_failed_on_restart()` → on startup, mark any incomplete sessions as failed with `reason_code: "server_restart"`
@@ -81,7 +81,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any sequence of session submissions arriving while a compilation is active, verify FIFO ordering is preserved
     - **Validates: Requirements 12.1**
 
-  - [~] 5.4 Write property test for session isolation (Property 18)
+  - [x] 5.4 Write property test for session isolation (Property 18)
     - **Property 18: Session Isolation Invariant**
     - For any set of sessions (even with identical descriptions), verify unique UUIDs, exclusive output directories, no cross-session file references
     - **Validates: Requirements 12.2, 12.5**
