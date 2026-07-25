@@ -33,12 +33,22 @@ LOG = BENCH / "flywheel-log.txt"
 STATE = BENCH / "flywheel-state.json"
 PAUSE_FLYWHEEL = BENCH / "PAUSE-FLYWHEEL.txt"
 PAUSE_BENCH = BENCH / "PAUSE-BENCH.txt"
+SWEEP_CADENCE_STATE = BENCH / "hparam-sweep-cadence-state.json"
 CORPUS_FILES = (ROOT / "data" / "flywheel" / "corpus.jsonl",
                 ROOT / "data" / "flywheel" / "corpus-bench.jsonl")
 
 GROWTH_THRESHOLD = 50    # new corpus rows needed before retraining
 TOPUP_PROMPTS = 15       # synthetic good-data top-up batch size per cycle
 CHECK_EVERY_S = 600      # 10 min between growth checks while waiting
+
+# A hyperparameter sweep (bench/hparam_sweep.py) trains 5 full combos - roughly
+# 5x the GPU cost of one normal cycle - so it runs far less often than the
+# exam's every-5th-cycle baseline check. Every 10th successful cycle, it
+# re-searches around whatever the CURRENT best hyperparameters are; if a combo
+# wins, bench/best-hparams.json updates and every training run after that
+# (this flywheel's own, and any manual one) picks it up automatically -
+# advance, learn, repeat, with no extra wiring needed anywhere else.
+SWEEP_EVERY_N_CYCLES = 10
 
 
 def log(msg: str) -> None:
@@ -72,6 +82,22 @@ def _save_state(state: dict) -> None:
 def _run(script: str, *args, timeout=None) -> int:
     return subprocess.run([sys.executable, str(BENCH / script), *args],
                            cwd=str(ROOT), timeout=timeout).returncode
+
+
+def _sweep_due() -> bool:
+    """True on every SWEEP_EVERY_N_CYCLES-th successful training cycle. Own
+    persistent counter, separate from the exam's baseline-cadence state, since
+    the two run on different schedules for different reasons."""
+    state = {"cycle": 0}
+    if SWEEP_CADENCE_STATE.exists():
+        try:
+            state.update(json.loads(SWEEP_CADENCE_STATE.read_text(encoding="utf-8")))
+        except Exception:
+            pass
+    state["cycle"] = state.get("cycle", 0) + 1
+    due = state["cycle"] % SWEEP_EVERY_N_CYCLES == 0
+    SWEEP_CADENCE_STATE.write_text(json.dumps(state), encoding="utf-8")
+    return due
 
 
 def main() -> int:
@@ -110,10 +136,24 @@ def main() -> int:
 
         log("pausing the llama3.1 harvester for the training window")
         PAUSE_BENCH.write_text("paused by flywheel_loop.py for a training cycle\n", encoding="utf-8")
+        chain_rc = None
         try:
             log("launching the training chain (make_training_set -> train -> register -> exam)")
-            r = _run("run_chain.py", timeout=6 * 3600)
-            log(f"training chain finished rc={r}")
+            chain_rc = _run("run_chain.py", timeout=6 * 3600)
+            log(f"training chain finished rc={chain_rc}")
+
+            if chain_rc == 0 and _sweep_due():
+                log(f"hyperparameter sweep due (every {SWEEP_EVERY_N_CYCLES}th successful cycle) - "
+                    "searching around the current best combo now, still under harvester pause")
+                try:
+                    r_sweep = _run("hparam_sweep.py", timeout=8 * 3600)
+                    log(f"hparam sweep finished rc={r_sweep} - if a combo won, "
+                        "bench/best-hparams.json now has it and every training run "
+                        "after this (including the next one of these cycles) uses it")
+                except subprocess.TimeoutExpired:
+                    log("hparam sweep exceeded its 8h timeout - killed, will retry next due cycle")
+                except Exception as exc:
+                    log(f"hparam sweep crashed: {exc}")
         except subprocess.TimeoutExpired:
             log("training chain exceeded its 6h timeout - killed, will retry next cycle")
         except Exception as exc:

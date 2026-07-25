@@ -159,8 +159,9 @@ def test_v11_semantic_geometry_repair_fixes_wrong_relation_kinds(monkeypatch):
 
     correct = _mock_floor_plan_v11()
 
-    # Build a bad Plan that uses adjacent_to with oversized spans — schema valid but
-    # will place stools east of the counter (outside room for a 6m-wide room).
+    # Build a bad Plan that uses against_wall east for stools — schema valid but
+    # will place stools against the east wall (outside room when wall_gap_m=0)
+    # instead of south_of the counter where they belong.
     bad = _json.loads(_json.dumps(correct))
     bad["relationships"] = [
         {
@@ -169,11 +170,9 @@ def test_v11_semantic_geometry_repair_fixes_wrong_relation_kinds(monkeypatch):
         },
         *[
             {
-                "subject_id": f"stool_{index}", "kind": "adjacent_to",
-                "target_id": "counter_1", "parameters_m": {
-                    "gap_m": 0.2, "distribution_index": float(index - 1),
-                    "distribution_count": 4.0, "distribution_span_m": 4.2,
-                },
+                "subject_id": f"stool_{index}", "kind": "against_wall",
+                "wall": "east",
+                "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.0},
             }
             for index in range(1, 5)
         ],

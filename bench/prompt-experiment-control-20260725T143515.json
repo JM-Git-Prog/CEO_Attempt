@@ -1,0 +1,184 @@
+{
+ "started": "2026-07-25 14:35:15",
+ "prompts": 15,
+ "lanes": {
+  "planner-probe-v1": {
+   "legal": 1,
+   "total": 15,
+   "legal_rate": 0.07,
+   "violation_census": {
+    "error:ValidationError": 3
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "3 validation errors for FloorPlanV11\nrelationships.0.subject_id\n  Field required [type=missing, input_value={'id': 'stool_1', 'kind':...: 1, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nrelationships.1.subject_id\n  Field required ",
+     "seconds": 44.9,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 1,
+     "seconds": 119.8,
+     "plan": {
+      "name": "Diner Counter",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.7
+      },
+      "items": [
+       {
+        "id": "counter",
+        "name": "Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 3.0,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A 1950s-style counter with four stools."
+       }
+      ],
+      "openings": [
+       {
+        "id": "window",
+        "kind": "window",
+        "wall": "west",
+        "offset": 3.3,
+        "width": 1.2,
+        "height": 1.8,
+        "sill_height": 0.3
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 0.9,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [
+       "Create a practical, buildable floor plan with clear circulation paths."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x": 0.0,
+         "z": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window",
+        "wall": "west",
+        "placement": "near_corner",
+        "corner": "northwest",
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "counter",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.9,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p002"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p003"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p004"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p005"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p006"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p007"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p008"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p009"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p010"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 58.6,
+     "prompt_id": "p011"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nopening_intents.0.corner\n  Input should be 'northwest', 'northeast', 'southwest' or 'southeast' [type=literal_error, input_value='null', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/literal_error",
+     "seconds": 70.0,
+     "prompt_id": "p012"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p013"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p014"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p015"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-25 15:02:09"
+}
