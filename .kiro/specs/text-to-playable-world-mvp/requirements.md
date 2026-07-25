@@ -147,7 +147,7 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 1. WHEN the Sidecar produces a Runtime_Candidate, THE Parity_Gate SHALL verify that: (a) the scene inventory JSON contains all expected object IDs from the CompilerPlan with no missing IDs, AND (b) the total object count in the inventory matches the expected count from the CompilerPlan (catches spurious extra objects)
 2. IF the Parity_Gate detects missing object IDs or a count mismatch, THEN THE Pipeline SHALL reject the Runtime_Candidate and return a structured failure listing each discrepancy
 3. WHEN the Parity_Gate passes, THE Pipeline SHALL IMMEDIATELY proceed to Auto_Launch without waiting for the Smoke_Runner
-4. THE Smoke_Runner SHALL run ASYNCHRONOUSLY after Auto_Launch is triggered — it launches a SEPARATE UPBGE process to verify load success (process starts, loads .blend without crash, reaches game-mode frame loop within 30 seconds) and records its result to the session without blocking the user
+4. THE Smoke_Runner SHALL run ASYNCHRONOUSLY after Auto_Launch is triggered — it launches a SEPARATE blenderplayer process (the same executable used for Auto_Launch) to verify load success (process starts, loads .blend without crash, reaches game-mode frame loop within 30 seconds) and records its result to the session without blocking the user
 5. IF the async Smoke_Runner reports a load failure, THE Web_Interface SHALL display a warning ("smoke test failed — game may have issues") but SHALL NOT terminate the already-running game
 6. THE session record SHALL include the smoke result with quality label: "smoke_full" (load + frame loop confirmed), "smoke_partial" (load confirmed, frame loop unverified), or "smoke_skipped" (async runner not yet complete)
 
@@ -158,7 +158,7 @@ The MVP leverages existing pipeline stages (LLM interpretation, floor plan gener
 #### Acceptance Criteria
 
 1. WHILE the Pipeline is executing, THE Web_Interface SHALL push stage progress updates via Server-Sent Events (SSE) to the browser client, delivering each stage transition (interpreting, planning, building_scene, compiling, validating, launching, game_running) within 2 seconds of occurrence
-2. WHEN the Pipeline produces a Playable_Artifact, THE Web_Interface SHALL automatically trigger Auto_Launch (invoke UPBGE in game mode) without requiring user interaction beyond the initial "Generate" action
+2. WHEN the Pipeline produces a Playable_Artifact, THE Web_Interface SHALL automatically trigger Auto_Launch (invoke blenderplayer on the compiled .blend) without requiring user interaction beyond the initial "Generate" action
 3. WHEN the game is running, THE Web_Interface SHALL display a "Game Running" status with a "Download .blend" secondary action for later replay
 4. IF Auto_Launch fails, THEN THE Web_Interface SHALL present the download link with platform-specific instructions for manual launch
 5. IF the Pipeline fails at any stage, THEN THE Web_Interface SHALL display the failed stage name and a human-readable reason rather than a generic error

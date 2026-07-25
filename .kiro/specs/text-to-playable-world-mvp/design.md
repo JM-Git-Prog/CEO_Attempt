@@ -7,7 +7,7 @@ This design defines the **shortest viable path** from a user's text sentence to 
 The MVP achieves this by:
 1. **Shortening the pipeline** — cutting 10+ quality-assurance stages (canon image, composition, alignment, human QA) that block delivery without adding structural correctness
 2. **Relaxing plan validation** — accepting plans with minor geometric imperfections rather than rejecting them
-3. **Auto-launching** — invoking UPBGE in game mode directly after compilation succeeds
+3. **Auto-launching** — invoking `blenderplayer` (UPBGE's standalone game player) directly after parity passes, so the user is playing immediately without touching a file
 
 All existing components (LLM interpreter, floor plan builder, scene graph builder, world contract, compiler plan builder, first-party UPBGE compile script, runtime templates, sidecar, web interface) are reused without redesign. The changes are surgical: new tolerance thresholds, skipped stages, and one new function (auto-launch).
 
@@ -110,7 +110,7 @@ sequenceDiagram
     Pipeline->>Sidecar: smoke_load(runtime_candidate)
     Sidecar-->>Pipeline: load_success
     Pipeline->>Launcher: auto_launch(blend_path)
-    Launcher->>UPBGE: subprocess (game mode)
+    Launcher->>UPBGE: blenderplayer file.blend (fullscreen)
     Pipeline-->>Web: {status: "game_running", download_url: ...}
     Web-->>User: Game window opens
 ```
@@ -122,7 +122,7 @@ sequenceDiagram
 | Pipeline Orchestrator | `src/pipeline.py` | Add MVP mode branch that skips canon/composition/alignment/semantic-commands/QA stages |
 | Plan Validator | `src/floor_plan/validator.py` | Add `mvp_tolerance` parameter to `validate_floor_plan()` |
 | Web Interface | `src/web/app.py` | Add `mode` param to session creation, auto-launch trigger on completion |
-| Auto-Launcher | `src/auto_launch.py` | **NEW** — subprocess invocation of UPBGE in game mode |
+| Auto-Launcher | `src/auto_launch.py` | **NEW** — subprocess invocation of `blenderplayer` (not the UPBGE editor) |
 | Sidecar | `src/upbge_sidecar.py` | No changes needed (already supports `runtime=True`) |
 | CompilerPlan Builder | `src/upbge_compiler.py` | No changes needed |
 | Runtime Templates | `src/upbge_runtime.py` | No changes needed |
@@ -135,9 +135,9 @@ sequenceDiagram
 class LaunchResult:
     success: bool
     pid: int | None
-    executable: str
+    executable: str  # path to blenderplayer
     blend_path: str
-    reason_code: str
+    reason_code: str  # "launched", "blenderplayer_not_found", "process_exited", "file_missing"
     diagnostics: str
 
 def auto_launch_game(
@@ -147,31 +147,48 @@ def auto_launch_game(
     fullscreen: bool = True,
     timeout_s: float = 10.0,
 ) -> LaunchResult:
-    """Launch UPBGE in game mode on the compiled .blend file.
+    """Launch blenderplayer on the compiled .blend file.
     
     Strategy:
     1. Verify blend_path exists and is non-zero
-    2. Construct launch command using capability.executable_path
+    2. Discover blenderplayer from capability.blenderplayer_path
     3. Start subprocess (non-blocking — game runs independently)
     4. Wait up to timeout_s for process to NOT exit (confirms it's running)
     5. Return LaunchResult with PID for tracking
+    
+    CRITICAL: Uses blenderplayer (standalone game player), NOT the UPBGE editor.
+    blenderplayer takes a .blend and runs it directly in game mode — no editor UI,
+    no Python startup hacks, no import bge issues. This is reliable and documented.
     """
 ```
 
 **Launch Command Construction:**
 
-UPBGE supports game-mode launch via embedded Python:
+The `blenderplayer` executable ships alongside the UPBGE editor. It takes a .blend file
+and runs it immediately in game mode:
 ```
-upbge --python-expr "import bge; bge.logic.startGame()" path/to/file.blend
+blenderplayer path/to/file.blend
 ```
 
-Alternative (if the above fails on the installed version):
+With fullscreen:
 ```
-upbge -b path/to/file.blend --python-expr "
-import bpy
-bpy.ops.view3d.game_start()
-"
+blenderplayer -f 0 0 path/to/file.blend
 ```
+
+**Why blenderplayer and NOT the UPBGE editor:**
+- `import bge` is NOT available from Blender's startup Python context — it only exists inside the BGE runtime
+- `upbge --python-expr "import bge; bge.logic.startGame()"` does NOT work reliably
+- `blenderplayer` is the purpose-built tool for exactly this use case: run a .blend as a game
+- The .blend already has logic bricks wired (Always → Python → `bge.logic.startGame()`), which auto-starts the game on load in blenderplayer
+
+**Dual-executable architecture:**
+| Job | Executable | Context |
+|-----|-----------|---------|
+| Compile (build .blend from CompilerPlan) | UPBGE editor (`upbge`) | `bpy` Python API, headless mode |
+| Launch (run .blend as a game) | `blenderplayer` | `bge` runtime, fullscreen game mode |
+
+Both executables are discovered and probed independently by the Capability_Report.
+The .blend works in BOTH contexts: blenderplayer for users, editor P-key for developers.
 
 The auto-launcher tries the primary command first. If the process exits within `timeout_s` (indicating failure), it tries the alternative. The capability probe will be extended to detect which invocation pattern works.
 
