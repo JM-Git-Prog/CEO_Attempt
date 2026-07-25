@@ -206,8 +206,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Full mode (existing V11) remains selectable via mode parameter
     - _Requirements: 10.2, 10.3, 10.4, 9.6_
 
-- [~] 12. Player Controller and Door Interaction (RuntimePlan validation)
-  - [~] 12.1 Implement player controller math utilities
+- [x] 12. Player Controller and Door Interaction (RuntimePlan validation)
+  - [x] 12.1 Implement player controller math utilities
     - Movement speed normalization: diagonal input (two keys) produces normalized direction vector so combined speed ≤ max_speed
     - Vertical look angle clamping to ±85°
     - Spawn repositioning: spiral search outward from floor center in 0.5m increments (up to 8 attempts), fallback to ceiling_height - 0.5m drop
@@ -228,7 +228,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any room geometry with obstructed default spawn, repositioning produces a valid in-bounds, non-intersecting point
     - **Validates: Requirements 4.7**
 
-  - [~] 12.5 Implement door interaction parameter validation in RuntimePlan builder
+  - [x] 12.5 Implement door interaction parameter validation in RuntimePlan builder
     - Validate door interaction intents: `open_angle_deg` within [-180, 180] non-zero, `speed_deg_s` within (0, 720], `initially_open` boolean
     - Reject WorldContract with structured error if door subject lacks explicit physics intent or uses trigger body mode
     - _Requirements: 5.1, 5.5_

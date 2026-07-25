@@ -1,0 +1,29 @@
+{
+ "started": "2026-07-25 15:58:35",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 3,
+   "legal_rate": 0.0,
+   "violation_census": {},
+   "rows": [
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p046"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p047"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p048"
+    }
+   ]
+  }
+ }
+}

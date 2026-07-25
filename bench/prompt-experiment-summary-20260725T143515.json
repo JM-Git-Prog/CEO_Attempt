@@ -1,0 +1,39 @@
+{
+ "started": "2026-07-25 14:35:15",
+ "lane": "planner-probe-v1",
+ "prompts_per_variant": 15,
+ "variants": {
+  "control": {
+   "legal_rate": 0.07,
+   "legal": 1,
+   "total": 15,
+   "violation_census": {
+    "error:ValidationError": 3
+   },
+   "results_file": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\bench\\prompt-experiment-control-20260725T143515.json",
+   "rc": 0
+  },
+  "explicit-math": {
+   "legal_rate": 0.0,
+   "legal": 0,
+   "total": 15,
+   "violation_census": {},
+   "results_file": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\bench\\prompt-experiment-explicit-math-20260725T143515.json",
+   "rc": 0
+  },
+  "self-check": {
+   "legal_rate": 0.0,
+   "legal": 0,
+   "total": 15,
+   "violation_census": {},
+   "results_file": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\bench\\prompt-experiment-self-check-20260725T143515.json",
+   "rc": 0
+  }
+ },
+ "finished": "2026-07-25 16:02:10",
+ "ranked": [
+  "control",
+  "explicit-math",
+  "self-check"
+ ]
+}
