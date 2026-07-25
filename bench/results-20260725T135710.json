@@ -4,10 +4,10 @@
  "lanes": {
   "llama3.1": {
    "legal": 0,
-   "total": 8,
+   "total": 15,
    "legal_rate": 0.0,
    "violation_census": {
-    "error:ValidationError": 7,
+    "error:ValidationError": 14,
     "opening_blocked": 2,
     "out_of_bounds": 1,
     "camera_inside_geometry": 1
@@ -372,8 +372,58 @@
      "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
      "seconds": 21.3,
      "prompt_id": "p033"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1950s Classroom...: 3.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 33.4,
+     "prompt_id": "p034"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'monitor_s...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 22.1,
+     "prompt_id": "p035"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Victorian Libra...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 22.3,
+     "prompt_id": "p036"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 17.6,
+     "prompt_id": "p037"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "3 validation errors for FloorPlanV11\nrelationships.1.parameters_m.wall\n  Input should be a valid number, unable to parse string as a number [type=float_parsing, input_value='east', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/float_parsing\nrelationships.2.para",
+     "seconds": 20.5,
+     "prompt_id": "p038"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 22.4,
+     "prompt_id": "p039"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.7\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'menu_boar...target_id': 'counter_1'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 31.1,
+     "prompt_id": "p040"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-25 14:03:26"
 }

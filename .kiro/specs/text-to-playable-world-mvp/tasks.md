@@ -104,8 +104,8 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - On failure: generate `fallback_instructions` with platform-specific manual launch instructions
     - _Requirements: 1.1, 1.2, 1.8, 9.2_
 
-- [~] 8. Pipeline Orchestrator — MVP Branch
-  - [ ] 8.1 Implement `run_mvp()` method in Pipeline Orchestrator
+- [-] 8. Pipeline Orchestrator — MVP Branch
+  - [x] 8.1 Implement `run_mvp()` method in Pipeline Orchestrator
     - Add MVP mode branch to `src/pipeline.py`
     - Implement shortened pipeline: interpret → plan (lane ladder) → scene graph → WorldContract → CompilerPlan+RuntimePlan → sidecar compile → parity gate → smoke validator → auto-launch
     - Skip canon image generation and composition validation stages in MVP mode (Req 2.4)
@@ -114,16 +114,16 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Integrate FIFO queue — serialize only the sidecar compilation stage
     - _Requirements: 1.1, 1.3, 2.4, 10.1, 10.2_
 
-  - [~] 8.2 Implement input validation gate
+  - [x] 8.2 Implement input validation gate
     - Reject empty strings, strings < 3 characters, strings > 500 characters with descriptive validation error BEFORE invoking any LLM stage
     - _Requirements: 1.6_
 
-  - [~] 8.3 Write property test for input length validation (Property 1)
+  - [x] 8.3 Write property test for input length validation (Property 1)
     - **Property 1: Input Length Validation**
     - For any string input, verify rejection iff char count < 3 or > 500, and no LLM invocation occurs on rejection
     - **Validates: Requirements 1.6**
 
-  - [~] 8.4 Implement parity gate check
+  - [x] 8.4 Implement parity gate check
     - Verify scene inventory JSON contains all expected object IDs from CompilerPlan with no missing IDs
     - Verify total object count matches expected count
     - On failure: list each discrepancy (missing IDs, count mismatch) — hard stop
@@ -139,7 +139,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any (parity_passed, smoke_passed) combination, verify correct quality label assignment
     - **Validates: Requirements 8.5**
 
-  - [~] 8.7 Implement structured error reporting and graceful degradation
+  - [x] 8.7 Implement structured error reporting and graceful degradation
     - Every stage returns success result or `StageFailure` — no exceptions that corrupt session state
     - On pipeline failure: report stage name, reason_code, diagnostic message to web interface
     - Graceful degradation chain: smoke fails → proceed with `smoke_skipped`; launch fails → download link fallback; parity fails → hard stop
@@ -154,7 +154,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
   - Ensure all tests pass, ask the user if questions arise.
 
 - [~] 10. Serialization and Contract Integrity
-  - [ ] 10.1 Implement canonical JSON serialization constraints
+  - [~] 10.1 Implement canonical JSON serialization constraints
     - Ensure serializer rejects non-finite numbers (NaN, Infinity, -Infinity)
     - Enforce sorted keys, no-whitespace separators (`,` and `:`), UTF-8 encoding
     - Ensure deserialization raises validation error on non-conforming input (missing fields, unknown fields, type mismatches) identifying the first bad element
@@ -207,7 +207,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - _Requirements: 10.2, 10.3, 10.4, 9.6_
 
 - [~] 12. Player Controller and Door Interaction (RuntimePlan validation)
-  - [ ] 12.1 Implement player controller math utilities
+  - [~] 12.1 Implement player controller math utilities
     - Movement speed normalization: diagonal input (two keys) produces normalized direction vector so combined speed ≤ max_speed
     - Vertical look angle clamping to ±85°
     - Spawn repositioning: spiral search outward from floor center in 0.5m increments (up to 8 attempts), fallback to ceiling_height - 0.5m drop
@@ -243,18 +243,18 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Per-frame step advances toward target without overshooting; step = min(|target - current|, speed_deg_s / frame_rate)
     - **Validates: Requirements 5.3**
 
-- [ ] 13. Checkpoint — Ensure all tests pass
+- [~] 13. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Integration wiring and final verification
-  - [ ] 14.1 Wire all components into the pipeline orchestrator
+  - [~] 14.1 Wire all components into the pipeline orchestrator
     - Connect session manager → FIFO queue → lane ladder → MVP validator → scene graph → contract → sidecar → parity → smoke → auto-launch → web SSE
     - Ensure each stage builds on the previous, no orphaned code
     - Verify `run_mvp()` calls all components in correct order with proper data flow
     - Verify `run_full()` (existing V11) remains unchanged and operational
     - _Requirements: 1.1, 10.1, 10.2_
 
-  - [ ] 14.2 Implement session cleanup with configurable TTL
+  - [~] 14.2 Implement session cleanup with configurable TTL
     - Background task (hourly) scans session directories
     - Remove .blend artifacts after 7 days, intermediate compiler inputs after 24 hours, temporary files immediately on session complete
     - _Requirements: 12.3_
@@ -269,7 +269,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any invalid sidecar state, verify `SidecarResult` with `success=False`, non-empty reason_code, and captured output for process failures
     - **Validates: Requirements 7.2, 7.4, 7.7**
 
-- [ ] 15. Final checkpoint — Ensure all tests pass
+- [~] 15. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

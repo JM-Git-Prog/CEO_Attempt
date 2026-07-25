@@ -655,3 +655,14 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 [13:57:10] batch: prompts 25..39 (llama3.1)
 
 === LANE llama3.1 — 15 prompts ===
+  p026: error    (21.2s) 
+  p027: error    (26.7s) 
+  p028: error    (26.0s) 
+  p029: blocked  (32.3s) out_of_bounds,opening_blocked,opening_blocked
+  p030: error    (25.5s) 
+  p031: error    (40.6s) 
+  p032: error    (13.3s) 
+  p033: error    (21.3s) 
+  p034: error    (33.4s) 
+  p035: error    (22.1s) 
+  p036: error    (22.3s) 
