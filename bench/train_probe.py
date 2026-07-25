@@ -24,6 +24,15 @@ MAX_SEQ = 4096
 EPOCHS = 3
 LR = 2e-4
 
+# Live status for the Training Monitor desktop app - one small JSON file,
+# overwritten as training moves. Only ever written from real trainer
+# callbacks and real stage transitions below - never fabricated.
+PROGRESS = ROOT / "bench" / "training-progress.json"
+
+
+def _write_progress(**fields) -> None:
+    PROGRESS.write_text(json.dumps({"updated": time.time(), **fields}), encoding="utf-8")
+
 
 def main() -> int:
     if not DATA.exists():
@@ -33,10 +42,25 @@ def main() -> int:
     from datasets import Dataset
     from unsloth import FastLanguageModel
     from trl import SFTTrainer
-    from transformers import TrainingArguments
+    from transformers import TrainingArguments, TrainerCallback
+
+    class ProgressCallback(TrainerCallback):
+        """Mirrors the trainer's own step/loss into PROGRESS - real numbers only."""
+
+        def on_train_begin(self, args, state, control, **kw):
+            _write_progress(stage="training", run_id=run_id, rows=len(rows),
+                             step=0, max_steps=state.max_steps, epoch=0.0, loss=None)
+
+        def on_log(self, args, state, control, logs=None, **kw):
+            if logs and "loss" in logs:
+                _write_progress(stage="training", run_id=run_id, rows=len(rows),
+                                 step=state.global_step, max_steps=state.max_steps,
+                                 epoch=round(state.epoch or 0, 3), loss=logs["loss"])
 
     rows = [json.loads(l) for l in DATA.read_text(encoding="utf-8").splitlines() if l.strip()]
     print(f"Training rows: {len(rows)} | base: {BASE_MODEL}")
+    run_id = OUT.name
+    _write_progress(stage="loading_model", run_id=run_id, rows=len(rows))
 
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=BASE_MODEL, max_seq_length=MAX_SEQ, load_in_4bit=True,
@@ -61,18 +85,22 @@ def main() -> int:
             num_train_epochs=EPOCHS, learning_rate=LR, logging_steps=5,
             save_strategy="no", bf16=True, report_to=[], seed=13,
         ),
+        callbacks=[ProgressCallback()],
     )
     trainer.train()
 
     OUT.mkdir(parents=True, exist_ok=True)
+    _write_progress(stage="saving_gguf", run_id=run_id, rows=len(rows))
     print("Saving merged GGUF (q4_k_m) - takes a few minutes...")
     model.save_pretrained_gguf(str(OUT), tokenizer, quantization_method="q4_k_m")
 
     gguf = next(OUT.glob("*.gguf"), None)
     modelfile = OUT / "Modelfile"
     modelfile.write_text(f"FROM {gguf}\n", encoding="utf-8")
+    ollama_cmd = f'ollama create planner-probe-v1 -f "{modelfile}"'
+    _write_progress(stage="done", run_id=run_id, rows=len(rows), ollama_cmd=ollama_cmd)
     print("\n=== DONE - register the lane ===")
-    print(f'ollama create planner-probe-v1 -f "{modelfile}"')
+    print(ollama_cmd)
     print('then bench it:')
     print('python bench\\plan_bench.py --lanes "llama3.1,planner-probe-v1" --prompts 30')
     return 0
