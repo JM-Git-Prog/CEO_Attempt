@@ -16,6 +16,15 @@ from src.models import StageFailure
 
 T = TypeVar("T")
 
+__all__ = [
+    "StageSuccess",
+    "StageResult",
+    "run_stage",
+    "run_stage_async",
+    "format_failure_for_web",
+    "determine_quality_label",
+]
+
 
 @dataclass(frozen=True)
 class StageSuccess(Generic[T]):

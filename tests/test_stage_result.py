@@ -123,3 +123,67 @@ async def test_run_stage_async_exception():
     assert result.reason_code == "unhandled_exception"
     assert "RuntimeError: network timeout" in result.diagnostic
     assert result.recoverable is False
+
+
+# --- _handle_stage_failure integration test ---
+
+
+def test_handle_stage_failure_sets_session_error():
+    """WorldBuilder._handle_stage_failure sets session to ERROR and returns structured result."""
+    from unittest.mock import patch, MagicMock
+    import time
+
+    with patch("src.pipeline.snapshot_session"):
+        from src.pipeline import WorldBuilder
+
+        builder = WorldBuilder(session_id="test-err")
+        builder._mvp_started_at = time.monotonic()
+
+        failure = StageFailure(
+            stage="compiling",
+            reason_code="timeout",
+            diagnostic="Compilation timed out after 30s",
+            recoverable=False,
+        )
+        result = builder._handle_stage_failure(
+            failure, plan_warnings=[], model_used="lane-A", attempts=2,
+        )
+
+        assert result.success is False
+        assert result.failure_stage == "compiling"
+        assert result.failure_reason_code == "timeout"
+        assert result.failure_diagnostic == "Compilation timed out after 30s"
+        assert result.model_used == "lane-A"
+        assert result.attempts == 2
+        assert result.quality_label == "parity_only"
+        assert builder.session.error == "Compilation timed out after 30s"
+
+
+def test_handle_stage_failure_preserves_artifact_path():
+    """_handle_stage_failure passes artifact_path through to result."""
+    from unittest.mock import patch
+    from pathlib import Path
+    import time
+
+    with patch("src.pipeline.snapshot_session"):
+        from src.pipeline import WorldBuilder
+
+        builder = WorldBuilder(session_id="test-art")
+        builder._mvp_started_at = time.monotonic()
+
+        failure = StageFailure(
+            stage="validating",
+            reason_code="parity_failed",
+            diagnostic="Object count mismatch",
+            recoverable=False,
+        )
+        result = builder._handle_stage_failure(
+            failure,
+            plan_warnings=[],
+            model_used="",
+            attempts=1,
+            artifact_path=Path("/tmp/world.blend"),
+        )
+
+        assert result.artifact_path == Path("/tmp/world.blend")
+        assert result.failure_stage == "validating"

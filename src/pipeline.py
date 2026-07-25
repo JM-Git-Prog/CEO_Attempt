@@ -92,6 +92,7 @@ from src.auto_launch import auto_launch_game, LaunchResult
 from src.lane_ladder import generate_plan_with_ladder
 from src.session_manager import SessionManager, SessionQueue
 from src.smoke_validator import run_structural_smoke
+from src.stage_result import run_stage_async, format_failure_for_web, StageSuccess
 from src.workflow_provenance import (
     historical_profile_for,
     normalize_interface_version,
@@ -1563,6 +1564,38 @@ class WorldBuilder:
     # Shared FIFO queue for serializing sidecar compilation across sessions.
     _compilation_queue: SessionQueue = SessionQueue()
 
+    def _handle_stage_failure(
+        self,
+        failure: StageFailure,
+        *,
+        plan_warnings: list[PlanValidationWarning],
+        model_used: str = "",
+        attempts: int = 0,
+        artifact_path: Path | None = None,
+    ) -> MVPPipelineResult:
+        """Consolidate pipeline failure handling into a single helper.
+
+        Sets session state to ERROR, saves the session, and returns a properly
+        structured MVPPipelineResult with all failure metadata.
+        Implements Req 1.5 (structured error propagation) and Req 9.5 (web reporting).
+        """
+        self.session.state = PipelineState.ERROR
+        self.session.error = failure.diagnostic
+        self.save_session()
+        return MVPPipelineResult(
+            success=False,
+            artifact_path=artifact_path,
+            launch_result=None,
+            quality_label="parity_only",
+            warnings=plan_warnings,
+            failure_stage=failure.stage,
+            failure_reason_code=failure.reason_code,
+            failure_diagnostic=failure.diagnostic,
+            duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
+            model_used=model_used,
+            attempts=attempts,
+        )
+
     def _emit_sse(self, stage: str) -> None:
         """Emit an SSE-style progress event for the current session.
 
@@ -1591,6 +1624,13 @@ class WorldBuilder:
         Skips canon image generation and composition validation (Req 2.4).
         Emits SSE events at each stage transition.
         Returns MVPPipelineResult on success or failure.
+
+        Each stage is wrapped with run_stage_async so that no unhandled exception
+        from one stage corrupts session state (Req 1.5, 9.5).
+        Graceful degradation (Req 1.8):
+          - smoke fails → quality_label = "smoke_skipped", proceed to launch
+          - launch fails → success=True with download fallback
+          - parity fails → hard stop with structured failure
         """
         self._mvp_started_at = time.monotonic()
         self.session.mode = SessionMode.MVP
@@ -1601,82 +1641,98 @@ class WorldBuilder:
         # --- Input Validation Gate (Req 1.6) ---
         input_failure = validate_input(description)
         if input_failure is not None:
-            return MVPPipelineResult(
-                success=False,
-                artifact_path=None,
-                launch_result=None,
-                quality_label="parity_only",
-                warnings=[],
-                failure_stage=input_failure.stage,
-                failure_reason_code=input_failure.reason_code,
-                failure_diagnostic=input_failure.diagnostic,
-                duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                model_used="",
-                attempts=0,
+            return self._handle_stage_failure(
+                input_failure, plan_warnings=[], model_used="", attempts=0,
             )
 
-        try:
-            # --- Stage 1: Interpret ---
-            self._emit_sse("interpreting")
-            concept = await self.step_interpret(description)
+        # --- Stage 1: Interpret ---
+        self._emit_sse("interpreting")
+        interpret_result = await run_stage_async(
+            "interpreting", self.step_interpret, description
+        )
+        if isinstance(interpret_result, StageFailure):
+            return self._handle_stage_failure(
+                interpret_result, plan_warnings=plan_warnings,
+                model_used=model_used, attempts=attempts,
+            )
+        concept = interpret_result.result
 
-            # --- Stage 2: Plan via lane ladder (MVP tolerance) ---
-            self._emit_sse("planning")
-            self._progress("Generating floor plan via lane ladder (MVP tolerance)...")
-            plan, raw_warnings, validation_report, model_used, attempts = (
-                await generate_plan_with_ladder(
-                    description, concept, tolerance="mvp"
-                )
+        # --- Stage 2: Plan via lane ladder (MVP tolerance) ---
+        self._emit_sse("planning")
+        self._progress("Generating floor plan via lane ladder (MVP tolerance)...")
+
+        async def _run_planning():
+            return await generate_plan_with_ladder(
+                description, concept, tolerance="mvp"
             )
 
-            if not validation_report.valid:
-                # All retries exhausted inside the lane ladder — hard stop
-                blocker_summary = "; ".join(
-                    b.message if hasattr(b, "message") else str(b.code)
-                    for b in validation_report.blockers[:5]
-                )
-                return MVPPipelineResult(
-                    success=False,
-                    artifact_path=None,
-                    launch_result=None,
-                    quality_label="parity_only",
-                    warnings=plan_warnings,
-                    failure_stage="planning",
-                    failure_reason_code="plan_rejected",
-                    failure_diagnostic=f"All plan attempts exhausted. Blockers: {blocker_summary}",
-                    duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                    model_used=model_used,
-                    attempts=attempts,
-                )
+        plan_result = await run_stage_async("planning", _run_planning)
+        if isinstance(plan_result, StageFailure):
+            return self._handle_stage_failure(
+                plan_result, plan_warnings=plan_warnings,
+                model_used=model_used, attempts=attempts,
+            )
 
-            # Record plan in session (skip composition/canon entirely per Req 2.4)
-            self.session.floor_plan = plan
-            self.session.plan_warnings = raw_warnings
-            self.session.plan_validation = validation_report
-            self.session.floor_plan_approved = True
-            self.session.camera_contract = build_camera_contract(plan)
+        plan, raw_warnings, validation_report, model_used, attempts = plan_result.result
 
-            # Convert raw warnings to typed PlanValidationWarning for the result
-            for w in raw_warnings:
-                if isinstance(w, str):
-                    plan_warnings.append(PlanValidationWarning(
-                        warning_type="general", affected_id="", measured_deviation=0.0, threshold=0.0,
-                    ))
+        if not validation_report.valid:
+            # All retries exhausted inside the lane ladder — hard stop
+            blocker_summary = "; ".join(
+                b.message if hasattr(b, "message") else str(b.code)
+                for b in validation_report.blockers[:5]
+            )
+            return self._handle_stage_failure(
+                StageFailure(
+                    stage="planning",
+                    reason_code="plan_rejected",
+                    diagnostic=f"All plan attempts exhausted. Blockers: {blocker_summary}",
+                    recoverable=False,
+                ),
+                plan_warnings=plan_warnings,
+                model_used=model_used,
+                attempts=attempts,
+            )
 
-            # --- Stage 3: Build Scene Graph ---
-            self._emit_sse("building_scene")
-            self._progress("Building scene graph (MVP — no canon image)...")
-            scene_graph = await build_scene_graph(
+        # Record plan in session (skip composition/canon entirely per Req 2.4)
+        self.session.floor_plan = plan
+        self.session.plan_warnings = raw_warnings
+        self.session.plan_validation = validation_report
+        self.session.floor_plan_approved = True
+        self.session.camera_contract = build_camera_contract(plan)
+
+        # Convert raw warnings to typed PlanValidationWarning for the result
+        for w in raw_warnings:
+            if isinstance(w, str):
+                plan_warnings.append(PlanValidationWarning(
+                    warning_type="general", affected_id="", measured_deviation=0.0, threshold=0.0,
+                ))
+
+        # --- Stage 3: Build Scene Graph ---
+        self._emit_sse("building_scene")
+        self._progress("Building scene graph (MVP — no canon image)...")
+
+        async def _run_build_scene():
+            return await build_scene_graph(
                 concept,
                 plan,
                 timeout_seconds=self._llm_timeout(),
                 enforce_plan_lights=True,
             )
-            self.session.scene_graph = scene_graph
-            self._progress(f"Scene graph: {len(scene_graph.objects)} objects, {len(scene_graph.lights)} lights")
 
-            # --- Stage 4: Build WorldContract ---
-            contract = build_world_contract(
+        scene_result = await run_stage_async("building_scene", _run_build_scene)
+        if isinstance(scene_result, StageFailure):
+            return self._handle_stage_failure(
+                scene_result, plan_warnings=plan_warnings,
+                model_used=model_used, attempts=attempts,
+            )
+
+        scene_graph = scene_result.result
+        self.session.scene_graph = scene_graph
+        self._progress(f"Scene graph: {len(scene_graph.objects)} objects, {len(scene_graph.lights)} lights")
+
+        # --- Stage 4: Build WorldContract ---
+        def _run_build_contract():
+            return build_world_contract(
                 plan,
                 scene_graph,
                 self.session.camera_contract,
@@ -1687,151 +1743,228 @@ class WorldBuilder:
                 appearance_intent=concept.model_dump(mode="json"),
                 export_policy=ExportPolicy(targets=("upbge_blend", "upbge_runtime")),
             )
-            self.session.world_contract = contract.model_dump(mode="json")
 
-            # --- Stage 5: Build CompilerPlan + RuntimePlan ---
-            from src.upbge_compiler import build_compiler_plan
+        from src.stage_result import run_stage
+        contract_result = run_stage("building_contract", _run_build_contract)
+        if isinstance(contract_result, StageFailure):
+            return self._handle_stage_failure(
+                contract_result, plan_warnings=plan_warnings,
+                model_used=model_used, attempts=attempts,
+            )
+        contract = contract_result.result
+        self.session.world_contract = contract.model_dump(mode="json")
 
-            compiler_plan = build_compiler_plan(
+        # --- Stage 5: Build CompilerPlan + RuntimePlan ---
+        from src.upbge_compiler import build_compiler_plan
+
+        def _run_build_compiler_plan():
+            return build_compiler_plan(
                 contract,
                 outputs=CompilerOutputFlags(blend=True, runtime=True, render=False, glb=False),
             )
-            runtime_plan = compiler_plan.runtime
 
-            # --- Stage 6: Sidecar Compile (serialized via FIFO queue) ---
-            self._emit_sse("compiling")
-            self._progress("Compiling world via UPBGE sidecar...")
+        compiler_result = run_stage("building_compiler_plan", _run_build_compiler_plan)
+        if isinstance(compiler_result, StageFailure):
+            return self._handle_stage_failure(
+                compiler_result, plan_warnings=plan_warnings,
+                model_used=model_used, attempts=attempts,
+            )
+        compiler_plan = compiler_result.result
+        runtime_plan = compiler_plan.runtime
 
-            # Acquire compilation slot from the shared FIFO queue
-            queue = WorldBuilder._compilation_queue
-            started_immediately = await queue.enqueue(self.session)
-            if not started_immediately:
-                self._progress("Queued behind active compilation — waiting...")
-                # Poll until we are the active session
-                while not queue.is_active(self.session.session_id):
-                    await __import__("asyncio").sleep(0.5)
+        # --- Stage 6: Sidecar Compile (serialized via FIFO queue) ---
+        self._emit_sse("compiling")
+        self._progress("Compiling world via UPBGE sidecar...")
 
-            try:
-                capability = discover_upbge(explicit_path=os.getenv("UPBGE_PATH"))
+        # Acquire compilation slot from the shared FIFO queue
+        queue = WorldBuilder._compilation_queue
+        started_immediately = await queue.enqueue(self.session)
+        if not started_immediately:
+            self._progress("Queued behind active compilation — waiting...")
+            # Poll until we are the active session
+            while not queue.is_active(self.session.session_id):
+                await __import__("asyncio").sleep(0.5)
 
-                if not capability.compatible or not capability.available:
-                    return MVPPipelineResult(
-                        success=False,
-                        artifact_path=None,
-                        launch_result=None,
-                        quality_label="parity_only",
-                        warnings=plan_warnings,
-                        failure_stage="compiling",
-                        failure_reason_code=capability.reason_code,
-                        failure_diagnostic=f"UPBGE not available: {'; '.join(capability.diagnostics)}",
-                        duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                        model_used=model_used,
-                        attempts=attempts,
-                    )
+        try:
+            capability = discover_upbge(explicit_path=os.getenv("UPBGE_PATH"))
 
-                compile_output_dir = self.output_dir / "mvp_compile"
-                compile_output_dir.mkdir(parents=True, exist_ok=True)
+            if not capability.compatible or not capability.available:
+                return self._handle_stage_failure(
+                    StageFailure(
+                        stage="compiling",
+                        reason_code=capability.reason_code,
+                        diagnostic=f"UPBGE not available: {'; '.join(capability.diagnostics)}",
+                        recoverable=False,
+                    ),
+                    plan_warnings=plan_warnings,
+                    model_used=model_used,
+                    attempts=attempts,
+                )
 
-                sidecar_result = run_upbge_sidecar(
+            compile_output_dir = self.output_dir / "mvp_compile"
+            compile_output_dir.mkdir(parents=True, exist_ok=True)
+
+            def _run_sidecar():
+                return run_upbge_sidecar(
                     capability,
                     contract.canonical_bytes(),
                     compile_output_dir,
                     outputs=CompilerOutputFlags(blend=True, runtime=True, render=False, glb=False),
                 )
 
-                if not sidecar_result.success:
-                    return MVPPipelineResult(
-                        success=False,
-                        artifact_path=None,
-                        launch_result=None,
-                        quality_label="parity_only",
-                        warnings=plan_warnings,
-                        failure_stage="compiling",
-                        failure_reason_code=sidecar_result.reason_code,
-                        failure_diagnostic=f"Sidecar compilation failed: {sidecar_result.reason_code}",
-                        duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                        model_used=model_used,
-                        attempts=attempts,
-                    )
-            finally:
-                # Release the FIFO queue slot regardless of outcome
+            sidecar_stage_result = run_stage("compiling", _run_sidecar)
+            if isinstance(sidecar_stage_result, StageFailure):
+                return self._handle_stage_failure(
+                    sidecar_stage_result, plan_warnings=plan_warnings,
+                    model_used=model_used, attempts=attempts,
+                )
+            sidecar_result = sidecar_stage_result.result
+
+            if not sidecar_result.success:
+                return self._handle_stage_failure(
+                    StageFailure(
+                        stage="compiling",
+                        reason_code=sidecar_result.reason_code,
+                        diagnostic=f"Sidecar compilation failed: {sidecar_result.reason_code}",
+                        recoverable=False,
+                    ),
+                    plan_warnings=plan_warnings,
+                    model_used=model_used,
+                    attempts=attempts,
+                )
+        except Exception as exc:
+            # Catch unexpected errors in the compile stage boundary
+            await queue.complete(self.session.session_id)
+            return self._handle_stage_failure(
+                StageFailure(
+                    stage="compiling",
+                    reason_code="unhandled_exception",
+                    diagnostic=f"{type(exc).__name__}: {exc}",
+                    recoverable=False,
+                ),
+                plan_warnings=plan_warnings,
+                model_used=model_used,
+                attempts=attempts,
+            )
+        finally:
+            # Release the FIFO queue slot regardless of outcome
+            try:
                 await queue.complete(self.session.session_id)
+            except Exception:
+                pass  # Already completed in the except branch above
 
-            # Locate key artifacts from the sidecar output
-            artifact_map = {item.role: Path(item.path) for item in sidecar_result.artifacts}
-            inventory_path = artifact_map.get("inventory")
-            runtime_candidate = artifact_map.get("runtime_candidate") or artifact_map.get("blend")
+        # Locate key artifacts from the sidecar output
+        artifact_map = {item.role: Path(item.path) for item in sidecar_result.artifacts}
+        inventory_path = artifact_map.get("inventory")
+        runtime_candidate = artifact_map.get("runtime_candidate") or artifact_map.get("blend")
 
-            if inventory_path is None or runtime_candidate is None:
-                return MVPPipelineResult(
-                    success=False,
-                    artifact_path=None,
-                    launch_result=None,
-                    quality_label="parity_only",
-                    warnings=plan_warnings,
-                    failure_stage="compiling",
-                    failure_reason_code="missing_artifacts",
-                    failure_diagnostic="Sidecar did not produce expected .blend or inventory artifacts",
-                    duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                    model_used=model_used,
-                    attempts=attempts,
-                )
+        if inventory_path is None or runtime_candidate is None:
+            return self._handle_stage_failure(
+                StageFailure(
+                    stage="compiling",
+                    reason_code="missing_artifacts",
+                    diagnostic="Sidecar did not produce expected .blend or inventory artifacts",
+                    recoverable=False,
+                ),
+                plan_warnings=plan_warnings,
+                model_used=model_used,
+                attempts=attempts,
+            )
 
-            # --- Stage 7: Parity Gate ---
-            self._emit_sse("validating")
-            self._progress("Running parity gate...")
-            parity_report = validate_upbge_inventory(contract, inventory_path)
-            self.session.parity_report = parity_report.model_dump(mode="json")
+        # --- Stage 7: Parity Gate ---
+        self._emit_sse("validating")
+        self._progress("Running parity gate...")
 
-            if not parity_report.passed:
-                # Parity failure = hard stop
-                issue_summary = "; ".join(
-                    f"{issue.code}@{issue.path}" for issue in parity_report.issues[:5]
-                ) if hasattr(parity_report, "issues") else "parity_check_failed"
-                return MVPPipelineResult(
-                    success=False,
-                    artifact_path=runtime_candidate,
-                    launch_result=None,
-                    quality_label="parity_only",
-                    warnings=plan_warnings,
-                    failure_stage="validating",
-                    failure_reason_code="parity_failed",
-                    failure_diagnostic=f"Parity gate failed: {issue_summary}",
-                    duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                    model_used=model_used,
-                    attempts=attempts,
-                )
+        def _run_parity():
+            return validate_upbge_inventory(contract, inventory_path)
 
-            # --- Stage 8: Smoke Validator (bpy structural, headless — NO game window) ---
-            self._progress("Running structural smoke validation (bpy headless)...")
-            smoke_result = run_structural_smoke(
+        parity_stage_result = run_stage("validating", _run_parity)
+        if isinstance(parity_stage_result, StageFailure):
+            return self._handle_stage_failure(
+                parity_stage_result, plan_warnings=plan_warnings,
+                model_used=model_used, attempts=attempts,
+                artifact_path=runtime_candidate,
+            )
+        parity_report = parity_stage_result.result
+        self.session.parity_report = parity_report.model_dump(mode="json")
+
+        if not parity_report.passed:
+            # Parity failure = hard stop (Req 1.8 graceful degradation)
+            issue_summary = "; ".join(
+                f"{issue.code}@{issue.path}" for issue in parity_report.issues[:5]
+            ) if hasattr(parity_report, "issues") else "parity_check_failed"
+            return self._handle_stage_failure(
+                StageFailure(
+                    stage="validating",
+                    reason_code="parity_failed",
+                    diagnostic=f"Parity gate failed: {issue_summary}",
+                    recoverable=False,
+                ),
+                plan_warnings=plan_warnings,
+                model_used=model_used,
+                attempts=attempts,
+                artifact_path=runtime_candidate,
+            )
+
+        # --- Stage 8: Smoke Validator (bpy structural, headless — NO game window) ---
+        self._progress("Running structural smoke validation (bpy headless)...")
+
+        def _run_smoke():
+            return run_structural_smoke(
                 capability,
                 runtime_candidate,
                 runtime_plan,
                 timeout_s=15.0,
             )
 
-            # Determine quality label:
-            # parity passed + smoke passed → "smoke_structural"
-            # parity passed + smoke failed/timed out → "smoke_skipped" (proceed anyway)
-            if smoke_result.passed:
-                quality_label = "smoke_structural"
-                self._progress("Smoke validation passed — all structural checks OK")
-            else:
-                quality_label = "smoke_skipped"
-                self._progress(
-                    f"Smoke validation did not pass ({smoke_result.reason_code}) — proceeding anyway"
-                )
+        smoke_stage_result = run_stage("smoke_validation", _run_smoke)
 
-            self.session.quality_label = quality_label
+        # Graceful degradation: smoke fails → proceed with smoke_skipped (Req 1.8)
+        if isinstance(smoke_stage_result, StageFailure):
+            # Smoke stage itself threw an unexpected exception — treat as smoke_skipped
+            quality_label = "smoke_skipped"
+            self._progress(
+                f"Smoke validation error ({smoke_stage_result.reason_code}) — proceeding anyway"
+            )
+        elif smoke_stage_result.result.passed:
+            quality_label = "smoke_structural"
+            self._progress("Smoke validation passed — all structural checks OK")
+        else:
+            quality_label = "smoke_skipped"
+            self._progress(
+                f"Smoke validation did not pass ({smoke_stage_result.result.reason_code}) — proceeding anyway"
+            )
 
-            # --- Stage 9: Auto-Launch (blenderplayer — game window opens) ---
-            self._emit_sse("launching")
-            self._progress("Launching game via blenderplayer...")
-            launch_result = auto_launch_game(
+        self.session.quality_label = quality_label
+
+        # --- Stage 9: Auto-Launch (blenderplayer — game window opens) ---
+        self._emit_sse("launching")
+        self._progress("Launching game via blenderplayer...")
+
+        def _run_launch():
+            return auto_launch_game(
                 capability, runtime_candidate, fullscreen=True, timeout_s=10.0,
             )
 
+        launch_stage_result = run_stage("launching", _run_launch)
+
+        # Graceful degradation: launch fails → download link fallback (Req 1.8)
+        if isinstance(launch_stage_result, StageFailure):
+            # Unexpected exception in launch — provide fallback
+            launch_result = LaunchResult(
+                success=False,
+                pid=None,
+                executable="unknown",
+                blend_path=str(runtime_candidate),
+                reason_code=launch_stage_result.reason_code,
+                diagnostics=launch_stage_result.diagnostic,
+                fallback_instructions=f"Download the .blend file at: {runtime_candidate}",
+            )
+            self._progress(
+                f"Auto-launch error ({launch_stage_result.reason_code}) — download fallback available"
+            )
+        else:
+            launch_result = launch_stage_result.result
             if launch_result.success:
                 self._emit_sse("game_running")
                 self.session.game_pid = launch_result.pid
@@ -1842,40 +1975,22 @@ class WorldBuilder:
                     f"Auto-launch failed ({launch_result.reason_code}) — download fallback available"
                 )
 
-            # Pipeline success
-            self.session.state = PipelineState.READY
-            self.session.output_path = str(runtime_candidate)
-            self.session.error = None
-            self.save_session()
+        # Pipeline success
+        self.session.state = PipelineState.READY
+        self.session.output_path = str(runtime_candidate)
+        self.session.error = None
+        self.save_session()
 
-            return MVPPipelineResult(
-                success=True,
-                artifact_path=runtime_candidate,
-                launch_result=launch_result,
-                quality_label=quality_label,
-                warnings=plan_warnings,
-                failure_stage=None,
-                failure_reason_code=None,
-                failure_diagnostic=None,
-                duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                model_used=model_used,
-                attempts=attempts,
-            )
-
-        except Exception as exc:
-            self.session.state = PipelineState.ERROR
-            self.session.error = str(exc)
-            self.save_session()
-            return MVPPipelineResult(
-                success=False,
-                artifact_path=None,
-                launch_result=None,
-                quality_label="parity_only",
-                warnings=plan_warnings,
-                failure_stage=self.session.state.value if self.session.state != PipelineState.ERROR else "unknown",
-                failure_reason_code="exception",
-                failure_diagnostic=str(exc),
-                duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
-                model_used=model_used,
-                attempts=attempts,
-            )
+        return MVPPipelineResult(
+            success=True,
+            artifact_path=runtime_candidate,
+            launch_result=launch_result,
+            quality_label=quality_label,
+            warnings=plan_warnings,
+            failure_stage=None,
+            failure_reason_code=None,
+            failure_diagnostic=None,
+            duration_ms=int((time.monotonic() - self._mvp_started_at) * 1000),
+            model_used=model_used,
+            attempts=attempts,
+        )

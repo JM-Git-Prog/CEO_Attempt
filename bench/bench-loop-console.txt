@@ -721,3 +721,13 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T141404.json
 [14:19:39] bench batch rc=0
 [14:19:39] ingest: ingest: +4 records | 281 already banked | 331 plan-less rows skipped
+[14:21:09] batch: prompts 70..84 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p071: error    (17.9s) 
+  p072: error    (8.4s) 
+  p073: error    (22.9s) 
+  p074: error    (23.9s) 
+  p075: error    (8.1s) 
+  p076: error    (27.1s) 
+  p077: error    (13.7s) 
