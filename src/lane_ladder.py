@@ -198,6 +198,30 @@ async def generate_plan_with_ladder(
                     )
                     return plan, warnings, report, lane.model, total_attempts
 
+                # Plan rejected — try auto-repair before escalating
+                if report.blockers:
+                    from src.floor_plan.repair import repair_near_miss
+
+                    repair_result = repair_near_miss(plan, report, max_nudge_m=0.3)
+                    if repair_result.repaired:
+                        plan = repair_result.plan
+                        # Re-validate the repaired plan
+                        report = validate_floor_plan(plan, warnings, tolerance=tolerance)
+                        if report.valid:
+                            logger.info(
+                                "[LaneLadder] Plan auto-repaired and accepted: model=%s, attempt=%d, repairs=%s",
+                                lane.model,
+                                total_attempts,
+                                repair_result.repairs_applied,
+                            )
+                            return plan, warnings, report, lane.model, total_attempts
+                        # Still failing after repair — continue to next attempt/lane
+                        logger.info(
+                            "[LaneLadder] Auto-repair applied %d fixes but %d blockers remain",
+                            len(repair_result.repairs_applied),
+                            len(repair_result.remaining_blockers),
+                        )
+
                 # Plan rejected — log blockers and continue
                 blocker_summary = ", ".join(b.code for b in report.blockers[:3])
                 last_error = f"Structural rejection ({blocker_summary})"
