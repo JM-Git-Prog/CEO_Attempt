@@ -1,0 +1,12 @@
+C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\src\assembler\upbge_compile.py:347: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\src\assembler\upbge_compile.py:122: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  material.use_nodes = True
+Traceback (most recent call last):
+  File "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\src\assembler\upbge_compile.py", line 603, in <module>
+    main()
+  File "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\src\assembler\upbge_compile.py", line 581, in main
+    _write_inventory(output_dir, contract, plan, inventory_objects)
+  File "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\src\assembler\upbge_compile.py", line 363, in _write_inventory
+    raise FileExistsError(path)
+FileExistsError: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\output\c92c704c\mvp_compile\upbge-run-n49372ge\output\scene_inventory.json
