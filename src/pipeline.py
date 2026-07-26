@@ -1727,6 +1727,15 @@ class WorldBuilder:
             )
 
         scene_graph = scene_result.result
+
+        # Ensure scene graph has at least as many objects as the floor plan.
+        # build_scene_graph already calls _apply_plan_constraints, but if the
+        # LLM under-generates severely (e.g. 1 object vs 10 plan items), verify
+        # plan coverage was applied.  If not, re-apply constraints explicitly.
+        if plan and len(scene_graph.objects) < len(plan.items):
+            from src.scene_graph.builder import _apply_plan_constraints
+            _apply_plan_constraints(scene_graph, plan, enforce_plan_lights=True)
+
         self.session.scene_graph = scene_graph
         self._progress(f"Scene graph: {len(scene_graph.objects)} objects, {len(scene_graph.lights)} lights")
 

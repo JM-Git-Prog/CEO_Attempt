@@ -145,14 +145,40 @@ def _validate_scene(scene: SceneGraph) -> None:
             print(f"  - {e}", file=sys.stderr)
 
 
+def _infer_primitive_shape(name: str, category: str) -> str:
+    """Infer a primitive shape from an item's name/category for visual variety."""
+    combined = f"{name} {category}".lower()
+    if any(token in combined for token in ("lamp", "light", "candle", "lantern", "vase", "bottle")):
+        return "cylinder"
+    if any(token in combined for token in ("ball", "globe", "sphere", "orb")):
+        return "sphere"
+    if any(token in combined for token in ("rug", "carpet", "mat", "placemat")):
+        return "box"  # will be flattened by compiler
+    # Default: box (most versatile for furniture/architectural)
+    return "box"
+
+
 def _apply_plan_constraints(
     scene: SceneGraph, plan: FloorPlan, *, enforce_plan_lights: bool = False
 ) -> None:
-    """Make approved plan geometry authoritative over LLM-authored scene details."""
+    """Make approved plan geometry authoritative over LLM-authored scene details.
+
+    If the LLM under-generates (fewer objects than the plan specifies), this
+    function guarantees every plan item gets a SceneObject entry with reasonable
+    defaults — ensuring the scene graph always reflects the full floor plan.
+    """
     scene.room.width = plan.room.width
     scene.room.depth = plan.room.depth
     scene.room.height = plan.room.height
     authored = {obj.id: obj for obj in scene.objects}
+
+    # Diagnostic: warn if LLM under-generated significantly
+    if len(authored) < len(plan.items):
+        missing_count = len(plan.items) - len(authored)
+        print(f"[SceneGraph] LLM under-generation detected: {len(authored)} objects "
+              f"authored vs {len(plan.items)} plan items ({missing_count} will use "
+              f"fallback defaults)", file=sys.stderr)
+
     constrained: list[SceneObject] = []
     palette = {
         "furniture": "#9b7048",
@@ -163,6 +189,9 @@ def _apply_plan_constraints(
     for item in plan.items:
         obj = authored.get(item.id)
         if obj is None:
+            # Fallback: generate a default SceneObject from plan item geometry
+            # Choose primitive shape based on item category/name for variety
+            primitive = _infer_primitive_shape(item.name, item.category)
             obj = SceneObject(
                 id=item.id,
                 name=item.name,
@@ -174,9 +203,9 @@ def _apply_plan_constraints(
                     mass_kg=40.0 if item.fixed else 8.0,
                     can_topple=not item.fixed,
                 ),
-                material=MaterialProps(base_color=palette[item.category]),
+                material=MaterialProps(base_color=palette.get(item.category, "#808080")),
                 mesh_type="generated",
-                primitive_shape="box",
+                primitive_shape=primitive,
                 description=item.description,
             )
         obj.name = item.name
@@ -190,28 +219,49 @@ def _apply_plan_constraints(
             obj.physics.body_type = PhysicsBody.STATIC
         constrained.append(obj)
     scene.objects = constrained
-    if enforce_plan_lights:
+
+    # Always ensure at least one light exists (ambient fallback)
+    if enforce_plan_lights or not scene.lights:
         light_items = [
             item for item in plan.items
             if item.category == "fixture"
             and any(token in f"{item.name} {item.description}".lower() for token in ("light", "lamp", "pendant"))
         ]
-        scene.lights = [
-            SceneLight(
-                id=item.id,
-                name=item.name,
-                light_type="point",
-                position=Vec3(x=item.x, y=item.elevation, z=item.z),
-                direction=Vec3(x=0.0, y=-1.0, z=0.0),
-                color="#ffb347",
-                color_temperature_k=3000,
-                intensity=2.5,
-                range_meters=5.0,
-                spot_angle_deg=45.0,
-                cast_shadows=True,
-            )
-            for item in light_items
-        ]
+        if light_items:
+            scene.lights = [
+                SceneLight(
+                    id=item.id,
+                    name=item.name,
+                    light_type="point",
+                    position=Vec3(x=item.x, y=item.elevation, z=item.z),
+                    direction=Vec3(x=0.0, y=-1.0, z=0.0),
+                    color="#ffb347",
+                    color_temperature_k=3000,
+                    intensity=2.5,
+                    range_meters=5.0,
+                    spot_angle_deg=45.0,
+                    cast_shadows=True,
+                )
+                for item in light_items
+            ]
+        elif not scene.lights:
+            # No fixture lights in plan and LLM didn't generate any — add ambient
+            scene.lights = [
+                SceneLight(
+                    id="fallback_ambient_light",
+                    name="Ambient Light",
+                    light_type="point",
+                    position=Vec3(x=0.0, y=plan.room.height * 0.9, z=0.0),
+                    direction=Vec3(x=0.0, y=-1.0, z=0.0),
+                    color="#fff5e6",
+                    color_temperature_k=4000,
+                    intensity=3.0,
+                    range_meters=max(plan.room.width, plan.room.depth) * 1.2,
+                    spot_angle_deg=45.0,
+                    cast_shadows=True,
+                )
+            ]
+
     scene.doors = []
     scene.windows = []
     half_w, half_d = plan.room.width / 2, plan.room.depth / 2

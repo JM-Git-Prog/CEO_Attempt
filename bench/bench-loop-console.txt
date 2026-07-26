@@ -1144,3 +1144,20 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p044: timeout  (120.0s) 
   p045: timeout  (120.0s) 
 [22:58:50] bench batch rc=3221225786
+[07:16:16] bench loop up - waiting for training chain to finish first
+[07:16:16] GPU turn acquired - continuous benching begins
+[07:16:16] batch: prompts 40..54 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p041: error    (36.9s) 
+  p042: blocked  (22.4s) physical_overlap,physical_overlap,physical_overlap
+  p043: error    (19.5s) 
+  p044: error    (7.6s) 
+  p045: error    (17.7s) 
+  p046: error    (17.4s) 
+  p047: blocked  (29.4s) opening_blocked,opening_blocked
+  p048: error    (24.1s) 
+  p049: error    (22.8s) 
+  p050: error    (8.4s) 
+  p051: error    (34.5s) 
+  p052: error    (25.1s) 

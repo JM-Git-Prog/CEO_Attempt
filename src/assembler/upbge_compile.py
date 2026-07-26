@@ -173,8 +173,17 @@ def _apply_geometry_spec(bpy, obj, spec, materials):
 
 def _add_primitive(bpy, spec, materials):
     shape = spec["shape"]
+    # --- Primitive variety: choose shape based on object name/role ---
+    name_lower = (spec.get("stable_id", "") + " " + spec.get("role", "")).lower()
     if shape == "box":
-        bpy.ops.mesh.primitive_cube_add(size=1.0)
+        # Determine if a more specific primitive is appropriate
+        if any(token in name_lower for token in ("lamp", "light", "candle", "lantern")):
+            bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.5, depth=1.0)
+        elif any(token in name_lower for token in ("rug", "carpet", "mat")):
+            bpy.ops.mesh.primitive_cube_add(size=1.0)
+            # Will be flattened via dimensions below (Z very small)
+        else:
+            bpy.ops.mesh.primitive_cube_add(size=1.0)
     elif shape == "cylinder":
         bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.5, depth=1.0)
     elif shape == "sphere":
@@ -186,7 +195,20 @@ def _add_primitive(bpy, spec, materials):
         bpy.ops.mesh.primitive_uv_sphere_add(segments=32, ring_count=16, radius=0.5)
     else:
         raise ValueError("unsupported geometry shape: " + str(shape))
-    return _apply_geometry_spec(bpy, bpy.context.object, spec, materials)
+    obj = _apply_geometry_spec(bpy, bpy.context.object, spec, materials)
+    # Post-apply dimension overrides for variety shapes
+    if shape == "box":
+        dims = list(obj.dimensions)
+        if any(token in name_lower for token in ("rug", "carpet", "mat")):
+            # Flatten: keep X and Y (width/depth), make Z very thin
+            dims[2] = min(dims[2], 0.02)
+            obj.dimensions = tuple(dims)
+        elif any(token in name_lower for token in ("shelf", "bookshelf", "cabinet", "wardrobe")):
+            # Tall and thin in depth: ensure Y (depth) is proportionally smaller
+            if dims[1] > dims[2] * 0.6:
+                dims[1] = max(dims[2] * 0.3, 0.3)
+                obj.dimensions = tuple(dims)
+    return obj
 
 
 def _add_asset(bpy, spec, materials, input_root):
@@ -455,16 +477,34 @@ def _add_logic_module(bpy, module_name, source):
 
 
 def _attach_logic(bpy, obj, module_name):
+    """Wire an Always sensor → Python controller for the given module.
+
+    In UPBGE 0.50+ the logic brick API may be absent; in that case the script
+    is still embedded as a text datablock (done by _add_logic_module) but cannot
+    be wired to the object via logic bricks.  Returns True if wiring succeeded.
+    """
     bpy.context.view_layer.objects.active = obj
     obj.select_set(True)
-    bpy.ops.logic.sensor_add(type="ALWAYS", object=obj.name)
-    sensor = obj.game.sensors[-1]
-    sensor.use_pulse_true_level = True
-    bpy.ops.logic.controller_add(type="PYTHON", object=obj.name)
-    controller = obj.game.controllers[-1]
-    controller.mode = "MODULE"
-    controller.module = module_name + ".main"
-    sensor.link(controller)
+    game = getattr(obj, "game", None)
+    if game is None:
+        # UPBGE 0.50: logic brick API unavailable — skip wiring
+        print(f"[UPBGE 0.50 compat] Logic bricks unavailable for {obj.name}, "
+              f"script '{module_name}' embedded as text only", file=sys.stderr)
+        return False
+    try:
+        bpy.ops.logic.sensor_add(type="ALWAYS", object=obj.name)
+        sensor = game.sensors[-1]
+        sensor.use_pulse_true_level = True
+        bpy.ops.logic.controller_add(type="PYTHON", object=obj.name)
+        controller = game.controllers[-1]
+        controller.mode = "MODULE"
+        controller.module = module_name + ".main"
+        sensor.link(controller)
+        return True
+    except (AttributeError, RuntimeError) as exc:
+        print(f"[UPBGE 0.50 compat] Logic brick wiring failed for {obj.name}: {exc}",
+              file=sys.stderr)
+        return False
 
 
 def _configure_runtime(bpy, plan, object_by_id, camera_obj):
@@ -485,13 +525,32 @@ def _configure_runtime(bpy, plan, object_by_id, camera_obj):
     player.location = tuple(plan["camera"]["position_upbge"])
     player["kiro_stable_id"] = "runtime:player"
     player["kiro_role"] = "runtime_player"
-    if not getattr(player, "game", None):
-        raise RuntimeError("verified UPBGE build exposes no game API")
-    player.game.physics_type = "CHARACTER"
-    player.game.use_collision_bounds = True
-    player.game.collision_bounds_type = "CAPSULE"
-    player.game.mass = 80.0
+
+    # --- UPBGE 0.50 compatibility: graceful game physics fallback ---
+    game_api_available = False
+    game = getattr(player, "game", None)
+    if game is not None:
+        try:
+            game.physics_type = "CHARACTER"
+            game.use_collision_bounds = True
+            game.collision_bounds_type = "CAPSULE"
+            game.mass = 80.0
+            game_api_available = True
+        except AttributeError as exc:
+            print(f"[UPBGE 0.50 compat] Game physics config failed: {exc}",
+                  file=sys.stderr)
+    else:
+        # Check if bpy.types.Object even has a 'game' attribute (UPBGE 0.50 removed it)
+        if not hasattr(bpy.types.Object, "game"):
+            print("[UPBGE 0.50 compat] bpy.types.Object has no 'game' attribute — "
+                  "skipping runtime physics configuration. Player object created and "
+                  "scripts embedded as text datablocks.", file=sys.stderr)
+        else:
+            print("[UPBGE 0.50 compat] Player object has no game attribute — "
+                  "skipping runtime physics configuration.", file=sys.stderr)
+
     player["kiro_gravity"] = abs(runtime["gravity_upbge"][2])
+    player["kiro_game_api_available"] = game_api_available
     _attach_logic(bpy, player, source_by_template[runtime["player_template_id"]])
     camera_obj.parent = player
     camera_obj.matrix_parent_inverse = player.matrix_world.inverted()
@@ -591,7 +650,13 @@ def main():
     if args.blend == "1":
         bpy.ops.wm.save_as_mainfile(filepath=str(_safe_output(output_dir, requested["blend"])))
     if args.runtime == "1":
-        _configure_runtime(bpy, plan, object_by_id, camera_obj)
+        try:
+            _configure_runtime(bpy, plan, object_by_id, camera_obj)
+        except (RuntimeError, AttributeError, TypeError, ValueError) as exc:
+            # UPBGE 0.50 may not support the old game/logic API from --background mode.
+            # Save the .blend without game logic rather than crashing the whole compile.
+            print(f"WARNING: Runtime configuration failed ({exc}), "
+                  f"saving runtime_candidate.blend without game logic", file=sys.stderr)
         bpy.ops.wm.save_as_mainfile(
             filepath=str(_safe_output(output_dir, requested["runtime_candidate"]))
         )

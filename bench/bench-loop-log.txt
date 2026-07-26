@@ -416,3 +416,9 @@
 [22:46:42] bench batch rc=0
 [22:46:42] ingest: ingest: +0 records | 289 already banked | 597 plan-less rows skipped
 [22:48:12] batch: prompts 40..54 (llama3.1)
+[07:16:16] bench loop up - waiting for training chain to finish first
+[07:16:16] GPU turn acquired - continuous benching begins
+[07:16:16] batch: prompts 40..54 (llama3.1)
+[07:21:49] bench batch rc=0
+[07:21:49] ingest: ingest: +3 records | 289 already banked | 614 plan-less rows skipped
+[07:23:19] batch: prompts 55..69 (llama3.1)
