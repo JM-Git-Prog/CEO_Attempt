@@ -229,6 +229,11 @@ def probe_upbge_executable(
         return UPBGECapabilityReport(
             **base, reason_code="malformed_identity", diagnostics=(str(exc),)
         )
+    # UPBGE 0.50+ no longer exposes `bge` module from --background mode, but the
+    # build branch string still contains "upbge". Accept this as UPBGE identity.
+    if product != "UPBGE" and "upbge" in product_version.lower():
+        product = "UPBGE"
+        runtime = True  # bge exists at game-time in blenderplayer, just not in headless probe
     verified = product == "UPBGE" and runtime
     capabilities_present = eevee and gltf
     version_diagnostics: list[str] = []
