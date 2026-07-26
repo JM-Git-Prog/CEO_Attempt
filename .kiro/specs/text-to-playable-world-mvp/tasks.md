@@ -243,7 +243,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Per-frame step advances toward target without overshooting; step = min(|target - current|, speed_deg_s / frame_rate)
     - **Validates: Requirements 5.3**
 
-- [ ] 13. Checkpoint — Ensure all tests pass
+- [x] 13. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Integration wiring and final verification
