@@ -238,23 +238,23 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any door interaction intent, RuntimePlan accepts iff open_angle_deg in [-180,180] non-zero AND speed_deg_s in (0,720] AND physics is kinematic (not trigger/dynamic)
     - **Validates: Requirements 5.1, 5.5**
 
-  - [ ] 12.7 Write property test for door animation step convergence (Property 8)
+  - [x] 12.7 Write property test for door animation step convergence (Property 8)
     - **Property 8: Door Animation Step Convergence**
     - Per-frame step advances toward target without overshooting; step = min(|target - current|, speed_deg_s / frame_rate)
     - **Validates: Requirements 5.3**
 
-- [~] 13. Checkpoint — Ensure all tests pass
+- [ ] 13. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Integration wiring and final verification
-  - [~] 14.1 Wire all components into the pipeline orchestrator
+  - [ ] 14.1 Wire all components into the pipeline orchestrator
     - Connect session manager → FIFO queue → lane ladder → MVP validator → scene graph → contract → sidecar → parity → smoke → auto-launch → web SSE
     - Ensure each stage builds on the previous, no orphaned code
     - Verify `run_mvp()` calls all components in correct order with proper data flow
     - Verify `run_full()` (existing V11) remains unchanged and operational
     - _Requirements: 1.1, 10.1, 10.2_
 
-  - [~] 14.2 Implement session cleanup with configurable TTL
+  - [ ] 14.2 Implement session cleanup with configurable TTL
     - Background task (hourly) scans session directories
     - Remove .blend artifacts after 7 days, intermediate compiler inputs after 24 hours, temporary files immediately on session complete
     - _Requirements: 12.3_
@@ -269,7 +269,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any invalid sidecar state, verify `SidecarResult` with `success=False`, non-empty reason_code, and captured output for process failures
     - **Validates: Requirements 7.2, 7.4, 7.7**
 
-- [~] 15. Final checkpoint — Ensure all tests pass
+- [ ] 15. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

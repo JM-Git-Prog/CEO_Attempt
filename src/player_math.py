@@ -132,3 +132,40 @@ def find_spawn_position(
 
     # Fallback: drop from ceiling_height - 0.5m
     return (cx, cy, ceiling_height - 0.5)
+
+
+def compute_door_step(
+    current_angle: float,
+    target_angle: float,
+    speed_deg_s: float,
+    frame_rate: float,
+) -> float:
+    """Compute the next angle after one frame of door animation.
+
+    The step advances toward target without overshooting:
+    step = min(|target - current|, speed_deg_s / frame_rate)
+
+    Parameters
+    ----------
+    current_angle : float
+        Current door rotation angle in degrees.
+    target_angle : float
+        Target door rotation angle in degrees.
+    speed_deg_s : float
+        Door rotation speed in degrees per second. Must be > 0.
+    frame_rate : float
+        Game frame rate (frames per second). Must be > 0.
+
+    Returns
+    -------
+    float
+        New angle after one frame step.
+
+    Validates: Requirements 5.3
+    """
+    max_step = speed_deg_s / frame_rate
+    difference = target_angle - current_angle
+    # Clamp the step: advance by at most max_step in the correct direction,
+    # but never overshoot the target.
+    clamped = max(-max_step, min(max_step, difference))
+    return current_angle + clamped
