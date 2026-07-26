@@ -170,7 +170,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Building CompilerPlan twice with identical inputs produces identical SHA-256 hash
     - **Validates: Requirements 11.2**
 
-  - [~] 10.4 Write property test for RuntimePlan template hash integrity (Property 14)
+  - [x] 10.4 Write property test for RuntimePlan template hash integrity (Property 14)
     - **Property 14: RuntimePlan Template Hash Integrity**
     - Each template source SHA-256 matches corresponding entry in template_hashes
     - **Validates: Requirements 11.3**
