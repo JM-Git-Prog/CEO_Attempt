@@ -9,6 +9,7 @@ import mimetypes
 import os
 import re
 import shutil
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
@@ -23,6 +24,7 @@ from src.floor_plan.validator import validate_floor_plan
 from src.models import PipelineState, SessionMode
 from src.orchestrator.llm import LLM_MODEL, OLLAMA_URL
 from src.pipeline import SemanticBatchRejectedError, WorldBuilder
+from src.session_manager import SessionManager
 from src.telemetry import read_telemetry
 from src.web.event_log import append_event
 from src.web.history import (
@@ -35,11 +37,25 @@ from src.web.history import (
 from src.web.templates import get_index_html
 from src.workflow_provenance import normalize_interface_version, workflow_profiles
 
-app = FastAPI(title="The Living Room", version="0.9.0")
-sessions: dict[str, WorldBuilder] = {}
-session_locks: dict[str, asyncio.Lock] = {}
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
 STATIC_DIR = Path(__file__).parent / "static"
+
+# Global SessionManager for MVP session lifecycle (Req 12.2, 12.5, 12.6)
+_session_manager = SessionManager(output_base=OUTPUT_DIR)
+
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    """Mark any incomplete sessions from a previous server run as failed (Req 12.6)."""
+    count = _session_manager.mark_failed_on_restart()
+    if count:
+        print(f"[startup] Marked {count} incomplete session(s) as failed (server_restart)")
+    yield
+
+
+app = FastAPI(title="The Living Room", version="0.9.0", lifespan=_lifespan)
+sessions: dict[str, WorldBuilder] = {}
+session_locks: dict[str, asyncio.Lock] = {}
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
@@ -1001,6 +1017,7 @@ async def describe_mvp(session_id: str, request: Request):
     builder.run_mvp(description) as an async background task and returns
     immediately so the client can stream progress via the SSE /events endpoint.
 
+    Uses SessionManager for proper session isolation (Req 12.2, 12.5).
     Implements Requirements 9.1, 9.2, 9.3.
     """
     builder = _restore_builder(session_id)
@@ -1008,6 +1025,10 @@ async def describe_mvp(session_id: str, request: Request):
         builder = WorldBuilder(
             session_id=session_id, interface_version=_request_version(request)
         )
+        # Ensure MVP session has proper isolation subdirectories (Req 12.2)
+        (builder.output_dir / "input").mkdir(parents=True, exist_ok=True)
+        (builder.output_dir / "output").mkdir(parents=True, exist_ok=True)
+        (builder.output_dir / "tmp").mkdir(parents=True, exist_ok=True)
         sessions[session_id] = builder
 
     try:
@@ -1037,7 +1058,9 @@ async def describe_mvp(session_id: str, request: Request):
 
         async def _run_mvp_pipeline():
             try:
-                result = await builder.run_mvp(description)
+                result = await builder.run_mvp(
+                    description, session_manager=_session_manager
+                )
                 # Store result summary in session for later retrieval
                 builder.session.error = None
                 if not result.success:
