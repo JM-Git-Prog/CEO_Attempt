@@ -1127,3 +1127,11 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p035: timeout  (120.0s) 
   p036: timeout  (120.0s) 
   p037: timeout  (120.0s) 
+  p038: timeout  (120.0s) 
+  p039: timeout  (120.0s) 
+  p040: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T221642.json
+[22:46:42] bench batch rc=0
+[22:46:42] ingest: ingest: +0 records | 289 already banked | 597 plan-less rows skipped

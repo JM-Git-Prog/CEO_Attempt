@@ -175,7 +175,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Each template source SHA-256 matches corresponding entry in template_hashes
     - **Validates: Requirements 11.3**
 
-  - [~] 10.5 Write property test for canonical JSON format constraints (Property 15)
+  - [-] 10.5 Write property test for canonical JSON format constraints (Property 15)
     - **Property 15: Canonical JSON Format Constraints**
     - Non-finite numbers rejected; keys sorted; separators are `,`/`:`; encoding is UTF-8
     - **Validates: Requirements 11.4**
