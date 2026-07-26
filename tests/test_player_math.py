@@ -292,3 +292,79 @@ class TestFindSpawnPositionProperty:
         assert pos[0] == pytest.approx(cx)
         assert pos[1] == pytest.approx(cy)
         assert pos[2] == pytest.approx(ceiling_h - 0.5)
+
+    @given(
+        # Room center and half-extents
+        cx=st.floats(min_value=-5.0, max_value=5.0),
+        cy=st.floats(min_value=-5.0, max_value=5.0),
+        floor_z=st.floats(min_value=-5.0, max_value=5.0),
+        half_w=st.floats(min_value=3.0, max_value=10.0),
+        half_h=st.floats(min_value=3.0, max_value=10.0),
+        ceiling_h=st.floats(min_value=2.5, max_value=20.0),
+        eye_height=st.floats(min_value=1.0, max_value=2.5),
+        # Obstacle covering center: half-extents for the obstacle (small enough
+        # to leave room area free for the spiral search to succeed)
+        obs_half_w=st.floats(min_value=0.1, max_value=1.0),
+        obs_half_h=st.floats(min_value=0.1, max_value=1.0),
+    )
+    @settings(max_examples=200)
+    def test_obstructed_center_produces_valid_position(
+        self,
+        cx: float,
+        cy: float,
+        floor_z: float,
+        half_w: float,
+        half_h: float,
+        ceiling_h: float,
+        eye_height: float,
+        obs_half_w: float,
+        obs_half_h: float,
+    ):
+        """When center is obstructed but room has free space, repositioning produces
+        a valid in-bounds, correct-height, non-intersecting spawn point.
+
+        Property 6: Obstructed Spawn Repositioning
+        **Validates: Requirements 4.7**
+        """
+        # Build room bounds with guaranteed positive dimensions (half >= 3.0)
+        room_bounds = (cx - half_w, cy - half_h, cx + half_w, cy + half_h)
+
+        # Obstacle centered on cx, cy — small enough (max 1.0m half-extent)
+        # to leave the outer room area free for spiral search
+        obstacles = [
+            (cx - obs_half_w, cy - obs_half_h, cx + obs_half_w, cy + obs_half_h)
+        ]
+
+        pos = find_spawn_position(
+            floor_center=(cx, cy, floor_z),
+            ceiling_height=ceiling_h,
+            room_bounds=room_bounds,
+            obstacles=obstacles,
+            eye_height=eye_height,
+        )
+
+        min_x, min_y, max_x, max_y = room_bounds
+
+        # (a) Result is within room bounds
+        assert min_x <= pos[0] <= max_x, (
+            f"x={pos[0]} not in [{min_x}, {max_x}]"
+        )
+        assert min_y <= pos[1] <= max_y, (
+            f"y={pos[1]} not in [{min_y}, {max_y}]"
+        )
+
+        # (b) z is at the correct eye height above floor
+        assert pos[2] == pytest.approx(floor_z + eye_height), (
+            f"z={pos[2]} != floor_z + eye_height = {floor_z + eye_height}"
+        )
+
+        # (c) Result does NOT intersect any obstacle AABB
+        for obs_min_x, obs_min_y, obs_max_x, obs_max_y in obstacles:
+            in_obstacle = (
+                obs_min_x <= pos[0] <= obs_max_x
+                and obs_min_y <= pos[1] <= obs_max_y
+            )
+            assert not in_obstacle, (
+                f"pos ({pos[0]}, {pos[1]}) intersects obstacle "
+                f"({obs_min_x}, {obs_min_y}, {obs_max_x}, {obs_max_y})"
+            )

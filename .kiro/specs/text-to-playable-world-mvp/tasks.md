@@ -223,7 +223,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any sequence of mouse Y-axis movements, vertical angle stays within [-85°, +85°]
     - **Validates: Requirements 4.3**
 
-  - [~] 12.4 Write property test for obstructed spawn repositioning (Property 6)
+  - [x] 12.4 Write property test for obstructed spawn repositioning (Property 6)
     - **Property 6: Obstructed Spawn Repositioning**
     - For any room geometry with obstructed default spawn, repositioning produces a valid in-bounds, non-intersecting point
     - **Validates: Requirements 4.7**
