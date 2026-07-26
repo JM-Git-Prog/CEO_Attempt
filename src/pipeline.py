@@ -1821,17 +1821,63 @@ class WorldBuilder:
             sidecar_result = sidecar_stage_result.result
 
             if not sidecar_result.success:
-                return self._handle_stage_failure(
-                    StageFailure(
-                        stage="compiling",
-                        reason_code=sidecar_result.reason_code,
-                        diagnostic=f"Sidecar compilation failed: {sidecar_result.reason_code}",
-                        recoverable=False,
-                    ),
-                    plan_warnings=plan_warnings,
-                    model_used=model_used,
-                    attempts=attempts,
-                )
+                # Graceful degradation: if runtime_candidate failed but scene.blend
+                # and inventory exist, proceed with scene.blend as the artifact.
+                # This handles UPBGE 0.50 where _configure_runtime may crash but
+                # the basic .blend was already saved.
+                if sidecar_result.output_dir:
+                    _out = Path(sidecar_result.output_dir)
+                    _blend = _out / "scene.blend"
+                    _inv = _out / "scene_inventory.json"
+                    if _blend.is_file() and _inv.is_file():
+                        # Partial success — use scene.blend without runtime logic
+                        self._progress(
+                            f"Runtime candidate failed ({sidecar_result.reason_code}) "
+                            "— using basic .blend without game logic"
+                        )
+                        from src.upbge_sidecar import SidecarArtifact, SidecarResult as _SR
+                        sidecar_result = _SR(
+                            schema_version=sidecar_result.schema_version,
+                            success=True,
+                            status="partial",
+                            reason_code="runtime_degraded",
+                            output_dir=sidecar_result.output_dir,
+                            artifacts=(
+                                SidecarArtifact(role="blend", path=str(_blend), bytes=_blend.stat().st_size),
+                                SidecarArtifact(role="inventory", path=str(_inv), bytes=_inv.stat().st_size),
+                            ),
+                            return_code=sidecar_result.return_code,
+                            duration_ms=sidecar_result.duration_ms,
+                            stdout_tail=sidecar_result.stdout_tail,
+                            stderr_tail=sidecar_result.stderr_tail,
+                            violated_limit=None,
+                            isolation_controls=sidecar_result.isolation_controls,
+                            isolation_limitations=sidecar_result.isolation_limitations,
+                        )
+                    else:
+                        return self._handle_stage_failure(
+                            StageFailure(
+                                stage="compiling",
+                                reason_code=sidecar_result.reason_code,
+                                diagnostic=f"Sidecar compilation failed: {sidecar_result.reason_code}",
+                                recoverable=False,
+                            ),
+                            plan_warnings=plan_warnings,
+                            model_used=model_used,
+                            attempts=attempts,
+                        )
+                else:
+                    return self._handle_stage_failure(
+                        StageFailure(
+                            stage="compiling",
+                            reason_code=sidecar_result.reason_code,
+                            diagnostic=f"Sidecar compilation failed: {sidecar_result.reason_code}",
+                            recoverable=False,
+                        ),
+                        plan_warnings=plan_warnings,
+                        model_used=model_used,
+                        attempts=attempts,
+                    )
         except Exception as exc:
             # Catch unexpected errors in the compile stage boundary
             await queue.complete(self.session.session_id)

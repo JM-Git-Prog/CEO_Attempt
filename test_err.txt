@@ -1,0 +1,5 @@
+usage: blender.exe [-h] --input INPUT --plan PLAN --output-dir OUTPUT_DIR
+                   --render {0,1} --blend {0,1} --glb {0,1} --runtime {0,1}
+                   --max-objects MAX_OBJECTS --max-polygons MAX_POLYGONS
+                   --max-texture-dimension MAX_TEXTURE_DIMENSION
+blender.exe: error: unrecognized arguments: Applications\Kiro\CEO_Kiro\CEO_Attempt\output\ccdce0a2\mvp_compile\upbge-run-_hmpof07\input\world_contract.json Applications\Kiro\CEO_Kiro\CEO_Attempt\output\ccdce0a2\mvp_compile\upbge-run-_hmpof07\input\compiler_plan.json Applications\Kiro\CEO_Kiro\CEO_Attempt\output\ccdce0a2\mvp_compile\upbge-run-_hmpof07\output
