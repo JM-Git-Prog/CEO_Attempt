@@ -78,10 +78,7 @@ def _validate_inputs(args):
         for role in ("render", "blend", "glb", "runtime")
         if getattr(args, role) == "1"
     }
-    planned = {
-        "runtime" if role == "runtime_candidate" else role
-        for role in set(outputs) - {"inventory"}
-    }
+    planned = set(outputs) - {"inventory"}
     if planned != enabled or outputs.get("inventory") != "scene_inventory.json":
         raise ValueError("command output flags do not match signed compiler plan")
     for role, filename in outputs.items():
