@@ -125,7 +125,7 @@ INDEX_HTML = """<!doctype html>
     <section class="conversation">
       __INTRO__
       <div id="messages" class="messages" aria-live="polite"></div>
-      <form id="composer" class="composer"><label class="composer-label" for="input">Describe your room</label><span class="composer-help" id="inputHelp">Include layout, era, materials, lighting, and openings. Enter submits; Shift+Enter adds a line.</span><textarea id="input" rows="3" aria-describedby="inputHelp" placeholder="A sunken 1970s lounge with walnut walls, amber lamps and rain against a wide window…"></textarea><button id="sendBtn" type="submit">Generate space plan <span>↗</span></button></form>
+      <form id="composer" class="composer"><label class="composer-label" for="input">Describe your room</label><span class="composer-help" id="inputHelp">Include layout, era, materials, lighting, and openings. Enter submits; Shift+Enter adds a line.</span><textarea id="input" rows="3" aria-describedby="inputHelp" placeholder="A sunken 1970s lounge with walnut walls, amber lamps and rain against a wide window…"></textarea><div class="composer-actions"><button id="mvpBtn" type="button" class="mvp-generate-btn" onclick="sendDescriptionMvp()">Generate &amp; Play ⚡</button><button id="sendBtn" type="submit">Generate space plan <span>↗</span></button></div></form>
     </section>
     __WORKSPACE_SPLITTER__
     <aside class="stage">

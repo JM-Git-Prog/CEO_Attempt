@@ -207,3 +207,10 @@
 .mvp-instructions-box{margin:12px auto 0;max-width:480px;padding:12px 16px;border:1px solid #5d482d;background:#1a1308;text-align:left;font-size:12px;line-height:1.55;color:#e8d5b5}
 .mvp-instructions-box strong{display:block;margin-bottom:6px;color:var(--amber);font:700 10px ui-monospace,monospace;letter-spacing:.04em}
 .mvp-instructions-box p{margin:0;color:#d1bc96}
+
+/* MVP Generate & Play button + composer actions layout */
+.composer-actions{display:flex;gap:0;width:100%}
+.composer-actions button{flex:1}
+.mvp-generate-btn{padding:12px 14px;background:#1a472e;color:var(--green);border:0;border-right:1px solid var(--line);cursor:pointer;font-weight:700;transition:background .15s,color .15s}
+.mvp-generate-btn:hover{background:#215c3a;color:#a1ffc7}
+.mvp-generate-btn:disabled{background:#1a2420;color:#567;cursor:wait}
