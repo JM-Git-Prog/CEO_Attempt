@@ -1955,3 +1955,8 @@ ModuleNotFoundError: No module named 'datasets'
   p010: blocked  (88.1s) camera_inside_geometry
   p011: legal    (99.8s) 
   p012: timeout  (120.0s) 
+[13:28:24] flywheel loop up - waiting for corpus growth before the first cycle
+[13:28:24] threshold met (251 new rows, 622 total) - starting a cycle
+[13:28:24] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===

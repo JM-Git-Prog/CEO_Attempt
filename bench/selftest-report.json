@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-26 13:18:58",
+  "generated": "2026-07-26 13:28:28",
   "live": false,
-  "passed": 10,
-  "failed": 1,
+  "passed": 11,
+  "failed": 0,
   "checks": [
     {
       "check": "1 imports",
@@ -12,9 +12,9 @@
     },
     {
       "check": "2 training interpreter",
-      "ok": false,
-      "detail": "OSError: [Errno 8] Exec format error: '/sessions/bold-lucid-knuth/mnt/Kiro/CEO_Kiro/CEO_Attempt/bench/venv-train/Scripts/python.exe'",
-      "seconds": 0.0
+      "ok": true,
+      "detail": "torch 2.11.0+cu126, CUDA available",
+      "seconds": 3.1
     },
     {
       "check": "3 relation reconciler",
@@ -50,25 +50,25 @@
       "check": "4 geometry repair wiring",
       "ok": true,
       "detail": "a failing plan was rescued in _one_plan (1 nudges) and tagged",
-      "seconds": 1.2
+      "seconds": 0.2
     },
     {
       "check": "5 corpus round-trip",
       "ok": true,
       "detail": "row reached the corpus with repaired_by_math + synthesized_relations intact",
-      "seconds": 1.1
+      "seconds": 0.1
     },
     {
       "check": "6 stuck detector",
       "ok": true,
-      "detail": "stale progress (21.3h old) correctly ignored, real freezes still caught",
+      "detail": "stale progress (21.5h old) correctly ignored, real freezes still caught",
       "seconds": 0.0
     },
     {
       "check": "7 dashboard",
       "ok": true,
-      "detail": "flywheel-dashboard.html generated (7222 bytes)",
-      "seconds": 3.9
+      "detail": "flywheel-dashboard.html generated (7221 bytes)",
+      "seconds": 0.2
     }
   ]
 }

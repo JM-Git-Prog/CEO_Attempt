@@ -2573,3 +2573,8 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T132740.json
 [13:27:52] bench batch rc=0
 [13:27:53] ingest: ingest: +0 records | 497 already banked | 1526 plan-less rows skipped
+[13:28:24] bench loop up - waiting for training chain to finish first
+[13:28:24] GPU turn acquired - continuous benching begins
+[13:28:24] batch: prompts 40..54 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
