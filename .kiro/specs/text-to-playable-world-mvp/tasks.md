@@ -165,22 +165,22 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any valid WorldContract, serialize → deserialize produces structurally equal instance
     - **Validates: Requirements 11.1**
 
-  - [ ]* 10.3 Write property test for CompilerPlan deterministic hash (Property 13)
+  - [x] 10.3 Write property test for CompilerPlan deterministic hash (Property 13)
     - **Property 13: CompilerPlan Deterministic Hash**
     - Building CompilerPlan twice with identical inputs produces identical SHA-256 hash
     - **Validates: Requirements 11.2**
 
-  - [ ]* 10.4 Write property test for RuntimePlan template hash integrity (Property 14)
+  - [~] 10.4 Write property test for RuntimePlan template hash integrity (Property 14)
     - **Property 14: RuntimePlan Template Hash Integrity**
     - Each template source SHA-256 matches corresponding entry in template_hashes
     - **Validates: Requirements 11.3**
 
-  - [ ]* 10.5 Write property test for canonical JSON format constraints (Property 15)
+  - [~] 10.5 Write property test for canonical JSON format constraints (Property 15)
     - **Property 15: Canonical JSON Format Constraints**
     - Non-finite numbers rejected; keys sorted; separators are `,`/`:`; encoding is UTF-8
     - **Validates: Requirements 11.4**
 
-  - [ ]* 10.6 Write property test for deserialization validation errors (Property 16)
+  - [~] 10.6 Write property test for deserialization validation errors (Property 16)
     - **Property 16: Deserialization Validation Errors**
     - Non-conforming bytes raise validation error with identified element, never silently coerce
     - **Validates: Requirements 11.5**
