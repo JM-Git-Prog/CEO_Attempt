@@ -377,3 +377,39 @@
 [15:57:05] bench batch rc=0
 [15:57:05] ingest: ingest: +0 records | 289 already banked | 402 plan-less rows skipped
 [15:58:35] batch: prompts 45..59 (llama3.1)
+[16:28:35] bench batch rc=0
+[16:28:35] ingest: ingest: +0 records | 289 already banked | 417 plan-less rows skipped
+[16:30:05] batch: prompts 60..74 (llama3.1)
+[17:00:06] bench batch rc=0
+[17:00:06] ingest: ingest: +0 records | 289 already banked | 432 plan-less rows skipped
+[17:01:36] batch: prompts 75..89 (llama3.1)
+[17:31:36] bench batch rc=0
+[17:31:36] ingest: ingest: +0 records | 289 already banked | 447 plan-less rows skipped
+[17:33:06] batch: prompts 90..4 (llama3.1)
+[18:03:07] bench batch rc=0
+[18:03:07] ingest: ingest: +0 records | 289 already banked | 462 plan-less rows skipped
+[18:04:37] batch: prompts 5..19 (llama3.1)
+[18:34:37] bench batch rc=0
+[18:34:38] ingest: ingest: +0 records | 289 already banked | 477 plan-less rows skipped
+[18:36:08] batch: prompts 20..34 (llama3.1)
+[19:06:08] bench batch rc=0
+[19:06:08] ingest: ingest: +0 records | 289 already banked | 492 plan-less rows skipped
+[19:07:38] batch: prompts 35..49 (llama3.1)
+[19:37:39] bench batch rc=0
+[19:37:39] ingest: ingest: +0 records | 289 already banked | 507 plan-less rows skipped
+[19:39:09] batch: prompts 50..64 (llama3.1)
+[20:09:09] bench batch rc=0
+[20:09:09] ingest: ingest: +0 records | 289 already banked | 522 plan-less rows skipped
+[20:10:39] batch: prompts 65..79 (llama3.1)
+[20:40:40] bench batch rc=0
+[20:40:40] ingest: ingest: +0 records | 289 already banked | 537 plan-less rows skipped
+[20:42:10] batch: prompts 80..94 (llama3.1)
+[21:12:10] bench batch rc=0
+[21:12:10] ingest: ingest: +0 records | 289 already banked | 552 plan-less rows skipped
+[21:13:40] batch: prompts 95..9 (llama3.1)
+[21:43:41] bench batch rc=0
+[21:43:41] ingest: ingest: +0 records | 289 already banked | 567 plan-less rows skipped
+[21:45:11] batch: prompts 10..24 (llama3.1)
+[22:15:12] bench batch rc=0
+[22:15:12] ingest: ingest: +0 records | 289 already banked | 582 plan-less rows skipped
+[22:16:42] batch: prompts 25..39 (llama3.1)

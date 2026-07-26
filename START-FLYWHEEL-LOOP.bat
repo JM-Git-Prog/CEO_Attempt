@@ -11,7 +11,7 @@ echo resumes it after, even if a cycle fails. Pause the WHOLE flywheel any
 echo time by creating bench\PAUSE-FLYWHEEL.txt. Log: bench\flywheel-log.txt
 echo.
 cd /d "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt"
-start "flywheel-loop" /min cmd /c "cd /d "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt" && python bench\flywheel_loop.py >> bench\flywheel-console.txt 2>&1"
+start "flywheel-loop" /min cmd /c "cd /d "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt" && bench\venv-train\Scripts\python bench\flywheel_loop.py >> bench\flywheel-console.txt 2>&1"
 echo Loop launched minimized. The Training Monitor shows its live status.
 echo.
 pause

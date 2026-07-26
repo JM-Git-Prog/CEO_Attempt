@@ -1,5 +1,5 @@
 {
- "started": "2026-07-25 15:58:35",
+ "started": "2026-07-25 19:39:09",
  "prompts": 15,
  "lanes": {
   "llama3.1": {
@@ -8,31 +8,6 @@
    "legal_rate": 0.0,
    "violation_census": {},
    "rows": [
-    {
-     "status": "timeout",
-     "seconds": 120.0,
-     "prompt_id": "p046"
-    },
-    {
-     "status": "timeout",
-     "seconds": 120.0,
-     "prompt_id": "p047"
-    },
-    {
-     "status": "timeout",
-     "seconds": 120.0,
-     "prompt_id": "p048"
-    },
-    {
-     "status": "timeout",
-     "seconds": 120.0,
-     "prompt_id": "p049"
-    },
-    {
-     "status": "timeout",
-     "seconds": 120.0,
-     "prompt_id": "p050"
-    },
     {
      "status": "timeout",
      "seconds": 120.0,
@@ -82,9 +57,34 @@
      "status": "timeout",
      "seconds": 120.0,
      "prompt_id": "p060"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p061"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p062"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p063"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p064"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p065"
     }
    ]
   }
  },
- "finished": "2026-07-25 16:28:35"
+ "finished": "2026-07-25 20:09:09"
 }

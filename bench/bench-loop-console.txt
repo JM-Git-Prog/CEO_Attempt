@@ -848,3 +848,277 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p052: timeout  (120.0s) 
   p053: timeout  (120.0s) 
   p054: timeout  (120.0s) 
+  p055: timeout  (120.0s) 
+  p056: timeout  (120.0s) 
+  p057: timeout  (120.0s) 
+  p058: timeout  (120.0s) 
+  p059: timeout  (120.0s) 
+  p060: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T155835.json
+[16:28:35] bench batch rc=0
+[16:28:35] ingest: ingest: +0 records | 289 already banked | 417 plan-less rows skipped
+[16:30:05] batch: prompts 60..74 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p061: timeout  (120.0s) 
+  p062: timeout  (120.0s) 
+  p063: timeout  (120.0s) 
+  p064: timeout  (120.0s) 
+  p065: timeout  (120.0s) 
+  p066: timeout  (120.0s) 
+  p067: timeout  (120.0s) 
+  p068: timeout  (120.0s) 
+  p069: timeout  (120.0s) 
+  p070: timeout  (120.0s) 
+  p071: timeout  (120.0s) 
+  p072: timeout  (120.0s) 
+  p073: timeout  (120.0s) 
+  p074: timeout  (120.0s) 
+  p075: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T163005.json
+[17:00:06] bench batch rc=0
+[17:00:06] ingest: ingest: +0 records | 289 already banked | 432 plan-less rows skipped
+[17:01:36] batch: prompts 75..89 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p076: timeout  (120.0s) 
+  p077: timeout  (120.0s) 
+  p078: timeout  (120.0s) 
+  p079: timeout  (120.0s) 
+  p080: timeout  (120.0s) 
+  p081: timeout  (120.0s) 
+  p082: timeout  (120.0s) 
+  p083: timeout  (120.0s) 
+  p084: timeout  (120.0s) 
+  p085: timeout  (120.0s) 
+  p086: timeout  (120.0s) 
+  p087: timeout  (120.0s) 
+  p088: timeout  (120.0s) 
+  p089: timeout  (120.0s) 
+  p090: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T170136.json
+[17:31:36] bench batch rc=0
+[17:31:36] ingest: ingest: +0 records | 289 already banked | 447 plan-less rows skipped
+[17:33:06] batch: prompts 90..4 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p091: timeout  (120.0s) 
+  p092: timeout  (120.0s) 
+  p093: timeout  (120.0s) 
+  p094: timeout  (120.0s) 
+  p095: timeout  (120.0s) 
+  p096: timeout  (120.0s) 
+  p097: timeout  (120.0s) 
+  p098: timeout  (120.0s) 
+  p099: timeout  (120.0s) 
+  p100: timeout  (120.0s) 
+  p001: timeout  (120.0s) 
+  p002: timeout  (120.0s) 
+  p003: timeout  (120.0s) 
+  p004: timeout  (120.0s) 
+  p005: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T173306.json
+[18:03:07] bench batch rc=0
+[18:03:07] ingest: ingest: +0 records | 289 already banked | 462 plan-less rows skipped
+[18:04:37] batch: prompts 5..19 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p006: timeout  (120.0s) 
+  p007: timeout  (120.0s) 
+  p008: timeout  (120.0s) 
+  p009: timeout  (120.0s) 
+  p010: timeout  (120.0s) 
+  p011: timeout  (120.0s) 
+  p012: timeout  (120.0s) 
+  p013: timeout  (120.0s) 
+  p014: timeout  (120.0s) 
+  p015: timeout  (120.0s) 
+  p016: timeout  (120.0s) 
+  p017: timeout  (120.0s) 
+  p018: timeout  (120.0s) 
+  p019: timeout  (120.0s) 
+  p020: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T180437.json
+[18:34:37] bench batch rc=0
+[18:34:38] ingest: ingest: +0 records | 289 already banked | 477 plan-less rows skipped
+[18:36:08] batch: prompts 20..34 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p021: timeout  (120.0s) 
+  p022: timeout  (120.0s) 
+  p023: timeout  (120.0s) 
+  p024: timeout  (120.0s) 
+  p025: timeout  (120.0s) 
+  p026: timeout  (120.0s) 
+  p027: timeout  (120.0s) 
+  p028: timeout  (120.0s) 
+  p029: timeout  (120.0s) 
+  p030: timeout  (120.0s) 
+  p031: timeout  (120.0s) 
+  p032: timeout  (120.0s) 
+  p033: timeout  (120.0s) 
+  p034: timeout  (120.0s) 
+  p035: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T183608.json
+[19:06:08] bench batch rc=0
+[19:06:08] ingest: ingest: +0 records | 289 already banked | 492 plan-less rows skipped
+[19:07:38] batch: prompts 35..49 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p036: timeout  (120.0s) 
+  p037: timeout  (120.0s) 
+  p038: timeout  (120.0s) 
+  p039: timeout  (120.0s) 
+  p040: timeout  (120.0s) 
+  p041: timeout  (120.0s) 
+  p042: timeout  (120.0s) 
+  p043: timeout  (120.0s) 
+  p044: timeout  (120.0s) 
+  p045: timeout  (120.0s) 
+  p046: timeout  (120.0s) 
+  p047: timeout  (120.0s) 
+  p048: timeout  (120.0s) 
+  p049: timeout  (120.0s) 
+  p050: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T190738.json
+[19:37:39] bench batch rc=0
+[19:37:39] ingest: ingest: +0 records | 289 already banked | 507 plan-less rows skipped
+[19:39:09] batch: prompts 50..64 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p051: timeout  (120.0s) 
+  p052: timeout  (120.0s) 
+  p053: timeout  (120.0s) 
+  p054: timeout  (120.0s) 
+  p055: timeout  (120.0s) 
+  p056: timeout  (120.0s) 
+  p057: timeout  (120.0s) 
+  p058: timeout  (120.0s) 
+  p059: timeout  (120.0s) 
+  p060: timeout  (120.0s) 
+  p061: timeout  (120.0s) 
+  p062: timeout  (120.0s) 
+  p063: timeout  (120.0s) 
+  p064: timeout  (120.0s) 
+  p065: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T193909.json
+[20:09:09] bench batch rc=0
+[20:09:09] ingest: ingest: +0 records | 289 already banked | 522 plan-less rows skipped
+[20:10:39] batch: prompts 65..79 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p066: timeout  (120.0s) 
+  p067: timeout  (120.0s) 
+  p068: timeout  (120.0s) 
+  p069: timeout  (120.0s) 
+  p070: timeout  (120.0s) 
+  p071: timeout  (120.0s) 
+  p072: timeout  (120.0s) 
+  p073: timeout  (120.0s) 
+  p074: timeout  (120.0s) 
+  p075: timeout  (120.0s) 
+  p076: timeout  (120.0s) 
+  p077: timeout  (120.0s) 
+  p078: timeout  (120.0s) 
+  p079: timeout  (120.0s) 
+  p080: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T201039.json
+[20:40:40] bench batch rc=0
+[20:40:40] ingest: ingest: +0 records | 289 already banked | 537 plan-less rows skipped
+[20:42:10] batch: prompts 80..94 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p081: timeout  (120.0s) 
+  p082: timeout  (120.0s) 
+  p083: timeout  (120.0s) 
+  p084: timeout  (120.0s) 
+  p085: timeout  (120.0s) 
+  p086: timeout  (120.0s) 
+  p087: timeout  (120.0s) 
+  p088: timeout  (120.0s) 
+  p089: timeout  (120.0s) 
+  p090: timeout  (120.0s) 
+  p091: timeout  (120.0s) 
+  p092: timeout  (120.0s) 
+  p093: timeout  (120.0s) 
+  p094: timeout  (120.0s) 
+  p095: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T204210.json
+[21:12:10] bench batch rc=0
+[21:12:10] ingest: ingest: +0 records | 289 already banked | 552 plan-less rows skipped
+[21:13:40] batch: prompts 95..9 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p096: timeout  (120.0s) 
+  p097: timeout  (120.0s) 
+  p098: timeout  (120.0s) 
+  p099: timeout  (120.0s) 
+  p100: timeout  (120.0s) 
+  p001: timeout  (120.0s) 
+  p002: timeout  (120.0s) 
+  p003: timeout  (120.0s) 
+  p004: timeout  (120.0s) 
+  p005: timeout  (120.0s) 
+  p006: timeout  (120.0s) 
+  p007: timeout  (120.0s) 
+  p008: timeout  (120.0s) 
+  p009: timeout  (120.0s) 
+  p010: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T211341.json
+[21:43:41] bench batch rc=0
+[21:43:41] ingest: ingest: +0 records | 289 already banked | 567 plan-less rows skipped
+[21:45:11] batch: prompts 10..24 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p011: timeout  (120.0s) 
+  p012: timeout  (120.0s) 
+  p013: timeout  (120.0s) 
+  p014: timeout  (120.0s) 
+  p015: timeout  (120.0s) 
+  p016: timeout  (120.0s) 
+  p017: timeout  (120.0s) 
+  p018: timeout  (120.0s) 
+  p019: timeout  (120.0s) 
+  p020: timeout  (120.0s) 
+  p021: timeout  (120.0s) 
+  p022: timeout  (120.0s) 
+  p023: timeout  (120.0s) 
+  p024: timeout  (120.0s) 
+  p025: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260725T214511.json
+[22:15:12] bench batch rc=0
+[22:15:12] ingest: ingest: +0 records | 289 already banked | 582 plan-less rows skipped
+[22:16:42] batch: prompts 25..39 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p026: timeout  (120.0s) 
+  p027: timeout  (120.0s) 
+  p028: timeout  (120.0s) 
+  p029: timeout  (120.0s) 
+  p030: timeout  (120.0s) 
+  p031: timeout  (120.0s) 
+  p032: timeout  (120.0s) 

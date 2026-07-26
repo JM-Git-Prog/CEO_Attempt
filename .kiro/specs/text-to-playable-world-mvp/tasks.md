@@ -150,7 +150,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any stage failure, verify result contains stage name + reason_code + diagnostic, and session state remains uncorrupted
     - **Validates: Requirements 1.5**
 
-- [-] 9. Checkpoint — Ensure all tests pass
+- [x] 9. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 10. Serialization and Contract Integrity
@@ -160,7 +160,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Ensure deserialization raises validation error on non-conforming input (missing fields, unknown fields, type mismatches) identifying the first bad element
     - _Requirements: 11.4, 11.5_
 
-  - [ ]* 10.2 Write property test for serialization round-trip (Property 12)
+  - [x] 10.2 Write property test for serialization round-trip (Property 12)
     - **Property 12: WorldContract Serialization Round-Trip**
     - For any valid WorldContract, serialize → deserialize produces structurally equal instance
     - **Validates: Requirements 11.1**
