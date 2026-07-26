@@ -56,19 +56,22 @@ class TestDoorStepNoOvershooting:
     def test_result_between_current_and_target(
         self, current: float, target: float, speed: float, fps: float
     ):
-        """Result is always between current and target (inclusive)."""
-        # Skip near-equal cases where floating-point arithmetic can't
-        # distinguish between "overshooting" and "at target"
+        """Result is always between current and target (inclusive).
+
+        Due to floating-point arithmetic (current + clamped != target exactly),
+        we allow a tiny tolerance (1e-9 degrees) for the overshoot check.
+        """
         assume(abs(current - target) > 1e-9)
 
         result = compute_door_step(current, target, speed, fps)
+        tol = 1e-9  # floating-point tolerance for overshoot detection
 
         if current <= target:
-            assert current <= result <= target, (
+            assert current - tol <= result <= target + tol, (
                 f"Overshoot: current={current}, target={target}, result={result}"
             )
         else:
-            assert target <= result <= current, (
+            assert target - tol <= result <= current + tol, (
                 f"Overshoot: current={current}, target={target}, result={result}"
             )
 
