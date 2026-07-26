@@ -1,0 +1,25 @@
+replayed          : 182 failing plans
+RESCUED by math   : 48  (26.4%)
+still failing     : 134
+replayed clean    : 0 (not credited)
+unparseable       : 0
+cost              : 0.6 ms mean, 2.8 ms worst
+
+rescued, by what was originally wrong:
+     42  out_of_bounds
+      3  out_of_bounds,physical_overlap
+      2  opening_blocked,out_of_bounds
+      1  physical_overlap
+NOT rescued, by what was originally wrong:
+     25  physical_overlap
+     22  opening_blocked
+     20  opening_blocked,out_of_bounds
+     15  out_of_bounds,physical_overlap
+     10  opening_blocked,out_of_bounds,physical_overlap
+     10  camera_inside_geometry,opening_blocked,out_of_bounds,physical_overlap
+      8  opening_blocked,physical_overlap
+      7  camera_inside_geometry,out_of_bounds
+      5  camera_inside_geometry
+      4  out_of_bounds
+
+wrote /sessions/bold-lucid-knuth/mnt/Kiro/CEO_Kiro/CEO_Attempt/bench/repair-harvest-proof.json

@@ -72,6 +72,13 @@ def main() -> int:
                     "plan": row["plan"],
                     "per_gate_verdicts": {"plan": "passed" if legal else "failed"},
                     "failure_signatures": [f"plan/validator/{c}" for c in row.get("blockers", [])],
+                    # Carried through so training prep can include or exclude
+                    # math-repaired exemplars and measure the difference. A
+                    # repaired row passed the SAME strict validator as any
+                    # other, but its coordinates were nudged, not authored.
+                    "repaired_by_math": bool(row.get("repaired_by_math")),
+                    "repairs_applied": row.get("repairs_applied") or [],
+                    "blockers_before_repair": row.get("blockers_before_repair") or [],
                     "model_lane": lane,
                     "qualification_mode": "bench",
                     "pipeline_era": "pre-inversion",

@@ -239,3 +239,1023 @@ ModuleNotFoundError: No module named 'datasets'
 [07:35:03] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
 
 === LANE glm-5.2:cloud — 15 prompts ===
+[07:36:06] flywheel loop up - waiting for corpus growth before the first cycle
+[07:36:06] threshold met (53 new rows, 424 total) - starting a cycle
+[07:36:06] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[07:37:09] flywheel loop up - waiting for corpus growth before the first cycle
+[07:37:09] threshold met (53 new rows, 424 total) - starting a cycle
+[07:37:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.6s) 
+[07:38:11] flywheel loop up - waiting for corpus growth before the first cycle
+[07:38:11] threshold met (53 new rows, 424 total) - starting a cycle
+[07:38:11] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (46.4s) 
+[07:39:14] flywheel loop up - waiting for corpus growth before the first cycle
+[07:39:14] threshold met (53 new rows, 424 total) - starting a cycle
+[07:39:14] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (35.3s) 
+[07:40:17] flywheel loop up - waiting for corpus growth before the first cycle
+[07:40:17] threshold met (53 new rows, 424 total) - starting a cycle
+[07:40:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[07:41:19] flywheel loop up - waiting for corpus growth before the first cycle
+[07:41:19] threshold met (53 new rows, 424 total) - starting a cycle
+[07:41:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.9s) 
+[07:42:22] flywheel loop up - waiting for corpus growth before the first cycle
+[07:42:22] threshold met (54 new rows, 425 total) - starting a cycle
+[07:42:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (47.1s) out_of_bounds,out_of_bounds,out_of_bounds
+[07:43:25] flywheel loop up - waiting for corpus growth before the first cycle
+[07:43:25] threshold met (54 new rows, 425 total) - starting a cycle
+[07:43:25] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (43.5s) 
+[07:44:27] flywheel loop up - waiting for corpus growth before the first cycle
+[07:44:27] threshold met (54 new rows, 425 total) - starting a cycle
+[07:44:27] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (57.4s) 
+[07:45:30] flywheel loop up - waiting for corpus growth before the first cycle
+[07:45:30] threshold met (54 new rows, 425 total) - starting a cycle
+[07:45:30] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (55.9s) 
+[07:46:33] flywheel loop up - waiting for corpus growth before the first cycle
+[07:46:33] threshold met (54 new rows, 425 total) - starting a cycle
+[07:46:33] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (34.0s) 
+[07:47:35] flywheel loop up - waiting for corpus growth before the first cycle
+[07:47:35] threshold met (54 new rows, 425 total) - starting a cycle
+[07:47:35] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (57.8s) 
+[07:48:38] flywheel loop up - waiting for corpus growth before the first cycle
+[07:48:38] threshold met (60 new rows, 431 total) - starting a cycle
+[07:48:38] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (50.9s) 
+[07:49:41] flywheel loop up - waiting for corpus growth before the first cycle
+[07:49:41] threshold met (60 new rows, 431 total) - starting a cycle
+[07:49:41] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (55.6s) out_of_bounds,out_of_bounds,out_of_bounds
+[07:50:43] flywheel loop up - waiting for corpus growth before the first cycle
+[07:50:43] threshold met (60 new rows, 431 total) - starting a cycle
+[07:50:43] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.1s) 
+[07:51:46] flywheel loop up - waiting for corpus growth before the first cycle
+[07:51:46] threshold met (60 new rows, 431 total) - starting a cycle
+[07:51:46] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (54.5s) 
+[07:52:48] flywheel loop up - waiting for corpus growth before the first cycle
+[07:52:48] threshold met (60 new rows, 431 total) - starting a cycle
+[07:52:48] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[07:53:51] flywheel loop up - waiting for corpus growth before the first cycle
+[07:53:51] threshold met (60 new rows, 431 total) - starting a cycle
+[07:53:51] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[07:54:54] flywheel loop up - waiting for corpus growth before the first cycle
+[07:54:54] threshold met (60 new rows, 431 total) - starting a cycle
+[07:54:54] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (47.1s) out_of_bounds,out_of_bounds,out_of_bounds
+[07:55:56] flywheel loop up - waiting for corpus growth before the first cycle
+[07:55:56] threshold met (66 new rows, 437 total) - starting a cycle
+[07:55:56] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.0s) 
+[07:56:59] flywheel loop up - waiting for corpus growth before the first cycle
+[07:56:59] threshold met (66 new rows, 437 total) - starting a cycle
+[07:56:59] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.6s) 
+[07:58:01] flywheel loop up - waiting for corpus growth before the first cycle
+[07:58:01] threshold met (66 new rows, 437 total) - starting a cycle
+[07:58:01] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.9s) 
+[07:59:04] flywheel loop up - waiting for corpus growth before the first cycle
+[07:59:04] threshold met (66 new rows, 437 total) - starting a cycle
+[07:59:04] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (43.9s) 
+[08:00:07] flywheel loop up - waiting for corpus growth before the first cycle
+[08:00:07] threshold met (66 new rows, 437 total) - starting a cycle
+[08:00:07] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.5s) 
+[08:01:09] flywheel loop up - waiting for corpus growth before the first cycle
+[08:01:09] threshold met (66 new rows, 437 total) - starting a cycle
+[08:01:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (53.0s) 
+[08:02:12] flywheel loop up - waiting for corpus growth before the first cycle
+[08:02:12] threshold met (66 new rows, 437 total) - starting a cycle
+[08:02:12] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (32.2s) 
+[08:03:14] flywheel loop up - waiting for corpus growth before the first cycle
+[08:03:14] threshold met (66 new rows, 437 total) - starting a cycle
+[08:03:14] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (55.1s) 
+[08:04:17] flywheel loop up - waiting for corpus growth before the first cycle
+[08:04:17] threshold met (70 new rows, 441 total) - starting a cycle
+[08:04:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (53.3s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:05:19] flywheel loop up - waiting for corpus growth before the first cycle
+[08:05:19] threshold met (70 new rows, 441 total) - starting a cycle
+[08:05:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:06:22] flywheel loop up - waiting for corpus growth before the first cycle
+[08:06:22] threshold met (70 new rows, 441 total) - starting a cycle
+[08:06:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:07:25] flywheel loop up - waiting for corpus growth before the first cycle
+[08:07:25] threshold met (70 new rows, 441 total) - starting a cycle
+[08:07:25] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (51.9s) 
+[08:08:27] flywheel loop up - waiting for corpus growth before the first cycle
+[08:08:27] threshold met (70 new rows, 441 total) - starting a cycle
+[08:08:27] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (45.1s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:09:30] flywheel loop up - waiting for corpus growth before the first cycle
+[08:09:30] threshold met (70 new rows, 441 total) - starting a cycle
+[08:09:30] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (45.0s) 
+[08:10:32] flywheel loop up - waiting for corpus growth before the first cycle
+[08:10:32] threshold met (70 new rows, 441 total) - starting a cycle
+[08:10:32] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (46.8s) 
+[08:11:35] flywheel loop up - waiting for corpus growth before the first cycle
+[08:11:35] threshold met (81 new rows, 452 total) - starting a cycle
+[08:11:35] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (48.0s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:12:38] flywheel loop up - waiting for corpus growth before the first cycle
+[08:12:38] threshold met (81 new rows, 452 total) - starting a cycle
+[08:12:38] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.0s) 
+[08:13:40] flywheel loop up - waiting for corpus growth before the first cycle
+[08:13:40] threshold met (81 new rows, 452 total) - starting a cycle
+[08:13:40] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.3s) 
+[08:14:43] flywheel loop up - waiting for corpus growth before the first cycle
+[08:14:43] threshold met (81 new rows, 452 total) - starting a cycle
+[08:14:43] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:15:45] flywheel loop up - waiting for corpus growth before the first cycle
+[08:15:45] threshold met (81 new rows, 452 total) - starting a cycle
+[08:15:45] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (50.4s) 
+[08:16:48] flywheel loop up - waiting for corpus growth before the first cycle
+[08:16:48] threshold met (81 new rows, 452 total) - starting a cycle
+[08:16:48] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:17:51] flywheel loop up - waiting for corpus growth before the first cycle
+[08:17:51] threshold met (81 new rows, 452 total) - starting a cycle
+[08:17:51] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.0s) 
+[08:18:53] flywheel loop up - waiting for corpus growth before the first cycle
+[08:18:53] threshold met (81 new rows, 452 total) - starting a cycle
+[08:18:53] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (50.0s) 
+[08:19:56] flywheel loop up - waiting for corpus growth before the first cycle
+[08:19:56] threshold met (85 new rows, 456 total) - starting a cycle
+[08:19:56] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (28.5s) 
+[08:20:58] flywheel loop up - waiting for corpus growth before the first cycle
+[08:20:58] threshold met (85 new rows, 456 total) - starting a cycle
+[08:20:58] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (53.7s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:22:01] flywheel loop up - waiting for corpus growth before the first cycle
+[08:22:01] threshold met (85 new rows, 456 total) - starting a cycle
+[08:22:01] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:23:04] flywheel loop up - waiting for corpus growth before the first cycle
+[08:23:04] threshold met (85 new rows, 456 total) - starting a cycle
+[08:23:04] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (53.7s) out_of_bounds,camera_inside_geometry
+[08:24:06] flywheel loop up - waiting for corpus growth before the first cycle
+[08:24:06] threshold met (85 new rows, 456 total) - starting a cycle
+[08:24:06] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: legal    (59.0s) 
+[08:25:09] flywheel loop up - waiting for corpus growth before the first cycle
+[08:25:09] threshold met (85 new rows, 456 total) - starting a cycle
+[08:25:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.9s) 
+[08:26:11] flywheel loop up - waiting for corpus growth before the first cycle
+[08:26:11] threshold met (85 new rows, 456 total) - starting a cycle
+[08:26:11] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.4s) 
+[08:27:14] flywheel loop up - waiting for corpus growth before the first cycle
+[08:27:14] threshold met (90 new rows, 461 total) - starting a cycle
+[08:27:14] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (44.4s) 
+[08:28:17] flywheel loop up - waiting for corpus growth before the first cycle
+[08:28:17] threshold met (90 new rows, 461 total) - starting a cycle
+[08:28:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (54.6s) 
+[08:29:19] flywheel loop up - waiting for corpus growth before the first cycle
+[08:29:19] threshold met (90 new rows, 461 total) - starting a cycle
+[08:29:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (41.2s) 
+[08:30:22] flywheel loop up - waiting for corpus growth before the first cycle
+[08:30:22] threshold met (90 new rows, 461 total) - starting a cycle
+[08:30:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:31:25] flywheel loop up - waiting for corpus growth before the first cycle
+[08:31:25] threshold met (90 new rows, 461 total) - starting a cycle
+[08:31:25] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:32:28] flywheel loop up - waiting for corpus growth before the first cycle
+[08:32:28] threshold met (90 new rows, 461 total) - starting a cycle
+[08:32:28] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (45.8s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:33:31] flywheel loop up - waiting for corpus growth before the first cycle
+[08:33:31] threshold met (94 new rows, 465 total) - starting a cycle
+[08:33:31] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.4s) 
+[08:34:33] flywheel loop up - waiting for corpus growth before the first cycle
+[08:34:33] threshold met (94 new rows, 465 total) - starting a cycle
+[08:34:33] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (51.2s) 
+[08:35:36] flywheel loop up - waiting for corpus growth before the first cycle
+[08:35:36] threshold met (94 new rows, 465 total) - starting a cycle
+[08:35:36] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.1s) 
+[08:36:38] flywheel loop up - waiting for corpus growth before the first cycle
+[08:36:38] threshold met (94 new rows, 465 total) - starting a cycle
+[08:36:38] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.8s) 
+[08:37:41] flywheel loop up - waiting for corpus growth before the first cycle
+[08:37:41] threshold met (94 new rows, 465 total) - starting a cycle
+[08:37:41] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (56.2s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:38:44] flywheel loop up - waiting for corpus growth before the first cycle
+[08:38:44] threshold met (94 new rows, 465 total) - starting a cycle
+[08:38:44] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.2s) 
+[08:39:46] flywheel loop up - waiting for corpus growth before the first cycle
+[08:39:46] threshold met (99 new rows, 470 total) - starting a cycle
+[08:39:46] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:40:49] flywheel loop up - waiting for corpus growth before the first cycle
+[08:40:49] threshold met (99 new rows, 470 total) - starting a cycle
+[08:40:49] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.4s) 
+[08:41:51] flywheel loop up - waiting for corpus growth before the first cycle
+[08:41:51] threshold met (99 new rows, 470 total) - starting a cycle
+[08:41:51] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (43.8s) 
+[08:42:54] flywheel loop up - waiting for corpus growth before the first cycle
+[08:42:54] threshold met (99 new rows, 470 total) - starting a cycle
+[08:42:54] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (45.6s) 
+[08:43:57] flywheel loop up - waiting for corpus growth before the first cycle
+[08:43:57] threshold met (99 new rows, 470 total) - starting a cycle
+[08:43:57] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: legal    (49.7s) 
+[08:44:59] flywheel loop up - waiting for corpus growth before the first cycle
+[08:44:59] threshold met (99 new rows, 470 total) - starting a cycle
+[08:44:59] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (56.1s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:46:02] flywheel loop up - waiting for corpus growth before the first cycle
+[08:46:02] threshold met (99 new rows, 470 total) - starting a cycle
+[08:46:02] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.0s) 
+[08:47:04] flywheel loop up - waiting for corpus growth before the first cycle
+[08:47:04] threshold met (104 new rows, 475 total) - starting a cycle
+[08:47:04] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (46.0s) 
+[08:48:07] flywheel loop up - waiting for corpus growth before the first cycle
+[08:48:07] threshold met (104 new rows, 475 total) - starting a cycle
+[08:48:07] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.4s) 
+[08:49:10] flywheel loop up - waiting for corpus growth before the first cycle
+[08:49:10] threshold met (104 new rows, 475 total) - starting a cycle
+[08:49:10] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (51.0s) out_of_bounds,out_of_bounds,out_of_bounds
+[08:50:12] flywheel loop up - waiting for corpus growth before the first cycle
+[08:50:12] threshold met (104 new rows, 475 total) - starting a cycle
+[08:50:12] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (45.3s) 
+[08:51:15] flywheel loop up - waiting for corpus growth before the first cycle
+[08:51:15] threshold met (104 new rows, 475 total) - starting a cycle
+[08:51:15] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.8s) 
+[08:52:17] flywheel loop up - waiting for corpus growth before the first cycle
+[08:52:17] threshold met (104 new rows, 475 total) - starting a cycle
+[08:52:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.7s) 
+[08:53:20] flywheel loop up - waiting for corpus growth before the first cycle
+[08:53:20] threshold met (104 new rows, 475 total) - starting a cycle
+[08:53:20] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[08:54:22] flywheel loop up - waiting for corpus growth before the first cycle
+[08:54:22] threshold met (104 new rows, 475 total) - starting a cycle
+[08:54:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.7s) 
+[08:55:25] flywheel loop up - waiting for corpus growth before the first cycle
+[08:55:25] threshold met (108 new rows, 479 total) - starting a cycle
+[08:55:25] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.1s) 
+[08:56:28] flywheel loop up - waiting for corpus growth before the first cycle
+[08:56:28] threshold met (108 new rows, 479 total) - starting a cycle
+[08:56:28] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (51.4s) 
+[08:57:30] flywheel loop up - waiting for corpus growth before the first cycle
+[08:57:30] threshold met (108 new rows, 479 total) - starting a cycle
+[08:57:30] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.1s) 
+[08:58:33] flywheel loop up - waiting for corpus growth before the first cycle
+[08:58:33] threshold met (108 new rows, 479 total) - starting a cycle
+[08:58:33] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (59.0s) 
+[08:59:35] flywheel loop up - waiting for corpus growth before the first cycle
+[08:59:35] threshold met (108 new rows, 479 total) - starting a cycle
+[08:59:35] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.1s) 
+[09:00:38] flywheel loop up - waiting for corpus growth before the first cycle
+[09:00:38] threshold met (108 new rows, 479 total) - starting a cycle
+[09:00:38] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (41.5s) 
+[09:01:41] flywheel loop up - waiting for corpus growth before the first cycle
+[09:01:41] threshold met (108 new rows, 479 total) - starting a cycle
+[09:01:41] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:02:43] flywheel loop up - waiting for corpus growth before the first cycle
+[09:02:43] threshold met (108 new rows, 479 total) - starting a cycle
+[09:02:43] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (57.9s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:03:46] flywheel loop up - waiting for corpus growth before the first cycle
+[09:03:46] threshold met (114 new rows, 485 total) - starting a cycle
+[09:03:46] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (46.1s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:04:48] flywheel loop up - waiting for corpus growth before the first cycle
+[09:04:48] threshold met (114 new rows, 485 total) - starting a cycle
+[09:04:48] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (46.6s) 
+[09:05:51] flywheel loop up - waiting for corpus growth before the first cycle
+[09:05:51] threshold met (114 new rows, 485 total) - starting a cycle
+[09:05:51] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:06:53] flywheel loop up - waiting for corpus growth before the first cycle
+[09:06:53] threshold met (114 new rows, 485 total) - starting a cycle
+[09:06:53] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (53.8s) 
+[09:07:56] flywheel loop up - waiting for corpus growth before the first cycle
+[09:07:56] threshold met (114 new rows, 485 total) - starting a cycle
+[09:07:56] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:08:59] flywheel loop up - waiting for corpus growth before the first cycle
+[09:08:59] threshold met (114 new rows, 485 total) - starting a cycle
+[09:08:59] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (42.9s) 
+[09:10:01] flywheel loop up - waiting for corpus growth before the first cycle
+[09:10:01] threshold met (114 new rows, 485 total) - starting a cycle
+[09:10:01] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.3s) 
+[09:11:04] flywheel loop up - waiting for corpus growth before the first cycle
+[09:11:04] threshold met (118 new rows, 489 total) - starting a cycle
+[09:11:04] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (59.2s) 
+[09:12:07] flywheel loop up - waiting for corpus growth before the first cycle
+[09:12:07] threshold met (118 new rows, 489 total) - starting a cycle
+[09:12:07] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (57.0s) 
+[09:13:09] flywheel loop up - waiting for corpus growth before the first cycle
+[09:13:09] threshold met (118 new rows, 489 total) - starting a cycle
+[09:13:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (53.5s) 
+[09:14:12] flywheel loop up - waiting for corpus growth before the first cycle
+[09:14:12] threshold met (118 new rows, 489 total) - starting a cycle
+[09:14:12] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.5s) 
+[09:15:14] flywheel loop up - waiting for corpus growth before the first cycle
+[09:15:14] threshold met (118 new rows, 489 total) - starting a cycle
+[09:15:14] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:16:17] flywheel loop up - waiting for corpus growth before the first cycle
+[09:16:17] threshold met (118 new rows, 489 total) - starting a cycle
+[09:16:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (50.6s) 
+[09:17:19] flywheel loop up - waiting for corpus growth before the first cycle
+[09:17:19] threshold met (118 new rows, 489 total) - starting a cycle
+[09:17:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:18:22] flywheel loop up - waiting for corpus growth before the first cycle
+[09:18:22] threshold met (118 new rows, 489 total) - starting a cycle
+[09:18:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (46.9s) 
+[09:19:25] flywheel loop up - waiting for corpus growth before the first cycle
+[09:19:25] threshold met (118 new rows, 489 total) - starting a cycle
+[09:19:25] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:20:27] flywheel loop up - waiting for corpus growth before the first cycle
+[09:20:27] threshold met (118 new rows, 489 total) - starting a cycle
+[09:20:27] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.2s) 
+[09:21:30] flywheel loop up - waiting for corpus growth before the first cycle
+[09:21:30] threshold met (118 new rows, 489 total) - starting a cycle
+[09:21:30] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.8s) 
+[09:22:32] flywheel loop up - waiting for corpus growth before the first cycle
+[09:22:32] threshold met (118 new rows, 489 total) - starting a cycle
+[09:22:32] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (46.1s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:23:35] flywheel loop up - waiting for corpus growth before the first cycle
+[09:23:35] threshold met (118 new rows, 489 total) - starting a cycle
+[09:23:35] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (39.6s) 
+[09:24:38] flywheel loop up - waiting for corpus growth before the first cycle
+[09:24:38] threshold met (118 new rows, 489 total) - starting a cycle
+[09:24:38] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.9s) 
+[09:25:40] flywheel loop up - waiting for corpus growth before the first cycle
+[09:25:40] threshold met (124 new rows, 495 total) - starting a cycle
+[09:25:40] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:26:43] flywheel loop up - waiting for corpus growth before the first cycle
+[09:26:43] threshold met (124 new rows, 495 total) - starting a cycle
+[09:26:43] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (54.1s) 
+[09:27:45] flywheel loop up - waiting for corpus growth before the first cycle
+[09:27:45] threshold met (124 new rows, 495 total) - starting a cycle
+[09:27:45] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:28:48] flywheel loop up - waiting for corpus growth before the first cycle
+[09:28:48] threshold met (124 new rows, 495 total) - starting a cycle
+[09:28:48] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:29:51] flywheel loop up - waiting for corpus growth before the first cycle
+[09:29:51] threshold met (124 new rows, 495 total) - starting a cycle
+[09:29:51] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:30:53] flywheel loop up - waiting for corpus growth before the first cycle
+[09:30:53] threshold met (124 new rows, 495 total) - starting a cycle
+[09:30:53] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.2s) 
+[09:31:56] flywheel loop up - waiting for corpus growth before the first cycle
+[09:31:56] threshold met (124 new rows, 495 total) - starting a cycle
+[09:31:56] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (59.6s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:32:58] flywheel loop up - waiting for corpus growth before the first cycle
+[09:32:58] threshold met (127 new rows, 498 total) - starting a cycle
+[09:32:58] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (52.9s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:34:01] flywheel loop up - waiting for corpus growth before the first cycle
+[09:34:01] threshold met (127 new rows, 498 total) - starting a cycle
+[09:34:01] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (42.6s) 
+[09:35:04] flywheel loop up - waiting for corpus growth before the first cycle
+[09:35:04] threshold met (127 new rows, 498 total) - starting a cycle
+[09:35:04] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (31.3s) 
+[09:36:06] flywheel loop up - waiting for corpus growth before the first cycle
+[09:36:06] threshold met (127 new rows, 498 total) - starting a cycle
+[09:36:06] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.9s) 
+[09:37:09] flywheel loop up - waiting for corpus growth before the first cycle
+[09:37:09] threshold met (127 new rows, 498 total) - starting a cycle
+[09:37:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:38:11] flywheel loop up - waiting for corpus growth before the first cycle
+[09:38:11] threshold met (127 new rows, 498 total) - starting a cycle
+[09:38:11] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.7s) 
+[09:39:14] flywheel loop up - waiting for corpus growth before the first cycle
+[09:39:14] threshold met (127 new rows, 498 total) - starting a cycle
+[09:39:14] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:40:17] flywheel loop up - waiting for corpus growth before the first cycle
+[09:40:17] threshold met (130 new rows, 501 total) - starting a cycle
+[09:40:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:41:19] flywheel loop up - waiting for corpus growth before the first cycle
+[09:41:19] threshold met (130 new rows, 501 total) - starting a cycle
+[09:41:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:42:22] flywheel loop up - waiting for corpus growth before the first cycle
+[09:42:22] threshold met (130 new rows, 501 total) - starting a cycle
+[09:42:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.4s) 
+[09:43:24] flywheel loop up - waiting for corpus growth before the first cycle
+[09:43:24] threshold met (130 new rows, 501 total) - starting a cycle
+[09:43:24] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:44:27] flywheel loop up - waiting for corpus growth before the first cycle
+[09:44:27] threshold met (130 new rows, 501 total) - starting a cycle
+[09:44:27] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:45:30] flywheel loop up - waiting for corpus growth before the first cycle
+[09:45:30] threshold met (130 new rows, 501 total) - starting a cycle
+[09:45:30] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (59.4s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:46:32] flywheel loop up - waiting for corpus growth before the first cycle
+[09:46:32] threshold met (130 new rows, 501 total) - starting a cycle
+[09:46:32] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.2s) 
+[09:47:36] flywheel loop up - waiting for corpus growth before the first cycle
+[09:47:36] threshold met (138 new rows, 509 total) - starting a cycle
+[09:47:36] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (53.8s) 
+[09:48:39] flywheel loop up - waiting for corpus growth before the first cycle
+[09:48:39] threshold met (138 new rows, 509 total) - starting a cycle
+[09:48:39] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:49:41] flywheel loop up - waiting for corpus growth before the first cycle
+[09:49:41] threshold met (138 new rows, 509 total) - starting a cycle
+[09:49:41] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.0s) 
+[09:50:44] flywheel loop up - waiting for corpus growth before the first cycle
+[09:50:44] threshold met (138 new rows, 509 total) - starting a cycle
+[09:50:44] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (50.9s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:51:47] flywheel loop up - waiting for corpus growth before the first cycle
+[09:51:47] threshold met (138 new rows, 509 total) - starting a cycle
+[09:51:47] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:52:49] flywheel loop up - waiting for corpus growth before the first cycle
+[09:52:49] threshold met (138 new rows, 509 total) - starting a cycle
+[09:52:49] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[09:53:52] flywheel loop up - waiting for corpus growth before the first cycle
+[09:53:52] threshold met (138 new rows, 509 total) - starting a cycle
+[09:53:52] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (55.5s) 
+[09:54:54] flywheel loop up - waiting for corpus growth before the first cycle
+[09:54:54] threshold met (138 new rows, 509 total) - starting a cycle
+[09:54:54] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.9s) 
+[09:55:57] flywheel loop up - waiting for corpus growth before the first cycle
+[09:55:57] threshold met (141 new rows, 512 total) - starting a cycle
+[09:55:57] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.1s) 
+[09:56:59] flywheel loop up - waiting for corpus growth before the first cycle
+[09:56:59] threshold met (141 new rows, 512 total) - starting a cycle
+[09:56:59] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (49.3s) 
+[09:58:02] flywheel loop up - waiting for corpus growth before the first cycle
+[09:58:02] threshold met (141 new rows, 512 total) - starting a cycle
+[09:58:02] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (45.4s) out_of_bounds,out_of_bounds,out_of_bounds
+[09:59:05] flywheel loop up - waiting for corpus growth before the first cycle
+[09:59:05] threshold met (141 new rows, 512 total) - starting a cycle
+[09:59:05] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (55.8s) 
+[10:00:07] flywheel loop up - waiting for corpus growth before the first cycle
+[10:00:07] threshold met (141 new rows, 512 total) - starting a cycle
+[10:00:07] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:01:10] flywheel loop up - waiting for corpus growth before the first cycle
+[10:01:10] threshold met (141 new rows, 512 total) - starting a cycle
+[10:01:10] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (51.7s) 
+[10:02:12] flywheel loop up - waiting for corpus growth before the first cycle
+[10:02:12] threshold met (141 new rows, 512 total) - starting a cycle
+[10:02:12] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:03:15] flywheel loop up - waiting for corpus growth before the first cycle
+[10:03:15] threshold met (141 new rows, 512 total) - starting a cycle
+[10:03:15] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.9s) 
+[10:04:18] flywheel loop up - waiting for corpus growth before the first cycle
+[10:04:18] threshold met (145 new rows, 516 total) - starting a cycle
+[10:04:18] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (46.4s) 
+[10:05:20] flywheel loop up - waiting for corpus growth before the first cycle
+[10:05:20] threshold met (145 new rows, 516 total) - starting a cycle
+[10:05:20] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (42.8s) 
+[10:06:23] flywheel loop up - waiting for corpus growth before the first cycle
+[10:06:23] threshold met (145 new rows, 516 total) - starting a cycle
+[10:06:23] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (45.3s) 
+[10:07:25] flywheel loop up - waiting for corpus growth before the first cycle
+[10:07:25] threshold met (145 new rows, 516 total) - starting a cycle
+[10:07:25] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:08:28] flywheel loop up - waiting for corpus growth before the first cycle
+[10:08:28] threshold met (145 new rows, 516 total) - starting a cycle
+[10:08:28] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:09:31] flywheel loop up - waiting for corpus growth before the first cycle
+[10:09:31] threshold met (145 new rows, 516 total) - starting a cycle
+[10:09:31] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (44.9s) 
+[10:10:33] flywheel loop up - waiting for corpus growth before the first cycle
+[10:10:33] threshold met (149 new rows, 520 total) - starting a cycle
+[10:10:33] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (58.2s) 
+[10:11:36] flywheel loop up - waiting for corpus growth before the first cycle
+[10:11:36] threshold met (149 new rows, 520 total) - starting a cycle
+[10:11:36] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (55.4s) 
+[10:12:38] flywheel loop up - waiting for corpus growth before the first cycle
+[10:12:38] threshold met (149 new rows, 520 total) - starting a cycle
+[10:12:38] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (56.1s) 
+[10:13:41] flywheel loop up - waiting for corpus growth before the first cycle
+[10:13:41] threshold met (149 new rows, 520 total) - starting a cycle
+[10:13:41] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.5s) 
+[10:14:43] flywheel loop up - waiting for corpus growth before the first cycle
+[10:14:43] threshold met (149 new rows, 520 total) - starting a cycle
+[10:14:43] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (37.6s) 
+[10:15:46] flywheel loop up - waiting for corpus growth before the first cycle
+[10:15:46] threshold met (149 new rows, 520 total) - starting a cycle
+[10:15:46] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:16:49] flywheel loop up - waiting for corpus growth before the first cycle
+[10:16:49] threshold met (155 new rows, 526 total) - starting a cycle
+[10:16:49] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (48.7s) 
+[10:17:51] flywheel loop up - waiting for corpus growth before the first cycle
+[10:17:51] threshold met (155 new rows, 526 total) - starting a cycle
+[10:17:51] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:18:54] flywheel loop up - waiting for corpus growth before the first cycle
+[10:18:54] threshold met (155 new rows, 526 total) - starting a cycle
+[10:18:54] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:19:56] flywheel loop up - waiting for corpus growth before the first cycle
+[10:19:56] threshold met (155 new rows, 526 total) - starting a cycle
+[10:19:56] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (50.5s) 
+[10:20:59] flywheel loop up - waiting for corpus growth before the first cycle
+[10:20:59] threshold met (155 new rows, 526 total) - starting a cycle
+[10:20:59] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (58.6s) 
+[10:22:02] flywheel loop up - waiting for corpus growth before the first cycle
+[10:22:02] threshold met (155 new rows, 526 total) - starting a cycle
+[10:22:02] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (53.3s) 
+[10:23:04] flywheel loop up - waiting for corpus growth before the first cycle
+[10:23:04] threshold met (155 new rows, 526 total) - starting a cycle
+[10:23:04] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:24:07] flywheel loop up - waiting for corpus growth before the first cycle
+[10:24:07] threshold met (155 new rows, 526 total) - starting a cycle
+[10:24:07] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (47.6s) 
+[10:25:09] flywheel loop up - waiting for corpus growth before the first cycle
+[10:25:09] threshold met (160 new rows, 531 total) - starting a cycle
+[10:25:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:26:12] flywheel loop up - waiting for corpus growth before the first cycle
+[10:26:12] threshold met (160 new rows, 531 total) - starting a cycle
+[10:26:12] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.0s) 
+[10:27:15] flywheel loop up - waiting for corpus growth before the first cycle
+[10:27:15] threshold met (160 new rows, 531 total) - starting a cycle
+[10:27:15] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (57.1s) 
+[10:28:17] flywheel loop up - waiting for corpus growth before the first cycle
+[10:28:17] threshold met (160 new rows, 531 total) - starting a cycle
+[10:28:17] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.6s) 
+[10:29:20] flywheel loop up - waiting for corpus growth before the first cycle
+[10:29:20] threshold met (160 new rows, 531 total) - starting a cycle
+[10:29:20] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (47.4s) out_of_bounds,out_of_bounds,out_of_bounds
+[10:30:22] flywheel loop up - waiting for corpus growth before the first cycle
+[10:30:22] threshold met (160 new rows, 531 total) - starting a cycle
+[10:30:22] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (51.5s) out_of_bounds,out_of_bounds,out_of_bounds
+[10:31:26] flywheel loop up - waiting for corpus growth before the first cycle
+[10:31:26] threshold met (161 new rows, 532 total) - starting a cycle
+[10:31:26] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (53.4s) out_of_bounds,out_of_bounds,out_of_bounds
+[10:32:29] flywheel loop up - waiting for corpus growth before the first cycle
+[10:32:29] threshold met (161 new rows, 532 total) - starting a cycle
+[10:32:29] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+[10:33:32] flywheel loop up - waiting for corpus growth before the first cycle
+[10:33:32] threshold met (161 new rows, 532 total) - starting a cycle
+[10:33:32] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (53.0s) out_of_bounds,camera_inside_geometry
+[10:34:34] flywheel loop up - waiting for corpus growth before the first cycle
+[10:34:34] threshold met (161 new rows, 532 total) - starting a cycle
+[10:34:34] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (44.4s) 
+[10:35:37] flywheel loop up - waiting for corpus growth before the first cycle
+[10:35:37] threshold met (161 new rows, 532 total) - starting a cycle
+[10:35:37] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (52.9s) 
+[10:36:39] flywheel loop up - waiting for corpus growth before the first cycle
+[10:36:39] threshold met (161 new rows, 532 total) - starting a cycle
+[10:36:39] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (51.0s) 
+[10:37:42] flywheel loop up - waiting for corpus growth before the first cycle
+[10:37:42] threshold met (161 new rows, 532 total) - starting a cycle
+[10:37:42] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (50.1s) 
+[10:38:45] flywheel loop up - waiting for corpus growth before the first cycle
+[10:38:45] threshold met (168 new rows, 539 total) - starting a cycle
+[10:38:45] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (54.7s) 
+[10:39:47] flywheel loop up - waiting for corpus growth before the first cycle
+[10:39:47] threshold met (168 new rows, 539 total) - starting a cycle
+[10:39:47] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: error    (40.3s) 

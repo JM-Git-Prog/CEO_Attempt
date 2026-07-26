@@ -1,0 +1,23 @@
+{
+ "started": "2026-07-26 10:05:20",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 0,
+   "total": 1,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:ValidationError": 1
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='1980s ...ht_m=1.0, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_",
+     "seconds": 42.8,
+     "prompt_id": "p001"
+    }
+   ]
+  }
+ }
+}

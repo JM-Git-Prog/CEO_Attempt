@@ -19,7 +19,7 @@
 </style></head><body>
 
 <h1>The Living Room - Flywheel Dashboard</h1>
-<div class="sub">Generated 2026-07-26 07:16:15 - reopen the Desktop launcher any time to refresh.</div>
+<div class="sub">Generated 2026-07-26 08:22:20 - reopen the Desktop launcher any time to refresh.</div>
 
 <h2>The vision</h2>
 <p>You describe a room in plain conversation. The AI designs it - proposes a look, furniture,
@@ -40,27 +40,63 @@ often as possible, across all kinds of rooms. Get this reliable and the
 
 <h2>Executive overview</h2>
 <div class="card">
-<b>Corpus right now:</b> 210 organic (llama3.1 harvester) + 21 synthetic
-(cloud top-up) + 183 from earlier pipeline runs = 414 rows -&gt;
-<b>166 pass validation</b> and become trainable exemplars.<br>
-<b>Pace:</b> 43 new rows in 17.9 hours (~2.4/hour, real observed pace including any stalls).<br>At that pace, about 2.9 more hours until the next training cycle triggers (7 rows to go).
+<b>Corpus right now:</b> 244 organic (llama3.1 harvester) + 29 synthetic
+(cloud top-up) + 183 from earlier pipeline runs = 456 rows -&gt;
+<b>168 pass validation</b> and become trainable exemplars.<br>
+<b>Pace:</b> 85 new rows in 19.0 hours (~4.5/hour, real observed pace including any stalls).
 </div>
 
 <div class="card">
 <b>System health (right now):</b><br>
-Harvester (bench_loop.py): <span class="bad">
-not active - restart the supervisor</span><br>
-Flywheel loop: <span class="bad">
-not active - restart the supervisor</span><br>
+Harvester (bench_loop.py): <span class="ok">
+active</span><br>
+Flywheel loop: <span class="ok">
+active</span><br>
 Training right now: <span class="ok">
 no - idle, waiting or between cycles</span><br>
-GPU: 39.0% util, 10.8/24.0 GB VRAM
+GPU: 89.0% util, 11.1/24.0 GB VRAM
 </div>
 
 <div class="card">
 <b>Most recent real comparison:</b> llama3.1 baseline 27% vs. trained model
 30% 
 </div>
+
+<h2>Why rows get thrown away</h2>
+<p>Every generated blueprint that fails the checker is discarded. Corpus growth =
+how fast we generate x how many survive. Right now <b>145 of
+1070</b> attempts ever recorded survived. Here's what happened to the
+925 that didn't:</p>
+<div class="card">
+<b>Rescued by the free repair pass so far:</b> <span class="warn">
+0 rows</span> that would have been discarded were nudged back into
+legality by math alone (no model call, ~0.6ms each) and banked as training
+examples. They're tagged <code>repaired_by_math</code> in the corpus so we can
+train with and without them and check they actually help.
+Nothing rescued yet - this counts only rows generated since the repair pass was wired in, so it stays 0 until the harvester produces new rows.
+</div>
+
+<div class="card">
+<b>Historically thrown away on placement alone:</b> <span class="warn">274 rows
+(30% of failures)</span> failed <i>only</i> because
+something was in the wrong place - overlapping, outside the room, blocking a door,
+or the camera stuck in a wall. Nothing wrong with the model's thinking; just the
+numbers. <code>src/solver_repair.py</code> already fixes exactly this in ~19ms with
+no model call, but it is only wired into the full pipeline - <b>not</b> into the
+harvester that feeds this corpus. So these were generated, then thrown away.<br><br>
+<b>Not a placement problem:</b> 260 timed out
+(28%), 391 errored or failed schema
+(42%), 0 had both a placement fault and a
+schema fault (0%). Moving furniture cannot save these - they
+need a faster/stricter generation step, not a repair pass.
+</div>
+<p style="color:#666;font-size:0.9em">Individual blocker codes below. Timeouts and
+errors don't appear here - they die before the checker ever reports a blocker, which
+is why they're easy to under-count.</p>
+<table>
+<tr><th>Blocker</th><th>Times seen</th><th>Fixable by moving things?</th></tr>
+<tr><td>out_of_bounds</td><td>177</td><td>movable geometry</td></tr><tr><td>physical_overlap</td><td>136</td><td>movable geometry</td></tr><tr><td>opening_blocked</td><td>116</td><td>movable geometry</td></tr><tr><td>camera_inside_geometry</td><td>46</td><td>movable geometry</td></tr>
+</table>
 
 <h2>Objective and progress</h2>
 <p><b>Working target (my proposed default - tell me to change it):</b> the trained model should

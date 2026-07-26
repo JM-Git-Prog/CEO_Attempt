@@ -191,7 +191,7 @@ def _failure_census() -> dict:
     errored, timed out, or failed schema validation is NOT recoverable by
     moving furniture. Counting them together hides which fix buys more data.
     """
-    passed = spatial_only = errored = timed_out = mixed = 0
+    passed = spatial_only = errored = timed_out = mixed = rescued = 0
     codes = {}
     for rf in BENCH.glob("results-*.json"):
         data = _read_json(rf)
@@ -202,6 +202,8 @@ def _failure_census() -> dict:
                 status = row.get("status")
                 if status == "legal":
                     passed += 1
+                    if row.get("repaired_by_math"):
+                        rescued += 1
                     continue
                 blockers = set(row.get("blockers") or [])
                 for c in blockers:
@@ -217,7 +219,7 @@ def _failure_census() -> dict:
     failed = spatial_only + errored + timed_out + mixed
     return {"passed": passed, "failed": failed, "spatial_only": spatial_only,
             "errored": errored, "timed_out": timed_out, "mixed": mixed,
-            "total": passed + failed,
+            "rescued": rescued, "total": passed + failed,
             "codes": sorted(codes.items(), key=lambda kv: -kv[1])}
 
 
@@ -382,6 +384,42 @@ GPU: {totals.get('gpu_util_pct', '?')}% util, {totals.get('vram_used_gb', '?')}/
 <b>Most recent real comparison:</b> llama3.1 baseline {_fmt_pct(latest_base)} vs. trained model
 {_fmt_pct(latest_rate)} {'(no comparison exam has completed yet)' if latest_rate is None else ''}
 </div>
+
+<h2>Why rows get thrown away</h2>
+<p>Every generated blueprint that fails the checker is discarded. Corpus growth =
+how fast we generate x how many survive. Right now <b>{fail['passed']} of
+{fail['total']}</b> attempts ever recorded survived. Here's what happened to the
+{fail['failed']} that didn't:</p>
+<div class="card">
+<b>Rescued by the free repair pass so far:</b> <span class="{'ok' if fail['rescued'] else 'warn'}">
+{fail['rescued']} rows</span> that would have been discarded were nudged back into
+legality by math alone (no model call, ~0.6ms each) and banked as training
+examples. They're tagged <code>repaired_by_math</code> in the corpus so we can
+train with and without them and check they actually help.
+{'Nothing rescued yet - this counts only rows generated since the repair pass was wired in, so it stays 0 until the harvester produces new rows.' if not fail['rescued'] else ''}
+</div>
+
+<div class="card">
+<b>Historically thrown away on placement alone:</b> <span class="warn">{fail['spatial_only']} rows
+({_share(fail['spatial_only'])} of failures)</span> failed <i>only</i> because
+something was in the wrong place - overlapping, outside the room, blocking a door,
+or the camera stuck in a wall. Nothing wrong with the model's thinking; just the
+numbers. <code>src/solver_repair.py</code> already fixes exactly this in ~19ms with
+no model call, but it is only wired into the full pipeline - <b>not</b> into the
+harvester that feeds this corpus. So these were generated, then thrown away.<br><br>
+<b>Not a placement problem:</b> {fail['timed_out']} timed out
+({_share(fail['timed_out'])}), {fail['errored']} errored or failed schema
+({_share(fail['errored'])}), {fail['mixed']} had both a placement fault and a
+schema fault ({_share(fail['mixed'])}). Moving furniture cannot save these - they
+need a faster/stricter generation step, not a repair pass.
+</div>
+<p style="color:#666;font-size:0.9em">Individual blocker codes below. Timeouts and
+errors don't appear here - they die before the checker ever reports a blocker, which
+is why they're easy to under-count.</p>
+<table>
+<tr><th>Blocker</th><th>Times seen</th><th>Fixable by moving things?</th></tr>
+{code_rows}
+</table>
 
 <h2>Objective and progress</h2>
 <p><b>Working target (my proposed default - tell me to change it):</b> the trained model should

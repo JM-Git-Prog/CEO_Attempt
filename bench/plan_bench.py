@@ -24,6 +24,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))  # bench/ is not a package; make src importable
 
+# How far the free repair pass may move any one item. Deliberately below the
+# 0.5m row pitch the planner uses for seating rows - see _one_plan().
+MAX_NUDGE_M = 0.3
+
 
 def _stub_concept(description: str):
     """Identical minimal concept for every lane - keeps the bench fair.
@@ -59,11 +63,43 @@ async def _one_plan(description: str, timeout_s: float) -> dict:
         )
         blockers = [getattr(b, "code", str(b)) for b in (getattr(report, "blockers", None) or [])]
         advisories = [getattr(a, "code", str(a)) for a in (getattr(report, "advisories", None) or [])]
+
+        # Free repair before rejection (LL3M's debug-loop idea): a plan that
+        # only failed on WHERE something sits is geometry pure math can nudge -
+        # no model call, ~0.6ms. Measured on every archived failure:
+        # 48/183 rescued at this cap (bench/repair-harvest-proof.json).
+        # The cap stays under the 0.5m row pitch the planner uses for seating,
+        # so a repair can't silently shuffle an evenly-spaced row into a layout
+        # that no longer matches its own description. Raising it rescues more
+        # (see bench/nudge-sweep.txt) at the cost of that guarantee - a data
+        # quality decision, not a free win.
+        repaired_by_math = False
+        repairs_applied: list[str] = []
+        blockers_before = list(blockers)
+        if blockers:
+            from src.floor_plan.repair import repair_near_miss
+            from src.floor_plan.validator import validate_floor_plan
+
+            attempt = repair_near_miss(plan, report, max_nudge_m=MAX_NUDGE_M)
+            if attempt.repaired:
+                # Re-judge at the SAME bar the report was produced with.
+                # repair_near_miss re-validates internally at "mvp" tolerance,
+                # which forgives overlaps <=0.1m - trusting its own verdict
+                # would bank plans this bench calls illegal.
+                recheck = validate_floor_plan(attempt.plan, warnings, tolerance="strict")
+                if recheck.valid:
+                    plan, report = attempt.plan, recheck
+                    blockers = []
+                    advisories = [getattr(a, "code", str(a))
+                                  for a in (getattr(recheck, "advisories", None) or [])]
+                    repaired_by_math = True
+                    repairs_applied = attempt.repairs_applied
+
         try:  # full plan payload so bench rows are TRAINING DATA, not just scores
             plan_payload = plan.model_dump(mode="json")
         except AttributeError:
             plan_payload = plan.dict()
-        return {
+        row = {
             "status": "legal" if not blockers else "blocked",
             "blockers": blockers,
             "advisories": advisories,
@@ -72,6 +108,13 @@ async def _one_plan(description: str, timeout_s: float) -> dict:
             "seconds": round(time.time() - started, 1),
             "plan": plan_payload,
         }
+        if repaired_by_math:
+            # Tagged so a later run can train with and without these rows and
+            # measure whether repaired exemplars actually help.
+            row["repaired_by_math"] = True
+            row["repairs_applied"] = repairs_applied
+            row["blockers_before_repair"] = blockers_before
+        return row
     except asyncio.TimeoutError:
         return {"status": "timeout", "seconds": round(time.time() - started, 1)}
     except Exception as exc:  # model emission / schema / plumbing failures

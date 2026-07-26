@@ -1,0 +1,6 @@
+failing plans with payload: 183
+  max_nudge= 0.3m -> rescued  48/183 (26.2%)  worst 2.8ms
+  max_nudge= 0.5m -> rescued  54/183 (29.5%)  worst 3.2ms
+  max_nudge=0.75m -> rescued  63/183 (34.4%)  worst 3.2ms
+  max_nudge= 1.0m -> rescued  71/183 (38.8%)  worst 3.1ms
+  max_nudge= 1.5m -> rescued  77/183 (42.1%)  worst 3.1ms

@@ -1,0 +1,23 @@
+{
+ "started": "2026-07-26 08:29:19",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 0,
+   "total": 1,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:ValidationError": 1
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan subjects must have exactly one placement relation [type=value_error, input_value={'name': '1980s Cottage K...: 1.1, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+     "seconds": 41.2,
+     "prompt_id": "p001"
+    }
+   ]
+  }
+ }
+}

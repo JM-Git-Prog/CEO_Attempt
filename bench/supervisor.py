@@ -88,24 +88,41 @@ def kill_tree(proc, name: str) -> None:
         log(f"{name} (pid {pid}) confirmed gone")
 
 
-def flywheel_is_stuck() -> bool:
+def flywheel_is_stuck(started_at: float) -> bool:
+    """Is the CURRENT flywheel process frozen mid-training?
+
+    started_at is when this flywheel process was launched. A progress file
+    that hasn't been written since then belongs to some EARLIER run - it says
+    nothing about whether this process is stuck, so it is ignored.
+
+    Without that check the supervisor eats itself: a crashed run leaves
+    training-progress.json permanently reading stage="training" with an old
+    timestamp, every check declares "frozen", the flywheel is killed and
+    restarted, the fresh process hasn't written progress yet either, and the
+    same stale file triggers the same verdict 60 seconds later - forever.
+    That is exactly what happened on 2026-07-26 between 08:10 and 08:15: five
+    kill/restart rounds, each one killing a cycle about a second after it
+    started, so nothing could ever finish.
+    """
     if not PROGRESS.exists():
         return False
     try:
         d = json.loads(PROGRESS.read_text(encoding="utf-8"))
     except Exception:
         return False
-    stage = d.get("stage")
+    if d.get("stage") not in ("training", "loading_model", "saving_gguf"):
+        return False
     updated = d.get("updated", 0)
-    if stage in ("training", "loading_model", "saving_gguf"):
-        return (time.time() - updated) > STUCK_AFTER
-    return False
+    if updated < started_at:
+        return False  # leftover from a previous run - not this process's state
+    return (time.time() - updated) > STUCK_AFTER
 
 
 def main() -> None:
     log("supervisor starting")
     harvester = start("harvester", PY_PLAIN, "bench_loop.py", "bench-loop-console.txt")
     flywheel = start("flywheel", PY_TRAIN, "flywheel_loop.py", "flywheel-console.txt")
+    flywheel_started_at = time.time()
 
     while True:
         time.sleep(CHECK_EVERY)
@@ -121,11 +138,13 @@ def main() -> None:
         if not alive(flywheel):
             log("flywheel is not running - restarting")
             flywheel = start("flywheel", PY_TRAIN, "flywheel_loop.py", "flywheel-console.txt")
-        elif flywheel_is_stuck():
+            flywheel_started_at = time.time()
+        elif flywheel_is_stuck(flywheel_started_at):
             log(f"training-progress.json has not moved in {STUCK_AFTER // 60}+ min "
                 "while claiming to be training - treating as frozen")
             kill_tree(flywheel, "flywheel")
             flywheel = start("flywheel", PY_TRAIN, "flywheel_loop.py", "flywheel-console.txt")
+            flywheel_started_at = time.time()
 
 
 if __name__ == "__main__":

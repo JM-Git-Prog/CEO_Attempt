@@ -1,0 +1,79 @@
+{
+  "generated": "2026-07-26 07:41:21",
+  "failing_plans_replayed": 182,
+  "rescued_by_math_alone": 48,
+  "still_failing_after_repair": 134,
+  "rescue_rate": 0.264,
+  "plans_that_replayed_clean_not_credited": 0,
+  "unparseable_plan_payloads": 0,
+  "worst_case_ms": 2.8,
+  "mean_ms": 0.6,
+  "rescued_by_blocker_signature": [
+    [
+      "out_of_bounds",
+      42
+    ],
+    [
+      "out_of_bounds,physical_overlap",
+      3
+    ],
+    [
+      "opening_blocked,out_of_bounds",
+      2
+    ],
+    [
+      "physical_overlap",
+      1
+    ]
+  ],
+  "unrescued_by_blocker_signature": [
+    [
+      "physical_overlap",
+      25
+    ],
+    [
+      "opening_blocked",
+      22
+    ],
+    [
+      "opening_blocked,out_of_bounds",
+      20
+    ],
+    [
+      "out_of_bounds,physical_overlap",
+      15
+    ],
+    [
+      "opening_blocked,out_of_bounds,physical_overlap",
+      10
+    ],
+    [
+      "camera_inside_geometry,opening_blocked,out_of_bounds,physical_overlap",
+      10
+    ],
+    [
+      "opening_blocked,physical_overlap",
+      8
+    ],
+    [
+      "camera_inside_geometry,out_of_bounds",
+      7
+    ],
+    [
+      "camera_inside_geometry",
+      5
+    ],
+    [
+      "out_of_bounds",
+      4
+    ],
+    [
+      "camera_inside_geometry,opening_blocked,out_of_bounds",
+      3
+    ],
+    [
+      "camera_inside_geometry,physical_overlap",
+      2
+    ]
+  ]
+}
