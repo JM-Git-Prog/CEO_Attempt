@@ -4,10 +4,10 @@
  "lanes": {
   "llama3.1": {
    "legal": 0,
-   "total": 14,
+   "total": 15,
    "legal_rate": 0.0,
    "violation_census": {
-    "error:ValidationError": 13,
+    "error:ValidationError": 14,
     "out_of_bounds": 2,
     "physical_overlap": 1,
     "opening_blocked": 1,
@@ -419,8 +419,16 @@
      "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Bike R...ht_m=1.2, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
      "seconds": 10.4,
      "prompt_id": "p084"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Victorian Apoth...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 17.9,
+     "prompt_id": "p085"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-26 07:35:31"
 }

@@ -42,6 +42,12 @@ MIN_POINTS_FOR_TREND = 4       # fewer real comparisons than this = no trend mat
 ACTIVE_WINDOW_S = 10 * 60      # a log touched within this window counts as "running"
 CORPUS_THRESHOLD = 50          # rows needed to trigger the next training cycle
 
+# Blockers that are purely a question of WHERE something sits - i.e. fixable by
+# moving geometry, which src/solver_repair.py already does. Anything else
+# (schema errors, timeouts) is not a placement problem.
+SPATIAL_CODES = {"physical_overlap", "out_of_bounds",
+                 "opening_blocked", "camera_inside_geometry"}
+
 
 def _read_json(path: Path):
     try:
@@ -175,6 +181,46 @@ def _scan_history() -> list[dict]:
     return list(reversed(runs))
 
 
+def _failure_census() -> dict:
+    """WHY rows get thrown away, across every bench result ever recorded.
+
+    The split that matters: a row whose blockers are ALL spatial (something
+    overlaps, sticks out of the room, blocks a door, or the camera is inside
+    geometry) is geometry that pure math can move - src/solver_repair.py
+    already does exactly that, in <=19ms, with no model call. A row that
+    errored, timed out, or failed schema validation is NOT recoverable by
+    moving furniture. Counting them together hides which fix buys more data.
+    """
+    passed = spatial_only = errored = timed_out = mixed = 0
+    codes = {}
+    for rf in BENCH.glob("results-*.json"):
+        data = _read_json(rf)
+        if not data:
+            continue
+        for lane in (data.get("lanes") or {}).values():
+            for row in lane.get("rows") or []:
+                status = row.get("status")
+                if status == "legal":
+                    passed += 1
+                    continue
+                blockers = set(row.get("blockers") or [])
+                for c in blockers:
+                    codes[c] = codes.get(c, 0) + 1
+                if status == "timeout":
+                    timed_out += 1
+                elif status == "error" or not blockers:
+                    errored += 1
+                elif blockers <= SPATIAL_CODES:
+                    spatial_only += 1
+                else:
+                    mixed += 1
+    failed = spatial_only + errored + timed_out + mixed
+    return {"passed": passed, "failed": failed, "spatial_only": spatial_only,
+            "errored": errored, "timed_out": timed_out, "mixed": mixed,
+            "total": passed + failed,
+            "codes": sorted(codes.items(), key=lambda kv: -kv[1])}
+
+
 def _real_history():
     """Only the runs with a genuine >=20-prompt exam AND a known baseline -
     the same bar _scan_history() already enforces. Returned oldest-first."""
@@ -209,6 +255,7 @@ def build():
     progress = _read_json(PROGRESS) or {}
     comp = _corpus_composition()
     history = _real_history()
+    fail = _failure_census()
 
     harvester_active = _fresh(BENCH_LOOP_LOG)
     flywheel_active = _fresh(FLYWHEEL_LOG)
@@ -255,6 +302,15 @@ def build():
                     f"{MIN_POINTS_FOR_TREND}) - most of today's cycles never got measured "
                     f"because of bugs that are now fixed. This will turn into a real number "
                     f"once a few more training cycles complete and get benched.")
+
+    def _share(n):
+        return f"{n / fail['failed'] * 100:.0f}%" if fail["failed"] else "-"
+
+    code_rows = "".join(
+        f"<tr><td>{c}</td><td>{n}</td>"
+        f"<td>{'movable geometry' if c in SPATIAL_CODES else 'not a placement problem'}</td></tr>"
+        for c, n in fail["codes"][:8]
+    ) or "<tr><td colspan='3'>No bench results recorded yet.</td></tr>"
 
     history_rows = "".join(
         f"<tr><td>{time.strftime('%b %d %H:%M', time.localtime(r['trained_epoch']))}</td>"

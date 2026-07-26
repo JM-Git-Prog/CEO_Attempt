@@ -234,3 +234,8 @@ ModuleNotFoundError: No module named 'datasets'
 
 === LANE glm-5.2:cloud — 15 prompts ===
   p001: error    (52.5s) 
+[07:35:03] flywheel loop up - waiting for corpus growth before the first cycle
+[07:35:03] threshold met (50 new rows, 421 total) - starting a cycle
+[07:35:03] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===

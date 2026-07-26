@@ -157,3 +157,6 @@
 [07:35:03] flywheel loop up - waiting for corpus growth before the first cycle
 [07:35:03] threshold met (50 new rows, 421 total) - starting a cycle
 [07:35:03] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+[07:36:06] flywheel loop up - waiting for corpus growth before the first cycle
+[07:36:06] threshold met (53 new rows, 424 total) - starting a cycle
+[07:36:06] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
