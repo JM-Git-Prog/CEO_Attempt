@@ -244,6 +244,26 @@ class TestClampVerticalAngleProperty:
         result = clamp_vertical_angle(current, delta)
         assert -85.0 <= result <= 85.0
 
+    @given(
+        initial_angle=st.floats(min_value=-85.0, max_value=85.0),
+        deltas=st.lists(
+            st.floats(min_value=-500.0, max_value=500.0),
+            min_size=1,
+            max_size=50,
+        ),
+    )
+    @settings(max_examples=200)
+    def test_sequence_always_within_bounds(self, initial_angle: float, deltas: list[float]):
+        """For any sequence of mouse Y-axis movements, vertical angle stays within [-85, 85].
+
+        Property 5: Vertical Look Angle Clamping
+        **Validates: Requirements 4.3**
+        """
+        angle = initial_angle
+        for delta in deltas:
+            angle = clamp_vertical_angle(angle, delta)
+            assert -85.0 <= angle <= 85.0
+
 
 class TestFindSpawnPositionProperty:
     """Property tests for find_spawn_position (Req 4.7).

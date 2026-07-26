@@ -218,7 +218,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - For any WASD input combination and max_speed, resulting vector magnitude ≤ max_speed
     - **Validates: Requirements 4.2**
 
-  - [~] 12.3 Write property test for vertical look angle clamping (Property 5)
+  - [x] 12.3 Write property test for vertical look angle clamping (Property 5)
     - **Property 5: Vertical Look Angle Clamping**
     - For any sequence of mouse Y-axis movements, vertical angle stays within [-85°, +85°]
     - **Validates: Requirements 4.3**
