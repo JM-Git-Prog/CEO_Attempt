@@ -22,3 +22,6 @@
 [07:23:31] training-progress.json has not moved in 30+ min while claiming to be training - treating as frozen
 [07:23:34] flywheel (pid 32512) confirmed gone
 [07:23:34] flywheel started (pid=38768, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)
+[07:24:34] training-progress.json has not moved in 30+ min while claiming to be training - treating as frozen
+[07:24:37] flywheel (pid 38768) confirmed gone
+[07:24:37] flywheel started (pid=30636, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)
