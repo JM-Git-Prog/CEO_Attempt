@@ -233,12 +233,12 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Reject WorldContract with structured error if door subject lacks explicit physics intent or uses trigger body mode
     - _Requirements: 5.1, 5.5_
 
-  - [ ]* 12.6 Write property test for door interaction parameter validation (Property 7)
+  - [x] 12.6 Write property test for door interaction parameter validation (Property 7)
     - **Property 7: Door Interaction Parameter Validation**
     - For any door interaction intent, RuntimePlan accepts iff open_angle_deg in [-180,180] non-zero AND speed_deg_s in (0,720] AND physics is kinematic (not trigger/dynamic)
     - **Validates: Requirements 5.1, 5.5**
 
-  - [ ]* 12.7 Write property test for door animation step convergence (Property 8)
+  - [ ] 12.7 Write property test for door animation step convergence (Property 8)
     - **Property 8: Door Animation Step Convergence**
     - Per-frame step advances toward target without overshooting; step = min(|target - current|, speed_deg_s / frame_rate)
     - **Validates: Requirements 5.3**
