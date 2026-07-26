@@ -246,7 +246,7 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
 - [x] 13. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 14. Integration wiring and final verification
+- [x] 14. Integration wiring and final verification
   - [x] 14.1 Wire all components into the pipeline orchestrator
     - Connect session manager → FIFO queue → lane ladder → MVP validator → scene graph → contract → sidecar → parity → smoke → auto-launch → web SSE
     - Ensure each stage builds on the previous, no orphaned code
@@ -259,17 +259,17 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Remove .blend artifacts after 7 days, intermediate compiler inputs after 24 hours, temporary files immediately on session complete
     - _Requirements: 12.3_
 
-  - [~] 14.3 Write integration test for full MVP pipeline with mock LLM
+  - [x] 14.3 Write integration test for full MVP pipeline with mock LLM
     - Test end-to-end flow: user text → interpret → plan (mocked) → scene graph → contract → compile (mocked) → parity → smoke (mocked) → launch (mocked) → result
     - Use deterministic plan from flywheel corpus
     - _Requirements: 1.1, 1.2, 1.3_
 
-  - [~] 14.4 Write property test for sidecar structured failure (Property 9)
+  - [x] 14.4 Write property test for sidecar structured failure (Property 9)
     - **Property 9: Sidecar Structured Failure**
     - For any invalid sidecar state, verify `SidecarResult` with `success=False`, non-empty reason_code, and captured output for process failures
     - **Validates: Requirements 7.2, 7.4, 7.7**
 
-- [~] 15. Final checkpoint — Ensure all tests pass
+- [x] 15. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
