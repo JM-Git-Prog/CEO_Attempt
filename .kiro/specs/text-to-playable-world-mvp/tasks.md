@@ -213,17 +213,17 @@ All code is Python (FastAPI, Pydantic, Hypothesis). The project already has exis
     - Spawn repositioning: spiral search outward from floor center in 0.5m increments (up to 8 attempts), fallback to ceiling_height - 0.5m drop
     - _Requirements: 4.2, 4.3, 4.7_
 
-  - [ ]* 12.2 Write property test for player movement speed normalization (Property 4)
+  - [x] 12.2 Write property test for player movement speed normalization (Property 4)
     - **Property 4: Player Movement Speed Normalization**
     - For any WASD input combination and max_speed, resulting vector magnitude ≤ max_speed
     - **Validates: Requirements 4.2**
 
-  - [ ]* 12.3 Write property test for vertical look angle clamping (Property 5)
+  - [~] 12.3 Write property test for vertical look angle clamping (Property 5)
     - **Property 5: Vertical Look Angle Clamping**
     - For any sequence of mouse Y-axis movements, vertical angle stays within [-85°, +85°]
     - **Validates: Requirements 4.3**
 
-  - [ ]* 12.4 Write property test for obstructed spawn repositioning (Property 6)
+  - [~] 12.4 Write property test for obstructed spawn repositioning (Property 6)
     - **Property 6: Obstructed Spawn Repositioning**
     - For any room geometry with obstructed default spawn, repositioning produces a valid in-bounds, non-intersecting point
     - **Validates: Requirements 4.7**
