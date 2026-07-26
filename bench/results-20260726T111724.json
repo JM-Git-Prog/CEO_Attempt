@@ -1,0 +1,1348 @@
+{
+ "started": "2026-07-26 11:17:24",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "physical_overlap": 15,
+    "error:ValidationError": 10,
+    "opening_blocked": 10,
+    "out_of_bounds": 2
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Victorian Libra...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 18.6,
+     "prompt_id": "p036"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 17.0,
+     "prompt_id": "p037"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1940s Radio Bro...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 16.5,
+     "prompt_id": "p038"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.0\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'bed_1', '...arget_id': 'wall_north'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 17.5,
+     "prompt_id": "p039"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 29.3,
+     "prompt_id": "p040"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 11,
+     "seconds": 41.1,
+     "plan": {
+      "name": "Brewery Taproom",
+      "room": {
+       "width": 10.0,
+       "depth": 12.0,
+       "height": 3.2
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Bar Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 4.05,
+        "width": 2.5,
+        "depth": 3.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_1",
+        "name": "Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.516987298107781,
+        "z": 4.3,
+        "width": 0.4,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_2",
+        "name": "Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.5749999999999997,
+        "z": 3.400480947161671,
+        "width": 0.4,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_3",
+        "name": "Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.95,
+        "z": 4.05,
+        "width": 0.4,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_4",
+        "name": "Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.0839745962155614,
+        "z": 4.55,
+        "width": 0.4,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_5",
+        "name": "Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.0839745962155614,
+        "z": 3.5500000000000003,
+        "width": 0.4,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_6",
+        "name": "Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.35,
+        "z": 4.05,
+        "width": 0.4,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "barrel_table_1",
+        "name": "Barrel Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 4.1,
+        "z": 2.4045517328095665,
+        "width": 0.8,
+        "depth": 2.0,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "barrel_table_2",
+        "name": "Barrel Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.15,
+        "z": 4.05,
+        "width": 0.8,
+        "depth": 2.0,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light_1",
+        "name": "Hanging Filament Bulb",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -0.8,
+        "z": 4.05,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 1.0,
+        "elevation": 2.2,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light_2",
+        "name": "Hanging Filament Bulb",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.8,
+        "z": 4.05,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 1.0,
+        "elevation": 2.2,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 5.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 4.05,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_5",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_6",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barrel_table_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barrel_table_2",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 1.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light_2",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 1.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p041"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 22.1,
+     "plan": {
+      "name": "Florist Shop",
+      "room": {
+       "width": 10.0,
+       "depth": 8.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "work_counter_1",
+        "name": "Work Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "tiered_display_stand_1",
+        "name": "Tiered Display Stand",
+        "category": "furniture",
+        "mount": "wall",
+        "x": -2.25,
+        "z": 3.0500000000000003,
+        "width": 1.8,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 2.4,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "tiered_display_stand_2",
+        "name": "Tiered Display Stand",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 1.8,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 2.4,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "tiered_display_stand_3",
+        "name": "Tiered Display Stand",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 2.25,
+        "z": 3.0500000000000003,
+        "width": 1.8,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 2.4,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "cooler_cabinet_1",
+        "name": "Cooler Cabinet",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 2.0,
+        "depth": 1.8,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 3.0500000000000003,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "work_counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "tiered_display_stand_1",
+        "kind": "above",
+        "target_id": "work_counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "tiered_display_stand_2",
+        "kind": "above",
+        "target_id": "work_counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "tiered_display_stand_3",
+        "kind": "above",
+        "target_id": "work_counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 3.0,
+         "distribution_span_m": 4.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "cooler_cabinet_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "work_counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p042"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'schema_version': 'floor...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 20.2,
+     "prompt_id": "p043"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 4,
+     "seconds": 17.5,
+     "plan": {
+      "name": "Physical Therapy Room",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.5
+      },
+      "items": [
+       {
+        "id": "padded_table_1",
+        "name": "Padded Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "parallel_bar_rig_1",
+        "name": "Parallel-Bar Walking Rig",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.45,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "exercise_ball_corner_1",
+        "name": "Exercise Ball Corner",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 2.25,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 1.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "supply_cabinet_1",
+        "name": "Supply Cabinet",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 3.2,
+        "width": 2.0,
+        "depth": 1.5,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 2.0,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 1.2m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight lighting to minimize shadows on patients."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "padded_table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "parallel_bar_rig_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "exercise_ball_corner_1",
+        "kind": "adjacent_to",
+        "target_id": "padded_table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "supply_cabinet_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "padded_table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.0,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p044"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 20.0,
+     "prompt_id": "p045"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 4,
+     "seconds": 18.6,
+     "plan": {
+      "name": "Hunting Lodge Den",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "couch_1",
+        "name": "Leather Couch",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.5,
+        "depth": 3.0,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "rug_1",
+        "name": "Bearskin-Style Rug",
+        "category": "decor",
+        "mount": "floor",
+        "x": 1.5,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 4.0,
+        "height": 0.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "fireplace_1",
+        "name": "Stone Fireplace",
+        "category": "architectural",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.45,
+        "width": 2.0,
+        "depth": 3.0,
+        "height": 2.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chandelier_1",
+        "name": "Antler Chandelier",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 2.45,
+        "width": 2.0,
+        "depth": 2.0,
+        "height": 1.8,
+        "elevation": 0.9999999999999998,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 2.5,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 1.2m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use a neutral color palette to create a calm atmosphere."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "couch_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "rug_1",
+        "kind": "adjacent_to",
+        "target_id": "couch_1",
+        "wall": null,
+        "parameters_m": {
+         "m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fireplace_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chandelier_1",
+        "kind": "above",
+        "target_id": "fireplace_1",
+        "wall": null,
+        "parameters_m": {
+         "m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "couch_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.5,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p046"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 9,
+     "seconds": 35.3,
+     "plan": {
+      "name": "Sushi Bar",
+      "room": {
+       "width": 10.0,
+       "depth": 8.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Chef Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "display_case",
+        "name": "Display Case",
+        "category": "fixture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 1.0,
+        "depth": 1.5,
+        "height": 2.0,
+        "elevation": 2.4,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_1",
+        "name": "Stool 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.95,
+        "z": 2.1500000000000004,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_2",
+        "name": "Stool 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.45,
+        "z": 2.75,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_3",
+        "name": "Stool 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.95,
+        "z": 2.7500000000000004,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_4",
+        "name": "Stool 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.45,
+        "z": 3.35,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_5",
+        "name": "Stool 5",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.95,
+        "z": 3.6500000000000004,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -0.3,
+        "z": 3.0500000000000003,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.9,
+        "elevation": 1.9,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "pendant_light_2",
+        "name": "Pendant Light 2",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.3,
+        "z": 3.0500000000000003,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.9,
+        "elevation": 1.9,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 2.8,
+       "target_z": 3.0500000000000003,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "A sushi bar with a chef counter, five seats, a display case on the counter, and cool clean lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "display_case",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 1.0,
+         "distribution_span_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_5",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 4.0,
+         "distribution_count": 5.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_2",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.8,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p047"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1970s Recording...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 23.6,
+     "prompt_id": "p048"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Daycare Playroo... 2.75, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 24.3,
+     "prompt_id": "p049"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Genera...ht_m=2.5, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 9.2,
+     "prompt_id": "p050"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 11:22:55"
+}

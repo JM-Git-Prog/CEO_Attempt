@@ -1,0 +1,24 @@
+error: Expecting property name enclosed in double quotes: line 21 column 33 (char 506)
+------------------------------------------------------------
+{
+    "schema_version": "floor-plan/v11",
+    "name": "Tiny Studio Apartment",
+    "room": {
+        "width": 4.5,
+        "depth": 3.6,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "bed_1",
+            "name": "Fold-out Bed",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 0.5,
+            "z": 1.8,
+            "width": 2.4,
+            "depth": 1.9,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+           

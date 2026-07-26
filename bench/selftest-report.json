@@ -1,0 +1,74 @@
+{
+  "generated": "2026-07-26 13:18:58",
+  "live": false,
+  "passed": 10,
+  "failed": 1,
+  "checks": [
+    {
+      "check": "1 imports",
+      "ok": true,
+      "detail": "every module the loop needs imports cleanly",
+      "seconds": 0.3
+    },
+    {
+      "check": "2 training interpreter",
+      "ok": false,
+      "detail": "OSError: [Errno 8] Exec format error: '/sessions/bold-lucid-knuth/mnt/Kiro/CEO_Kiro/CEO_Attempt/bench/venv-train/Scripts/python.exe'",
+      "seconds": 0.0
+    },
+    {
+      "check": "3 relation reconciler",
+      "ok": true,
+      "detail": "orphan/duplicate/missing all repaired; healthy plan untouched",
+      "seconds": 0.0
+    },
+    {
+      "check": "3b surviving normalization",
+      "ok": true,
+      "detail": "renames followed exactly; dropped items and camera recovered",
+      "seconds": 0.0
+    },
+    {
+      "check": "3c JSON repair",
+      "ok": true,
+      "detail": "punctuation defects repaired; string contents untouched",
+      "seconds": 0.0
+    },
+    {
+      "check": "3d backend errors surface",
+      "ok": true,
+      "detail": "a backend failure now raises with its real cause attached",
+      "seconds": 0.0
+    },
+    {
+      "check": "3e empty 200 raises",
+      "ok": true,
+      "detail": "an empty 200 raises, carrying done_reason and the context counters",
+      "seconds": 0.0
+    },
+    {
+      "check": "4 geometry repair wiring",
+      "ok": true,
+      "detail": "a failing plan was rescued in _one_plan (1 nudges) and tagged",
+      "seconds": 1.2
+    },
+    {
+      "check": "5 corpus round-trip",
+      "ok": true,
+      "detail": "row reached the corpus with repaired_by_math + synthesized_relations intact",
+      "seconds": 1.1
+    },
+    {
+      "check": "6 stuck detector",
+      "ok": true,
+      "detail": "stale progress (21.3h old) correctly ignored, real freezes still caught",
+      "seconds": 0.0
+    },
+    {
+      "check": "7 dashboard",
+      "ok": true,
+      "detail": "flywheel-dashboard.html generated (7222 bytes)",
+      "seconds": 3.9
+    }
+  ]
+}

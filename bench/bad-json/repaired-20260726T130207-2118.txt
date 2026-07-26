@@ -1,0 +1,88 @@
+error: Expecting property name enclosed in double quotes: line 86 column 28 (char 1825)
+------------------------------------------------------------
+{
+  "name": "1970s Living Room",
+  "room": {
+    "width": 6.5,
+    "depth": 4.8,
+    "height": 2.7
+  },
+  "items": [
+    {
+      "id": "sofa_1",
+      "name": "Low Orange Sofa",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 1.8,
+      "width": 2.3,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "sofa_1",
+          "kind": "against_wall",
+          "target_id": null,
+          "wall": "north",
+          "parameters_m": {},
+          "weight": 1.0,
+          "relaxable": false
+        }
+      ]
+    },
+    {
+      "id": "coffee_table_1",
+      "name": "Round Coffee Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.3,
+      "z": 1.8,
+      "width": 1.5,
+      "depth": 1.5,
+      "height": 0.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "coffee_table_1",
+          "kind": "centered",
+          "parameters_m": {},
+          "relaxable": true
+        }
+      ]
+    },
+    {
+      "id": "shag_rug_1",
+      "name": "Shag Rug",
+      "category": "decor",
+      "mount": "floor",
+      "x": 2.3,
+      "z": 1.8,
+      "width": 2.5,
+      "depth": 2.5,
+      "height": 0.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "shag_rug_1",
+          "kind": "centered",
+          "parameters_m": {},
+          "relaxable": true
+        }
+      ]
+    },
+    {
+      "id": "floor_lamp_1",
+      "name": "Floor Lamp",

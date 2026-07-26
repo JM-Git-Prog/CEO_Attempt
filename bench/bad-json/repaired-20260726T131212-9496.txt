@@ -1,0 +1,110 @@
+error: Expecting value: line 108 column 9 (char 2089)
+------------------------------------------------------------
+{
+  "name": "Victorian Library",
+  "room": {
+    "width": 6.0,
+    "depth": 4.5,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "bookcase_1",
+      "name": "Tall Bookcase",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 0.75,
+      "z": 1.5,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 4.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bookcase_2",
+      "name": "Tall Bookcase",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.25,
+      "z": 1.5,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 4.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bookcase_3",
+      "name": "Tall Bookcase",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 6.0,
+      "z": 1.5,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 4.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "reading_desk",
+      "name": "Reading Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.25,
+      "z": 2.5,
+      "width": 1.8,
+      "depth": 1.5,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "ladder",
+      "name": "Ladder",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.25,
+      "z": 1.5,
+      "width": 0.6,
+      "depth": 2.0,
+      "height": 4.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "banker_lamp",
+      "name": "Green Banker Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 3.25,
+      "z": 2.5,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 2.7,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 1.2,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.25,
+    "y": 1.6,
+    "z": 

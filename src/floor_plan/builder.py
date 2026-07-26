@@ -161,6 +161,159 @@ def _complete_v11_base_fields(raw: dict, concept: SceneConcept) -> dict:
     return payload
 
 
+def _reconcile_v11_relations(raw: dict) -> tuple[dict, dict]:
+    """Make relationships and items agree before validation.
+
+    FloorPlanV11 demands exactly one placement relation per item. Models miss
+    that constantly, and by a hair: a relation naming an item that isn't in
+    the list, two relations for one item, or an item nobody placed. Measured
+    2026-07-26: 385 of 558 generations died on this single rule - more than
+    every geometry fault combined - and the model-retry below usually failed
+    on it too, so the cost was two LLM calls to produce nothing.
+
+    Dropping an orphan or a duplicate relation invents nothing: an orphan
+    references an item that does not exist, and a second relation for the
+    same subject is unusable either way. Synthesizing a relation for an
+    unplaced item DOES guess, so those are counted and surfaced as a warning
+    so the row can be kept out of training if the guess proves harmful.
+    """
+    payload = dict(raw)
+    items = payload.get("items")
+    relations = payload.get("relationships")
+    if not isinstance(items, list) or not isinstance(relations, list):
+        return payload, {}
+
+    item_ids = [i.get("id") for i in items if isinstance(i, dict) and i.get("id")]
+    known = set(item_ids)
+    kept: list[dict] = []
+    placed: set = set()
+    dropped_orphan = dropped_duplicate = synthesized = 0
+
+    for relation in relations:
+        if not isinstance(relation, dict):
+            continue
+        subject = relation.get("subject_id")
+        if subject not in known:
+            dropped_orphan += 1
+            continue
+        if subject in placed:
+            dropped_duplicate += 1
+            continue
+        placed.add(subject)
+        kept.append(relation)
+
+    for item_id in item_ids:
+        if item_id in placed:
+            continue
+        # "centered" is the only kind needing neither a wall nor a target, and
+        # relaxable lets the solver move it rather than declaring the whole
+        # contract unsatisfiable. It is a placeholder, not a design choice.
+        kept.append({"subject_id": item_id, "kind": "centered",
+                     "parameters_m": {}, "relaxable": True})
+        synthesized += 1
+
+    payload["relationships"] = kept
+    stats = {}
+    if dropped_orphan:
+        stats["dropped_orphan_relations"] = dropped_orphan
+    if dropped_duplicate:
+        stats["dropped_duplicate_relations"] = dropped_duplicate
+    if synthesized:
+        stats["synthesized_relations"] = synthesized
+    return payload, stats
+
+
+def _remap_relations_after_normalize(pre_items: list, payload: dict) -> tuple[dict, dict]:
+    """Follow items through normalization so their relations follow too.
+
+    normalize_floor_plan() rewrites the item list before the plan is validated
+    again: it DROPS items that look like surfaces or openings (floor, wall,
+    door, window...) and RENAMES ids via _safe_id plus a de-duplicating
+    suffix. Relations still name the old ids, so a plan the model got
+    perfectly right fails "exactly one typed placement relation per item" on
+    the second validate - and reconciling before normalization cannot help,
+    because the damage happens after it. Measured 2026-07-26: this, not the
+    model, was the source of most of those failures.
+
+    Item names survive normalization, and the surviving items stay in their
+    original order, so the post-list is an ordered subsequence of the
+    pre-list. Walking both in order recovers old id -> new id. Relations
+    whose subject or target did not survive are dropped, and the caller's
+    reconcile pass then fills any resulting gap.
+    """
+    items = payload.get("items")
+    relations = payload.get("relationships")
+    if not isinstance(items, list) or not isinstance(relations, list):
+        return payload, {}
+
+    mapping: dict[str, str] = {}
+    cursor = 0
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name")
+        while cursor < len(pre_items) and pre_items[cursor][1] != name:
+            cursor += 1
+        if cursor < len(pre_items):
+            mapping[pre_items[cursor][0]] = item.get("id")
+            cursor += 1
+
+    surviving = {i.get("id") for i in items if isinstance(i, dict)}
+    remapped: list[dict] = []
+    renamed = dropped = 0
+    for relation in relations:
+        if not isinstance(relation, dict):
+            continue
+        new = dict(relation)
+        subject = new.get("subject_id")
+        if subject not in surviving and subject in mapping:
+            new["subject_id"] = mapping[subject]
+            renamed += 1
+        target = new.get("target_id")
+        if target and target not in surviving and target in mapping:
+            new["target_id"] = mapping[target]
+        if new.get("subject_id") not in surviving:
+            dropped += 1
+            continue
+        if new.get("target_id") and new["target_id"] not in surviving:
+            # its anchor was normalized away; the reconcile pass will replace
+            # this with a placeholder rather than leave a dangling reference
+            dropped += 1
+            continue
+        remapped.append(new)
+
+    payload = dict(payload)
+    payload["relationships"] = remapped
+
+    # The camera points at an item too, and the schema rejects the whole plan
+    # if that item was renamed or dropped ("camera intent has dangling
+    # target"). Follow the rename; if the subject is gone entirely, aim at the
+    # first surviving item so the plan stays valid rather than being discarded.
+    camera_retargeted = 0
+    intent = payload.get("camera_intent")
+    if isinstance(intent, dict):
+        intent = dict(intent)
+        target = intent.get("target_id")
+        if target not in surviving:
+            replacement = mapping.get(target)
+            if replacement not in surviving:
+                replacement = next((i.get("id") for i in items
+                                    if isinstance(i, dict) and i.get("id") in surviving), None)
+            if replacement:
+                intent["target_id"] = replacement
+                camera_retargeted = 1
+                payload["camera_intent"] = intent
+
+    stats = {}
+    if renamed:
+        stats["relations_followed_rename"] = renamed
+    if dropped:
+        stats["relations_lost_to_normalize"] = dropped
+    if camera_retargeted:
+        stats["camera_retargeted"] = camera_retargeted
+    return payload, stats
+
+
 async def build_floor_plan(
     description: str,
     concept: SceneConcept,
@@ -203,6 +356,7 @@ async def build_floor_plan(
         from src.floor_plan.solver import solve_explicit_plan
 
         raw = _complete_v11_base_fields(raw, concept)
+        raw, relation_fixes = _reconcile_v11_relations(raw)
         schema_repair_used = False
         try:
             plan = FloorPlanV11.model_validate(raw)
@@ -226,14 +380,35 @@ async def build_floor_plan(
                 model=_v11_plan_model(),
                 timeout_seconds=timeout_seconds,
             )
-            plan = FloorPlanV11.model_validate(
+            repaired_payload, repair_relation_fixes = _reconcile_v11_relations(
                 _complete_v11_base_fields(repaired, concept)
             )
+            for key, count in repair_relation_fixes.items():
+                relation_fixes[key] = relation_fixes.get(key, 0) + count
+            plan = FloorPlanV11.model_validate(repaired_payload)
         solved = solve_explicit_plan(plan)
+        pre_normalize_items = [(i.id, i.name) for i in solved.items]
         normalized, warnings, _ = normalize_floor_plan(
             solved, "", strict=strict_validation, infer_text_placement=False
         )
-        resolved = solve_explicit_plan(FloorPlanV11.model_validate(normalized))
+        # Normalization drops and renames items, which orphans the relations
+        # pointing at them. Follow them across, then reconcile whatever is
+        # left, BEFORE the validate below - this is where most of the
+        # "one relation per item" deaths actually happened.
+        normalized_payload = normalized.model_dump(mode="json")
+        normalized_payload, remap_stats = _remap_relations_after_normalize(
+            pre_normalize_items, normalized_payload)
+        normalized_payload, post_fixes = _reconcile_v11_relations(normalized_payload)
+        for key, count in list(remap_stats.items()) + list(post_fixes.items()):
+            relation_fixes[key] = relation_fixes.get(key, 0) + count
+
+        # Surfaced through the existing warnings channel so callers (and the
+        # bench corpus) can see a plan only validated because we reconciled
+        # its relations - no schema change needed to carry the fact.
+        warnings = list(warnings or [])
+        for key, count in relation_fixes.items():
+            warnings.append(f"{key}:{count}")
+        resolved = solve_explicit_plan(FloorPlanV11.model_validate(normalized_payload))
         report = validate_floor_plan(resolved, warnings, tolerance="strict")
 
         # Bounded semantic repair: if schema was valid but deterministic validation
@@ -315,13 +490,20 @@ async def build_floor_plan(
                     update={"relationships": authorized_relationships},
                 )
                 solved2 = solve_explicit_plan(repaired_plan)
+                pre_normalize_items2 = [(i.id, i.name) for i in solved2.items]
                 normalized2, warnings2, _ = normalize_floor_plan(
                     solved2, "", strict=strict_validation, infer_text_placement=False
                 )
-                resolved2 = solve_explicit_plan(FloorPlanV11.model_validate(normalized2))
+                payload2, _remap2 = _remap_relations_after_normalize(
+                    pre_normalize_items2, normalized2.model_dump(mode="json"))
+                payload2, _fix2 = _reconcile_v11_relations(payload2)
+                resolved2 = solve_explicit_plan(FloorPlanV11.model_validate(payload2))
                 report2 = validate_floor_plan(resolved2, warnings2, tolerance="strict")
                 # Accept the repair only if it actually improved things
                 if report2.valid or len(report2.blockers) < len(report.blockers):
+                    warnings2 = list(warnings2 or [])
+                    for key, count in relation_fixes.items():
+                        warnings2.append(f"{key}:{count}")
                     return resolved2, warnings2, report2
             except (ValidationError, ValueError, KeyError, TypeError):
                 pass  # Repair failed schema/solve — fall through with original

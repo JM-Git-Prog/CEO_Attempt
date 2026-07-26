@@ -1,0 +1,263 @@
+{
+ "started": "2026-07-26 12:24:59",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 1,
+   "total": 15,
+   "legal_rate": 0.07,
+   "violation_census": {
+    "error:LLMError": 14
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 106 column 6 (char 2115)\nRaw output:\n{\n  \"name\": \"Small Cottage Kitchen\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 3.6,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Simple Wooden Counter\",\n   ",
+     "seconds": 13.0,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 103 column 6 (char 1956)\nRaw output:\n{\n  \"name\": \"1950s Diner\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Counter\",\n      \"category\": \"furniture\",",
+     "seconds": 13.0,
+     "prompt_id": "p002"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 102 column 6 (char 2063)\nRaw output:\n{\n  \"name\": \"1970s Living Room\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"sofa_1\",\n      \"name\": \"Low Orange Sofa\",\n      \"category\"",
+     "seconds": 13.1,
+     "prompt_id": "p003"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 3,
+     "seconds": 21.9,
+     "plan": {
+      "name": "Minimalist Home Office",
+      "room": {
+       "width": 4.5,
+       "depth": 3.6,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "standing_desk_1",
+        "name": "Standing Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.4,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "shelf_1",
+        "name": "Shelf",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 1.4500000000000002,
+        "width": 0.9,
+        "depth": 0.3,
+        "height": 0.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "task_chair_1",
+        "name": "Task Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.9200000000000002,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.8,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.8,
+       "y": 1.6,
+       "z": 1.35,
+       "target_x": 0.0,
+       "target_y": 2.4,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "standing_desk_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shelf_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_chair_1",
+        "kind": "adjacent_to",
+        "target_id": "standing_desk_1",
+        "wall": null,
+        "parameters_m": {
+         "gap": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "standing_desk_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.4,
+       "fov_deg": 55.0
+      }
+     },
+     "repaired_by_math": true,
+     "repairs_applied": [
+      "Nudged Task Chair (task_chair_1) inward by 0.030m (from [1.950, 0.000] to [1.920, 0.000])"
+     ],
+     "blockers_before_repair": [
+      "out_of_bounds"
+     ],
+     "prompt_id": "p004"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 104 column 25 (char 2088)\nRaw output:\n{\n  \"name\": \"1920s Study\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 3.6,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"heavy_oak_desk\",\n      \"name\": \"Heavy Oak Desk\",\n      \"categor",
+     "seconds": 13.6,
+     "prompt_id": "p005"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 97 column 6 (char 1982)\nRaw output:\n{\n  \"name\": \"1990s Teenage Bedroom\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 3.6,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"bed_1\",\n      \"name\": \"Single Bed\",\n      \"category\": \"",
+     "seconds": 13.1,
+     "prompt_id": "p006"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 107 column 6 (char 2080)\nRaw output:\n{\n  \"name\": \"Laundry Room\",\n  \"room\": {\n    \"width\": 2.5,\n    \"depth\": 3.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"washer_1\",\n      \"name\": \"Washer\",\n      \"category\": \"furniture",
+     "seconds": 13.2,
+     "prompt_id": "p007"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1842)\nRaw output:\n{\n  \"name\": \"Barber Shop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"chair_1\",\n      \"name\": \"Barber Chair 1\",\n      \"category\": \"furniture",
+     "seconds": 13.1,
+     "prompt_id": "p008"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 102 column 6 (char 2073)\nRaw output:\n{\n  \"name\": \"Rustic Cabin Bunk Room\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"bunk_bed_1\",\n      \"name\": \"Bunk Bed 1\",\n      \"categ",
+     "seconds": 13.7,
+     "prompt_id": "p009"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 106 column 6 (char 2029)\nRaw output:\n{\n  \"name\": \"Yoga Studio\",\n  \"room\": {\n    \"width\": 6,\n    \"depth\": 8,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"mat_1\",\n      \"name\": \"Yoga Mat\",\n      \"category\": \"furniture\",\n   ",
+     "seconds": 13.1,
+     "prompt_id": "p010"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 98 column 6 (char 1990)\nRaw output:\n{\n  \"name\": \"1940s Detective Office\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"desk_1\",\n      \"name\": \"Cluttered Desk\",\n      \"catego",
+     "seconds": 13.0,
+     "prompt_id": "p011"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 88 column 6 (char 1801)\nRaw output:\n{\n  \"name\": \"Coffee Shop Corner\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Service Counter\",\n      \"catego",
+     "seconds": 13.4,
+     "prompt_id": "p012"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1995)\nRaw output:\n{\n  \"name\": \"1980s Video Arcade\",\n  \"room\": {\n    \"width\": 10.0,\n    \"depth\": 8.0,\n    \"height\": 3.2\n  },\n  \"items\": [\n    {\n      \"id\": \"arcade_cabinet_1\",\n      \"name\": \"Pac-Man Upright Arcade ",
+     "seconds": 13.3,
+     "prompt_id": "p013"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 98 column 6 (char 1996)\nRaw output:\n{\n  \"name\": \"Victorian Parlor\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"chaise_lounge_1\",\n      \"name\": \"Chaise Lounge\",\n      \"cate",
+     "seconds": 13.1,
+     "prompt_id": "p014"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1806)\nRaw output:\n{\n  \"name\": \"Hotel Room\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 3.6,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"bed_1\",\n      \"name\": \"Queen Bed\",\n      \"category\": \"furniture\",\n",
+     "seconds": 12.9,
+     "prompt_id": "p015"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 12:28:25"
+}

@@ -1,0 +1,102 @@
+error: Expecting ',' delimiter: line 100 column 15 (char 2179)
+------------------------------------------------------------
+{
+  "description": "A 1950s classroom with six student desks in rows, a teacher desk, a chalkboard wall, and tall windows.",
+  "schema_version": "floor-plan/v11",
+  "name": "Classroom Floor Plan",
+  "room": {
+    "width": 10.5,
+    "depth": 8.2,
+    "height": 3.0
+  },
+  "items": [
+    {
+      "id": "student_desk_1",
+      "name": "Student Desk 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 2.5,
+      "width": 0.8,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "student_desk_2",
+      "name": "Student Desk 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 2.5,
+      "width": 0.8,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "student_desk_3",
+      "name": "Student Desk 3",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.5,
+      "z": 2.5,
+      "width": 0.8,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "student_desk_4",
+      "name": "Student Desk 4",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 7.5,
+      "z": 2.5,
+      "width": 0.8,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "student_desk_5",
+      "name": "Student Desk 5",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 9.5,
+      "z": 2.5,
+      "width": 0.8,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "student_desk_6",
+      "name": "Student Desk 6",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 4.5,
+      "width": 0.8,
+      "depth": 1.4,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "teacher_desk",
+      "name": "Teacher Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.5

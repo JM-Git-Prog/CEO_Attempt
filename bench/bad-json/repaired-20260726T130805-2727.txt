@@ -1,0 +1,110 @@
+error: Unterminated string starting at: line 108 column 13 (char 2110)
+------------------------------------------------------------
+{
+  "name": "Medieval Tavern Hall",
+  "room": {
+    "width": 10.0,
+    "depth": 15.0,
+    "height": 3.5
+  },
+  "items": [
+    {
+      "id": "table_1",
+      "name": "Long Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 7.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "table_2",
+      "name": "Long Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.5,
+      "z": 7.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "table_3",
+      "name": "Long Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 8.5,
+      "z": 7.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bench_1",
+      "name": "Benches",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 3.0,
+      "depth": 1.0,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bench_2",
+      "name": "Benches",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.5,
+      "z": 3.0,
+      "width": 3.0,
+      "depth": 1.0,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bench_3",
+      "name": "Benches",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 8.5,
+      "z": 3.0,
+      "width": 3.0,
+      "depth": 1.0,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "hearth",
+      "name": "Hearth",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 5.5,
+      "z": 9.0,
+      "width": 2.0,
+      "depth": 1.0,
+      "height": 3.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bar@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

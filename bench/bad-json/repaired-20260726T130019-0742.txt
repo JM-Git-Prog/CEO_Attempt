@@ -1,0 +1,108 @@
+error: Unterminated string starting at: line 106 column 15 (char 2088)
+------------------------------------------------------------
+{
+  "name": "Maple Sugar Shack",
+  "room": {
+    "width": 10.0,
+    "depth": 15.0,
+    "height": 3.5
+  },
+  "items": [
+    {
+      "id": "boiling_evaporator_table",
+      "name": "Boiling Evaporator Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.0,
+      "z": 7.5,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "wood_pile",
+      "name": "Wood Pile",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 5.0,
+      "z": 2.0,
+      "width": 1.0,
+      "depth": 3.0,
+      "height": 6.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "stool_1",
+      "name": "Stool 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 10.0,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_2",
+      "name": "Stool 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 10.0,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "steam_softened_window",
+      "name": "Steam-Softened Window",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 8.0,
+      "z": 2.5,
+      "width": 1.0,
+      "depth": 3.0,
+      "height": 6.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "main_door",
+      "kind": "door",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 2.0,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 4.0,
+    "y": 3.0,
+    "z": 8.0,
+    "target_x": 5.0,
+    "target_y": 2.0,
+    "target_z": 7.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [],
+  "design_notes": [],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "stool_1",
+      "kind": "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

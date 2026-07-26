@@ -1,0 +1,20 @@
+error: Expecting value: line 18 column 21 (char 419)
+------------------------------------------------------------
+{
+    "schema_version": "floor-plan/v11",
+    "name": "Dentist Operatory",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "chair_1",
+            "name": "Reclined Patient Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 

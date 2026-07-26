@@ -1,0 +1,122 @@
+{
+ "started": "2026-07-26 12:15:25",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 15
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 112 column 6 (char 2178)\nRaw output:\n{\n  \"name\": \"Loft Photography Studio\",\n  \"room\": {\n    \"width\": 6,\n    \"depth\": 4,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"backdrop_stand\",\n      \"name\": \"Backdrop Stand\",\n      \"",
+     "seconds": 13.3,
+     "prompt_id": "p071"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 112 column 6 (char 2239)\nRaw output:\n{\n  \"name\": \"Pharmacy Counter Area\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"service_counter_1\",\n      \"name\": \"Service Counter\",\n    ",
+     "seconds": 13.1,
+     "prompt_id": "p072"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 104 column 6 (char 2032)\nRaw output:\n{\n  \"name\": \"1920s Jazz Club\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"piano_1\",\n      \"name\": \"Piano\",\n      \"category\": \"furniture\",\n ",
+     "seconds": 13.2,
+     "prompt_id": "p073"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 106 column 6 (char 2073)\nRaw output:\n{\n  \"name\": \"University Study Room\",\n  \"room\": {\n    \"width\": 6,\n    \"depth\": 4,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"table_1\",\n      \"name\": \"Large Table\",\n      \"category\": \"",
+     "seconds": 13.2,
+     "prompt_id": "p074"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 108 column 25 (char 2160)\nRaw output:\n{\n  \"name\": \"Barn Workshop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 15,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"workbench_1\",\n      \"name\": \"Tractor-part Workbench\",\n      \"cate",
+     "seconds": 13.0,
+     "prompt_id": "p075"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 106 column 6 (char 2057)\nRaw output:\n{\n  \"name\": \"Nail Salon\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 15,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"table_1\",\n      \"name\": \"Manicure Table\",\n      \"category\": \"furnitur",
+     "seconds": 13.0,
+     "prompt_id": "p076"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 110 column 6 (char 2225)\nRaw output:\n{\n  \"name\": \"1990s Skate Shop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 15,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"deck_wall_display\",\n      \"name\": \"Deck Wall Display\",\n      \"c",
+     "seconds": 13.3,
+     "prompt_id": "p077"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1853)\nRaw output:\n{\n  \"name\": \"Microbrew Coffee Lab\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 8.0,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"brewing_counter_1\",\n      \"name\": \"Brewing Counter\",\n   ",
+     "seconds": 12.8,
+     "prompt_id": "p078"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 103 column 25 (char 2069)\nRaw output:\n{\n  \"name\": \"1940s Diner Kitchen\",\n  \"room\": {\n    \"width\": 6.5,\n    \"depth\": 4.2,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Flat-Top Line Counter\",\n    ",
+     "seconds": 12.7,
+     "prompt_id": "p079"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1886)\nRaw output:\n{\n  \"name\": \"Tattoo Studio\",\n  \"room\": {\n    \"width\": 6,\n    \"depth\": 4,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"client_chair\",\n      \"name\": \"Client Chair\",\n      \"category\": \"fur",
+     "seconds": 12.9,
+     "prompt_id": "p080"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1806)\nRaw output:\n{\n  \"name\": \"Cyberpunk Noodle Stall\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Counter\",\n      \"category\":",
+     "seconds": 12.9,
+     "prompt_id": "p081"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 103 column 6 (char 1998)\nRaw output:\n{\n  \"name\": \"Realtor Office\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"desk_1\",\n      \"name\": \"Desk\",\n      \"category\": \"furniture\",",
+     "seconds": 13.3,
+     "prompt_id": "p082"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1913)\nRaw output:\n{\n  \"name\": \"1960s Hair Salon\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 8.0,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"dryer_chair_1\",\n      \"name\": \"Dryer Chair 1\",\n      \"catego",
+     "seconds": 12.9,
+     "prompt_id": "p083"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 112 column 6 (char 2215)\nRaw output:\n{\n  \"name\": \"Bike Repair Shop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 12,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"repair_stand_1\",\n      \"name\": \"Repair Stand\",\n      \"category\"",
+     "seconds": 13.1,
+     "prompt_id": "p084"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 103 column 25 (char 2171)\nRaw output:\n{\n  \"name\": \"Victorian Apothecary\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"tall_bottle_cabinet_wall\",\n      \"name\": \"Tall Bottle ",
+     "seconds": 13.0,
+     "prompt_id": "p085"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 12:18:41"
+}

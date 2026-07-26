@@ -1,0 +1,122 @@
+error: Expecting ',' delimiter: line 119 column 22 (char 2425)
+------------------------------------------------------------
+{
+  "name": "Physical Therapy Room",
+  "room": {
+    "width": 10.0,
+    "depth": 12.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "padded_table_1",
+      "name": "Padded Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 6.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "parallel_bar_rig_1",
+      "name": "Parallel Bar Rig",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 6.0,
+      "width": 4.0,
+      "depth": 3.0,
+      "height": 2.5,
+      "elevation": 1.8,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "exercise_ball_corner_1",
+      "name": "Exercise Ball Corner",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 7.5,
+      "z": 6.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "supply_cabinet_1",
+      "name": "Supply Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 5.5,
+      "z": 6.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 2.5,
+      "elevation": 1.8,
+      "rotation_deg": 90.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 2.0,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 4.5,
+    "y": 1.6,
+    "z": 3.0,
+    "target_x": 4.5,
+    "target_y": 1.1,
+    "target_z": 2.8,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "Use simple daylight for lighting."
+  ],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "padded_table_1",
+      "kind": "centered"
+    },
+    {
+      "subject_id": "parallel_bar_rig_1",
+      "kind": "against_wall",
+      "wall": "north"
+    },
+    {
+      "subject_id": "exercise_ball_corner_1",
+      "kind": "adjacent_to",
+      "target_id": "padded_table_1"
+    },
+    {
+      "subject_id": "supply_cabinet_1",
+      "kind": "centered",
+      "parameters_m": {},
+      "relaxable": true
+    }
+  ],
+  "opening_intents": [
+    {
+      "id": "door_1",
+      "placement": "near_corner",
+      "wall": "north"
+   

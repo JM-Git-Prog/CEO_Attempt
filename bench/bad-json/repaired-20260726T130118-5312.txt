@@ -1,0 +1,111 @@
+error: Expecting value: line 109 column 16 (char 2103)
+------------------------------------------------------------
+{
+  "name": "Data Center Aisle Room",
+  "room": {
+    "width": 10.0,
+    "depth": 12.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "rack_1",
+      "name": "Server Rack",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 6.0,
+      "width": 2.4,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "rack_2",
+      "name": "Server Rack",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 6.0,
+      "width": 2.4,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "rack_3",
+      "name": "Server Rack",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 7.5,
+      "z": 6.0,
+      "width": 2.4,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "rack_4",
+      "name": "Server Rack",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 10.5,
+      "z": 6.0,
+      "width": 2.4,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "crash_cart",
+      "name": "Crash Cart Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 9.0,
+      "width": 1.8,
+      "depth": 2.0,
+      "height": 1.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "light",
+      "name": "Cold Blue Panel Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 5.25,
+      "z": 6.75,
+      "width": 2.4,
+      "depth": 0.3,
+      "height": 1.8,
+      "elevation": 2.9,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door",
+      "kind": "door",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 2.4,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 6.75,
+    "y": 3.2,
+    "z": 9.0,
+    "target_x": 

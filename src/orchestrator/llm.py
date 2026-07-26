@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import time
 from typing import Optional
 
 import httpx
@@ -45,7 +46,26 @@ async def _call_ollama(
         response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
         if response.status_code != 200:
             raise LLMError(f"Ollama returned {response.status_code}: {response.text}")
-        return response.json()["message"]["content"]
+        body = response.json()
+        content = (body.get("message") or {}).get("content") or ""
+        if not content.strip():
+            # Ollama answers 200 with an EMPTY message more often than it
+            # errors: measured 2026-07-26, 55% of calls. That is not an
+            # exception, so it slipped through as "the model returned invalid
+            # JSON" and the real reason was never recorded. Ollama's own
+            # counters say why - done_reason "length" means the output cap or
+            # context ran out; a prompt_eval_count at the context ceiling
+            # means the prompt itself did not fit.
+            raise LLMError(
+                "Ollama returned 200 with an EMPTY message. "
+                f"done_reason={body.get('done_reason')!r} "
+                f"prompt_eval_count={body.get('prompt_eval_count')} "
+                f"eval_count={body.get('eval_count')} "
+                f"num_ctx={payload['options']['num_ctx']} "
+                f"num_predict={payload['options']['num_predict']} "
+                f"total_duration_ms={round((body.get('total_duration') or 0) / 1e6)}"
+            )
+        return content
 
 
 async def _call_openai_compatible(
@@ -87,20 +107,140 @@ async def generate(
     # needs this fallback to see the current value, not whatever it was
     # the first time this module got imported in the process.
     model = model or os.getenv("LLM_MODEL", "llama3.1")
+
+    # Every backend failure used to be swallowed with a bare `pass` and
+    # answered with mock_generate(). The caller then saw an unparseable
+    # response and reported "LLM returned invalid JSON" - so an ollama
+    # timeout, a 500, or a refused connection all showed up as a JSON
+    # problem, and the real cause was thrown away. Measured 2026-07-26: 50
+    # of 50 "bad JSON" failures were actually EMPTY mock responses standing
+    # in for a backend error nobody ever saw.
+    failures: list[str] = []
     if OLLAMA_URL:
         try:
             return await _call_ollama(system, user, model, json_mode=json_mode)
-        except (httpx.HTTPError, LLMError):
-            pass
+        except (httpx.HTTPError, LLMError) as exc:
+            failures.append(f"ollama({model}): {type(exc).__name__}: {exc}")
     if OPENAI_API_URL:
         try:
             return await _call_openai_compatible(
                 system, user, model, json_mode=json_mode
             )
-        except (httpx.HTTPError, LLMError):
-            pass
+        except (httpx.HTTPError, LLMError) as exc:
+            failures.append(f"openai-compatible({model}): {type(exc).__name__}: {exc}")
+
+    if failures and os.getenv("ALLOW_MOCK_LLM", "") != "1":
+        # A configured backend failed. Say so, loudly, instead of quietly
+        # substituting fake output into a measurement run.
+        raise LLMError("all configured LLM backends failed -> " + " | ".join(failures))
+
     from src.orchestrator.mock_llm import mock_generate
     return mock_generate(system, user)
+
+
+def _repair_json_text(text: str) -> str:
+    """Fix the malformed-JSON defects that are unambiguous, and only those.
+
+    Local models routinely emit JSON that is correct except for punctuation,
+    and the whole generation - a minute of GPU time - was being thrown away
+    for it. Measured 2026-07-26: "Expecting ',' delimiter" was the single
+    biggest remaining failure once the schema faults were fixed.
+
+    Four repairs, each with exactly one possible interpretation:
+      - strip // and /* */ comments (never legal in JSON)
+      - drop trailing commas before } or ]
+      - insert a missing comma after a closing } or ] that is immediately
+        followed by another value (the observed defect)
+      - close containers left open by a truncated response
+
+    Everything happens outside string literals, so no repair can alter the
+    model's actual content. Anything ambiguous - a missing colon, a missing
+    quote mid-key - is deliberately left alone to fail loudly.
+    """
+    out: list[str] = []
+    stack: list[str] = []
+    in_string = False
+    escaped = False
+    index = 0
+    length = len(text)
+
+    while index < length:
+        char = text[index]
+
+        if in_string:
+            out.append(char)
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            index += 1
+            continue
+
+        if char == '"':
+            in_string = True
+            out.append(char)
+            index += 1
+            continue
+
+        if char == "/" and index + 1 < length and text[index + 1] == "/":
+            while index < length and text[index] != "\n":
+                index += 1
+            continue
+        if char == "/" and index + 1 < length and text[index + 1] == "*":
+            end = text.find("*/", index + 2)
+            index = length if end < 0 else end + 2
+            continue
+
+        if char == ",":
+            following = index + 1
+            while following < length and text[following].isspace():
+                following += 1
+            if following < length and text[following] in "}]":
+                index += 1  # trailing comma
+                continue
+
+        if char in "{[":
+            stack.append(char)
+        elif char in "}]":
+            if stack:
+                stack.pop()
+            # a value directly after a closed container needs a comma between
+            following = index + 1
+            while following < length and text[following].isspace():
+                following += 1
+            if following < length and text[following] in '{["' and stack:
+                out.append(char)
+                out.append(",")
+                index += 1
+                continue
+
+        out.append(char)
+        index += 1
+
+    repaired = "".join(out)
+    if in_string:
+        repaired += '"'
+    while stack:
+        repaired += "]" if stack.pop() == "[" else "}"
+    return repaired
+
+
+def _log_bad_json(raw: str, error: Exception, repaired_ok: bool) -> None:
+    """Keep the raw text of anything we could not parse, so the next defect
+    is diagnosed from evidence instead of guessed at."""
+    try:
+        from pathlib import Path
+
+        folder = Path(__file__).resolve().parent.parent.parent / "bench" / "bad-json"
+        folder.mkdir(parents=True, exist_ok=True)
+        stamp = time.strftime("%Y%m%dT%H%M%S")
+        tag = "repaired" if repaired_ok else "unparseable"
+        (folder / f"{tag}-{stamp}-{abs(hash(raw)) % 10000:04d}.txt").write_text(
+            f"error: {error}\n{'-' * 60}\n{raw}", encoding="utf-8")
+    except Exception:
+        pass  # diagnostics must never break generation
 
 
 def _parse_json(raw: str) -> dict:
@@ -114,11 +254,18 @@ def _parse_json(raw: str) -> dict:
     cleaned = cleaned.strip()
     try:
         value = json.loads(cleaned)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as first_error:
         start, end = cleaned.find("{"), cleaned.rfind("}")
-        if start < 0 or end <= start:
-            raise
-        value = json.loads(cleaned[start : end + 1])
+        sliced = cleaned[start : end + 1] if start >= 0 and end > start else cleaned
+        try:
+            value = json.loads(sliced)
+        except json.JSONDecodeError:
+            try:
+                value = json.loads(_repair_json_text(sliced))
+            except json.JSONDecodeError:
+                _log_bad_json(raw, first_error, repaired_ok=False)
+                raise first_error
+            _log_bad_json(raw, first_error, repaired_ok=True)
     if not isinstance(value, dict):
         raise LLMError("LLM JSON response must be an object")
     return value

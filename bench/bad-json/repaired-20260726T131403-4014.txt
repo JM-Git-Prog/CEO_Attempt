@@ -1,0 +1,108 @@
+error: Unterminated string starting at: line 106 column 3 (char 2083)
+------------------------------------------------------------
+{
+  "name": "1940s Radio Broadcast Booth",
+  "room": {
+    "width": 5.0,
+    "depth": 4.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "desk_1",
+      "name": "Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 0.5,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "microphone_1",
+      "name": "Microphone",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 0.5,
+      "width": 0.3,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": false
+    },
+    {
+      "id": "microphone_2",
+      "name": "Microphone",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 0.5,
+      "width": 0.3,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": false
+    },
+    {
+      "id": "console_1",
+      "name": "Control Console",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.5,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "lamp_1",
+      "name": "Red On-Air Lamp",
+      "category": "decor",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 3.5,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 2.7,
+      "rotation_deg": 0.0,
+      "fixed": false
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 1.2,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.5,
+    "y": 1.6,
+    "z": 3.5,
+    "target_x": 2.5,
+    "target_y": 1.1,
+    "target_z": 3.5,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "The desk should be placed against a wall to maximize space."
+  ],
+  "schema@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

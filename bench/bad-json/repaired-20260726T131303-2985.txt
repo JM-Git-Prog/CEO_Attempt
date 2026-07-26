@@ -1,0 +1,108 @@
+error: Unterminated string starting at: line 106 column 5 (char 2153)
+------------------------------------------------------------
+{
+  "name": "Florist Shop",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "work_counter_1",
+      "name": "Work Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.0,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 1.5,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "display_stand_1",
+      "name": "Three Tiered Display Stand",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 2.0,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "display_stand_2",
+      "name": "Three Tiered Display Stand",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 4.6,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "display_stand_3",
+      "name": "Three Tiered Display Stand",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 5.0,
+      "z": 2.0,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "cooler_cabinet_1",
+      "name": "Cooler Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 5.8,
+      "z": 4.0,
+      "width": 1.2,
+      "depth": 1.8,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 1.2,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.0,
+    "y": 1.6,
+    "z": 4.5,
+    "target_x": 0.0,
+    "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

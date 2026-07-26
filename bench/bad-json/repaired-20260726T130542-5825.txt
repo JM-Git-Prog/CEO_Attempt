@@ -1,0 +1,105 @@
+error: Expecting ',' delimiter: line 103 column 21 (char 2043)
+------------------------------------------------------------
+{
+  "name": "1950s Soda Fountain",
+  "room": {
+    "width": 10.0,
+    "depth": 15.0,
+    "height": 3.5
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 7.0,
+      "width": 10.0,
+      "depth": 3.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "stool_1",
+      "name": "Red Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 7.3,
+      "width": 0.4,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_2",
+      "name": "Red Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 7.3,
+      "width": 0.4,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_3",
+      "name": "Red Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 7.3,
+      "width": 0.4,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_4",
+      "name": "Red Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.5,
+      "z": 7.3,
+      "width": 0.4,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_5",
+      "name": "Red Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 6.5,
+      "z": 7.3,
+      "width": 0.4,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_6",
+      "name": "Red Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 7.5,
+      "z": 7.3,
+      "width": 0.4,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.

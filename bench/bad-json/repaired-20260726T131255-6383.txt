@@ -1,0 +1,76 @@
+error: Expecting value: line 74 column 12 (char 1470)
+------------------------------------------------------------
+{
+  "name": "Brewery Taproom",
+  "room": {
+    "width": 10.0,
+    "depth": 15.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "bar_counter_1",
+      "name": "Bar Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 7.0,
+      "width": 3.0,
+      "depth": 2.5,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "stool_1",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 9.0,
+      "width": 0.6,
+      "depth": 0.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "stool_2",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 10.8,
+      "width": 0.6,
+      "depth": 0.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "stool_3",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 12.6,
+      "width": 0.6,
+      "depth": 0.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id":

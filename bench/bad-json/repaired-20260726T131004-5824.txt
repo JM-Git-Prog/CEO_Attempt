@@ -1,0 +1,75 @@
+error: Expecting value: line 73 column 15 (char 1443)
+------------------------------------------------------------
+{
+  "name": "1990s Internet Cafe",
+  "room": {
+    "width": 10.0,
+    "depth": 15.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "desk_1",
+      "name": "Computer Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 7.0,
+      "width": 1.8,
+      "depth": 1.2,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_2",
+      "name": "Computer Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.3,
+      "z": 7.0,
+      "width": 1.8,
+      "depth": 1.2,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_3",
+      "name": "Computer Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 6.1,
+      "z": 7.0,
+      "width": 1.8,
+      "depth": 1.2,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_4",
+      "name": "Computer Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 10.8,
+      "width": 1.8,
+      "depth": 1.2,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_5",
+      "name": "Computer Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.3,
+      "z": 10.8,
+      "width": 1.8,
+      "depth":

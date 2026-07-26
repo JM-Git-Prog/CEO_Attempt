@@ -1,0 +1,123 @@
+{
+ "started": "2026-07-26 13:04:04",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 11,
+    "error:ValidationError": 4
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nopening_intents.0\n  Value error, near_corner opening placement requires corner [type=value_error, input_value={'placement': 'near_corne... 'opening_id': 'door_1'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nc",
+     "seconds": 13.8,
+     "prompt_id": "p006"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "5 validation errors for FloorPlanV11\nroom.depth\n  Input should be greater than or equal to 2.5 [type=greater_than_equal, input_value=2.4, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.12/v/greater_than_equal\nschema_version\n  Field required [type=missing, input_val",
+     "seconds": 12.2,
+     "prompt_id": "p007"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.6,
+     "prompt_id": "p008"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nopening_intents\n  Field required [type=missing, input_value={'name': 'Rustic Cabin Bu...{}, 'relaxable': True}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ncamera_intent\n  Field required [type=missing, input_val",
+     "seconds": 12.3,
+     "prompt_id": "p009"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.0,
+     "prompt_id": "p010"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.8,
+     "prompt_id": "p011"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.8,
+     "prompt_id": "p012"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.5,
+     "prompt_id": "p013"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.7,
+     "prompt_id": "p014"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.4,
+     "prompt_id": "p015"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.4,
+     "prompt_id": "p016"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nopening_intents\n  Field required [type=missing, input_value={'name': 'Workshop Plan',...{}, 'relaxable': True}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ncamera_intent\n  Field required [type=missing, input_val",
+     "seconds": 12.7,
+     "prompt_id": "p017"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.8,
+     "prompt_id": "p018"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.6,
+     "prompt_id": "p019"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.3,
+     "prompt_id": "p020"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 13:06:20"
+}

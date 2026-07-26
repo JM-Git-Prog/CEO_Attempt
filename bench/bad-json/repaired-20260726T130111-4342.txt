@@ -1,0 +1,108 @@
+error: Expecting property name enclosed in double quotes: line 106 column 38 (char 2194)
+------------------------------------------------------------
+{
+  "name": "Dragon-Themed Toy Store",
+  "room": {
+    "width": 5.0,
+    "depth": 4.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "castle_display_table",
+      "name": "Castle Display Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 0.5,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "shelf_wall_north",
+      "name": "Shelf Wall (North)",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": -2.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "shelf_wall_south",
+      "name": "Shelf Wall (South)",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 2.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 0.0,
+      "rotation_deg": -90.0,
+      "fixed": true
+    },
+    {
+      "id": "checkout_counter",
+      "name": "Checkout Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 1.5,
+      "width": 2.0,
+      "depth": 1.8,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "warm_spot_lighting",
+      "name": "Warm Spot Lighting",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 1.5,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.4,
+      "elevation": 2.8,
+      "rotation_deg": 0.0,
+      "fixed": false
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_north",
+      "kind": "door",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 1.2,
+      "height": 2.0,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.5,
+    "y": 1.6,
+    "z": 1.5,
+    "target_x": 2.5,
+    "target_y": 1.5,
+    "target_z": 1.5,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "Use warm spot lighting to create a cozy atmosphere."
+  ],
+  "schema_version": "floor-plan/v11",

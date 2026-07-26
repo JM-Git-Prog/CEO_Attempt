@@ -1,0 +1,2337 @@
+{
+ "started": "2026-07-26 13:13:36",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 3,
+   "total": 12,
+   "legal_rate": 0.25,
+   "violation_census": {
+    "out_of_bounds": 5,
+    "camera_inside_geometry": 3,
+    "opening_blocked": 2,
+    "error:ValidationError": 2,
+    "physical_overlap": 1
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 6,
+     "seconds": 50.3,
+     "plan": {
+      "name": "1980s Cottage Kitchen",
+      "room": {
+       "width": 3.5,
+       "depth": 4.0,
+       "height": 2.7
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Simple Wooden Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.3,
+        "z": 1.7,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.8,
+        "description": "Warm pine counter with laminate top, typical 1980s cottage kitchen"
+       },
+       {
+        "id": "fridge_1",
+        "name": "Refrigerator",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.4,
+        "z": 1.65,
+        "width": 0.7,
+        "depth": 0.7,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Beige 1980s refrigerator"
+       },
+       {
+        "id": "table_1",
+        "name": "Breakfast Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -0.6,
+        "width": 1.0,
+        "depth": 0.7,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Small round-edged wooden breakfast table for two"
+       },
+       {
+        "id": "chair_1",
+        "name": "Dining Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.35,
+        "z": -1.775,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple wooden dining chair"
+       },
+       {
+        "id": "chair_2",
+        "name": "Dining Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.35,
+        "z": -1.775,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple wooden dining chair"
+       },
+       {
+        "id": "pendant_1",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": -0.6,
+        "width": 0.25,
+        "depth": 0.25,
+        "height": 0.3,
+        "elevation": 2.4000000000000004,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Warm pendant light hanging above breakfast table"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.2,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": 1.3,
+       "y": 1.6,
+       "z": -1.55,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": -0.6,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Door on south wall near west corner swings inward; 1.0m clearance kept clear of all furniture.",
+       "Path from door to breakfast table runs diagonally northeast with 0.8m minimum clearance.",
+       "Path from door to counter along east side is unobstructed.",
+       "Fridge door opens eastward with 0.8m clearance in front."
+      ],
+      "design_notes": [
+       "Counter placed along north wall to maximize floor space; fridge tucks into northwest corner adjacent to counter.",
+       "Breakfast table centered in the southern half so morning light from the east window falls across it.",
+       "Two chairs face north toward the counter and window, creating a cozy cottage dining nook.",
+       "Pendant light centered above table provides warm task lighting; east window provides warm morning daylight.",
+       "Wall shelf above counter adds cottage charm without consuming floor space."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.3,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fridge_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 1.65,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x_offset_m": 0.0,
+         "z_offset_m": -0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "south_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.1,
+         "distribution_index": 0.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 0.7
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "south_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.1,
+         "distribution_index": 1.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 0.7
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_1",
+        "kind": "above",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "height_above_m": 1.35
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 60.0
+      }
+     },
+     "dropped_duplicate_relations": 1,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 6,
+     "seconds": 64.2,
+     "plan": {
+      "name": "1950s Diner Counter with Rain on the Window",
+      "room": {
+       "width": 5.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Diner Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.5999999999999999,
+        "width": 2.4,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Retro laminate counter with chrome trim, typical 1950s diner service counter"
+       },
+       {
+        "id": "stool_1",
+        "name": "Chrome Stool 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.75,
+        "z": -0.15000000000000013,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chrome-vinyl swivel stool with red seat"
+       },
+       {
+        "id": "stool_2",
+        "name": "Chrome Stool 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.25,
+        "z": -0.15000000000000013,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chrome-vinyl swivel stool with red seat"
+       },
+       {
+        "id": "stool_3",
+        "name": "Chrome Stool 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.25,
+        "z": -0.15000000000000013,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chrome-vinyl swivel stool with red seat"
+       },
+       {
+        "id": "stool_4",
+        "name": "Chrome Stool 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.75,
+        "z": -0.15000000000000013,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Chrome-vinyl swivel stool with red seat"
+       },
+       {
+        "id": "pendant_1",
+        "name": "Pendant Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 1.5999999999999999,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.4,
+        "elevation": 2.4,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Vintage enameled metal pendant shade hanging above the counter"
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.2,
+        "sill_height": 0.9
+       },
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 1.7499999999999998,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.7,
+       "y": 1.6,
+       "z": -1.2,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": 1.5999999999999999,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall near east corner; 1.0m clear swing arc into room is unobstructed.",
+       "Straight path from door northwest to the stool row is over 1.2m wide at all points.",
+       "Stools are 0.5m apart center-to-center, leaving 0.1m gaps between seats for easy access.",
+       "Counter back face is 0.1m from north wall; front face leaves 0.5m legroom before stool centers."
+      ],
+      "design_notes": [
+       "Counter is the focal point, centered on the north wall so the pendant and stools align symmetrically.",
+       "Window on the west wall provides rainy daylight from the side, creating moody reflections on chrome.",
+       "Pendant hangs 0.4m tall from the ceiling directly above the counter's front edge for task lighting.",
+       "Wall shelf behind the counter adds period-appropriate diner detail without blocking circulation.",
+       "Palette: chrome, red vinyl, cream laminate, black-and-white checkered floor implied."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.3,
+         "distribution_index": 0.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.3,
+         "distribution_index": 1.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.3,
+         "distribution_index": 2.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.3,
+         "distribution_index": 3.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "offset_z_m": -0.3,
+         "distribution_index": 0.0,
+         "distribution_count": 1.0,
+         "distribution_span_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.3
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "counter_1",
+       "inset_m": 0.8,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p002"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 1,
+     "items": 3,
+     "seconds": 79.7,
+     "plan": {
+      "name": "1970s Living Room",
+      "room": {
+       "width": 5.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "sofa",
+        "name": "Low Orange Sofa",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.4749999999999999,
+        "width": 2.2,
+        "depth": 0.85,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "1970s-style low-profile sofa in burnt orange upholstery"
+       },
+       {
+        "id": "coffee_table",
+        "name": "Round Coffee Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.8369701987210297e-16,
+        "z": -1.5000000000000002,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Round wood coffee table with tripod base"
+       },
+       {
+        "id": "shag_rug",
+        "name": "Shag Rug",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 2.0,
+        "height": 0.03,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Thick cream-colored shag area rug"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": -1.5499999999999998,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_east",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.2,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": 2.2,
+       "y": 1.6,
+       "z": -1.7,
+       "target_x": -1.8369701987210297e-16,
+       "target_y": 0.9,
+       "target_z": -1.5000000000000002,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from south door to seating zone: enter and turn north toward sofa, 1.2m clearance between door swing and coffee table edge.",
+       "East window remains unobstructed; coffee table is 0.3m from east window wall light path.",
+       "Floor lamp tucked in northwest corner does not impede circulation."
+      ],
+      "design_notes": [
+       "Sofa anchors the north wall as the primary seating focal point, facing south into the room.",
+       "Round coffee table centered in front of sofa creates an intimate conversation grouping typical of 1970s layouts.",
+       "Shag rug defines the seating zone and extends under both sofa front and coffee table.",
+       "Arc floor lamp in the northwest corner provides warm ambient lighting and reinforces the era aesthetic."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "sofa",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "coffee_table",
+        "kind": "south_of",
+        "target_id": "sofa",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shag_rug",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.0,
+         "offset_z_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "window_east",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "coffee_table",
+       "inset_m": 0.3,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.9,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p003"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 3,
+     "seconds": 29.3,
+     "plan": {
+      "name": "Minimalist Home Office",
+      "room": {
+       "width": 4.0,
+       "depth": 3.5,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "standing_desk",
+        "name": "Standing Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.0999999999999999,
+        "width": 1.6,
+        "depth": 0.7,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Minimalist adjustable standing desk, light oak top with white frame"
+       },
+       {
+        "id": "task_chair",
+        "name": "Task Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.1,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Ergonomic mesh task chair on casters, black"
+       },
+       {
+        "id": "shelf",
+        "name": "Bookshelf",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.525,
+        "z": 0.0,
+        "width": 1.0,
+        "depth": 0.35,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Tall minimalist shelving unit, white finish with five fixed shelves"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -1.05,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.0,
+        "sill_height": 0.4
+       }
+      ],
+      "camera": {
+       "x": 1.55,
+       "y": 1.6,
+       "z": -1.3,
+       "target_x": 0.0,
+       "target_y": 1.1,
+       "target_z": 1.0999999999999999,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall near southwest corner; 1.0m inward clearance is unobstructed.",
+       "Clear path from door northeast to task chair and desk \u2014 no furniture in the southwest quadrant.",
+       "0.8m minimum clearance maintained between shelf and desk zone on the east side."
+      ],
+      "design_notes": [
+       "Standing desk placed against north wall facing the tall window for natural daylight while working.",
+       "Task chair positioned south of desk so the user faces north toward the window.",
+       "Shelf on east wall keeps storage off the floor plan's circulation path and balances the room.",
+       "Minimalist palette: light oak desk, white shelf, black mesh chair \u2014 neutral and uncluttered."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "standing_desk",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_chair",
+        "kind": "south_of",
+        "target_id": "standing_desk",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shelf",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 1.0
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "standing_desk",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.1,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p004"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 7,
+     "seconds": 59.4,
+     "plan": {
+      "name": "1920s Study",
+      "room": {
+       "width": 4.5,
+       "depth": 3.6,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "oak_desk",
+        "name": "Heavy Oak Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.325,
+        "width": 1.6,
+        "depth": 0.75,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Solid oak writing desk with carved legs, dark finish"
+       },
+       {
+        "id": "leather_armchair",
+        "name": "Leather Armchair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.6454482671904336,
+        "z": -0.025000000000000244,
+        "width": 0.8,
+        "depth": 0.85,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Tufted brown leather armchair with rolled arms"
+       },
+       {
+        "id": "globe_stand",
+        "name": "Globe Stand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.95,
+        "z": 1.5,
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 1.1,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Antique floor globe on carved wooden stand"
+       },
+       {
+        "id": "desk_lamp",
+        "name": "Brass Desk Lamp",
+        "category": "fixture",
+        "mount": "floor",
+        "x": 1.0,
+        "z": 1.325,
+        "width": 0.25,
+        "depth": 0.25,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.1,
+        "description": "Adjustable brass banker's lamp with green glass shade"
+       },
+       {
+        "id": "bookshelf",
+        "name": "Tall Bookshelf",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.975,
+        "z": 0.0,
+        "width": 1.2,
+        "depth": 0.35,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Floor-to-ceiling oak bookshelf with leaded glass doors"
+       },
+       {
+        "id": "side_table",
+        "name": "Side Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.675,
+        "z": -0.9750000000000001,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.55,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.3,
+        "description": "Small round oak side table"
+       },
+       {
+        "id": "rug",
+        "name": "Persian Rug",
+        "category": "decor",
+        "mount": "floor",
+        "x": -0.07500000000000007,
+        "z": -0.12990381056766576,
+        "width": 2.5,
+        "depth": 2.2,
+        "height": 0.02,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Deep red and navy Persian area rug"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": -1.4500000000000002,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_east",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.4,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": -1.75,
+       "y": 1.6,
+       "z": -1.3,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": 1.325,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall near southwest corner swings inward; 1.0m clearance maintained from door arc to nearest furniture (bookshelf is along west wall but set back from south corner).",
+       "Clear path from door northeast to desk/armchair zone: at least 0.8m wide along the east side of the room.",
+       "Globe stand placed in southeast corner away from primary circulation path.",
+       "Window on east wall left unobstructed; globe stand is 0.3m from east wall."
+      ],
+      "design_notes": [
+       "1920s study aesthetic: heavy oak desk as focal point against north wall, leather armchair facing it.",
+       "Brass banker's lamp placed on desk surface toward the back-right, providing task lighting.",
+       "Globe stand anchors the southeast corner as a secondary visual interest point.",
+       "Tall bookshelf along west wall provides storage and balances the room mass.",
+       "Side table flanks the armchair on its east side for a drink or book.",
+       "Persian rug grounds the desk and seating area, adding warmth and era-appropriate color."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "oak_desk",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "leather_armchair",
+        "kind": "south_of",
+        "target_id": "oak_desk",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_lamp",
+        "kind": "above",
+        "target_id": "oak_desk",
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.4,
+         "offset_z_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "globe_stand",
+        "kind": "near_corner",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "corner_offset_x_m": 0.55,
+         "corner_offset_z_m": 0.55
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "bookshelf",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "side_table",
+        "kind": "east_of",
+        "target_id": "leather_armchair",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.15
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "rug",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_z_m": 0.6
+        },
+        "weight": 0.5,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.35
+       },
+       {
+        "opening_id": "window_east",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southwest",
+       "target_id": "oak_desk",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 55.0
+      }
+     },
+     "dropped_duplicate_relations": 1,
+     "prompt_id": "p005"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 7,
+     "seconds": 70.3,
+     "plan": {
+      "name": "1990s Teenage Bedroom",
+      "room": {
+       "width": 4.0,
+       "depth": 3.5,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "single_bed",
+        "name": "Single Bed",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.15,
+        "z": 0.7,
+        "width": 1.0,
+        "depth": 2.0,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Twin mattress on a simple metal frame, headboard against north wall."
+       },
+       {
+        "id": "nightstand",
+        "name": "Nightstand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.55,
+        "z": 0.7,
+        "width": 0.5,
+        "depth": 0.4,
+        "height": 0.55,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.3,
+        "description": "Small particleboard nightstand flanking the bed's headboard side."
+       },
+       {
+        "id": "tv_stand",
+        "name": "TV Stand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.5,
+        "z": 0.5,
+        "width": 0.5,
+        "depth": 0.8,
+        "height": 0.6,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Low wooden TV stand with shelf, pushed against east wall."
+       },
+       {
+        "id": "crt_tv",
+        "name": "CRT Television",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.5,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.45,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.2,
+        "description": "Boxy 19-inch CRT TV sitting on top of the stand."
+       },
+       {
+        "id": "beanbag",
+        "name": "Beanbag Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.15000000000000002,
+        "z": 0.0,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Vinyl beanbag positioned to face the TV on the east wall."
+       },
+       {
+        "id": "desk",
+        "name": "Study Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.375,
+        "z": -1.0200961894323342,
+        "width": 0.6,
+        "depth": 1.0,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple desk against west wall near the window for homework."
+       },
+       {
+        "id": "desk_chair",
+        "name": "Desk Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.45,
+        "z": -1.525,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.4,
+        "description": "Molded plastic desk chair tucked in front of the desk."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": -0.44999999999999996,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_west",
+        "kind": "window",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.2,
+        "sill_height": 0.8
+       }
+      ],
+      "camera": {
+       "x": 1.55,
+       "y": 1.6,
+       "z": -1.3,
+       "target_x": -0.15000000000000002,
+       "target_y": 1.0,
+       "target_z": 0.0,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Door on south wall swings inward; 1.0m clearance kept clear of all furniture.",
+       "Path from door to beanbag and bed is unobstructed with at least 0.8m width.",
+       "Desk chair can pull out fully without blocking the main circulation path."
+      ],
+      "design_notes": [
+       "Bed placed against north wall to maximize floor space in the center.",
+       "TV stand on east wall faces the beanbag for a classic 90s gaming/viewing setup.",
+       "Desk near window for natural light during homework.",
+       "Poster trim rails on north and east walls imply posters without placing wall decor items directly."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "single_bed",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": -1.0,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "nightstand",
+        "kind": "adjacent_to",
+        "target_id": "single_bed",
+        "wall": null,
+        "parameters_m": {
+         "offset_m": 0.0,
+         "gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "tv_stand",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "crt_tv",
+        "kind": "above",
+        "target_id": "tv_stand",
+        "wall": null,
+        "parameters_m": {
+         "elevation_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "beanbag",
+        "kind": "west_of",
+        "target_id": "tv_stand",
+        "wall": null,
+        "parameters_m": {
+         "offset_m": 1.35,
+         "gap_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": -1.15,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_chair",
+        "kind": "south_of",
+        "target_id": "desk",
+        "wall": null,
+        "parameters_m": {
+         "offset_m": 0.0,
+         "gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "window_west",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "beanbag",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 60.0
+      }
+     },
+     "prompt_id": "p006"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.5\n  Value error, near_corner requires wall [type=value_error, input_value={'subject_id': 'laundry_b...rs_m': {'inset_m': 0.5}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+     "seconds": 60.7,
+     "prompt_id": "p007"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap"
+     ],
+     "advisories": [],
+     "warnings": 3,
+     "items": 6,
+     "seconds": 72.8,
+     "plan": {
+      "name": "1960s Barber Shop",
+      "room": {
+       "width": 6.0,
+       "depth": 5.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "barber_chair_1",
+        "name": "1960s Barber Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.0,
+        "z": 0.0,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Chrome-and-vinyl vintage barber chair facing the north mirror."
+       },
+       {
+        "id": "barber_chair_2",
+        "name": "1960s Barber Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Second chrome-and-vinyl vintage barber chair facing the north mirror."
+       },
+       {
+        "id": "waiting_bench",
+        "name": "Waiting Bench",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.5,
+        "z": -2.2,
+        "width": 2.0,
+        "depth": 0.5,
+        "height": 0.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Simple wood-and-chrome waiting bench against the south wall."
+       },
+       {
+        "id": "coat_stand",
+        "name": "Coat Stand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.75,
+        "z": 2.25,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Freestanding metal coat stand near the entrance for customers."
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Ceiling pendant providing task lighting over barber chair 1."
+       },
+       {
+        "id": "pendant_light_2",
+        "name": "Pendant Light 2",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Ceiling pendant providing task lighting over barber chair 2."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 1.5,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.5,
+        "sill_height": 1.0
+       }
+      ],
+      "camera": {
+       "x": 2.5,
+       "y": 1.6,
+       "z": -2.0,
+       "target_x": 1.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Main entry through the south-east door; 1.0m clear swing arc kept free of furniture.",
+       "Straight circulation path from door northwest to the barber chairs, minimum 1.0m wide.",
+       "Waiting bench is along the south wall west of the door, leaving the entry zone unobstructed.",
+       "Coat stand sits just inside the door against the east wall without blocking the path to the chairs."
+      ],
+      "design_notes": [
+       "Counter and mirror span the full north wall, creating the classic barber-shop focal line.",
+       "Two barber chairs are evenly spaced along the counter with 0.5m working gap for the barber to stand behind.",
+       "Pendant lights are positioned slightly north of each chair (toward the counter) to illuminate the customer's head and the mirror.",
+       "Waiting bench and coat stand occupy the south end, keeping the service zone and waiting zone visually separated.",
+       "East window provides natural daylight without glare on the mirror surface."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "waiting_bench",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "along_offset_m": -0.5,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "coat_stand",
+        "kind": "near_corner",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "corner_offset_x_m": 0.8,
+         "corner_offset_z_m": 0.7
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "above",
+        "target_id": "barber_chair_1",
+        "wall": null,
+        "parameters_m": {
+         "offset_z_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_2",
+        "kind": "above",
+        "target_id": "barber_chair_2",
+        "wall": null,
+        "parameters_m": {
+         "offset_z_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barber_chair_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "barber_chair_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 1.0
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "barber_chair_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 2,
+     "prompt_id": "p008"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.2\n  Value error, near_corner requires wall [type=value_error, input_value={'subject_id': 'wood_stov...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+     "seconds": 51.9,
+     "prompt_id": "p009"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 3,
+     "items": 8,
+     "seconds": 88.1,
+     "plan": {
+      "name": "Yoga Studio",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "mat_1",
+        "name": "Yoga Mat 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.75,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 1.7,
+        "height": 0.02,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Yoga mat, front-left position facing mirror"
+       },
+       {
+        "id": "mat_2",
+        "name": "Yoga Mat 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.649519052838329,
+        "z": 0.37499999999999994,
+        "width": 0.6,
+        "depth": 1.7,
+        "height": 0.02,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Yoga mat, front-right position facing mirror"
+       },
+       {
+        "id": "mat_3",
+        "name": "Yoga Mat 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.4,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 1.7,
+        "height": 0.02,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Yoga mat, back-left position facing mirror"
+       },
+       {
+        "id": "mat_4",
+        "name": "Yoga Mat 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 1.7,
+        "height": 0.02,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Yoga mat, back-right position facing mirror"
+       },
+       {
+        "id": "block_shelf",
+        "name": "Block Shelf",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.75,
+        "z": -2.5,
+        "width": 0.35,
+        "depth": 0.4,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.5,
+        "description": "Small built-in shelf for yoga blocks and props"
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.3,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Soft pendant light for even illumination"
+       },
+       {
+        "id": "pendant_light_2",
+        "name": "Pendant Light 2",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 1.8369701987210297e-17,
+        "z": 0.3,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Soft pendant light for even illumination"
+       },
+       {
+        "id": "pendant_light_3",
+        "name": "Pendant Light 3",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.7,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Soft pendant light for even illumination"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 2.05,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 1.5,
+        "sill_height": 1.0
+       },
+       {
+        "id": "window_2",
+        "kind": "window",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 1.5,
+        "sill_height": 1.0
+       }
+      ],
+      "camera": {
+       "x": 2.5,
+       "y": 1.6,
+       "z": -3.5,
+       "target_x": 0.75,
+       "target_y": 1.0,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall opens inward with 1.0m clear arc unobstructed.",
+       "Central walkway runs north-south between the two mat columns providing 1.6m clearance.",
+       "East-side path from door to block shelf maintains 0.8m minimum clear width.",
+       "0.3m gap maintained between all mats and exterior window walls for light access."
+      ],
+      "design_notes": [
+       "Mirror wall on north provides visual feedback for all four mat positions.",
+       "Mats arranged in 2x2 grid facing north toward mirror with 0.8m spacing between rows and 1.0m between columns.",
+       "Three pendant lights evenly spaced along the mat area centerline for soft, even illumination.",
+       "Block shelf placed on east wall near the door for easy access when entering or retrieving props.",
+       "Windows on east and west walls at sill height 1.0m provide natural light without distracting floor-level glare."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "block_shelf",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "wall_gap_m": 0.05,
+         "along_offset_m": -2.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x_offset": -1.5,
+         "z_offset": 0.75
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x_offset": 0.0,
+         "z_offset": 0.75
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x_offset": 1.5,
+         "z_offset": 0.75
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "mat_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "mat_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "mat_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "mat_4",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_2",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "mat_1",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 4,
+     "prompt_id": "p010"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 7,
+     "seconds": 99.8,
+     "plan": {
+      "name": "1940s Detective Office",
+      "room": {
+       "width": 4.5,
+       "depth": 4.5,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "desk_1",
+        "name": "Cluttered Detective Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.8499999999999999,
+        "width": 1.6,
+        "depth": 0.7,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Heavy oak desk with papers, typewriter, and ashtray cluttering its surface"
+       },
+       {
+        "id": "desk_chair_1",
+        "name": "Detective Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.3750000000000001,
+        "z": 0.49951905283832887,
+        "width": 0.55,
+        "depth": 0.6,
+        "height": 0.95,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Worn leather swivel chair behind the desk"
+       },
+       {
+        "id": "visitor_chair_1",
+        "name": "Visitor Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.3,
+        "z": -0.125,
+        "width": 0.5,
+        "depth": 0.55,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple wooden chair for visitors and suspects"
+       },
+       {
+        "id": "visitor_chair_2",
+        "name": "Visitor Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.3,
+        "z": -0.125,
+        "width": 0.5,
+        "depth": 0.55,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple wooden chair for visitors and suspects"
+       },
+       {
+        "id": "filing_cabinet_1",
+        "name": "Filing Cabinet",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.9,
+        "z": 0.0,
+        "width": 0.5,
+        "depth": 0.6,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Tall metal filing cabinet with case files, against west wall"
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Desk Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 1.8499999999999999,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.4,
+        "elevation": 2.4,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Single bare bulb pendant hanging over the desk"
+       },
+       {
+        "id": "desk_lamp_1",
+        "name": "Desk Lamp",
+        "category": "fixture",
+        "mount": "floor",
+        "x": 1.675,
+        "z": 1.8499999999999999,
+        "width": 0.25,
+        "depth": 0.25,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Green-shaded banker's lamp on the desk surface"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -1.2000000000000002,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.4,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": 1.9,
+       "y": 1.6,
+       "z": -1.9,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": 1.8499999999999999,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Door on south wall near southwest corner swings inward; 1.0m clearance arc kept clear of all furniture.",
+       "Path from door eastward to visitor chairs is unobstructed along the south-center of the room.",
+       "Filing cabinet on west wall does not impede circulation between door and desk area.",
+       "0.8m+ clearance maintained between visitor chairs and desk edge for legroom and access."
+      ],
+      "design_notes": [
+       "Desk placed against north wall as the focal point, with detective chair behind and two visitor chairs facing it \u2014 classic interrogation layout.",
+       "Filing cabinet against west wall adds vertical mass and balances the room.",
+       "East wall window with venetian blinds casts the signature striped shadows across the desk and floor.",
+       "Pendant light centered above desk provides focused task lighting; desk lamp adds warm accent.",
+       "Muted 1940s palette: dark oak, aged brass, olive green, and dusty cream."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "desk_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "wall_gap_m": 0.05,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_chair_1",
+        "kind": "south_of",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.15
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "visitor_chair_1",
+        "kind": "south_of",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.75,
+         "distribution_index": 0.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "visitor_chair_2",
+        "kind": "south_of",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.75,
+         "distribution_index": 1.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "filing_cabinet_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "wall_gap_m": 0.05,
+         "along_offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "above",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "desk_lamp_1",
+        "kind": "adjacent_to",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.55,
+         "offset_z_m": 0.0,
+         "on_surface": 1.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.6
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "desk_1",
+       "inset_m": 0.35,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 60.0
+      }
+     },
+     "prompt_id": "p011"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p012"
+    }
+   ]
+  }
+ }
+}

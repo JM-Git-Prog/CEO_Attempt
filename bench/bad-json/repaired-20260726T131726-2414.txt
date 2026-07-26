@@ -1,0 +1,105 @@
+error: Expecting ',' delimiter: line 103 column 21 (char 2141)
+------------------------------------------------------------
+{
+  "name": "Laundromat Floor Plan",
+  "room": {
+    "width": 10.0,
+    "depth": 12.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "washing_machine_1",
+      "name": "Washing Machine 1",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 0.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "washing_machine_2",
+      "name": "Washing Machine 2",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 3.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "washing_machine_3",
+      "name": "Washing Machine 3",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 6.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "washing_machine_4",
+      "name": "Washing Machine 4",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 9.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "washing_machine_5",
+      "name": "Washing Machine 5",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 12.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "washing_machine_6",
+      "name": "Washing Machine 6",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 15.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "folding_table",
+      "name": "Folding Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 6.5,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 0.8,
+      "elevation": 0

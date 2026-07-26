@@ -1,0 +1,25 @@
+error: Expecting value: line 23 column 11 (char 533)
+------------------------------------------------------------
+{
+    "schema_version": "floor-plan/v11",
+    "name": "Speakeasy Bar",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "counter_1",
+            "name": "Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 1.5,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true
+        },

@@ -1,0 +1,109 @@
+error: Expecting ',' delimiter: line 107 column 13 (char 2064)
+------------------------------------------------------------
+{
+  "name": "1970s Basement Rec Room",
+  "room": {
+    "width": 6.5,
+    "depth": 8.2,
+    "height": 2.7
+  },
+  "items": [
+    {
+      "id": "pool_table_1",
+      "name": "Pool Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 4.1,
+      "width": 2.3,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bar_counter_1",
+      "name": "Bar Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.8,
+      "z": 4.9,
+      "width": 1.5,
+      "depth": 0.7,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "stool_1",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.8,
+      "z": 5.6,
+      "width": 0.4,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_2",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.2,
+      "z": 5.6,
+      "width": 0.4,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_3",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.6,
+      "z": 5.6,
+      "width": 0.4,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "billiard_light_1",
+      "name": "Billiard Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.8,
+      "z": 4.9,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.5,
+      "elevation": 2.7,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.5,
+    "y": 1.6

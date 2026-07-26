@@ -1,0 +1,105 @@
+error: Unterminated string starting at: line 103 column 7 (char 2068)
+------------------------------------------------------------
+{
+  "name": "1970s Recording Studio",
+  "room": {
+    "width": 10.0,
+    "depth": 12.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "drum_kit",
+      "name": "Drum Kit",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "amp_stack_1",
+      "name": "Amp Stack 1",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "amp_stack_2",
+      "name": "Amp Stack 2",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 6.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "mic_stand_1",
+      "name": "Mic Stand 1",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 4.5,
+      "width": 0.5,
+      "depth": 0.5,
+      "height": 2.0,
+      "elevation": 3.1,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "mic_stand_2",
+      "name": "Mic Stand 2",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 5.5,
+      "z": 4.5,
+      "width": 0.5,
+      "depth": 0.5,
+      "height": 2.0,
+      "elevation": 3.1,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "mic_stand_3",
+      "name": "Mic Stand 3",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 8.5,
+      "z": 4.5,
+      "width": 0.5,
+      "depth": 0.5,
+      "height": 2.0,
+      "elevation": 3.1,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "acoustic_panel_1",
+      "name": "Acoustic Panel 1",
+      "category": "decor",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 6.0,
+      "width": 1.5,
+      "depth": 1.5,
+      "height": 2.0,
+      "e@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

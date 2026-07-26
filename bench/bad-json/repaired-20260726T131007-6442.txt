@@ -1,0 +1,27 @@
+error: Unterminated string starting at: line 25 column 7 (char 456)
+------------------------------------------------------------
+{
+  "schema_version": "floor-plan/v11",
+  "name": "1990s Internet Cafe",
+  "room": {
+    "width": 10.0,
+    "depth": 15.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "desk_1",
+      "name": "Computer Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 7.0,
+      "width": 1.8,
+      "depth": 1.2,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

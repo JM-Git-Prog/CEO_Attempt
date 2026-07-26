@@ -1,0 +1,105 @@
+error: Unterminated string starting at: line 103 column 7 (char 2183)
+------------------------------------------------------------
+{
+  "description": "A podcast studio with a round table, four microphones on arms, four chairs, acoustic panel walls, and a low warm lamp.",
+  "schema_version": "floor-plan/v11",
+  "name": "Podcast Studio",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "table_1",
+      "name": "Round Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.0,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 2.5,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "microphone_1",
+      "name": "Microphone Arm",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.5,
+      "width": 0.5,
+      "depth": 1.0,
+      "height": 1.5,
+      "elevation": 1.0,
+      "rotation_deg": 90.0,
+      "fixed": false
+    },
+    {
+      "id": "microphone_2",
+      "name": "Microphone Arm",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 3.5,
+      "width": 0.5,
+      "depth": 1.0,
+      "height": 1.5,
+      "elevation": 1.0,
+      "rotation_deg": 90.0,
+      "fixed": false
+    },
+    {
+      "id": "microphone_3",
+      "name": "Microphone Arm",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 3.5,
+      "width": 0.5,
+      "depth": 1.0,
+      "height": 1.5,
+      "elevation": 1.0,
+      "rotation_deg": 90.0,
+      "fixed": false
+    },
+    {
+      "id": "microphone_4",
+      "name": "Microphone Arm",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 5.5,
+      "z": 3.5,
+      "width": 0.5,
+      "depth": 1.0,
+      "height": 1.5,
+      "elevation": 1.0,
+      "rotation_deg": 90.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_1",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 6.0,
+      "width": 0.8,
+      "depth": 0.8,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_2",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 6.0,
+      "width": 0.8,
+      "depth@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

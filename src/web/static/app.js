@@ -1260,10 +1260,25 @@ async function sendDescriptionMvp() {
             });
           }
 
+          // Update the right panel (stage area) with the result
+          stageTitle.textContent = payload.game_running ? 'Game Running' : 'Walkable World Ready';
+          stageBody.innerHTML = payload.state === 'ready'
+            ? `<div class="mvp-stage-result">
+                <div class="mvp-stage-icon">${payload.game_running ? '🎮' : '📦'}</div>
+                <h3>${payload.game_running ? 'Game is running in fullscreen' : 'Your world is compiled and ready'}</h3>
+                <p>${payload.quality_label ? 'Quality: ' + payload.quality_label : ''}</p>
+                ${payload.download_url ? `<a class="download" href="${payload.download_url}" download>Download .blend</a>` : ''}
+              </div>`
+            : `<div class="mvp-stage-result mvp-stage-error">
+                <h3>Pipeline Failed: ${payload.failure_stage || 'unknown'}</h3>
+                <p>${payload.error || 'An error occurred'}</p>
+              </div>`;
+
           setBusy(false);
           input.focus();
         } else {
           // Progress event — update the stage indicator
+          setStage('world');  // MVP mode always targets the "world" stage in the rail
           if (progressElement) {
             progressElement.innerHTML = renderMvpProgress(payload.stage, payload.elapsed);
           }

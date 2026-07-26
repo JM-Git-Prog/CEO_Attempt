@@ -1,0 +1,107 @@
+error: Unterminated string starting at: line 105 column 5 (char 2067)
+------------------------------------------------------------
+{
+  "name": "Hunting Lodge Den",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "couch_1",
+      "name": "Leather Couch",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.0,
+      "z": 4.0,
+      "width": 3.5,
+      "depth": 2.5,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "rug_1",
+      "name": "Bearskin-Style Rug",
+      "category": "decor",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 4.0,
+      "width": 3.5,
+      "depth": 2.5,
+      "height": 0.1,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "fireplace_1",
+      "name": "Stone Fireplace",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 2.5,
+      "height": 2.5,
+      "elevation": 1.8,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "chandelier_1",
+      "name": "Antler Chandelier",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 3.5,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 2.5,
+      "height": 1.8,
+      "elevation": 2.5,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 2.5,
+      "height": 2.1
+    },
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "south",
+      "offset": 0.5,
+      "width": 2.5,
+      "height": 2.1
+    }
+  ],
+  "camera": {
+    "x": 3.5,
+    "y": 1.6,
+    "z": 4.0,
+    "target_x": 0.0,
+    "target_y": 1.1,
+    "target_z": 0.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "The leather couch is centered in the room, with the bearskin-style rug placed adjacent@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

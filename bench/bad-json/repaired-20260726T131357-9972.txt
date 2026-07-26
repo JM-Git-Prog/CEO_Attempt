@@ -1,0 +1,107 @@
+error: Unterminated string starting at: line 105 column 7 (char 2065)
+------------------------------------------------------------
+{
+  "name": "Art Studio",
+  "room": {
+    "width": 5.0,
+    "depth": 4.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "easel_1",
+      "name": "Easel 1",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 0.5,
+      "width": 1.2,
+      "depth": 0.8,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "easel_2",
+      "name": "Easel 2",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 1.5,
+      "width": 1.2,
+      "depth": 0.8,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "worktable",
+      "name": "Paint-Splattered Worktable",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 1.0,
+      "width": 3.6,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "supply_shelf",
+      "name": "Supply Shelf",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "north_window",
+      "kind": "window",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 2.4,
+      "height": 3.6,
+      "sill_height": 0.9
+    }
+  ],
+  "camera": {
+    "x": 2.5,
+    "y": 1.8,
+    "z": 2.4,
+    "target_x": 2.5,
+    "target_y": 1.8,
+    "target_z": 0.9,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "Use simple daylight for lighting."
+  ],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "easel_1",
+      "kind": "against_wall",
+      "target_id": null,
+      "wall": "north",
+      "parameters_m": {},
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "easel_2",
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -1,0 +1,75 @@
+error: Expecting ',' delimiter: line 73 column 18 (char 1452)
+------------------------------------------------------------
+{
+  "name": "Dentist Operatory",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "chair_1",
+      "name": "Reclined Patient Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "instrument_cart_1",
+      "name": "Instrument Cart",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "counter_1",
+      "name": "Counter with Cabinets",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 4.0,
+      "depth": 1.5,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "exam_light_1",
+      "name": "Bright Exam Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 0.5,
+      "depth": 0.5,
+      "height": 1.8,
+      "elevation": 2.7,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 1.2,
+      "height": 2.

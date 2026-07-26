@@ -1,0 +1,110 @@
+error: Expecting property name enclosed in double quotes: line 108 column 22 (char 2103)
+------------------------------------------------------------
+{
+  "name": "Ramen Shop Floor Plan",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.0,
+      "width": 2.0,
+      "depth": 1.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "kitchen_pass_1",
+      "name": "Kitchen Pass",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 2.8,
+      "width": 0.6,
+      "depth": 1.8,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "seat_1",
+      "name": "Seat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "seat_2",
+      "name": "Seat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "seat_3",
+      "name": "Seat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "seat_4",
+      "name": "Seat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "seat_5",
+      "name": "Seat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "seat_6",

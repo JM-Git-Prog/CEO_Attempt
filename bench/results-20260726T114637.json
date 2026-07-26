@@ -1,0 +1,23 @@
+{
+ "started": "2026-07-26 11:46:37",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 0,
+   "total": 1,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:ValidationError": 1
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.2.parameters_m.corner\n  Input should be a valid number, unable to parse string as a number [type=float_parsing, input_value='southeast', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/float_parsing",
+     "seconds": 50.0,
+     "prompt_id": "p001"
+    }
+   ]
+  }
+ }
+}

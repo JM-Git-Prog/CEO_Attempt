@@ -1,0 +1,107 @@
+{
+ "started": "2026-07-26 12:48:12",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 13,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 13
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 106 column 6 (char 2054)\nRaw output:\n{\n  \"name\": \"Nail Salon\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 12,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"manicure_table_1\",\n      \"name\": \"Manicure Table\",\n      \"category\": ",
+     "seconds": 13.7,
+     "prompt_id": "p076"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 107 column 6 (char 2084)\nRaw output:\n{\n  \"name\": \"1990s Skate Shop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 15,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"deck_wall_display\",\n      \"name\": \"Deck Wall Display\",\n      \"c",
+     "seconds": 12.5,
+     "prompt_id": "p077"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 88 column 6 (char 1819)\nRaw output:\n{\n  \"name\": \"Microbrew Coffee Lab\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Brewing Counter\",\n      \"cate",
+     "seconds": 12.4,
+     "prompt_id": "p078"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 102 column 6 (char 2060)\nRaw output:\n{\n  \"name\": \"1940s Diner Kitchen\",\n  \"room\": {\n    \"width\": 6.5,\n    \"depth\": 4.2,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Flat-Top Line Counter\",\n     ",
+     "seconds": 12.9,
+     "prompt_id": "p079"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1923)\nRaw output:\n{\n  \"name\": \"Tattoo Studio\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 8.0,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"client_chair\",\n      \"name\": \"Client Chair\",\n      \"category\": ",
+     "seconds": 13.8,
+     "prompt_id": "p080"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1796)\nRaw output:\n{\n  \"name\": \"Cyberpunk Noodle Stall\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Counter\",\n      \"category\":",
+     "seconds": 13.2,
+     "prompt_id": "p081"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 103 column 6 (char 2020)\nRaw output:\n{\n  \"name\": \"Realtor Office\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"desk_1\",\n      \"name\": \"Desk\",\n      \"category\": \"furniture\",",
+     "seconds": 13.1,
+     "prompt_id": "p082"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1870)\nRaw output:\n{\n  \"name\": \"1960s Hair Salon\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"dryer_chair_1\",\n      \"name\": \"Dryer Chair 1\",\n      \"category\"",
+     "seconds": 13.2,
+     "prompt_id": "p083"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 111 column 6 (char 2135)\nRaw output:\n{\n  \"name\": \"Bike Repair Shop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 12,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"repair_stand_1\",\n      \"name\": \"Repair Stand\",\n      \"category\"",
+     "seconds": 13.3,
+     "prompt_id": "p084"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 25 (char 2094)\nRaw output:\n{\n  \"name\": \"Victorian Apothecary\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"apothecary_cabinet\",\n      \"name\": \"Tall Bottle Cabinet",
+     "seconds": 13.3,
+     "prompt_id": "p085"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1912)\nRaw output:\n{\n  \"name\": \"Cooking Class Kitchen\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 8.0,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"demo_island\",\n      \"name\": \"Demo Island\",\n      \"categ",
+     "seconds": 13.6,
+     "prompt_id": "p086"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1902)\nRaw output:\n{\n  \"name\": \"1970s Van Conversion\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 6.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"bench_bed_1\",\n      \"name\": \"Bench Bed\",\n      \"category",
+     "seconds": 13.2,
+     "prompt_id": "p087"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1803)\nRaw output:\n{\n  \"name\": \"Board Game Cafe Corner\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"table_1\",\n      \"name\": \"Table 1\",\n      \"category\": \"",
+     "seconds": 13.0,
+     "prompt_id": "p088"
+    }
+   ]
+  }
+ }
+}

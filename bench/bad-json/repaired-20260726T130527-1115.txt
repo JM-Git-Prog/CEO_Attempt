@@ -1,0 +1,108 @@
+error: Expecting ',' delimiter: line 106 column 18 (char 2117)
+------------------------------------------------------------
+{
+  "name": "Victorian Parlor",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "chaise_lounge_1",
+      "name": "Chaise Lounge",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 3.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "wingback_chair_1",
+      "name": "Wingback Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 4.0,
+      "width": 1.8,
+      "depth": 2.0,
+      "height": 1.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "wingback_chair_2",
+      "name": "Wingback Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 4.0,
+      "width": 1.8,
+      "depth": 2.0,
+      "height": 1.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "tea_table",
+      "name": "Tea Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 1.8,
+      "depth": 1.5,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "chandelier",
+      "name": "Chandelier",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 4.0,
+      "width": 1.8,
+      "depth": 1.8,
+      "height": 1.7,
+      "elevation": 2.3,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 1.2,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.5,
+    "y": 1.6,
+    "z": 4.0,
+    "target_x": 0.0,
+    "target_y": 1

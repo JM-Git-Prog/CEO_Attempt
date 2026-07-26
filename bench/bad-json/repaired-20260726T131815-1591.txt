@@ -1,0 +1,108 @@
+error: Expecting value: line 106 column 20 (char 2170)
+------------------------------------------------------------
+{
+  "name": "Wartime Map Room",
+  "room": {
+    "width": 6.0,
+    "depth": 4.5,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "central_table",
+      "name": "Central Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.0,
+      "z": 1.5,
+      "width": 3.6,
+      "depth": 2.4,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_station_1",
+      "name": "Desk Station 1",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.4,
+      "z": 0.0,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_station_2",
+      "name": "Desk Station 2",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.8,
+      "z": 3.6,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk_station_3",
+      "name": "Desk Station 3",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.4,
+      "z": 3.6,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "cone_lamp",
+      "name": "Cone Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 0.0,
+      "z": 1.5,
+      "width": 0.6,
+      "depth": 0.4,
+      "height": 1.2,
+      "elevation": 2.8,
+      "rotation_deg": 0.0,
+      "fixed": false
+    }
+  ],
+  "openings": [
+    {
+      "id": "north_door",
+      "kind": "door",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 1.2,
+      "height": 2.0,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.0,
+    "y": 1.6,
+    "z": 2.8,
+    "target_x": 0.0,
+    "target_y": 1.5,
+    "target_z": 1.5,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "The central table is a focal point in the room, with three desk stations against walls for functionality."
+  ],
+  "schema_version":

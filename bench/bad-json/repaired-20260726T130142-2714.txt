@@ -1,0 +1,110 @@
+error: Unterminated string starting at: line 108 column 7 (char 2141)
+------------------------------------------------------------
+{
+  "name": "Small Cottage Kitchen",
+  "room": {
+    "width": 4.5,
+    "depth": 3.6,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Simple Wooden Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 0.5,
+      "z": 1.8,
+      "width": 3.6,
+      "depth": 0.9,
+      "height": 0.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "table_1",
+      "name": "Two-Seat Breakfast Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.3,
+      "z": 1.8,
+      "width": 1.5,
+      "depth": 0.9,
+      "height": 0.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "fridge_1",
+      "name": "Fridge",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.3,
+      "z": 2.7,
+      "width": 0.9,
+      "depth": 0.8,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "light_1",
+      "name": "Pendant Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.3,
+      "z": 1.8,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.5,
+      "elevation": 2.8,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    }
+  ],
+  "openings": [
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.3,
+    "y": 1.6,
+    "z": 1.8,
+    "target_x": 0.0,
+    "target_y": 1.1,
+    "target_z": 0.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [],
+  "design_notes": [],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "counter_1",
+      "kind": "against_wall",
+      "target_id": null,
+      "wall": "north",
+      "parameters_m": {},
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

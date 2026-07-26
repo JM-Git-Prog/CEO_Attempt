@@ -1,0 +1,51 @@
+{
+ "started": "2026-07-26 13:07:50",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 5,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 5
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.9,
+     "prompt_id": "p021"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.9,
+     "prompt_id": "p022"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.5,
+     "prompt_id": "p023"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.6,
+     "prompt_id": "p024"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.9,
+     "prompt_id": "p025"
+    }
+   ]
+  }
+ }
+}

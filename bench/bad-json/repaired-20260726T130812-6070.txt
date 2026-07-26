@@ -1,0 +1,108 @@
+error: Expecting value: line 106 column 20 (char 2077)
+------------------------------------------------------------
+{
+  "name": "Small Gym",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "treadmill_1",
+      "name": "Treadmill 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.0,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 6.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "treadmill_2",
+      "name": "Treadmill 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.5,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 6.0,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "dumbbell_rack",
+      "name": "Dumbbell Rack",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 2.0,
+      "width": 1.8,
+      "depth": 3.6,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "bench",
+      "name": "Bench",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.0,
+      "z": 2.0,
+      "width": 1.8,
+      "depth": 1.5,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "mirror_wall",
+      "name": "Mirror Wall",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 2.0,
+      "width": 3.6,
+      "depth": 2.4,
+      "height": 2.4,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door",
+      "kind": "door",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 1.8,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.0,
+    "y": 1.6,
+    "z": 4.5,
+    "target_x": 0.0,
+    "target_y": 1.1,
+    "target_z": 0.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "Use simple daylight for bright even lighting."
+  ],
+  "schema_version":

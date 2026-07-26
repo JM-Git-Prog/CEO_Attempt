@@ -1,0 +1,123 @@
+{
+ "started": "2026-07-26 13:17:18",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 13,
+    "error:ValidationError": 2
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.6,
+     "prompt_id": "p051"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.7,
+     "prompt_id": "p052"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.0,
+     "prompt_id": "p053"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.2,
+     "prompt_id": "p054"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.0,
+     "prompt_id": "p055"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.1,
+     "prompt_id": "p056"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.0,
+     "prompt_id": "p057"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.3,
+     "prompt_id": "p058"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 12.8,
+     "prompt_id": "p059"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "5 validation errors for FloorPlanV11\ncamera\n  Field required [type=missing, input_value={'name': \"Wizard's Study\"...1, 'sill_height': 0.0}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nschema_version\n  Field required [type=missing, input_value={'nam",
+     "seconds": 23.9,
+     "prompt_id": "p060"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 10.9,
+     "prompt_id": "p061"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "6 validation errors for FloorPlanV11\nroom\n  Field required [type=missing, input_value={'name': 'contemporary un...ription says otherwise'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ncamera\n  Field required [type=missing, input_value={'name': 'conte",
+     "seconds": 1.7,
+     "prompt_id": "p062"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 1.1,
+     "prompt_id": "p063"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 1.2,
+     "prompt_id": "p064"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 1.1,
+     "prompt_id": "p065"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 13:19:17"
+}

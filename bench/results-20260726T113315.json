@@ -1,0 +1,438 @@
+{
+ "started": "2026-07-26 11:33:15",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:ValidationError": 12,
+    "out_of_bounds": 2,
+    "error:LLMError": 2,
+    "physical_overlap": 1,
+    "opening_blocked": 1,
+    "camera_inside_geometry": 1
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships\n  Field required [type=missing, input_value={'name': 'Victorian Conse...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing",
+     "seconds": 21.1,
+     "prompt_id": "p066"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Escape Room Lob...: 2.0, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 25.0,
+     "prompt_id": "p067"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1950s Appliance...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 27.0,
+     "prompt_id": "p068"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Medita...ht_m=2.8, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 10.4,
+     "prompt_id": "p069"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 26.5,
+     "prompt_id": "p070"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Loft Photograph...: 2.5, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 18.7,
+     "prompt_id": "p071"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'Pharmacy Counte...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 14.8,
+     "prompt_id": "p072"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': '1920s Jazz Club...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 24.1,
+     "prompt_id": "p073"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value={'name': 'University Stud...: 2.5, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 24.8,
+     "prompt_id": "p074"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='Barn W...ht_m=1.2, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 8.6,
+     "prompt_id": "p075"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nrelationships.7\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'polish_di...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\ncamera_intent.target_i",
+     "seconds": 41.5,
+     "prompt_id": "p076"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, V11 Plan requires exactly one typed placement relation per item [type=value_error, input_value=FloorPlanV11(name='1990s ...ht_m=1.2, fov_deg=55.0)), input_type=FloorPlanV11]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_",
+     "seconds": 9.5,
+     "prompt_id": "p077"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 9,
+     "seconds": 34.4,
+     "plan": {
+      "name": "Microbrew Coffee Lab",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Brewing Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 2.0,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "scale_1",
+        "name": "Scale Station 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.6,
+        "z": 3.0500000000000003,
+        "width": 0.8,
+        "depth": 1.2,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "scale_2",
+        "name": "Scale Station 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.6,
+        "z": 3.0500000000000003,
+        "width": 0.8,
+        "depth": 1.2,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "cupping_table",
+        "name": "Cupping Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_1",
+        "name": "Stool 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.1598076211353316,
+        "z": 0.14999999999999997,
+        "width": 0.4,
+        "depth": 0.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_2",
+        "name": "Stool 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.3,
+        "z": 0.75,
+        "width": 0.4,
+        "depth": 0.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_3",
+        "name": "Stool 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.3,
+        "z": 0.75,
+        "width": 0.4,
+        "depth": 0.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_4",
+        "name": "Stool 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.2,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light_1",
+        "name": "Daylight Bulb 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.1,
+        "elevation": 2.6999999999999997,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight lighting to create a neutral atmosphere."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "scale_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "scale_2",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "cupping_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "x": 2.5,
+         "z": 6.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "above",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "above",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "above",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "above",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light_1",
+        "kind": "above",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "x": 3.5,
+         "z": 4.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "cupping_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p078"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 10.8,
+     "prompt_id": "p079"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 1.1,
+     "prompt_id": "p080"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 11:38:13"
+}

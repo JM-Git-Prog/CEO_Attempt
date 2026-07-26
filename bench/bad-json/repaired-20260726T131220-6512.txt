@@ -1,0 +1,116 @@
+error: Unterminated string starting at: line 114 column 5 (char 2154)
+------------------------------------------------------------
+{
+  "name": "Art Studio",
+  "room": {
+    "width": 6.0,
+    "depth": 4.5,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "easel_1",
+      "name": "Easel 1",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 0.75,
+      "z": 2.25,
+      "width": 1.5,
+      "depth": 0.8,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "easel_2",
+      "name": "Easel 2",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.25,
+      "z": 2.25,
+      "width": 1.5,
+      "depth": 0.8,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "worktable",
+      "name": "Worktable",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 2.25,
+      "width": 3.0,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "supply_shelf",
+      "name": "Supply Shelf",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 3.75,
+      "width": 2.0,
+      "depth": 0.8,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "north_window",
+      "kind": "window",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 1.5,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.0,
+    "y": 1.6,
+    "z": 2.25,
+    "target_x": 0.0,
+    "target_y": 1.1,
+    "target_z": 0.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [],
+  "design_notes": [],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "easel_1",
+      "kind": "centered"
+    },
+    {
+      "subject_id": "worktable",
+      "kind": "against_wall",
+      "wall": "north"
+    },
+    {
+      "subject_id": "supply_shelf",
+      "kind": "above",
+      "target_id": "worktable"
+    }
+  ],
+  "opening_intents": [
+    {
+      "opening_id": "north_window",
+      "wall": "north",
+      "placement": "centered"
+    }
+  ],
+  "camera_intent": {
+    "corner": "northeast",
+    "target@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

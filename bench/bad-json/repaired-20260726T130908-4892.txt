@@ -1,0 +1,73 @@
+error: Unterminated string starting at: line 71 column 7 (char 1429)
+------------------------------------------------------------
+{
+  "name": "1960s Diner Booth Section",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "booth_1",
+      "name": "Booth 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 0.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "booth_2",
+      "name": "Booth 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 0.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "booth_3",
+      "name": "Booth 3",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 7.5,
+      "z": 0.5,
+      "width": 2.5,
+      "depth": 3.0,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "table_1",
+      "name": "Table 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.5,
+      "width": 1.5,
+      "depth": 0.8,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

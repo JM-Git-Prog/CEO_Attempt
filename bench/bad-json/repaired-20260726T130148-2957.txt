@@ -1,0 +1,99 @@
+error: Expecting value: line 97 column 21 (char 2068)
+------------------------------------------------------------
+{
+  "name": "Small Cottage Kitchen",
+  "room": {
+    "width": 4.5,
+    "depth": 3.6,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Simple Wooden Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 0.5,
+      "z": 1.8,
+      "width": 3.6,
+      "depth": 0.9,
+      "height": 0.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "counter_1",
+          "kind": "against_wall",
+          "target_id": null,
+          "wall": "north",
+          "parameters_m": {},
+          "weight": 1.0,
+          "relaxable": false
+        }
+      ]
+    },
+    {
+      "id": "table_1",
+      "name": "Two-Seat Breakfast Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.3,
+      "z": 1.8,
+      "width": 1.5,
+      "depth": 0.9,
+      "height": 0.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "table_1",
+          "kind": "centered",
+          "parameters_m": {},
+          "relaxable": true
+        }
+      ]
+    },
+    {
+      "id": "fridge_1",
+      "name": "Fridge",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.3,
+      "z": 2.7,
+      "width": 0.9,
+      "depth": 0.8,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "fridge_1",
+          "kind": "centered",
+          "parameters_m": {},
+          "relaxable": true
+        }
+      ]
+    },
+    {
+      "id": "light_1",
+      "name": "Pendant Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.3,
+      "z": 1.8,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.5,
+      "elevation": 2.8,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m":

@@ -1,0 +1,275 @@
+{
+ "started": "2026-07-26 12:23:10",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 1,
+   "total": 1,
+   "legal_rate": 1.0,
+   "violation_census": {},
+   "rows": [
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 51.3,
+     "plan": {
+      "name": "1980s Cottage Kitchen",
+      "room": {
+       "width": 3.5,
+       "depth": 3.0,
+       "height": 2.6
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Wooden Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.17,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.8,
+        "description": "Simple pine counter with warm honey stain, typical 1980s cottage style"
+       },
+       {
+        "id": "fridge_1",
+        "name": "Fridge",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.3499999999999999,
+        "z": 0.8,
+        "width": 0.7,
+        "depth": 0.7,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Compact beige refrigerator, 1980s era"
+       },
+       {
+        "id": "table_1",
+        "name": "Breakfast Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Small round wooden breakfast table for two"
+       },
+       {
+        "id": "chair_1",
+        "name": "Dining Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.2449999999999999,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple wooden chair with spindle back"
+       },
+       {
+        "id": "chair_2",
+        "name": "Dining Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.7000000000000006,
+        "z": 0.06256443470178619,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple wooden chair with spindle back, facing south"
+       },
+       {
+        "id": "pendant_1",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.3000000000000003,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Warm-toned pendant lamp hanging above breakfast table"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -1.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.2,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": 1.3,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.0,
+       "target_y": 1.1,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall near west corner opens inward; 1.0m clearance maintained",
+       "Path from door to breakfast table is unobstructed along the south-center of the room",
+       "Counter along north wall leaves 0.9m front clearance for working space",
+       "Fridge on west wall is accessible without blocking the main circulation path"
+      ],
+      "design_notes": [
+       "Warm morning light enters through the east window, illuminating the breakfast table",
+       "Pendant light centered above the table provides warm evening lighting",
+       "Compact 3.5x3.0m footprint typical of 1980s cottage kitchens",
+       "Two-chair breakfast nook is cozy but functional for a small household"
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fridge_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.8,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.5,
+         "offset_z_m": -0.4
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "south_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.15
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.15
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_1",
+        "kind": "above",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "hang_height_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.3
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.9
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.1,
+       "fov_deg": 55.0
+      }
+     },
+     "repaired_by_math": true,
+     "repairs_applied": [
+      "Nudged Wooden Counter (counter_1) inward by 0.030m (from [0.000, 1.200] to [0.000, 1.170])",
+      "Nudged Dining Chair (chair_1) inward by 0.030m (from [0.000, -1.275] to [0.000, -1.245])"
+     ],
+     "blockers_before_repair": [
+      "out_of_bounds",
+      "out_of_bounds"
+     ],
+     "prompt_id": "p001"
+    }
+   ]
+  }
+ }
+}

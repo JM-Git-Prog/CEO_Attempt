@@ -1,0 +1,108 @@
+error: Expecting ',' delimiter: line 105 column 20 (char 2100)
+------------------------------------------------------------
+{
+  "name": "Hotel Room",
+  "room": {
+    "width": 4.5,
+    "depth": 3.6,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "bed_1",
+      "name": "Queen Bed",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 1.8,
+      "width": 2.3,
+      "depth": 1.9,
+      "height": 0.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "nightstand_1",
+      "name": "Nightstand",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.8,
+      "z": 1.8,
+      "width": 0.6,
+      "depth": 0.4,
+      "height": 0.3,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "nightstand_2",
+      "name": "Nightstand",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.4,
+      "z": 1.8,
+      "width": 0.6,
+      "depth": 0.4,
+      "height": 0.3,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "luggage_bench",
+      "name": "Luggage Bench",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.2,
+      "z": 3.6,
+      "width": 0.8,
+      "depth": 0.4,
+      "height": 0.3,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "desk",
+      "name": "Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.8,
+      "z": 1.2,
+      "width": 1.5,
+      "depth": 0.6,
+      "height": 0.4,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "chair",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.2,
+      "z": 1.2,
+      "width": 0.6,
+      "depth": 0.4,
+      "height": 0.3,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "blackout_curtains",
+      "name": "Blackout Curtains",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.8,
+      "z": 1.2,
+      "width": 0.9,
+      "depth": 0.4,
+      "height": 0.3,
+      "elevation": 2.5,
+      "rotation_deg": 0.0,
+      "fixed": true
+   

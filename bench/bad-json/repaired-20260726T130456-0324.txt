@@ -1,0 +1,110 @@
+error: Unterminated string starting at: line 108 column 3 (char 2087)
+------------------------------------------------------------
+{
+  "name": "Yoga Studio",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "mat_1",
+      "name": "Yoga Mat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.0,
+      "z": 1.0,
+      "width": 2.0,
+      "depth": 4.0,
+      "height": 0.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "mat_2",
+      "name": "Yoga Mat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.0,
+      "z": 1.0,
+      "width": 2.0,
+      "depth": 4.0,
+      "height": 0.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "mat_3",
+      "name": "Yoga Mat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.0,
+      "z": 5.0,
+      "width": 2.0,
+      "depth": 4.0,
+      "height": 0.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "mat_4",
+      "name": "Yoga Mat",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.0,
+      "z": 5.0,
+      "width": 2.0,
+      "depth": 4.0,
+      "height": 0.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "mirror",
+      "name": "Mirror Wall",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 2.0,
+      "z": 4.0,
+      "width": 3.0,
+      "depth": 1.5,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "shelf",
+      "name": "Block Shelf",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 4.0,
+      "width": 1.5,
+      "depth": 0.5,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "lighting",
+      "name": "Soft Lighting",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 4.0,
+      "width": 1.5,
+      "depth": 1.5,
+      "height": 0.5,
+      "elevation": 2.3,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

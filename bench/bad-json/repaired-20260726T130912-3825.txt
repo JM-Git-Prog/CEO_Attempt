@@ -1,0 +1,53 @@
+error: Expecting property name enclosed in double quotes: line 51 column 43 (char 1373)
+------------------------------------------------------------
+{
+    "schema_version": "floor-plan/v11",
+    "name": "1960s Diner Booth Section",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "booth_1",
+            "name": "Booth 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 0.5,
+            "width": 2.5,
+            "depth": 3.0,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "booth_1",
+                    "kind": "adjacent_to",
+                    "target_id": "booth_2"
+                }
+            ]
+        },
+        {
+            "id": "booth_2",
+            "name": "Booth 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 0.5,
+            "width": 2.5,
+            "depth": 3.0,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "booth_2",
+                    "kind": "adjacent_to",

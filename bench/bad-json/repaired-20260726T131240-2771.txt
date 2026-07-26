@@ -1,0 +1,75 @@
+error: Unterminated string starting at: line 73 column 7 (char 1443)
+------------------------------------------------------------
+{
+  "name": "Tiny Studio Apartment",
+  "room": {
+    "width": 4.5,
+    "depth": 3.6,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "bed_1",
+      "name": "Fold-out Bed",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 1.8,
+      "width": 2.4,
+      "depth": 1.9,
+      "height": 0.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "counter_1",
+      "name": "Kitchenette Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 0.8,
+      "width": 1.4,
+      "depth": 0.9,
+      "height": 0.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "table_2",
+      "name": "Two-seat Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.8,
+      "z": 2.5,
+      "width": 1.6,
+      "depth": 0.9,
+      "height": 0.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "light_3",
+      "name": "Pendant Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.1,
+      "z": 1.9,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.3,
+      "elevation": 2.5,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "light_4",
+      "name": "Pendant Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 1.3,
+      "z": 2.7,
+      "width": 0.4,
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

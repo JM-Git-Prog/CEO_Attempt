@@ -1,0 +1,122 @@
+{
+ "started": "2026-07-26 12:20:12",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 15
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1904)\nRaw output:\n{\n  \"name\": \"Cooking Class Kitchen\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 8.0,\n    \"height\": 2.5\n  },\n  \"items\": [\n    {\n      \"id\": \"demo_island_1\",\n      \"name\": \"Demo Island\",\n      \"cat",
+     "seconds": 13.7,
+     "prompt_id": "p086"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 98 column 6 (char 1947)\nRaw output:\n{\n  \"name\": \"1970s Van Conversion\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 6.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"bench_bed_1\",\n      \"name\": \"Bench Bed\",\n      \"category",
+     "seconds": 13.0,
+     "prompt_id": "p087"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 92 column 6 (char 1803)\nRaw output:\n{\n  \"name\": \"Board Game Cafe Corner\",\n  \"room\": {\n    \"width\": 5.0,\n    \"depth\": 4.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"table_1\",\n      \"name\": \"Table 1\",\n      \"category\": \"",
+     "seconds": 12.9,
+     "prompt_id": "p088"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1867)\nRaw output:\n{\n  \"name\": \"1930s Hotel Lobby\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"concierge_desk_1\",\n      \"name\": \"Concierge Desk\",\n      \"catego",
+     "seconds": 13.3,
+     "prompt_id": "p089"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 6 (char 1996)\nRaw output:\n{\n  \"name\": \"Recording Voiceover Booth\",\n  \"room\": {\n    \"width\": 4.0,\n    \"depth\": 6.0,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"stool_1\",\n      \"name\": \"Stool\",\n      \"category\": ",
+     "seconds": 13.0,
+     "prompt_id": "p090"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 103 column 6 (char 1995)\nRaw output:\n{\n  \"name\": \"Maple Sugar Shack\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 15,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"boiling_evaporator_table\",\n      \"name\": \"Boiling Evaporator T",
+     "seconds": 13.1,
+     "prompt_id": "p091"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1914)\nRaw output:\n{\n  \"name\": \"Urgent Care Triage Room\",\n  \"room\": {\n    \"width\": 6.0,\n    \"depth\": 4.5,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"bed_1\",\n      \"name\": \"Bed\",\n      \"category\": \"furni",
+     "seconds": 13.2,
+     "prompt_id": "p092"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1871)\nRaw output:\n{\n  \"name\": \"1980s Roller Rink Rental Counter\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 12,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Rental Counter\",\n    ",
+     "seconds": 13.1,
+     "prompt_id": "p093"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 111 column 6 (char 2174)\nRaw output:\n{\n  \"name\": \"Succulents Shop\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"plant_table_1\",\n      \"name\": \"Three Tiered Plant Table\",\n      \"",
+     "seconds": 13.2,
+     "prompt_id": "p094"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 102 column 6 (char 2084)\nRaw output:\n{\n  \"name\": \"1950s Gas Station Office\",\n  \"room\": {\n    \"width\": 6.5,\n    \"depth\": 4.2,\n    \"height\": 3.1\n  },\n  \"items\": [\n    {\n      \"id\": \"cash_desk_1\",\n      \"name\": \"Cash Desk\",\n      \"cat",
+     "seconds": 13.0,
+     "prompt_id": "p095"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 93 column 6 (char 1864)\nRaw output:\n{\n  \"name\": \"Courtroom Corner\",\n  \"schema_version\": \"floor-plan/v11\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 12,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"judge_bench\",\n      \"name\"",
+     "seconds": 13.1,
+     "prompt_id": "p096"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1946)\nRaw output:\n{\n  \"name\": \"Dragon-Themed Toy Store\",\n  \"room\": {\n    \"width\": 4.5,\n    \"depth\": 3.6,\n    \"height\": 2.8\n  },\n  \"items\": [\n    {\n      \"id\": \"castle_display_table\",\n      \"name\": \"Castle Display ",
+     "seconds": 13.2,
+     "prompt_id": "p097"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 113 column 4 (char 2101)\nRaw output:\n{\n  \"name\": \"Data Center Aisle Room\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 12,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"rack_1\",\n      \"name\": \"Server Rack\",\n      \"category\": \"",
+     "seconds": 13.1,
+     "prompt_id": "p098"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 104 column 6 (char 2087)\nRaw output:\n{\n  \"name\": \"1990s Pizza Parlor\",\n  \"room\": {\n    \"width\": 10,\n    \"depth\": 8,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"counter_1\",\n      \"name\": \"Counter\",\n      \"category\": \"furnit",
+     "seconds": 12.9,
+     "prompt_id": "p099"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 99 column 4 (char 1847)\nRaw output:\n{\n  \"name\": \"Rooftop Greenhouse\",\n  \"room\": {\n    \"width\": 6,\n    \"depth\": 8,\n    \"height\": 3\n  },\n  \"items\": [\n    {\n      \"id\": \"planter_table_1\",\n      \"name\": \"Planter Table 1\",\n      \"catego",
+     "seconds": 12.8,
+     "prompt_id": "p100"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 12:23:28"
+}

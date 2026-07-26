@@ -1,0 +1,110 @@
+error: Unterminated string starting at: line 108 column 7 (char 2092)
+------------------------------------------------------------
+{
+  "name": "Sushi Bar",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Chef Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 3.0,
+      "width": 2.0,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "display_case_1",
+      "name": "Display Case",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 2.8,
+      "width": 1.0,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.9,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "stool_1",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 2.8,
+      "width": 0.6,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_2",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_3",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 4.8,
+      "width": 0.6,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_4",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 5.8,
+      "width": 0.6,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_5",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 6.8,
+      "width": 0.6,
+      "depth": 0.3,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

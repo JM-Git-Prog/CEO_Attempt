@@ -1,0 +1,110 @@
+error: Unterminated string starting at: line 108 column 21 (char 2140)
+------------------------------------------------------------
+{
+  "name": "1920s Study",
+  "room": {
+    "width": 4.5,
+    "depth": 6.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "desk_1",
+      "name": "Heavy Oak Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 3.0,
+      "width": 2.4,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "armchair_1",
+      "name": "Leather Armchair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 1.8,
+      "depth": 1.4,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "globe_stand_1",
+      "name": "Globe Stand",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 4.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.9,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "desk_lamp_1",
+      "name": "Brass Desk Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 2.7,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.5,
+    "y": 1.6,
+    "z": 3.0,
+    "target_x": 0.0,
+    "target_y": 1.1,
+    "target_z": 0.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [],
+  "design_notes": [],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "desk_1",
+      "kind": "against_wall",
+      "target_id": null,
+      "wall": "north",
+      "parameters_m": {},
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

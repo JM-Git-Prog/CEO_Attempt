@@ -1,0 +1,1030 @@
+{
+ "started": "2026-07-26 12:55:29",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 1,
+   "total": 9,
+   "legal_rate": 0.11,
+   "violation_census": {
+    "out_of_bounds": 5,
+    "camera_inside_geometry": 2,
+    "error:ValidationError": 2
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 61.8,
+     "plan": {
+      "name": "1980s Cottage Kitchen",
+      "room": {
+       "width": 3.5,
+       "depth": 3.0,
+       "height": 2.6
+      },
+      "items": [
+       {
+        "id": "wooden_counter",
+        "name": "Simple Wooden Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.575,
+        "z": 1.2,
+        "width": 1.6,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Warm pine counter with a worn butcher-block top, typical 1980s cottage"
+       },
+       {
+        "id": "fridge",
+        "name": "Refrigerator",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.4,
+        "z": 1.15,
+        "width": 0.7,
+        "depth": 0.7,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Beige upright fridge tucked into the northeast corner"
+       },
+       {
+        "id": "breakfast_table",
+        "name": "Two-Seat Breakfast Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Small round-topped wooden breakfast table"
+       },
+       {
+        "id": "chair_1",
+        "name": "Dining Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.275,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.85,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple spindle-back wooden chair, south side of table"
+       },
+       {
+        "id": "chair_2",
+        "name": "Dining Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.4330127018922192,
+        "z": 1.0249999999999997,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.85,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple spindle-back wooden chair, north side of table"
+       },
+       {
+        "id": "pendant_light",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.25,
+        "depth": 0.25,
+        "height": 0.3,
+        "elevation": 2.3000000000000003,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Small warm-glass pendant hanging above the breakfast table"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -0.9500000000000001,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.2,
+        "sill_height": 1.0
+       }
+      ],
+      "camera": {
+       "x": -1.3,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": 0.0,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Door swings inward at the southwest area of the south wall; 1.0m clearance kept clear of all furniture.",
+       "A 0.8m+ path runs from the door northward along the west side to the counter and then east to the fridge.",
+       "Chairs are pulled slightly away from the table so a person can slide in without blocking the main circulation path."
+      ],
+      "design_notes": [
+       "Warm morning light enters through the east-facing window, falling across the breakfast table and fridge.",
+       "The wooden counter is the primary work surface along the north wall, keeping the center open for the small table.",
+       "Fridge is placed in the northeast corner to maximize counter wall length while remaining within easy reach of the table.",
+       "Pendant light provides task lighting over the table and echoes the cottage's cozy, intimate scale."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "wooden_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": -0.575,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fridge",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": 1.15,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "breakfast_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.0,
+         "offset_z_m": -0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "south_of",
+        "target_id": "breakfast_table",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.05,
+         "distribution_index": 0.0,
+         "distribution_count": 1.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "north_of",
+        "target_id": "breakfast_table",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.05,
+         "distribution_index": 0.0,
+         "distribution_count": 1.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light",
+        "kind": "above",
+        "target_id": "breakfast_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 1.0,
+         "distribution_span_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.35
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southwest",
+       "target_id": "breakfast_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 60.0
+      }
+     },
+     "prompt_id": "p001"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p002"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.3\n  Value error, near_corner requires wall [type=value_error, input_value={'subject_id': 'floor_lam...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+     "seconds": 52.7,
+     "prompt_id": "p003"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 3,
+     "seconds": 82.6,
+     "plan": {
+      "name": "Minimalist Home Office",
+      "room": {
+       "width": 3.5,
+       "depth": 3.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "standing_desk",
+        "name": "Standing Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.15,
+        "width": 1.4,
+        "depth": 0.7,
+        "height": 1.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Minimalist adjustable-height standing desk with clean lines, positioned against the south wall facing the north window."
+       },
+       {
+        "id": "task_chair",
+        "name": "Task Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.0,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Ergonomic task chair on casters, placed north of the standing desk for seated use."
+       },
+       {
+        "id": "shelf",
+        "name": "Bookshelf",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.35,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.8,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Tall minimalist shelving unit against the east wall for books and office supplies."
+       }
+      ],
+      "openings": [
+       {
+        "id": "north_window",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 2.2,
+        "sill_height": 0.3
+       },
+       {
+        "id": "west_door",
+        "kind": "door",
+        "wall": "west",
+        "offset": -0.75,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.3,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.0,
+       "target_y": 1.1,
+       "target_z": -1.15,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on west wall near southwest corner swings inward; 1.0m clearance arc is unobstructed.",
+       "Clear path from door northeast to desk area along the west and central floor space.",
+       "Shelf on east wall leaves at least 0.8m clearance from desk for side circulation."
+      ],
+      "design_notes": [
+       "Standing desk placed against south wall so the user faces the tall north window for natural daylight.",
+       "Task chair sits north of the desk at 0.3m gap, allowing easy transition between seated and standing modes.",
+       "Single bookshelf on east wall keeps the room uncluttered and maintains the minimalist aesthetic.",
+       "Window sill at 0.3m lets light reach the desk surface without glare on a hypothetical monitor."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "standing_desk",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_chair",
+        "kind": "north_of",
+        "target_id": "standing_desk",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shelf",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "north_window",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "west_door",
+        "wall": "west",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.3
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "standing_desk",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.1,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p004"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.5\n  Value error, near_corner requires wall [type=value_error, input_value={'subject_id': 'globe_sta...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+     "seconds": 51.7,
+     "prompt_id": "p005"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p006"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 94.1,
+     "plan": {
+      "name": "Compact Laundry Room",
+      "room": {
+       "width": 2.5,
+       "depth": 3.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "washer",
+        "name": "Front-Load Washer",
+        "category": "fixture",
+        "mount": "floor",
+        "x": -0.35,
+        "z": 1.15,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.85,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Compact front-loading washing machine"
+       },
+       {
+        "id": "dryer",
+        "name": "Front-Load Dryer",
+        "category": "fixture",
+        "mount": "floor",
+        "x": 0.9199999999999999,
+        "z": 1.15,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.85,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Compact front-loading dryer paired beside washer"
+       },
+       {
+        "id": "folding_counter",
+        "name": "Folding Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.5,
+        "z": -0.1,
+        "width": 0.6,
+        "depth": 1.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.8,
+        "description": "Built-in counter for folding laundry along east wall"
+       },
+       {
+        "id": "hanging_rod",
+        "name": "Hanging Rod",
+        "category": "fixture",
+        "mount": "wall",
+        "x": -0.7,
+        "z": -0.7,
+        "width": 0.05,
+        "depth": 1.0,
+        "height": 0.05,
+        "elevation": 2.75,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Wall-mounted hanging rod near the door for drip-drying clothes"
+       },
+       {
+        "id": "pendant_light",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.5,
+        "z": -0.1,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.15,
+        "elevation": 2.65,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Ceiling pendant illuminating the folding counter"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": -0.5,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_north",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 0.8,
+        "sill_height": 1.2
+       }
+      ],
+      "camera": {
+       "x": 0.8,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.5,
+       "target_y": 1.0,
+       "target_z": -0.1,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Door swings inward on the south wall near the southwest corner; 1.0m clearance arc is unobstructed.",
+       "Clear path from door to washer/dryer along the west side of the room, minimum 0.8m wide.",
+       "Folding counter on east wall is accessible from the open center of the room without squeezing past appliances.",
+       "Hanging rod is mounted high on the west wall (2.0m) so it does not impede circulation below."
+      ],
+      "design_notes": [
+       "Washer and dryer are placed side-by-side against the north wall for a compact appliance bank.",
+       "Folding counter runs along the east wall providing workspace at comfortable standing height (0.9m).",
+       "Hanging rod is positioned near the door on the west wall for easy access when bringing in wet items.",
+       "Pendant light centered above the folding counter provides task lighting for folding.",
+       "North window above the appliances adds natural daylight without occupying wall space needed for machines."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "washer",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": -0.35,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "dryer",
+        "kind": "east_of",
+        "target_id": "washer",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "folding_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": -0.1,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "hanging_rod",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": -0.7,
+         "wall_gap_m": 0.05,
+         "elevation_m": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light",
+        "kind": "above",
+        "target_id": "folding_counter",
+        "wall": null,
+        "parameters_m": {
+         "offset_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.3
+       },
+       {
+        "opening_id": "window_north",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.75
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "folding_counter",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 60.0
+      }
+     },
+     "repaired_by_math": true,
+     "repairs_applied": [
+      "Nudged Front-Load Dryer (dryer) inward by 0.030m (from [0.950, 1.150] to [0.920, 1.150])"
+     ],
+     "blockers_before_repair": [
+      "out_of_bounds"
+     ],
+     "prompt_id": "p007"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 8,
+     "seconds": 59.8,
+     "plan": {
+      "name": "1960s Barber Shop",
+      "room": {
+       "width": 6.0,
+       "depth": 5.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter",
+        "name": "Mirror Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.9000000000000001,
+        "width": 4.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Long counter with sink and storage below, mirror mounted on wall above"
+       },
+       {
+        "id": "barber_chair_1",
+        "name": "Barber Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.6,
+        "z": -0.2999999999999998,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Vintage chrome-and-leather barber chair facing the mirror"
+       },
+       {
+        "id": "barber_chair_2",
+        "name": "Barber Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.6,
+        "z": -0.2999999999999998,
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Vintage chrome-and-leather barber chair facing the mirror"
+       },
+       {
+        "id": "waiting_bench",
+        "name": "Waiting Bench",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.5,
+        "z": -2.0,
+        "width": 1.8,
+        "depth": 0.5,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Simple wooden bench with vinyl cushion for waiting customers"
+       },
+       {
+        "id": "coat_stand",
+        "name": "Coat Stand",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.75,
+        "z": -2.25,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 1.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Freestanding wooden coat stand with hooks near the entrance"
+       },
+       {
+        "id": "magazine_rack",
+        "name": "Magazine Rack",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.9,
+        "z": -2.0,
+        "width": 0.5,
+        "depth": 0.3,
+        "height": 0.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Small wire magazine rack beside the waiting bench"
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -0.6,
+        "z": -0.2999999999999998,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.35,
+        "elevation": 2.4499999999999997,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Hanging pendant light above barber chair 1"
+       },
+       {
+        "id": "pendant_light_2",
+        "name": "Pendant Light 2",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.6,
+        "z": -0.2999999999999998,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.35,
+        "elevation": 2.4499999999999997,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Hanging pendant light above barber chair 2"
+       }
+      ],
+      "openings": [
+       {
+        "id": "front_door",
+        "kind": "door",
+        "wall": "south",
+        "offset": 1.9499999999999997,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_east",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.2,
+        "sill_height": 1.0
+       }
+      ],
+      "camera": {
+       "x": 2.5,
+       "y": 1.6,
+       "z": -2.0,
+       "target_x": 0.0,
+       "target_y": 1.1,
+       "target_z": 1.9000000000000001,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Main path from front door (south wall, offset +1.2m) runs north toward the barber chairs with over 1.2m clear width.",
+       "Waiting bench is along the south wall to the left of the door, keeping the entry zone unobstructed.",
+       "Coat stand sits just inside the door to the right with 0.5m clearance from the door swing arc.",
+       "Barber chairs are 1.2m apart center-to-center, allowing the barber to move freely behind and between them."
+      ],
+      "design_notes": [
+       "Counter and mirror span the full north wall, creating the classic barber-shop focal point.",
+       "Two pendant lights hang directly above each barber chair for task illumination.",
+       "Magazine rack beside the bench provides reading material for waiting customers.",
+       "East window provides natural daylight without glare on the mirror.",
+       "1960s aesthetic conveyed through chrome barber chairs, simple wood bench, and frameless wall mirror."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barber_chair_1",
+        "kind": "south_of",
+        "target_id": "counter",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.9,
+         "distribution_index": 0.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "barber_chair_2",
+        "kind": "south_of",
+        "target_id": "counter",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.9,
+         "distribution_index": 1.0,
+         "distribution_count": 2.0,
+         "distribution_span_m": 1.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "waiting_bench",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "along_offset_m": -1.5,
+         "wall_gap_m": 0.25
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "coat_stand",
+        "kind": "near_corner",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "corner_offset_x_m": 1.2,
+         "corner_offset_z_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "magazine_rack",
+        "kind": "adjacent_to",
+        "target_id": "waiting_bench",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "above",
+        "target_id": "barber_chair_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 1.25
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_2",
+        "kind": "above",
+        "target_id": "barber_chair_2",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 1.25
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "front_door",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.6
+       },
+       {
+        "opening_id": "window_east",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "counter",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.1,
+       "fov_deg": 60.0
+      }
+     },
+     "prompt_id": "p008"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p009"
+    }
+   ]
+  }
+ }
+}

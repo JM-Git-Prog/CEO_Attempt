@@ -1,0 +1,111 @@
+error: Expecting ',' delimiter: line 109 column 4 (char 2223)
+------------------------------------------------------------
+{
+  "name": "Minimalist Home Office",
+  "room": {
+    "width": 4.5,
+    "depth": 3.6,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "standing_desk_1",
+      "name": "Standing Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 1.5,
+      "width": 2.4,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "shelf_1",
+      "name": "Shelf",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 1.8,
+      "width": 0.9,
+      "depth": 0.6,
+      "height": 0.3,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "task_chair_1",
+      "name": "Task Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 1.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 2.4,
+      "height": 1.8,
+      "sill_height": 0.3
+    }
+  ],
+  "camera": {
+    "x": 2.25,
+    "y": 1.6,
+    "z": 1.5,
+    "target_x": 2.25,
+    "target_y": 1.6,
+    "target_z": 0.9,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "A minimalist home office with a standing desk, one shelf, a task chair, and a tall window on the north wall."
+  ],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "standing_desk_1",
+      "kind": "centered"
+    },
+    {
+      "subject_id": "shelf_1",
+      "kind": "against_wall",
+      "wall": "north"
+    },
+    {
+      "subject_id": "task_chair_1",
+      "kind": "adjacent_to",
+      "target_id": "standing_desk_1"
+    }
+  ],
+  "opening_intents": [
+    {
+      "opening_id": "window_1",
+      "wall": "north",
+      "placement": "centered"
+    }
+  ],
+  "camera_intent": {
+    "corner": "northeast",
+    "target_id": "standing_desk_1",
+    "inset_m": 0.45,
+    "eye_height_m": 1.6,
+    "target_height_m": 1.2,
+    "fov_deg": 55.0
+  }

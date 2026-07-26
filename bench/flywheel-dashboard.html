@@ -19,7 +19,7 @@
 </style></head><body>
 
 <h1>The Living Room - Flywheel Dashboard</h1>
-<div class="sub">Generated 2026-07-26 08:22:20 - reopen the Desktop launcher any time to refresh.</div>
+<div class="sub">Generated 2026-07-26 13:18:58 - reopen the Desktop launcher any time to refresh.</div>
 
 <h2>The vision</h2>
 <p>You describe a room in plain conversation. The AI designs it - proposes a look, furniture,
@@ -40,10 +40,10 @@ often as possible, across all kinds of rooms. Get this reliable and the
 
 <h2>Executive overview</h2>
 <div class="card">
-<b>Corpus right now:</b> 244 organic (llama3.1 harvester) + 29 synthetic
-(cloud top-up) + 183 from earlier pipeline runs = 456 rows -&gt;
-<b>168 pass validation</b> and become trainable exemplars.<br>
-<b>Pace:</b> 85 new rows in 19.0 hours (~4.5/hour, real observed pace including any stalls).
+<b>Corpus right now:</b> 343 organic (llama3.1 harvester) + 87 synthetic
+(cloud top-up) + 183 from earlier pipeline runs = 613 rows -&gt;
+<b>192 pass validation</b> and become trainable exemplars.<br>
+<b>Pace:</b> 242 new rows in 24.0 hours (~10.1/hour, real observed pace including any stalls).
 </div>
 
 <div class="card">
@@ -54,7 +54,7 @@ Flywheel loop: <span class="ok">
 active</span><br>
 Training right now: <span class="ok">
 no - idle, waiting or between cycles</span><br>
-GPU: 89.0% util, 11.1/24.0 GB VRAM
+GPU: 84.0% util, 19.8/24.0 GB VRAM
 </div>
 
 <div class="card">
@@ -64,29 +64,29 @@ GPU: 89.0% util, 11.1/24.0 GB VRAM
 
 <h2>Why rows get thrown away</h2>
 <p>Every generated blueprint that fails the checker is discarded. Corpus growth =
-how fast we generate x how many survive. Right now <b>145 of
-1070</b> attempts ever recorded survived. Here's what happened to the
-925 that didn't:</p>
+how fast we generate x how many survive. Right now <b>171 of
+1935</b> attempts ever recorded survived. Here's what happened to the
+1764 that didn't:</p>
 <div class="card">
-<b>Rescued by the free repair pass so far:</b> <span class="warn">
-0 rows</span> that would have been discarded were nudged back into
+<b>Rescued by the free repair pass so far:</b> <span class="ok">
+19 rows</span> that would have been discarded were nudged back into
 legality by math alone (no model call, ~0.6ms each) and banked as training
 examples. They're tagged <code>repaired_by_math</code> in the corpus so we can
 train with and without them and check they actually help.
-Nothing rescued yet - this counts only rows generated since the repair pass was wired in, so it stays 0 until the harvester produces new rows.
+
 </div>
 
 <div class="card">
-<b>Historically thrown away on placement alone:</b> <span class="warn">274 rows
-(30% of failures)</span> failed <i>only</i> because
+<b>Historically thrown away on placement alone:</b> <span class="warn">409 rows
+(23% of failures)</span> failed <i>only</i> because
 something was in the wrong place - overlapping, outside the room, blocking a door,
 or the camera stuck in a wall. Nothing wrong with the model's thinking; just the
 numbers. <code>src/solver_repair.py</code> already fixes exactly this in ~19ms with
 no model call, but it is only wired into the full pipeline - <b>not</b> into the
 harvester that feeds this corpus. So these were generated, then thrown away.<br><br>
-<b>Not a placement problem:</b> 260 timed out
-(28%), 391 errored or failed schema
-(42%), 0 had both a placement fault and a
+<b>Not a placement problem:</b> 271 timed out
+(15%), 1084 errored or failed schema
+(61%), 0 had both a placement fault and a
 schema fault (0%). Moving furniture cannot save these - they
 need a faster/stricter generation step, not a repair pass.
 </div>
@@ -95,7 +95,7 @@ errors don't appear here - they die before the checker ever reports a blocker, w
 is why they're easy to under-count.</p>
 <table>
 <tr><th>Blocker</th><th>Times seen</th><th>Fixable by moving things?</th></tr>
-<tr><td>out_of_bounds</td><td>177</td><td>movable geometry</td></tr><tr><td>physical_overlap</td><td>136</td><td>movable geometry</td></tr><tr><td>opening_blocked</td><td>116</td><td>movable geometry</td></tr><tr><td>camera_inside_geometry</td><td>46</td><td>movable geometry</td></tr>
+<tr><td>out_of_bounds</td><td>272</td><td>movable geometry</td></tr><tr><td>opening_blocked</td><td>209</td><td>movable geometry</td></tr><tr><td>physical_overlap</td><td>204</td><td>movable geometry</td></tr><tr><td>camera_inside_geometry</td><td>100</td><td>movable geometry</td></tr>
 </table>
 
 <h2>Objective and progress</h2>

@@ -1,0 +1,111 @@
+error: Expecting property name enclosed in double quotes: line 108 column 5 (char 2063)
+------------------------------------------------------------
+{
+  "name": "1930s Train Station Waiting Room",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "bench_1",
+      "name": "Wooden Bench",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 0.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bench_2",
+      "name": "Wooden Bench",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 0.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "bench_3",
+      "name": "Wooden Bench",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 7.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 0.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "counter",
+      "name": "Ticket Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 5.0,
+      "z": 2.0,
+      "width": 1.8,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "clock",
+      "name": "Wall Clock",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 1.2,
+      "width": 0.8,
+      "depth": 0.4,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 2.0,
+      "height": 3.0,
+      "sill_height": 0.8
+    },
+    {
+      "id": "window_2",
+      "kind": "window",
+      "wall": "south",
+      "offset": 0.5,
+      "width": 2.0,
+      "height": 3.0,
+      "sill_height": 0.8
+    }
+  ],
+  "camera": {
+    "x": 1.6,
+    "y": 1.6,
+    "z": 1.6,
+    "target_x": 5.0,
+    "target_y": 2.0,
+    "target_z": 1.2,
+    "fov_deg": 55.0
+  },
+ 

@@ -1,0 +1,107 @@
+error: Expecting ',' delimiter: line 104 column 71 (char 2120)
+------------------------------------------------------------
+{
+  "name": "Rooftop Greenhouse",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "planter_table_1",
+      "name": "Planter Table 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 3.5,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "planter_table_2",
+      "name": "Planter Table 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 4.0,
+      "width": 2.0,
+      "depth": 3.5,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "potting_station",
+      "name": "Potting Station",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.0,
+      "z": 2.5,
+      "width": 1.5,
+      "depth": 2.0,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "hose_reel",
+      "name": "Hose Reel",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 1.0,
+      "width": 1.0,
+      "depth": 1.5,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    },
+    {
+      "id": "glass_panel_sun",
+      "name": "Glass Panel Sun",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 3.5,
+      "z": 4.5,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 0.8,
+      "elevation": 3.2,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "north_window",
+      "kind": "window",
+      "wall": "north",
+      "offset": 1.5,
+      "width": 2.0,
+      "height": 3.0,
+      "sill_height": 0.5
+    }
+  ],
+  "camera": {
+    "x": 3.0,
+    "y": 1.6,
+    "z": 4.0,
+    "target_x": 3.0,
+    "target_y": 2.0,
+    "target_z": 4.0,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 1.5m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "Use a neutral color palette to reflect the natural surroundings."
+ 

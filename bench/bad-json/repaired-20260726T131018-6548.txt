@@ -1,0 +1,75 @@
+error: Expecting value: line 72 column 7 (char 1469)
+------------------------------------------------------------
+{
+  "name": "Bakery Front",
+  "room": {
+    "width": 6.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Display Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.0,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 1.5,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "shelf_1",
+      "name": "Bread Shelf Wall",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 2.0,
+      "width": 2.5,
+      "depth": 1.5,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "table_1",
+      "name": "Bistro Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 6.0,
+      "width": 1.5,
+      "depth": 1.5,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "table_2",
+      "name": "Bistro Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 6.0,
+      "width": 1.5,
+      "depth": 1.5,
+      "height": 0.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+   

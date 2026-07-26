@@ -503,3 +503,111 @@
 [10:37:56] bench batch rc=0
 [10:37:56] ingest: ingest: +7 records | 407 already banked | 1032 plan-less rows skipped
 [10:39:26] batch: prompts 60..74 (llama3.1)
+[10:46:06] bench batch rc=0
+[10:46:06] ingest: ingest: +3 records | 414 already banked | 1050 plan-less rows skipped
+[10:47:36] batch: prompts 75..89 (llama3.1)
+[10:52:34] bench batch rc=0
+[10:52:34] ingest: ingest: +3 records | 417 already banked | 1066 plan-less rows skipped
+[10:54:04] batch: prompts 90..4 (llama3.1)
+[11:00:06] bench batch rc=0
+[11:00:06] ingest: ingest: +3 records | 420 already banked | 1081 plan-less rows skipped
+[11:01:36] batch: prompts 5..19 (llama3.1)
+[11:08:33] bench batch rc=0
+[11:08:33] ingest: ingest: +5 records | 423 already banked | 1097 plan-less rows skipped
+[11:10:03] batch: prompts 20..34 (llama3.1)
+[11:15:54] bench batch rc=0
+[11:15:54] ingest: ingest: +4 records | 428 already banked | 1113 plan-less rows skipped
+[11:17:24] batch: prompts 35..49 (llama3.1)
+[11:22:55] bench batch rc=0
+[11:22:55] ingest: ingest: +8 records | 432 already banked | 1126 plan-less rows skipped
+[11:24:25] batch: prompts 50..64 (llama3.1)
+[11:31:44] bench batch rc=0
+[11:31:44] ingest: ingest: +6 records | 440 already banked | 1142 plan-less rows skipped
+[11:33:14] batch: prompts 65..79 (llama3.1)
+[11:38:13] bench batch rc=0
+[11:38:13] ingest: ingest: +2 records | 446 already banked | 1158 plan-less rows skipped
+[11:39:43] batch: prompts 80..94 (llama3.1)
+[11:43:25] bench batch rc=0
+[11:43:25] ingest: ingest: +2 records | 448 already banked | 1174 plan-less rows skipped
+[11:44:55] batch: prompts 95..9 (llama3.1)
+[11:49:44] bench batch rc=0
+[11:49:44] ingest: ingest: +4 records | 450 already banked | 1189 plan-less rows skipped
+[11:51:14] batch: prompts 10..24 (llama3.1)
+[11:57:10] bench batch rc=0
+[11:57:10] ingest: ingest: +6 records | 454 already banked | 1203 plan-less rows skipped
+[11:58:40] batch: prompts 25..39 (llama3.1)
+[12:04:09] bench batch rc=0
+[12:04:09] ingest: ingest: +4 records | 460 already banked | 1219 plan-less rows skipped
+[12:05:39] batch: prompts 40..54 (llama3.1)
+[12:09:08] bench batch rc=0
+[12:09:09] ingest: ingest: +2 records | 464 already banked | 1235 plan-less rows skipped
+[12:10:39] batch: prompts 55..69 (llama3.1)
+[12:13:55] bench batch rc=0
+[12:13:55] ingest: ingest: +1 records | 466 already banked | 1252 plan-less rows skipped
+[12:15:25] batch: prompts 70..84 (llama3.1)
+[12:18:41] bench batch rc=0
+[12:18:42] ingest: ingest: +2 records | 467 already banked | 1269 plan-less rows skipped
+[12:20:12] batch: prompts 85..99 (llama3.1)
+[12:23:28] bench batch rc=0
+[12:23:29] ingest: ingest: +1 records | 469 already banked | 1287 plan-less rows skipped
+[12:24:59] batch: prompts 0..14 (llama3.1)
+[12:28:25] bench batch rc=0
+[12:28:26] ingest: ingest: +2 records | 470 already banked | 1303 plan-less rows skipped
+[12:29:56] batch: prompts 15..29 (llama3.1)
+[12:33:19] bench batch rc=0
+[12:33:19] ingest: ingest: +1 records | 472 already banked | 1320 plan-less rows skipped
+[12:33:57] bench loop up - waiting for training chain to finish first
+[12:33:57] GPU turn acquired - continuous benching begins
+[12:33:57] batch: prompts 30..44 (llama3.1)
+[12:37:10] bench batch rc=0
+[12:37:10] ingest: ingest: +0 records | 473 already banked | 1338 plan-less rows skipped
+[12:38:40] batch: prompts 45..59 (llama3.1)
+[12:42:06] bench batch rc=0
+[12:42:06] ingest: ingest: +2 records | 473 already banked | 1349 plan-less rows skipped
+[12:43:36] batch: prompts 60..74 (llama3.1)
+[12:47:11] bench batch rc=0
+[12:47:11] ingest: ingest: +2 records | 476 already banked | 1369 plan-less rows skipped
+[12:48:12] bench loop up - waiting for training chain to finish first
+[12:48:12] GPU turn acquired - continuous benching begins
+[12:48:12] batch: prompts 75..89 (llama3.1)
+[12:55:29] bench loop up - waiting for training chain to finish first
+[12:55:29] GPU turn acquired - continuous benching begins
+[12:55:29] batch: prompts 75..89 (llama3.1)
+[12:58:42] bench batch rc=0
+[12:58:42] ingest: ingest: +2 records | 478 already banked | 1399 plan-less rows skipped
+[13:00:12] batch: prompts 90..4 (llama3.1)
+[13:02:33] bench batch rc=0
+[13:02:33] ingest: ingest: +3 records | 480 already banked | 1401 plan-less rows skipped
+[13:04:03] batch: prompts 5..19 (llama3.1)
+[13:06:20] bench batch rc=0
+[13:06:20] ingest: ingest: +2 records | 483 already banked | 1417 plan-less rows skipped
+[13:07:50] batch: prompts 20..34 (llama3.1)
+[13:08:39] bench loop up - waiting for training chain to finish first
+[13:08:39] GPU turn acquired - continuous benching begins
+[13:08:39] batch: prompts 20..34 (llama3.1)
+[13:10:35] bench batch rc=0
+[13:10:35] ingest: ingest: +0 records | 485 already banked | 1438 plan-less rows skipped
+[13:12:05] batch: prompts 35..49 (llama3.1)
+[13:13:36] bench loop up - waiting for training chain to finish first
+[13:13:36] GPU turn acquired - continuous benching begins
+[13:13:36] batch: prompts 35..49 (llama3.1)
+[13:15:48] bench batch rc=0
+[13:15:48] ingest: ingest: +3 records | 485 already banked | 1448 plan-less rows skipped
+[13:17:18] batch: prompts 50..64 (llama3.1)
+[13:19:17] bench batch rc=0
+[13:19:17] ingest: ingest: +5 records | 488 already banked | 1448 plan-less rows skipped
+[13:20:47] batch: prompts 65..79 (llama3.1)
+[13:20:59] bench batch rc=0
+[13:20:59] ingest: ingest: +1 records | 493 already banked | 1464 plan-less rows skipped
+[13:22:29] batch: prompts 80..94 (llama3.1)
+[13:22:43] bench batch rc=0
+[13:22:43] ingest: ingest: +1 records | 494 already banked | 1480 plan-less rows skipped
+[13:24:13] batch: prompts 95..9 (llama3.1)
+[13:24:27] bench batch rc=0
+[13:24:27] ingest: ingest: +1 records | 495 already banked | 1495 plan-less rows skipped
+[13:25:57] batch: prompts 10..24 (llama3.1)
+[13:26:09] bench batch rc=0
+[13:26:09] ingest: ingest: +1 records | 496 already banked | 1510 plan-less rows skipped
+[13:27:39] batch: prompts 25..39 (llama3.1)
+[13:27:52] bench batch rc=0
+[13:27:53] ingest: ingest: +0 records | 497 already banked | 1526 plan-less rows skipped

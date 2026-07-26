@@ -1,0 +1,114 @@
+error: Expecting ',' delimiter: line 112 column 11 (char 2213)
+------------------------------------------------------------
+{
+  "name": "Wizard's Study",
+  "room": {
+    "width": 4.5,
+    "depth": 6.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "desk_1",
+      "name": "Cluttered Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 3.0,
+      "width": 2.0,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "desk_1",
+          "kind": "centered"
+        }
+      ]
+    },
+    {
+      "id": "bookshelf_1",
+      "name": "Tall Bookshelf",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 1.8,
+      "depth": 2.4,
+      "height": 2.7,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "bookshelf_1",
+          "kind": "against_wall",
+          "wall": "north"
+        }
+      ]
+    },
+    {
+      "id": "cauldron_1",
+      "name": "Cauldron Corner",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 2.0,
+      "width": 1.4,
+      "depth": 1.8,
+      "height": 1.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "cauldron_1",
+          "kind": "centered"
+        }
+      ]
+    },
+    {
+      "id": "lamp_1",
+      "name": "Glowing Orb Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 2.7,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "lamp_1",
+          "kind": "centered"
+        }
+      ]
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.0,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.5,
+    "y": 1

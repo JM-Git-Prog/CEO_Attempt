@@ -1,0 +1,80 @@
+{
+ "started": "2026-07-26 13:12:05",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 9,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 5,
+    "error:ValidationError": 4
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 8.0,
+     "prompt_id": "p036"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.corner\n  Input should be 'northwest', 'northeast', 'southwest' or 'southeast' [type=literal_error, input_value='nw', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/literal_error",
+     "seconds": 13.8,
+     "prompt_id": "p037"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.5,
+     "prompt_id": "p038"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "4 validation errors for FloorPlanV11\ncamera\n  Field required [type=missing, input_value={'schema_version': 'floor...h': 3.6, 'height': 2.8}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nrelationships\n  Field required [type=missing, input_value={'sche",
+     "seconds": 6.8,
+     "prompt_id": "p039"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "4 validation errors for FloorPlanV11\ncamera\n  Field required [type=missing, input_value={'schema_version': 'floor...ution_span_m': 1.2}}]}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nrelationships\n  Field required [type=missing, input_value={'sche",
+     "seconds": 8.7,
+     "prompt_id": "p040"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 5.9,
+     "prompt_id": "p041"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.9,
+     "prompt_id": "p042"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting value: line 1 column 1 (char 0)\nRaw output:\n",
+     "seconds": 7.6,
+     "prompt_id": "p043"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "4 validation errors for FloorPlanV11\nschema_version\n  Field required [type=missing, input_value={'name': 'Physical Therap...: 0.0, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nrelationships\n  Field required [type=missing, input_valu",
+     "seconds": 12.8,
+     "prompt_id": "p044"
+    }
+   ]
+  }
+ }
+}

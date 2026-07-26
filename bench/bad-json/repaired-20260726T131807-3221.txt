@@ -1,0 +1,110 @@
+error: Expecting ',' delimiter: line 107 column 20 (char 2074)
+------------------------------------------------------------
+{
+  "name": "Airport Gate Corner",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "gate_desk_1",
+      "name": "Gate Desk",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 4.0,
+      "z": 3.0,
+      "width": 2.5,
+      "depth": 1.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "standing_sign_1",
+      "name": "Standing Sign",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 6.5,
+      "z": 3.0,
+      "width": 2.0,
+      "depth": 0.8,
+      "height": 1.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "window_wall_1",
+      "name": "Window Wall",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 4.0,
+      "depth": 8.0,
+      "height": 2.5,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "linked_seats_1",
+      "name": "Linked Seats",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.0,
+      "z": 4.0,
+      "width": 2.5,
+      "depth": 1.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "linked_seats_2",
+      "name": "Linked Seats",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.0,
+      "z": 4.8,
+      "width": 2.5,
+      "depth": 1.8,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 2.0,
+      "height": 2.1,
+      "sill_height": 0.0
+    },
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "east",
+      "offset": 0.5,
+      "width": 2.0,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 4.5,
+    "y": 3.0,
+    "z": 2.0,
+    "target_x": 5.0,
+    "target_y": 4.0,
+    "target_z": 1.8,
+    "fov_deg": 55.0
+ 

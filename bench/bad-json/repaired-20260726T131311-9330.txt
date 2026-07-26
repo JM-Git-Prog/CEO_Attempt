@@ -1,0 +1,108 @@
+error: Expecting value: line 106 column 9 (char 2032)
+------------------------------------------------------------
+{
+  "name": "1930s Barbershop Quartet Rehearsal Room",
+  "room": {
+    "width": 6.5,
+    "depth": 8.2,
+    "height": 3.1
+  },
+  "items": [
+    {
+      "id": "piano_1",
+      "name": "Piano",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 2.8,
+      "width": 3.4,
+      "depth": 1.9,
+      "height": 2.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "chair_1",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.4,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_2",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.1,
+      "z": 3.4,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_3",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 3.7,
+      "z": 3.4,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_4",
+      "name": "Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.3,
+      "z": 3.4,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "coat_rack_1",
+      "name": "Coat Rack",
+      "category": "furniture",
+      "mount": "wall",
+      "x": -2.5,
+      "z": 3.4,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.9,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "west",
+      "offset": 0.0,
+      "width": 1.2,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 

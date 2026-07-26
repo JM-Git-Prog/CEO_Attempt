@@ -1790,3 +1790,786 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T103241.json
 [10:37:56] bench batch rc=0
 [10:37:56] ingest: ingest: +7 records | 407 already banked | 1032 plan-less rows skipped
+[10:39:26] batch: prompts 60..74 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p061: blocked  (87.7s) physical_overlap,physical_overlap,out_of_bounds
+  p062: error    (10.0s) 
+  p063: error    (18.0s) 
+  p064: error    (25.9s) 
+  p065: blocked  (20.6s) physical_overlap,opening_blocked
+  p066: error    (23.9s) 
+  p067: error    (25.4s) 
+  p068: error    (19.7s) 
+  p069: error    (29.4s) 
+  p070: error    (14.6s) 
+  p071: blocked  (32.5s) physical_overlap,out_of_bounds,opening_blocked
+  p072: error    (17.3s) 
+  p073: error    (36.2s) 
+  p074: error    (27.7s) 
+  p075: error    (9.3s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T103927.json
+[10:46:06] bench batch rc=0
+[10:46:06] ingest: ingest: +3 records | 414 already banked | 1050 plan-less rows skipped
+[10:47:36] batch: prompts 75..89 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p076: error    (32.8s) 
+  p077: error    (9.4s) 
+  p078: blocked  (36.2s) physical_overlap,out_of_bounds,physical_overlap
+  p079: error    (9.4s) 
+  p080: error    (8.9s) 
+  p081: error    (31.4s) 
+  p082: error    (16.9s) 
+  p083: error    (17.0s) 
+  p084: error    (17.3s) 
+  p085: error    (8.8s) 
+  p086: error    (28.6s) 
+  p087: error    (23.0s) 
+  p088: error    (25.4s) 
+  p089: error    (11.0s) 
+  p090: error    (21.4s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T104736.json
+[10:52:34] bench batch rc=0
+[10:52:34] ingest: ingest: +3 records | 417 already banked | 1066 plan-less rows skipped
+[10:54:04] batch: prompts 90..4 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p091: error    (19.0s) 
+  p092: error    (17.2s) 
+  p093: error    (10.5s) 
+  p094: error    (21.8s) 
+  p095: error    (18.2s) 
+  p096: error    (18.2s) 
+  p097: error    (17.4s) 
+  p098: error    (21.3s) 
+  p099: blocked  (40.5s) physical_overlap,out_of_bounds,opening_blocked
+  p100: error    (19.2s) 
+  p001: error    (84.5s) 
+  p002: blocked  (24.2s) out_of_bounds,physical_overlap,out_of_bounds
+  p003: error    (19.8s) 
+  p004: error    (14.5s) 
+  p005: error    (15.8s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T105404.json
+[11:00:06] bench batch rc=0
+[11:00:06] ingest: ingest: +3 records | 420 already banked | 1081 plan-less rows skipped
+[11:01:36] batch: prompts 5..19 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p006: error    (14.6s) 
+  p007: blocked  (18.7s) physical_overlap,out_of_bounds,physical_overlap
+  p008: error    (10.3s) 
+  p009: error    (16.5s) 
+  p010: error    (11.6s) 
+  p011: legal    (19.8s) 
+  p012: blocked  (30.4s) opening_blocked
+  p013: error    (26.8s) 
+  p014: error    (21.0s) 
+  p015: error    (24.8s) 
+  p016: error    (31.0s) 
+  p017: error    (16.1s) 
+  p018: error    (33.6s) 
+  p019: timeout  (120.0s) 
+  p020: error    (20.8s) 
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T110136.json
+[11:08:33] bench batch rc=0
+[11:08:33] ingest: ingest: +5 records | 423 already banked | 1097 plan-less rows skipped
+[11:10:03] batch: prompts 20..34 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p021: error    (20.6s) 
+  p022: error    (23.2s) 
+  p023: error    (18.4s) 
+  p024: error    (31.7s) 
+  p025: error    (17.1s) 
+  p026: error    (22.2s) 
+  p027: error    (29.8s) 
+  p028: error    (26.9s) 
+  p029: blocked  (32.6s) physical_overlap,out_of_bounds,out_of_bounds
+  p030: blocked  (18.5s) physical_overlap,physical_overlap,physical_overlap
+  p031: error    (43.4s) 
+  p032: error    (13.7s) 
+  p033: error    (10.5s) 
+  p034: error    (33.2s) 
+  p035: error    (8.9s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T111003.json
+[11:15:54] bench batch rc=0
+[11:15:54] ingest: ingest: +4 records | 428 already banked | 1113 plan-less rows skipped
+[11:17:24] batch: prompts 35..49 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p036: error    (18.6s) 
+  p037: error    (17.0s) 
+  p038: error    (16.5s) 
+  p039: error    (17.5s) 
+  p040: error    (29.3s) 
+  p041: blocked  (41.1s) opening_blocked
+  p042: blocked  (22.1s) physical_overlap,physical_overlap,physical_overlap
+  p043: error    (20.2s) 
+  p044: blocked  (17.5s) physical_overlap,physical_overlap,out_of_bounds
+  p045: error    (20.0s) 
+  p046: blocked  (18.6s) physical_overlap,physical_overlap,physical_overlap
+  p047: blocked  (35.3s) physical_overlap,physical_overlap,opening_blocked
+  p048: error    (23.6s) 
+  p049: error    (24.3s) 
+  p050: error    (9.2s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T111724.json
+[11:22:55] bench batch rc=0
+[11:22:55] ingest: ingest: +8 records | 432 already banked | 1126 plan-less rows skipped
+[11:24:25] batch: prompts 50..64 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p051: blocked  (47.5s) out_of_bounds,physical_overlap,physical_overlap
+  p052: error    (23.9s) 
+  p053: blocked  (44.8s) physical_overlap,out_of_bounds,physical_overlap
+  p054: error    (25.3s) 
+  p055: error    (18.6s) 
+  p056: error    (17.0s) 
+  p057: error    (17.0s) 
+  p058: error    (29.4s) 
+  p059: error    (21.8s) 
+  p060: blocked  (17.1s) physical_overlap,physical_overlap,physical_overlap
+  p061: blocked  (87.9s) physical_overlap,physical_overlap,physical_overlap
+  p062: error    (18.1s) 
+  p063: error    (17.2s) 
+  p064: error    (28.1s) 
+  p065: error    (24.9s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T112425.json
+[11:31:44] bench batch rc=0
+[11:31:44] ingest: ingest: +6 records | 440 already banked | 1142 plan-less rows skipped
+[11:33:14] batch: prompts 65..79 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p066: error    (21.1s) 
+  p067: error    (25.0s) 
+  p068: error    (27.0s) 
+  p069: error    (10.4s) 
+  p070: error    (26.5s) 
+  p071: error    (18.7s) 
+  p072: error    (14.8s) 
+  p073: error    (24.1s) 
+  p074: error    (24.8s) 
+  p075: error    (8.6s) 
+  p076: error    (41.5s) 
+  p077: error    (9.5s) 
+  p078: blocked  (34.4s) out_of_bounds,physical_overlap,out_of_bounds
+  p079: error    (10.8s) 
+  p080: error    (1.1s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T113315.json
+[11:38:13] bench batch rc=0
+[11:38:13] ingest: ingest: +2 records | 446 already banked | 1158 plan-less rows skipped
+[11:39:43] batch: prompts 80..94 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p081: error    (1.4s) 
+  p082: error    (12.8s) 
+  p083: error    (1.1s) 
+  p084: error    (24.2s) 
+  p085: blocked  (18.6s) physical_overlap,physical_overlap,physical_overlap
+  p086: error    (1.1s) 
+  p087: error    (23.8s) 
+  p088: error    (27.8s) 
+  p089: error    (10.7s) 
+  p090: error    (17.4s) 
+  p091: error    (18.9s) 
+  p092: error    (9.5s) 
+  p093: error    (17.2s) 
+  p094: error    (21.7s) 
+  p095: blocked  (15.5s) physical_overlap,physical_overlap,physical_overlap
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T113943.json
+[11:43:25] bench batch rc=0
+[11:43:25] ingest: ingest: +2 records | 448 already banked | 1174 plan-less rows skipped
+[11:44:55] batch: prompts 95..9 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p096: error    (31.3s) 
+  p097: error    (17.4s) 
+  p098: blocked  (22.4s) physical_overlap,physical_overlap,out_of_bounds
+  p099: blocked  (35.4s) physical_overlap,opening_blocked,opening_blocked
+  p100: blocked  (23.7s) physical_overlap,out_of_bounds,physical_overlap
+  p001: error    (17.7s) 
+  p002: error    (20.7s) 
+  p003: error    (15.5s) 
+  p004: error    (9.4s) 
+  p005: blocked  (18.0s) opening_blocked,opening_blocked
+  p006: error    (14.9s) 
+  p007: error    (17.8s) 
+  p008: error    (17.7s) 
+  p009: error    (16.0s) 
+  p010: error    (10.8s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T114455.json
+[11:49:44] bench batch rc=0
+[11:49:44] ingest: ingest: +4 records | 450 already banked | 1189 plan-less rows skipped
+[11:51:14] batch: prompts 10..24 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p011: blocked  (19.9s) physical_overlap,physical_overlap,out_of_bounds
+  p012: blocked  (38.0s) opening_blocked,opening_blocked
+  p013: error    (26.6s) 
+  p014: blocked  (21.9s) out_of_bounds,physical_overlap,out_of_bounds
+  p015: error    (22.6s) 
+  p016: error    (31.0s) 
+  p017: error    (15.0s) 
+  p018: error    (34.0s) 
+  p019: error    (19.1s) 
+  p020: error    (20.4s) 
+  p021: blocked  (23.2s) opening_blocked,opening_blocked,camera_inside_geometry
+  p022: error    (22.8s) 
+  p023: error    (18.6s) 
+  p024: error    (23.1s) 
+  p025: blocked  (19.6s) physical_overlap,out_of_bounds,opening_blocked
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T115114.json
+[11:57:10] bench batch rc=0
+[11:57:10] ingest: ingest: +6 records | 454 already banked | 1203 plan-less rows skipped
+[11:58:40] batch: prompts 25..39 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p026: error    (19.8s) 
+  p027: error    (28.0s) 
+  p028: error    (32.4s) 
+  p029: blocked  (34.6s) physical_overlap,out_of_bounds,out_of_bounds
+  p030: blocked  (17.3s) out_of_bounds,physical_overlap,opening_blocked
+  p031: error    (26.3s) 
+  p032: error    (13.0s) 
+  p033: error    (10.7s) 
+  p034: error    (32.5s) 
+  p035: error    (16.5s) 
+  p036: error    (18.2s) 
+  p037: error    (16.0s) 
+  p038: error    (19.1s) 
+  p039: error    (20.0s) 
+  p040: error    (24.1s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T115840.json
+[12:04:09] bench batch rc=0
+[12:04:09] ingest: ingest: +4 records | 460 already banked | 1219 plan-less rows skipped
+[12:05:39] batch: prompts 40..54 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p041: error    (16.2s) 
+  p042: error    (12.9s) 
+  p043: error    (13.3s) 
+  p044: error    (13.5s) 
+  p045: error    (13.0s) 
+  p046: error    (14.2s) 
+  p047: error    (15.1s) 
+  p048: error    (14.7s) 
+  p049: error    (13.9s) 
+  p050: error    (14.2s) 
+  p051: error    (14.0s) 
+  p052: error    (13.9s) 
+  p053: error    (13.6s) 
+  p054: error    (12.9s) 
+  p055: error    (13.2s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T120539.json
+[12:09:08] bench batch rc=0
+[12:09:09] ingest: ingest: +2 records | 464 already banked | 1235 plan-less rows skipped
+[12:10:39] batch: prompts 55..69 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p056: error    (13.8s) 
+  p057: error    (13.2s) 
+  p058: error    (13.0s) 
+  p059: error    (12.6s) 
+  p060: error    (13.0s) 
+  p061: error    (13.2s) 
+  p062: error    (13.0s) 
+  p063: error    (12.8s) 
+  p064: error    (13.1s) 
+  p065: error    (13.0s) 
+  p066: error    (13.2s) 
+  p067: error    (13.4s) 
+  p068: error    (13.2s) 
+  p069: error    (13.2s) 
+  p070: error    (12.8s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T121039.json
+[12:13:55] bench batch rc=0
+[12:13:55] ingest: ingest: +1 records | 466 already banked | 1252 plan-less rows skipped
+[12:15:25] batch: prompts 70..84 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p071: error    (13.3s) 
+  p072: error    (13.1s) 
+  p073: error    (13.2s) 
+  p074: error    (13.2s) 
+  p075: error    (13.0s) 
+  p076: error    (13.0s) 
+  p077: error    (13.3s) 
+  p078: error    (12.8s) 
+  p079: error    (12.7s) 
+  p080: error    (12.9s) 
+  p081: error    (12.9s) 
+  p082: error    (13.3s) 
+  p083: error    (12.9s) 
+  p084: error    (13.1s) 
+  p085: error    (13.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T121525.json
+[12:18:41] bench batch rc=0
+[12:18:42] ingest: ingest: +2 records | 467 already banked | 1269 plan-less rows skipped
+[12:20:12] batch: prompts 85..99 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p086: error    (13.7s) 
+  p087: error    (13.0s) 
+  p088: error    (12.9s) 
+  p089: error    (13.3s) 
+  p090: error    (13.0s) 
+  p091: error    (13.1s) 
+  p092: error    (13.2s) 
+  p093: error    (13.1s) 
+  p094: error    (13.2s) 
+  p095: error    (13.0s) 
+  p096: error    (13.1s) 
+  p097: error    (13.2s) 
+  p098: error    (13.1s) 
+  p099: error    (12.9s) 
+  p100: error    (12.8s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T122012.json
+[12:23:28] bench batch rc=0
+[12:23:29] ingest: ingest: +1 records | 469 already banked | 1287 plan-less rows skipped
+[12:24:59] batch: prompts 0..14 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p001: error    (13.0s) 
+  p002: error    (13.0s) 
+  p003: error    (13.1s) 
+  p004: legal    (21.9s) 
+  p005: error    (13.6s) 
+  p006: error    (13.1s) 
+  p007: error    (13.2s) 
+  p008: error    (13.1s) 
+  p009: error    (13.7s) 
+  p010: error    (13.1s) 
+  p011: error    (13.0s) 
+  p012: error    (13.4s) 
+  p013: error    (13.3s) 
+  p014: error    (13.1s) 
+  p015: error    (12.9s) 
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T122459.json
+[12:28:25] bench batch rc=0
+[12:28:26] ingest: ingest: +2 records | 470 already banked | 1303 plan-less rows skipped
+[12:29:56] batch: prompts 15..29 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p016: error    (14.6s) 
+  p017: error    (14.5s) 
+  p018: error    (14.6s) 
+  p019: error    (13.6s) 
+  p020: error    (13.1s) 
+  p021: error    (13.2s) 
+  p022: error    (13.3s) 
+  p023: error    (13.3s) 
+  p024: error    (13.2s) 
+  p025: error    (13.5s) 
+  p026: error    (13.5s) 
+  p027: error    (13.2s) 
+  p028: error    (13.5s) 
+  p029: error    (13.2s) 
+  p030: error    (13.1s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T122956.json
+[12:33:19] bench batch rc=0
+[12:33:19] ingest: ingest: +1 records | 472 already banked | 1320 plan-less rows skipped
+[12:33:57] bench loop up - waiting for training chain to finish first
+[12:33:57] GPU turn acquired - continuous benching begins
+[12:33:57] batch: prompts 30..44 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p031: error    (13.2s) 
+  p032: error    (12.6s) 
+  p033: error    (12.5s) 
+  p034: error    (12.6s) 
+  p035: error    (13.0s) 
+  p036: error    (13.5s) 
+  p037: error    (13.5s) 
+  p038: error    (13.0s) 
+  p039: error    (12.8s) 
+  p040: error    (12.8s) 
+  p041: error    (13.3s) 
+  p042: error    (12.7s) 
+  p043: error    (12.3s) 
+  p044: error    (13.0s) 
+  p045: error    (12.5s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T123357.json
+[12:37:10] bench batch rc=0
+[12:37:10] ingest: ingest: +0 records | 473 already banked | 1338 plan-less rows skipped
+[12:38:40] batch: prompts 45..59 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p046: error    (13.8s) 
+  p047: error    (14.0s) 
+  p048: error    (14.2s) 
+  p049: error    (13.7s) 
+  p050: error    (13.7s) 
+  p051: error    (13.6s) 
+  p052: error    (13.5s) 
+  p053: error    (14.0s) 
+  p054: error    (13.0s) 
+  p055: error    (13.2s) 
+  p056: error    (13.0s) 
+  p057: error    (13.8s) 
+  p058: error    (13.8s) 
+  p059: error    (13.1s) 
+  p060: error    (14.7s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T123840.json
+[12:42:06] bench batch rc=0
+[12:42:06] ingest: ingest: +2 records | 473 already banked | 1349 plan-less rows skipped
+[12:43:36] batch: prompts 60..74 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p061: error    (15.0s) 
+  p062: error    (14.6s) 
+  p063: error    (14.5s) 
+  p064: error    (14.4s) 
+  p065: error    (13.8s) 
+  p066: error    (13.2s) 
+  p067: error    (13.9s) 
+  p068: error    (14.7s) 
+  p069: error    (14.7s) 
+  p070: error    (14.5s) 
+  p071: error    (14.5s) 
+  p072: error    (14.7s) 
+  p073: error    (13.8s) 
+  p074: error    (14.2s) 
+  p075: error    (14.2s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T124336.json
+[12:47:11] bench batch rc=0
+[12:47:11] ingest: ingest: +2 records | 476 already banked | 1369 plan-less rows skipped
+[12:48:12] bench loop up - waiting for training chain to finish first
+[12:48:12] GPU turn acquired - continuous benching begins
+[12:48:12] batch: prompts 75..89 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p076: error    (13.7s) 
+  p077: error    (12.5s) 
+  p078: error    (12.4s) 
+  p079: error    (12.9s) 
+  p080: error    (13.8s) 
+  p081: error    (13.2s) 
+  p082: error    (13.1s) 
+  p083: error    (13.2s) 
+  p084: error    (13.3s) 
+  p085: error    (13.3s) 
+  p086: error    (13.6s) 
+  p087: error    (13.2s) 
+  p088: error    (13.0s) 
+[12:51:04] bench batch rc=3221225786
+[12:55:29] bench loop up - waiting for training chain to finish first
+[12:55:29] GPU turn acquired - continuous benching begins
+[12:55:29] batch: prompts 75..89 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p076: error    (12.8s) 
+  p077: error    (12.4s) 
+  p078: error    (12.6s) 
+  p079: error    (12.8s) 
+  p080: error    (13.4s) 
+  p081: error    (13.0s) 
+  p082: error    (12.6s) 
+  p083: error    (12.9s) 
+  p084: error    (13.2s) 
+  p085: error    (12.7s) 
+  p086: error    (13.3s) 
+  p087: error    (13.0s) 
+  p088: error    (12.8s) 
+  p089: error    (12.9s) 
+  p090: error    (12.7s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T125529.json
+[12:58:42] bench batch rc=0
+[12:58:42] ingest: ingest: +2 records | 478 already banked | 1399 plan-less rows skipped
+[13:00:12] batch: prompts 90..4 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p091: error    (8.1s) 
+  p092: error    (7.8s) 
+  p093: error    (7.8s) 
+  p094: error    (7.6s) 
+  p095: error    (12.6s) 
+  p096: error    (7.9s) 
+  p097: error    (7.6s) 
+  p098: error    (7.6s) 
+  p099: error    (8.0s) 
+  p100: error    (7.7s) 
+  p001: error    (12.4s) 
+  p002: error    (7.9s) 
+  p003: error    (11.6s) 
+  p004: legal    (14.1s) 
+  p005: error    (12.0s) 
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T130013.json
+[13:02:33] bench batch rc=0
+[13:02:33] ingest: ingest: +3 records | 480 already banked | 1401 plan-less rows skipped
+[13:04:03] batch: prompts 5..19 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p006: error    (13.8s) 
+  p007: error    (12.2s) 
+  p008: error    (7.6s) 
+  p009: error    (12.3s) 
+  p010: error    (8.0s) 
+  p011: error    (7.8s) 
+  p012: error    (7.8s) 
+  p013: error    (7.5s) 
+  p014: error    (7.7s) 
+  p015: error    (7.4s) 
+  p016: error    (7.4s) 
+  p017: error    (12.7s) 
+  p018: error    (7.8s) 
+  p019: error    (7.6s) 
+  p020: error    (8.3s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T130404.json
+[13:06:20] bench batch rc=0
+[13:06:20] ingest: ingest: +2 records | 483 already banked | 1417 plan-less rows skipped
+[13:07:50] batch: prompts 20..34 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p021: error    (7.9s) 
+  p022: error    (7.9s) 
+  p023: error    (7.5s) 
+  p024: error    (7.6s) 
+  p025: error    (7.9s) 
+[13:08:39] bench loop up - waiting for training chain to finish first
+[13:08:39] GPU turn acquired - continuous benching begins
+[13:08:39] batch: prompts 20..34 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p021: error    (8.1s) 
+  p022: error    (7.8s) 
+  p023: error    (7.9s) 
+  p024: error    (8.7s) 
+  p025: error    (8.8s) 
+  p026: error    (8.7s) 
+  p027: error    (8.1s) 
+  p028: error    (8.2s) 
+  p029: error    (6.9s) 
+  p030: error    (6.6s) 
+  p031: error    (7.2s) 
+  p032: error    (6.4s) 
+  p033: error    (6.0s) 
+  p034: error    (8.0s) 
+  p035: error    (8.2s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T130839.json
+[13:10:35] bench batch rc=0
+[13:10:35] ingest: ingest: +0 records | 485 already banked | 1438 plan-less rows skipped
+[13:12:05] batch: prompts 35..49 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p036: error    (8.0s) 
+  p037: error    (13.8s) 
+  p038: error    (7.5s) 
+  p039: error    (6.8s) 
+  p040: error    (8.7s) 
+  p041: error    (5.9s) 
+  p042: error    (7.9s) 
+  p043: error    (7.6s) 
+  p044: error    (12.8s) 
+[13:13:36] bench loop up - waiting for training chain to finish first
+[13:13:36] GPU turn acquired - continuous benching begins
+[13:13:36] batch: prompts 35..49 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p036: error    (8.0s) 
+  p037: error    (12.7s) 
+  p038: error    (7.8s) 
+  p039: error    (7.7s) 
+  p040: error    (7.6s) 
+  p041: error    (8.0s) 
+  p042: error    (8.0s) 
+  p043: error    (7.5s) 
+  p044: error    (13.4s) 
+  p045: error    (7.6s) 
+  p046: error    (7.7s) 
+  p047: error    (7.9s) 
+  p048: error    (7.9s) 
+  p049: error    (7.7s) 
+  p050: error    (12.3s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T131336.json
+[13:15:48] bench batch rc=0
+[13:15:48] ingest: ingest: +3 records | 485 already banked | 1448 plan-less rows skipped
+[13:17:18] batch: prompts 50..64 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p051: error    (8.6s) 
+  p052: error    (8.7s) 
+  p053: error    (8.0s) 
+  p054: error    (8.2s) 
+  p055: error    (8.0s) 
+  p056: error    (8.1s) 
+  p057: error    (8.0s) 
+  p058: error    (8.3s) 
+  p059: error    (12.8s) 
+  p060: error    (23.9s) 
+  p061: error    (10.9s) 
+  p062: error    (1.7s) 
+  p063: error    (1.1s) 
+  p064: error    (1.2s) 
+  p065: error    (1.1s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T131718.json
+[13:19:17] bench batch rc=0
+[13:19:17] ingest: ingest: +5 records | 488 already banked | 1448 plan-less rows skipped
+[13:20:47] batch: prompts 65..79 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p066: error    (1.3s) 
+  p067: error    (0.7s) 
+  p068: error    (0.8s) 
+  p069: error    (0.7s) 
+  p070: error    (0.7s) 
+  p071: error    (0.6s) 
+  p072: error    (0.8s) 
+  p073: error    (0.7s) 
+  p074: error    (0.7s) 
+  p075: error    (0.7s) 
+  p076: error    (0.7s) 
+  p077: error    (0.7s) 
+  p078: error    (0.8s) 
+  p079: error    (0.7s) 
+  p080: error    (0.8s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T132047.json
+[13:20:59] bench batch rc=0
+[13:20:59] ingest: ingest: +1 records | 493 already banked | 1464 plan-less rows skipped
+[13:22:29] batch: prompts 80..94 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p081: error    (1.1s) 
+  p082: error    (0.8s) 
+  p083: error    (0.8s) 
+  p084: error    (1.2s) 
+  p085: error    (0.8s) 
+  p086: error    (0.9s) 
+  p087: error    (0.8s) 
+  p088: error    (0.8s) 
+  p089: error    (0.8s) 
+  p090: error    (0.8s) 
+  p091: error    (0.8s) 
+  p092: error    (0.8s) 
+  p093: error    (0.9s) 
+  p094: error    (0.8s) 
+  p095: error    (1.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T132229.json
+[13:22:43] bench batch rc=0
+[13:22:43] ingest: ingest: +1 records | 494 already banked | 1480 plan-less rows skipped
+[13:24:13] batch: prompts 95..9 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p096: error    (1.1s) 
+  p097: error    (0.8s) 
+  p098: error    (0.8s) 
+  p099: error    (0.8s) 
+  p100: error    (0.9s) 
+  p001: error    (1.3s) 
+  p002: error    (0.9s) 
+  p003: error    (0.9s) 
+  p004: error    (0.8s) 
+  p005: error    (1.0s) 
+  p006: error    (0.9s) 
+  p007: error    (0.8s) 
+  p008: error    (0.8s) 
+  p009: error    (0.8s) 
+  p010: error    (0.9s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T132413.json
+[13:24:27] bench batch rc=0
+[13:24:27] ingest: ingest: +1 records | 495 already banked | 1495 plan-less rows skipped
+[13:25:57] batch: prompts 10..24 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p011: error    (1.0s) 
+  p012: error    (0.7s) 
+  p013: error    (0.7s) 
+  p014: error    (0.7s) 
+  p015: error    (0.7s) 
+  p016: error    (0.7s) 
+  p017: error    (0.7s) 
+  p018: error    (0.7s) 
+  p019: error    (0.7s) 
+  p020: error    (1.0s) 
+  p021: error    (0.9s) 
+  p022: error    (0.7s) 
+  p023: error    (0.7s) 
+  p024: error    (0.8s) 
+  p025: error    (0.7s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T132557.json
+[13:26:09] bench batch rc=0
+[13:26:09] ingest: ingest: +1 records | 496 already banked | 1510 plan-less rows skipped
+[13:27:39] batch: prompts 25..39 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p026: error    (1.2s) 
+  p027: error    (0.8s) 
+  p028: error    (0.8s) 
+  p029: error    (0.8s) 
+  p030: error    (0.8s) 
+  p031: error    (0.8s) 
+  p032: error    (0.7s) 
+  p033: error    (0.7s) 
+  p034: error    (0.8s) 
+  p035: error    (0.8s) 
+  p036: error    (0.7s) 
+  p037: error    (0.8s) 
+  p038: error    (0.8s) 
+  p039: error    (1.1s) 
+  p040: error    (0.7s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T132740.json
+[13:27:52] bench batch rc=0
+[13:27:53] ingest: ingest: +0 records | 497 already banked | 1526 plan-less rows skipped

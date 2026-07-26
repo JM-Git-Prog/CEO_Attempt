@@ -1,0 +1,13 @@
+error: Unterminated string starting at: line 11 column 19 (char 217)
+------------------------------------------------------------
+{
+    "schema_version": "floor-plan/v11",
+    "name": "Traditional Japanese Tea Room",
+    "room": {
+        "width": 4.5,
+        "depth": 6.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "tokonoma@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

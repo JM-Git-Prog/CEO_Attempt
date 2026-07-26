@@ -1,0 +1,274 @@
+{
+ "started": "2026-07-26 10:46:04",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 0,
+   "total": 1,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "out_of_bounds": 2,
+    "camera_inside_geometry": 1
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 52.2,
+     "plan": {
+      "name": "1980s Cottage Kitchen",
+      "room": {
+       "width": 3.5,
+       "depth": 3.0,
+       "height": 2.6
+      },
+      "items": [
+       {
+        "id": "wooden_counter",
+        "name": "Simple Wooden Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.0999999999999999,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.8,
+        "description": "Warm pine butcher-block counter with base cabinets, 1980s cottage style."
+       },
+       {
+        "id": "fridge",
+        "name": "Refrigerator",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.3749999999999998,
+        "z": 0.6299038105676658,
+        "width": 0.7,
+        "depth": 0.7,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Compact 1980s refrigerator with top freezer, cream finish."
+       },
+       {
+        "id": "breakfast_table",
+        "name": "Two-Seat Breakfast Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.9,
+        "depth": 0.7,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Small round-edged pine breakfast table near the window."
+       },
+       {
+        "id": "chair_1",
+        "name": "Breakfast Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.275,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple spindle-back wooden chair facing the table."
+       },
+       {
+        "id": "chair_2",
+        "name": "Breakfast Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.7000000000000006,
+        "z": 0.06256443470178619,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple spindle-back wooden chair facing the table."
+       },
+       {
+        "id": "pendant_light",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.25,
+        "depth": 0.25,
+        "height": 0.3,
+        "elevation": 2.3000000000000003,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Warm-glass pendant hanging above the breakfast table."
+       }
+      ],
+      "openings": [
+       {
+        "id": "entry_door",
+        "kind": "door",
+        "wall": "south",
+        "offset": -0.8,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "east_window",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.2,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": -1.3,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": 0.0,
+       "fov_deg": 60.0
+      },
+      "circulation_notes": [
+       "Entry door on south wall near the west corner; 1.0m inward clearance kept clear of all furniture.",
+       "Path from door to breakfast table runs diagonally northeast with at least 0.8m clearance.",
+       "Path from door to counter runs north along the east side of the fridge with 0.8m clearance.",
+       "Fridge door can open eastward without blocking the main circulation route."
+      ],
+      "design_notes": [
+       "Counter placed against the north wall to anchor the kitchen work zone and leave the south-east area open for the breakfast nook.",
+       "Fridge tucked against the west wall, north of the door swing, keeping it close to the counter for a compact work triangle.",
+       "Breakfast table positioned near the east window so morning light falls across the table surface.",
+       "Pendant light centered above the table provides warm task lighting and echoes 1980s cottage styling.",
+       "Two chairs flank the table on its north and south faces, leaving the east side open toward the window."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "wooden_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fridge",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.5,
+         "wall_gap_m": 0.1
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "breakfast_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.5,
+         "offset_z_m": -0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "south_of",
+        "target_id": "breakfast_table",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.25
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "north_of",
+        "target_id": "breakfast_table",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.25
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light",
+        "kind": "above",
+        "target_id": "breakfast_table",
+        "wall": null,
+        "parameters_m": {
+         "hang_height_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "entry_door",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "east_window",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.9
+       }
+      ],
+      "camera_intent": {
+       "corner": "southwest",
+       "target_id": "breakfast_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 60.0
+      }
+     },
+     "prompt_id": "p001"
+    }
+   ]
+  }
+ }
+}

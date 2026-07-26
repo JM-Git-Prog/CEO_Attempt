@@ -1,0 +1,110 @@
+error: Expecting property name enclosed in double quotes: line 108 column 23 (char 2179)
+------------------------------------------------------------
+{
+  "name": "Conference Room",
+  "room": {
+    "width": 10.0,
+    "depth": 12.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "table_1",
+      "name": "Long Conference Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 5.0,
+      "z": 6.0,
+      "width": 3.2,
+      "depth": 8.0,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "chair_1",
+      "name": "Conference Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.8,
+      "z": 6.2,
+      "width": 0.5,
+      "depth": 0.7,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_2",
+      "name": "Conference Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.8,
+      "z": 6.5,
+      "width": 0.5,
+      "depth": 0.7,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_3",
+      "name": "Conference Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.8,
+      "z": 6.8,
+      "width": 0.5,
+      "depth": 0.7,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_4",
+      "name": "Conference Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.8,
+      "z": 7.1,
+      "width": 0.5,
+      "depth": 0.7,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_5",
+      "name": "Conference Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.8,
+      "z": 7.4,
+      "width": 0.5,
+      "depth": 0.7,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_6",
+      "name": "Conference Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.8,
+      "z": 7.7,
+      "width": 0.5,
+      "depth": 0.7,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "chair_7",

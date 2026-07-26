@@ -1,0 +1,101 @@
+error: Expecting ',' delimiter: line 99 column 15 (char 2156)
+------------------------------------------------------------
+{
+  "name": "1980s Video Arcade",
+  "room": {
+    "width": 10.0,
+    "depth": 12.0,
+    "height": 3.2
+  },
+  "items": [
+    {
+      "id": "arcade_cabinet_1",
+      "name": "Pac-Man Upright Arcade Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 0.5,
+      "z": 2.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 2.8,
+      "elevation": 1.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "arcade_cabinet_2",
+      "name": "Donkey Kong Upright Arcade Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 1.5,
+      "z": 2.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 2.8,
+      "elevation": 1.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "arcade_cabinet_3",
+      "name": "Galaga Upright Arcade Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 2.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 2.8,
+      "elevation": 1.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "arcade_cabinet_4",
+      "name": "Street Fighter Upright Arcade Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 3.5,
+      "z": 2.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 2.8,
+      "elevation": 1.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "arcade_cabinet_5",
+      "name": "Mortal Kombat Upright Arcade Cabinet",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 2.0,
+      "width": 3.0,
+      "depth": 6.0,
+      "height": 2.8,
+      "elevation": 1.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "change_machine",
+      "name": "Coin-Operated Change Machine",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 5.5,
+      "z": 2.0,
+      "width": 1.5,
+      "depth": 3.0,
+      "height": 2.8,
+      "elevation": 1.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "neon_light",
+      "name": "Neon-Warm Ambient Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 0.0,
+      "z": 2.5

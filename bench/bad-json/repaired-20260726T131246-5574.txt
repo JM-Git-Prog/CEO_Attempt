@@ -1,0 +1,73 @@
+error: Expecting value: line 71 column 21 (char 1439)
+------------------------------------------------------------
+{
+  "name": "Bowling Alley Snack Bar",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Counter",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 4.5,
+      "z": 3.0,
+      "width": 2.5,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "stool_1",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "stool_2",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 4.3,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "stool_3",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 4.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description":

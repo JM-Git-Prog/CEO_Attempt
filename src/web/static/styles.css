@@ -214,3 +214,10 @@
 .mvp-generate-btn{padding:12px 14px;background:#1a472e;color:var(--green);border:0;border-right:1px solid var(--line);cursor:pointer;font-weight:700;transition:background .15s,color .15s}
 .mvp-generate-btn:hover{background:#215c3a;color:#a1ffc7}
 .mvp-generate-btn:disabled{background:#1a2420;color:#567;cursor:wait}
+
+/* MVP: right-panel stage result display after pipeline completion */
+.mvp-stage-result{height:100%;display:grid;place-content:center;justify-items:center;text-align:center;padding:24px}
+.mvp-stage-result h3{margin:8px 0;font-size:15px;color:var(--green)}
+.mvp-stage-result p{margin:0 0 16px;color:#b8c1cd;font-size:12px}
+.mvp-stage-icon{font-size:48px;margin-bottom:12px}
+.mvp-stage-error h3{color:var(--red)}

@@ -77,6 +77,10 @@ def main() -> int:
                     # repaired row passed the SAME strict validator as any
                     # other, but its coordinates were nudged, not authored.
                     "repaired_by_math": bool(row.get("repaired_by_math")),
+                    # >0 means part of this plan's placement was invented by us
+                    # to satisfy the one-relation-per-item rule, not authored by
+                    # the model. Exclude these if repaired exemplars hurt.
+                    "synthesized_relations": row.get("synthesized_relations", 0),
                     "repairs_applied": row.get("repairs_applied") or [],
                     "blockers_before_repair": row.get("blockers_before_repair") or [],
                     "model_lane": lane,

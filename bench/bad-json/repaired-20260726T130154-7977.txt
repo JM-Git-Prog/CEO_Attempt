@@ -1,0 +1,111 @@
+error: Unterminated string starting at: line 109 column 5 (char 2055)
+------------------------------------------------------------
+{
+  "name": "1950s Diner",
+  "room": {
+    "width": 10.0,
+    "depth": 8.0,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "counter_1",
+      "name": "Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.0,
+      "z": 3.0,
+      "width": 8.0,
+      "depth": 2.5,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "stool_1",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.2,
+      "width": 0.8,
+      "depth": 0.6,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_2",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 3.8,
+      "width": 0.8,
+      "depth": 0.6,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_3",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 4.4,
+      "width": 0.8,
+      "depth": 0.6,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "stool_4",
+      "name": "Stool",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 4.5,
+      "z": 5.0,
+      "width": 0.8,
+      "depth": 0.6,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    },
+    {
+      "id": "pendant_lamp",
+      "name": "Pendant Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 5.0,
+      "z": 3.2,
+      "width": 0.8,
+      "depth": 0.6,
+      "height": 1.0,
+      "elevation": 2.4,
+      "rotation_deg": 0.0,
+      "fixed": true
+    }
+  ],
+  "openings": [
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 2.0,
+      "height": 3.0,
+      "sill_height": 0.5
+    }
+  ],
+  "camera": {
+    "x": 4.5,
+    "y": 1.6,
+    "z": 3.2,
+    "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

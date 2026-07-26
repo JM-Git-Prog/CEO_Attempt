@@ -108,6 +108,15 @@ async def _one_plan(description: str, timeout_s: float) -> dict:
             "seconds": round(time.time() - started, 1),
             "plan": plan_payload,
         }
+        # Relation bookkeeping the builder had to reconcile to get this plan
+        # past schema validation at all. "synthesized" means we invented a
+        # placeholder placement - a guess - so those rows are marked.
+        for warning in warnings or []:
+            for key in ("synthesized_relations", "dropped_orphan_relations",
+                        "dropped_duplicate_relations"):
+                if isinstance(warning, str) and warning.startswith(key + ":"):
+                    row[key] = int(warning.split(":", 1)[1])
+
         if repaired_by_math:
             # Tagged so a later run can train with and without these rows and
             # measure whether repaired exemplars actually help.

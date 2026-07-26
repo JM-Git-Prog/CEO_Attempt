@@ -1,0 +1,110 @@
+error: Expecting property name enclosed in double quotes: line 107 column 6 (char 2127)
+------------------------------------------------------------
+{
+  "name": "1950s Gas Station Office",
+  "room": {
+    "width": 5.0,
+    "depth": 4.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "cash_desk_1",
+      "name": "Cash Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 0.5,
+      "width": 2.0,
+      "depth": 1.5,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "tire_display_1",
+      "name": "Tire Display Stack",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 1.0,
+      "width": 1.5,
+      "depth": 3.0,
+      "height": 2.0,
+      "elevation": 1.8,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "oil_can_shelf_1",
+      "name": "Oil Can Shelf",
+      "category": "furniture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 1.5,
+      "depth": 0.5,
+      "height": 1.8,
+      "elevation": 1.8,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    },
+    {
+      "id": "window_1",
+      "name": "Window to Pumps",
+      "category": "architectural",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.5,
+      "width": 0.9,
+      "depth": 2.1,
+      "height": 2.1,
+      "elevation": 1.8,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": ""
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 3.0,
+    "y": 1.6,
+    "z": 2.5,
+    "target_x": 2.5,
+    "target_y": 1.8,
+    "target_z": 2.5,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [],
+  "design_notes": [],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "cash_desk_1",
+      "kind": "centered"
+    },
+    {
+      "subject_id": "tire_display_1",
+      "kind": "against_wall",
+      "wall": "north"
+    },
+    {
+     

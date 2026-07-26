@@ -1,0 +1,126 @@
+error: Unterminated string starting at: line 124 column 18 (char 2424)
+------------------------------------------------------------
+{
+  "name": "1990s Teenage Bedroom",
+  "room": {
+    "width": 4.5,
+    "depth": 3.6,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "bed_1",
+      "name": "Single Bed",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.5,
+      "z": 1.8,
+      "width": 2.4,
+      "depth": 1.9,
+      "height": 1.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "tv_stand_1",
+      "name": "CRT Television Stand",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 1.8,
+      "width": 0.9,
+      "depth": 0.6,
+      "height": 1.4,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "beanbag_1",
+      "name": "Beanbag Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.4,
+      "width": 1.8,
+      "depth": 1.9,
+      "height": 0.6,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true
+    },
+    {
+      "id": "posters_1",
+      "name": "Posters",
+      "category": "decor",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 3.4,
+      "width": 0.9,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "north",
+      "offset": 0.5,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 2.25,
+    "y": 1.6,
+    "z": 3.4,
+    "target_x": 2.5,
+    "target_y": 1.8,
+    "target_z": 1.8,
+    "fov_deg": 55.0
+  },
+  "circulation_notes": [
+    "Maintain at least 0.8m clear paths between the door and all zones."
+  ],
+  "design_notes": [
+    "A simple, neutral design with a focus on functionality."
+  ],
+  "schema_version": "floor-plan/v11",
+  "relationships": [
+    {
+      "subject_id": "bed_1",
+      "kind": "centered"
+    },
+    {
+      "subject_id": "tv_stand_1",
+      "kind": "against_wall",
+      "wall": "north"
+    },
+    {
+      "subject_id": "beanbag_1",
+      "kind": "adjacent_to",
+      "target_id": "tv_stand_1"
+    },
+    {
+      "subject_id": "posters_1",
+      "kind": "centered",
+      "parameters_m": {},
+      "relaxable": true
+    }
+  ],
+  "opening_intents": [
+    {
+      "id": "door_1",
+      "placement": "near_corner",
+      "wall": "north"
+    }
+  ],
+  "camera_intent": {
+    "corner": "nw",
+    "target_id": "bed_@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

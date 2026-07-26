@@ -1,0 +1,95 @@
+error: Expecting ',' delimiter: line 93 column 18 (char 1968)
+------------------------------------------------------------
+{
+  "name": "1920s Study",
+  "room": {
+    "width": 4.5,
+    "depth": 6.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "desk_1",
+      "name": "Heavy Oak Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.5,
+      "z": 3.0,
+      "width": 2.4,
+      "depth": 1.8,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "desk_1",
+          "kind": "against_wall",
+          "target_id": null,
+          "wall": "north",
+          "parameters_m": {},
+          "weight": 1.0,
+          "relaxable": false
+        }
+      ]
+    },
+    {
+      "id": "armchair_1",
+      "name": "Leather Armchair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 1.8,
+      "depth": 1.4,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "armchair_1",
+          "kind": "centered",
+          "parameters_m": {},
+          "relaxable": true
+        }
+      ]
+    },
+    {
+      "id": "globe_stand_1",
+      "name": "Globe Stand",
+      "category": "fixture",
+      "mount": "wall",
+      "x": 2.5,
+      "z": 4.8,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.8,
+      "elevation": 0.9,
+      "rotation_deg": 90.0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "",
+      "relationships": [
+        {
+          "subject_id": "globe_stand_1",
+          "kind": "centered",
+          "parameters_m": {},
+          "relaxable": true
+        }
+      ]
+    },
+    {
+      "id": "desk_lamp_1",
+      "name": "Brass Desk Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 2.5,
+      "z": 3.0,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 1.
