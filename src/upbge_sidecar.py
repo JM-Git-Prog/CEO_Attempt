@@ -401,11 +401,21 @@ def run_upbge_sidecar(
             violated=violated, controls=tuple(controls), limitations=tuple(limitations),
         )
     if process.returncode != 0:
-        return _failure(
-            "compiler_process_failure", output_dir=output_dir, status="failed",
-            duration_ms=duration_ms, return_code=process.returncode, stdout=stdout,
-            stderr=stderr, controls=tuple(controls), limitations=tuple(limitations),
-        )
+        # UPBGE 0.50+ may exit with non-zero due to plugin cleanup warnings
+        # (Logic Nodes, Bricky Nodes) even when the script ran successfully.
+        # Check if all expected output files exist before declaring failure.
+        expected_check = dict(outputs.requested_names())
+        expected_names_check = set(expected_check.values())
+        missing_check = [fn for fn in expected_names_check if not (output_dir / fn).is_file()]
+        if not missing_check:
+            # All expected files present — treat as success despite non-zero exit
+            pass  # Fall through to normal output validation below
+        else:
+            return _failure(
+                "compiler_process_failure", output_dir=output_dir, status="failed",
+                duration_ms=duration_ms, return_code=process.returncode, stdout=stdout,
+                stderr=stderr, controls=tuple(controls), limitations=tuple(limitations),
+            )
 
     expected = dict(outputs.requested_names())
     actual_files = [path for path in output_dir.rglob("*") if path.is_file() or path.is_symlink()]
