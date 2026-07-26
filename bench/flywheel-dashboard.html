@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>The Living Room - Flywheel Dashboard</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; max-width: 900px;
+         margin: 30px auto; padding: 0 20px; color: #1a1a1a; line-height: 1.55; }
+  h1 { font-size: 1.5em; margin-bottom: 0; }
+  h2 { border-bottom: 2px solid #ddd; padding-bottom: 6px; margin-top: 2.2em; }
+  .sub { color: #666; margin-top: 2px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+  td, th { border: 1px solid #ddd; padding: 6px 10px; text-align: left; font-size: 0.95em; }
+  th { background: #f4f4f4; }
+  .card { background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 8px;
+           padding: 14px 18px; margin: 10px 0; }
+  .ok { color: #1a7a1a; font-weight: bold; }
+  .warn { color: #b35900; font-weight: bold; }
+  .bad { color: #b30000; font-weight: bold; }
+  .footer { color: #888; font-size: 0.85em; margin-top: 3em; border-top: 1px solid #eee; padding-top: 10px; }
+  ol li { margin-bottom: 6px; }
+</style></head><body>
+
+<h1>The Living Room - Flywheel Dashboard</h1>
+<div class="sub">Generated 2026-07-26 06:14:04 - reopen the Desktop launcher any time to refresh.</div>
+
+<h2>The vision</h2>
+<p>You describe a room in plain conversation. The AI designs it - proposes a look, furniture,
+and layout - and shows you a photorealistic image to approve. Once approved, the AI builds
+it as a real, walkable 3D space: correct room shape, every object in a physically sensible
+place, right down to trim and outlets. Then it's usable in "real mode" (your actual tools
+and tasks live inside it) or "game mode" (the same space becomes a game built around it).
+Every world built adds reusable pieces to a shared warehouse, so each new world gets faster
+to build than the last one. Runs on open, local models - no dependence on any one paid API.</p>
+
+<p><b>What this specific loop is responsible for:</b> before any of that can happen, the AI
+has to reliably turn a room description into a correct blueprint - room size, where every
+piece of furniture goes, doors and windows, the camera - numbers a math checker can verify
+don't collide, don't leave the room, and don't block a doorway. This flywheel's only job is
+teaching a small, free, local model to write that blueprint correctly on the first try, as
+often as possible, across all kinds of rooms. Get this reliable and the
+"conversation -> approved image -> real world" promise holds up without constant manual fixes.</p>
+
+<h2>Executive overview</h2>
+<div class="card">
+<b>Corpus right now:</b> 210 organic (llama3.1 harvester) + 21 synthetic
+(cloud top-up) + 183 from earlier pipeline runs = 414 rows -&gt;
+<b>166 pass validation</b> and become trainable exemplars.<br>
+<b>Pace:</b> 43 new rows in 16.9 hours (~2.5/hour, real observed pace including any stalls).<br>At that pace, about 2.7 more hours until the next training cycle triggers (7 rows to go).
+</div>
+
+<div class="card">
+<b>System health (right now):</b><br>
+Harvester (bench_loop.py): <span class="bad">
+not active - restart the supervisor</span><br>
+Flywheel loop: <span class="bad">
+not active - restart the supervisor</span><br>
+Training right now: <span class="ok">
+no - idle, waiting or between cycles</span><br>
+GPU: 8.0% util, 10.1/24.0 GB VRAM
+</div>
+
+<div class="card">
+<b>Most recent real comparison:</b> llama3.1 baseline 27% vs. trained model
+30% 
+</div>
+
+<h2>Objective and progress</h2>
+<p><b>Working target (my proposed default - tell me to change it):</b> the trained model should
+correctly build 90% of room layouts on the first try, across a wide
+range of room types - reliable enough that a broken layout becomes a rare exception, not a
+regular occurrence.</p>
+<p><b>Not enough clean data yet to give a real estimate.</b> Only 1 real comparison(s) exist so far (need at least 4) - most of today's cycles never got measured because of bugs that are now fixed. This will turn into a real number once a few more training cycles complete and get benched.</p>
+<table>
+<tr><th>Trained</th><th>Baseline (llama3.1)</th><th>Trained model</th></tr>
+<tr><td>Jul 24 10:44</td><td>27% (8/30)</td><td>30% (9/30)</td></tr>
+</table>
+
+<h2>The loop, plain English</h2>
+<ol>
+<li>A room description goes to a model (llama3.1 locally, a cloud model, or the model being trained).</li>
+<li>The model writes a JSON blueprint: room size, every item's position/size, doors, windows, camera.</li>
+<li>A strict math checker verifies it - no collisions, nothing out of bounds, no blocked doors.</li>
+<li>Passing blueprints get banked as training examples ("trainable exemplars").</li>
+<li>Once 50 new passing examples pile up, the harvester pauses and the model is
+fine-tuned on them.</li>
+<li>The freshly-trained model gets tested against the old baseline on a fixed set of prompts
+it has never seen.</li>
+<li>Repeat, forever. Every 10th cycle, different training settings are also tried, and
+whichever setting wins becomes the new default automatically.</li>
+</ol>
+
+<div class="footer">
+Corpus: data/flywheel/corpus.jsonl + corpus-bench.jsonl &middot;
+Health/history: bench/flywheel-state.json, bench/training-progress.json, bench/results-*.json &middot;
+Numbers reuse tools/training_monitor.py's own counting logic, so this page and that app never disagree.
+</div>
+
+</body></html>

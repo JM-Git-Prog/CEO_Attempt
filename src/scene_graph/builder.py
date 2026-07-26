@@ -51,13 +51,15 @@ heights, rotations, doors, and windows must not change. Add materials, physics, 
 
 def _parse_scene_graph(data: dict) -> SceneGraph:
     """Parse raw JSON dict into a validated SceneGraph model."""
+    room_data = data.get("room", {})
+    _default_material = {"base_color": "#808080", "metallic": 0.0, "roughness": 0.8}
     room = RoomShell(
-        width=data["room"]["width"],
-        depth=data["room"]["depth"],
-        height=data["room"]["height"],
-        floor_material=MaterialProps(**data["room"]["floor_material"]),
-        wall_material=MaterialProps(**data["room"]["wall_material"]),
-        ceiling_material=MaterialProps(**data["room"]["ceiling_material"]),
+        width=room_data.get("width", 5.0),
+        depth=room_data.get("depth", 4.0),
+        height=room_data.get("height", 3.0),
+        floor_material=MaterialProps(**room_data.get("floor_material", _default_material)),
+        wall_material=MaterialProps(**room_data.get("wall_material", _default_material)),
+        ceiling_material=MaterialProps(**room_data.get("ceiling_material", _default_material)),
     )
 
     objects = []
