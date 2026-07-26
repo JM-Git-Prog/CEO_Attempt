@@ -1183,3 +1183,27 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p064: error    (24.6s) 
   p065: error    (17.2s) 
   p066: error    (23.7s) 
+  p067: error    (23.2s) 
+  p068: error    (22.9s) 
+  p069: error    (25.5s) 
+  p070: error    (11.5s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T072319.json
+[07:29:03] bench batch rc=0
+[07:29:03] ingest: ingest: +4 records | 292 already banked | 625 plan-less rows skipped
+[07:30:33] batch: prompts 70..84 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p071: error    (18.5s) 
+  p072: error    (7.6s) 
+  p073: error    (23.0s) 
+  p074: error    (24.1s) 
+  p075: error    (14.3s) 
+  p076: error    (34.5s) 
+  p077: error    (11.9s) 
+  p078: blocked  (38.6s) out_of_bounds,physical_overlap,out_of_bounds
+  p079: error    (10.1s) 
+  p080: error    (18.2s) 
+  p081: error    (30.0s) 
+  p082: error    (17.6s) 
