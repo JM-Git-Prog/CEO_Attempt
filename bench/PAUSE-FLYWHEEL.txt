@@ -1,7 +1,0 @@
-paused by Claude at 2026-07-25 14:44 - a hparam sweep (bench/hparam_sweep.py) is
-mid-training on the "baseline" combo with VRAM already at 23.3/24 GB. The flywheel
-was at 42/50 corpus rows and would have tried to start its OWN training run soon,
-which is not GPU-quiet-checked the same way the sweep's train_probe.py calls
-aren't either - two concurrent train_probe.py runs on a near-full 24GB card is a
-real OOM risk. Delete this file (or let John's own tooling) once the sweep
-finishes to resume the flywheel.
