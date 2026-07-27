@@ -1,0 +1,7 @@
+error: Unterminated string starting at: line 4 column 5 (char 54)
+------------------------------------------------------------
+```json
+{
+  "name": "Minimalist Home Office",
+  "room": {
+    "

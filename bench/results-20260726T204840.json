@@ -3,14 +3,14 @@
  "prompts": 15,
  "lanes": {
   "llama3.1": {
-   "legal": 0,
-   "total": 10,
-   "legal_rate": 0.0,
+   "legal": 1,
+   "total": 15,
+   "legal_rate": 0.07,
    "violation_census": {
-    "physical_overlap": 27,
-    "out_of_bounds": 5,
-    "opening_blocked": 4,
-    "error:ValidationError": 4,
+    "physical_overlap": 43,
+    "opening_blocked": 9,
+    "out_of_bounds": 6,
+    "error:ValidationError": 5,
     "camera_inside_geometry": 2
    },
    "rows": [
@@ -1456,8 +1456,1232 @@
       }
      },
      "prompt_id": "p060"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 23,
+     "seconds": 99.7,
+     "plan": {
+      "name": "Ramen Shop Floor Plan",
+      "room": {
+       "width": 10.0,
+       "depth": 8.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "kitchen_pass_1",
+        "name": "Kitchen Pass",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.9,
+        "width": 0.9,
+        "depth": 1.8,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_1",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": -1.8,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_2",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": -1.2000000000000002,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_3",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": -0.6000000000000001,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_4",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_5",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": 0.5999999999999999,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_6",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": 1.2,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "seat_7",
+        "name": "Seat",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.05,
+        "z": 1.8,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_1",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -1.8,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_2",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -1.2000000000000002,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_3",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -0.6000000000000001,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_4",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_5",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.5999999999999999,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_6",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 1.2,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lantern_7",
+        "name": "Lantern",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 1.8,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_1",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -1.8,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_2",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -1.2000000000000002,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_3",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -0.6000000000000001,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_4",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_5",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.5999999999999999,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_6",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 1.2,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lighting_7",
+        "name": "Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 1.8,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 1.5999999999999999,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 2.1,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from door to counter"
+      ],
+      "design_notes": [
+       "Ramen shop theme"
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "kitchen_pass_1",
+        "kind": "against_wall",
+        "target_id": "counter_1",
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_2",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_3",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_4",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_5",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 4.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_6",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 5.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "seat_7",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 6.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_2",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_3",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_4",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_5",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 4.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_6",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 5.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lantern_7",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 6.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_2",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 1.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_3",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 2.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_4",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 3.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_5",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 4.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_6",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 5.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lighting_7",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 6.0,
+         "distribution_count": 7.0,
+         "distribution_span_m": 3.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.1,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p061"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 1,
+     "items": 2,
+     "seconds": 10.4,
+     "plan": {
+      "name": "Bank Teller Hall Corner",
+      "room": {
+       "width": 6.5,
+       "depth": 7.2,
+       "height": 3.0
+      },
+      "items": [
+       {
+        "id": "writing_desk_island",
+        "name": "Writing Desk Island",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "globe_light",
+        "name": "Globe Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.2,
+        "elevation": 1.8,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "teller_window_1_opening",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.5,
+        "sill_height": 0.0
+       },
+       {
+        "id": "teller_window_2_opening",
+        "kind": "window",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.5,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.8,
+       "y": 1.6,
+       "z": 3.15,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "The writing desk island should be centered in the room, with the globe light hanging above it."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "writing_desk_island",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "globe_light",
+        "kind": "above",
+        "target_id": "writing_desk_island",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "teller_window_1_opening",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "teller_window_2_opening",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "globe_light",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p062"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 3,
+     "items": 4,
+     "seconds": 22.0,
+     "plan": {
+      "name": "Climbing Gym Corner",
+      "room": {
+       "width": 4.5,
+       "depth": 6.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "crash_pad_1",
+        "name": "Crash Pad",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -3.490243377569956e-16,
+        "z": -1.9,
+        "width": 1.8,
+        "depth": 1.8,
+        "height": 0.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "crash_pad_2",
+        "name": "Crash Pad",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 1.8,
+        "height": 0.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "bench_1",
+        "name": "Bench",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.35,
+        "width": 0.8,
+        "depth": 1.2,
+        "height": 0.6,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chalk_stand_1",
+        "name": "Chalk Stand",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.6500000000000004,
+        "width": 0.8,
+        "depth": 0.6,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.8,
+       "y": 1.6,
+       "z": 2.55,
+       "target_x": -3.490243377569956e-16,
+       "target_y": 1.2,
+       "target_z": -1.9,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "The bouldering wall should be placed against a north wall to maximize natural light."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "bench_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chalk_stand_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "crash_pad_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "crash_pad_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "crash_pad_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 3,
+     "prompt_id": "p063"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.12/v/string_type",
+     "seconds": 24.5,
+     "prompt_id": "p064"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 4,
+     "seconds": 21.3,
+     "plan": {
+      "name": "Phone Repair Kiosk",
+      "room": {
+       "width": 4.5,
+       "depth": 6.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Service Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "display_case_1",
+        "name": "Display Case",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.3499999999999996,
+        "width": 1.8,
+        "depth": 0.9,
+        "height": 2.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "work_desk_1",
+        "name": "Work Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.35,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 0.9,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "accessory_hooks_1",
+        "name": "Accessory Hooks",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 2.5,
+        "width": 0.9,
+        "depth": 0.6,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.8,
+       "y": 1.6,
+       "z": 2.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "display_case_1",
+        "kind": "against_wall",
+        "target_id": "counter_1",
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "work_desk_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "accessory_hooks_1",
+        "kind": "against_wall",
+        "target_id": "work_desk_1",
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p065"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-26 20:56:36"
 }
