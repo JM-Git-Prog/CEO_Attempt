@@ -132,11 +132,13 @@ def auto_launch_game(
     cmd.append(blend_str)
 
     # 4. Start subprocess non-blocking
+    #    Capture stderr via PIPE so we can report it if the process exits early.
+    #    stdout is discarded (game rendering output is not useful for diagnostics).
     try:
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
         )
     except OSError as exc:
         return LaunchResult(
@@ -151,23 +153,36 @@ def auto_launch_game(
             ),
         )
 
-    # 5. Wait up to timeout_s; confirm process is still running
+    # 5. Wait up to timeout_s; confirm process is still running.
+    #    A minimum of 3 seconds confirms successful scene load (not immediate exit).
     poll_interval = min(0.2, timeout_s / 10) if timeout_s > 0 else 0.1
     elapsed = 0.0
     while elapsed < timeout_s:
         exit_code = process.poll()
         if exit_code is not None:
-            # Process exited prematurely
+            # Process exited prematurely — capture stderr for diagnostics
+            stderr_output = ""
+            if process.stderr:
+                try:
+                    stderr_output = process.stderr.read().decode(
+                        "utf-8", errors="replace"
+                    )
+                except (OSError, ValueError):
+                    stderr_output = ""
+            stderr_snippet = stderr_output.strip()[-1000:] if stderr_output else ""
+            diag_parts = [
+                f"blenderplayer exited with code {exit_code} "
+                f"within {elapsed:.1f}s of launch"
+            ]
+            if stderr_snippet:
+                diag_parts.append(f"stderr: {stderr_snippet}")
             return LaunchResult(
                 success=False,
                 pid=process.pid,
                 executable=executable,
                 blend_path=blend_str,
                 reason_code="process_exited",
-                diagnostics=(
-                    f"blenderplayer exited with code {exit_code} "
-                    f"within {elapsed:.1f}s of launch"
-                ),
+                diagnostics="; ".join(diag_parts),
                 fallback_instructions=_generate_fallback_instructions(
                     executable, blend_str, fullscreen
                 ),
@@ -175,7 +190,15 @@ def auto_launch_game(
         time.sleep(poll_interval)
         elapsed += poll_interval
 
-    # Process is still running after timeout_s — success
+    # Process is still running after timeout_s — success.
+    # Close our handle to the process's stderr pipe to prevent resource leak
+    # (the process remains running; we just detach from its stderr).
+    if process.stderr:
+        try:
+            process.stderr.close()
+        except OSError:
+            pass
+
     return LaunchResult(
         success=True,
         pid=process.pid,

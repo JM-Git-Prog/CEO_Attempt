@@ -2,32 +2,40 @@
 Smoke validator: structural .blend validation via bpy in headless mode.
 
 Opens the Runtime_Candidate in UPBGE_Editor --background and verifies that
-logic bricks are wired, player controller text datablocks are present,
-physics bodies are configured, and the scene loads without error.
+Python Components are attached, required text datablocks are present,
+physics is configured, and the scene loads without error.
 
 Does NOT enter game mode, does NOT open a visible window, does NOT launch blenderplayer.
+
+Uses the UPBGE 0.50 smoke probe (smoke_probe_050.py) which verifies:
+- scene_loads: .blend opens without bpy errors
+- player_component_attached: player object has PlayerComponent (native or fallback)
+- text_datablocks_present: required .py Text datablocks exist
+- physics_configured: player has CHARACTER physics
+- door_components_attached: door objects have DoorComponent registered
 """
 
 from __future__ import annotations
 
 import json
 import subprocess
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
 
+from src.assembler.smoke_probe_050 import SMOKE_PROBE_SCRIPT_050, SMOKE_RESULT_MARKER
 from src.upbge_capabilities import UPBGECapabilityReport
 from src.upbge_runtime import RuntimePlan
 
-_SMOKE_RESULT_MARKER = "SMOKE_RESULT="
-_PROBE_SCRIPT = Path(__file__).parent / "assembler" / "smoke_probe.py"
+_SMOKE_RESULT_MARKER = SMOKE_RESULT_MARKER
 
 
 @dataclass(frozen=True)
 class SmokeCheck:
     """Result of a single structural smoke check."""
 
-    name: str  # "player_controller_exists", "character_physics", "logic_bricks_wired", "scene_loads"
+    name: str  # "scene_loads", "player_component_attached", "text_datablocks_present", "physics_configured", "door_components_attached"
     passed: bool
     detail: str
 
@@ -38,20 +46,22 @@ class SmokeValidationResult:
 
     passed: bool
     checks: tuple[SmokeCheck, ...]  # individual check results
-    reason_code: str  # "structural_ok", "missing_controller", "physics_misconfigured", etc.
+    reason_code: str  # "structural_ok", "scene_load_error", "player_component_missing", etc.
     duration_ms: int
 
 
 def _determine_reason_code(checks: dict[str, dict[str, object]]) -> str:
-    """Derive a reason_code from the individual check results."""
+    """Derive a reason_code from the individual check results (UPBGE 0.50 checks)."""
     if not checks.get("scene_loads", {}).get("passed", False):
         return "scene_load_error"
-    if not checks.get("player_controller_exists", {}).get("passed", False):
-        return "missing_controller"
-    if not checks.get("character_physics", {}).get("passed", False):
-        return "character_physics_missing"
-    if not checks.get("logic_bricks_wired", {}).get("passed", False):
-        return "logic_bricks_unwired"
+    if not checks.get("player_component_attached", {}).get("passed", False):
+        return "player_component_missing"
+    if not checks.get("text_datablocks_present", {}).get("passed", False):
+        return "text_datablocks_missing"
+    if not checks.get("physics_configured", {}).get("passed", False):
+        return "physics_not_configured"
+    if not checks.get("door_components_attached", {}).get("passed", False):
+        return "door_components_missing"
     return "structural_ok"
 
 
@@ -64,8 +74,11 @@ def run_structural_smoke(
 ) -> SmokeValidationResult:
     """Run structural smoke checks on a .blend file via UPBGE_Editor headless mode.
 
-    Invokes UPBGE_Editor with --background to open the blend file and run the
-    smoke_probe.py script which performs 4 structural checks via bpy.
+    Invokes UPBGE_Editor with --background to run the smoke_probe_050.py script
+    which performs 5 structural checks via bpy for UPBGE 0.50 component-based runtime.
+
+    The blend path is passed as an argument after '--' so the probe can read it
+    from sys.argv. Command: upbge --background --python <script_file> -- <blend_path>
 
     Does NOT enter game mode, does NOT open a visible window, does NOT launch blenderplayer.
     """
@@ -89,9 +102,18 @@ def run_structural_smoke(
             duration_ms=int((time.monotonic() - started) * 1000),
         )
 
-    # Locate the smoke probe script
-    probe_script = _PROBE_SCRIPT
-    if not probe_script.exists():
+    # Write the probe script to a temp file for execution inside UPBGE
+    try:
+        probe_tmpfile = tempfile.NamedTemporaryFile(
+            mode="w",
+            suffix=".py",
+            prefix="smoke_probe_050_",
+            delete=False,
+        )
+        probe_tmpfile.write(SMOKE_PROBE_SCRIPT_050)
+        probe_tmpfile.close()
+        probe_script_path = probe_tmpfile.name
+    except OSError:
         return SmokeValidationResult(
             passed=False,
             checks=(),
@@ -99,13 +121,14 @@ def run_structural_smoke(
             duration_ms=int((time.monotonic() - started) * 1000),
         )
 
-    # Build command: upbge --background blend_path --python smoke_probe.py
+    # Build command: upbge --background --python <script_file> -- <blend_path>
     command = [
         str(executable),
         "--background",
-        str(blend_path),
         "--python",
-        str(probe_script),
+        probe_script_path,
+        "--",
+        str(blend_path),
     ]
 
     # Run the probe subprocess
@@ -134,6 +157,12 @@ def run_structural_smoke(
             reason_code="executable_missing",
             duration_ms=int((time.monotonic() - started) * 1000),
         )
+    finally:
+        # Clean up temp file
+        try:
+            Path(probe_script_path).unlink(missing_ok=True)
+        except OSError:
+            pass
 
     # Parse the SMOKE_RESULT= JSON line from stdout
     result_line: str | None = None
@@ -200,3 +229,160 @@ def run_structural_smoke(
         reason_code=reason_code,
         duration_ms=duration_ms,
     )
+
+
+# ---------------------------------------------------------------------------
+# UPBGE 0.50 standalone entry point (dict-returning interface)
+# ---------------------------------------------------------------------------
+
+# Evaluation order for reason_code determination
+_SMOKE_CHECK_NAMES_050 = (
+    "scene_loads",
+    "player_component_attached",
+    "text_datablocks_present",
+    "physics_configured",
+    "door_components_attached",
+)
+
+
+def run_structural_smoke_050(
+    upbge_path: str,
+    blend_path: str,
+    *,
+    timeout_s: float = 30.0,
+) -> dict:
+    """Run UPBGE 0.50 structural smoke checks and return a dict result.
+
+    This is the standalone entry point that writes the probe script to a temp file,
+    invokes UPBGE with ``--background --python <script> -- <blend_path>``, parses the
+    SMOKE_RESULT= JSON output, and returns a structured dict.
+
+    Args:
+        upbge_path: Path to the UPBGE 0.50 executable.
+        blend_path: Path to the runtime_candidate.blend file.
+        timeout_s: Maximum seconds to wait for the probe subprocess.
+
+    Returns:
+        Dict with keys:
+            passed (bool): True if all checks passed.
+            reason_code (str): "smoke_passed" or the name of the first failed check.
+            detail (str): Human-readable description of the result.
+            checks (dict): The raw checks dict from the probe output.
+    """
+    import os
+    import tempfile
+
+    # Write probe script to temp file
+    try:
+        fd, probe_path = tempfile.mkstemp(suffix=".py", prefix="smoke_probe_050_")
+        os.write(fd, SMOKE_PROBE_SCRIPT_050.encode("utf-8"))
+        os.close(fd)
+    except OSError as exc:
+        return {
+            "passed": False,
+            "reason_code": "smoke_parse_error",
+            "detail": f"Failed to write probe script: {exc}",
+            "checks": {},
+        }
+
+    # Build command: upbge --background --python <script> -- <blend_path>
+    command = [
+        upbge_path,
+        "--background",
+        "--python",
+        probe_path,
+        "--",
+        blend_path,
+    ]
+
+    try:
+        completed = subprocess.run(
+            command,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout_s,
+            text=True,
+            check=False,
+        )
+        stdout = completed.stdout
+    except subprocess.TimeoutExpired:
+        return {
+            "passed": False,
+            "reason_code": "smoke_timeout",
+            "detail": f"Probe subprocess timed out after {timeout_s}s",
+            "checks": {},
+        }
+    except OSError as exc:
+        return {
+            "passed": False,
+            "reason_code": "smoke_parse_error",
+            "detail": f"Failed to invoke UPBGE: {exc}",
+            "checks": {},
+        }
+    finally:
+        # Clean up temp file
+        try:
+            if os.path.exists(probe_path):
+                os.unlink(probe_path)
+        except OSError:
+            pass
+
+    # Parse SMOKE_RESULT= marker from stdout
+    from src.assembler.smoke_probe_050 import parse_smoke_output
+
+    try:
+        payload = parse_smoke_output(stdout)
+    except ValueError as exc:
+        return {
+            "passed": False,
+            "reason_code": "smoke_parse_error",
+            "detail": str(exc),
+            "checks": {},
+        }
+
+    # Validate checks structure
+    checks = payload.get("checks")
+    if not isinstance(checks, dict):
+        return {
+            "passed": False,
+            "reason_code": "smoke_parse_error",
+            "detail": "Probe output 'checks' field is not a dict",
+            "checks": {},
+        }
+
+    # Determine pass/fail and reason_code
+    all_passed = all(
+        isinstance(c, dict) and c.get("passed", False)
+        for c in checks.values()
+    )
+
+    if all_passed:
+        return {
+            "passed": True,
+            "reason_code": "smoke_passed",
+            "detail": "All checks passed",
+            "checks": checks,
+        }
+
+    # Find the first failed check in evaluation order
+    first_failure_name = None
+    first_failure_detail = ""
+    for name in _SMOKE_CHECK_NAMES_050:
+        check = checks.get(name, {})
+        if isinstance(check, dict) and not check.get("passed", False):
+            first_failure_name = name
+            first_failure_detail = check.get("detail", "")
+            break
+
+    # Fallback: if somehow none matched in order, use generic
+    if first_failure_name is None:
+        first_failure_name = "unknown_failure"
+        first_failure_detail = "A check failed but could not identify which"
+
+    return {
+        "passed": False,
+        "reason_code": first_failure_name,
+        "detail": first_failure_detail,
+        "checks": checks,
+    }

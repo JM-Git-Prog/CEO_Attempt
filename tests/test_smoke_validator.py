@@ -1,7 +1,7 @@
 """Tests for the smoke_validator module.
 
 Verifies run_structural_smoke handles precondition failures, subprocess
-outcomes, and result parsing correctly.
+outcomes, and result parsing correctly for UPBGE 0.50 component-based checks.
 """
 
 from __future__ import annotations
@@ -49,33 +49,100 @@ def _make_runtime_plan() -> RuntimePlan:
     )
 
 
-def _probe_success_output() -> str:
-    """Produce a stdout string with a successful SMOKE_RESULT line."""
+def _probe_success_output_050() -> str:
+    """Produce a stdout string with a successful SMOKE_RESULT line (UPBGE 0.50 format)."""
     payload = {
-        "success": True,
+        "schema_version": "smoke-probe-050/v1",
         "checks": {
-            "player_controller_exists": {"passed": True, "detail": "Found 1 text datablock(s)"},
-            "character_physics": {"passed": True, "detail": "Found 1 object(s) with CHARACTER physics"},
-            "logic_bricks_wired": {"passed": True, "detail": "Wired: 2, unwired: 0"},
-            "scene_loads": {"passed": True, "detail": "Scene loaded successfully via bpy"},
+            "scene_loads": {"passed": True, "detail": "Scene loaded with 5 objects"},
+            "player_component_attached": {"passed": True, "detail": "Fallback component on KiroPlayer: kiro_player_first_person.PlayerComponent"},
+            "text_datablocks_present": {"passed": True, "detail": "All 2 required text datablocks present"},
+            "physics_configured": {"passed": True, "detail": "Fallback CHARACTER physics on KiroPlayer (runtime bootstrap required)"},
+            "door_components_attached": {"passed": True, "detail": "All 1 doors have DoorComponent"},
         },
+        "all_passed": True,
     }
-    # Simulate engine startup noise plus the result line
-    return f"Blender 3.6.0\nRead blend: /tmp/test.blend\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
+    return f"Blender 5.0.1\nRead blend: /tmp/test.blend\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
 
 
-def _probe_partial_failure_output() -> str:
-    """Produce a stdout string where character_physics check fails."""
+def _probe_player_component_failure_output() -> str:
+    """Produce a stdout string where player_component_attached check fails."""
     payload = {
-        "success": True,
+        "schema_version": "smoke-probe-050/v1",
         "checks": {
-            "player_controller_exists": {"passed": True, "detail": "Found 1 text datablock(s)"},
-            "character_physics": {"passed": False, "detail": "Found 0 object(s) with CHARACTER physics"},
-            "logic_bricks_wired": {"passed": True, "detail": "Wired: 2, unwired: 0"},
-            "scene_loads": {"passed": True, "detail": "Scene loaded successfully via bpy"},
+            "scene_loads": {"passed": True, "detail": "Scene loaded with 5 objects"},
+            "player_component_attached": {"passed": False, "detail": "Player object 'KiroPlayer' has no component (native or fallback)"},
+            "text_datablocks_present": {"passed": True, "detail": "All 2 required text datablocks present"},
+            "physics_configured": {"passed": True, "detail": "Fallback CHARACTER physics on KiroPlayer"},
+            "door_components_attached": {"passed": True, "detail": "No doors in scene (vacuously true)"},
         },
+        "all_passed": False,
     }
-    return f"Blender 3.6.0\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
+    return f"Blender 5.0.1\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
+
+
+def _probe_physics_failure_output() -> str:
+    """Produce a stdout string where physics_configured check fails."""
+    payload = {
+        "schema_version": "smoke-probe-050/v1",
+        "checks": {
+            "scene_loads": {"passed": True, "detail": "Scene loaded with 5 objects"},
+            "player_component_attached": {"passed": True, "detail": "Fallback component on KiroPlayer"},
+            "text_datablocks_present": {"passed": True, "detail": "All 2 required text datablocks present"},
+            "physics_configured": {"passed": False, "detail": "Player 'KiroPlayer' has no CHARACTER physics configured"},
+            "door_components_attached": {"passed": True, "detail": "No doors in scene (vacuously true)"},
+        },
+        "all_passed": False,
+    }
+    return f"Blender 5.0.1\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
+
+
+def _probe_text_datablocks_failure_output() -> str:
+    """Produce a stdout string where text_datablocks_present check fails."""
+    payload = {
+        "schema_version": "smoke-probe-050/v1",
+        "checks": {
+            "scene_loads": {"passed": True, "detail": "Scene loaded with 5 objects"},
+            "player_component_attached": {"passed": True, "detail": "Fallback component on KiroPlayer"},
+            "text_datablocks_present": {"passed": False, "detail": "Missing: kiro_player_first_person.py"},
+            "physics_configured": {"passed": True, "detail": "Fallback CHARACTER physics on KiroPlayer"},
+            "door_components_attached": {"passed": True, "detail": "No doors in scene (vacuously true)"},
+        },
+        "all_passed": False,
+    }
+    return f"Blender 5.0.1\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
+
+
+def _probe_door_components_failure_output() -> str:
+    """Produce a stdout string where door_components_attached check fails."""
+    payload = {
+        "schema_version": "smoke-probe-050/v1",
+        "checks": {
+            "scene_loads": {"passed": True, "detail": "Scene loaded with 5 objects"},
+            "player_component_attached": {"passed": True, "detail": "Fallback component on KiroPlayer"},
+            "text_datablocks_present": {"passed": True, "detail": "All 2 required text datablocks present"},
+            "physics_configured": {"passed": True, "detail": "Fallback CHARACTER physics on KiroPlayer"},
+            "door_components_attached": {"passed": False, "detail": "1/2 doors have components; missing: Door.002"},
+        },
+        "all_passed": False,
+    }
+    return f"Blender 5.0.1\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
+
+
+def _probe_scene_load_failure_output() -> str:
+    """Produce a stdout string where scene_loads check fails."""
+    payload = {
+        "schema_version": "smoke-probe-050/v1",
+        "checks": {
+            "scene_loads": {"passed": False, "detail": "Scene load error: FileNotFoundError"},
+            "player_component_attached": {"passed": False, "detail": "Skipped (scene failed to load)"},
+            "text_datablocks_present": {"passed": False, "detail": "Skipped (scene failed to load)"},
+            "physics_configured": {"passed": False, "detail": "Skipped (scene failed to load)"},
+            "door_components_attached": {"passed": False, "detail": "Skipped (scene failed to load)"},
+        },
+        "all_passed": False,
+    }
+    return f"Blender 5.0.1\n{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n"
 
 
 class TestRunStructuralSmokePreConditions:
@@ -117,7 +184,7 @@ class TestRunStructuralSmokeSubprocess:
 
         mock_result = subprocess.CompletedProcess(
             args=[], returncode=0,
-            stdout=_probe_success_output(),
+            stdout=_probe_success_output_050(),
             stderr="",
         )
 
@@ -126,7 +193,7 @@ class TestRunStructuralSmokeSubprocess:
 
         assert result.passed is True
         assert result.reason_code == "structural_ok"
-        assert len(result.checks) == 4
+        assert len(result.checks) == 5
         assert all(check.passed for check in result.checks)
         assert result.duration_ms >= 0
 
@@ -156,7 +223,7 @@ class TestRunStructuralSmokeSubprocess:
 
         mock_result = subprocess.CompletedProcess(
             args=[], returncode=0,
-            stdout="Blender 3.6.0\nSome startup log\nNo result here\n",
+            stdout="Blender 5.0.1\nSome startup log\nNo result here\n",
             stderr="",
         )
 
@@ -200,15 +267,15 @@ class TestRunStructuralSmokeSubprocess:
         assert result.passed is False
         assert result.reason_code == "executable_missing"
 
-    def test_partial_check_failure_reports_correct_reason(self, tmp_path: Path) -> None:
-        """run_structural_smoke reports character_physics_missing when that check fails."""
+    def test_player_component_failure_reports_correct_reason(self, tmp_path: Path) -> None:
+        """run_structural_smoke reports player_component_missing when that check fails."""
         capability = _make_capability()
         blend_path = tmp_path / "scene.blend"
         blend_path.write_bytes(b"BLENDER")
 
         mock_result = subprocess.CompletedProcess(
             args=[], returncode=0,
-            stdout=_probe_partial_failure_output(),
+            stdout=_probe_player_component_failure_output(),
             stderr="",
         )
 
@@ -216,11 +283,92 @@ class TestRunStructuralSmokeSubprocess:
             result = run_structural_smoke(capability, blend_path, _make_runtime_plan())
 
         assert result.passed is False
-        assert result.reason_code == "character_physics_missing"
-        assert len(result.checks) == 4
-        # The character_physics check should be the one that failed
-        physics_check = next(c for c in result.checks if c.name == "character_physics")
+        assert result.reason_code == "player_component_missing"
+        assert len(result.checks) == 5
+        player_check = next(c for c in result.checks if c.name == "player_component_attached")
+        assert player_check.passed is False
+        assert "no component" in player_check.detail
+
+    def test_physics_failure_reports_correct_reason(self, tmp_path: Path) -> None:
+        """run_structural_smoke reports physics_not_configured when physics check fails."""
+        capability = _make_capability()
+        blend_path = tmp_path / "scene.blend"
+        blend_path.write_bytes(b"BLENDER")
+
+        mock_result = subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=_probe_physics_failure_output(),
+            stderr="",
+        )
+
+        with patch("src.smoke_validator.subprocess.run", return_value=mock_result):
+            result = run_structural_smoke(capability, blend_path, _make_runtime_plan())
+
+        assert result.passed is False
+        assert result.reason_code == "physics_not_configured"
+        physics_check = next(c for c in result.checks if c.name == "physics_configured")
         assert physics_check.passed is False
+
+    def test_text_datablocks_failure_reports_correct_reason(self, tmp_path: Path) -> None:
+        """run_structural_smoke reports text_datablocks_missing when check fails."""
+        capability = _make_capability()
+        blend_path = tmp_path / "scene.blend"
+        blend_path.write_bytes(b"BLENDER")
+
+        mock_result = subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=_probe_text_datablocks_failure_output(),
+            stderr="",
+        )
+
+        with patch("src.smoke_validator.subprocess.run", return_value=mock_result):
+            result = run_structural_smoke(capability, blend_path, _make_runtime_plan())
+
+        assert result.passed is False
+        assert result.reason_code == "text_datablocks_missing"
+        text_check = next(c for c in result.checks if c.name == "text_datablocks_present")
+        assert text_check.passed is False
+        assert "Missing" in text_check.detail
+
+    def test_door_components_failure_reports_correct_reason(self, tmp_path: Path) -> None:
+        """run_structural_smoke reports door_components_missing when check fails."""
+        capability = _make_capability()
+        blend_path = tmp_path / "scene.blend"
+        blend_path.write_bytes(b"BLENDER")
+
+        mock_result = subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=_probe_door_components_failure_output(),
+            stderr="",
+        )
+
+        with patch("src.smoke_validator.subprocess.run", return_value=mock_result):
+            result = run_structural_smoke(capability, blend_path, _make_runtime_plan())
+
+        assert result.passed is False
+        assert result.reason_code == "door_components_missing"
+        door_check = next(c for c in result.checks if c.name == "door_components_attached")
+        assert door_check.passed is False
+
+    def test_scene_load_failure_reports_correct_reason(self, tmp_path: Path) -> None:
+        """run_structural_smoke reports scene_load_error when scene fails to load."""
+        capability = _make_capability()
+        blend_path = tmp_path / "scene.blend"
+        blend_path.write_bytes(b"BLENDER")
+
+        mock_result = subprocess.CompletedProcess(
+            args=[], returncode=1,
+            stdout=_probe_scene_load_failure_output(),
+            stderr="",
+        )
+
+        with patch("src.smoke_validator.subprocess.run", return_value=mock_result):
+            result = run_structural_smoke(capability, blend_path, _make_runtime_plan())
+
+        assert result.passed is False
+        assert result.reason_code == "scene_load_error"
+        scene_check = next(c for c in result.checks if c.name == "scene_loads")
+        assert scene_check.passed is False
 
     def test_handles_empty_checks_dict(self, tmp_path: Path) -> None:
         """run_structural_smoke returns probe_parse_error when checks dict is empty/missing."""
@@ -228,7 +376,7 @@ class TestRunStructuralSmokeSubprocess:
         blend_path = tmp_path / "scene.blend"
         blend_path.write_bytes(b"BLENDER")
 
-        payload = {"success": True, "checks": "not-a-dict"}
+        payload = {"schema_version": "smoke-probe-050/v1", "checks": "not-a-dict", "all_passed": False}
         mock_result = subprocess.CompletedProcess(
             args=[], returncode=0,
             stdout=f"{_SMOKE_RESULT_MARKER}{json.dumps(payload)}\n",
@@ -240,3 +388,30 @@ class TestRunStructuralSmokeSubprocess:
 
         assert result.passed is False
         assert result.reason_code == "probe_parse_error"
+
+    def test_command_uses_correct_argument_order(self, tmp_path: Path) -> None:
+        """run_structural_smoke passes blend_path after '--' not as positional arg."""
+        capability = _make_capability()
+        blend_path = tmp_path / "scene.blend"
+        blend_path.write_bytes(b"BLENDER")
+
+        captured_command = []
+
+        def mock_run(cmd, **kwargs):
+            captured_command.extend(cmd)
+            return subprocess.CompletedProcess(
+                args=cmd, returncode=0,
+                stdout=_probe_success_output_050(),
+                stderr="",
+            )
+
+        with patch("src.smoke_validator.subprocess.run", side_effect=mock_run):
+            run_structural_smoke(capability, blend_path, _make_runtime_plan())
+
+        # Verify command structure: upbge --background --python <script> -- <blend>
+        assert Path(captured_command[0]) == Path("C:/upbge/upbge.exe")
+        assert captured_command[1] == "--background"
+        assert captured_command[2] == "--python"
+        # captured_command[3] is the temp file path (variable)
+        assert captured_command[4] == "--"
+        assert captured_command[5] == str(blend_path)

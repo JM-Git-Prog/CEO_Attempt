@@ -115,6 +115,338 @@ def main(controller):
         grabbed.setLinearVelocity((target - grabbed.worldPosition) * 10.0, False)
 '''
 
+PLAYER_COMPONENT_SOURCE = r'''import bge
+import math
+import json
+from mathutils import Vector
+
+
+class PlayerComponent(bge.types.KX_PythonComponent):
+    """First-person WASD + mouse-look player controller with grab interaction."""
+
+    args = {
+        "move_speed": 4.0,
+        "look_speed": 0.0025,
+        "gravity": 9.81,
+        "max_grab_distance": 3.0,
+        "grab_hold_distance": 1.5,
+    }
+
+    def start(self, args):
+        self.move_speed = max(0.1, min(float(args["move_speed"]), 20.0))
+        self.look_speed = max(0.0001, min(float(args["look_speed"]), 0.02))
+        self.gravity = max(0.0, min(float(args["gravity"]), 50.0))
+        self.max_grab_distance = float(args["max_grab_distance"])
+        self.grab_hold_distance = float(args["grab_hold_distance"])
+        self.paused = False
+        self.grabbed_object = None
+        self.grab_rules = {}
+        rules_json = self.object.get("kiro_grab_rules_json", "{}")
+        try:
+            self.grab_rules = json.loads(rules_json)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+    def update(self):
+        if self._check_exit():
+            return
+        if self._check_pause():
+            return
+        if self.paused:
+            return
+        self._update_look()
+        self._update_movement()
+        self._update_grab()
+
+    def _check_exit(self) -> bool:
+        keyboard = bge.logic.keyboard.events
+        if keyboard.get(bge.events.F10KEY) == bge.logic.KX_INPUT_JUST_ACTIVATED:
+            bge.logic.endGame()
+            return True
+        return False
+
+    def _check_pause(self) -> bool:
+        keyboard = bge.logic.keyboard.events
+        if keyboard.get(bge.events.ESCKEY) == bge.logic.KX_INPUT_JUST_ACTIVATED:
+            self.paused = not self.paused
+            return True
+        return False
+
+    def _update_look(self):
+        mouse = bge.logic.mouse
+        delta_x = mouse.position[0] - 0.5
+        delta_y = mouse.position[1] - 0.5
+        # Yaw on player object (world Z)
+        self.object.applyRotation((0.0, 0.0, -delta_x * self.look_speed * 100.0), False)
+        # Pitch on camera (local X, clamped +/-1.5 rad)
+        camera = bge.logic.getCurrentScene().active_camera
+        euler = camera.localOrientation.to_euler()
+        euler.x = max(-1.5, min(1.5, euler.x - delta_y * self.look_speed * 100.0))
+        camera.localOrientation = euler.to_matrix()
+        # Re-center mouse each frame
+        bge.render.setMousePosition(
+            bge.render.getWindowWidth() // 2,
+            bge.render.getWindowHeight() // 2
+        )
+
+    def _update_movement(self):
+        keyboard = bge.logic.keyboard.events
+        direction = Vector((0.0, 0.0, 0.0))
+        direction.y += keyboard.get(bge.events.WKEY, 0) > 0
+        direction.y -= keyboard.get(bge.events.SKEY, 0) > 0
+        direction.x -= keyboard.get(bge.events.AKEY, 0) > 0
+        direction.x += keyboard.get(bge.events.DKEY, 0) > 0
+        if direction.length > 0.0:
+            direction.normalize()
+        speed = self.move_speed
+        self.object.applyMovement(
+            (direction.x * speed / 60.0, direction.y * speed / 60.0, 0.0), True
+        )
+        # Gravity
+        mass = max(self.object.mass, 1.0)
+        self.object.applyForce((0.0, 0.0, -self.gravity * mass), False)
+
+    def _update_grab(self):
+        keyboard = bge.logic.keyboard.events
+        scene = bge.logic.getCurrentScene()
+        if keyboard.get(bge.events.EKEY) == bge.logic.KX_INPUT_JUST_ACTIVATED:
+            if self.grabbed_object:
+                self.grabbed_object = None
+                return
+            camera = scene.active_camera
+            ray_to = camera.worldPosition + camera.getAxisVect(
+                (0.0, 0.0, -self.max_grab_distance)
+            )
+            hit, _point, _normal = self.object.rayCast(
+                ray_to, camera.worldPosition, self.max_grab_distance
+            )
+            if hit and "kiro_open_angle_deg" in hit:
+                hit["kiro_interact_requested"] = True
+            elif hit and hit.get("kiro_body_mode") == "dynamic":
+                stable_id = hit.get("kiro_stable_id", "")
+                rule = self.grab_rules.get(stable_id)
+                if rule:
+                    max_mass = float(rule.get("max_mass_kg", 0))
+                    obj_mass = float(hit.get("kiro_mass_kg", 0))
+                    if obj_mass <= max_mass:
+                        self.grabbed_object = hit
+                        self.grab_hold_distance = float(
+                            rule.get("hold_distance_m", 1.5)
+                        )
+        # Hold logic
+        if self.grabbed_object and self.grabbed_object.name in scene.objects:
+            camera = scene.active_camera
+            target = camera.worldPosition + camera.getAxisVect(
+                (0.0, 0.0, -self.grab_hold_distance)
+            )
+            self.grabbed_object.setLinearVelocity(
+                (target - self.grabbed_object.worldPosition) * 10.0, False
+            )
+        elif self.grabbed_object:
+            self.grabbed_object = None
+'''
+
+
+DOOR_COMPONENT_SOURCE_050 = r'''import bge
+import math
+
+
+class DoorComponent(bge.types.KX_PythonComponent):
+    """Door toggle with rotation animation, triggered by kiro_interact_requested."""
+
+    args = {
+        "open_angle_deg": 90.0,
+        "speed_deg_s": 120.0,
+        "initially_open": False,
+    }
+
+    def start(self, args):
+        self.open_angle_deg = float(args["open_angle_deg"])
+        self.speed_deg_s = float(args["speed_deg_s"])
+        self.initially_open = bool(args["initially_open"])
+        # Record the closed angle from current orientation
+        self.closed_angle = self.object.localOrientation.to_euler().z
+        self.is_open = self.initially_open
+
+    def update(self):
+        # Check for interaction request
+        if self.object.get("kiro_interact_requested", False):
+            self.object["kiro_interact_requested"] = False
+            self.is_open = not self.is_open
+        # Animate toward target
+        target = self.closed_angle + (
+            math.radians(self.open_angle_deg) if self.is_open else 0.0
+        )
+        euler = self.object.localOrientation.to_euler()
+        step = math.radians(self.speed_deg_s) / 60.0
+        diff = target - euler.z
+        euler.z += max(-step, min(step, diff))
+        self.object.localOrientation = euler.to_matrix()
+'''
+
+
+def compute_door_target_angle(closed_angle: float, open_angle_deg: float, is_open: bool) -> float:
+    """Return the target rotation angle in radians for a door.
+
+    Args:
+        closed_angle: The recorded closed angle in radians.
+        open_angle_deg: The opening offset in degrees.
+        is_open: Whether the door is currently in the open state.
+
+    Returns:
+        Target angle in radians.
+    """
+    if is_open:
+        return closed_angle + math.radians(open_angle_deg)
+    return closed_angle
+
+
+def compute_door_rotation_step(current_angle: float, target_angle: float, speed_deg_s: float) -> float:
+    """Return the new rotation angle after one frame step (1/60s).
+
+    Moves current_angle toward target_angle by at most speed_deg_s/60 degrees,
+    clamping the step so it never overshoots.
+
+    Args:
+        current_angle: Current rotation in radians.
+        target_angle: Target rotation in radians.
+        speed_deg_s: Rotation speed in degrees per second.
+
+    Returns:
+        New angle in radians after one frame.
+    """
+    step = math.radians(speed_deg_s) / 60.0
+    diff = target_angle - current_angle
+    return current_angle + max(-step, min(step, diff))
+
+
+# ---------------------------------------------------------------------------
+# Pure utility functions factored out of PlayerComponent for testability.
+# These are imported directly by property-based tests (tasks 2.3–2.11).
+# ---------------------------------------------------------------------------
+
+
+def compute_movement_vector(
+    keys_state: dict, speed: float
+) -> tuple[float, float, float]:
+    """Compute local-space movement vector from WASD key states.
+
+    Args:
+        keys_state: dict with boolean keys "w", "a", "s", "d".
+        speed: movement speed (units/second).
+
+    Returns:
+        (x, y, z) movement tuple for one frame (speed/60), normalized for
+        diagonals. Returns (0, 0, 0) when no keys are pressed.
+    """
+    dx = 0.0
+    dy = 0.0
+    if keys_state.get("w", False):
+        dy += 1.0
+    if keys_state.get("s", False):
+        dy -= 1.0
+    if keys_state.get("a", False):
+        dx -= 1.0
+    if keys_state.get("d", False):
+        dx += 1.0
+    length = math.sqrt(dx * dx + dy * dy)
+    if length == 0.0:
+        return (0.0, 0.0, 0.0)
+    dx /= length
+    dy /= length
+    frame_speed = speed / 60.0
+    return (dx * frame_speed, dy * frame_speed, 0.0)
+
+
+def compute_look_delta(
+    mouse_dx: float, mouse_dy: float, current_pitch: float, look_speed: float
+) -> tuple[float, float]:
+    """Compute yaw change and new pitch from mouse movement.
+
+    Args:
+        mouse_dx: horizontal mouse offset from center (0.5).
+        mouse_dy: vertical mouse offset from center (0.5).
+        current_pitch: current camera pitch in radians.
+        look_speed: sensitivity multiplier.
+
+    Returns:
+        (yaw_change, new_pitch) where yaw_change is the rotation to apply
+        on the world Z axis, and new_pitch is clamped to [-1.5, 1.5] rad.
+    """
+    yaw_change = -mouse_dx * look_speed * 100.0
+    raw_pitch = current_pitch - mouse_dy * look_speed * 100.0
+    new_pitch = max(-1.5, min(1.5, raw_pitch))
+    return (yaw_change, new_pitch)
+
+
+def compute_gravity_force(
+    gravity: float, mass: float
+) -> tuple[float, float, float]:
+    """Compute the gravity force vector.
+
+    Args:
+        gravity: gravity magnitude (m/s^2), non-negative.
+        mass: object mass (kg), floored to 1.0.
+
+    Returns:
+        (0.0, 0.0, -gravity * max(mass, 1.0)) force vector in world space.
+    """
+    effective_mass = max(mass, 1.0)
+    return (0.0, 0.0, -gravity * effective_mass)
+
+
+def classify_interaction_hit(
+    hit_properties: dict, grab_rules: dict
+) -> str:
+    """Classify a raycast hit as door interaction, grab, or none.
+
+    Args:
+        hit_properties: dictionary of properties on the hit object.
+        grab_rules: player's grab rules dict keyed by stable_id.
+
+    Returns:
+        "door" if hit has kiro_open_angle_deg,
+        "grab" if hit is dynamic and passes grab rule validation,
+        "none" otherwise.
+    """
+    if "kiro_open_angle_deg" in hit_properties:
+        return "door"
+    if hit_properties.get("kiro_body_mode") == "dynamic":
+        stable_id = hit_properties.get("kiro_stable_id", "")
+        rule = grab_rules.get(stable_id)
+        if rule:
+            max_mass = float(rule.get("max_mass_kg", 0))
+            obj_mass = float(hit_properties.get("kiro_mass_kg", 0))
+            if obj_mass <= max_mass:
+                return "grab"
+    return "none"
+
+
+def compute_hold_velocity(
+    obj_pos: tuple, cam_pos: tuple, cam_forward: tuple, hold_distance: float
+) -> tuple[float, float, float]:
+    """Compute the velocity to apply to a held object.
+
+    The target position is cam_pos + cam_forward * hold_distance.
+    Velocity is (target - obj_pos) * 10.0.
+
+    Args:
+        obj_pos: (x, y, z) grabbed object world position.
+        cam_pos: (x, y, z) camera world position.
+        cam_forward: (x, y, z) camera forward unit vector.
+        hold_distance: distance in front of camera to hold the object.
+
+    Returns:
+        (vx, vy, vz) velocity tuple to apply to the grabbed object.
+    """
+    target_x = cam_pos[0] + cam_forward[0] * hold_distance
+    target_y = cam_pos[1] + cam_forward[1] * hold_distance
+    target_z = cam_pos[2] + cam_forward[2] * hold_distance
+    vx = (target_x - obj_pos[0]) * 10.0
+    vy = (target_y - obj_pos[1]) * 10.0
+    vz = (target_z - obj_pos[2]) * 10.0
+    return (vx, vy, vz)
+
 
 @dataclass(frozen=True)
 class RuntimeTemplateSpec:
@@ -153,6 +485,22 @@ GRAB_TEMPLATE = RuntimeTemplateSpec(
     source=GRAB_COMPONENT_SOURCE,
     allowed_parameters=("max_distance_m", "hold_distance_m", "max_mass_kg"),
     behaviors=("raycast", "grab", "release"),
+)
+DOOR_COMPONENT_TEMPLATE_050 = RuntimeTemplateSpec(
+    template_id="interaction.door.050",
+    version=TEMPLATE_VERSION,
+    entrypoint="DoorComponent",
+    source=DOOR_COMPONENT_SOURCE_050,
+    allowed_parameters=("open_angle_deg", "speed_deg_s", "initially_open"),
+    behaviors=("door_toggle",),
+)
+PLAYER_COMPONENT_TEMPLATE = RuntimeTemplateSpec(
+    template_id="player.first_person.050",
+    version=TEMPLATE_VERSION,
+    entrypoint="PlayerComponent",
+    source=PLAYER_COMPONENT_SOURCE,
+    allowed_parameters=("move_speed", "look_speed", "gravity", "max_grab_distance", "grab_hold_distance"),
+    behaviors=("spawn", "movement", "collision", "gravity", "pause", "exit", "raycast", "grab", "release"),
 )
 RUNTIME_TEMPLATES = (PLAYER_TEMPLATE, DOOR_TEMPLATE, GRAB_TEMPLATE)
 _TEMPLATE_BY_KIND = {"door": DOOR_TEMPLATE, "grab": GRAB_TEMPLATE}
