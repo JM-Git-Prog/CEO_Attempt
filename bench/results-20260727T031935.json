@@ -1,0 +1,496 @@
+{
+ "started": "2026-07-27 03:19:35",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 13,
+    "physical_overlap": 2,
+    "out_of_bounds": 1,
+    "opening_blocked": 1
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "physical_overlap",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 6,
+     "seconds": 49.2,
+     "plan": {
+      "name": "Courtroom Corner",
+      "room": {
+       "width": 10.0,
+       "depth": 12.0,
+       "height": 3.2
+      },
+      "items": [
+       {
+        "id": "judge_bench",
+        "name": "Judge Bench",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 5.05,
+        "width": 2.0,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "witness_stand",
+        "name": "Witness Stand",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 3.4,
+        "z": 5.0,
+        "width": 1.8,
+        "depth": 2.0,
+        "height": 1.5,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "counsel_table_1",
+        "name": "Counsel Table 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "counsel_table_2",
+        "name": "Counsel Table 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_1",
+        "name": "Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.0669872981077804,
+        "z": 5.2842996770121955,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 338.63673247770504,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_2",
+        "name": "Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.222600009942291,
+        "z": 3.2484150926472,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 315.2285711618468,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_3",
+        "kind": "window",
+        "wall": "south",
+        "offset": 3.9,
+        "width": 2.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 5.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 5.05,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 1.2m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "judge_bench",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "witness_stand",
+        "kind": "adjacent_to",
+        "target_id": "judge_bench",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "counsel_table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "counsel_table_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "facing",
+        "target_id": "counsel_table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "facing",
+        "target_id": "counsel_table_2",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_3",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "judge_bench",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 2,
+     "prompt_id": "p096"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 3,
+     "seconds": 28.6,
+     "plan": {
+      "name": "Dragon-Themed Toy Store",
+      "room": {
+       "width": 5.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "castle_display_table",
+        "name": "Castle Display Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 1.5,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A wooden table with a castle design, perfect for displaying toys."
+       },
+       {
+        "id": "checkout_counter",
+        "name": "Checkout Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 1.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A wooden counter with a cash register, perfect for checking out customers."
+       },
+       {
+        "id": "warm_spot_lighting",
+        "name": "Warm Spot Lighting",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 2.0,
+        "height": 0.3,
+        "elevation": 2.5,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A warm spot light fixture, perfect for illuminating the store."
+       }
+      ],
+      "openings": [
+       {
+        "id": "store_front_door",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.05,
+       "y": 1.6,
+       "z": 1.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use warm colors to create a cozy atmosphere in the store."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "castle_display_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "checkout_counter",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "warm_spot_lighting",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "store_front_door",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "castle_display_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 1,
+     "prompt_id": "p097"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p098"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.7,
+     "prompt_id": "p099"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p100"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p002"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.7,
+     "prompt_id": "p003"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p004"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p005"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p006"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.7,
+     "prompt_id": "p007"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p008"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p009"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p010"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-27 03:21:03"
+}

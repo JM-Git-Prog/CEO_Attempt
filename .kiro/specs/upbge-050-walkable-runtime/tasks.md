@@ -8,7 +8,7 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
 
 ## Tasks
 
-- [-] 1. API Probe and Discovery Infrastructure
+- [ ] 1. API Probe and Discovery Infrastructure
   - [x] 1.1 Implement the API probe script (`src/assembler/api_probe_050.py`)
     - Create the headless introspection script that runs inside UPBGE 0.50 via `--background --python`
     - Discover component attachment mechanism: check `bpy.types.Object.components`, `obj.game.components`, UPBGE RNA properties
@@ -25,7 +25,7 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
     - Handle malformed output with `probe_parse_error` reason code
     - _Requirements: 1.2, 1.3_
 
-  - [ ] 1.3 Write property test for probe report parsing round-trip (Property 1)
+  - [x] 1.3 Write property test for probe report parsing round-trip (Property 1)
     - **Property 1: Probe Report Parsing Round-Trip**
     - For any valid JSON probe output containing probe fields, parsing into `UPBGEComponentAPI` and serializing back to dict SHALL preserve all field values
     - Generate random valid probe JSON with Hypothesis and verify round-trip consistency

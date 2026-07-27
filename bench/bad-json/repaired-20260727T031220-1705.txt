@@ -1,0 +1,1055 @@
+error: Unterminated string starting at: line 1053 column 22 (char 32212)
+------------------------------------------------------------
+{
+    "name": "1960s Hair Salon",
+    "room": {
+        "width": 10.0,
+        "depth": 12.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "dryer_chair_1",
+            "name": "Dryer Chair 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.0,
+            "z": 2.0,
+            "width": 1.5,
+            "depth": 1.8,
+            "height": 1.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "dryer_chair_1",
+                    "kind": "adjacent_to",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "dryer_chair_2",
+            "name": "Dryer Chair 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.5,
+            "depth": 1.8,
+            "height": 1.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "dryer_chair_2",
+                    "kind": "adjacent_to",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "dryer_chair_3",
+            "name": "Dryer Chair 3",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,  "z": 2.0,
+            "width": 1.5,
+            "depth": 1.8,
+            "height": 1.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "dryer_chair_3",
+                    "kind": "adjacent_to",
+                    "target_id": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stylist_station",
+            "name": "Stylist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stylist_station",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {"wall_gap_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "magazine_table",
+            "name": "Magazine Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "magazine_table",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset": -1, "z_offset": 0},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_1",
+            "name": "Ceiling Pendant 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_1",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_2",
+            "name": "Ceiling Pendant 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_2",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_3",
+            "name": "Ceiling Pendant 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_3",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_4",
+            "name": "Ceiling Pendant 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_4",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_5",
+            "name": "Ceiling Pendant 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_5",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_6",
+            "name": "Ceiling Pendant 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_6",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_7",
+            "name": "Ceiling Pendant 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_7",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_8",
+            "name": "Ceiling Pendant 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_8",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_9",
+            "name": "Ceiling Pendant 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_9",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_10",
+            "name": "Ceiling Pendant 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_10",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_11",
+            "name": "Ceiling Pendant 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_11",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_12",
+            "name": "Ceiling Pendant 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_12",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_13",
+            "name": "Ceiling Pendant 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_13",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_14",
+            "name": "Ceiling Pendant 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_14",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_15",
+            "name": "Ceiling Pendant 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_15",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_16",
+            "name": "Ceiling Pendant 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_16",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_17",
+            "name": "Ceiling Pendant 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_17",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_18",
+            "name": "Ceiling Pendant 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_18",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_19",
+            "name": "Ceiling Pendant 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_19",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_20",
+            "name": "Ceiling Pendant 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_20",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_21",
+            "name": "Ceiling Pendant 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_21",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_22",
+            "name": "Ceiling Pendant 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_22",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_23",
+            "name": "Ceiling Pendant 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_23",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_24",
+            "name": "Ceiling Pendant 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_24",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_25",
+            "name": "Ceiling Pendant 25",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_25",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_26",
+            "name": "Ceiling Pendant 26",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_26",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_27",
+            "name": "Ceiling Pendant 27",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_27",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_28",
+            "name": "Ceiling Pendant 28",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_28",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_29",
+            "name": "Ceiling Pendant 29",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_29",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_30",
+            "name": "Ceiling Pendant 30",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_30",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_31",
+            "name": "Ceiling Pendant 31",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_31",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_32",
+            "name": "Ceiling Pendant 32",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_32",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_33",
+            "name": "Ceiling Pendant 33",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_33",
+                    "kind": "above",
+                    "target_id": "magazine_table",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_34",
+            "name": "Ceiling Pendant 34",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_34",
+                    "kind": "above",
+                    "target_id": "dryer_chair_2",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_35",
+            "name": "Ceiling Pendant 35",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_35",
+                    "kind": "above",
+                    "target_id": "dryer_chair_3",
+                    "parameters_m": {"radius_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_36",
+            "name": "Ceiling Pendant 36",
+            "category": "fixture",
+            "mount": "ce

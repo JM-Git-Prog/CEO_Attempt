@@ -1086,3 +1086,29 @@
 [21:08:50] ingest rc=0
 [21:08:50] pausing the llama3.1 harvester for the training window
 [21:08:50] launching the training chain (make_training_set -> train -> register -> exam)
+[03:08:51] training chain exceeded its 6h timeout - killed, will retry next cycle
+[03:08:51] resumed the llama3.1 harvester
+[03:08:51] cycle done - corpus now at 966 rows
+[03:08:51] waiting: 0/50 new corpus rows since last cycle (966 total)
+[03:18:51] waiting: 10/50 new corpus rows since last cycle (976 total)
+[03:28:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[03:38:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[03:48:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[03:58:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[04:08:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[04:18:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[04:28:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[04:38:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[04:48:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[04:58:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[05:08:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[05:18:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[05:28:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[05:38:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[05:48:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[05:58:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[06:08:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[06:18:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[06:28:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[06:38:51] waiting: 12/50 new corpus rows since last cycle (978 total)
+[06:48:51] waiting: 12/50 new corpus rows since last cycle (978 total)

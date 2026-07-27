@@ -1,0 +1,122 @@
+{
+ "started": "2026-07-27 05:06:58",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 15,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 15
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 1.0,
+     "prompt_id": "p026"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 1.2,
+     "prompt_id": "p027"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p028"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p029"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p030"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p031"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p032"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p033"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.9,
+     "prompt_id": "p034"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p035"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p036"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p037"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.9,
+     "prompt_id": "p038"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p039"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. error=None done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0 body={\"model\": \"\", \"created_at\": \"0001-01-01T00:00:00Z\", \"message\": {\"rol",
+     "seconds": 0.8,
+     "prompt_id": "p040"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-27 05:07:11"
+}

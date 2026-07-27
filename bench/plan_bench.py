@@ -164,6 +164,7 @@ def main() -> int:
         os.environ["LLM_MODEL"] = lane
         print(f"\n=== LANE {lane} — {len(prompts)} prompts ===", flush=True)
         lane_rows, census = [], {}
+        legal = backend_errors = consecutive_backend = 0
         for p in prompts:
             row = asyncio.run(_one_plan(p["text"], args.timeout))
             row["prompt_id"] = p["id"]
@@ -172,21 +173,53 @@ def main() -> int:
                 census[b] = census.get(b, 0) + 1
             if row["status"] == "error":
                 census[f"error:{row.get('error_type')}"] = census.get(f"error:{row.get('error_type')}", 0) + 1
+            # A backend/transport failure is NOT a wrong answer. Counting it as
+            # one made an Ollama outage arithmetically identical to a model that
+            # scores zero, and hid four training generations behind a 0% floor
+            # for ~3.5 hours on 2026-07-27.
+            if row.get("error_type") == "LLMError":
+                backend_errors += 1
+                consecutive_backend += 1
+            else:
+                consecutive_backend = 0
             print(f"  {p['id']}: {row['status']:8s} ({row['seconds']}s) "
                   f"{','.join(row.get('blockers', [])[:3])}", flush=True)
             # Save + refine the tally after EVERY prompt, not just once per
             # lane - live progress, and a kill mid-run only loses the one
             # in-flight prompt instead of the whole 30.
             legal = sum(1 for r in lane_rows if r["status"] == "legal")
+            attempted = len(lane_rows) - backend_errors
             results["lanes"][lane] = {
                 "legal": legal, "total": len(lane_rows),
-                "legal_rate": round(legal / max(1, len(lane_rows)), 2),
+                "attempted": attempted,
+                "backend_errors": backend_errors,
+                "backend_healthy": backend_errors == 0,
+                # Scored over ATTEMPTED rows only. None means the backend never
+                # answered - that is not a score of zero, it is no score at all.
+                "legal_rate": round(legal / attempted, 2) if attempted > 0 else None,
                 "violation_census": dict(sorted(census.items(), key=lambda x: -x[1])),
                 "rows": lane_rows,
             }
             out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")
-        print(f"  LANE RESULT: {legal}/{len(lane_rows)} legal plans "
-              f"({round(100*legal/max(1,len(lane_rows)))}%)", flush=True)
+            # Freeze the lane rather than sample a dead backend 14 more times.
+            if consecutive_backend >= 3:
+                results["lanes"][lane]["aborted"] = (
+                    "3 consecutive backend errors - lane frozen. This is an "
+                    "infrastructure failure, NOT a model result."
+                )
+                out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")
+                print("  !! LANE ABORTED after 3 consecutive backend errors. "
+                      "Infrastructure failure, not a model score.", flush=True)
+                break
+        attempted = len(lane_rows) - backend_errors
+        if attempted > 0:
+            print(f"  LANE RESULT: {legal}/{attempted} legal plans "
+                  f"({round(100*legal/attempted)}%)"
+                  + (f"   [{backend_errors} backend errors excluded]" if backend_errors else ""),
+                  flush=True)
+        else:
+            print(f"  LANE RESULT: NO SCORE - all {len(lane_rows)} calls failed "
+                  f"at the backend. Fix the backend, then re-run.", flush=True)
 
     results["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
     out_path.write_text(json.dumps(results, indent=1), encoding="utf-8")
