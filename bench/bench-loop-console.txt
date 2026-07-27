@@ -4340,3 +4340,15 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p071: blocked  (24.6s) physical_overlap,out_of_bounds,opening_blocked
   p072: legal    (19.3s) 
   p073: blocked  (30.8s) physical_overlap,physical_overlap,physical_overlap
+  p074: legal    (94.4s) 
+  p075: error    (18.6s) 
+  p076: blocked  (91.8s) physical_overlap,physical_overlap,physical_overlap
+  p077: error    (16.8s) 
+  p078: blocked  (39.3s) out_of_bounds,physical_overlap,opening_blocked
+  p079: blocked  (20.2s) physical_overlap,out_of_bounds
+  p080: blocked  (26.4s) out_of_bounds,physical_overlap,opening_blocked
+  LANE RESULT: 4/15 legal plans (27%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T205806.json
+[21:08:06] bench batch rc=0
+[21:08:06] ingest: ingest: +12 records | 818 already banked | 2489 plan-less rows skipped

@@ -8,8 +8,8 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
 
 ## Tasks
 
-- [ ] 1. API Probe and Discovery Infrastructure
-  - [ ] 1.1 Implement the API probe script (`src/assembler/api_probe_050.py`)
+- [-] 1. API Probe and Discovery Infrastructure
+  - [x] 1.1 Implement the API probe script (`src/assembler/api_probe_050.py`)
     - Create the headless introspection script that runs inside UPBGE 0.50 via `--background --python`
     - Discover component attachment mechanism: check `bpy.types.Object.components`, `obj.game.components`, UPBGE RNA properties
     - Discover physics configuration API: check `obj.game.physics_type` and alternatives
@@ -18,20 +18,20 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
     - Must complete within 15 seconds on target hardware
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 1.2 Implement the `UPBGEComponentAPI` dataclass and probe result parser
+  - [x] 1.2 Implement the `UPBGEComponentAPI` dataclass and probe result parser
     - Create frozen dataclass in `src/assembler/api_probe_050.py` (or a shared models module)
     - Parse JSON probe output into `UPBGEComponentAPI` with fields: `has_game_attr`, `has_components_attr`, `component_api_path`, `component_add_method`, `has_logic_ops`, `physics_api_path`, `has_game_physics`, `blender_version`, `upbge_detected`, `fallback_required`
     - Implement `parse_probe_output(stdout: str) -> UPBGEComponentAPI` with `PROBE_RESULT=` marker extraction
     - Handle malformed output with `probe_parse_error` reason code
     - _Requirements: 1.2, 1.3_
 
-  - [ ]* 1.3 Write property test for probe report parsing round-trip (Property 1)
+  - [ ] 1.3 Write property test for probe report parsing round-trip (Property 1)
     - **Property 1: Probe Report Parsing Round-Trip**
     - For any valid JSON probe output containing probe fields, parsing into `UPBGEComponentAPI` and serializing back to dict SHALL preserve all field values
     - Generate random valid probe JSON with Hypothesis and verify round-trip consistency
     - **Validates: Requirements 1.2**
 
-  - [ ] 1.4 Implement probe runner with timeout and error handling
+  - [x] 1.4 Implement probe runner with timeout and error handling
     - Create `run_api_probe(upbge_path: str, timeout_s: float = 15.0) -> UPBGEComponentAPI` in the assembler module
     - Invoke UPBGE 0.50 with `--background --python api_probe_050.py`
     - Handle timeout (>15s → `probe_timeout` reason code)
@@ -60,48 +60,48 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
     - Store as `DOOR_COMPONENT_SOURCE` string constant in `src/upbge_runtime.py`
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-  - [ ]* 2.3 Write property test for movement direction relative to orientation (Property 2)
+  - [ ] 2.3 Write property test for movement direction relative to orientation (Property 2)
     - **Property 2: Movement Direction Relative to Orientation**
     - For any keyboard state (W/A/S/D combination) and player orientation, the computed movement vector SHALL have correct direction relative to local frame, and magnitude = `move_speed / 60.0` when keys pressed, or zero otherwise
     - Factor `compute_movement_vector(keys, orientation, speed)` as pure function for testability
     - **Validates: Requirements 2.2, 2.7**
 
-  - [ ]* 2.4 Write property test for mouse look delta with pitch clamping (Property 3)
+  - [ ] 2.4 Write property test for mouse look delta with pitch clamping (Property 3)
     - **Property 3: Mouse Look Delta with Pitch Clamping**
     - For any mouse position delta (dx, dy) and current camera pitch, resulting pitch SHALL be clamped to [-1.5, 1.5] radians, yaw change SHALL be proportional to `dx * look_speed * 100.0`
     - **Validates: Requirements 2.3**
 
-  - [ ]* 2.5 Write property test for gravity force computation (Property 4)
+  - [ ] 2.5 Write property test for gravity force computation (Property 4)
     - **Property 4: Gravity Force Computation**
     - For any gravity ∈ [0.0, 50.0] and mass ≥ 1.0, the applied force vector SHALL be exactly `(0.0, 0.0, -g * max(m, 1.0))`
     - **Validates: Requirements 2.4**
 
-  - [ ]* 2.6 Write property test for pause toggle idempotence (Property 5)
+  - [ ] 2.6 Write property test for pause toggle idempotence (Property 5)
     - **Property 5: Pause Toggle Idempotence**
     - Toggling pause twice SHALL return to original state; while paused, movement/look updates produce zero state change
     - **Validates: Requirements 2.5**
 
-  - [ ]* 2.7 Write property test for movement round-trip (Property 6)
+  - [ ] 2.7 Write property test for movement round-trip (Property 6)
     - **Property 6: Movement Round-Trip**
     - For any valid move_speed and unit direction, N frames forward + N frames reverse → final position within 0.01 units of start (no collision/gravity)
     - **Validates: Requirements 2.9**
 
-  - [ ]* 2.8 Write property test for door state toggle (Property 7)
+  - [ ] 2.8 Write property test for door state toggle (Property 7)
     - **Property 7: Door State Toggle**
     - Setting `kiro_interact_requested = True` and executing one update SHALL flip `is_open` and clear the flag
     - **Validates: Requirements 3.3**
 
-  - [ ]* 2.9 Write property test for door rotation convergence (Property 8)
+  - [ ] 2.9 Write property test for door rotation convergence (Property 8)
     - **Property 8: Door Rotation Convergence**
     - For any `open_angle_deg` ∈ [-180, 180] \ {0} and `speed_deg_s` ∈ (0, 720], iterating the animation for bounded frames SHALL converge within tolerance
     - **Validates: Requirements 3.6**
 
-  - [ ]* 2.10 Write property test for interaction hit classification (Property 9)
+  - [ ] 2.10 Write property test for interaction hit classification (Property 9)
     - **Property 9: Interaction Hit Classification**
     - For any raycast hit object: door trigger (has `kiro_open_angle_deg`), grab (dynamic + rule match), or no action — mutually exclusive and exhaustive
     - **Validates: Requirements 4.2, 4.3, 4.4, 4.5**
 
-  - [ ]* 2.11 Write property test for held object velocity direction (Property 10)
+  - [ ] 2.11 Write property test for held object velocity direction (Property 10)
     - **Property 10: Held Object Velocity Direction**
     - For any grabbed object position P and camera state (C, F, D), velocity SHALL point from P toward (C + F * D) with magnitude proportional to distance
     - **Validates: Requirements 4.6**
@@ -143,17 +143,17 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
     - Save `runtime_candidate.blend` on success
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 6.1, 6.2, 6.3, 6.4, 9.1_
 
-  - [ ]* 4.5 Write property test for interaction binding to component attachment (Property 11)
+  - [ ] 4.5 Write property test for interaction binding to component attachment (Property 11)
     - **Property 11: Interaction Binding to Component Attachment**
     - For any set of interaction bindings in a RuntimePlan, the compiler SHALL produce exactly one component attachment per binding with matching `args` values
     - **Validates: Requirements 5.2, 5.3**
 
-  - [ ]* 4.6 Write property test for text datablock embedding completeness (Property 12)
+  - [ ] 4.6 Write property test for text datablock embedding completeness (Property 12)
     - **Property 12: Text Datablock Embedding Completeness**
     - For any set of component templates, the compiler SHALL embed exactly one Text datablock per template with correct name and byte-for-byte content match
     - **Validates: Requirements 5.4, 10.1**
 
-  - [ ]* 4.7 Write property test for graceful degradation save (Property 14)
+  - [ ] 4.7 Write property test for graceful degradation save (Property 14)
     - **Property 14: Graceful Degradation Save**
     - When component attachment fails, the compiler SHALL still produce a saved .blend with scene geometry and SHALL NOT raise an unhandled exception
     - **Validates: Requirements 9.1**
@@ -181,22 +181,22 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
     - Report specific failed check with diagnostic details on failure
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
 
-  - [ ]* 6.3 Write property test for validator correctness (Property 13)
+  - [ ] 6.3 Write property test for validator correctness (Property 13)
     - **Property 13: Validator Correctness**
     - For any mocked .blend state (objects with/without components, text datablocks), validator reports `passed=True` only when ALL checks pass; reports specific `reason_code` for first failure; includes non-empty `detail` for every failing check
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.4, 7.5**
 
-  - [ ]* 6.4 Write property test for degradation reason codes (Property 15)
+  - [ ] 6.4 Write property test for degradation reason codes (Property 15)
     - **Property 15: Degradation Reason Codes**
     - For any degradation event, the system SHALL produce a reason_code from the defined set and it SHALL be a non-empty string
     - **Validates: Requirements 9.4, 9.5**
 
-  - [ ]* 6.5 Write property test for module path ↔ text datablock consistency (Property 16)
+  - [ ] 6.5 Write property test for module path ↔ text datablock consistency (Property 16)
     - **Property 16: Module Path ↔ Text Datablock Consistency**
     - For any component attachment, `module_name + ".py"` SHALL exist in `bpy.data.texts`
     - **Validates: Requirements 10.2**
 
-  - [ ]* 6.6 Write property test for component source import restriction (Property 17)
+  - [ ] 6.6 Write property test for component source import restriction (Property 17)
     - **Property 17: Component Source Import Restriction**
     - Parsing any component source AST SHALL yield only imports from allowed set: `{bge, mathutils, math, json}` + stdlib. No `bpy` or third-party imports
     - **Validates: Requirements 10.4, 10.5**
@@ -226,7 +226,7 @@ All code is Python (pytest, Hypothesis for PBT, pytest-asyncio). UPBGE 0.50 is i
     - Test degradation paths: probe timeout → fallback compile, component failure → scene-only save
     - _Requirements: 1.1, 5.7, 9.1_
 
-  - [ ]* 9.3 Write integration test against live UPBGE 0.50 binary
+  - [ ] 9.3 Write integration test against live UPBGE 0.50 binary
     - Run actual API probe against installed UPBGE 0.50
     - Verify probe completes within 15 seconds and produces parseable output
     - Verify discovered API surface matches what the compiler expects

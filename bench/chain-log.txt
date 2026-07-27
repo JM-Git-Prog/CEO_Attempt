@@ -223,3 +223,10 @@
 [17:50:10] launching the exam - lanes: llama3.1,planner-probe-v1
 [18:40:18] exam finished rc=0
 [18:40:18] SUCCESS - full cycle done (train -> register -> exam)
+[21:08:50] chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)
+[21:08:50] waiting (census done=True, gpu 42%, quiet votes 0/3)
+[21:09:50] waiting (census done=True, gpu 48%, quiet votes 0/3)
+[21:10:50] waiting (census done=True, gpu 49%, quiet votes 0/3)
+[21:11:51] waiting (census done=True, gpu 46%, quiet votes 0/3)
+[21:12:51] waiting (census done=True, gpu 46%, quiet votes 0/3)
+[21:13:51] waiting (census done=True, gpu 46%, quiet votes 0/3)

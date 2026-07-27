@@ -4172,3 +4172,16 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p009: error    (81.4s) 
   p010: error    (96.0s) 
   p011: error    (93.5s) 
+  p012: error    (91.6s) 
+  p013: error    (85.2s) 
+  p014: error    (60.4s) 
+  p015: error    (71.7s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T203019.json
+ingest: +0 records | 830 already banked | 2490 plan-less rows skipped
+[21:08:50] ingest rc=0
+[21:08:50] pausing the llama3.1 harvester for the training window
+[21:08:50] launching the training chain (make_training_set -> train -> register -> exam)
+[21:08:50] chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)
+[21:08:50] waiting (census done=True, gpu 42%, quiet votes 0/3)

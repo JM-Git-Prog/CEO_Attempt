@@ -1083,3 +1083,6 @@
 [20:20:19] waiting: 47/50 new corpus rows since last cycle (901 total)
 [20:30:19] threshold met (60 new rows, 914 total) - starting a cycle
 [20:30:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+[21:08:50] ingest rc=0
+[21:08:50] pausing the llama3.1 harvester for the training window
+[21:08:50] launching the training chain (make_training_set -> train -> register -> exam)
