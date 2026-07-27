@@ -16,6 +16,7 @@ let pollTimer = null;
 let activeViewer = null;
 let currentDescription = '';
 let currentPlanData = null;
+let lastSceneGraph = null;
 let v9CanonAlignmentPassed = null;
 let v9CanonConcept = null;
 
@@ -465,6 +466,219 @@ async function reviseWorld() {
   } finally { stopPolling(); setBusy(false); }
 }
 
+function buildSceneFromGraph(graph) {
+  const room = graph.room;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#07090d');
+  scene.fog = new THREE.Fog('#07090d', 12, 28);
+  const addBox = (name, size, position, meshMaterial, cast = false) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), meshMaterial);
+    mesh.name = name; mesh.position.set(...position); mesh.castShadow = cast; mesh.receiveShadow = true; scene.add(mesh); return mesh;
+  };
+  addBox('Floor', [room.width,.08,room.depth], [0,-.04,0], material(room.floor_material,'#4e5055'));
+  const wallMaterial_ = material(room.wall_material,'#bbb5aa');
+  const halfWidth = room.width / 2, halfDepth = room.depth / 2, halfHeight = room.height / 2;
+  addBox('Back wall',[room.width,room.height,.12],[0,halfHeight,-halfDepth-.06],wallMaterial_);
+  addBox('East wall',[.12,room.height,room.depth],[halfWidth+.06,halfHeight,0],wallMaterial_);
+  addBox('West wall',[.12,room.height,room.depth],[-halfWidth-.06,halfHeight,0],wallMaterial_);
+  const grid = new THREE.GridHelper(Math.max(room.width,room.depth), Math.ceil(Math.max(room.width,room.depth)*2), 0x313947, 0x1c222c);
+  grid.position.y = .006; scene.add(grid);
+  (graph.objects || []).forEach(object => {
+    let geometry;
+    const dimensions = object.dimensions;
+    if (object.primitive_shape === 'cylinder') geometry = new THREE.CylinderGeometry(Math.min(dimensions.x,dimensions.z)/2,Math.min(dimensions.x,dimensions.z)/2,dimensions.y,24);
+    else if (object.primitive_shape === 'sphere') geometry = new THREE.SphereGeometry(Math.max(dimensions.x,dimensions.y,dimensions.z)/2,24,16);
+    else if (object.primitive_shape === 'capsule') geometry = new THREE.CapsuleGeometry(Math.min(dimensions.x,dimensions.z)/2,Math.max(0,dimensions.y-Math.min(dimensions.x,dimensions.z)),8,16);
+    else geometry = new THREE.BoxGeometry(dimensions.x,dimensions.y,dimensions.z);
+    const mesh = new THREE.Mesh(geometry, material(object.material));
+    mesh.name = object.name;
+    mesh.position.set(object.position.x, object.position.y + dimensions.y/2, object.position.z);
+    mesh.rotation.set((object.rotation.x||0)*Math.PI/180,(object.rotation.y||0)*Math.PI/180,(object.rotation.z||0)*Math.PI/180);
+    mesh.scale.set(object.scale?.x||1,object.scale?.y||1,object.scale?.z||1);
+    mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh);
+  });
+  (graph.doors || []).forEach(door => {
+    const alongX = ['north','south'].includes(door.wall);
+    const mesh = addBox(door.id, alongX?[door.width,door.height,.06]:[.06,door.height,door.width], [door.position.x,door.height/2,door.position.z], material({},'#71492f'), true);
+    mesh.rotation.y = (door.wall === 'east' || door.wall === 'west') ? Math.PI/2 : 0;
+  });
+  (graph.windows || []).forEach(windowSpec => {
+    const alongX = ['north','south'].includes(windowSpec.wall);
+    const geometry = new THREE.PlaneGeometry(windowSpec.width,windowSpec.height);
+    const glass = new THREE.MeshPhysicalMaterial({color:0x8fb9ce,transparent:true,opacity:.42,roughness:.18,metalness:.05,side:THREE.DoubleSide});
+    const mesh = new THREE.Mesh(geometry,glass);
+    mesh.position.set(windowSpec.position.x,windowSpec.sill_height+windowSpec.height/2,windowSpec.position.z);
+    if (!alongX) mesh.rotation.y = Math.PI/2;
+    scene.add(mesh);
+  });
+  scene.add(new THREE.HemisphereLight(0xb8c9df,0x251d17,.75));
+  scene.add(new THREE.AmbientLight(color(graph.ambient_color,'#20283a'),Math.max(.35,graph.ambient_energy||.3)));
+  (graph.lights || []).forEach(item => {
+    const lightColor = color(item.color,'#ffd0a0');
+    let light;
+    if (item.light_type === 'directional') { light = new THREE.DirectionalLight(lightColor,item.intensity||1); light.target.position.set(item.direction?.x||0,item.direction?.y||0,item.direction?.z||0); scene.add(light.target); }
+    else if (item.light_type === 'spot') light = new THREE.SpotLight(lightColor,(item.intensity||1)*1.5,item.range_meters||5,(item.spot_angle_deg||45)*Math.PI/180);
+    else light = new THREE.PointLight(lightColor,(item.intensity||1)*1.6,item.range_meters||6);
+    light.position.set(item.position.x,item.position.y,item.position.z); light.castShadow = !!item.cast_shadows; scene.add(light);
+  });
+  return scene;
+}
+
+class FPSControls {
+  constructor(camera, domElement) {
+    this.camera = camera;
+    this.domElement = domElement;
+    this.isLocked = false;
+    this.euler = new THREE.Euler(0, 0, 0, 'YXZ');
+    this.PI_2 = Math.PI / 2;
+    this.onMouseMove = (event) => {
+      if (!this.isLocked) return;
+      const dx = event.movementX || 0;
+      const dy = event.movementY || 0;
+      this.euler.setFromQuaternion(this.camera.quaternion);
+      this.euler.y -= dx * 0.002;
+      this.euler.x -= dy * 0.002;
+      this.euler.x = Math.max(-this.PI_2, Math.min(this.PI_2, this.euler.x));
+      this.camera.quaternion.setFromEuler(this.euler);
+    };
+    this.onPointerlockChange = () => {
+      this.isLocked = document.pointerLockElement === this.domElement;
+      this.domElement.dispatchEvent(new CustomEvent('lockchange', {detail:{locked:this.isLocked}}));
+    };
+    domElement.addEventListener('click', () => { if (!this.isLocked) domElement.requestPointerLock(); });
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('pointerlockchange', this.onPointerlockChange);
+  }
+  dispose() {
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('pointerlockchange', this.onPointerlockChange);
+    if (this.isLocked) document.exitPointerLock();
+  }
+  getDirection() {
+    return new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
+  }
+}
+
+function buildGameViewer(graph) {
+  disposeViewer();
+  setStage('game');
+  stageTitle.textContent = 'First-person exploration';
+  stageState.textContent = 'GAME';
+  stageState.className = 'stage-state ready';
+
+  stageBody.innerHTML = `<canvas class="viewer" tabindex="0" aria-label="First-person game view"></canvas><div class="game-overlay" id="gameOverlay">Click to play</div><div class="game-hud">WASD move · MOUSE look · ESC exit · SHIFT run · SPACE jump</div>`;
+
+  if (typeof THREE === 'undefined') {
+    stageBody.innerHTML = '<div class="empty-stage"><p>Three.js could not load.</p></div>';
+    return;
+  }
+
+  const canvas = stageBody.querySelector('canvas');
+  const overlay = stageBody.querySelector('#gameOverlay');
+  const scene = buildSceneFromGraph(graph);
+
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const camera = new THREE.PerspectiveCamera(75, 1, .05, 100);
+  camera.position.set(0, 1.7, 0);
+
+  const controls = new FPSControls(camera, canvas);
+
+  canvas.addEventListener('lockchange', (e) => {
+    overlay.classList.toggle('hidden', e.detail.locked);
+  });
+  overlay.addEventListener('click', () => canvas.requestPointerLock());
+
+  const keys = {};
+  const onKeyDown = e => { keys[e.code] = true; };
+  const onKeyUp = e => { keys[e.code] = false; };
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
+
+  const velocity = new THREE.Vector3();
+  let onFloor = false;
+  const SPEED = 4.0;
+  const GRAVITY = 9.8;
+  const PLAYER_HEIGHT = 1.7;
+  const raycaster = new THREE.Raycaster();
+  const clock = new THREE.Clock();
+
+  const resize = () => {
+    const rect = stageBody.getBoundingClientRect();
+    camera.aspect = rect.width / Math.max(rect.height, 1);
+    camera.updateProjectionMatrix();
+    renderer.setSize(rect.width, rect.height, false);
+  };
+  const observer = new ResizeObserver(resize);
+  observer.observe(stageBody);
+  resize();
+
+  const state = {renderer, controls, observer, scene, camera, frame:0};
+  activeViewer = state;
+
+  const animate = () => {
+    state.frame = requestAnimationFrame(animate);
+    const delta = Math.min(clock.getDelta(), 0.1);
+
+    if (controls.isLocked) {
+      const speed = keys['ShiftLeft'] || keys['ShiftRight'] ? SPEED * 2 : SPEED;
+      const direction = new THREE.Vector3();
+      const right = new THREE.Vector3();
+      camera.getWorldDirection(direction);
+      direction.y = 0;
+      direction.normalize();
+      right.crossVectors(direction, camera.up).normalize();
+
+      velocity.x = 0;
+      velocity.z = 0;
+      if (keys['KeyW']) { velocity.x += direction.x * speed; velocity.z += direction.z * speed; }
+      if (keys['KeyS']) { velocity.x -= direction.x * speed; velocity.z -= direction.z * speed; }
+      if (keys['KeyA']) { velocity.x -= right.x * speed; velocity.z -= right.z * speed; }
+      if (keys['KeyD']) { velocity.x += right.x * speed; velocity.z += right.z * speed; }
+
+      // Gravity
+      velocity.y -= GRAVITY * delta;
+
+      // Apply movement
+      camera.position.x += velocity.x * delta;
+      camera.position.z += velocity.z * delta;
+      camera.position.y += velocity.y * delta;
+
+      // Floor collision (raycast down)
+      raycaster.set(camera.position, new THREE.Vector3(0, -1, 0));
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      if (intersects.length > 0 && intersects[0].distance <= PLAYER_HEIGHT + 0.1) {
+        camera.position.y = intersects[0].point.y + PLAYER_HEIGHT;
+        velocity.y = 0;
+        onFloor = true;
+      } else {
+        onFloor = false;
+      }
+
+      // Jump
+      if (keys['Space'] && onFloor) {
+        velocity.y = 5.0;
+        onFloor = false;
+      }
+    }
+
+    renderer.render(scene, camera);
+  };
+  animate();
+  logEvent('process', 'game_entered', {room: graph.room?.width});
+}
+
+function enterGame() {
+  if (!lastSceneGraph) return;
+  buildGameViewer(lastSceneGraph);
+}
+
 function disposeViewer() {
   if (!activeViewer) return;
   cancelAnimationFrame(activeViewer.frame);
@@ -573,6 +787,7 @@ function initWorkspaceSplitter() {
 
 function buildViewer(graph, downloadUrl, options = {}) {
   disposeViewer();
+  lastSceneGraph = graph;
   setStage('world');
   stageTitle.textContent = graph.name || 'Generated world';
   stageState.textContent = '3D READY';
@@ -582,7 +797,7 @@ function buildViewer(graph, downloadUrl, options = {}) {
   const cameraLocked = appVersion >= 9 && !!cameraContract;
   const viewerActions = readOnly
     ? '<button class="revise-world" type="button" disabled>REVISE WORLD ↻</button><a class="download" aria-disabled="true" tabindex="-1">DOWNLOAD GODOT ↘</a>'
-    : `<button class="revise-world" onclick="reviseWorld()">REVISE WORLD ↻</button><a class="download" href="${downloadUrl}">DOWNLOAD GODOT ↘</a>`;
+    : `<button class="revise-world" onclick="reviseWorld()">REVISE WORLD ↻</button><button class="enter-game" onclick="enterGame()">ENTER GAME ▶</button><a class="download" href="${downloadUrl}">DOWNLOAD GODOT ↘</a>`;
   const cameraHud = cameraLocked
     ? `<div class="viewer-hud"><span id="cameraViewState">CANON VIEW · locked initial camera</span><span class="camera-help">ARROWS orbit · +/− zoom · WASD pan</span><button class="reset-camera" type="button" onclick="resetLockedCamera()">RESET CAMERA</button></div>`
     : '<div class="viewer-hud">DRAG orbit · WHEEL zoom · RIGHT-DRAG pan · ARROWS/+−/WASD keyboard</div>';
@@ -918,6 +1133,13 @@ function renderV8Stage(stage, response) {
     else {
       stageTitle.textContent = 'Generated world';
       stageBody.innerHTML = '<div class="empty-stage"><p>No world scene graph was recorded for this revision.</p></div>';
+    }
+  } else if (stage === 'game') {
+    const graph = payload.scene_graph || payload.world?.scene_graph || payload.graph || lastSceneGraph;
+    if (graph) buildGameViewer(graph);
+    else {
+      stageTitle.textContent = 'Game mode';
+      stageBody.innerHTML = '<div class="empty-stage"><p>Generate a world first, then enter game mode.</p></div>';
     }
   } else renderV8Compare(payload);
   applyV8ReadOnlyState();
@@ -1313,7 +1535,7 @@ async function sendDescriptionMvp() {
 
 // ─── End MVP Pipeline Mode ────────────────────────────────────────────────────
 
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp});
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp, enterGame});
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);

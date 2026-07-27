@@ -39,11 +39,11 @@ def get_index_html(version: int = 11) -> str:
         + ''.join(
             f'<button type="button" class="stage-step{" active" if stage == "brief" else ""}" '
             f'data-stage="{stage}"{current_step(stage == "brief")}>{stage.upper()}</button>'
-            for stage in ("brief", "plan", "blockout", "canon", "world", "compare")
+            for stage in ("brief", "plan", "blockout", "canon", "world", "game", "compare")
         )
         + '</nav>'
         if version >= 8
-        else '<nav class="stage-rail" aria-label="Build stages"><span class="stage-step active" data-stage="brief">BRIEF</span><span class="stage-step" data-stage="plan"__PLAN_STAGE_ATTR__>PLAN</span><span class="stage-step" data-stage="blockout"__BLOCKOUT_STAGE_ATTR__>BLOCKOUT</span><span class="stage-step" data-stage="canon">CANON</span><span class="stage-step" data-stage="world">WORLD</span><span class="stage-step" data-stage="compare">COMPARE</span></nav>'
+        else '<nav class="stage-rail" aria-label="Build stages"><span class="stage-step active" data-stage="brief">BRIEF</span><span class="stage-step" data-stage="plan"__PLAN_STAGE_ATTR__>PLAN</span><span class="stage-step" data-stage="blockout"__BLOCKOUT_STAGE_ATTR__>BLOCKOUT</span><span class="stage-step" data-stage="canon">CANON</span><span class="stage-step" data-stage="world">WORLD</span><span class="stage-step" data-stage="game">GAME</span><span class="stage-step" data-stage="compare">COMPARE</span></nav>'
     )
     history_ui = (
         '<div id="historyBanner" class="history-banner" role="status" hidden>'
@@ -60,12 +60,12 @@ def get_index_html(version: int = 11) -> str:
         if version >= 8 else ""
     )
     intro = (
-        '<div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD</span>'
+        '<div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD → GAME</span>'
         '<h1>Build a room you can enter.</h1><p>Describe one interior. Approve its metric layout '
         'and camera first, then render a plan-conditioned canon and compile the world with UPBGE '
         'as primary and the declared Godot fallback when required.</p></div>'
         if version == 11 else
-        '<div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD</span>'
+        '<div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD → GAME</span>'
         '<h1>Build a room you can enter.</h1><p>Describe one interior. Approve its metric layout and '
         'camera first, then render a plan-conditioned canon and build the world.</p></div>'
     )
