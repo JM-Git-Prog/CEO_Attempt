@@ -1,0 +1,1033 @@
+error: Expecting ',' delimiter: line 1031 column 39 (char 33068)
+------------------------------------------------------------
+{
+    "name": "1950s Classroom",
+    "room": {
+        "width": 10.0,
+        "depth": 12.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "student_desk_1",
+            "name": "Student Desk 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 3.0,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "student_desk_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "student_desk_2",
+            "name": "Student Desk 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "student_desk_2",
+                    "kind": "adjacent_to",
+                    "target_id": "student_desk_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "student_desk_3",
+            "name": "Student Desk 3",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "student_desk_3",
+                    "kind": "adjacent_to",
+                    "target_id": "student_desk_2",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "student_desk_4",
+            "name": "Student Desk 4",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "student_desk_4",
+                    "kind": "adjacent_to",
+                    "target_id": "student_desk_3",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "student_desk_5",
+            "name": "Student Desk 5",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 9.5,
+            "z": 3.0,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "student_desk_5",
+                    "kind": "adjacent_to",
+                    "target_id": "student_desk_4",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "student_desk_6",
+            "name": "Student Desk 6",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 4.8,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "student_desk_6",
+                    "kind": "south_of",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "teacher_desk",
+            "name": "Teacher Desk",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 1.2,
+            "depth": 0.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "teacher_desk",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chalkboard",
+            "name": "Chalkboard Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 0.9,
+            "height": 2.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chalkboard",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window 1",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_2",
+            "name": "Window 2",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 8.5,
+            "z": 4.8,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_3",
+            "name": "Pendant Light 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_3",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 2, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_4",
+            "name": "Pendant Light 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_4",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 3, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_5",
+            "name": "Pendant Light 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_5",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 4, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_6",
+            "name": "Pendant Light 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_6",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 5, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_7",
+            "name": "Pendant Light 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_7",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 6, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_8",
+            "name": "Pendant Light 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_8",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 7, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_9",
+            "name": "Pendant Light 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_9",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 8, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_10",
+            "name": "Pendant Light 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_10",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 9, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_11",
+            "name": "Pendant Light 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_11",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 10, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_12",
+            "name": "Pendant Light 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_12",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 11, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_13",
+            "name": "Pendant Light 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_13",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 12, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_14",
+            "name": "Pendant Light 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_14",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 13, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_15",
+            "name": "Pendant Light 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_15",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 14, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_16",
+            "name": "Pendant Light 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_16",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 15, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_17",
+            "name": "Pendant Light 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_17",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 16, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_18",
+            "name": "Pendant Light 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_18",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 17, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_19",
+            "name": "Pendant Light 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_19",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 18, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_20",
+            "name": "Pendant Light 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_20",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 19, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_21",
+            "name": "Pendant Light 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_21",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 20, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_22",
+            "name": "Pendant Light 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_22",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 21, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_23",
+            "name": "Pendant Light 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_23",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 22, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_24",
+            "name": "Pendant Light 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_24",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 23, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_25",
+            "name": "Pendant Light 25",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_25",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 24, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_26",
+            "name": "Pendant Light 26",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_26",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 25, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_27",
+            "name": "Pendant Light 27",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_27",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 26, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_28",
+            "name": "Pendant Light 28",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_28",
+                    "kind": "above",
+                    "target_id": "teacher_desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 27, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false

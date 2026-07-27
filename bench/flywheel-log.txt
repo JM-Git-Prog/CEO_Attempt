@@ -1081,3 +1081,5 @@
 [20:00:19] waiting: 26/50 new corpus rows since last cycle (880 total)
 [20:10:19] waiting: 38/50 new corpus rows since last cycle (892 total)
 [20:20:19] waiting: 47/50 new corpus rows since last cycle (901 total)
+[20:30:19] threshold met (60 new rows, 914 total) - starting a cycle
+[20:30:19] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)

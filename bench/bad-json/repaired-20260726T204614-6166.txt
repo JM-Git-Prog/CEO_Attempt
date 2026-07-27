@@ -1,0 +1,1045 @@
+error: Expecting ',' delimiter: line 1043 column 23 (char 33068)
+------------------------------------------------------------
+{
+    "name": "Recording Studio Live Room",
+    "room": {
+        "width": 12.0,
+        "depth": 15.0,
+        "height": 3.2
+    },
+    "items": [
+        {
+            "id": "drum_kit",
+            "name": "Drum Kit Corner",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 7.0,
+            "width": 3.0,
+            "depth": 4.0,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "drum_kit",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "amp_stack_1",
+            "name": "Amp Stack 1",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 5.0,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 4.0,
+            "height": 3.0,
+            "elevation": 1.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "amp_stack_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "amp_stack_2",
+            "name": "Amp Stack 2",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 5.0,
+            "z": 8.0,
+            "width": 2.0,
+            "depth": 4.0,
+            "height": 3.0,
+            "elevation": 1.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "amp_stack_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "west",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_1",
+            "name": "Mic Stand 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_1",
+                    "kind": "above",
+                    "target_id": "drum_kit",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_2",
+            "name": "Mic Stand 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 9.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_2",
+                    "kind": "above",
+                    "target_id": "amp_stack_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_3",
+            "name": "Mic Stand 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 4.5,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_3",
+                    "kind": "above",
+                    "target_id": "amp_stack_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "acoustic_panel_1",
+            "name": "Acoustic Panel 1",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 6.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 1.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "acoustic_panel_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "acoustic_panel_2",
+            "name": "Acoustic Panel 2",
+            "category": "decor",
+            "mount": "wall",
+            "x": 9.5,
+            "z": 6.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 1.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "acoustic_panel_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "acoustic_panel_3",
+            "name": "Acoustic Panel 3",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 1.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "acoustic_panel_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_4",
+            "name": "Mic Stand 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 10.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_4",
+                    "kind": "above",
+                    "target_id": "acoustic_panel_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_5",
+            "name": "Mic Stand 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 11.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_5",
+                    "kind": "above",
+                    "target_id": "acoustic_panel_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_6",
+            "name": "Mic Stand 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 12.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_6",
+                    "kind": "above",
+                    "target_id": "acoustic_panel_3",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_7",
+            "name": "Mic Stand 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 13.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_7",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_8",
+            "name": "Mic Stand 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 14.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_8",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 2, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_9",
+            "name": "Mic Stand 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 15.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_9",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 3, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_10",
+            "name": "Mic Stand 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 16.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_10",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 4, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_11",
+            "name": "Mic Stand 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 17.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_11",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 5, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_12",
+            "name": "Mic Stand 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 18.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_12",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 6, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_13",
+            "name": "Mic Stand 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 19.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_13",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 7, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_14",
+            "name": "Mic Stand 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 20.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_14",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 8, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_15",
+            "name": "Mic Stand 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 21.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_15",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 9, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_16",
+            "name": "Mic Stand 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 22.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_16",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 10, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_17",
+            "name": "Mic Stand 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 23.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_17",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 11, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_18",
+            "name": "Mic Stand 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 24.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_18",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 12, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_19",
+            "name": "Mic Stand 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 25.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_19",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 13, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_20",
+            "name": "Mic Stand 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 26.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_20",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 14, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_21",
+            "name": "Mic Stand 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 27.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_21",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 15, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_22",
+            "name": "Mic Stand 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 28.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_22",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 16, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_23",
+            "name": "Mic Stand 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 29.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_23",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 17, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_24",
+            "name": "Mic Stand 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 30.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_24",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 18, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_25",
+            "name": "Mic Stand 25",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 31.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_25",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 19, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_26",
+            "name": "Mic Stand 26",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 32.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_26",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 20, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_27",
+            "name": "Mic Stand 27",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 33.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_27",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 21, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_28",
+            "name": "Mic Stand 28",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 34.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_28",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 22, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_29",
+            "name": "Mic Stand 29",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 35.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_29",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 23, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_30",
+            "name": "Mic Stand 30",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 36.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_30",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 24, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_31",
+            "name": "Mic Stand 31",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 37.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_31",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 25, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_32",
+            "name": "Mic Stand 32",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 38.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mic_stand_32",
+                    "kind": "above",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 26, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mic_stand_33",
+            "name": "Mic Stand 33",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 39.0,
+            "width": 0.2,
+            "depth": 0.

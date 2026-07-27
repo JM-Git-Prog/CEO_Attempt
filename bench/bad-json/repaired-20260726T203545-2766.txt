@@ -1,0 +1,21 @@
+error: Expecting ',' delimiter: line 18 column 23 (char 416)
+------------------------------------------------------------
+```json
+{
+  "name": "Minimalist Home Office",
+  "room": {"width": 3.5, "depth": 3.0, "height": 2.8},
+  "items": [
+    {
+      "id": "standing_desk",
+      "name": "Standing Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.0,
+      "z": 0.85,
+      "width": 1.4,
+      "depth": 0.7,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 0.0,
+      "fixed": false,
+      "clearance_m": 0.
