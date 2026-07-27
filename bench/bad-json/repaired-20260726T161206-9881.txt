@@ -1,0 +1,1082 @@
+error: Unterminated string starting at: line 1080 column 29 (char 33787)
+------------------------------------------------------------
+{
+    "name": "Tattoo Studio",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "client_chair",
+            "name": "Client Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.0,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "client_chair",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter",
+                    "kind": "above",
+                    "target_id": "flash_art_wall",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_2",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_2",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_2",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_2",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_2",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_2",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_3",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_3",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_3",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_3",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_3",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_3",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_3",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_3",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_4",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_4",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_3",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_4",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_4",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_4",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_4",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_4",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_4",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_5",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 9.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_5",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_4",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_5",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 9.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_5",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 8.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_5",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_5",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 8.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_5",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_5",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_6",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 11.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_6",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_5",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_6",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 11.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_6",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_6",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 10.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_6",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_6",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 10.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_6",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_6",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_7",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 13.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_7",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_6",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_7",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 13.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_7",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_7",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 12.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_7",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_7",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 12.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_7",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_7",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_8",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 15.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_8",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_7",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_8",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 15.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_8",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_8",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 14.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_8",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_8",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 14.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_8",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_8",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_9",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 17.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_9",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_8",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_9",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 17.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_9",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_9",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 16.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_9",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sterilization_counter_9",
+            "name": "Sterilization Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 16.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sterilization_counter_9",
+                    "kind": "above",
+                    "target_id": "flash_art_wall_9",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_stool_10",
+            "name": "Artist Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 19.5,
+            "z": 4.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_stool_10",
+                    "kind": "adjacent_to",
+                    "target_id": "artist_station_9",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "artist_station_10",
+            "name": "Artist Station",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 19.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "artist_station_10",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "flash_art_wall_10",
+            "name": "Flash Art Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 18.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "flash_art_wall_10",
+                    "kind": "against

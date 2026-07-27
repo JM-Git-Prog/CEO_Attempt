@@ -1,0 +1,116 @@
+error: Extra data: line 25 column 1 (char 1309)
+------------------------------------------------------------
+{"name":"Diner Interior",
+"room":{"width":6.0,"depth":4.0,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter","category":"furniture","mount":"floor","x":1.5,
+"z":0.0,"width":4.2,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,"fixed":true,
+"clearance_m":0.3,"description":"Rounded polished-chrome edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.5,"width":0.9,"height":2.1,
+"sill_height":0.0}],
+"openings":[{"id":"window_1","kind":"window","wall":"south","offset":0.0,"width":1.0,"height":1.0,
+"sill_height":0.0}],
+"camera":{"x":3.5,"y":2.0,"z":1.6,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"R-1","subject_id":"counter_1","kind":"centered","wall":null,
+"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"OI-1","opening_id":"door_1","wall":"west","placement":"near_corner",
+"corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"CI-1","corner":"southeast","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"against_wall":[{"id":"AW-1","item_id":"counter_1","wall":"north"}],
+"zones":[],
+"apply_design_notes":[],
+"apply_circulation_notes":[]}
+
+V11 RELATION SEMANTICS — apply these geometric operations before placing anything:
+1. CENTERED: x = 0, z = half_depth. Use for large focal-point surfaces (counters, islands).
+2. AGAINST_WALL + WALL: Place item against the named wall with x = 0, z = 0. Use for furniture
+   against walls.
+3. ADJACENT_TO / EAST_OF: x increases. Use for seating rows along a north counter or focal point.
+4. WEST_OF: x decreases. Use for placing items relative to a east-facing focal point.
+5. SOUTH_OF: z decreases. Use for seating rows along a north counter.
+6. NORTH_OF: z increases. Use for placing items relative to a south-facing focal point.
+7. ABOVE: Places item directly above target at ceiling. Use for pendant lights, ceiling fixtures.
+8. AROUND: Distributes items in a circle around target. Use for creating evenly spaced rows.
+9. NEAR_CORNER: Place item near a random corner with x, z = 0. Use for supporting pieces relative
+   to a focal point.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, and design_notes.
+- Add schema_version="floor-plan/v11".
+- Add relationships with EXACTLY one typed placement for every item. Each entry has subject_id,
+  kind, optional target_id/wall, and parameters_m. Never encode placement intent only in names.
+- Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+  wall_gap_m is distance from wall surface to nearest item edge; ensure depth/2 + wall_gap_m < half_room_depth.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Repeated rows must be compact rather than stretched across the complete target. Unless the user
+  gives an exact spacing, use 0.5m center spacing for floor seating and 0.6m center spacing for
+  ceiling pendants. distribution_span_m = (count - 1) * spacing (e.g. 1.5m for four stools, 1.2m for three pendants).
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+- Add opening_intents with exactly one entry per opening. placement is centered or near_corner;
+  near_corner also declares northwest/northeast/southwest/southeast.
+- Add camera_intent with corner, target_id, inset_m, eye_height_m, target_height_m, and fov_deg.
+- Initial x/z/offset/camera values are placeholders only; the deterministic solver owns final values.
+
+V11 COMPLETE-INTENT-ONLY-APPLICATION-SCHEMA — augment the complete V11 schema above; do not replace it:
+- Every field remains mandatory, including name, room, items, openings, camera, circulation_notes,
+  design_notes, schema_version, relationships, opening_intents, camera_intent, against_wall,
+  zones, apply_design_notes, and apply_circulation_notes.
+- Add against_wall with item_id, wall, and optional x,z/offset parameters. Use for placing furniture
+  against walls.
+- Add zones with name, kind, optional x,z/center, width, depth, and height. Use for identifying
+  functional areas (seating, work, display).
+- Add apply_design_notes with note_id and optional apply_m. Use for applying design notes as geometric operations.
+- Add apply_circulation_notes with note_id and optional apply_m. Use for applying circulation notes as geometric operations.
+
+V11 COMPLETE-INTENT-ONLY-APPLICATION-SCHEMA-EXTENSION — augment the complete V11 schema above; do not replace it:
+- Every field remains mandatory, including name, room, items, openings, camera, circulation_notes,
+  design_notes, schema_version, relationships, opening_intents, camera_intent, against_wall,
+  zones, apply_design_notes, apply_circulation_notes.
+- Add against_wall with item_id, wall, and optional x,z/offset parameters. Use for placing furniture
+  against walls.
+- Add zones with name, kind, optional x,z/center, width, depth, and height. Use for identifying
+  functional areas (seating, work, display).
+- Add apply_design_notes with note_id and optional apply_m. Use for applying design notes as geometric operations.
+- Add apply_circulation_notes with note_id and optional apply_m. Use for applying circulation notes as geometric operations.
+
+V11 COMPLETE-INTENT-ONLY-APPLICATION-SCHEMA-EXTENSION-REPLICATION — create a complete, buildable practical plan by applying the schema above; do not replace EXPLICIT-INTENT-ONLY-APPLICATION-SCHEMA.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},"items":[{"id":string,
+"name":string,"category":"furniture|fixture|architectural|decor","mount":"floor|wall|ceiling",
+"x":number,"z":number,"width":number,"depth":number,"height":number,"elevation":number,
+"rotation_deg":number,"fixed":boolean,"clearance_m":number,"description":string}],
+"openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west","offset":number,
+"width":number,"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":number,
+"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},"circulation_notes":[string],
+"design_notes":[string],"schema_version":"floor-plan/v11","relationships":[{"id":string,
+"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|
+around|above|facing|near_corner","target_id":string,"wall":string,"parameters_m":{number:string},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"placement":"centered|near_corner","corner":string,"margin_m":number}], "camera_intent":{
+"corner":"northwest|northeast|southwest|southeast","target_id":string,"inset_m":number,
+"eye_height_m":number,"target_height_m":number,"fov_deg":number}, "against_wall":[{"id":string,
+"item_id":string,"wall":"north|south|east|west","x":number,"z":number,"offset_m":number}],
+"zones":[{"id":string,"name":string,"kind":"seating|work|display","x":number,"z":number,
+"width":number,"depth":number,"height":number}], "apply_design_notes":[{"id":string,"note_id":
+string,"apply_m":number}], "apply_circulation_notes":[{"id":string,"note_id":string,"apply_m":
+number}]}

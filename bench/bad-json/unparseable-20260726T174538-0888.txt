@@ -1,0 +1,344 @@
+error: Expecting property name enclosed in double quotes: line 4 column 1 (char 337)
+------------------------------------------------------------
+{"name":"Laundromat-1",
+"room":{"width":8,"depth":10,"height":3},
+"items":[{"id":"washing_machine_1","name":"Washing Machine 1","category":"fixture","mount":"floor","x":0.5,"z":2,"width":0.9,"depth":0.7,"height":1.8,"elevation":0,"rotation_deg":0,"fixed":true,"clearance_m":0.75,"description":"Large washing machine with six cycles."}],
+["washing_machine_2","Washing Machine 2", "fixture", "floor", 3.5, 2, 0.9, 0.7, 1.8, 0, 0, true, 0.75, "Medium-sized washing machine for delicates."],
+["washing_machine_3","Washing Machine 3", "fixture", "floor", 6, 2, 0.9, 0.7, 1.8, 0, 0, true, 0.75, "Large capacity washing machine with extra rinse cycle."],
+["washing_machine_4","Washing Machine 4", "fixture", "floor", 0.5, 4, 0.9, 0.7, 1.8, 0, 0, true, 0.75, "Compact washing machine for small loads."],
+["washing_machine_5","Washing Machine 5", "fixture", "floor", 3.5, 4, 0.9, 0.7, 1.8, 0, 0, true, 0.75, "Energy-efficient washing machine with eco-mode."],
+["washing_machine_6","Washing Machine 6", "fixture", "floor", 6, 4, 0.9, 0.7, 1.8, 0, 0, true, 0.75, "High-capacity washing machine for large families."],
+["folding_table","Folding Table", "furniture", "floor", 2, 5, 1.2, 0.9, 0.7, 0, 0, false, 0.3, "Portable folding table for sorting laundry."],
+["plastic_chair_1","Plastic Chair 1", "furniture", "floor", 4, 6, 0.4, 0.3, 0.8, 0, 0, false, 0.2, "Lightweight plastic chair for seating."],
+["plastic_chair_2","Plastic Chair 2", "furniture", "floor", 5.6, 6, 0.4, 0.3, 0.8, 0, 0, false, 0.2, "Identical plastic chair for additional seating."],
+["plastic_chair_3","Plastic Chair 3", "furniture", "floor", 7.2, 6, 0.4, 0.3, 0.8, 0, 0, false, 0.2, "Third plastic chair for complete seating."],
+["fluorescent_light","Fluorescent Light", "fixture", "ceiling", 4, -1, 0.3, 0.3, 0.6, 2.7, 0, 55, 0, "Simple fluorescent light fixture providing general illumination."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0,"width":0.9,"height":2.1,"sill_height":0}],
+["door_1", "door", "north", 0, 0.9, 2.1, 0],
+["window_1","window","east",0,0.6,1.8,0]],
+"camera":{"x":4,"y":1.6,"z":3,"target_x":0,"target_y":0,"target_z":0,"fov_deg":55},
+"circulation_notes":["Clear path from door to washing machines.","Zones: washing + folding + seating."],
+"design_notes":["Laundromat practicality is priority.","Repeated items distributed evenly along parent surface."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"1","subject_id":"washing_machine_1","kind":"against_wall","wall":"north","parameters_m":{"x":0,"z":2},"weight":1,"relaxable":false}],
+["1", "washing_machine_1", "against_wall", "north", null, {"x":0,"z":2}, 1, false],
+["2", "folding_table", "centered", null, null, {}, 1, true],
+["3", "plastic_chair_1", "adjacent_to", "folding_table", null, {"x":0.4,"z":0}, 1, false],
+["4", "plastic_chair_2", "east_of", "plastic_chair_1", null, {"x":0.8,"z":0}, 1, false],
+["5", "plastic_chair_3", "west_of", "folding_table", null, {"x":-0.4,"z":0}, 1, false],
+["6", "fluorescent_light", "above", "folding_table", null, {"x":0,"z":0.3}, 1, false]],
+"opening_intents":[{"id":"1","opening_id":"door_1","wall":"north","placement":"centered","corner":"null","margin_m":0.1}],
+["1", "door_1", "north", "centered", null, 0.1],
+["2", "window_1", "east", "near_corner", "southeast", 0.1]],
+"camera_intent":{"id":"1","corner":"northwest","target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55}},
+"design_notes":[]}
+
+V11-EXPLICIT-INTENT-EXTENSION-APPLICATION — apply these rules after creating the complete base plan:
+1. RELATION SEMANTICS — apply geometric operations to items, not natural-language interpretation.
+   * adjacent_to / east_of: x increases. Never for a south row.
+   * west_of: x decreases.
+   * south_of: z decreases.
+   * north_of: z increases.
+   * above: places item at ceiling with zero x,z. Use only for fixed-ceiling fixtures.
+   * around: distributes items in a circle around target with equal spacing.
+   * centered: places item at room center with optional x,z offsets.
+   * facing: relative to target, front is Z+0, left is X-1, right is X+1, back is Z-0.
+2. REPEATED ROWS — apply these rules in addition to semantic relation application:
+   * Use a directional/above relation (east_of, south_of, etc.) plus distribution_index,
+     distribution_count, and distribution_span_m.
+   * Keep every repeated instance separate; do not merge items into a single instance.
+   * Apply practical spacing: 0.5m center for seating, 0.6m center for ceiling pendants.
+     distribution_span_m = (count - 1) * spacing.
+3. CEILING FIXTURES — mount="ceiling" is required. Use above with distribution parameters.
+4. OPENING INTENTS — create one entry per opening with placement, wall, corner, and margin_m.
+5. CAMERA INTENT — complete the camera placement intent with corner, target_id, inset_m,
+  eye_height_m, target_height_m, and fov_deg.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+
+V11-EXPLICIT-INTENT-APPLICATION — apply these rules after creating the complete base plan:
+1. RELATION SEMANTICS — apply geometric operations to items, not natural-language interpretation.
+2. REPEATED ROWS — apply practical spacing for seating and ceiling pendants.
+3. CEILING FIXTURES — mount="ceiling" is required. Use above with distribution parameters.
+4. OPENING INTENTS — create one entry per opening with placement, wall, corner, and margin_m.
+5. CAMERA INTENT — complete the camera placement intent with corner, target_id, inset_m,
+  eye_height_m, target_height_m, and fov_deg.
+
+V11-EXPLICIT-INTENT-APPLICATION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENT-APPLICATION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION — apply these practical rules before placing anything:
+1. ZONES — identify functional zones (seating, work, circulation, display). Place primary furniture first, then support pieces relative to it.
+2. WALLS FIRST — large furniture belongs against walls. Only focal-point pieces (tables, islands) go in the center. Never cluster everything at 0,0.
+3. CIRCULATION — maintain at least 0.8m clear paths between the door and all zones. A person must walk from the door to any seat without squeezing past furniture.
+4. RELATIONSHIPS — chairs face tables. Stools line up along counters/bars. Pendant lights hang above the surface they illuminate. Side tables flank beds/sofas.
+5. SPACING — repeated items (stools, chairs, cabinets) distribute evenly along their parent surface with equal gaps. Never stack them on top of each other.
+6. DOOR CLEARANCE — nothing within 1.0m inward of a door. The door swing arc must be completely unobstructed.
+7. WINDOW CLEARANCE — keep furniture at least 0.3m from exterior window walls so light enters freely.
+8. PROPORTIONS — item dimensions must be realistic. A stool is ~0.4m wide. A pendant light is ~0.3m tall. An arcade cabinet is ~0.7m wide × 0.8m deep. A bed is ~2.0m × 1.6m.
+9. CAMERA — place the camera in a corner with a clear diagonal view across the room showing the maximum number of objects. Never place the camera behind or inside furniture.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION-RECURSION — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION-RECURSION-RESULT — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION-RECURSION-RESULT — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION-RECURSION-RESULT — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION-RECURSION-RESULT — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number}}
+
+V11-EXPLICIT-INTENSION-APPLICATION-RECURSION-RESULT — return the complete, augmented JSON object only. Never encode placement intent only in names.
+
+DESIGN-THINKING-APPLICATION-RECURSION-RESULT — apply practical design thinking before placing items, then apply V11 explicit intent rules. Never place the camera until the complete item placement is known.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"x":number,"z":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":"null|northwest|northeast|southwest|southeast",
+"margin_m":number}], "camera_intent":{"id":string,"corner":"northwest|northeast|south

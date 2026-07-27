@@ -1,0 +1,542 @@
+error: Expecting property name enclosed in double quotes: line 7 column 21 (char 468)
+------------------------------------------------------------
+{"name":"Diner Interior",
+"room":{"width":6,"depth":4,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter","category":"furniture","mount":"floor","x":0,
+"z":1.7,"width":4.2,"depth":0.9,"height":0.7,"elevation":0.3,"rotation_deg":0,"fixed":true,
+"clearance_m":0.5,"description":"Rounded polished-chrome edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.9,"width":0.9,"height":2.1,
+"sill_height":0.1}],["window_1":{"id":"window_1","kind":"window","wall":"south","offset":0,
+"width":1.5,"height":1.8,"sill_height":0}],
+"camera":{"x":3.4,"y":2.6,"z":0.7,"target_x":0,"target_y":0,"target_z":0,"fov_deg":55},
+"circulation_notes":[],"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"1","subject_id":"counter_1","kind":"centered","wall":null,
+"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"1","opening_id":"door_1","wall":"west","placement":"near_corner",
+"corner":null,"margin_m":0.2}],
+"camera_intent":{"id":"1","corner":"southeast","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55}}
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-IMPLEMENTATION-NOTE: Never encode placement intent only in names.
+Use typed relations with subject_id, kind, target_id/wall, and parameters_m instead.
+
+COORDINATE-SYSTEM-Note: Room center is (0, 0). North is +Z, East is +X.
+
+V11-RELATION-SEMANTICS:
+* adjacent_to / east_of: places subject EAST of target. Never for a south row.
+* west_of: places subject WEST of target.
+* south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+* north_of: places subject NORTH of target.
+* above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+* around: distributes subjects in a circle around target.
+* centered: places at room center with optional offsets.
+
+V11-RELATION-APPLICATION-Note: Apply these geometric operations after placing the subject item, then
+reapply against the updated item distribution. Never encode placement intent only in names.
+
+V11-EXPLICIT-INTENT-Complete-Implementation-Note: Return one complete, valid JSON object with
+every mandatory field including name, room, items, openings, camera, circulation_notes,
+design_notes, schema_version, relationships, opening_intents, and camera_intent. Never encode
+intention only in commentary. Never place the camera behind or inside furniture. Never encode
+placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never encode placement intent only in names.
+
+V11-Complete-Implementation-Note: Return one complete, valid JSON object with every mandatory field
+including name, room, items, openings, camera, circulation_notes, design_notes, schema_version,
+relationships, opening_intents, and camera_intent. Never encode intention only in commentary.
+Never place the camera behind or inside furniture. Never

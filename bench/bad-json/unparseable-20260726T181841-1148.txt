@@ -1,0 +1,24 @@
+error: Invalid control character at: line 12 column 69 (char 672)
+------------------------------------------------------------
+{"name":"Minimalist Home Office",
+"room":{"width":4.0,"depth":6.0,"height":2.8},
+"items":[{"id":"standing_desk_1","name":"Standing Desk",
+"category":"furniture","mount":"floor","x":1.5,"z":3.0,"width":2.0,
+"depth":1.0,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":true,
+"clearance_m":0.75,"description":"A practical standing desk for a home office."}],
+"openings":[{"id":"window_1","kind":"window","wall":"north",
+"offset":0.0,"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera":{"x":0.5,"y":1.6,"z":0.0,"target_x":0.0,"target_y":1.1,
+"target_z":0.0,"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan with clear
+circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"rel_1","subject_id":"standing_desk_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1.0,
+"relaxable":false}],
+"opening_intents":[{"id":"int_1","opening_id":"window_1",
+"wall":"north","placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"intent_1","corner":"northeast",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,
+"fov_deg":55.0}}

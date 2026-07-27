@@ -1,0 +1,492 @@
+error: Invalid control character at: line 11 column 73 (char 632)
+------------------------------------------------------------
+{"name":"Hotel Room",
+"room":{"width":4.5,"depth":6.0,"height":2.8},
+"items":[{"id":"bed","name":"Queen Bed","category":"furniture","mount":"floor","x":1.7,
+"z":3.0,"width":2.0,"depth":2.5,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.75,"description":"A comfortable queen-sized bed."}],
+"openings":[{"id":"window_1","kind":"window","wall":"west","offset":0.2,"width":0.9,
+"height":1.5,"sill_height":0.0}],
+"camera":{"x":0.0,"y":1.6,"z":0.0,"target_x":0.0,"target_y":0.0,"target_z":0.0,
+"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan with clear zon
+es and functional circulation."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"bed_1","subject_id":"bed","kind":"centered","wall":null,
+"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"window_1_intent","opening_id":"window_1","wall":"west",
+"placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera_1","corner":"northwest","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55.0}}
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE-SYSTEM-APPLICATION — x,z are item center; width is X-axis span, depth is Z-axis span;
+elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items);
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES-APPLICATION — one item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+Doors and windows go in "openings" only.
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-APPLICATION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Apply against_wall + wall="west" + along_offset_m=0 + wall_gap_m for practical window placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.

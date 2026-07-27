@@ -616,3 +616,238 @@
 [13:28:24] batch: prompts 40..54 (llama3.1)
 [13:28:37] bench batch rc=0
 [13:28:37] ingest: ingest: +0 records | 497 already banked | 1541 plan-less rows skipped
+[13:30:07] batch: prompts 55..69 (llama3.1)
+[13:30:20] bench batch rc=0
+[13:30:20] ingest: ingest: +1 records | 497 already banked | 1541 plan-less rows skipped
+[13:31:50] batch: prompts 70..84 (llama3.1)
+[13:34:05] bench loop up - waiting for training chain to finish first
+[13:34:05] GPU turn acquired - continuous benching begins
+[13:34:05] batch: prompts 70..84 (llama3.1)
+[13:41:14] bench batch rc=0
+[13:41:14] ingest: ingest: +16 records | 498 already banked | 1546 plan-less rows skipped
+[13:42:44] batch: prompts 85..99 (llama3.1)
+[13:50:52] bench batch rc=0
+[13:50:53] ingest: ingest: +18 records | 503 already banked | 1552 plan-less rows skipped
+[13:52:23] batch: prompts 0..14 (llama3.1)
+[14:00:24] bench batch rc=0
+[14:00:24] ingest: ingest: +14 records | 521 already banked | 1560 plan-less rows skipped
+[14:01:54] batch: prompts 15..29 (llama3.1)
+[14:11:16] bench batch rc=0
+[14:11:16] ingest: ingest: +8 records | 535 already banked | 1576 plan-less rows skipped
+[14:12:46] PAUSE-BENCH.txt present - sleeping 5 min
+[14:17:46] PAUSE-BENCH.txt present - sleeping 5 min
+[14:22:46] batch: prompts 30..44 (llama3.1)
+[14:32:11] bench batch rc=0
+[14:32:11] ingest: ingest: +12 records | 543 already banked | 1580 plan-less rows skipped
+[14:33:41] batch: prompts 45..59 (llama3.1)
+[14:42:16] bench batch rc=0
+[14:42:16] ingest: ingest: +15 records | 555 already banked | 1580 plan-less rows skipped
+[14:43:46] batch: prompts 60..74 (llama3.1)
+[14:51:38] bench batch rc=0
+[14:51:38] ingest: ingest: +15 records | 570 already banked | 1580 plan-less rows skipped
+[14:53:08] batch: prompts 75..89 (llama3.1)
+[15:00:17] bench batch rc=0
+[15:00:18] ingest: ingest: +11 records | 585 already banked | 1584 plan-less rows skipped
+[15:01:48] batch: prompts 90..4 (llama3.1)
+[15:07:57] bench batch rc=0
+[15:07:57] ingest: ingest: +15 records | 596 already banked | 1591 plan-less rows skipped
+[15:09:27] batch: prompts 5..19 (llama3.1)
+[15:16:19] bench batch rc=0
+[15:16:20] ingest: ingest: +17 records | 611 already banked | 1597 plan-less rows skipped
+[15:17:50] batch: prompts 20..34 (llama3.1)
+[15:28:44] bench batch rc=0
+[15:28:44] ingest: ingest: +13 records | 628 already banked | 1610 plan-less rows skipped
+[15:30:14] batch: prompts 35..49 (llama3.1)
+[15:38:19] bench batch rc=0
+[15:38:19] ingest: ingest: +8 records | 644 already banked | 1618 plan-less rows skipped
+[15:39:49] PAUSE-BENCH.txt present - sleeping 5 min
+[15:44:49] PAUSE-BENCH.txt present - sleeping 5 min
+[15:49:49] batch: prompts 50..64 (llama3.1)
+[15:59:30] bench batch rc=0
+[15:59:30] ingest: ingest: +11 records | 652 already banked | 1622 plan-less rows skipped
+[16:01:00] batch: prompts 65..79 (llama3.1)
+[16:12:06] bench batch rc=0
+[16:12:06] ingest: ingest: +12 records | 663 already banked | 1625 plan-less rows skipped
+[16:13:36] batch: prompts 80..94 (llama3.1)
+[16:21:19] bench batch rc=0
+[16:21:19] ingest: ingest: +11 records | 675 already banked | 1629 plan-less rows skipped
+[16:22:49] batch: prompts 95..9 (llama3.1)
+[16:29:00] bench batch rc=0
+[16:29:00] ingest: ingest: +10 records | 686 already banked | 1634 plan-less rows skipped
+[16:30:30] batch: prompts 10..24 (llama3.1)
+[16:39:20] bench batch rc=0
+[16:39:20] ingest: ingest: +12 records | 696 already banked | 1637 plan-less rows skipped
+[16:40:50] batch: prompts 25..39 (llama3.1)
+[16:41:01] bench batch rc=0
+[16:41:01] ingest: ingest: +0 records | 708 already banked | 1652 plan-less rows skipped
+[16:42:31] batch: prompts 40..54 (llama3.1)
+[16:42:43] bench batch rc=0
+[16:42:43] ingest: ingest: +0 records | 708 already banked | 1667 plan-less rows skipped
+[16:44:13] batch: prompts 55..69 (llama3.1)
+[16:44:25] bench batch rc=0
+[16:44:25] ingest: ingest: +0 records | 708 already banked | 1682 plan-less rows skipped
+[16:45:55] batch: prompts 70..84 (llama3.1)
+[16:46:07] bench batch rc=0
+[16:46:07] ingest: ingest: +0 records | 708 already banked | 1697 plan-less rows skipped
+[16:47:37] batch: prompts 85..99 (llama3.1)
+[16:47:52] bench batch rc=0
+[16:47:52] ingest: ingest: +0 records | 708 already banked | 1712 plan-less rows skipped
+[16:49:22] batch: prompts 0..14 (llama3.1)
+[16:49:34] bench batch rc=0
+[16:49:34] ingest: ingest: +0 records | 708 already banked | 1729 plan-less rows skipped
+[16:51:04] batch: prompts 15..29 (llama3.1)
+[16:51:16] bench batch rc=0
+[16:51:16] ingest: ingest: +1 records | 708 already banked | 1744 plan-less rows skipped
+[16:52:46] batch: prompts 30..44 (llama3.1)
+[16:52:58] bench batch rc=0
+[16:52:58] ingest: ingest: +2 records | 709 already banked | 1759 plan-less rows skipped
+[16:54:28] batch: prompts 45..59 (llama3.1)
+[16:54:40] bench batch rc=0
+[16:54:41] ingest: ingest: +0 records | 711 already banked | 1775 plan-less rows skipped
+[16:56:11] batch: prompts 60..74 (llama3.1)
+[16:56:22] bench batch rc=0
+[16:56:23] ingest: ingest: +2 records | 711 already banked | 1790 plan-less rows skipped
+[16:57:53] batch: prompts 75..89 (llama3.1)
+[16:58:05] bench batch rc=0
+[16:58:05] ingest: ingest: +2 records | 713 already banked | 1805 plan-less rows skipped
+[16:59:35] batch: prompts 90..4 (llama3.1)
+[16:59:47] bench batch rc=0
+[16:59:47] ingest: ingest: +2 records | 715 already banked | 1820 plan-less rows skipped
+[17:01:17] batch: prompts 5..19 (llama3.1)
+[17:01:29] bench batch rc=0
+[17:01:29] ingest: ingest: +0 records | 717 already banked | 1836 plan-less rows skipped
+[17:02:59] batch: prompts 20..34 (llama3.1)
+[17:03:11] bench batch rc=0
+[17:03:11] ingest: ingest: +0 records | 717 already banked | 1851 plan-less rows skipped
+[17:04:41] batch: prompts 35..49 (llama3.1)
+[17:04:53] bench batch rc=0
+[17:04:53] ingest: ingest: +0 records | 717 already banked | 1867 plan-less rows skipped
+[17:06:23] batch: prompts 50..64 (llama3.1)
+[17:06:35] bench batch rc=0
+[17:06:35] ingest: ingest: +0 records | 717 already banked | 1884 plan-less rows skipped
+[17:08:05] batch: prompts 65..79 (llama3.1)
+[17:08:17] bench batch rc=0
+[17:08:17] ingest: ingest: +1 records | 717 already banked | 1899 plan-less rows skipped
+[17:09:47] batch: prompts 80..94 (llama3.1)
+[17:09:59] bench batch rc=0
+[17:09:59] ingest: ingest: +0 records | 718 already banked | 1915 plan-less rows skipped
+[17:11:29] batch: prompts 95..9 (llama3.1)
+[17:11:41] bench batch rc=0
+[17:11:41] ingest: ingest: +0 records | 718 already banked | 1932 plan-less rows skipped
+[17:13:11] batch: prompts 10..24 (llama3.1)
+[17:13:22] bench batch rc=0
+[17:13:22] ingest: ingest: +0 records | 718 already banked | 1949 plan-less rows skipped
+[17:14:52] batch: prompts 25..39 (llama3.1)
+[17:15:04] bench batch rc=0
+[17:15:04] ingest: ingest: +0 records | 718 already banked | 1966 plan-less rows skipped
+[17:16:34] batch: prompts 40..54 (llama3.1)
+[17:16:45] bench batch rc=0
+[17:16:45] ingest: ingest: +0 records | 718 already banked | 1983 plan-less rows skipped
+[17:18:15] batch: prompts 55..69 (llama3.1)
+[17:18:27] bench batch rc=0
+[17:18:27] ingest: ingest: +0 records | 718 already banked | 2000 plan-less rows skipped
+[17:19:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:24:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:29:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:34:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:39:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:44:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:49:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:54:57] PAUSE-BENCH.txt present - sleeping 5 min
+[17:59:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:04:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:09:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:14:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:19:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:24:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:29:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:34:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:39:57] PAUSE-BENCH.txt present - sleeping 5 min
+[18:44:57] batch: prompts 70..84 (llama3.1)
+[18:45:11] bench batch rc=0
+[18:45:11] ingest: ingest: +0 records | 718 already banked | 2077 plan-less rows skipped
+[18:46:41] batch: prompts 85..99 (llama3.1)
+[18:46:53] bench batch rc=0
+[18:46:53] ingest: ingest: +0 records | 718 already banked | 2092 plan-less rows skipped
+[18:48:23] batch: prompts 0..14 (llama3.1)
+[18:48:35] bench batch rc=0
+[18:48:35] ingest: ingest: +0 records | 718 already banked | 2107 plan-less rows skipped
+[18:50:05] batch: prompts 15..29 (llama3.1)
+[18:50:17] bench batch rc=0
+[18:50:17] ingest: ingest: +0 records | 718 already banked | 2122 plan-less rows skipped
+[18:51:47] batch: prompts 30..44 (llama3.1)
+[18:51:58] bench batch rc=0
+[18:51:59] ingest: ingest: +0 records | 718 already banked | 2137 plan-less rows skipped
+[18:53:29] batch: prompts 45..59 (llama3.1)
+[18:53:40] bench batch rc=0
+[18:53:40] ingest: ingest: +0 records | 718 already banked | 2152 plan-less rows skipped
+[18:55:10] batch: prompts 60..74 (llama3.1)
+[18:55:21] bench batch rc=0
+[18:55:21] ingest: ingest: +0 records | 718 already banked | 2167 plan-less rows skipped
+[18:56:51] batch: prompts 75..89 (llama3.1)
+[18:57:03] bench batch rc=0
+[18:57:03] ingest: ingest: +0 records | 718 already banked | 2182 plan-less rows skipped
+[18:58:33] batch: prompts 90..4 (llama3.1)
+[18:58:45] bench batch rc=0
+[18:58:45] ingest: ingest: +0 records | 718 already banked | 2197 plan-less rows skipped
+[19:00:15] batch: prompts 5..19 (llama3.1)
+[19:00:26] bench batch rc=0
+[19:00:27] ingest: ingest: +0 records | 718 already banked | 2212 plan-less rows skipped
+[19:01:57] batch: prompts 20..34 (llama3.1)
+[19:02:08] bench batch rc=0
+[19:02:08] ingest: ingest: +0 records | 718 already banked | 2227 plan-less rows skipped
+[19:03:38] batch: prompts 35..49 (llama3.1)
+[19:03:50] bench batch rc=0
+[19:03:50] ingest: ingest: +0 records | 718 already banked | 2242 plan-less rows skipped
+[19:05:20] batch: prompts 50..64 (llama3.1)
+[19:05:32] bench batch rc=0
+[19:05:32] ingest: ingest: +0 records | 718 already banked | 2257 plan-less rows skipped
+[19:07:02] batch: prompts 65..79 (llama3.1)
+[19:07:14] bench batch rc=0
+[19:07:14] ingest: ingest: +0 records | 718 already banked | 2272 plan-less rows skipped
+[19:08:44] batch: prompts 80..94 (llama3.1)
+[19:08:56] bench batch rc=0
+[19:08:56] ingest: ingest: +0 records | 718 already banked | 2287 plan-less rows skipped
+[19:10:26] batch: prompts 95..9 (llama3.1)
+[19:10:38] bench batch rc=0
+[19:10:38] ingest: ingest: +0 records | 718 already banked | 2302 plan-less rows skipped
+[19:12:08] batch: prompts 10..24 (llama3.1)
+[19:12:19] bench batch rc=0
+[19:12:20] ingest: ingest: +0 records | 718 already banked | 2317 plan-less rows skipped
+[19:13:50] batch: prompts 25..39 (llama3.1)
+[19:14:01] bench batch rc=0
+[19:14:01] ingest: ingest: +0 records | 718 already banked | 2332 plan-less rows skipped
+[19:15:31] batch: prompts 40..54 (llama3.1)
+[19:15:43] bench batch rc=0
+[19:15:43] ingest: ingest: +0 records | 718 already banked | 2347 plan-less rows skipped
+[19:17:13] batch: prompts 55..69 (llama3.1)
+[19:17:52] bench batch rc=0
+[19:17:53] ingest: ingest: +1 records | 718 already banked | 2361 plan-less rows skipped
+[19:19:23] batch: prompts 70..84 (llama3.1)
+[19:19:34] bench batch rc=0
+[19:19:34] ingest: ingest: +0 records | 719 already banked | 2376 plan-less rows skipped
+[19:21:04] batch: prompts 85..99 (llama3.1)
+[19:21:15] bench batch rc=0
+[19:21:16] ingest: ingest: +0 records | 719 already banked | 2391 plan-less rows skipped
+[19:22:46] batch: prompts 0..14 (llama3.1)
+[19:22:57] bench batch rc=0
+[19:22:57] ingest: ingest: +0 records | 719 already banked | 2406 plan-less rows skipped
+[19:24:27] batch: prompts 15..29 (llama3.1)
+[19:24:39] bench batch rc=0
+[19:24:40] ingest: ingest: +0 records | 719 already banked | 2421 plan-less rows skipped
+[19:26:10] batch: prompts 30..44 (llama3.1)
+[19:27:36] bench batch rc=0
+[19:27:37] ingest: ingest: +3 records | 719 already banked | 2433 plan-less rows skipped
+[19:29:07] batch: prompts 45..59 (llama3.1)
+[19:38:45] bench batch rc=0
+[19:38:45] ingest: ingest: +10 records | 722 already banked | 2438 plan-less rows skipped
+[19:40:15] batch: prompts 60..74 (llama3.1)
+[19:50:21] bench batch rc=0
+[19:50:21] ingest: ingest: +12 records | 732 already banked | 2441 plan-less rows skipped
+[19:51:51] batch: prompts 75..89 (llama3.1)
+[20:01:19] bench batch rc=0
+[20:01:19] ingest: ingest: +12 records | 744 already banked | 2444 plan-less rows skipped
+[20:02:49] batch: prompts 90..4 (llama3.1)
+[20:11:16] bench batch rc=0
+[20:11:16] ingest: ingest: +9 records | 756 already banked | 2450 plan-less rows skipped
+[20:12:46] batch: prompts 5..19 (llama3.1)

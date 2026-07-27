@@ -1,0 +1,464 @@
+error: Extra data: line 19 column 1 (char 1114)
+------------------------------------------------------------
+{"name":"Podcast Studio",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"table_1","name":"Round Table","category":"furniture","mount":"floor","x":3.0,"z":4.0,
+"width":2.5,"depth":2.5,"height":0.9,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.7,
+"description":"A practical round table for recording."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,"width":0.9,"height":2.1,
+"sill_height":0.0}],
+"camera":{"x":3.5,"y":1.6,"z":1.7,"target_x":3.0,"target_y":1.0,"target_z":0.0,"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create practical, buildable floor plan with clear paths and zoned functional areas."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"r_1","subject_id":"table_1","kind":"centered","wall":null,"parameters_m":{},
+"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"oi_1","opening_id":"door_1","wall":"north","placement":"centered",
+"corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"ci_1","corner":"northeast","target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55.0}}
+
+V11-EXPLICIT-INTENT-EXTENSION-APPLICATION:
+
+* Items: Apply practical placement rules before applying V11 relationships.
+	+ Table_1: Centered at x=3.0, z=4.0 with fixed=true.
+* Relationships: Apply typed placements relative to the item's initial position.
+	+ r_1: Places table_1 at x=3.0, z=4.0 with no change (centered + wall=null).
+* Openings: Place doors/windows relative to the room with intent.
+	+ door_1: North wall, offset=0.0, width=0.9, height=2.1. Never place a door behind furniture.
+* Camera: Place the camera with intent; practical placement is secondary.
+	+ ci_1: Places camera in northeast corner with eye_height_m=1.6 and target_height_m=1.2.
+
+COORDINATE-SYSTEM-APPLICATION:
+
+* x,z are item centers in meters.
+* width is X-axis span, depth is Z-axis span.
+* elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+* rotation_deg rotates the item around its center.
+
+RULES-APPLICATION:
+
+* One item per physical instance: table_1 is a complete, practical implementation.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+V11-RELATION-SEMANTICS-APPLICATION:
+
+* adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+* west_of: places subject WEST of target.
+* south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+* north_of: places subject NORTH of target.
+* above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+* around: distributes subjects in a circle around target.
+* centered: places at room center with optional offsets.
+
+V11-RELATION-APPLICATION:
+
+* r_1: Places table_1 at x=3.0, z=4.0 with no change (centered + wall=null).
+
+V11-DISTRIBUTION-APPLICATION:
+
+* stool_1, stool_2, stool_3, stool_4: Apply seating row placement with south_of + distribution_index,
+  distribution_count, and distribution_span_m. Place four stools in a practical row along the south
+  face of the counter with equal gaps.
+
+V11-CEILING-FIXTURE-APPLICATION:
+
+* pendant_light_1: Set mount="ceiling", height=0.3m, elevation=room_height - height. Apply hanging
+  placement with above + distribution_index, distribution_count, and distribution_span_m. Place
+  pendant_light_1 above the counter with a practical distance from the table.
+
+V11-DOOR-WINDOW-APPLICATION:
+
+* door_1: Place north door with offset=0.0, width=0.9, height=2.1. Never place a door behind furniture.
+
+V11-CAMERA-INTENT-APPLICATION:
+
+* ci_1: Places camera in northeast corner with eye_height_m=1.6 and target_height_m=1.2.
+
+V11-OPENING-INTENT-APPLICATION:
+
+* oi_1: Places door_1 in north wall with centered placement and margin_m=0.1.
+
+V11-RELATION-ZONE-APPLICATION:
+
+* Apply practical zone placement rules before applying V11 relationships.
+	+ Table_1: Centered at x=3.0, z=4.0 with fixed=true.
+* Apply typed placements relative to the item's initial position.
+	+ r_1: Places table_1 at x=3.0, z=4.0 with no change (centered + wall=null).
+
+V11-CIRCULATION-APPLICATION:
+
+* Maintain at least 0.8m clear paths between the door and all zones.
+* A person must walk from the door to any seat without squeezing past furniture.
+
+V11-DESIGN-NOTES-APPLICATION:
+
+* Create practical, buildable floor plan with clear paths and zoned functional areas.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Complete practical, buildable floor plan with clear paths and zoned functional areas. Apply V11
+semantics and rules before placing anything. Return one valid JSON object only. Never encode placement
+intent only in names. One item per physical instance. Items = furniture, built-ins, freestanding fixtures
+only. Doors and windows go in "openings" only. Ceiling fixtures: set mount="ceiling", height = realistic
+hanging size, elevation = room_height - height. fixed=true only for large built-in surfaces. Everything
+else is fixed=false. Apply V11 semantics and rules before placing anything. Return one valid JSON object
+only. Never encode placement intent only in names. One item per physical instance. Items = furniture,
+built-ins, freestanding fixtures only. Doors and windows go in "openings" only. Ceiling fixtures: set
+mount="ceiling", height = realistic hanging size, elevation = room_height - height. fixed=true only for
+large built-in surfaces. Everything else is fixed=false. Apply V11 semantics and rules before placing
+anything. Return one valid JSON object only. Never encode placement intent only in names. One item per
+physical instance. Items = furniture, built-ins, freestanding fixtures only. Doors and windows go in
+"openings" only. Ceiling fixtures: set mount="ceiling", height = realistic hanging size, elevation =
+room_height - height. fixed=true only for large built-in surfaces. Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Complete practical, buildable floor plan with clear paths and zoned functional areas. Apply V11
+semantics and rules before placing anything. Return one valid JSON object only. Never encode placement
+intent only in names. One item per physical instance. Items = furniture, built-ins, freestanding fixtures
+only. Doors and windows go in "openings" only. Ceiling fixtures: set mount="ceiling", height = realistic
+hanging size, elevation = room_height - height. fixed=true only for large built-in surfaces. Everything
+else is fixed=false. Apply V11 semantics and rules before placing anything. Return one valid JSON object
+only. Never encode placement intent only in names. One item per physical instance. Items = furniture,
+built-ins, freestanding fixtures only. Doors and windows go in "openings" only. Ceiling fixtures: set
+mount="ceiling", height = realistic hanging size, elevation = room_height - height. fixed=true only for
+large built-in surfaces. Everything else is fixed=false. Apply V11 semantics and rules before placing
+anything. Return one valid JSON object only. Never encode placement intent only in names. One item per
+physical instance. Items = furniture, built-ins, freestanding fixtures only. Doors and windows go in
+"openings" only. Ceiling fixtures: set mount="ceiling", height = realistic hanging size, elevation =
+room_height - height. fixed=true only for large built-in surfaces. Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else
+  is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|north_of|
+south_of|east_of|west_of|around|above|facing|near_corner","wall":string,"parameters_m":{number},
+"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":string,
+"wall":"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"schema_version":"floor-plan/v11"}
+
+V11-Complete-APPLICATION:
+
+* Return one valid JSON object only. Never encode placement intent only in names.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window
+  in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation
+  = room_height - height.
+* fixed=true only for large built-in surfaces (

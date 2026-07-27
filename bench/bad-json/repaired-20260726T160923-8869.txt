@@ -1,0 +1,1127 @@
+error: Expecting ',' delimiter: line 1125 column 26 (char 33355)
+------------------------------------------------------------
+{
+    "name": "Nail Salon",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "manicure_table_1",
+            "name": "Manicure Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 1.5,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "manicure_table_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "manicure_table_2",
+            "name": "Manicure Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 1.5,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "manicure_table_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "manicure_table_3",
+            "name": "Manicure Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 1.5,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "manicure_table_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_1",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_1",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_2",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_2",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_3",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_3",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_4",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 4.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_4",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_5",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 4.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_5",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_6",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 4.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_6",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "polish_display_wall",
+            "name": "Polish Display Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.5,
+            "width": 4.0,
+            "depth": 0.8,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "polish_display_wall",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "polish_display_wall",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 3.0, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 2.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "polish_display_wall",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1.0, "distribution_count": 3.0, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_3",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 2.5,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_3",
+                    "kind": "above",
+                    "target_id": "polish_display_wall",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 2.0, "distribution_count": 3.0, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_7",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_7",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_8",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_8",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_9",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_9",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_10",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_10",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_11",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_11",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_12",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_12",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_13",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_13",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_14",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_14",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_15",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_15",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_16",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_16",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_17",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_17",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_18",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_18",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_19",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_19",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_20",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_20",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_21",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_21",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_22",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_22",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_23",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_23",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_24",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_24",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_25",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_25",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_26",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_26",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_27",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_27",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_28",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_28",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_29",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_29",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_30",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_30",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_31",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_31",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_32",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_32",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_33",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_33",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_34",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_34",
+                    "kind": "adjacent_to",
+                    "target_id": "manicure_table_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_35",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.8,
+            "depth": 0.6,
+            "height": 1.2

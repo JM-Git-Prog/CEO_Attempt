@@ -1,0 +1,990 @@
+error: Expecting property name enclosed in double quotes: line 988 column 26 (char 32451)
+------------------------------------------------------------
+{
+    "name": "Urgent Care Triage Room",
+    "room": {
+        "width": 5.0,
+        "depth": 4.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "bed_1",
+            "name": "Bed",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bed_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "vitals_cart_1",
+            "name": "Vitals Cart",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.5,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "vitals_cart_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "visitor_chair_1",
+            "name": "Visitor Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.0,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "visitor_chair_1",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "supply_cabinet_1",
+            "name": "Supply Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 0.5,
+            "width": 1.8,
+            "depth": 1.2,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "supply_cabinet_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_1",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_1",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_2",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_2",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_3",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_3",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_4",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_4",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_5",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_5",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_6",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_6",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_7",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_7",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_8",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_8",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_9",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_9",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_10",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_10",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_11",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_11",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_12",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_12",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_13",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_13",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_14",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_14",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_15",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_15",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_16",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_16",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_17",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_17",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_18",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_18",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_19",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_19",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_20",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_20",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_21",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_21",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_22",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_22",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_23",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_23",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_24",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_24",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_25",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_25",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_26",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_26",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_27",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_27",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_28",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_28",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_29",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_29",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_30",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_30",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_31",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_31",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_32",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_32",
+                    "kind": "above",
+                    "target_id": "vitals_cart_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_33",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 0.6,

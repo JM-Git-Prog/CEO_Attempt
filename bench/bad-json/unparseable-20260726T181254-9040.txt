@@ -1,0 +1,448 @@
+error: Expecting ',' delimiter: line 24 column 29 (char 1658)
+------------------------------------------------------------
+{"name":"1980s Arcade",
+"room":{"width":10,"depth":12,"height":3},
+"items":[{"id":"cabinet_1","name":"Galaga","category":"furniture",
+"mount":"floor","x":0.5,"z":2,"width":0.8,"depth":1.9,"height":2.4,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.75,"description":"Classic arcade cabinet"},
+{"id":"cabinet_2","name":"Pac-Man","category":"furniture",
+"mount":"floor","x":1.7,"z":2,"width":0.8,"depth":1.9,"height":2.4,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.75,"description":"Iconic arcade cabinet"},
+{"id":"cabinet_3","name":"Donkey Kong","category":"furniture",
+"mount":"floor","x":3.1,"z":2,"width":0.8,"depth":1.9,"height":2.4,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.75,"description":"Retro arcade classic"},
+{"id":"cabinet_4","name":"Space Invaders","category":"furniture",
+"mount":"floor","x":4.5,"z":2,"width":0.8,"depth":1.9,"height":2.4,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.75,"description":"Early arcade shooter"},
+{"id":"cabinet_5","name":"Centipede","category":"furniture",
+"mount":"floor","x":6.1,"z":2,"width":0.8,"depth":1.9,"height":2.4,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.75,"description":"Retro arcade game"},
+{"id":"change_machine","name":"Quarter-Operated Change Machine",
+"category":"fixture","mount":"wall","x":5.1,"z":0,"width":0.7,"depth":0.8,
+"height":2.4,"elevation":3,"rotation_deg":0,"fixed":true,"clearance_m":0.75,
+"description":"A practical fixture for gamers"},
+{"id":"neon_light_1","name":"Arcade-Style Neon Light",
+"category":"decor","mount":"ceiling","x":5.2,"z":3,"width":0.4,"depth":0.4,
+"height":0.6,"elevation":2.8-0.6,"rotation_deg":0,"fixed":false,"clearance_m":0.75,
+"description":"A decorative neon light adding ambiance to the space"},
+{"id":"neon_light_2","name":"Arcade-Style Neon Light",
+"category":"decor","mount":"ceiling","x":5.8,"z":3,"width":0.4,"depth":0.4,
+"height":0.6,"elevation":2.8-0.6,"rotation_deg":0,"fixed":false,"clearance_m":0.75,
+"description":"A decorative neon light adding ambiance to the space"}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.3,"width":0.9,
+"height":2.1,"sill_height":0}],
+"camera":{"x":5.4,"y":1.6,"z":1.8,"target_x":0,"target_y":0,"target_z":0,
+"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Zones: Seating = north half, Gaming = south half.",
+"Relational placement: apply against_wall + east_of + along_offset_m=0 + wall_gap_m",
+"Ceiling fixtures: apply mount='ceiling' + height=0.3-0.5m + elevation=room_height - height"],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"cabinet_1-against_wall","subject_id":"cabinet_1",
+"kind":"against_wall","wall":null,"parameters_m":{"x":0,"z":2},"weight":1,
+"relaxable":false}],
+{"id":"cabinet_2-east_of_cabinet_1","subject_id":"cabinet_2","kind":"east_of",
+"target_id":"cabinet_1","wall":null,"parameters_m":{"x":0.8,"z":0},
+"weight":1,"relaxable":false},
+{"id":"cabinet_3-east_of_cabinet_2","subject_id":"cabinet_3","kind":"east_of",
+"target_id":"cabinet_2","wall":null,"parameters_m":{"x":0.8,"z":0},
+"weight":1,"relaxable":false},
+{"id":"cabinet_4-south_of_cabinet_3","subject_id":"cabinet_4","kind":"south_of",
+"target_id":"cabinet_3","wall":"north","parameters_m":{"x":0,"z":-2},
+"weight":1,"relaxable":false},
+{"id":"cabinet_5-south_of_cabinet_4","subject_id":"cabinet_5","kind":"south_of",
+"target_id":"cabinet_4","wall":"north","parameters_m":{"x":0,"z":-2},
+"weight":1,"relaxable":false},
+{"id":"change_machine-north_of_cabinet_5","subject_id":"change_machine",
+"kind":"north_of","target_id":"cabinet_5","wall":null,
+"parameters_m":{"x":0,"z":2},"weight":1,"relaxable":false}],
+"opening_intents":[{"id":"door_1-intent","opening_id":"door_1","wall":"north",
+"placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera-intent","corner":"northeast",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,
+"fov_deg":55}}
+V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number:"x";number:"z";...},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west",
+"placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number}}.V11 EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes.
+
+COORDINATE SYSTEM:
+Room center is (0, 0). North is +Z, East is +X.
+x,z are the item's CENTER position in meters.
+width is the X-axis span, depth is the Z-axis span.
+elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north

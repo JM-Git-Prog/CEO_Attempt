@@ -1,0 +1,37 @@
+error: Invalid control character at: line 4 column 82 (char 301)
+------------------------------------------------------------
+{"name":"Diner Interior","room":{"width":6,"depth":4,"height":2.8},
+"items":[{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor",
+"x":0.9,"z":1.5,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.3,
+"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"Veneer-wood seat,
+metal frame."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2,"sill_height":0.0}],
+"camera":{"x":-1.6,"y":1.6,"z":2.3,"target_x":0.4,"target_y":0.7,
+"target_z":0.0,"fov_deg":55},
+"openings_intents":[{"id":"oi_1","opening_id":"door_1","wall":"west",
+"placement":"near_corner","corner":"northwest","margin_m":0.2}],
+"camera_intent":{"id":"ci_1","corner":"southeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"relationships":[{"id":"r_1","subject_id":"stool_1","kind":"adjacent_to",
+"wall":null,"parameters_m":{"x":0.4,"z":0},"weight":1,"relaxable":false}],
+"schema_version":"floor-plan/v11",
+"zone_intents":[],"wall_notes":[],"ceiling_notes":[],"floor_notes":[],
+"circulation_notes":["Path from door to stool is clear."],"design_notes":[],
+"items_intents":[],"openings_mntk":[],"camera_mntk":[]}
+
+V11-INTENT-ONLY-EXTENSION-REPAIR — apply these rules in addition to complete-v11:
+1. RELATION SEMANTICS: Apply geometric operations relative to the subject's final position.
+2. ZONES: Identify functional zones before placing furniture. Use against_wall + wall + along_offset_m
+   for fixed, focal-point pieces. Never place zone-centered furniture before establishing the zone.
+3. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands) go
+   in the center. Never cluster everything at 0,0.
+4. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. A person must walk
+   from the door to any seat without squeezing past furniture.
+5. RELATIONSHIPS + INTENTS: These are geometric operations, not natural-language synonyms. Use them
+   to place items relative to each other, not to encode intent or name. Never repeat semantic intent
+   only in names.
+6. EXPLICIT-INTENT-ONLY-SCHEMA: Return one complete V11 object with all mandatory fields including
+   name, room, items, openings, camera, schema_version, relationships, opening_intents,
+   camera_intent, zones, wall_notes, ceiling_notes, floor_notes, items_intents,
+   opening_mntk, camera_mntk, zone_intents, and wall_mntk. Never encode intent only in partial data.

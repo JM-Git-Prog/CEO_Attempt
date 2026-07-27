@@ -1,0 +1,99 @@
+error: Expecting property name enclosed in double quotes: line 6 column 1 (char 326)
+------------------------------------------------------------
+{"name":"Diner Counter",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor","x":0.5,
+"z":3.0,"width":0.4,"depth":0.6,"height":0.8,"elevation":0.2,"rotation_deg":0,
+"fixed":true,"clearance_m":0.7,"description":"A chrome stool with a curved back."}],
+["stool_2","Stool 2", "furniture", "floor", 1.5, 3.0, 0.4, 0.6, 0.8, 0.2, 0, true, 0.7,
+"A chrome stool with a curved back."],
+["stool_3","Stool 3", "furniture", "floor", 3.0, 3.0, 0.4, 0.6, 0.8, 0.2, 0, true, 0.7,
+"A chrome stool with a curved back."],
+["stool_4","Stool 4", "furniture", "floor", 4.5, 3.0, 0.4, 0.6, 0.8, 0.2, 0, true, 0.7,
+"A chrome stool with a curved back."],
+["counter","Counter", "furniture", "floor", 1.0, 0.0, 1.5, 0.9, 0.6, 0.3, 0, false, 0.8,
+"An L-shaped counter with four stools along its length."],
+["pendant","Pendant Light", "fixture", "ceiling", 2.7/2, 4.5-0.3, 0.3, 0.3, 0.6, 0.9-0.6,
+0, false, 0.1, "A pendant light hanging above the counter."],
+["window","Window", "architectural", "wall", 0, 4.5, 2.0, 1.0, 0.8, 0.3, null, true, 0,
+"An exterior window showing rain on the glass."]],
+"openings":[{"id":"door","kind":"door","wall":"north","offset":0,"width":0.9,
+"height":2.1,"sill_height":0}],
+"camera":{"x":0,"y":1.6,"z":0,"target_x":0,"target_y":0,"target_z":0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan showing the counter and stools.",
+"Apply ZONES: Identify functional zones (seating, work) and place primary furniture first.",
+"WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces go in the center."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"stool_1-against_wall","subject_id":"stool_1","kind":"against_wall",
+"wall":null,"parameters_m":{},"weight":1,"relaxable":false}],
+["stool_2-against_wall", "stool_2", "against_wall", null, {}, 1, false],
+["stool_3-against_wall", "stool_3", "against_wall", null, {}, 1, false],
+["stool_4-against_wall", "stool_4", "against_wall", null, {}, 1, false],
+["counter-centered", "counter", "centered", null, {}, 1, false],
+["pendant-above_counter", "pendant", "above", "counter", {"height":0.3}, 1, true],
+["window-apply_north_wall", "window", "apply_north_wall", null, {}, 1, false]],
+"opening_intents":[{"id":"door-intent","kind":"open-door-intent",
+"wall":"north","placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera-intent","corner":"northeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"v11_extras":{}}
+
+V11 RELATION SEMANTICS — apply these geometric operations before placing anything:
+* adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+* west_of: places subject WEST of target.
+* south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+* north_of: places subject NORTH of target.
+* above: places subject directly above target at ceiling. Use for pendant lights hanging above a surface.
+* around: distributes subjects in a circle around target with equal spacing.
+* centered: places at room center with optional x,z offsets.
+
+V11 OPENING INTENT — apply this placement operation after relationships but before camera:
+* kind: door | window
+* wall: north | south | east | west
+* placement: centered | near_corner
+* corner: northwest | northeast | southwest | southeast (optional)
+* margin_m: distance from wall surface to nearest item edge
+
+V11 CAMERA INTENT — apply this placement operation after relationships and openings:
+* corner: northwest | northeast | southwest | southeast
+* target_id: optional ID of an item to focus on
+* inset_m: distance from corner edge to camera
+* eye_height_m: height of the camera above the floor
+* target_height_m: height of the target item (0 for focal point, room_height - item_height for ceiling item)
+* fov_deg: field of view in degrees
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is the X-axis span, depth is the Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|…",
+"wall":string,"parameters_m":{"key":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"kind":"open-door-intent","wall":string,"placement":"centered|near_corner",
+"corner":string,"margin_m":number}], "camera_intent":{"id":string,"corner":string,
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"v11_extras":{}}
+
+V11-EXPLICIT-INTENT EXTENSION — augment the complete base schema above; do not replace it.
+Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes. Add schema_version="floor-plan/v11", relationships,
+opening_intents, camera_intent, and v11_extras. Never encode placement intent only in names.

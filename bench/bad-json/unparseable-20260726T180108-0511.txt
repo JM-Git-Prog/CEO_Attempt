@@ -1,0 +1,129 @@
+error: Extra data: line 44 column 1 (char 1913)
+------------------------------------------------------------
+{"name":"1970s Airport Lounge",
+"room":{"width":10,"depth":12,"height":3},
+"items":[{"id":"swivel_chair_1","name":"Swivel Chair 1",
+"category":"furniture","mount":"floor","x":2.5,"z":6,
+"width":0.7,"depth":0.8,"height":0.9,"elevation":0,
+"rotation_deg":0,"fixed":false,"clearance_m":0.75,
+"description":"A comfortable, practical chair for seating."}],
+"openings":[{"id":"window_1","kind":"window",
+"wall":"west","offset":0.5,"width":1.2,"height":1.8,
+"sill_height":0.3}],
+"camera":{"x":4,"y":1.6,"z":0,"target_x":0,"target_y":0,
+"target_z":0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable seating arrangement.",
+"Apply ZONES: Identify functional zones (seating, work, circulation).",
+"WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces go in the center."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"seating_1","subject_id":"swivel_chair_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1,
+"relaxable":false}],
+"opening_intents":[{"id":"window_1_intent",
+"opening_id":"window_1","placement":"centered",
+"corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera_1","corner":"northwest",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55},
+"items_v11":[],
+"openings_v11":[],
+"camera_v11":{"x":4,"y":1.6,"z":0,"target_x":0,"target_y":0,
+"target_z":0,"fov_deg":55},
+"circulation_notes_v11":[],
+"design_notes_v11":[],
+"schema_version_v11":"floor-plan/v11",
+"relationships_v11":[{"id":"seating_1","subject_id":"swivel_chair_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1,
+"relaxable":false}],
+"opening_intents_v11":[{"id":"window_1_intent",
+"opening_id":"window_1","placement":"centered",
+"corner":null,"margin_m":0.1}],
+"camera_intent_v11":{"id":"camera_1","corner":"northwest",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55}}
+
+V11-EXPLICIT-INTENT AUGMENTATION — applying complete schema with typed placements:
+
+* Items remain the same; no V11 augmentation applies.
+* Openings remain the same; no V11 augmentation applies.
+* Camera remains the same; no V11 augmentation applies.
+* Circulation notes and design notes remain empty; no V11 augmentation applies.
+* Schema version remains "floor-plan/v11"; no change.
+* Relationships: apply ZONES + WALLS FIRST + CIRCULATION + RELATION SEMANTICS.
+* Opening intents: apply EXPLICIT-INTENT RULES with placement = centered + wall = west.
+* Camera intent: remain the same; no V11 augmentation applies.
+
+RELATION SEMANTICS — applying typed placements:
+
+* seating_1: centered + wall = null => x, z remain the same.
+* No against_wall or wall = north/south/east/west applications; everything is focal-point furniture.
+* No adjacent_to, east_of, west_of, south_of, or north_of applications; seating is practical, not geometric.
+
+EXPLICIT-INTENT RULES — applying placement + wall + optional target + parameters_m:
+
+* window_1_intent: placement = centered + wall = west + corner = null + margin_m = 0.1.
+* No against_wall application; window is a focal-point piece.
+
+COORDINATE SYSTEM — applying x, z, width, depth, height, elevation, and rotation_deg:
+
+* x, z remain the same from item_1.
+* width = 0.7, depth = 0.8, height = 0.9 for practical chair dimensions.
+* elevation = 0 for floor-item placement.
+* rotation_deg = 0 for front-facing chair.
+
+V11-EXPLICIT-INTENT COMPLETE-SCHEMA APPLICATION — combining all augmentations:
+
+* Items remain the same; no V11 augmentation applies.
+* Openings remain the same; no V11 augmentation applies.
+* Camera remains the same; no V11 augmentation applies.
+* Circulation notes and design notes remain empty; no V11 augmentation applies.
+* Schema version remains "floor-plan/v11"; no change.
+* Relationships: apply complete ZONES + WALLS FIRST + CIRCULATION + RELATION SEMANTICS.
+* Opening intents: apply EXPLICIT-INTENT RULES with placement = centered + wall = west.
+* Camera intent: remain the same; no V11 augmentation applies.
+
+FINAL-SCHEMA-APPLICATION-ONLY-RETURN-JSON — returning complete, valid JSON object only:
+
+{"name":"1970s Airport Lounge",
+"room":{"width":10,"depth":12,"height":3},
+"items":[{"id":"swivel_chair_1","name":"Swivel Chair 1",
+"category":"furniture","mount":"floor","x":2.5,"z":6,
+"width":0.7,"depth":0.8,"height":0.9,"elevation":0,
+"rotation_deg":0,"fixed":false,"clearance_m":0.75,
+"description":"A comfortable, practical chair for seating."}],
+"openings":[{"id":"window_1","kind":"window",
+"wall":"west","offset":0.5,"width":1.2,"height":1.8,
+"sill_height":0.3}],
+"camera":{"x":4,"y":1.6,"z":0,"target_x":0,"target_y":0,
+"target_z":0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable seating arrangement.",
+"Apply ZONES: Identify functional zones (seating, work, circulation).",
+"WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces go in the center."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"seating_1","subject_id":"swivel_chair_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1,
+"relaxable":false}],
+"opening_intents":[{"id":"window_1_intent",
+"opening_id":"window_1","placement":"centered",
+"corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera_1","corner":"northwest",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55},
+"items_v11":[],
+"openings_v11":[],
+"camera_v11":{"x":4,"y":1.6,"z":0,"target_x":0,"target_y":0,
+"target_z":0,"fov_deg":55},
+"circulation_notes_v11":[],
+"design_notes_v11":[],
+"schema_version_v11":"floor-plan/v11",
+"relationships_v11":[{"id":"seating_1","subject_id":"swivel_chair_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1,
+"relaxable":false}],
+"opening_intents_v11":[{"id":"window_1_intent",
+"opening_id":"window_1","placement":"centered",
+"corner":null,"margin_m":0.1}],
+"camera_intent_v11":{"id":"camera_1","corner":"northwest",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55}}

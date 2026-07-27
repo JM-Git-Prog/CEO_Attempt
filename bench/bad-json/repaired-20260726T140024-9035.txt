@@ -1,0 +1,1105 @@
+error: Expecting ',' delimiter: line 1103 column 29 (char 33226)
+------------------------------------------------------------
+{
+    "schema_version": "floor-plan/v11",
+    "name": "Hotel Room",
+    "room": {
+        "width": 4.5,
+        "depth": 3.6,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "bed_1",
+            "name": "Queen Bed",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 0.5,
+            "z": 1.8,
+            "width": 2.3,
+            "depth": 1.9,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bed_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_1",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_1",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_2",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.4,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_2",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "luggage_bench",
+            "name": "Luggage Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.2,
+            "z": 3.6,
+            "width": 0.9,
+            "depth": 0.5,
+            "height": 0.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "luggage_bench",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "desk",
+            "name": "Desk",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 1.4,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "desk",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.9,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.5,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair",
+                    "kind": "facing",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "blackout_curtains",
+            "name": "Blackout Curtains",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 3.0,
+            "depth": 0.9,
+            "height": 1.8,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "blackout_curtains",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 2.3,
+            "depth": 0.9,
+            "height": 2.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.4,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_3",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_3",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_4",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.4,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_4",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "luggage_bench_2",
+            "name": "Luggage Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.2,
+            "z": 3.6,
+            "width": 0.9,
+            "depth": 0.5,
+            "height": 0.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "luggage_bench_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_2",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.9,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.5,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_2",
+                    "kind": "facing",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "blackout_curtains_2",
+            "name": "Blackout Curtains",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 3.0,
+            "depth": 0.9,
+            "height": 1.8,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "blackout_curtains_2",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_2",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 2.3,
+            "depth": 0.9,
+            "height": 2.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_2",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.4,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_2",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_5",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_5",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_6",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.4,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_6",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "luggage_bench_3",
+            "name": "Luggage Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.2,
+            "z": 3.6,
+            "width": 0.9,
+            "depth": 0.5,
+            "height": 0.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "luggage_bench_3",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_3",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.9,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.5,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_3",
+                    "kind": "facing",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "blackout_curtains_3",
+            "name": "Blackout Curtains",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 3.0,
+            "depth": 0.9,
+            "height": 1.8,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "blackout_curtains_3",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_3",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 2.3,
+            "depth": 0.9,
+            "height": 2.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_3",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.4,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_3",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_7",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_7",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_8",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.4,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_8",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "luggage_bench_4",
+            "name": "Luggage Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.2,
+            "z": 3.6,
+            "width": 0.9,
+            "depth": 0.5,
+            "height": 0.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "luggage_bench_4",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_4",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.9,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.5,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_4",
+                    "kind": "facing",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "blackout_curtains_4",
+            "name": "Blackout Curtains",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 3.0,
+            "depth": 0.9,
+            "height": 1.8,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "blackout_curtains_4",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_4",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 2.3,
+            "depth": 0.9,
+            "height": 2.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_4",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.4,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_4",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_9",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_9",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_10",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.4,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_10",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "luggage_bench_5",
+            "name": "Luggage Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.2,
+            "z": 3.6,
+            "width": 0.9,
+            "depth": 0.5,
+            "height": 0.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "luggage_bench_5",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_5",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.9,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.5,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_5",
+                    "kind": "facing",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "blackout_curtains_5",
+            "name": "Blackout Curtains",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 3.0,
+            "depth": 0.9,
+            "height": 1.8,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "blackout_curtains_5",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_5",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 2.3,
+            "depth": 0.9,
+            "height": 2.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_5",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 1.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.4,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_5",
+                    "kind": "above",
+                    "target_id": "desk",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 1.0, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_11",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_11",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "nightstand_12",
+            "name": "Nightstand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.4,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "nightstand_12",
+                    "kind": "adjacent_to",
+                    "target_id": "bed_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "luggage_bench_6",
+            "name": "Luggage Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.2,
+            "z": 3.6,
+            "width": 0.9,
+            "depth": 0.5,
+            "height": 0.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "luggage_bench_6",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_6",
+            "name": "Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.9,
+            "z": 1.8,
+            "width": 0.6,
+            "depth": 0.5,
+            "height": 0.7,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.

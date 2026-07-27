@@ -1,0 +1,1032 @@
+error: Expecting property name enclosed in double quotes: line 1029 column 33 (char 32672)
+------------------------------------------------------------
+{
+    "name": "Courtroom Corner",
+    "schema_version": "floor-plan/v11",
+    "room": {
+        "width": 10.0,
+        "depth": 12.0,
+        "height": 3.2
+    },
+    "items": [
+        {
+            "id": "judge_bench",
+            "name": "Judge Bench",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 6.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "judge_bench",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "witness_stand",
+            "name": "Witness Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 6.0,
+            "width": 1.8,
+            "depth": 2.0,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "witness_stand",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "counsel_table_1",
+            "name": "Counsel Table 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 8.0,
+            "width": 3.0,
+            "depth": 1.5,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "counsel_table_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                },
+                {
+                    "subject_id": "stool_1",
+                    "kind": "adjacent_to",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                },
+                {
+                    "subject_id": "stool_3",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "counsel_table_2",
+            "name": "Counsel Table 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 8.0,
+            "width": 3.0,
+            "depth": 1.5,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "counsel_table_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                },
+                {
+                    "subject_id": "stool_2",
+                    "kind": "adjacent_to",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                },
+                {
+                    "subject_id": "stool_4",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_1",
+            "name": "Stool 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 9.0,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_1",
+                    "kind": "adjacent_to",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_2",
+            "name": "Stool 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 9.0,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_2",
+                    "kind": "adjacent_to",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_3",
+            "name": "Stool 3",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 10.0,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_3",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_4",
+            "name": "Stool 4",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 10.0,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_4",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window 1",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 3.0,
+            "depth": 2.0,
+            "height": 2.5,
+            "elevation": 1.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_2",
+            "name": "Window 2",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 4.0,
+            "width": 3.0,
+            "depth": 2.0,
+            "height": 2.5,
+            "elevation": 1.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_3",
+            "name": "Window 3",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.0,
+            "height": 2.5,
+            "elevation": 1.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "door_1",
+            "name": "Door 1",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 1.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_4",
+            "name": "Window 4",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 2.0,
+            "height": 2.5,
+            "elevation": 1.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "lighting_1",
+            "name": "Lighting 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 6.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_1",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_2",
+            "name": "Lighting 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 6.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_2",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_3",
+            "name": "Lighting 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 8.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_3",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_4",
+            "name": "Lighting 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 8.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_4",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_5",
+            "name": "Lighting 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 10.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_5",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_6",
+            "name": "Lighting 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 10.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_6",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_7",
+            "name": "Lighting 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 12.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_7",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_8",
+            "name": "Lighting 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 12.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_8",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_9",
+            "name": "Lighting 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 14.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_9",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_10",
+            "name": "Lighting 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 14.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_10",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_11",
+            "name": "Lighting 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 16.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_11",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_12",
+            "name": "Lighting 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 16.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_12",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_13",
+            "name": "Lighting 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 18.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_13",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_14",
+            "name": "Lighting 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 18.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_14",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_15",
+            "name": "Lighting 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 20.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_15",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_16",
+            "name": "Lighting 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 20.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_16",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_17",
+            "name": "Lighting 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 22.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_17",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_18",
+            "name": "Lighting 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 22.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_18",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_19",
+            "name": "Lighting 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 24.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_19",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_20",
+            "name": "Lighting 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 24.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_20",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_21",
+            "name": "Lighting 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 26.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_21",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_22",
+            "name": "Lighting 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 26.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_22",
+                    "kind": "above",
+                    "target_id": "counsel_table_2",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_23",
+            "name": "Lighting 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 28.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_23",
+                    "kind": "above",
+                    "target_id": "counsel_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0.0, "distribution_count": 2.0, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_24",
+            "name": "Lighting 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 6.5,
+            "z": 28.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.4,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+           

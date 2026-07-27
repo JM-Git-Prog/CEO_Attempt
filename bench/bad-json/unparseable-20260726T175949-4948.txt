@@ -1,0 +1,77 @@
+error: Invalid control character at: line 5 column 84 (char 328)
+------------------------------------------------------------
+{"name":"1990s Teenage Bedroom",
+"room":{"width":4.5,"depth":6.2,"height":2.8},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor","x":1.7,
+"z":3.1,"width":2.0,"depth":1.9,"height":0.5,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.75,"description":"A single bed with a wooden frame and
+mattress."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.0,"width":0.9,
+"height":2.1,"sill_height":0.0}],
+"camera":{"x":0.0,"y":1.6,"z":0.0,"target_x":0.0,"target_y":0.0,"target_z":0.0,
+"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Apply practical furniture placement rules before placing anything."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"bed_1-0","subject_id":"bed_1","kind":"centered","wall":null,
+"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"door_1-intent","opening_id":"door_1","wall":"west",
+"placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera-0","corner":"northwest","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55.0}}
+
+V11 EXPLICIT-INTENT APPLICATION — apply typed placement rules before placing anything:
+1. ZONES: Identify functional zones (seating, work, circulation). Place primary furniture first,
+then support pieces relative to it.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands)
+go in the center. Never cluster everything at 0,0.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. A person must
+walk from the door to any seat without squeezing past furniture.
+4. RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+	* adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+	* west_of: places subject WEST of target.
+	* south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's
+south face.
+	* north_of: places subject NORTH of target.
+	* above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+	* around: distributes subjects in a circle around target.
+	* centered: places at room center with optional offsets.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is the X-axis span, depth is the Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-ONLY EXTENSION — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, and design_notes.
+- Add schema_version="floor-plan/v11".
+- Add relationships with EXACTLY one typed placement for every item. Each entry has subject_id,
+  kind, optional target_id/wall, and parameters_m. Never encode placement intent only in names.
+- Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+  wall_gap_m is distance from wall surface to nearest item edge; ensure depth/2 + wall_gap_m < half_room_depth.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms.
+
+V11-EXPLICIT-INTENT-ONLY-APPLICATION — apply typed placement rules before placing anything:
+1. ZONES: Identify functional zones (seating, work, circulation). Place primary furniture first,
+then support pieces relative to it.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands)
+go in the center. Never cluster everything at 0,0.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. A person must
+walk from the door to any seat without squeezing past furniture.
+
+V11-EXPLICIT-INTENT-ONLY-SCHEMA — augment complete base schema; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, and design_notes.
+- Add schema_version="floor-plan/v11".
+- Add relationships with EXACTLY one typed placement for every item. Each entry has subject_id,
+  kind, optional target_id/wall, and parameters_m. Never encode placement intent only in names.
+
+V11-EXPLICIT-INTENT-ONLY-COORDINATE-SYSTEM — apply typed placement rules before placing anything:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is the X-axis span, depth is the Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).

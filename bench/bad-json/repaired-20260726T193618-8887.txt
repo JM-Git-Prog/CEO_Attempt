@@ -1,0 +1,1076 @@
+error: Unterminated string starting at: line 1074 column 13 (char 32246)
+------------------------------------------------------------
+{
+    "name": "Wine Cellar Tasting Room",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "tasting_table_1",
+            "name": "Tasting Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "tasting_table_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_1",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_1",
+                    "kind": "adjacent_to",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_2",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.1,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_2",
+                    "kind": "adjacent_to",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_3",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_3",
+                    "kind": "south_of",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_4",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.1,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_4",
+                    "kind": "south_of",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sconce_1",
+            "name": "Candle-Warm Sconce",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 1.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sconce_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "sconce_2",
+            "name": "Candle-Warm Sconce",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 1.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "sconce_2",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_5",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.7,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_5",
+                    "kind": "adjacent_to",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.7, "z": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_6",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.7,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_6",
+                    "kind": "adjacent_to",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.7, "z": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_7",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.7,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_7",
+                    "kind": "south_of",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_8",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.7,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_8",
+                    "kind": "south_of",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_1",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_2",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_3",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_3",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_4",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_4",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_5",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_5",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_6",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_6",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_7",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_7",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_8",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_8",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_9",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_9",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_10",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_10",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_11",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_11",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_12",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_12",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_13",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_13",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_14",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_14",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_15",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_15",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_16",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_16",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_17",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_17",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_18",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_18",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_19",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_19",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_20",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_20",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_21",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_21",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_22",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_22",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_23",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_23",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_24",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_24",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_25",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_25",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_26",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_26",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_27",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_27",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_28",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fixture_28",
+                    "kind": "above",
+                    "target_id": "tasting_table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0, "z": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fixture_29",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed

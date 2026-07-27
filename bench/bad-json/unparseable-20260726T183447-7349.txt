@@ -1,0 +1,60 @@
+error: Expecting ',' delimiter: line 11 column 151 (char 2068)
+------------------------------------------------------------
+{"name":"Farmhouse Kitchen",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"table_1","name":"Harvest Table","category":"furniture","mount":"floor","x":3.0,"z":4.0,"width":2.5,"depth":1.5,"height":0.9,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Large wooden table"},
+{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor","x":0.8,"z":3.2,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,"description":"Mismatched stool"},
+{"id":"stool_2","name":"Stool 2","category":"furniture","mount":"floor","x":1.4,"z":3.2,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,"description":"Mismatched stool"},
+{"id":"stool_3","name":"Stool 3","category":"furniture","mount":"floor","x":2.0,"z":3.2,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,"description":"Mismatched stool"},
+{"id":"stool_4","name":"Stool 4","category":"furniture","mount":"floor","x":2.8,"z":3.2,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,"description":"Mismatched stool"},
+{"id":"stool_5","name":"Stool 5","category":"furniture","mount":"floor","x":3.6,"z":3.2,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,"description":"Mismatched stool"},
+{"id":"stool_6","name":"Stool 6","category":"furniture","mount":"floor","x":4.2,"z":3.2,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,"description":"Mismatched stool"},
+{"id":"stove_1","name":"Iron Stove","category":"furniture","mount":"floor","x":2.5,"z":0.8,"width":0.7,"depth":0.9,"height":1.4,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Large iron stove"},
+{"id":"fixture_1","name":"Pendant Light 1","category":"fixture","mount":"ceiling","x":3.2,"z":4.8,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.7-0.5,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Pendant light fixture"},
+{"id":"fixture_2","name":"Pendant Light 2","category":"fixture","mount":"ceiling","x":1.8,"z":4.8,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.7-0.5,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Pendant light fixture"},
+{"id":"fixture_3","name":"Pendant Light 3","category":"fixture","mount":"ceiling","x":4.8,"z":4.8,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.7-0.5,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Pendant light fixture"},
+{"id":"fixture_4","name":"Pendant Light 4","category":"fixture","mount":"ceiling","x":0.8,"z":4.8,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.7-0.5,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Pendant light fixture"},
+{"id":"fixture_5","name":"Pendant Light 5","category":"fixture","mount":"ceiling","x":2.8,"z":4.8,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.7-0.5,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Pendant light fixture"},
+{"id":"fixture_6","name":"Pendant Light 6","category":"fixture","mount":"ceiling","x":3.8,"z":4.8,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.7-0.5,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Pendant light fixture"},
+{"id":"window_1","name":"Window 1","category":"architectural","mount":"wall","x":4.8,"z":0.0,"width":0.9,"depth":2.1,"height":0.0,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Window over counter"},
+{"id":"window_2","name":"Window 2","category":"architectural","mount":"wall","x":4.8-0.9/2,"z":0.0+2.1,"width":0.9,"depth":2.1,"height":0.0,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Window over counter"},
+{"id":"arch_1","name":"Countertop 1","category":"furniture","mount":"floor","x":3.2-0.5/2,"z":0.8+0.7,"width":0.5,"depth":0.7,"height":0.0,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Counter near stove"},
+{"id":"arch_2","name":"Countertop 2","category":"furniture","mount":"floor","x":4.8-0.5/2,"z":0.8+0.7,"width":0.5,"depth":0.7,"height":0.0,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"Counter near window"},
+],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera":{"x":3.5,"y":1.6,"z":1.7,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"r_1","subject_id":"table_1","kind":"centered","wall":null,"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"oi_1","opening_id":"door_1","wall":"north","placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"ci_1","corner":"northwest","target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+}
+
+V11-EXPLICIT-INTENT-EXTENSION — augment the complete base schema above; do not replace it:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, and design_notes.
+- Add schema_version="floor-plan/v11".
+- Add relationships with EXACTLY one typed placement for every item. Each entry has subject_id,
+  kind, optional target_id/wall, and parameters_m. Never encode placement intent only in names.
+- Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+  wall_gap_m is distance from wall surface to nearest item edge; ensure depth/2 + wall_gap_m < half_room_depth.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+- Repeated rows must be compact rather than stretched across the complete target. Unless the user
+  gives an exact spacing, use 0.5m center spacing for floor seating and 0.6m center spacing for
+  ceiling pendants. distribution_span_m = (count - 1) * spacing (e.g. 1.5m for four stools, 1.2m for three pendants).
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+- Add opening_intents with exactly one entry per opening. placement is centered or near_corner;
+  near_corner also declares northwest/northeast/southwest/southeast.
+- Add camera_intent with corner, target_id, inset_m, eye_height_m, target_height_m, and fov_deg.
+- Initial x/z/offset/camera values are placeholders only; the deterministic solver owns final values.
+Return JSON only and conform exactly to the supplied FloorPlanV11 JSON schema.

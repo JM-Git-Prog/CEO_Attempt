@@ -1,0 +1,26 @@
+error: Invalid control character at: line 10 column 81 (char 631)
+------------------------------------------------------------
+{"name":"Victorian Parlor","room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"chaise_lounge","name":"Chaise Lounge","category":"furniture",
+"mount":"floor","x":1.5,"z":4.0,"width":1.8,"depth":1.2,"height":0.9,
+"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.75,
+"description":"A comfortable chaise lounge."}],
+"openings":[{"id":"front_door","kind":"door","wall":"north","offset":0.0,
+"width":1.0,"height":2.1,"sill_height":0.0}],
+"camera":{"x":3.0,"y":1.6,"z":1.7,"target_x":0.0,"target_y":0.0,
+"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],"design_notes":["Create a practical, buildable floor plan
+with clear zones and circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"1","subject_id":"chaise_lounge","kind":"centered",
+"target_id":null,"wall":null,"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"1","opening_id":"front_door","wall":"north",
+"placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"1","corner":"northeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"zones":[],"wall_notes":[],"ceiling_notes":[],"floor_notes":[],
+"against_wall":[{"id":"1","item_id":"chaise_lounge","wall":"north",
+"along_offset_m":0,"wall_gap_m":0.3}],
+"fixed_items":[],"furniture_rows":[],"ceiling_fixtures":[],
+"floorfixtures":[],"architectural_elements":[],"decor":[],
+"apply_rules_before_placement":[true],"apply_schema_rules":true}

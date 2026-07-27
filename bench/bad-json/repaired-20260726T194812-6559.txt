@@ -1,0 +1,1058 @@
+error: Expecting property name enclosed in double quotes: line 1055 column 37 (char 32883)
+------------------------------------------------------------
+{
+    "name": "1980s Aerobics Studio",
+    "room": {
+        "width": 10.0,
+        "depth": 12.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "mirror_wall_1",
+            "name": "Mirror Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 5.0,
+            "z": 6.0,
+            "width": 10.0,
+            "depth": 2.8,
+            "height": 2.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mirror_wall_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ballet_barre_1",
+            "name": "Ballet Barre",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 5.0,
+            "z": 8.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ballet_barre_1",
+                    "kind": "adjacent_to",
+                    "target_id": "mirror_wall_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_1",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_1",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.0,
+            "z": 6.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_1",
+                    "kind": "north_of",
+                    "target_id": "mirror_wall_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_2",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.0,
+            "z": 6.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_2",
+                    "kind": "south_of",
+                    "target_id": "mirror_wall_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_3",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.0,
+            "z": 8.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_3",
+                    "kind": "east_of",
+                    "target_id": "ballet_barre_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_4",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.0,
+            "z": 8.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_4",
+                    "kind": "west_of",
+                    "target_id": "ballet_barre_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_5",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 7.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_5",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_6",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 7.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_6",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_7",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 7.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_7",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 2, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "floor_mat_8",
+            "name": "Floor Mat",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 7.0,
+            "width": 2.0,
+            "depth": 2.8,
+            "height": 0.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "floor_mat_8",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 3, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_1",
+            "name": "Boombox",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_1",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_2",
+            "name": "Boombox",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_2",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_3",
+            "name": "Boombox",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_3",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 2, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_4",
+            "name": "Boombox",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_4",
+                    "kind": "above",
+                    "target_id": "boombox_stand_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 3, "distribution_count": 4, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_2",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_3",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_3",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_4",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_4",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_5",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_5",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_6",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_6",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_7",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_7",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_8",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_8",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_9",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_9",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_10",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_10",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_11",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_11",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_12",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_12",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_13",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_13",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_14",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_14",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_15",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_15",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_16",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_16",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_17",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_17",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_18",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_18",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_19",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_19",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_20",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_20",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_21",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_21",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_22",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_22",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_23",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_23",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_24",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_24",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "boombox_stand_25",
+            "name": "Boombox Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "boombox_stand_25",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                   

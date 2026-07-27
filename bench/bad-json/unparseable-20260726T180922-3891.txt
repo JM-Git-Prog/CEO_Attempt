@@ -1,0 +1,20 @@
+error: Invalid control character at: line 4 column 87 (char 310)
+------------------------------------------------------------
+{"name":"Diner Interior","room":{"width":6,"depth":4,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter","category":"furniture",
+"mount":"floor","x":0,"z":2,"width":4.2,"depth":0.7,"height":0.9,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Rounded polished-chrome
+edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.5,"width":0.9,
+"height":2.1,"sill_height":0.1}],
+"camera":{"x":3,"y":1.6,"z":0.8,"target_x":0,"target_y":1.1,"target_z":0,
+"fov_deg":55},
+"circulation_notes":[],"design_notes":[],
+"scheme_version":"floor-plan/v11",
+"relationships":[{"id":"R-1","subject_id":"counter_1","kind":"centered","wall":null,
+"target_id":null,"parameters_m":{},"weight":1,"relaxable":false}],
+"opening_intents":[{"id":"OI-1","opening_id":"door_1","wall":"west",
+"placement":"near_corner","corner":"northwest","margin_m":0.1}],
+"camera_intent":{"id":"CI-1","corner":"southeast","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"schema_version":"floor-plan/v11"}

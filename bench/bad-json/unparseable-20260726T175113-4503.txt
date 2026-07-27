@@ -1,0 +1,22 @@
+error: Extra data: line 20 column 1 (char 1472)
+------------------------------------------------------------
+{"name":"1970s Rec Room","room":{"width":6.5,"depth":8.2,"height":2.7},
+"items":[{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor",
+"x":0.9,"z":3.4,"width":0.4,"depth":0.4,"height":0.6,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.2,"description":"A practical stool."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.0,"width":0.9,
+"height":2.1,"sill_height":0.0}], "camera":{"x":3.5,"y":1.6,"z":1.7,"target_x":3.15,
+"target_y":1.4,"target_z":0.8,"fov_deg":55.0},"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan with clear paths and zoned furniture."],
+"schema_version":"floor-plan/v11","relationships":[{"id":"rel_1","subject_id":"stool_1",
+"kind":"adjacent_to","target_id":null,"wall":"north","parameters_m":{"x":0.3,"z":0},
+"weight":1.0,"relaxable":false}], "opening_intents":[{"id":"int_1","opening_id":"door_1",
+"wall":"west","placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"intent_1","corner":"northwest","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55.0},
+"items_v11":[],"openings_v11":[{"id":"door_1","kind":"door","wall":"west",
+"offset":0.0,"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera_v11":{"x":3.5,"y":1.6,"z":1.7,"target_x":3.15,"target_y":1.4,
+"target_z":0.8,"fov_deg":55.0},"relational_intents_v11":[],
+"zoning_v11":{"zones":[],"fixed_items":[],"focal_points":[],"boundary_walls":[]}}
+}

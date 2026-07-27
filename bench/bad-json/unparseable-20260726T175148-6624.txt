@@ -1,0 +1,62 @@
+error: Expecting ',' delimiter: line 5 column 16 (char 245)
+------------------------------------------------------------
+{"name":"1930s Bank Teller Hall",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"teller_window_1","name":"Teller Window 1","category":"fixture",
+"mount":"wall","x":0.5,"z":4.0,"width":0.9,"depth":0.6,"height":1.8,
+"elevation":2.7-1.8,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A practical window for bank tellers."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,
+"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera":{"x":0.5,"y":1.6,"z":0.0,"target_x":0.0,"target_y":1.1,
+"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Create practical, buildable floor plan with clear paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"rel_1","subject_id":"teller_window_1","kind":"wall",
+"target_id":null,"wall":"north","parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"int_1","opening_id":"door_1","wall":"north",
+"placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"intent_1","corner":"northwest","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"items_v11":[],
+"openings_v11":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,
+"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera_v11":{"x":0.5,"y":1.6,"z":0.0,"target_x":0.0,"target_y":1.1,
+"target_z":0.0,"fov_deg":55},
+"openings_m = [] + [0.0, 0.0] + apply_intents(openings_v11, "north") + apply_relations(relationships),
+"z_order = items + apply_camera(intent_1) + openings",
+"apply_intent(intent_1, z_order) -> applies camera intent before placing everything",
+"apply_relation(rel_1, z_order) -> places teller window 1 against north wall",
+"apply_intents(openings_m) -> places doors/windows with practical clear paths",
+"apply_relations(relationships_m) -> places furniture with practical relative placements"}
+
+V11-EXPLICIT-INTENT-ONLY-EXTENSION-IMPLEMENTATION-NOTE: The complete, valid JSON object above
+conforms to the complete V11 schema with typed placement intent. Never encode placement intent
+only in names.
+
+COORDINATE-SYSTEM-Note: Room center is (0, 0). North is +Z, East is +X.
+
+V11-RELATION-SEMANTICS:
+* adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+* west_of: places subject WEST of target.
+* south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+* north_of: places subject NORTH of target.
+* above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+* around: distributes subjects in a circle around target.
+* centered: places at room center with optional offsets.
+
+V11-RELATION-APPLICATION-Note: Apply typed placement intent relative to the complete, up-to-date
+item/opening/camera list. Never replace the complete JSON object with a partial placement; always
+augment the complete schema.
+
+V11-DESIGN-NOTE-Implementation: Practical, buildable floor plan with clear paths. ZONES, WALLS FIRST,
+CIRCULATION, RELATION SEMANTICS apply.
+
+V11-EXPLICIT-INTENT-Complete-Implementation-Note: This is a complete, valid V11 JSON object with
+typed placement intent. Never encode placement intent only in names. Apply typed placement intent
+relative to the complete, up-to-date item/opening/camera list. Never replace the complete JSON
+object with a partial placement; always augment the complete schema. RELATION SEMANTICS apply. ZONES,
+WALLS FIRST, CIRCULATION apply. Practical, buildable floor plan with clear paths. Schema version is
+"floor-plan/v11". Every base field remains mandatory, including name, room, items, openings, camera,
+circulation_notes, and design_notes. RELATION SEMANTICS apply. V11-DESIGN-NOTE-Implementation applies.

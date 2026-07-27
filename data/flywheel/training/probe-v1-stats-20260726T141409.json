@@ -1,0 +1,7 @@
+{
+ "built": "20260726T141409",
+ "train": 160,
+ "holdout": 40,
+ "source_records": 200,
+ "system_prompt_chars": 5326
+}

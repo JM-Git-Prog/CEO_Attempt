@@ -1,0 +1,55 @@
+error: Extra data: line 13 column 1 (char 1111)
+------------------------------------------------------------
+{"name":"1970s Rec Room",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"pool_table_1","name":"Pool Table","category":"furniture","mount":"floor","x":3.0,"z":4.0,"width":2.5,"depth":3.5,"height":0.9,"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"A classic 1970s pool table."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera":{"x":0.0,"y":1.6,"z":0.0,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan with clear zones and circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"rel_1","subject_id":"pool_table_1","kind":"centered","wall":null,"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"int_1","opening_id":"door_1","wall":"north","placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"intent_1","corner":"northwest","target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55.0}}
+
+V11-EXPLICIT-INTENT-APPLICATION — apply typed placement rules before placing anything:
+1. CENTERED: Place pool_table_1 at (3, 4) with zero x,z offset.
+2. DOOR: Place door_1 in the north wall with offset 0, width 0.9, and height 2.1.
+3. CIRCULATION: Maintain at least 0.8m clear paths from the door to all zones.
+4. ZONES: Identify functional zones (seating, work, display). Place primary furniture first,
+   then support pieces relative to it.
+5. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands)
+   go in the center. Never cluster everything at 0,0.
+6. RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+   * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+   * west_of: places subject WEST of target.
+   * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's
+     south face.
+   * north_of: places subject NORTH of target.
+   * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+   * around: distributes subjects in a circle around target.
+   * centered: places at room center with optional offsets.
+
+COORDINATE- SYSTEM-APPLICATION — apply these rules after placing items:
+1. x,z are the item's CENTER position in meters.
+2. width is the X-axis span, depth is the Z-axis span.
+3. elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+4. rotation_deg rotates the item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-OUTPUT — return one complete, valid JSON object only. Never encode placement
+intent only in names.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":"floor-plan/v11",
+"relationships":[{"id":string,"subject_id":string,"kind":"centered|against_wall|adjacent_to|…",
+"wall":string,"parameters_m":{"number":"string"},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":string,"margin_m":number}], "camera_intent":{"id":string,
+"corner":"northwest|northeast|southwest|southeast","target_id":string,"inset_m":number,
+"eye_height_m":number,"target_height_m":number,"fov_deg":number}}.

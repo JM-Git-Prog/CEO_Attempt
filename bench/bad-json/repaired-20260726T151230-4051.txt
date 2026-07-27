@@ -1,0 +1,288 @@
+error: Expecting value: line 285 column 16 (char 7747)
+------------------------------------------------------------
+```json
+{
+  "name": "1980s Video Arcade Room",
+  "schema_version": "floor-plan/v11",
+  "room": {
+    "width": 6.0,
+    "depth": 5.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "arcade_cabinet_1",
+      "name": "Upright Arcade Cabinet 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": -1.8,
+      "z": 1.8,
+      "width": 0.7,
+      "depth": 0.8,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.8,
+      "description": "Classic 1980s upright arcade cabinet with CRT monitor and joystick controls"
+    },
+    {
+      "id": "arcade_cabinet_2",
+      "name": "Upright Arcade Cabinet 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.0,
+      "z": 1.8,
+      "width": 0.7,
+      "depth": 0.8,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.8,
+      "description": "Classic 1980s upright arcade cabinet with CRT monitor and joystick controls"
+    },
+    {
+      "id": "arcade_cabinet_3",
+      "name": "Upright Arcade Cabinet 3",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.8,
+      "z": 1.8,
+      "width": 0.7,
+      "depth": 0.8,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.8,
+      "description": "Classic 1980s upright arcade cabinet with CRT monitor and joystick controls"
+    },
+    {
+      "id": "arcade_cabinet_4",
+      "name": "Upright Arcade Cabinet 4",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 2.3,
+      "z": 0.0,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 270,
+      "fixed": false,
+      "clearance_m": 0.8,
+      "description": "Classic 1980s upright arcade cabinet facing west, CRT monitor and joystick controls"
+    },
+    {
+      "id": "arcade_cabinet_5",
+      "name": "Upright Arcade Cabinet 5",
+      "category": "furniture",
+      "mount": "floor",
+      "x": -2.3,
+      "z": 0.0,
+      "width": 0.8,
+      "depth": 0.7,
+      "height": 1.8,
+      "elevation": 0.0,
+      "rotation_deg": 90,
+      "fixed": false,
+      "clearance_m": 0.8,
+      "description": "Classic 1980s upright arcade cabinet facing east, CRT monitor and joystick controls"
+    },
+    {
+      "id": "change_machine",
+      "name": "Change Machine",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.8,
+      "z": -1.95,
+      "width": 0.6,
+      "depth": 0.5,
+      "height": 1.5,
+      "elevation": 0.0,
+      "rotation_deg": 180,
+      "fixed": false,
+      "clearance_m": 0.8,
+      "description": "Coin change machine with bill acceptor and coin dispenser, facing into room"
+    },
+    {
+      "id": "pendant_light_1",
+      "name": "Neon-Warm Pendant Light 1",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": -1.5,
+      "z": 0.0,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.3,
+      "elevation": 2.5,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.0,
+      "description": "Ceiling pendant with warm neon-orange glow"
+    },
+    {
+      "id": "pendant_light_2",
+      "name": "Neon-Warm Pendant Light 2",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 0.0,
+      "z": 0.0,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.3,
+      "elevation": 2.5,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.0,
+      "description": "Ceiling pendant with warm neon-orange glow"
+    },
+    {
+      "id": "pendant_light_3",
+      "name": "Neon-Warm Pendant Light 3",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 1.5,
+      "z": 0.0,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.3,
+      "elevation": 2.5,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.0,
+      "description": "Ceiling pendant with warm neon-orange glow"
+    },
+    {
+      "id": "neon_sign",
+      "name": "Neon Arcade Sign",
+      "category": "decor",
+      "mount": "wall",
+      "x": 0.0,
+      "z": -2.46,
+      "width": 1.5,
+      "depth": 0.08,
+      "height": 0.35,
+      "elevation": 2.1,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.0,
+      "description": "Wall-mounted neon sign reading ARCADE in warm pink-orange glow"
+    },
+    {
+      "id": "area_rug",
+      "name": "Arcade Floor Mat",
+      "category": "decor",
+      "mount": "floor",
+      "x": 0.0,
+      "z": 0.3,
+      "width": 3.0,
+      "depth": 2.5,
+      "height": 0.02,
+      "elevation": 0.0,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.0,
+      "description": "Dark patterned floor mat covering central play area"
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_1",
+      "kind": "door",
+      "wall": "south",
+      "offset": 1.0,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    },
+    {
+      "id": "window_1",
+      "kind": "window",
+      "wall": "east",
+      "offset": 1.0,
+      "width": 1.2,
+      "height": 1.2,
+      "sill_height": 1.2
+    },
+    {
+      "id": "window_2",
+      "kind": "window",
+      "wall": "west",
+      "offset": 1.0,
+      "width": 1.2,
+      "height": 1.2,
+      "sill_height": 1.2
+    }
+  ],
+  "camera": {
+    "x": 2.7,
+    "y": 1.6,
+    "z": -2.3,
+    "target_x": -0.5,
+    "target_y": 1.2,
+    "target_z": 0.8,
+    "fov_deg": 60
+  },
+  "circulation_notes": [
+    "Door is in the southwest area of the south wall; 1.0m inward clearance is unobstructed.",
+    "Central play area is approximately 3m x 3m, providing clear circulation from door to all five cabinets.",
+    "Change machine is positioned east of the door on the south wall, leaving the entry path clear.",
+    "0.8m minimum clearance maintained in front of each arcade cabinet for player standing room."
+  ],
+  "design_notes": [
+    "Three arcade cabinets line the north wall at 1.8m spacing for a classic arcade row feel.",
+    "One cabinet each on the east and west walls creates an immersive wrap-around arcade layout.",
+    "Change machine placed near the entrance for convenient access upon entry.",
+    "Three ceiling pendant lights with warm neon glow provide ambient lighting across the central play area.",
+    "Neon wall sign above the south wall adds thematic 1980s atmosphere.",
+    "Windows on east and west walls are positioned south of the wall cabinets to avoid blocking light."
+  ],
+  "relationships": [
+    {
+      "subject_id": "arcade_cabinet_1",
+      "kind": "against_wall",
+      "wall": "north",
+      "parameters_m": { "along_offset_m": -1.8, "wall_gap_m": 0.3 },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "arcade_cabinet_2",
+      "kind": "against_wall",
+      "wall": "north",
+      "parameters_m": { "along_offset_m": 0.0, "wall_gap_m": 0.3 },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "arcade_cabinet_3",
+      "kind": "against_wall",
+      "wall": "north",
+      "parameters_m": { "along_offset_m": 1.8, "wall_gap_m": 0.3 },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "arcade_cabinet_4",
+      "kind": "against_wall",
+      "wall": "east",
+      "parameters_m": { "along_offset_m": 0.0, "wall_gap_m": 0.3 },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "arcade_cabinet_5",
+      "kind": "against_wall",
+      "wall": "west",
+      "parameters_m": { "along_offset_m": 0.0, "wall_gap_m": 0.3 },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "change_machine",
+      "kind": "against_wall",
+      "wall": "south",
+      "parameters_m": { "along_offset_m": 1.8, "wall_gap_m": 0.3 },
+      "weight":

@@ -1,0 +1,1028 @@
+error: Expecting ',' delimiter: line 1026 column 80 (char 32791)
+------------------------------------------------------------
+{
+    "name": "Florist Shop",
+    "room": {
+        "width": 6.0,
+        "depth": 4.5,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "work_counter_1",
+            "name": "Work Counter",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 0.75,
+            "z": 1.5,
+            "width": 2.0,
+            "depth": 1.2,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "work_counter_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_1",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_1",
+                    "kind": "adjacent_to",
+                    "target_id": "work_counter_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_2",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_2",
+                    "kind": "adjacent_to",
+                    "target_id": "work_counter_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_3",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_3",
+                    "kind": "adjacent_to",
+                    "target_id": "work_counter_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "cooler_cabinet_1",
+            "name": "Cooler Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "cooler_cabinet_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_4",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_4",
+                    "kind": "above",
+                    "target_id": "work_counter_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_5",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_5",
+                    "kind": "above",
+                    "target_id": "work_counter_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 1, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_6",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_6",
+                    "kind": "above",
+                    "target_id": "work_counter_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_7",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_7",
+                    "kind": "adjacent_to",
+                    "target_id": "cooler_cabinet_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_8",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_8",
+                    "kind": "adjacent_to",
+                    "target_id": "cooler_cabinet_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_9",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_9",
+                    "kind": "adjacent_to",
+                    "target_id": "cooler_cabinet_1",
+                    "wall": null,
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_10",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_10",
+                    "kind": "above",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_11",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_11",
+                    "kind": "above",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 1, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_12",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_12",
+                    "kind": "above",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_13",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_13",
+                    "kind": "south_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_14",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_14",
+                    "kind": "south_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_15",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_15",
+                    "kind": "south_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_16",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_16",
+                    "kind": "south_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_17",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_17",
+                    "kind": "south_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_18",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_18",
+                    "kind": "south_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_19",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_19",
+                    "kind": "north_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_20",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_20",
+                    "kind": "north_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_21",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_21",
+                    "kind": "north_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_22",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_22",
+                    "kind": "north_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_23",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_23",
+                    "kind": "north_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_24",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_24",
+                    "kind": "north_of",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"offset_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_25",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_25",
+                    "kind": "around",
+                    "target_id": "work_counter_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_26",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_26",
+                    "kind": "around",
+                    "target_id": "work_counter_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 1, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_27",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_27",
+                    "kind": "around",
+                    "target_id": "work_counter_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_28",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_28",
+                    "kind": "around",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_29",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_29",
+                    "kind": "around",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 1, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_30",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_30",
+                    "kind": "around",
+                    "target_id": "cooler_cabinet_1",
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_31",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_31",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset_m": -1.5, "z_offset_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_32",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_32",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset_m": -1.5, "z_offset_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_33",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_33",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset_m": -1.5, "z_offset_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_34",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_34",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset_m": -1.5, "z_offset_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_35",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_35",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset_m": -1.5, "z_offset_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_36",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_36",
+                    "kind": "centered",
+                    "target_id": null,
+                    "parameters_m": {"x_offset_m": -1.5, "z_offset_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_stand_37",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_stand_37",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": -1.5, "wall_gap_m": 0.75

@@ -1,0 +1,30 @@
+error: Unterminated string starting at: line 27 column 7 (char 665)
+------------------------------------------------------------
+```json
+{
+  "name": "Victorian Parlor",
+  "room": {"width": 5.5, "depth": 4.5, "height": 3.2},
+  "items": [
+    {
+      "id": "chaise_lounge",
+      "name": "Victorian Chaise Lounge",
+      "category": "furniture",
+      "mount": "floor",
+      "x": -2.35,
+      "z": 0.8,
+      "width": 0.8,
+      "depth": 2.0,
+      "height": 0.9,
+      "elevation": 0.0,
+      "rotation_deg": 90.0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Tufted velvet chaise lounge with curved backrest, placed along west wall"
+    },
+    {
+      "id": "tea_table",
+      "name": "Tea Table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.3,
+      "z

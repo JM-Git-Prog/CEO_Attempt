@@ -1,0 +1,1098 @@
+error: Expecting ',' delimiter: line 1096 column 23 (char 33100)
+------------------------------------------------------------
+{
+    "name": "1980s Video Rental Store",
+    "room": {
+        "width": 6.5,
+        "depth": 4.2,
+        "height": 3.1
+    },
+    "items": [
+        {
+            "id": "shelf_1",
+            "name": "Shelf 1",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 0.5,
+            "z": 2.1,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.4,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "shelf_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "shelf_2",
+            "name": "Shelf 2",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.4,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.4,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "shelf_2",
+                    "kind": "adjacent_to",
+                    "target_id": "shelf_1",
+                    "wall": null,
+                    "parameters_m": {"m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "shelf_3",
+            "name": "Shelf 3",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.4,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.4,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "shelf_3",
+                    "kind": "adjacent_to",
+                    "target_id": "shelf_2",
+                    "wall": null,
+                    "parameters_m": {"m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "shelf_4",
+            "name": "Shelf 4",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 1.4,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.4,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "shelf_4",
+                    "kind": "adjacent_to",
+                    "target_id": "shelf_3",
+                    "wall": null,
+                    "parameters_m": {"m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "checkout_counter",
+            "name": "Checkout Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.9,
+            "z": 2.8,
+            "width": 3.4,
+            "depth": 0.6,
+            "height": 1.5,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "checkout_counter",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "cardboard_display",
+            "name": "Cardboard Display",
+            "category": "decor",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 1.4,
+            "width": 2.1,
+            "depth": 0.9,
+            "height": 2.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "cardboard_display",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "camera",
+            "name": "Canon camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 2.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera",
+                    "kind": "above",
+                    "target_id": "checkout_counter",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_1",
+            "name": "Door door_1",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 0.5,
+            "z": 2.8,
+            "width": 1.8,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 2.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "checkout_counter",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 2.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "checkout_counter",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_3",
+            "name": "Pendant Light 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 2.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_3",
+                    "kind": "above",
+                    "target_id": "checkout_counter",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_4",
+            "name": "Pendant Light 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 2.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_4",
+                    "kind": "above",
+                    "target_id": "checkout_counter",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_5",
+            "name": "Pendant Light 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_5",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_6",
+            "name": "Pendant Light 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_6",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_7",
+            "name": "Pendant Light 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_7",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_8",
+            "name": "Pendant Light 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_8",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_9",
+            "name": "Pendant Light 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_9",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_10",
+            "name": "Pendant Light 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_10",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_11",
+            "name": "Pendant Light 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_11",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_12",
+            "name": "Pendant Light 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_12",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_13",
+            "name": "Pendant Light 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_13",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_14",
+            "name": "Pendant Light 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_14",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_15",
+            "name": "Pendant Light 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_15",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_16",
+            "name": "Pendant Light 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_16",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_17",
+            "name": "Pendant Light 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_17",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_18",
+            "name": "Pendant Light 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_18",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_19",
+            "name": "Pendant Light 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_19",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_20",
+            "name": "Pendant Light 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_20",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_21",
+            "name": "Pendant Light 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_21",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_22",
+            "name": "Pendant Light 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_22",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_23",
+            "name": "Pendant Light 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_23",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_24",
+            "name": "Pendant Light 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_24",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_25",
+            "name": "Pendant Light 25",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_25",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_26",
+            "name": "Pendant Light 26",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_26",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_27",
+            "name": "Pendant Light 27",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_27",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_28",
+            "name": "Pendant Light 28",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_28",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_29",
+            "name": "Pendant Light 29",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_29",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_30",
+            "name": "Pendant Light 30",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_30",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_31",
+            "name": "Pendant Light 31",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.2,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_31",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_32",
+            "name": "Pendant Light 32",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.7,
+            "z": 1.4,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.5,
+            "elevation": 2.9,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_32",
+                    "kind": "above",
+                    "target_id": "cardboard_display",
+                    "wall": null,
+                    "parameters_m": {"m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_33",
+            "name": "Pendant Light 33",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 1.4,
+            "width": 0

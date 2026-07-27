@@ -1,0 +1,1096 @@
+error: Expecting property name enclosed in double quotes: line 1094 column 22 (char 32930)
+------------------------------------------------------------
+{
+    "name": "Farmhouse Kitchen",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "harvest_table_1",
+            "name": "Harvest Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "harvest_table_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "iron_stove_1",
+            "name": "Iron Stove",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.9,
+            "depth": 1.2,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "iron_stove_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"wall_gap_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_1",
+            "name": "Chair 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_1",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_2",
+            "name": "Chair 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_2",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_3",
+            "name": "Chair 3",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_3",
+                    "kind": "south_of",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_4",
+            "name": "Chair 4",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_4",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_5",
+            "name": "Chair 5",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_5",
+                    "kind": "adjacent_to",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_6",
+            "name": "Chair 6",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_6",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window 1",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.8,
+            "width": 0.9,
+            "depth": 1.8,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_2",
+            "name": "Window 2",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 3.8,
+            "width": 0.9,
+            "depth": 1.8,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 4.0,
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "elevation": 1.9,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "elevation": 1.9,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 1, "distribution_count": 3, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_3",
+            "name": "Pendant Light 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.8,
+            "z": 4.0,
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "elevation": 1.9,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_3",
+                    "kind": "above",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_4",
+            "name": "Pendant Light 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.2,
+            "z": 4.0,
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "elevation": 1.9,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_4",
+                    "kind": "above",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_5",
+            "name": "Pendant Light 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "elevation": 1.9,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_5",
+                    "kind": "above",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 1, "distribution_count": 3, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_6",
+            "name": "Pendant Light 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.8,
+            "z": 4.0,
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "elevation": 1.9,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_6",
+                    "kind": "above",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 2.0,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_2",
+            "name": "Canon Camera 2",
+            "category": "decor",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 2.0,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_3",
+            "name": "Canon Camera 3",
+            "category": "decor",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 2.0,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_4",
+            "name": "Canon Camera 4",
+            "category": "decor",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 2.0,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_5",
+            "name": "Canon Camera 5",
+            "category": "decor",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 2.0,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera_6",
+            "name": "Canon Camera 6",
+            "category": "decor",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 2.0,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera_6",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_7",
+            "name": "Chair 7",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_7",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_8",
+            "name": "Chair 8",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_8",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_9",
+            "name": "Chair 9",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_9",
+                    "kind": "south_of",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_10",
+            "name": "Chair 10",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_10",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_11",
+            "name": "Chair 11",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_11",
+                    "kind": "adjacent_to",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_12",
+            "name": "Chair 12",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_12",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_13",
+            "name": "Chair 13",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_13",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_14",
+            "name": "Chair 14",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_14",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_15",
+            "name": "Chair 15",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_15",
+                    "kind": "south_of",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_16",
+            "name": "Chair 16",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_16",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_17",
+            "name": "Chair 17",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_17",
+                    "kind": "adjacent_to",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_18",
+            "name": "Chair 18",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_18",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_19",
+            "name": "Chair 19",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_19",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_20",
+            "name": "Chair 20",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.5,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_20",
+                    "kind": "adjacent_to",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_21",
+            "name": "Chair 21",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_21",
+                    "kind": "south_of",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_22",
+            "name": "Chair 22",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_22",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_23",
+            "name": "Chair 23",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_23",
+                    "kind": "adjacent_to",
+                    "target_id": "iron_stove_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_24",
+            "name": "Chair 24",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.2,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_24",
+                    "kind": "north_of",
+                    "target_id": "harvest_table_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_25",
+            "name": "Chair 25",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.8,

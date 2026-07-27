@@ -1,0 +1,1097 @@
+error: Expecting ',' delimiter: line 1095 column 21 (char 33376)
+------------------------------------------------------------
+{
+    "name": "Victorian Conservatory",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 3.2
+    },
+    "items": [
+        {
+            "id": "seating_1",
+            "name": "Wicker Seating Pair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "seating_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "table_1",
+            "name": "Small Iron Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.9,
+            "depth": 1.2,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "table_1",
+                    "kind": "adjacent_to",
+                    "target_id": "seating_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plant_1",
+            "name": "Potted Plant",
+            "category": "decor",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 3.5,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plant_1",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plant_2",
+            "name": "Potted Plant",
+            "category": "decor",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 3.5,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plant_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "plant_3",
+            "name": "Potted Plant",
+            "category": "decor",
+            "mount": "floor",
+            "x": 4.2,
+            "z": 3.5,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plant_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "plant_4",
+            "name": "Potted Plant",
+            "category": "decor",
+            "mount": "floor",
+            "x": 2.8,
+            "z": 5.3,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plant_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "plant_5",
+            "name": "Potted Plant",
+            "category": "decor",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 5.3,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plant_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "plant_6",
+            "name": "Potted Plant",
+            "category": "decor",
+            "mount": "floor",
+            "x": 4.2,
+            "z": 5.3,
+            "width": 0.4,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plant_6",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "lighting_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_1",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_2",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_3",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_3",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 4},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_4",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_4",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_5",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_5",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_6",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_6",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 7},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_7",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_7",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_8",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_8",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 9},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_9",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_9",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 10},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_10",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_10",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 11},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_11",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_11",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 12},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_12",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_12",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 13},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_13",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_13",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 14},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_14",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_14",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 15},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_15",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_15",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 16},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_16",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_16",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 17},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_17",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_17",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 18},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_18",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_18",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 19},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_19",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_19",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 20},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_20",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_20",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 21},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_21",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_21",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 22},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_22",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_22",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 23},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_23",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_23",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 24},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_24",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_24",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 25},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_25",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_25",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 26},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_26",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_26",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 27},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_27",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_27",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 28},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_28",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_28",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 29},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_29",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_29",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 30},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_30",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_30",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 31},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_31",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_31",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 32},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_32",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.95,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_32",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 0.5, "distribution_count": 33},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_33",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": null,
+            "z": 4.8

@@ -1,0 +1,89 @@
+error: Invalid control character at: line 12 column 69 (char 666)
+------------------------------------------------------------
+{"name":"Minimalist Home Office",
+"room":{"width":4.0,"depth":5.0,"height":2.8},
+"items":[{"id":"standing_desk_1","name":"Standing Desk",
+"category":"furniture","mount":"floor","x":1.0,"z":2.0,"width":1.9,
+"depth":1.9,"height":0.7,"elevation":0.3,"rotation_deg":0.0,"fixed":true,
+"clearance_m":0.75,"description":"A practical standing desk for working."}],
+"openings":[{"id":"window_1","kind":"window","wall":"north",
+"offset":0.0,"width":0.9,"height":2.1,"sill_height":0.0}],
+"camera":{"x":0.0,"y":1.6,"z":0.0,"target_x":0.0,"target_y":0.0,
+"target_z":0.0,"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan with clear
+circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"rel_1","subject_id":"standing_desk_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1.0,
+"relaxable":false}],
+"opening_intents":[{"id":"int_1","opening_id":"window_1",
+"wall":"north","placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"intent_1","corner":"northeast",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,
+"fov_deg":55.0}}
+
+V11-EXPLICIT-INTENT-EXTENSION-APPLICATION:
+
+* Items: Apply practical placement rules before applying V11 relationships.
+  standing_desk_1 is centered at (1, 2) with width 1.9 and depth 1.9.
+* Relationships: Apply typed placements relative to the item's fixed position.
+  rel_1 places standing_desk_1 at the room center (2, 2.5), but this is overridden
+  by practical placement rules, so the desk remains at (1, 2).
+* Openings: Apply practical placement rules before applying V11 opening intents.
+  window_1 is placed in the north wall with offset 0 and width 0.9 and height 2.1.
+* Opening Intents: Apply typed placements relative to the wall surface.
+  int_1 places window_1 at the north wall center, but practical placement rules
+  place it at x=0 with zero offset because wall="north" and placement="centered".
+* Camera: Practical camera placement applies after V11 intent application.
+  The camera remains at (0, 1.6, 0) with target (0, 0, 0) and field of view 55 degrees.
+
+COORDINATE-SYSTEM-APPLICATION:
+
+* Room center is (0, 0). North is +Z, East is +X.
+* x,z are item centers in meters.
+* width is X-axis span, depth is Z-axis span.
+* elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+* rotation_deg rotates the item around its center (0 = front faces south).
+
+RULE-APPLICATION:
+
+* Return one valid JSON object only. No commentary.
+* One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+* Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+* Doors and windows go in "openings" only.
+* Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+* fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+SCHEMA-CONFORMANCE:
+
+* Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, and design_notes.
+* Add schema_version="floor-plan/v11".
+* Add relationships with EXACTLY one typed placement for every item. Each entry has subject_id,
+  kind, optional target_id/wall, and parameters_m. Never encode placement intent only in names.
+* Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+  wall_gap_m is distance from wall surface to nearest item edge; ensure depth/2 + wall_gap_m < half_room_depth.
+* RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+* Repeated rows use a directional/above relation plus zero-based distribution_index,
+  distribution_count, and distribution_span_m. Keep every repeated instance separate.
+* Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+V11-EXPLICIT-INTENT-SCHEMA-CONFORMANCE:
+
+* Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+* Add against_wall, wall, placement, corner, margin_m, relative_to, target_id, kind, parameters_m,
+  weight, and relaxable. Never encode placement intent only in names.
+* RELATION SEMANTICS apply as above.
+* OPENING-INTENT SEMANTICS: wall + placement + corner + margin_m are geometric operations.
+* CAMERA-INTENT SEMANTICS: corner + target_id + inset_m + eye_height_m + target_height_m + fov_deg
+  are geometric operations. Never place the camera behind or inside furniture. Apply practical camera
+  placement rules after intent application.

@@ -1,0 +1,101 @@
+error: Unterminated string starting at: line 98 column 7 (char 2086)
+------------------------------------------------------------
+```json
+{
+  "name": "1950s Diner Counter",
+  "room": {
+    "width": 5.0,
+    "depth": 4.0,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "counter",
+      "name": "Diner Counter",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0,
+      "z": 1.7,
+      "width": 3.0,
+      "depth": 0.6,
+      "height": 1.1,
+      "elevation": 0,
+      "rotation_deg": 0,
+      "fixed": true,
+      "clearance_m": 0.75,
+      "description": "1950s diner counter"
+    },
+    {
+      "id": "stool_1",
+      "name": "Chrome Stool 1",
+      "category": "furniture",
+      "mount": "floor",
+      "x": -0.75,
+      "z": 0.9,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.8,
+      "elevation": 0,
+      "rotation_deg": 180,
+      "fixed": false,
+      "clearance_m": 0.4,
+      "description": "Chrome diner stool"
+    },
+    {
+      "id": "stool_2",
+      "name": "Chrome Stool 2",
+      "category": "furniture",
+      "mount": "floor",
+      "x": -0.25,
+      "z": 0.9,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.8,
+      "elevation": 0,
+      "rotation_deg": 180,
+      "fixed": false,
+      "clearance_m": 0.4,
+      "description": "Chrome diner stool"
+    },
+    {
+      "id": "stool_3",
+      "name": "Chrome Stool 3",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.25,
+      "z": 0.9,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.8,
+      "elevation": 0,
+      "rotation_deg": 180,
+      "fixed": false,
+      "clearance_m": 0.4,
+      "description": "Chrome diner stool"
+    },
+    {
+      "id": "stool_4",
+      "name": "Chrome Stool 4",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.75,
+      "z": 0.9,
+      "width": 0.4,
+      "depth": 0.4,
+      "height": 0.8,
+      "elevation": 0,
+      "rotation_deg": 180,
+      "fixed": false,
+      "clearance_m": 0.4,
+      "description": "Chrome diner stool"
+    },
+    {
+      "id": "pendant",
+      "name": "Pendant Lamp",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 0,
+      "z": 1.7,
+      "width": 0.3,
+      "depth": 0.3,
+      "height

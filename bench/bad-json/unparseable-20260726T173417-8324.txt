@@ -1,0 +1,93 @@
+error: Expecting property name enclosed in double quotes: line 8 column 1 (char 324)
+------------------------------------------------------------
+{"name":"Airport Gate Corner",
+"room":{"width":10,"depth":12,"height":3},
+"items":[{"id":"seating_1","name":"Row 1 Seat 1",
+"category":"furniture","mount":"floor","x":0.5,"z":2,
+"width":0.4,"depth":0.7,"height":0.8,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.75,
+"description":"A standard airport seat."}],
+["seating_2","Row 1 Seat 2",0.9,2,0.4,0.7,0.8,0,0,3],
+["seating_3","Row 1 Seat 3",1.4,2,0.4,0.7,0.8,0,0,3],
+["seating_4","Row 1 Seat 4",1.9,2,0.4,0.7,0.8,0,0,3],
+["seating_5","Row 2 Seat 1",0.5,4,0.4,0.7,0.8,0,0,3],
+["seating_6","Row 2 Seat 2",0.9,4,0.4,0.7,0.8,0,0,3],
+["seating_7","Row 2 Seat 3",1.4,4,0.4,0.7,0.8,0,0,3],
+["seating_8","Row 2 Seat 4",1.9,4,0.4,0.7,0.8,0,0,3],
+["desk","Gate Desk",4,0,1,2,0.5,0,0,0,
+"fixed":true,"description":"A practical gate desk."}],
+["sign","Standing Sign",6,6,0.5,0.5,1,3,0,0,
+"fixed":false,"description":"A freestanding sign."],
+["window_wall","Large Window Wall",10,12,0,0,8,3,0,0,
+"fixed":true,"description":"A wall of large windows."]},
+"openings":[{"id":"door_1","kind":"door","wall":"north",
+"offset":0.5,"width":0.9,"height":2.1,"sill_height":0}],
+["window_1","window","east",0,0.8,0.6,0.3,0],
+["window_2","window","west",10,0,0.6,0.3,0]],
+"camera":{"x":5,"y":1.6,"z":5,"target_x":0,"target_y":0,
+"target_z":0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Create practical, buildable floor plan."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"seating_1-against_wall",
+"subject_id":"seating_1","kind":"against_wall","wall":"north",
+"parameters_m":{"gap":0.3},"weight":1,"relaxable":false}],
+["seating_2-adjacent_to-seating_1", "adjacent_to", "seating_1", null, {"m":0.4}, 1, false],
+["seating_3-adjacent_to-seating_2", "adjacent_to", "seating_2", null, {"m":0.4}, 1, false],
+["seating_4-adjacent_to-seating_3", "adjacent_to", "seating_3", null, {"m":0.4}, 1, false],
+["seating_5-north_of-desk", "north_of", "desk", null, {}, 1, false],
+["seating_6-adjacent_to-seating_5", "adjacent_to", "seating_5", null, {"m":0.4}, 1, false],
+["seating_7-adjacent_to-seating_6", "adjacent_to", "seating_6", null, {"m":0.4}, 1, false],
+["seating_8-south_of-desk", "south_of", "desk", null, {}, 1, false]],
+"opening_intents":[{"id":"door_1-intent",
+"opening_id":"door_1","wall":"north","placement":"centered",
+"corner":null,"margin_m":0.1}],
+["window_1-intent", "window_1", "east", "near_corner", null, 0],
+["window_2-intent", "window_2", "west", "near_corner", null, 0]],
+"camera_intent":{"id":"camera-intent",
+"corner":"northwest","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"v11_extras":{}}
+
+V11-EXPLICIT-INTENT-EXTENSION-COMPLIANT-REASONING:
+
+* ZONES: Identify seating, work, and display zones. Place primary furniture first,
+  then support pieces relative to it.
+* WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables,
+  islands) go in the center. Never cluster everything at 0,0.
+* CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones.
+  A person must walk from the door to any seat without squeezing past furniture.
+* RELATIONSHIPS: Chairs face tables. Stools line up along counters/bars. Pendant lights
+  hang above the surface they illuminate. Side tables flank beds/sofas.
+* SPACING: Repeated items (stools, chairs) distribute evenly along their parent surface
+  with equal gaps. Never stack them on top of each other.
+* DOOR CLEARANCE: Nothing within 1.0m inward of a door. The door swing arc must be completely
+  unobstructed.
+* WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light enters freely.
+
+V11-RELATION-SEMANTICS-APPLICATION:
+
+* adjacent_to / east_of: Places seating_2 EAST of seating_1 with m=0.4. Never for a south row.
+* west_of: Places seating_3 WEST of seating_2.
+* south_of: Places seating_4 SOUTH of desk with zero distribution_index.
+* north_of: Places seating_5 NORTH of desk with distribution_index=0, distribution_count=4,
+  and distribution_span_m=1.6.
+* above: Places pendant_light_1 directly above counter with realistic hanging size (0.3m).
+* around: Distributes stool_1, stool_2, stool_3, stool_4 evenly in a circle around table with
+  m=0.5, distribution_index=0, distribution_count=4, and distribution_span_m=2.
+* centered: Places focal_point_1 at room center with optional x,z offsets.
+
+V11-OPENING-INTENT-APPLICATION:
+
+* door_1-intent: Places door_1 in the north wall with centered placement and 0.1m margin from
+  nearest furniture.
+* window_1-intent: Places window_1 in the east wall near the northwest corner with practical
+  z=0.8 and height=0.6.
+* window_2-intent: Places window_2 in the west wall near the southeast corner with practical
+  z=0.8 and height=0.6.
+
+V11-CAMERA-INTENT-APPLICATION:
+
+* camera-intent: Places the camera in the northwest corner with inset_m=0.45, eye_height_m=1.6,
+  target_height_m=1.2, and fov_deg=55. This creates a practical diagonal view showing the
+  maximum number of objects without placing the camera behind or inside furniture.

@@ -1,0 +1,1031 @@
+error: Expecting ',' delimiter: line 1029 column 76 (char 32321)
+------------------------------------------------------------
+{
+    "name": "Laundromat Floor Plan",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "washing_machine_1",
+            "name": "Washing Machine 1",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "washing_machine_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "washing_machine_2",
+            "name": "Washing Machine 2",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "washing_machine_2",
+                    "kind": "adjacent_to",
+                    "target_id": "washing_machine_1",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "washing_machine_3",
+            "name": "Washing Machine 3",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "washing_machine_3",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "washing_machine_4",
+            "name": "Washing Machine 4",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 7.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "washing_machine_4",
+                    "kind": "adjacent_to",
+                    "target_id": "washing_machine_3",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "washing_machine_5",
+            "name": "Washing Machine 5",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 9.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "washing_machine_5",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "washing_machine_6",
+            "name": "Washing Machine 6",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 11.5,
+            "z": 0.5,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "washing_machine_6",
+                    "kind": "adjacent_to",
+                    "target_id": "washing_machine_5",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "folding_table",
+            "name": "Folding Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 2.5,
+            "width": 1.8,
+            "depth": 0.9,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "folding_table",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_1",
+            "name": "Plastic Chair 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.2,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_1",
+                    "kind": "north_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_2",
+            "name": "Plastic Chair 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.7,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_2",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_3",
+            "name": "Plastic Chair 3",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.2,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "fluorescent_light",
+            "name": "Fluorescent Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.2,
+            "z": 4.1,
+            "width": 0.9,
+            "depth": 0.6,
+            "height": 0.3,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "fluorescent_light",
+                    "kind": "above",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_4",
+            "name": "Plastic Chair 4",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_4",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_5",
+            "name": "Plastic Chair 5",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_6",
+            "name": "Plastic Chair 6",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_6",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_7",
+            "name": "Plastic Chair 7",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.4,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_7",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_8",
+            "name": "Plastic Chair 8",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.6,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_8",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_9",
+            "name": "Plastic Chair 9",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_9",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_10",
+            "name": "Plastic Chair 10",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.7,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_10",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_11",
+            "name": "Plastic Chair 11",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.2,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_11",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_12",
+            "name": "Plastic Chair 12",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_12",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_13",
+            "name": "Plastic Chair 13",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_13",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_14",
+            "name": "Plastic Chair 14",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_14",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_15",
+            "name": "Plastic Chair 15",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.4,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_15",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_16",
+            "name": "Plastic Chair 16",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.6,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_16",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_17",
+            "name": "Plastic Chair 17",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_17",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_18",
+            "name": "Plastic Chair 18",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.7,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_18",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_19",
+            "name": "Plastic Chair 19",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.2,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_19",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_20",
+            "name": "Plastic Chair 20",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_20",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_21",
+            "name": "Plastic Chair 21",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_21",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_22",
+            "name": "Plastic Chair 22",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_22",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_23",
+            "name": "Plastic Chair 23",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.4,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_23",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_24",
+            "name": "Plastic Chair 24",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.6,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_24",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_25",
+            "name": "Plastic Chair 25",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.1,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_25",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_26",
+            "name": "Plastic Chair 26",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.7,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_26",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_27",
+            "name": "Plastic Chair 27",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.2,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_27",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_28",
+            "name": "Plastic Chair 28",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_28",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_29",
+            "name": "Plastic Chair 29",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.3,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_29",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "plastic_chair_30",
+            "name": "Plastic Chair 30",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.9,
+            "width": 0.6,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "plastic_chair_30",
+                    "kind": "south_of",
+                    "target_id": "folding_table",
+                    "wall": null,
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5

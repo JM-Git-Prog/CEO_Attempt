@@ -1,0 +1,1101 @@
+error: Expecting property name enclosed in double quotes: line 1098 column 27 (char 32536)
+------------------------------------------------------------
+{
+    "name": "1920s Study",
+    "room": {
+        "width": 4.5,
+        "depth": 6.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "desk_1",
+            "name": "Heavy Oak Desk",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 3.0,
+            "width": 2.4,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "desk_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "armchair_1",
+            "name": "Leather Armchair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 1.4,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "armchair_1",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "globe_stand_1",
+            "name": "Globe Stand",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 1.8,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "globe_stand_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "east",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lamp_1",
+            "name": "Brass Desk Lamp",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lamp_1",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_1",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_1",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_2",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_2",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_3",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_3",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_4",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_4",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_5",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_5",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_6",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_6",
+                    "kind": "adjacent_to",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_7",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_7",
+                    "kind": "adjacent_to",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_8",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_8",
+                    "kind": "adjacent_to",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_9",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_9",
+                    "kind": "adjacent_to",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_10",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_10",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_11",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_11",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_12",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_12",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_13",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_13",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_14",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_14",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_15",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_15",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_16",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_16",
+                    "kind": "above",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_17",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_17",
+                    "kind": "above",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_18",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_18",
+                    "kind": "above",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {"height": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_19",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_19",
+                    "kind": "around",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_20",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_20",
+                    "kind": "around",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_21",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_21",
+                    "kind": "around",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_22",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_22",
+                    "kind": "around",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_23",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_23",
+                    "kind": "around",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_24",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_24",
+                    "kind": "around",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_25",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_25",
+                    "kind": "around",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_26",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_26",
+                    "kind": "around",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_27",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_27",
+                    "kind": "around",
+                    "target_id": "globe_stand_1",
+                    "wall": null,
+                    "parameters_m": {"radius": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_28",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_28",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 1.5, "z_offset": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_29",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_29",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 2.5, "z_offset": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_30",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_30",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 3.5, "z_offset": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_31",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_31",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 2.5, "z_offset": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_32",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_32",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 3.5, "z_offset": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_33",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 1.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_33",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 4.5, "z_offset": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_34",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_34",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 2.5, "z_offset": 4.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_35",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_35",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 3.5, "z_offset": 4.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_36",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.8,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_36",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {"x_offset": 4.5, "z_offset": 4.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_37",
+            "name": "Wooden Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.6,
+           

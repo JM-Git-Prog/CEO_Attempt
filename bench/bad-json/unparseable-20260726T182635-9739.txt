@@ -1,0 +1,108 @@
+error: Extra data: line 27 column 1 (char 1245)
+------------------------------------------------------------
+{"name":"Diner Interior",
+"room":{"width":6.0,"depth":4.0,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter",
+"category":"furniture","mount":"floor","x":1.5,"z":0.0,"width":4.2,
+"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,"fixed":true,
+"clearance_m":0.3,"description":"Rounded polished-chrome edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.7,
+"width":0.9,"height":2.1,"sill_height":0.0}],
+"openings":[{"id":"window_1","kind":"window","wall":"south","offset":0.5,
+"width":1.8,"height":1.4,"sill_height":0.0}],
+"camera":{"x":-0.7,"y":2.3,"z":1.6,"target_x":0.0,"target_y":0.0,
+"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"R-1","subject_id":"counter_1","kind":"centered",
+"wall":null,"parameters_m":{},"weight":1.0,"relaxable":false}],
+"openening_intents":[{"id":"EI-1","opening_id":"door_1","wall":"west",
+"placement":"near_corner","corner":null,"margin_m":0.2}],
+"camera_intent":{"id":"CI-1","corner":"southeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"zones":[],
+"wall_notes":[],
+"ceiling_notes":[],
+"floor_notes":[]}
+
+V11-EXPLICIT-INTENT-EXTENSION-APPLICATION — apply these rules after creating the complete base plan:
+1. RELATION SEMANTICS — apply geometric operations to items, not natural-language interpretation.
+2. ZONES + WALLS FIRST — place focal-point furniture against walls, then support pieces relative to it.
+3. CIRCULATION — maintain clear paths from the door to all zones. A person must walk without squeezing past furniture.
+4. RELATION + ITEM-INSTANCE-APPLICATION — apply typed placement instructions to create separate instances.
+5. OPENING INTENT + DOOR/WINDOW-APPLICATION — place doors and windows with intent; never put them at 0,0.
+6. CAMERA INTENT — place the camera with intent; return complete, valid JSON only.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are item CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-EXTENSION-SCHEMA:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Add zones with optional x,z,w,d,elevation,rotation_deg, and fixed.
+- Add wall_notes, ceiling_notes, and floor_notes with optional text.
+- Return complete, valid JSON only.
+
+V11-EXPLICIT-INTENT-EXTENSION-RULES:
+- RELATION + ITEM-INSTANCE-APPLICATION: Create separate instances for repeated items. Apply typed placement
+  instructions to create practical, buildable furniture arrangements.
+- ZONES + WALLS FIRST: Place focal-point furniture against walls, then support pieces relative to it.
+- CIRCULATION: Maintain clear paths from the door to all zones. A person must walk without squeezing past furniture.
+- OPENING INTENT + DOOR/WINDOW-APPLICATION: Place doors and windows with intent; never put them at 0,0.
+- CAMERA INTENT: Place the camera with intent; return complete, valid JSON only.
+
+V11-EXPLICIT-INTENTION-EXTENSION-APPLICATION-LOG — record every operation:
+- Apply RELATION SEMANTICS before ZONES + WALLS FIRST.
+- Record item x,z,w,d,elevation,rotation_deg before and after applying fixed.
+- Note practical buildable placement for every item before and after applying RELATION + ITEM-INSTANCE-APPLICATION.
+- Log wall, ceiling, and floor notes with text.
+- Record camera x,y,z,target_x,target_y,target_z,fov_deg before and after applying CAMERA INTENT.
+
+V11-EXPLICIT-INTENTION-EXTENSION-SCHEMA-VALIDATION — check complete, valid JSON against the schema:
+- Apply all schema rules, including type, optional, enum, and dependency checks.
+- Return error messages for every validation failure; do not generate partial output.
+
+V11-EXPLICIT-INTENTION-EXTENSION-IMPLEMENTATION — write complete, valid JSON code that applies these rules:
+- Use a deterministic solver to place items relative to focal-point furniture.
+- Apply typed placement instructions before placing individual item instances.
+- Place doors and windows with intent; never put them at 0,0.
+- Place the camera with intent; return complete, valid JSON only.
+
+V11-EXPLICIT-INTENTION-EXTENSION-APPLICATION-LOG-ENTRY — create a record for every operation:
+{"id":string,"operation":"apply_relation|place_item|apply_fixed|note_wall|note_ceiling|
+  note_floor|place_door|place_window|set_camera|apply_schema_validation",
+"input_m":number,"output_m":number,"item_id":string|"null",
+"wall":string|"null","placement":string|"null","intent_id":string|"null",
+"parameters_m":object,"schema_version":string,"circulation_notes":[string],
+"design_notes":[string],"zones":[object],"wall_notes":[object],
+"ceiling_notes":[object],"floor_notes":[object],"camera":{"x:number,"y":number,
+"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"schema_errors":[string]}
+
+V11-EXPLICIT-INTENTION-EXTENSION-APPLICATION-LOG-ENTRY-SCHEMA:
+- Every field remains mandatory, including id, operation, input_m, output_m, item_id, wall,
+  placement, intent_id, parameters_m, schema_version, circulation_notes, design_notes,
+  zones, wall_notes, ceiling_notes, floor_notes, camera, and schema_errors.
+- Return complete, valid JSON only.
+
+V11-EXPLICIT-INTENTION-EXTENSION-APPLICATION-LOG-ENTRY-RULES:
+- Apply these rules before creating the log entry.
+- RELATION SEMANTICS: Apply geometric operations to items, not natural-language interpretation.
+- ZONES + WALLS FIRST: Place focal-point furniture against walls, then support pieces relative to it.
+- CIRCULATION: Maintain clear paths from the door to all zones. A person must walk without squeezing past furniture.
+- RELATION + ITEM-INSTANCE-APPLICATION: Create separate instances for repeated items. Apply typed placement
+  instructions to create practical, buildable furniture arrangements.
+- OPENING INTENT + DOOR/WINDOW-APPLICATION: Place doors and windows with intent; never put them at 0,0.
+- CAMERA INTENT: Place the camera with intent; return complete, valid JSON only.
+
+V11-EXPLICIT-INTENTION-EXTENSION-APPLICATION-LOG-ENTRY-IMPLEMENTATION:
+- Write complete, valid JSON code that applies these rules.
+- Use a deterministic solver to place items relative to focal-point furniture.
+- Apply typed placement instructions before placing individual item instances.
+- Place doors and windows with intent; never put them at 0,0.
+- Place the camera with intent; return complete, valid JSON only.

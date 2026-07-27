@@ -1,0 +1,126 @@
+error: Extra data: line 31 column 1 (char 1230)
+------------------------------------------------------------
+{"name":"Diner Interior",
+"room":{"width":6,"depth":4,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter",
+"category":"furniture","mount":"floor","x":0,"z":1.5,
+"width":4.2,"depth":0.7,"height":0.9,"elevation":0.0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"Rounded polished-chrome edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west",
+"offset":0.5,"width":0.9,"height":2.1,"sill_height":0.0}],
+"openings":[{"id":"window_1","kind":"window","wall":"south",
+"offset":0.7,"width":1.8,"height":1.4,"sill_height":0.0}],
+"camera":{"x":-0.5,"y":2.0,"z":0.9,"target_x":0.0,
+"target_y":1.1,"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"r_1","subject_id":"counter_1",
+"kind":"centered","wall":null,"parameters_m":{},"weight":1,
+"relaxable":false}],
+"opening_intents":[{"id":"oi_1","opening_id":"door_1",
+"placement":"near_corner","corner":"northwest",
+"margin_m":0.2}],
+"camera_intent":{"id":"ci_1","corner":"southeast",
+"target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55},
+"zones":[],
+"wall_notes":[],
+"ceiling_notes":[],
+"floor_notes":[]}
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION — apply these rules in addition to complete base schema application:
+1. RELATION SEMANTICS — apply geometric operations before placing items.
+2. ZONES + WALLS FIRST — identify functional zones, then place furniture against walls.
+3. CIRCULATION — maintain clear paths from the door to all zones.
+4. RELATION + SPACING — apply typed placements, then distribute items relative to their parents.
+5. DOOR CLEARANCE — nothing within 1.0m inward of a door.
+6. WINDOW CLEARANCE — keep furniture at least 0.3m from exterior window walls.
+7. PROPORTIONS — item dimensions must be realistic.
+8. CAMERA — place the camera in a corner with a clear diagonal view.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-EXTENSION-SCHEMA:
+- Every base field remains mandatory, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Add schema_version="floor-plan/v11".
+
+V11-EXPLICIT-INTENT-EXTENSION-RULES:
+- Apply typed placements before placing items. RELATION SEMANTICS apply before ZONES + WALLS FIRST.
+- Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+- Use adjacent_to / east_of with z=0 for seating rows. Never use it for ceiling fixtures.
+- Use south_of / north_of for seating rows along a counter's south face.
+- Use above for pendant lights hanging from the ceiling.
+- Use around for distributing items in a circle around a target.
+- Use centered + optional x,z offset for placing items at room center.
+- RELATION SEMANTICS are geometric operations, not natural-language synonyms.
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION:
+Apply these rules in addition to complete base schema application.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","wall":string,"parameters_m":{"key":number},"weight":
+number,"relaxable":boolean}], "opening_intents":[{"id":string,"opening_id":
+string,"placement":"centered|near_corner","corner":"northwest|northeast|
+southwest|southeast","margin_m":number}], "camera_intent":{"id":string,
+"corner":"northwest|northeast|southwest|southeast","target_id":string,
+"inset_m":number,"eye_height_m":number,"target_height_m":number,"fov_deg":
+number},"zones":[string],"wall_notes":[string],"ceiling_notes":[string],
+"floor_notes":[string]}
+
+V11-EXPLICIT-INTENTION-APPLICATION-LOG — record every operation; do not encode intent only in names.
+
+COORDINATE-SYSTEM-IMPLEMENTATION:
+- Apply x,z = item_center before placing anything.
+- Use width = item_x_span + item_z_span for practical item placement.
+- Elevation is bottom of the item; use room_height - item_height for ceiling items.
+- Rotation_deg rotates the item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION-LOG:
+- Record every operation with timestamp, kind, target_id/wall, and parameters_m.
+
+V11-EXPLICIT-INTENTION-APPLICATION-RULES:
+1. ZONES: Identify functional zones before placing furniture.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands)
+   go in the center. Never cluster everything at 0,0.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones.
+4. RELATION SEMANTICS: Apply geometric operations before placing items.
+5. SPACING: Repeated items (stools, chairs, cabinets) distribute evenly along their parent surface
+   with equal gaps. Never stack them on top of each other.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of a door. The door swing arc must be completely
+   unobstructed.
+7. WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light enters freely.
+8. PROPORTIONS: Item dimensions must be realistic. A stool is ~0.4m wide. A pendant light is ~0.3m tall.
+9. CAMERA: Place the camera in a corner with a clear diagonal view across the room showing the
+   maximum number of objects.
+
+V11-EXPLICIT-INTENTION-APPLICATION-LOG-ENTRY-SCHEMA:
+{"id":string,"kind":string,"timestamp":number,"target_id"/wall:string,
+"parameters_m":{"key":number},"optional_notes":[string]}
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION-LOG-ENTRY-EXAMPLE:
+{"id":"placement_1","kind":"apply_zones","timestamp":1643723900,
+"target_id":null,"parameters_m":{},"optional_notes":["Identified seating zone."]}
+{"id":"placement_2","kind":"wall_first","timestamp":1643723901,
+"target_id":"counter_1","parameters_m":{},"optional_notes":[
+"Placed counter against north wall."]}
+{"id":"placement_3","kind":"circulation_maintenance",
+"timestamp":1643723902,"target_id":"door_1","parameters_m":{"clearance_m":0.8},
+"optional_notes":["Maintained 0.8m clear path from door to seating area."]}

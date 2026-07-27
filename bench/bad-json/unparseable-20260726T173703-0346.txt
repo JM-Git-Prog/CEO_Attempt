@@ -1,0 +1,123 @@
+error: Expecting ':' delimiter: line 14 column 60 (char 839)
+------------------------------------------------------------
+{"name":"Ramen Shop Counter",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"counter_1","name":"Counter","category":"furniture","mount":"floor","x":0.5,
+"z":4.0,"width":3.0,"depth":1.5,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.75,"description":"A practical counter for serving ramen."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,"width":0.9,
+"height":2.1,"sill_height":0.0}],
+"camera":{"x":3.5,"y":1.6,"z":1.7,"target_x":0.0,"target_y":0.0,"target_z":0.0,
+"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create practical, buildable counter with clear circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"seating_1","subject_id":"counter_1","kind":"adjacent_to",
+"target_id":"stool_1","wall":null,"parameters_m":{"m:0.5},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"door_1_intent","opening_id":"door_1","placement":"centered",
+"wall":"north","margin_m":0.1}],
+"camera_intent":{"id":"camera_1","corner":"northeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":0.0,"fov_deg":55.0}}
+
+V11-EXPLICIT-INTENT-EXTENSION-APPLICATION — apply typed placement rules after creating the complete base plan:
+
+* Apply ZONES: Identify functional zones (seating, work, circulation). Place practical furniture first, then support pieces relative to it.
+* Apply WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands) go in the center. Never cluster everything at 0,0.
+* Apply CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. A person must walk from the door to any seat without squeezing past furniture.
+* Apply RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+ + adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+ + west_of: places subject WEST of target.
+ + south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+ + north_of: places subject NORTH of target.
+ + above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+ + around: distributes subjects in a circle around target.
+ + centered: places at room center with optional offsets.
+
+V11-RELATION-APPLICATION — apply typed placement rules to create practical, buildable furniture arrangement:
+
+* stool_1: against_wall + wall="north" + along_offset_m=0 + wall_gap_m = 0.3m practical seating row.
+* stool_2, stool_3, stool_4, stool_5, stool_6, stool_7: adjacent_to + target_id="stool_1" + distribution_index=0-6,
+  distribution_count=7, distribution_span_m=0.6m = evenly spaced seats along north counter.
+* pendant_light_1: above + target_id="counter_1" + height=0.3m practical hanging light.
+* pendant_light_2: adjacent_to + target_id="stool_1" + height=0.3m practical side light.
+
+V11-OPENING-INTENT-APPLICATION — apply typed placement rules to create practical, buildable door:
+
+* door_1_intent: placement="centered" + wall="north" + margin_m=0.1m = practical north door with clear circulation path.
+
+V11-CAMERA-INTENT-APPLICATION — apply typed placement rule to create practical, buildable camera:
+
+* camera_1: corner="northeast" + target_id=null + inset_m=0.45m + eye_height_m=1.6m + target_height_m=0.0 +
+  fov_deg=55.0 = practical diagonal camera with clear view across the room.
+
+V11-COORDINATE-SYSTEM — apply these geometric rules after applying all typed placement rules:
+
+* Room center is (0, 0). North is +Z, East is +X.
+* x,z are the item's CENTER position in meters.
+* width is the X-axis span, depth is the Z-axis span.
+* elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+* rotation_deg rotates the item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-SCHEMA — return one complete, valid JSON object with all mandatory fields including name, room, items, openings, camera, schema_version, relationships, opening_intents, and camera_intent. Never encode placement intent only in names.
+
+Complete practical, buildable floor plan:
+
+{"name":"Ramen Shop Counter",
+"room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"stool_1","name":"Stool","category":"furniture","mount":"floor","x":1.5,
+"z":4.9,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"stool_2","name":"Stool","category":"furniture","mount":"floor","x":1.9,
+"z":4.3,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"stool_3","name":"Stool","category":"furniture","mount":"floor","x":2.3,
+"z":4.1,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"stool_4","name":"Stool","category":"furniture","mount":"floor","x":2.7,
+"z":3.9,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"stool_5","name":"Stool","category":"furniture","mount":"floor","x":3.1,
+"z":3.7,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"stool_6","name":"Stool","category":"furniture","mount":"floor","x":3.5,
+"z":3.5,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"stool_7","name":"Stool","category":"furniture","mount":"floor","x":3.9,
+"z":3.3,"width":0.4,"depth":0.7,"height":0.6,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.75,"description":"A practical stool for seating."}],
+"items":[{"id":"counter_1","name":"Counter","category":"furniture","mount":"floor",
+"x":0.5,"z":4.0,"width":3.0,"depth":1.5,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.75,"description":"A practical counter for serving ramen."}],
+"items":[{"id":"pendant_light_1","name":"Pendant Light","category":"fixture",
+"mount":"ceiling","x":2.5,"z":4.3,"width":0.3,"depth":0.3,"height":0.3,
+"elevation":2.7-0.3,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,
+"description":"A practical pendant light hanging above the counter."}],
+"items":[{"id":"pendant_light_2","name":"Pendant Light","category":"fixture",
+"mount":"ceiling","x":1.9,"z":4.1,"width":0.3,"depth":0.3,"height":0.3,
+"elevation":2.7-0.3,"rotation_deg":0.0,"fixed":false,"clearance_m":0.75,
+"description":"A practical pendant light hanging to the side."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,"width":0.9,
+"height":2.1,"sill_height":0.0}],
+"camera":{"x":3.5,"y":1.6,"z":1.7,"target_x":0.0,"target_y":0.0,"target_z":0.0,
+"fov_deg":55.0},
+"circulation_notes":[],
+"design_notes":["Create practical, buildable counter with clear circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"seating_1","subject_id":"stool_1","kind":"adjacent_to",
+"target_id":"counter_1","wall":null,"parameters_m":{"m:0.5},"weight":1.0,"relaxable":false}],
+"relationships":[{"id":"seating_2","subject_id":"stool_2","kind":"adjacent_to",
+"target_id":"stool_1","wall":null,"parameters_m":{"m:0.6},"weight":1.0,"relaxable":false}],
+"relationships":[{"id":"seating_3","subject_id":"stool_3","kind":"adjacent_to",
+"target_id":"stool_2","wall":null,"parameters_m":{"m:0.6},"weight":1.0,"relaxable":false}],
+"relationships":[{"id":"seating_4","subject_id":"stool_4","kind":"adjacent_to",
+"target_id":"stool_3","wall":null,"parameters_m":{"m:0.6},"weight":1.0,"relaxable":false}],
+"relationships":[{"id":"seating_5","subject_id":"stool_5","kind":"adjacent_to",
+"target_id":"stool_4","wall":null,"parameters_m":{"m:0.6},"weight":1.0,"relaxable":false}],
+"relationships":[{"id":"seating_6","subject_id":"stool_6","kind":"adjacent_to",
+"target_id":"stool_5","wall":null,"parameters_m":{"m:0.6},"weight":1.0,"relaxable":false}],
+"relationships":[{"id":"seating_7","subject_id":"stool_7","kind":"adjacent_to",
+"target_id":"stool_6","wall":null,"parameters_m":{"m:0.6},"weight":1.0,"relaxable":false}],
+"openings_intents":[{"id":"door_1_intent","opening_id":"door_1","placement":"centered",
+"wall":"north","margin_m":0.1}],
+"camera_intent":{"id":"camera_1","corner":"northeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":0.0,"fov_deg":55.0}}

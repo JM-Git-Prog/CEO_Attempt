@@ -1,0 +1,1142 @@
+error: Expecting value: line 1140 column 17 (char 33918)
+------------------------------------------------------------
+{
+    "name": "Phone Repair Kiosk",
+    "room": {
+        "width": 4.5,
+        "depth": 6.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "service_counter_1",
+            "name": "Service Counter",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "service_counter_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "display_case_1",
+            "name": "Display Case",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "display_case_1",
+                    "kind": "adjacent_to",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "work_desk_1",
+            "name": "Work Desk",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 1.2,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "work_desk_1",
+                    "kind": "north_of",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "accessory_hooks_1",
+            "name": "Accessory Hooks",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "accessory_hooks_1",
+                    "kind": "centered",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "stool_1",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_1",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_2",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_2",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_3",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_3",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "stool_4",
+            "name": "Stool",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.4,
+            "depth": 0.4,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "stool_4",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_3",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_3",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_4",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_4",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_5",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_5",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_6",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_6",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_7",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_7",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_8",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_8",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_9",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_9",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_10",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_10",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_11",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_11",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_12",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_12",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_13",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_13",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_14",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_14",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_15",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_15",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_16",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_16",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_17",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_17",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_18",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_18",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_19",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_19",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_20",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_20",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_2",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_2",
+                    "kind": "centered",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "centered",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_1",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_1",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intents_1",
+            "name": "Opening Intents",
+            "category": "decor",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intents_1",
+                    "kind": "centered",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_1",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_1",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_2",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_2",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_3",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_3",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_4",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_4",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_5",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_5",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_6",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_6",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_7",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_7",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_8",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_8",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_9",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_9",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_10",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.9,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_10",
+                    "kind": "above",
+                    "target_id": "service_counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_11",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 

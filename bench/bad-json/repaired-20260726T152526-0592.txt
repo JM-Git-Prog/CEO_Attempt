@@ -1,0 +1,1065 @@
+error: Expecting ',' delimiter: line 1063 column 19 (char 33357)
+------------------------------------------------------------
+{
+    "name": "Dentist Operatory",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "chair_1",
+            "name": "Reclined Patient Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_1",
+                    "kind": "south_of",
+                    "target_id": "counter_1",
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 2.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "instrument_cart_1",
+            "name": "Instrument Cart",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.5,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "instrument_cart_1",
+                    "kind": "west_of",
+                    "target_id": "counter_1",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "counter_1",
+            "name": "Counter with Cabinets",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 4.0,
+            "depth": 1.5,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "counter_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "exam_light_1",
+            "name": "Bright Exam Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.0,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "exam_light_1",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_1",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_1",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.0,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_1",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_intent_1",
+            "name": "Camera Intent",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.0,
+            "height": 1.8,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_intent_1",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_1",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_2",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_2",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_3",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_3",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_4",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_4",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_5",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_5",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_6",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_6",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_7",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_7",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_8",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_8",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_9",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_9",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_10",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_10",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_11",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_11",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_12",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_12",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_13",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_13",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_14",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_14",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_15",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_15",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_16",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_16",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_17",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_17",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_18",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_18",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_19",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_19",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_20",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_20",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_21",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_21",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_22",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_22",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_23",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_23",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_24",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_24",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_25",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_25",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_26",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_26",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_27",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_27",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_28",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_28",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_29",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_29",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_30",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_30",
+                    "kind": "near_corner",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"corner": "southeast", "margin_m": 0.1},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_31",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "opening_intent_31",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "opening_intent_32",
+            "name": "Opening Intent",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.

@@ -1,0 +1,144 @@
+error: Unterminated string starting at: line 141 column 7 (char 3192)
+------------------------------------------------------------
+```json
+{
+  "name": "Minimalist Home Office",
+  "schema_version": "floor-plan/v11",
+  "room": {
+    "width": 4.0,
+    "depth": 3.5,
+    "height": 2.8
+  },
+  "items": [
+    {
+      "id": "standing_desk",
+      "name": "Standing Desk",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 1.6,
+      "z": 0.0,
+      "width": 1.4,
+      "depth": 0.7,
+      "height": 1.2,
+      "elevation": 0.0,
+      "rotation_deg": 90,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Adjustable-height standing desk placed against the east wall, front facing west toward the user."
+    },
+    {
+      "id": "task_chair",
+      "name": "Task Chair",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0.3,
+      "z": 0.0,
+      "width": 0.65,
+      "depth": 0.65,
+      "height": 1.0,
+      "elevation": 0.0,
+      "rotation_deg": 90,
+      "fixed": false,
+      "clearance_m": 0.6,
+      "description": "Ergonomic task chair positioned west of the standing desk, facing east toward the work surface."
+    },
+    {
+      "id": "shelf",
+      "name": "Bookshelf",
+      "category": "furniture",
+      "mount": "floor",
+      "x": -1.775,
+      "z": 0.0,
+      "width": 1.0,
+      "depth": 0.35,
+      "height": 2.0,
+      "elevation": 0.0,
+      "rotation_deg": 90,
+      "fixed": false,
+      "clearance_m": 0.5,
+      "description": "Tall minimalist shelf against the west wall, open side facing east into the room."
+    },
+    {
+      "id": "pendant_light",
+      "name": "Pendant Light",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 1.6,
+      "z": 0.0,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.3,
+      "elevation": 2.5,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.0,
+      "description": "Single pendant fixture hanging directly above the standing desk work surface."
+    }
+  ],
+  "openings": [
+    {
+      "id": "window_north",
+      "kind": "window",
+      "wall": "north",
+      "offset": 1.25,
+      "width": 1.5,
+      "height": 2.2,
+      "sill_height": 0.3
+    },
+    {
+      "id": "door_south",
+      "kind": "door",
+      "wall": "south",
+      "offset": 0.5,
+      "width": 0.9,
+      "height": 2.1,
+      "sill_height": 0.0
+    }
+  ],
+  "camera": {
+    "x": 1.8,
+    "y": 1.6,
+    "z": 1.5,
+    "target_x": 0.0,
+    "target_y": 1.1,
+    "target_z": -0.3,
+    "fov_deg": 60
+  },
+  "relationships": [
+    {
+      "subject_id": "standing_desk",
+      "kind": "against_wall",
+      "wall": "east",
+      "parameters_m": {
+        "along_offset_m": 0.0,
+        "wall_gap_m": 0.05
+      },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "task_chair",
+      "kind": "west_of",
+      "target_id": "standing_desk",
+      "parameters_m": {
+        "gap_m": 0.625
+      },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "shelf",
+      "kind": "against_wall",
+      "wall": "west",
+      "parameters_m": {
+        "along_offset_m": 0.0,
+        "wall_gap_m": 0.05
+      },
+      "weight": 1.0,
+      "relaxable": false
+    },
+    {
+      "subject_id": "pendant_light",
+      "kind": "above",
+      "target_id": "standing_desk",
+      "

@@ -1,0 +1,523 @@
+error: Invalid control character at: line 52 column 72 (char 4126)
+------------------------------------------------------------
+{"description":"A 1960s hair salon with three dryer chairs in a row, a stylist station with mirror, and a magazine table.",
+"concept":{"era":"contemporary","mood":"neutral","palette":"derived from the description",
+"architecture_notes":"single rectangular room, standard walls and floor",
+"key_objects":["1960s","hair","salon","with","three","dryer","chairs","stylist"],
+"lighting_notes":"simple daylight","image_prompt":"A 1960s hair salon with three dryer chairs in a row, a stylist station with mirror, and a magazine table."},
+"floor_plan_v11_json_schema":{"$defs":{"CameraPlacementIntent":{"properties":
+{"corner":{"enum":["northwest","northeast","southwest","southeast"],"title":"Corner",
+"type":"string"},"target_id":{"title":"Target Id","type":"string"},
+"inset_m":{"default":0.45,"maximum":2.0,"minimum":0.2,"title":"Inset M","type":"number"},
+"eye_height_m":{"default":1.6,"maximum":5.0,"minimum":0.2,"title":"Eye Height M",
+"type":"number"},"target_height_m":{"default":1.2,"maximum":5.0,"minimum":0.0,
+"title":"Target Height M","type":"number"},"fov_deg":{"default":55.0,"maximum":90.0,
+"minimum":30.0,"title":"Fov Deg","type":"number"}},"required":["corner","target_id"],
+"title":"CameraPlacementIntent","type":"object"},"OpeningPlacementIntent":
+{"properties":{"opening_id":{"title":"Opening Id","type":"string"},
+"wall":{"enum":["north","south","east","west"],"title":"Wall","type":"string"},
+"placement":{"enum":["centered","near_corner"],"title":"Placement","type":"string"},
+"corner":{"anyOf":[{"enum":["northwest","northeast","southwest","southeast"],
+"type":"string"}],"default":null,"title":"Corner"},"margin_m":{"default":0.1,
+"maximum":2.0,"minimum":0.0,"title":"Margin M","type":"number"}},"required":
+["opening_id","wall","placement"],"title":"OpeningPlacementIntent",
+"type":"object"},"PlanCamera":{"properties":{"x":{"title":"X","type":"number"},
+"y":{"default":1.6,"maximum":5.0,"minimum":0.2,"title":"Y","type":"number"},
+"z":{"title":"Z","type":"number"},"target_x":{"default":0.0,"title":"Target X",
+"type":"number"},"target_y":{"default":1.1,"title":"Target Y","type":"number"},
+"target_z":{"default":0.0,"title":"Target Z","type":"number"},"fov_deg":
+{"default":55.0,"maximum":90.0,"minimum":30.0,"title":"Fov Deg","type":"number"}},
+"required":["x","z"],"title":"PlanCamera","type":"object"},"PlanItem":
+{"properties":{"id":{"title":"Id","type":"string"},"name":{"title":"Name",
+"type":"string"},"category":{"enum":["furniture","fixture","architectural",
+"decor"],"title":"Category","type":"string"},"mount":{"default":"floor",
+"enum":["floor","wall","ceiling"],"title":"Mount","type":"string"},
+"x":{"title":"X","type":"number"},"z":{"title":"Z","type":"number"},
+"width":{"exclusiveMinimum":0.0,"maximum":20.0,"title":"Width","type":"number"},
+"depth":{"exclusiveMinimum":0.0,"maximum":20.0,"title":"Depth","type":"number"},
+"height":{"exclusiveMinimum":0.0,"maximum":8.0,"title":"Height","type":"number"},
+"elevation":{"default":0.0,"maximum":8.0,"minimum":0.0,"title":"Elevation",
+"type":"number"},"rotation_deg":{"default":0.0,"title":"Rotation Deg",
+"type":"number"},"fixed":{"default":false,"title":"Fixed","type":"boolean"},
+"clearance_m":{"default":0.75,"maximum":3.0,"minimum":0.0,"title":"Clearance M",
+"type":"number"},"description":{"default":"","title":"Description","type":
+"string"}},"required":["id","name","category","x","z","width","depth","height"],
+"title":"PlanItem","type":"object"},"PlanOpening":{"properties":
+{"id":{"title":"Id","type":"string"},"kind":{"enum":["door","window"],
+"title":"Kind","type":"string"},"wall":{"enum":["north","south","east",
+"west"],"title":"Wall","type":"string"},"offset":{"default":0.0,"title":"Offset",
+"type":"number"},"width":{"default":0.9,"exclusiveMinimum":0.2,"maximum":
+8.0,"title":"Width","type":"number"},"height":{"default":2.1,
+"exclusiveMinimum":0.2,"maximum":5.0,"title":"Height","type":"number"},
+"sill_height":{"default":0.0,"maximum":4.0,"minimum":0.0,"title":"Sill Height",
+"type":"number"}},"required":["id","kind","wall"],"title":"PlanOpening",
+"type":"object"},"PlanRelation":{"description":"One V11 typed placement
+instruction owned by the approved Plan.",
+"properties":{"subject_id":{"title":"Subject Id","type":"string"},
+"kind":{"enum":["centered","against_wall","adjacent_to","north_of",
+"south_of","east_of","west_of","around","above","facing","near_corner"],
+"title":"Kind","type":"string"},"target_id":{"anyOf":[{"type":
+"string"}],"default":null,"title":"Target Id"},"wall":{"anyOf":[{"enum":
+["north","south","east","west"]},{"type":"null"}],"default":null,
+"title":"Wall"},"parameters_m":{"additionalProperties":{"type":"number"},
+"title":"Parameters M","type":"object"},"weight":{"default":1.0,
+"exclusiveMinimum":0.0,"title":"Weight","type":"number"},"relaxable":
+{"default":false,"title":"Relaxable","type":"boolean"}},"required":
+["subject_id","kind"],"title":"PlanRelation","type":"object"},
+"PlanRoom":{"properties":{"width":{"maximum":30.0,"minimum":2.5,
+"title":"Width","type":"number"},"depth":{"maximum":30.0,"minimum":2.5,
+"title":"Depth","type":"number"},"height":{"default":2.8,"maximum":8.0,
+"minimum":2.1,"title":"Height","type":"number"}},"required":["width",
+"depth"],"title":"PlanRoom","type":"object"}},
+"description":"V11 Plan authority with explicit, persisted spatial intent.",
+"properties":{"name":{"title":"Name","type":"string"},"room":
+{"$ref":"#/$defs/PlanRoom"},"items":
+{"items":{"$ref":"#/$defs/PlanItem"},"title":"Items","type":"array"},
+"openings":{"items":{"$ref":"#/$defs/PlanOpening"},"title":"Openings",
+"type":"array"},"camera":{"$ref":"#/$defs/PlanCamera"},"circulation_notes":
+{"items":{"type":"string"},"title":"Circulation Notes","type":"array"},
+"design_notes":{"items":{"type":"string"},"title":"Design Notes",
+"type":"array"},"schema_version":{"const":"floor-plan/v11",
+"title":"Schema Version","type":"string"},"relationships":
+{"items":{"$ref":"#/$defs/PlanRelation"},"title":"Relationships",
+"type":"array"},"opening_intents":
+{"items":{"$ref":"#/$defs/OpeningPlacementIntent"},"title":"Opening
+Intents","type":"array"},"camera_intent":
+{"$ref":"#/$defs/CameraPlacementIntent"}},
+"required":["name","room","camera","schema_version","relationships",
+"opening_intents","camera_intent"],"title":"FloorPlanV11","type":"object"}
+
+Schema application: Applying complete V11 schema with practical, buildable floor plan.
+
+DESIGN — apply practical, buildable principles before placing anything.
+ZONES: Identify functional zones (seating, work, circulation). Place primary furniture first,
+then support pieces relative to it.
+
+V11-RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+* adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+* west_of: places subject WEST of target.
+* south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's
+  south face.
+* north_of: places subject NORTH of target.
+* above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+* around: distributes subjects in a circle around target.
+* centered: places at room center with optional offsets.
+
+V11-RELATION APPLICATION — apply typed placement instructions with practical, buildable intent.
+Apply against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+wall_gap_m is distance from wall surface to nearest item edge; ensure depth/2 + wall_gap_m < half_room_depth.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-CAMERA-INTENT-APPLICATION — place the camera with intent, not just random x,z,y.
+Use corner + target_id + inset_m + eye_height_m + target_height_m + fov_deg for a practical,
+buildable camera placement.
+
+V11-OPENING-INTENT-APPLICATION — place doors and windows with intent, not just random wall + offset.
+Use opening_id + wall + placement + margin_m for a practical, buildable door or window.
+
+V11-RELATION-EXPLICIT-INTENT-COORDINATE-SYSTEM — x,z are item center in meters.
+width is X-axis span, depth is Z-axis span. elevation is bottom of the item (0 for floor items,
+  room_height - item_height for ceiling items). rotation_deg rotates the item around its center
+  (0 = front faces south).
+
+V11-RELATION-EXPLICIT-INTENT-RULES — apply these principles before placing anything:
+1. ZONES: Identify functional zones (seating, work, circulation). Place primary furniture first,
+  then support pieces relative to it.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands)
+  go in the center. Never cluster everything at 0,0.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. A person must
+  walk from the door to any seat without squeezing past furniture.
+4. RELATIONSHIPS: Chairs face tables. Stools line up along counters/bars. Pendant lights hang above
+  the surface they illuminate. Side tables flank beds/sofas.
+5. SPACING: Repeated items (stools, chairs, cabinets) distribute evenly along their parent surface
+  with equal gaps. Never stack them on top of each other.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of a door. The door swing arc must be completely
+  unobstructed.
+7. WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light enters freely.
+8. PROPORTIONS: Item dimensions must be realistic. A stool is ~0.4m wide. A pendant light is ~0.3m
+  tall. An arcade cabinet is ~0.7m wide × 0.8m deep. A bed is ~2.0m × 1.6m.
+9. CAMERA: Place the camera in a corner with a clear diagonal view across the room showing the
+  maximum number of objects. Never place the camera behind or inside furniture.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+Schema application: Applying complete V11 schema with practical, buildable floor plan.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-INTENT-APPLICATION — apply typed placement with intent, not just name.
+Never encode placement intent only in names. Use against_wall + wall="north" + along_offset_m=0 +
+  wall_gap_m for a practical, buildable north counter.
+
+V11-RELATION-EXPLICIT-

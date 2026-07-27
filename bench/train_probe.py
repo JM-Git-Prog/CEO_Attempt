@@ -131,7 +131,24 @@ def main() -> int:
     print("Saving merged GGUF (q4_k_m) - takes a few minutes...")
     model.save_pretrained_gguf(str(out), tokenizer, quantization_method="q4_k_m")
 
+    # Unsloth writes the GGUF into a SIBLING "<out>_gguf" folder, not into out
+    # itself. Globbing only `out` therefore found nothing, and the Modelfile
+    # was written as the literal text "FROM None" - 11 bytes - so every
+    # `ollama create` failed and no trained model was ever registered or
+    # benched. Confirmed 2026-07-26 on the 07-24 and 07-26 runs, both of which
+    # had a real 4.9 GB GGUF sitting in the sibling folder the whole time.
     gguf = next(out.glob("*.gguf"), None)
+    if gguf is None:
+        sibling = out.parent / f"{out.name}_gguf"
+        gguf = next(sibling.glob("*.gguf"), None) if sibling.exists() else None
+    if gguf is None:
+        _write_progress(stage="failed", run_id=run_id, rows=len(rows),
+                        error="no .gguf produced - conversion failed")
+        raise SystemExit(
+            "Training finished but NO .gguf was produced (looked in "
+            f"{out} and {out.parent / (out.name + '_gguf')}). Refusing to write "
+            "a Modelfile that points at nothing."
+        )
     modelfile = out / "Modelfile"
     modelfile.write_text(f"FROM {gguf}\n", encoding="utf-8")
     ollama_cmd = f'ollama create {args.model_name} -f "{modelfile}"'

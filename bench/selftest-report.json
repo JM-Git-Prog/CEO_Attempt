@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-26 13:28:28",
+  "generated": "2026-07-26 13:34:08",
   "live": false,
   "passed": 11,
   "failed": 0,
@@ -8,7 +8,7 @@
       "check": "1 imports",
       "ok": true,
       "detail": "every module the loop needs imports cleanly",
-      "seconds": 0.3
+      "seconds": 0.2
     },
     {
       "check": "2 training interpreter",
@@ -61,7 +61,7 @@
     {
       "check": "6 stuck detector",
       "ok": true,
-      "detail": "stale progress (21.5h old) correctly ignored, real freezes still caught",
+      "detail": "stale progress (21.6h old) correctly ignored, real freezes still caught",
       "seconds": 0.0
     },
     {

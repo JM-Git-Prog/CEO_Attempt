@@ -1,0 +1,293 @@
+{
+ "started": "2026-07-26 17:30:10",
+ "prompts": 45,
+ "lanes": {
+  "planner-probe-v1": {
+   "legal": 0,
+   "total": 45,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "error:LLMError": 19,
+    "error:ValidationError": 6
+   },
+   "rows": [
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-17605ad2f0bc49d9351535c598a9535122a97515146b4adb202aa185e9afe327"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ':' delimiter: line 17 column 16 (char 1105)\nRaw output:\n{\"name\":\"A practical, buildable Victorian parlor with a chaise lounge, two wingback chairs, a tea table, and a chandelier.\",\n\"room\":{\"width\":6.0,\"depth\":8.0,\"height\":2.7},\n\"items\":[{\"id\":\"chaise",
+     "seconds": 107.9,
+     "prompt_id": "holdout-2a4bbbbe0bf01e9da84dab21"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1531 (char 1530)\nRaw output:\n{\"description\":\"An airport gate corner with two rows of linked seats, a gate desk, a standing sign, and a big window wall.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":\"\",\"archit",
+     "seconds": 39.8,
+     "prompt_id": "holdout-dab67415ce098822b1f5fff0"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-9124bc860d1d7038797b5ae8177cfc471cbbc4d9fc289715b83a22dc3cc795e0"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 78 column 1 (char 6152)\nRaw output:\n{\"description\":\"A ramen shop counter with a kitchen pass, seven seats, hanging paper lanterns, and steam-warm lighting.\",\n\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":[],\"architectu",
+     "seconds": 107.6,
+     "prompt_id": "holdout-ce6650d892211332451d51bc"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-c1923e0a50a0fd4167faf232"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1540 (char 1539)\nRaw output:\n{\"description\":\"A rustic cabin bunk room with two bunk beds, a wood stove in the corner, and a small window with cold blue light.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":[],",
+     "seconds": 100.0,
+     "prompt_id": "holdout-ca645a72f5365f6b2eb83e8d"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-ece2c927745d38f52d45db55"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-1679ecb4aa4dd404c92dfee7"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "8 validation errors for FloorPlanV11\nitems.9.category\n  Field required [type=missing, input_value={'id': 'window_1', 'name'...: 1.2, 'fov_deg': 55}}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nitems.9.x\n  Field required [type=missing, input_value=",
+     "seconds": 66.0,
+     "prompt_id": "holdout-1cb16b7cc209d41471607b01a4fdb712d548a8852dccfb3d06e14d1c9baa50f5"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1560 (char 1559)\nRaw output:\n{\"description\":\"A 1970s airport lounge with four swivel chairs around a low table, a bar cart, and a sunset-orange window glow.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":[\"sun",
+     "seconds": 51.6,
+     "prompt_id": "holdout-2ea763e4e9c6b23cb037d5a6"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Invalid control character at: line 52 column 72 (char 4126)\nRaw output:\n{\"description\":\"A 1960s hair salon with three dryer chairs in a row, a stylist station with mirror, and a magazine table.\",\n\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":\"deriv",
+     "seconds": 109.4,
+     "prompt_id": "holdout-d5a098c8ca1ab08d85f2f869"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Invalid control character at: line 4 column 87 (char 332)\nRaw output:\n{\"name\":\"Minimalist Home Office\",\"room\":{\"width\":3.6,\"depth\":4.0,\"height\":2.7},\n\"items\":[{\"id\":\"standing_desk_1\",\"name\":\"Standing Desk\",\"category\":\"furniture\",\n\"mount\":\"floor\",\"x\":1.8,\"z\":0.5",
+     "seconds": 55.6,
+     "prompt_id": "holdout-5045c546f4f57a133564eea1"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1463 (char 1462)\nRaw output:\n{\"name\":\"1970s Rec Room\",\"room\":{\"width\":6.5,\"depth\":8.2,\"height\":2.7},\"items\":[{\"id\":\"stool_1\",\"name\":\"Stool 1\",\"category\":\"furniture\",\"mount\":\"floor\",\"x\":0.9,\"z\":2.4,\"width\":0.4,\"depth\":0.3,\"",
+     "seconds": 45.8,
+     "prompt_id": "holdout-1650c1e46587a43942664af0"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1516 (char 1515)\nRaw output:\n{\"description\":\"A 1930s bank teller hall corner with two teller windows on a counter, a writing desk island, and a hanging globe light.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palett",
+     "seconds": 23.5,
+     "prompt_id": "holdout-5107da4973e09cbdbf467012"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-c0bddc973c69573ab00164ca"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+     "seconds": 89.8,
+     "prompt_id": "holdout-24d798bbcf8c94c21bb34b09"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 16 column 82 (char 1847)\nRaw output:\n{\"description\":\"A phone repair kiosk room with a service counter, a display case, one work desk behind, and a wall of accessory hooks.\",\n\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette",
+     "seconds": 43.4,
+     "prompt_id": "holdout-1271c0360ba411c3ff4b00f6"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1405 (char 1404)\nRaw output:\n{\"name\":\"Diner Interior\",\"room\":{\"width\":6,\"depth\":4,\"height\":2.8},\"items\":[{\"id\":\"counter_1\",\"name\":\"Formica Counter\",\"category\":\"furniture\",\"mount\":\"floor\",\"x\":0,\"z\":2,\"width\":4.2,\"depth\":0.7",
+     "seconds": 61.4,
+     "prompt_id": "holdout-f84c882ce0c1e0b78a0fcd091ac6f4b4e8bcf4678a9864f6808795f8106ee3be"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 11 column 92 (char 1504)\nRaw output:\n{\"description\":\"A rooftop-style greenhouse room with two long planter tables, a potting station, a hose reel, and glass-panel sun.\",\n\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":\"d",
+     "seconds": 55.0,
+     "prompt_id": "holdout-7ad7d518fbfc380d673e5ce6"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+     "seconds": 102.8,
+     "prompt_id": "holdout-ca9f9a0468b0d50f419cb287e81dd2d3a691db84d920acf402716591a079846b"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 14 column 82 (char 1552)\nRaw output:\n{\"description\":\"A rustic cabin bunk room with two bunk beds, a wood stove in the corner, and a small window with cold blue light.\",\n\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":[],",
+     "seconds": 54.3,
+     "prompt_id": "holdout-4fceca4bf8784705d0e9ff18"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1560 (char 1559)\nRaw output:\n{\"description\":\"A 1970s airport lounge with four swivel chairs around a low table, a bar cart, and a sunset-orange window glow.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":[\"sun",
+     "seconds": 48.3,
+     "prompt_id": "holdout-a4e3a45494116be750c9c8bc"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1499 (char 1498)\nRaw output:\n{\"description\":\"A 1950s diner counter with four chrome stools, a pendant lamp, and rain on the window.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":[\"#964B00\",\"#F7D2C4\",\"#333333\"",
+     "seconds": 54.3,
+     "prompt_id": "holdout-c220f0d93b02f22113f0f525"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-bef0e457dccf801c1e8ca100"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+     "seconds": 70.8,
+     "prompt_id": "holdout-a8f932c7c86c6a409667ccf3b063637d031220ca53537a65000b129a37a92b6e"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1539 (char 1538)\nRaw output:\n{\"description\":\"A pet grooming salon with a grooming table, a wash tub counter, a kennel bank along one wall, and bright task lighting.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palett",
+     "seconds": 62.8,
+     "prompt_id": "holdout-65683365453c912656171195"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-066e160538801e23b06c3ac0"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 2170 (char 2169)\nRaw output:\n{\"name\":\"Diner Interior\",\"room\":{\"width\":6,\"depth\":4,\"height\":2.8},\"items\":[{\"id\":\"stool_1\",\"name\":\"Stool 1\",\"category\":\"furniture\",\"mount\":\"floor\",\"x\":0.9,\"z\":1.5,\"width\":0.4,\"depth\":0.7,\"heig",
+     "seconds": 62.8,
+     "prompt_id": "holdout-59866bd9a612f418581de961a5d861b1eee7b6561a9eac2018793c79ac2443e8"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-094f6decc0edc5b7b33b4170"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-76bac41ec816044bbce3f7f3e4b3c02b0e5864357025f55d24e63271d205406a"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-523f13ced127d92b805833b5"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-0d68f8711327f831709ce637"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+     "seconds": 52.0,
+     "prompt_id": "holdout-2b413c7b9d1f9cbb7c569bfa"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "LLM returned invalid JSON after retry: Expecting ',' delimiter: line 1 column 1540 (char 1539)\nRaw output:\n{\"description\":\"A minimalist home office with a standing desk, one shelf, a task chair, and a tall window on the north wall.\",\"concept\":{\"era\":\"contemporary\",\"mood\":\"neutral\",\"palette\":\"\",\"arch",
+     "seconds": 32.6,
+     "prompt_id": "holdout-74f13e93f34936dcaac26bc7"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\ncamera_intent.target_id\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+     "seconds": 27.6,
+     "prompt_id": "holdout-0fca602eb5e161a0ff3956a0"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(planner-probe-v1): LLMError: Ollama returned 400: {\"error\":\"{\\\"error\\\":{\\\"code\\\":400,\\\"message\\\":\\\"request (18080 tokens) exceeds the available context size (16384 tokens), try increasing it\\\",\\\"type\\\":\\\"exceed_context_size_error\\\",\\\"n_prompt_tokens\\\":180",
+     "seconds": 34.3,
+     "prompt_id": "holdout-828dcf7d00e4e9b575314fe8"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-edc9a8db6a3c627c5346d77811dd3344e5bf524b2020a0a4f7fceb9fa9f974d5"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-fa92f24cd8c9eb8b13097def"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-642934b3cd4b1efdaec2ec0a"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-c4eff8c535f61dc3d3156652e21447ba7c5098c0e0a105f40871090f4ca00fdf"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.1,
+     "prompt_id": "holdout-5128aa0ebb216cebf56afa980eb70cc5d3158f67f6f9ac426af2d98c8a43b32b"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-b2dec548e92b7963f78c5da5"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-d5d60e0aa8ce32cc2ba1749d"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "holdout-0c3e1746836cb9408e16e9c3"
+    }
+   ]
+  }
+ },
+ "finished": "2026-07-26 18:36:10"
+}

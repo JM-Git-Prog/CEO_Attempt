@@ -1,0 +1,1057 @@
+error: Unterminated string starting at: line 1055 column 21 (char 32896)
+------------------------------------------------------------
+{
+    "name": "Realtor Office",
+    "room": {
+        "width": 6.0,
+        "depth": 4.5,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "desk_1",
+            "name": "Desk",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 0.75,
+            "z": 2.25,
+            "width": 3.5,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "desk_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "chair_1",
+            "name": "Client Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 2.25,
+            "z": 2.25,
+            "width": 0.8,
+            "depth": 0.7,
+            "height": 1.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_1",
+                    "kind": "facing",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "award_shelf",
+            "name": "Award Shelf",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 2.25,
+            "width": 1.8,
+            "depth": 0.4,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "award_shelf",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "model_house",
+            "name": "Model House",
+            "category": "decor",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.25,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "model_house",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_2",
+            "name": "Client Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.35,
+            "z": 2.25,
+            "width": 0.8,
+            "depth": 0.7,
+            "height": 1.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_2",
+                    "kind": "facing",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera",
+            "name": "Canon camera",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.25,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.1,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_1",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.25,
+            "z": 4.5,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.25,
+            "z": 2.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_1",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_2",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_3",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.75,
+            "z": 2.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_3",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_4",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.25,
+            "z": 2.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_4",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_5",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.25,
+            "z": 3.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_5",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_6",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 3.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_6",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_7",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.75,
+            "z": 3.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_7",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_8",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.25,
+            "z": 3.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_8",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_9",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.25,
+            "z": 4.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_9",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_10",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_10",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_11",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.75,
+            "z": 4.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_11",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_12",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.25,
+            "z": 4.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_12",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_13",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.25,
+            "z": 4.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_13",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_14",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_14",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_15",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.75,
+            "z": 4.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_15",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_16",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.25,
+            "z": 4.75,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_16",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_17",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.25,
+            "z": 5.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_17",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_18",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 5.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_18",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_19",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.75,
+            "z": 5.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_19",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_20",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.25,
+            "z": 5.25,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.5,
+            "elevation": 2.75,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_20",
+                    "kind": "above",
+                    "target_id": "desk_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_2",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.25,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_3",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.75,
+            "z": 2.25,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_4",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 5.25,
+            "z": 2.25,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_5",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.75,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_6",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.75,
+            "z": 5.25,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_6",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_7",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 5.25,
+            "z": 4.75,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_7",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_8",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 2.25,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_8",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_9",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.75,
+            "z": 3.5,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_9",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_10",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 5.25,
+            "z": 3.5,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_10",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_11",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 4.75,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_11",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_12",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 4.75,
+            "z": 5.25,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_12",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_13",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 5.25,
+            "z": 4.75,
+            "width": 0.9,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_13",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall

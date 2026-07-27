@@ -1,0 +1,46 @@
+error: Invalid control character at: line 18 column 84 (char 1322)
+------------------------------------------------------------
+{"name":"Physical Therapy Room","room":{"width":6.0,"depth":8.0,"height":2.7},
+"items":[{"id":"padded_table_1","name":"Padded Table","category":"furniture",
+"mount":"floor","x":1.5,"z":4.0,"width":1.8,"depth":3.6,"height":0.9,
+"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,
+"description":"A large, padded surface for exercises."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.0,"width":0.9,
+"height":2.1,"sill_height":0.0}], "camera":{"x":3.0,"y":1.6,"z":1.7,"target_x":0.0,
+"target_y":0.0,"target_z":0.0,"fov_deg":55.0}, "circulation_notes":[],
+"design_notes":[], "schema_version":"floor-plan/v11",
+"relationships":[{"id":"table_center","subject_id":"padded_table_1","kind":"centered",
+"wall":null,"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"door_1_intent","opening_id":"door_1","wall":"north",
+"placement":"centered","corner":null,"margin_m":0.1}], "camera_intent":
+{"id":"camera_1_intent","corner":"northeast","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55.0},
+"v11_extras":[{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor",
+"x":0.9,"z":3.5,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.2,"description":"A practical stool
+for support."},{"id":"stool_2","name":"Stool 2","category":"furniture","mount":"floor",
+"x":1.3,"z":4.9,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.2,"description":"A practical stool
+for support."},{"id":"stool_3","name":"Stool 3","category":"furniture","mount":"floor",
+"x":1.7,"z":3.5,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.2,"description":"A practical stool
+for support."},{"id":"stool_4","name":"Stool 4","category":"furniture","mount":"floor",
+"x":2.1,"z":4.9,"width":0.4,"depth":0.6,"height":0.7,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.2,"description":"A practical stool
+for support."},{"id":"fixture_1","name":"Pendant Light 1","category":"fixture",
+"mount":"ceiling","x":3.5,"z":1.7,"width":0.4,"depth":0.4,"height":0.3,
+"elevation":2.4,"rotation_deg":0.0,"fixed":true,"clearance_m":0.15,
+"description":"A pendant light providing focused illumination."}],
+"against_wall":[{"id":"counter_1","name":"Counter 1","category":"furniture",
+"mount":"floor","x":0.0,"z":4.5,"width":2.0,"depth":0.8,"height":0.9,
+"elevation":0.0,"rotation_deg":0.0,"fixed":true,"clearance_m":0.3,
+"description":"A practical counter for support."}],
+"wall_gap_m":0.4, "distribution_span_m":1.2, "distribution_count":3,
+"distribution_index":0, "relational_extras":[{"id":"stools_1","subject_id":"stool_1",
+"kind":"east_of","target_id":"padded_table_1","wall":null,"parameters_m":{},"weight":1.0,
+"relaxable":false}], "intentional_placement":[{"id":"fixture_1_intent",
+"opening_id":null,"wall":"ceiling","placement":"near_wall","corner":null,
+"margin_m":0.2,"z_offset_m":0.3}], "v11_complete":true, "openings_intent":
+[{"id":"door_1_intent","opening_id":"door_1","wall":"north","placement":"centered",
+"corner":null,"margin_m":0.1}], "camera_intent_complete":true,
+"camera_intent_schema_version":"camera-intent/v1"}}

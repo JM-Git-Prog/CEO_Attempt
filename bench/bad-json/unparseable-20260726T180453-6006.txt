@@ -1,0 +1,109 @@
+error: Invalid control character at: line 22 column 21 (char 1666)
+------------------------------------------------------------
+{"name":"Diner-1",
+"room":{"width":6.0,"depth":4.0,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter","category":"furniture","mount":"floor","x":1.5,"z":0.0,"width":4.2,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Rounded polished-chrome edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.7,"width":0.9,"height":2.1,"sill_height":0.0}],
+"openings":[{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.8,"height":1.4,"sill_height":0.0}],
+"camera":{"x":3.6,"y":2.0,"z":1.7,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"r-1","subject_id":"counter_1","kind":"centered","wall":null,"parameters_m":{},"weight":1,"relaxable":false}],
+"opening_intents":[{"id":"oi-1","opening_id":"door_1","wall":"west","placement":"near_corner","corner":null,"margin_m":0.2}],
+"camera_intent":{"id":"ci-1","corner":"southeast","target_id":null,"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},
+"against_wall":[{"id":"aw-1","item_id":"counter_1","wall":"north"}],
+"zones":[],
+"ceiling_fixtures":[],
+"floor_fixtures":[],
+"wall_fixtures":[],
+"architectural_notes":["single rectangular room, standard walls and floor"],
+"key_objects":["Create","compact","rectangular","1950s","American","diner","interior","exactly"],
+"lighting_notes":"simple daylight",
+"image_prompt":"Create a compact rectangular 1950s American diner interior exactly 6 meters wide, 4 meters deep, and 2.8 meters high.",
+"against_wall_m=0.3,
+"wall_gap_m=0.1,
+"distribution_span_m=0.5,
+"distribution_count=4,
+"fixed=true,
+"mount="floor",
+"x=1.5,
+"z=0,
+"width=0.7,
+"depth=4.2,
+"height=0.9,
+"elevation=0,
+"rotation_deg=0}
+
+V11-EXTENSION-ONLY — apply these geometric operations after creating a complete base plan:
+1. RELATION SEMANTICS — apply these operations with subject_x, subject_z as the item's center:
+	* adjacent_to / east_of: x += distribution_span_m * cos(deg2rad(rotation_deg + 90)); z remains the same.
+	* west_of: x -= distribution_span_m; z remains the same.
+	* south_of: z -= distribution_span_m; x remains the same.
+	* north_of: z += distribution_span_m; x remains the same.
+	* above: z += height; x remains the same.
+	* around: apply uniform rotation with delta_x = cos(deg2rad(rotation_deg)) * distribution_span_m,
+      delta_z = sin(deg2rad(rotation_deg)) * distribution_span_m; x += delta_x, z += delta_z.
+	* centered: x = room_width / 2 + optional_x_offset; z = room_depth / 2 + optional_z_offset.
+2. APPLY DISTRIBUTION — repeat the item with varying x,z coordinates:
+	* x = subject_x + i * distribution_span_m for item_i with index i = 0 to distribution_count - 1.
+	* z = subject_z + (distribution_count / 2) * distribution_span_m * (1 - 2 * i / distribution_count)
+      for items with even index i, and z = subject_z - (distribution_count / 2) * distribution_span_m * (1 - 2 * i / distribution_count)
+      for items with odd index i.
+3. RELATION SEMANTICS (RECURSIVE) — reapply operations from step 1 for every item against the complete item list.
+4. CAMERA INTENT — place the camera with these optional parameters:
+	* x, y, z: remain unchanged unless overridden by intent.
+	* target_x, target_y, target_z: remain unchanged.
+	* fov_deg: remains unchanged.
+
+V11-EXTENSION-ONLY — return complete JSON with schema_version="floor-plan/v11" and all mandatory fields.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{
+"x":number,"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,
+"fov_deg":number}, "circulation_notes":[string],"design_notes":[string],
+"schema_version":"floor-plan/v11","relationships":[{"id":string,"subject_id":string,
+"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"wall":string,"parameters_m":{"number":number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":string,"margin_m":number}], "camera_intent":{
+"corner":"northwest|northeast|southwest|southeast","target_id":string,"inset_m":number,
+"eye_height_m":number,"target_height_m":number,"fov_deg":number}}
+
+V11-EXTENSION-ONLY — apply these geometric operations after creating a complete base plan:
+1. RELATION SEMANTICS — apply these operations with subject_x, subject_z as the item's center:
+	* adjacent_to / east_of: x += distribution_span_m * cos(deg2rad(rotation_deg + 90)); z remains the same.
+	* west_of: x -= distribution_span_m; z remains the same.
+	* south_of: z -= distribution_span_m; x remains the same.
+	* north_of: z += distribution_span_m; x remains the same.
+	* above: z += height; x remains the same.
+	* around: apply uniform rotation with delta_x = cos(deg2rad(rotation_deg)) * distribution_span_m,
+      delta_z = sin(deg2rad(rotation_deg)) * distribution_span_m; x += delta_x, z += delta_z.
+	* centered: x = room_width / 2 + optional_x_offset; z = room_depth / 2 + optional_z_offset.
+2. APPLY DISTRIBUTION — repeat the item with varying x,z coordinates:
+	* x = subject_x + i * distribution_span_m for item_i with index i = 0 to distribution_count - 1.
+	* z = subject_z + (distribution_count / 2) * distribution_span_m * (1 - 2 * i / distribution_count)
+      for items with even index i, and z = subject_z - (distribution_count / 2) * distribution_span_m * (1 - 2 * i / distribution_count)
+      for items with odd index i.
+3. RELATION SEMANTICS (RECURSIVE) — reapply operations from step 1 for every item against the complete item list.
+4. CAMERA INTENT — place the camera with these optional parameters:
+	* x, y, z: remain unchanged unless overridden by intent.
+	* target_x, target_y, target_z: remain unchanged.
+	* fov_deg: remains unchanged.
+
+V11-EXTENSION-ONLY — return complete JSON with schema_version="floor-plan/v11" and all mandatory fields.

@@ -1033,3 +1033,50 @@
 [13:28:24] flywheel loop up - waiting for corpus growth before the first cycle
 [13:28:24] threshold met (251 new rows, 622 total) - starting a cycle
 [13:28:24] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+[13:34:05] flywheel loop up - waiting for corpus growth before the first cycle
+[13:34:05] threshold met (252 new rows, 623 total) - starting a cycle
+[13:34:05] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+[14:11:59] ingest rc=0
+[14:11:59] pausing the llama3.1 harvester for the training window
+[14:11:59] launching the training chain (make_training_set -> train -> register -> exam)
+[14:20:42] training chain finished rc=1
+[14:20:42] resumed the llama3.1 harvester
+[14:20:43] cycle done - corpus now at 679 rows
+[14:20:43] waiting: 0/50 new corpus rows since last cycle (679 total)
+[14:30:43] waiting: 0/50 new corpus rows since last cycle (679 total)
+[14:40:43] waiting: 12/50 new corpus rows since last cycle (691 total)
+[14:50:43] waiting: 27/50 new corpus rows since last cycle (706 total)
+[15:00:43] threshold met (53 new rows, 732 total) - starting a cycle
+[15:00:43] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+[15:32:35] ingest rc=0
+[15:32:35] pausing the llama3.1 harvester for the training window
+[15:32:35] launching the training chain (make_training_set -> train -> register -> exam)
+[15:45:52] training chain finished rc=1
+[15:45:52] resumed the llama3.1 harvester
+[15:45:52] cycle done - corpus now at 788 rows
+[15:45:52] waiting: 0/50 new corpus rows since last cycle (788 total)
+[15:55:52] waiting: 0/50 new corpus rows since last cycle (788 total)
+[16:05:52] waiting: 11/50 new corpus rows since last cycle (799 total)
+[16:15:52] waiting: 23/50 new corpus rows since last cycle (811 total)
+[16:16:08] flywheel loop up - waiting for corpus growth before the first cycle
+[16:16:08] waiting: 23/50 new corpus rows since last cycle (811 total)
+[16:26:08] waiting: 34/50 new corpus rows since last cycle (822 total)
+[16:36:08] waiting: 44/50 new corpus rows since last cycle (832 total)
+[16:46:08] threshold met (56 new rows, 844 total) - starting a cycle
+[16:46:08] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+[17:19:46] ingest rc=0
+[17:19:46] pausing the llama3.1 harvester for the training window
+[17:19:46] launching the training chain (make_training_set -> train -> register -> exam)
+[18:40:18] training chain finished rc=0
+[18:40:18] resumed the llama3.1 harvester
+[18:40:18] cycle done - corpus now at 854 rows
+[18:40:18] waiting: 0/50 new corpus rows since last cycle (854 total)
+[18:50:19] waiting: 0/50 new corpus rows since last cycle (854 total)
+[19:00:19] waiting: 0/50 new corpus rows since last cycle (854 total)
+[19:10:19] waiting: 0/50 new corpus rows since last cycle (854 total)
+[19:20:19] waiting: 1/50 new corpus rows since last cycle (855 total)
+[19:30:19] waiting: 4/50 new corpus rows since last cycle (858 total)
+[19:40:19] waiting: 14/50 new corpus rows since last cycle (868 total)
+[19:50:19] waiting: 14/50 new corpus rows since last cycle (868 total)
+[20:00:19] waiting: 26/50 new corpus rows since last cycle (880 total)
+[20:10:19] waiting: 38/50 new corpus rows since last cycle (892 total)

@@ -37,6 +37,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BENCH = ROOT / "bench"
 LOG = BENCH / "supervisor-log.txt"
+FLYWHEEL_LOG = BENCH / "flywheel-log.txt"
 PROGRESS = BENCH / "training-progress.json"
 PAUSE_SUPERVISOR = BENCH / "PAUSE-SUPERVISOR.txt"
 
@@ -115,7 +116,21 @@ def flywheel_is_stuck(started_at: float) -> bool:
     updated = d.get("updated", 0)
     if updated < started_at:
         return False  # leftover from a previous run - not this process's state
-    return (time.time() - updated) > STUCK_AFTER
+    if (time.time() - updated) <= STUCK_AFTER:
+        return False
+
+    # Second opinion before killing anything: a frozen process writes nothing.
+    # If the flywheel's own log moved recently it is demonstrably alive, and
+    # the progress file is just stale because a crashed training run left
+    # stage="saving_gguf" behind and nothing ever cleared it. That exact case
+    # killed a perfectly healthy flywheel at 16:16 on 2026-07-26, sixteen
+    # seconds after it had logged "waiting: 23/50 new corpus rows".
+    try:
+        if (time.time() - FLYWHEEL_LOG.stat().st_mtime) < STUCK_AFTER:
+            return False
+    except OSError:
+        pass
+    return True
 
 
 def main() -> None:

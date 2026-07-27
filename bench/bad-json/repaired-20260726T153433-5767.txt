@@ -1,0 +1,1085 @@
+error: Expecting value: line 1083 column 28 (char 29703)
+------------------------------------------------------------
+{
+    "name": "Florist Shop",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "counter_1",
+            "name": "Work Counter",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": ""
+        },
+        {
+            "id": "display_stand_1",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 1.2,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": ""
+        },
+        {
+            "id": "display_stand_2",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 1.8,
+            "depth": 1.2,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": ""
+        },
+        {
+            "id": "display_stand_3",
+            "name": "Three Tiered Display Stand",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 1.2,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": ""
+        },
+        {
+            "id": "cooler_cabinet",
+            "name": "Cooler Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 1.2,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": ""
+        }
+    ],
+    "openings": [
+        {
+            "id": "door_1",
+            "kind": "door",
+            "wall": "north",
+            "offset": 0.0,
+            "width": 0.9,
+            "height": 2.1,
+            "sill_height": 0.0
+        }
+    ],
+    "camera": {
+        "x": 3.5,
+        "y": 1.6,
+        "z": 4.8,
+        "target_x": 0.0,
+        "target_y": 1.1,
+        "target_z": 0.0,
+        "fov_deg": 55.0
+    },
+    "circulation_notes": [
+        "Maintain at least 0.8m clear paths between the door and all zones."
+    ],
+    "design_notes": [
+        "Soft daylight will be used to illuminate the space."
+    ],
+    "schema_version": "floor-plan/v11",
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_1",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_2",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 0.5, "z": 3.6},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "display_stand_3",
+            "kind": "adjacent_to",
+            "target_id": "counter_1",
+            "wall": null,
+            "parameters_m": {"x": 2.5, "z": 0.2},
+            "weight": 1.0,
+            "relaxable": false
+        },
+        {
+            "subject_id": "cooler_cabinet",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m": {},
+            "weight": 1.0,
+            "relaxable": false
+        }
+    ],
+    "opening_intents": [
+        {
+            "opening_id": "door_1",
+            "wall": "north",
+            "placement": "centered",
+            "corner": null,
+            "margin_m": 0.1
+        }
+    ],
+    "camera_intent": {
+        "corner": "northeast",
+        "target_id": "display_stand_2",
+        "inset_m": 0.45,
+        "eye_height_m": 1.6,
+        "target_height_m": 1.2,
+        "fov_deg": 55.0
+    },
+    "relationships": [
+        {
+            "subject_id": "counter_1",
+            "kind": "against_wall",
+            "target_id": null,
+            "wall": "north",
+            "parameters_m":

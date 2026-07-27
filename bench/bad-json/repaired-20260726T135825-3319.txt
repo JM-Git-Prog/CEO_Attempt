@@ -1,0 +1,986 @@
+error: Unterminated string starting at: line 984 column 13 (char 32739)
+------------------------------------------------------------
+{
+    "name": "1980s Video Arcade",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "arcade_cabinet_1",
+            "name": "Pac-Man Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 0.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_2",
+            "name": "Donkey Kong Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_2",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_3",
+            "name": "Galaga Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_3",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_2",
+                    "wall": null,
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_4",
+            "name": "Street Fighter Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 9.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_4",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_3",
+                    "wall": null,
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_5",
+            "name": "Mortal Kombat Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_5",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_4",
+                    "wall": null,
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "change_machine",
+            "name": "Coin-Operated Change Machine",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 7.5,
+            "z": 1.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "change_machine",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 2.5,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_2",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_2",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_3",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 4.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_3",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_4",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 5.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_4",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_5",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 6.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_5",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_6",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 7.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_6",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_7",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 8.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_7",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_8",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_8",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_9",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 10.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_9",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_10",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 11.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_10",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_11",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 12.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_11",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_12",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 13.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_12",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_13",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 14.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_13",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_14",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 15.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_14",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_15",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 16.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_15",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_16",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 17.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_16",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_17",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 18.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_17",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_18",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 19.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_18",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_19",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 20.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_19",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_20",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 21.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_20",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_21",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 22.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_21",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_22",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 23.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_22",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_23",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 24.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_23",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_24",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 25.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_24",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_25",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 26.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_25",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_26",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 27.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_26",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_27",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 28.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_27",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_28",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 29.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_28",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_29",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 30.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_29",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_30",
+            "name": "Neon-Warm Ambient Lighting",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 31.0,
+            "width": 4.0,
+            "depth": 1.0,
+            "height": 0.3,
+            "elevation": 2.7,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "neon_lighting_30",
+                    "kind": "above",
+                    "target_id": "change_machine",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5, "distribution_index": 0, "distribution_count": 4, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "neon_lighting_31",
+            "name": "Neon-Warm Ambient Lighting",
+            "

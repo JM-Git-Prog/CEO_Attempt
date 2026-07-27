@@ -1,0 +1,29 @@
+error: Expecting property name enclosed in double quotes: line 6 column 1 (char 331)
+------------------------------------------------------------
+{"name":"Rustic Cabin Bunk Room",
+"room":{"width":4.5,"depth":6.0,"height":2.8},
+"items":[{"id":"bunk_1","name":"Bunk Bed 1","category":"furniture","mount":"floor","x":0.7,
+"z":0.3,"width":1.9,"depth":1.0,"height":1.0,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.75,"description":"A sturdy wooden bunk bed."}],
+["bunk_2","Bunk Bed 2","furniture","floor",3.8,0.7,1.9,1.0,1.0,0.0,0.0,true,0.75,
+"A second sturdy wooden bunk bed."],
+["stove","Wood Stove","fixture","corner_northwest",0.0,0.0,0.6,0.8,0.4,0.2,0.0,false,
+0.1,"A rustic wood-burning stove for warmth."]],
+"openings":[{"id":"window_1","kind":"window","wall":"east","offset":0.3,"width":0.9,
+"height":1.0,"sill_height":0.0}],
+"camera":{"x":2.5,"y":1.6,"z":1.7,"target_x":0.0,"target_y":0.0,"target_z":0.0,
+"fov_deg":55},"circulation_notes":[],"design_notes":["Create a practical, buildable
+bunk room with two beds and a focal-point wood stove."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"beds-against-wall","subject_id":"bunk_1","kind":"against_wall",
+"wall":"north","parameters_m":{},"weight":1.0,"relaxable":false}],
+["beds-against-wall","bunk_2","against_wall","north",{}],
+["stove-in-corner","stove","corner_northwest",null,{x:-0.3,z:0.4},"focal-point",
+true,false],
+["window-against-east-wall","window_1","against_wall","east",{}]],
+"opening_intents":[{"id":"place-door-north","kind":"door","wall":"north","placement":
+"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"apply-camera-rule",
+"kind":"CameraPlacementIntent","corner":"northwest","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55},"design_notes":[
+"Apply practical, buildable zoning rules before placing furniture."]}

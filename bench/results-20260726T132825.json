@@ -2,121 +2,911 @@
  "started": "2026-07-26 13:28:25",
  "prompts": 15,
  "lanes": {
-  "llama3.1": {
-   "legal": 0,
-   "total": 15,
-   "legal_rate": 0.0,
+  "glm-5.2:cloud": {
+   "legal": 1,
+   "total": 4,
+   "legal_rate": 0.25,
    "violation_census": {
-    "error:LLMError": 15
+    "out_of_bounds": 3,
+    "camera_inside_geometry": 2,
+    "opening_blocked": 1
    },
    "rows": [
     {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.9,
-     "prompt_id": "p041"
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 64.3,
+     "plan": {
+      "name": "1980s Cottage Kitchen",
+      "room": {
+       "width": 3.5,
+       "depth": 3.0,
+       "height": 2.6
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Simple Wooden Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.2,
+        "width": 2.0,
+        "depth": 0.6,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Warm pine counter with a plain laminate top, typical 1980s cottage build."
+       },
+       {
+        "id": "fridge_1",
+        "name": "Refrigerator",
+        "category": "fixture",
+        "mount": "floor",
+        "x": -1.4,
+        "z": 0.35,
+        "width": 0.7,
+        "depth": 0.7,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Beige 1980s freestanding fridge tucked into the northwest corner."
+       },
+       {
+        "id": "table_1",
+        "name": "Breakfast Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Small square pine table for two, positioned to catch morning window light."
+       },
+       {
+        "id": "chair_1",
+        "name": "Breakfast Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.275,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple spindle-back wooden chair facing the table."
+       },
+       {
+        "id": "chair_2",
+        "name": "Breakfast Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.7000000000000006,
+        "z": 0.06256443470178619,
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.45,
+        "elevation": 0.0,
+        "rotation_deg": 180.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Simple spindle-back wooden chair on the opposite side of the table."
+       },
+       {
+        "id": "pendant_1",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.3,
+        "elevation": 2.3000000000000003,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Single warm-glass pendant hanging above the breakfast table."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -1.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 1.2,
+        "sill_height": 1.0
+       }
+      ],
+      "camera": {
+       "x": -1.3,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.0,
+       "target_y": 1.1,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall near southwest corner swings inward; 1.0m clearance kept clear of all furniture.",
+       "A 0.9m wide path runs from the door along the west wall past the fridge to the counter.",
+       "Breakfast table is offset east to leave a clear central walkway from door to counter.",
+       "Chair 1 is pulled south of the table but still leaves 0.45m to the south wall for seating access."
+      ],
+      "design_notes": [
+       "Warm pine counter and matching table evoke a simple 1980s cottage aesthetic.",
+       "East-facing window provides warm morning light over the breakfast table.",
+       "Fridge is tucked into the northwest corner to maximize counter wall space.",
+       "Single pendant over the table provides focused task lighting and a cozy focal point."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fridge_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.35,
+         "wall_gap_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.3,
+         "offset_z_m": -0.4
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "south_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_1",
+        "kind": "above",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {
+         "hang_height_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.3
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southwest",
+       "target_id": "table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.1,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p001"
     },
     {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p042"
+     "status": "blocked",
+     "blockers": [
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 64.7,
+     "plan": {
+      "name": "1950s Diner Counter with Rain Window",
+      "room": {
+       "width": 5.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "diner_counter",
+        "name": "1950s Diner Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.4,
+        "width": 2.4,
+        "depth": 0.6,
+        "height": 0.95,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.6,
+        "description": "Chrome-trimmed laminate counter with a service top, fixed against the north wall."
+       },
+       {
+        "id": "stool_1",
+        "name": "Chrome Diner Stool 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.75,
+        "z": -0.20000000000000018,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Red vinyl-topped chrome stool seated at the counter."
+       },
+       {
+        "id": "stool_2",
+        "name": "Chrome Diner Stool 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.25,
+        "z": -0.20000000000000018,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Red vinyl-topped chrome stool seated at the counter."
+       },
+       {
+        "id": "stool_3",
+        "name": "Chrome Diner Stool 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.25,
+        "z": -0.20000000000000018,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Red vinyl-topped chrome stool seated at the counter."
+       },
+       {
+        "id": "stool_4",
+        "name": "Chrome Diner Stool 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.75,
+        "z": -0.20000000000000018,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.75,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.5,
+        "description": "Red vinyl-topped chrome stool seated at the counter."
+       },
+       {
+        "id": "pendant_lamp",
+        "name": "Pendant Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 1.4,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.35,
+        "elevation": 2.4499999999999997,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Vintage enameled pendant shade hanging above the counter top."
+       }
+      ],
+      "openings": [
+       {
+        "id": "rain_window",
+        "kind": "window",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.2,
+        "sill_height": 0.9
+       },
+       {
+        "id": "entry_door",
+        "kind": "door",
+        "wall": "south",
+        "offset": 1.7499999999999998,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.05,
+       "y": 1.6,
+       "z": -1.55,
+       "target_x": 0.0,
+       "target_y": 1.1,
+       "target_z": 1.4,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Entry door on the south wall near the southeast corner swings inward with 1.0m clearance.",
+       "A clear 0.9m circulation path runs from the door along the east wall to the counter seating zone.",
+       "Stools are spaced 0.5m on center, leaving room to sit and swivel without blocking neighbors."
+      ],
+      "design_notes": [
+       "Counter is the focal point, centered on the north wall so the pendant and stools align symmetrically.",
+       "Rain window on the west wall provides side daylight and a moody backdrop without glare on the counter.",
+       "Pendant hangs at 2.45m elevation, casting a warm pool of light over the counter surface.",
+       "Palette: chrome, red vinyl, cream laminate, and black-and-white checkerboard floor implied."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "diner_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "south_of",
+        "target_id": "diner_counter",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5,
+         "distribution_index": 0.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "south_of",
+        "target_id": "diner_counter",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5,
+         "distribution_index": 1.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "south_of",
+        "target_id": "diner_counter",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5,
+         "distribution_index": 2.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "south_of",
+        "target_id": "diner_counter",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5,
+         "distribution_index": 3.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_lamp",
+        "kind": "above",
+        "target_id": "diner_counter",
+        "wall": null,
+        "parameters_m": {
+         "offset_z_m": 0.0,
+         "hang_height_m": 0.35
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "rain_window",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "entry_door",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.3
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "diner_counter",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.1,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p002"
     },
     {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.7,
-     "prompt_id": "p043"
+     "status": "blocked",
+     "blockers": [
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 3,
+     "seconds": 35.9,
+     "plan": {
+      "name": "1970s Living Room",
+      "room": {
+       "width": 5.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "sofa",
+        "name": "Low Orange Sofa",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.425,
+        "width": 2.2,
+        "depth": 0.85,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Low-slung 1970s sofa in burnt orange upholstery, seated against the north wall."
+       },
+       {
+        "id": "coffee_table",
+        "name": "Round Coffee Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.37500000000000033,
+        "z": -1.4495190528383288,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Round wood coffee table with a warm teak finish."
+       },
+       {
+        "id": "shag_rug",
+        "name": "Shag Rug",
+        "category": "decor",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 2.0,
+        "height": 0.03,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Deep-pile cream shag rug anchoring the seating area."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_south",
+        "kind": "door",
+        "wall": "south",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_east",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 1.2,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": 2.0,
+       "y": 1.6,
+       "z": -1.5,
+       "target_x": -0.37500000000000033,
+       "target_y": 1.0,
+       "target_z": -1.4495190528383288,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall opens inward with 1.0m clearance; path from door to sofa passes around the coffee table with 0.8m minimum clearance.",
+       "East window remains unobstructed; furniture kept at least 0.3m from the east wall.",
+       "Floor lamp is tucked into the northwest corner, outside the main circulation path."
+      ],
+      "design_notes": [
+       "Sofa is the focal piece, placed against the north wall and centered for visual balance.",
+       "Round coffee table sits 0.6m in front of the sofa, within comfortable reach.",
+       "Shag rug defines the seating zone and extends under the coffee table toward the sofa.",
+       "Floor lamp anchors the northwest corner, adding warm 1970s ambiance."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "sofa",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.15
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "coffee_table",
+        "kind": "south_of",
+        "target_id": "sofa",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shag_rug",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_z_m": 0.8
+        },
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_south",
+        "wall": "south",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_east",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "coffee_table",
+       "inset_m": 0.5,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p003"
     },
     {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.7,
-     "prompt_id": "p044"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p045"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p046"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p047"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p048"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p049"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p050"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p051"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.9,
-     "prompt_id": "p052"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.7,
-     "prompt_id": "p053"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p054"
-    },
-    {
-     "status": "error",
-     "error_type": "LLMError",
-     "error": "all configured LLM backends failed -> ollama(llama3.1): LLMError: Ollama returned 200 with an EMPTY message. done_reason=None prompt_eval_count=None eval_count=None num_ctx=16384 num_predict=8192 total_duration_ms=0",
-     "seconds": 0.8,
-     "prompt_id": "p055"
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 4,
+     "seconds": 114.5,
+     "plan": {
+      "name": "Minimalist Home Office",
+      "room": {
+       "width": 3.5,
+       "depth": 3.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "standing_desk",
+        "name": "Standing Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.8499999999999999,
+        "width": 1.4,
+        "depth": 0.7,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.8,
+        "description": "Minimalist adjustable standing desk with clean lines, positioned near the north window for natural light."
+       },
+       {
+        "id": "task_chair",
+        "name": "Task Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -1.17,
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 1.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Ergonomic task chair on casters, positioned south of the standing desk facing north."
+       },
+       {
+        "id": "shelf",
+        "name": "Bookshelf",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -1.05,
+        "z": 0.0,
+        "width": 0.35,
+        "depth": 0.8,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 90.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Tall minimalist shelving unit against the west wall for books and office supplies."
+       },
+       {
+        "id": "pendant_light",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.8499999999999999,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.15,
+        "elevation": 2.65,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.0,
+        "description": "Simple pendant light hanging directly above the standing desk for task illumination."
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": -0.8,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.5,
+        "height": 2.0,
+        "sill_height": 0.4
+       }
+      ],
+      "camera": {
+       "x": 1.3,
+       "y": 1.6,
+       "z": -1.05,
+       "target_x": 0.0,
+       "target_y": 1.0,
+       "target_z": 0.8499999999999999,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Clear path from the south-wall door to the task chair is unobstructed \u2014 over 1.0m of clearance.",
+       "The area between the shelf (west wall) and the desk remains open for easy movement.",
+       "Door swing arc on the south wall is completely clear of furniture."
+      ],
+      "design_notes": [
+       "Standing desk is placed against the north wall beneath the tall window, giving the user natural daylight while working.",
+       "Task chair sits directly south of the desk so the user faces the window when seated.",
+       "Shelf is placed on the west wall, keeping it visible from the desk without encroaching on circulation.",
+       "Pendant light centered above the desk provides focused task lighting complementing the window daylight."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "standing_desk",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "task_chair",
+        "kind": "south_of",
+        "target_id": "standing_desk",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shelf",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light",
+        "kind": "above",
+        "target_id": "standing_desk",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 1.3
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southwest",
+        "margin_m": 0.5
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "standing_desk",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.0,
+       "fov_deg": 55.0
+      }
+     },
+     "repaired_by_math": true,
+     "repairs_applied": [
+      "Nudged Task Chair (task_chair) inward by 0.030m (from [0.000, -1.200] to [0.000, -1.170])"
+     ],
+     "blockers_before_repair": [
+      "out_of_bounds"
+     ],
+     "prompt_id": "p004"
     }
    ]
   }
- },
- "finished": "2026-07-26 13:28:37"
+ }
 }

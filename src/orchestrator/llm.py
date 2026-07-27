@@ -56,14 +56,21 @@ async def _call_ollama(
             # counters say why - done_reason "length" means the output cap or
             # context ran out; a prompt_eval_count at the context ceiling
             # means the prompt itself did not fit.
+            # Ollama also answers 200 with an {"error": ...} payload for things
+            # like "model requires more system memory" - there is no completion
+            # in that body at all, which is why every counter below reads None.
+            # Show the error field first, then the raw body, so the reason is
+            # never a guess again.
             raise LLMError(
                 "Ollama returned 200 with an EMPTY message. "
+                f"error={body.get('error')!r} "
                 f"done_reason={body.get('done_reason')!r} "
                 f"prompt_eval_count={body.get('prompt_eval_count')} "
                 f"eval_count={body.get('eval_count')} "
                 f"num_ctx={payload['options']['num_ctx']} "
                 f"num_predict={payload['options']['num_predict']} "
-                f"total_duration_ms={round((body.get('total_duration') or 0) / 1e6)}"
+                f"total_duration_ms={round((body.get('total_duration') or 0) / 1e6)} "
+                f"body={json.dumps(body)[:400]}"
             )
         return content
 

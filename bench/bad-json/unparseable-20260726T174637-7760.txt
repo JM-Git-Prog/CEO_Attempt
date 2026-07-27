@@ -1,0 +1,23 @@
+error: Invalid control character at: line 4 column 87 (char 310)
+------------------------------------------------------------
+{"name":"Diner Interior","room":{"width":6,"depth":4,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter","category":"furniture",
+"mount":"floor","x":0,"z":1,"width":4.2,"depth":0.7,"height":0.9,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Rounded polished-chrome
+edge trim, pale mint-green front."},{"id":"stool_1","name":"Stool 1","category":"furniture",
+"mount":"floor","x":1.7,"z":0.4,"width":0.4,"depth":0.6,"height":0.9,"elevation":0,
+"rotation_deg":0,"fixed":false,"clearance_m":0.3,"description":""}],
+"openings":[{"id":"window_1","kind":"window","wall":"south","offset":0,"width":1.8,
+"height":1.4,"sill_height":0.05},{"id":"door_1","kind":"door","wall":"west","offset":0,
+"width":0.9,"height":2,"sill_height":0.05}],
+"camera":{"x":-0.5,"y":1.6,"z":0.3,"target_x":2.7,"target_y":0.9,"target_z":0,
+"fov_deg":55},
+"circulation_notes":[],"design_notes":["Set the scene after closing on a rainy evening."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"subject_id":"counter_1","kind":"centered","parameters_m":{"x":0,
+"z":1},"relaxable":true},{"subject_id":"stool_1","kind":"adjacent_to","target_id":"counter_1",
+"parameters_m":{"x":0.4,"z":0},"relaxable":false}],
+"openings_intents":[{"id":"door_1_intent","opening_id":"door_1","wall":"west",
+"placement":"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera_1","corner":"southeast","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55}}

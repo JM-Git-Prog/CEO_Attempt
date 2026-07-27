@@ -1,0 +1,411 @@
+error: Extra data: line 25 column 1 (char 1239)
+------------------------------------------------------------
+{"name":"Diner Interior",
+"room":{"width":6.0,"depth":4.0,"height":2.8},
+"items":[{"id":"counter_1","name":"Formica Counter","category":"furniture","mount":"floor","x":0.0,
+"z":1.0,"width":4.2,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,"fixed":true,
+"clearance_m":0.3,"description":"Rounded polished-chrome edge trim, pale mint-green front."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.7,"width":0.9,"height":2.1,
+"sill_height":0.0}],
+"openings":[{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}],
+"camera":{"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":[],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"r1","subject_id":"counter_1","kind":"centered","wall":null,"parameters_m":{},
+"weight":1.0,"relaxable":false}],
+"openings_intents":[{"id":"oi1","opening_id":"door_1","wall":"west","placement":"near_corner",
+"corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"ci1","corner":"southeast","target_id":null,"inset_m":0.45,"eye_height_m":1.6,
+"target_height_m":1.2,"fov_deg":55},
+"zones":[],
+"wall_notes":[],
+"ceiling_notes":[],
+"floor_notes":[]}
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION — apply these rules in addition to complete base schema application:
+1. RELATION SEMANTICS — apply geometric operations before placing items.
+2. ZONES + WALLS FIRST — identify functional zones, then place furniture against walls.
+3. CIRCULATION — maintain clear paths from the door to all zones.
+4. RELATION + SPACING — apply typed placements, then distribute items relative to their parents.
+5. DOOR CLEARANCE — never place anything within 1.0m inward of a door.
+6. WINDOW CLEARANCE — keep furniture at least 0.3m from exterior window walls.
+7. PROPORTIONS — item dimensions must be realistic; apply practical height, width, and depth before placement.
+8. CAMERA — place the camera in a corner with a clear diagonal view showing the maximum number of objects.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11-EXPLICIT-INTENT-EXTENSION-SCHEMA:
+- Every base field remains mandatory, including name, room, items, openings, camera, circulation_notes,
+  design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- Add zones with EXACTLY one typed placement for every item. Each entry has id, kind, optional target_id/wall,
+  and parameters_m.
+- Use against_wall + wall="north" + along_offset_m=0 + wall_gap_m for a centered north counter.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms:
+  * adjacent_to / east_of: places subject EAST of target (x increases). Never for a south row.
+  * west_of: places subject WEST of target.
+  * south_of: places subject SOUTH of target (z decreases). Use for seating rows along a counter's south face.
+  * north_of: places subject NORTH of target.
+  * above: places subject directly above target at ceiling. Use for pendant lights above a counter.
+  * around: distributes subjects in a circle around target.
+  * centered: places at room center with optional offsets.
+- Repeated rows use a directional/above relation plus zero-based distribution_index, distribution_count,
+  and distribution_span_m. Keep every repeated instance separate.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION-RULES:
+1. Apply base schema rules first.
+2. Apply V11 explicit-intent extension rules second, after items, openings, camera, and relationships are complete.
+3. RELATION SEMANTICS — apply geometric operations before placing items.
+4. ZONES + WALLS FIRST — identify functional zones, then place furniture against walls.
+5. CIRCULATION — maintain clear paths from the door to all zones.
+6. RELATION + SPACING — apply typed placements, then distribute items relative to their parents.
+7. DOOR CLEARANCE — never place anything within 1.0m inward of a door.
+8. WINDOW CLEARANCE — keep furniture at least 0.3m from exterior window walls.
+9. PROPORTIONS — item dimensions must be realistic; apply practical height, width, and depth before placement.
+10. CAMERA — place the camera in a corner with a clear diagonal view showing the maximum number of objects.
+
+V11-EXPLICIT-INTENT-EXTENSION-SCHEMA-VALIDATION:
+- Return one complete valid JSON object only. No commentary.
+- Every base field remains mandatory, including name, room, items, openings, camera, circulation_notes,
+  design_notes, schema_version, relationships, opening_intents, and camera_intent.
+- against_wall + wall + along_offset_m + wall_gap_m is a valid complete placement.
+- RELATION SEMANTICS — these are geometric operations, not natural-language synonyms. Apply them before placing items.
+- Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+V11-EXPLICIT-INTENT-EXTENSION-IMPLEMENTATION-VALIDATION:
+- Apply base schema rules first, then V11 explicit-intent extension rules.
+- RELATION SEMANTICS — apply geometric operations before placing items.
+- ZONES + WALLS FIRST — identify functional zones, then place furniture against walls.
+- CIRCULATION — maintain clear paths from the door to all zones.
+- RELATION + SPACING — apply typed placements, then distribute items relative to their parents.
+- DOOR CLEARANCE — never place anything within 1.0m inward of a door.
+- WINDOW CLEARANCE — keep furniture at least 0.3m from exterior window walls.
+- PROPORTIONS — item dimensions must be realistic; apply practical height, width, and depth before placement.
+- CAMERA — place the camera in a corner with a clear diagonal view showing the maximum number of objects.
+
+V11-EXPLICIT-INTENT-EXTENSION-Complete-Implementation-Code:
+Schema = complete base schema + V11 extension schema
+Apply base schema rules
+Apply V11 explicit-intent extension rules
+Return complete valid JSON object only
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example:
+Schema = {"name":string,"room":{"width":number,"depth":number,"height":number},"items":[{"id":string,
+"name":string,"category":"furniture|fixture|architectural|decor","mount":"floor|wall|ceiling",
+"x":number,"z":number,"width":number,"depth":number,"height":number,"elevation":number,
+"rotation_deg":number,"fixed":boolean,"clearance_m":number,"description":string}],"openings":[{"id":string,
+"kind":"door|window","wall":"north|south|east|west","offset":number,"width":number,"height":number,
+"sill_height":number}],"camera":{"x":number,"y":number,"z":number,"target_x":number,"target_y":number,
+"target_z":number,"fov_deg":number},"circulation_notes":[string],"design_notes":[string],
+"schema_version":"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":"centered|
+against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"target_id":string,"wall":string,"parameters_m":{number},"weight":number,"relaxable":boolean}],
+"opening_intents":[{"id":string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":string,"margin_m":number}],"camera_intent":{"id":string,"corner":
+"northwest|northeast|southwest|southeast","target_id":string,"inset_m":number,"eye_height_m":number,
+"target_height_m":number,"fov_deg":number}}
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application:
+Apply base schema rules
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"counter_1","name":"Formica Counter","category":"furniture","mount":"floor",
+"x":0.0,"z":1.0,"width":4.2,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.3,"description":"Rounded polished-chrome edge trim, pale mint-green
+front."}]
+Openings = [{"id":"door_1","kind":"door","wall":"west","offset":0.7,"width":0.9,"height":2.1,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RELATION-SEMANTICS:
+Apply geometric operations before placing items.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-ZONES-WALLS-FIRST:
+Identify functional zones, then place furniture against walls.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"counter_1","name":"Formica Counter","category":"furniture","mount":"floor",
+"x":0.0,"z":1.0,"width":4.2,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":true,"clearance_m":0.3,"description":"Rounded polished-chrome edge trim, pale mint-green
+front."}]
+Openings = [{"id":"door_1","kind":"door","wall":"west","offset":0.7,"width":0.9,"height":2.1,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-CIRCULATION:
+Maintain clear paths from the door to all zones.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"door_1","kind":"door","wall":"west","offset":0.7,"width":0.9,"height":2.1,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RELATION-SPACING:
+Apply typed placements, then distribute items relative to their parents.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-DOOR-CLEARANCE:
+Never place anything within 1.0m inward of a door.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"door_1","kind":"door","wall":"west","offset":0.7,"width":0.9,"height":2.1,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-WINDOW-CLEARANCE:
+Keep furniture at least 0.3m from exterior window walls.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-PROPORTIONS:
+Item dimensions must be realistic; apply practical height, width, and depth before placement.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-CAMERA:
+Place the camera in a corner with a clear diagonal view showing the maximum number of objects.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RETURN-VALID-JSON:
+Return one complete valid JSON object only. No commentary.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-VALIDATION:
+Apply base schema rules, then V11 explicit-intent extension rules.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RETURN-VALID-JSON-RECURSIVE:
+Return one complete valid JSON object only. No commentary.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION:
+Apply base schema rules, then V11 explicit-intent extension rules.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-RETURN-VALID-JSON:
+Return one complete valid JSON object only. No commentary.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION:
+Apply base schema rules, then V11 explicit-intent extension rules.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-RETURN-VALID-JSON-APPLICATION:
+Return one complete valid JSON object only. No commentary.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-RELATION-SEMANTICS:
+Apply geometric operations before placing items.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-ZONES-WALLS-FIRST:
+Identify functional zones, then place furniture against walls.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-CIRCULATION:
+Maintain clear paths from the door to all zones.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-RELATION-SPACING:
+Apply typed placements, then distribute items relative to their parents.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-DOOR-CLEARANCE:
+Never place anything within 1.0m inward of a door.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-WINDOW-CLEARANCE:
+Keep furniture at least 0.3m from exterior window walls.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-PROPORTIONS:
+Item dimensions must be realistic; apply practical height, width, and depth before placement.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-CAMERA:
+Place the camera in a corner with a clear diagonal view showing the maximum number of objects.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.8,
+"sill_height":0.0}]
+Camera = {"x":-1.6,"y":2.3,"z":0.9,"target_x":0.0,"target_y":0.0,"target_z":0.0,"fov_deg":55}
+Circulation_notes = []
+Design_notes = []
+
+V11-EXPLICIT-INTENT-Extension-Complete-Implementation-Code-Example-Application-RECURSIVE-VALIDATION-APPLICATION-RETURN-VALID-JSON:
+Return one complete valid JSON object only. No commentary.
+Schema = complete base schema + V11 extension schema
+Items = [{"id":"stool_1","name":"Red-Vinyl Stool","category":"furniture","mount":"floor",
+"x":0.5,"z":2.0,"width":0.4,"depth":0.7,"height":0.9,"elevation":0.0,"rotation_deg":0.0,
+"fixed":false,"clearance_m":0.3,"description":"Individual red-vinyl-and-chrome stool."}]
+Openings = [{"id":"window_1","kind":"window","wall":"south","offset":0.5,"width":1.0,"height":1.

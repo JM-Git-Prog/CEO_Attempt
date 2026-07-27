@@ -1,0 +1,43 @@
+error: Invalid control character at: line 4 column 87 (char 332)
+------------------------------------------------------------
+{"name":"Minimalist Home Office","room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"standing_desk_1","name":"Standing Desk","category":"furniture",
+"mount":"floor","x":1.8,"z":0.5,"width":1.8,"depth":1.0,"height":0.9,"elevation":0.0,
+"rotation_deg":0.0,"fixed":true,"clearance_m":0.75,"description":"A practical standing
+desk for a home office."},{"id":"stool_1","name":"Stool","category":"furniture",
+"mount":"floor","x":2.3,"z":1.5,"width":0.4,"depth":0.4,"height":0.6,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.3,"description":"A practical stool
+for seating."},{"id":"stool_2","name":"Stool","category":"furniture","mount":"floor",
+"x":1.8 + 0.5,"z":1.5,"width":0.4,"depth":0.4,"height":0.6,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.3,"description":"A practical stool
+for seating."},{"id":"stool_3","name":"Stool","category":"furniture","mount":"floor",
+"x":1.8 - 0.5,"z":1.5,"width":0.4,"depth":0.4,"height":0.6,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.3,"description":"A practical stool
+for seating."},{"id":"stool_4","name":"Stool","category":"furniture","mount":"floor",
+"x":2.3 + 0.5,"z":1.5,"width":0.4,"depth":0.4,"height":0.6,"elevation":0.0,
+"rotation_deg":0.0,"fixed":false,"clearance_m":0.3,"description":"A practical stool
+for seating."},{"id":"pendant_light_1","name":"Pendant Light","category":"fixture",
+"mount":"ceiling","x":1.8,"z":2.5 - 0.3,"width":0.3,"depth":0.3,"height":0.3,
+"elevation":2.7 - 0.3,"rotation_deg":0.0,"fixed":true,"clearance_m":0.15,
+"description":"A practical pendant light for illuminating the work surface."}],
+"openings":[{"id":"window_1","kind":"window","wall":"north","offset":0.0,"width":0.9,
+"height":2.1,"sill_height":0.0}], "camera":{"x":0.0,"y":1.6,"z":0.0,"target_x":0.0,
+"target_y":0.0,"target_z":0.0,"fov_deg":55.0},"circulation_notes":[],"design_notes":
+["Apply practical zonning principles before placing furniture."],
+"schema_version":"floor-plan/v11","relationships":[{"id":"rel_1","subject_id":
+"standing_desk_1","kind":"centered","wall":null,"parameters_m":{},"weight":1.0,
+"relaxable":false},{"id":"rel_2","subject_id":"stool_1","kind":"east_of",
+"target_id":"standing_desk_1","wall":null,"parameters_m":{},"weight":1.0,
+"relaxable":true},{"id":"rel_3","subject_id":"stool_2","kind":"south_of",
+"target_id":"stool_1","wall":null,"parameters_m":{},"weight":1.0,"relaxable":true},
+{"id":"rel_4","subject_id":"stool_3","kind":"south_of","target_id":"stool_1",
+"wall":null,"parameters_m":{},"weight":1.0,"relaxable":true},{"id":"rel_5",
+"subject_id":"stool_4","kind":"east_of","target_id":"stool_1","wall":null,
+"parameters_m":{},"weight":1.0,"relaxable":true},{"id":"rel_6","subject_id":
+"pendant_light_1","kind":"above","target_id":"standing_desk_1","wall":null,
+"parameters_m":{},"weight":1.0,"relaxable":false}],
+"opening_intents":[{"id":"int_1","opening_id":"window_1","wall":"north",
+"placement":"centered","corner":null,"margin_m":0.1}], "camera_intent":
+{"id":"intent_1","corner":"northwest","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":1.2,"fov_deg":55.0},"zones":[],"wall_notes":
+[],"ceiling_notes":[],"floor_notes":[]}

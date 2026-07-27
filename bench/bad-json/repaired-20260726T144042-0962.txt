@@ -1,0 +1,1077 @@
+error: Expecting property name enclosed in double quotes: line 1074 column 27 (char 32872)
+------------------------------------------------------------
+{
+    "name": "Airport Gate Corner",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "gate_desk_1",
+            "name": "Gate Desk",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 2.0,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "gate_desk_1",
+                    "kind": "adjacent_to",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"x_offset": -0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "standing_sign_1",
+            "name": "Standing Sign",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 3.8,
+            "width": 0.8,
+            "depth": 2.0,
+            "height": 1.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "standing_sign_1",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -2.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_wall_1",
+            "name": "Window Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.8,
+            "width": 3.0,
+            "depth": 2.0,
+            "height": 2.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_wall_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "linked_seats_1",
+            "name": "Linked Seats",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 2.0,
+            "width": 4.0,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "linked_seats_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "linked_seats_2",
+            "name": "Linked Seats",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 4.8,
+            "width": 4.0,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "linked_seats_2",
+                    "kind": "south_of",
+                    "target_id": "linked_seats_1",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_1",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_1",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_2",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_2",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_3",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_3",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_4",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_4",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_5",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_5",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_6",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_6",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_7",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_7",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_8",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_8",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_9",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_9",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_10",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_10",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_11",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_11",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_12",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_12",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_13",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_13",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_14",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_14",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_15",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_15",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_16",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_16",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_17",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_17",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_18",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_18",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_19",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_19",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_20",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_20",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_21",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_21",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_22",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_22",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_23",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_23",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_24",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_24",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_25",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_25",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_26",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_26",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_27",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_27",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_28",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_28",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_29",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_29",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_30",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_30",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_31",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_31",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_32",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_32",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_33",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_33",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_34",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_pendant_34",
+                    "kind": "above",
+                    "target_id": "linked_seats_2",
+                    "wall": null,
+                    "parameters_m": {"z_offset": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_pendant_35",
+            "name": "Ceiling Pendant",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 1.2,
+            "elevation": 2.6,
+            "rotation_deg": 0.0,
+            "fixed": true,
+           

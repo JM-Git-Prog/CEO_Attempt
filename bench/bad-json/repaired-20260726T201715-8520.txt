@@ -1,0 +1,1125 @@
+error: Expecting ',' delimiter: line 1123 column 23 (char 33759)
+------------------------------------------------------------
+{
+    "name": "1980s Video Arcade",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "arcade_cabinet_1",
+            "name": "Pac-Man Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 0.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 2.4,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_2",
+            "name": "Donkey Kong Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 2.4,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_2",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_3",
+            "name": "Galaga Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 2.4,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_3",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_4",
+            "name": "Street Fighter Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 2.4,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_4",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_3",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_cabinet_5",
+            "name": "Mortal Kombat Upright Arcade Cabinet",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 2.4,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_cabinet_5",
+                    "kind": "adjacent_to",
+                    "target_id": "arcade_cabinet_4",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "change_machine",
+            "name": "Coin-Operated Change Machine",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 1.2,
+            "depth": 1.8,
+            "height": 2.3,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "change_machine",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_1",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_1",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_2",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_2",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_3",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 5.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_3",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_4",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 6.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_4",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_5",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 7.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_5",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_6",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 8.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_6",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_7",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 9.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_7",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_8",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 10.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_8",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_9",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 11.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_9",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_10",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 12.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_10",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_11",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 13.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_11",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_12",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 14.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_12",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_13",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 15.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_13",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_14",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 16.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_14",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_15",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 17.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_15",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_16",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 18.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_16",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_17",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 19.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_17",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_18",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 20.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_18",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_19",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 21.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_19",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_20",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 22.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_20",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_21",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 23.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_21",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_22",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 24.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_22",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_23",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 25.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_23",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_24",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 26.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_24",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_25",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 27.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_25",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_26",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 28.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_26",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_27",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 29.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_27",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_28",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 30.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_28",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_29",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 31.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_29",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_30",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 32.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_30",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_31",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 33.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_31",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_32",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 34.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_32",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_33",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 35.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_33",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_34",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 36.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_34",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_35",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 37.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "arcade_light_35",
+                    "kind": "above",
+                    "target_id": "counter_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "arcade_light_36",
+            "name": "Arcade Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 38.0,
+            "width": 0

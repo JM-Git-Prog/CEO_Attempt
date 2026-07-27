@@ -1,0 +1,208 @@
+error: Extra data: line 23 column 1 (char 1397)
+------------------------------------------------------------
+{"name":"1960s Bowling Alley Snack Bar",
+"room":{"width":10,"depth":12,"height":3},
+"items":[{"id":"counter_1","name":"Counter","category":"furniture","mount":"floor","x":2,
+"z":6,"width":4,"depth":1.5,"height":0.8,"elevation":0.3,"rotation_deg":0,"fixed":true,
+"clearance_m":0.7,"description":"A practical counter for serving snacks."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.5,"width":0.9,
+"height":2.1,"sill_height":0}],
+"camera":{"x":4,"y":3,"z":1,"target_x":0,"target_y":0,"target_z":0,"fov_deg":55},
+"circulation_notes":[],
+"design_notes":["Create a practical, buildable floor plan with clear circulation paths."],
+"schema_version":"floor-plan/v11",
+"relationships":[{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor",
+"x":3.5,"z":7,"width":0.4,"depth":0.6,"height":0.8,"elevation":0.2,"rotation_deg":0,
+"fixed":false,"clearance_m":0.7,"description":"A practical stool for seating."}],
+"opening_intents":[{"id":"door_1_intent","kind":"door","wall":"west","placement":
+"centered","corner":null,"margin_m":0.1}],
+"camera_intent":{"id":"camera_1","kind":"corner","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":0,"fov_deg":55},
+"zones":[{"id":"seating","name":"Seating","x":3,"z":7,"width":2,"depth":4}],
+"v11_extras":{"intents_achieved":[],"relations_achieved":[],"openings_achieved":
+["door_1"],"camera_achieved":true}}
+
+V11-EXPLICIT-INTENT-EXTENSION-APPLICATION:
+
+* RELATION SEMANTICS:
+ + stool_1 adjacent_to counter_1: places stool_1 EAST of counter_1 (x increases).
+ + stool_2 east_of stool_1: places stool_2 EAST of stool_1.
+* ZONES:
+ + seating x,z,w,d = 3,7,2,4. Stool_1 is within this zone.
+
+COORDINATE-SYSTEM-APPLICATION:
+
+* x,z = item center in meters.
+* width = X-axis span, depth = Z-axis span.
+* elevation = bottom of item (0 for floor items, room_height - item_height for ceiling items).
+* rotation_deg rotates the item around its center (0 = front faces south).
+
+DESIGN-THINKING-APPLICATION:
+
+* ZONES: Identify practical seating and work zones. Place primary furniture first, then support pieces relative to it.
+* WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands) go in the center.
+* CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones.
+* RELATIONSHIPS: Chairs face tables. Stools line up along counters/bars.
+* SPACING: Repeated items (stools) distribute evenly along their parent surface with equal gaps.
+* DOOR CLEARANCE: Nothing within 1.0m inward of a door.
+* WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light enters freely.
+
+V11-EXPLICIT-INTENT-RELATION-APPLICATION:
+
+* stool_1 adjacent_to counter_1 + z = 7 places stool_1 below counter_1.
+* stool_2 east_of stool_1 + x = 3.9 places stool_2 to the EAST of stool_1.
+
+V11-EXPLICIT-INTENT-OPENING-APPLICATION:
+
+* door_1_intent: Places door_1 in the WEST wall with zero offset.
+
+V11-EXPLICIT-INTENT-CAMERA-APPLICATION:
+
+* camera_1: Places the camera in the NORTHWEST corner with inset_m = 0.45.
+
+V11-EXPLICIT-INTENT-ZONE-APPLICATION:
+
+* seating: x,z,w,d = 3,7,2,4. Stool_1 is within this zone.
+
+V11-EXPLICIT-INTENT-EXTRA-APPLICATION:
+
+* intents_achieved: ["door_1_intent", "camera_1"]
+* relations_achieved: ["stool_1 adjacent_to counter_1", "stool_2 east_of stool_1"]
+* openings_achieved: ["door_1"]
+* camera_achieved: true
+
+V11-EXPLICIT-INTENT-VALIDATION:
+
+* Every base field is present, including name, room, items, openings, camera, circulation_notes,
+  design_notes, schema_version, relationships, opening_intents, and camera_intent.
+* schema_version = "floor-plan/v11".
+* Against_wall + wall = "north" + along_offset_m = 0 + wall_gap_m places a centered north counter.
+* RELATION SEMANTICS apply correctly: adjacent_to / east_of / west_of / south_of / north_of / above /
+  around / centered are geometric operations, not natural-language synonyms.
+* Repeated rows use a directional/above relation plus distribution_index, distribution_count,
+  and distribution_span_m. Every repeated instance is separate.
+* Ceiling fixtures declare mount = "ceiling" and use above with distribution parameters.
+* fixed = true only for large built-in surfaces (counters, islands, built-in shelving). Everything
+  else is fixed = false.
+
+V11-EXPLICIT-INTENT-RETURN-JSON:
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|
+east|west","offset":number,"width":number,"height":number,"sill_height":number}],
+"camera":{"x":number,"y":number,"z":number,"target_x":number,"target_y":number,
+"target_z":number,"fov_deg":number},"circulation_notes":[string],"design_notes":[string],
+"schema_version":"floor-plan/v11","relationships":[{"id":string,"name":string,
+"category":"furniture|fixture|architectural|decor","mount":"floor|wall|ceiling","x":number,
+"z":number,"width":number,"depth":number,"height":number,"elevation":number,"rotation_deg":number,
+"fixed":boolean,"clearance_m":number,"description":string,"kind":"centered|against_wall|
+adjacent_to|north_of|south_of|east_of|west_of|around|above|facing|near_corner",
+"target_id":string,"wall":string,"parameters_m":{"number":"string"},"weight":number,
+"relaxable":boolean}], "opening_intents":[{"id":string,"kind":"door|window","wall":
+"north|south|east|west","placement":"centered|near_corner","corner":string,"margin_m":number}],
+"camera_intent":{"id":string,"kind":"corner","target_id":string,"inset_m":number,
+"eye_height_m":number,"target_height_m":number,"fov_deg":number},"zones":[{"id":string,
+"name":string,"x":number,"z":number,"width":number,"depth":number}], "v11_extras":
+{"intents_achieved":[string],"relations_achieved":[string],"openings_achieved":[string],
+"camera_achieved":boolean},"against_wall_m":number,"wall_gap_m":number,"distribution_m":number,
+"distribution_count":number,"distribution_span_m":number}
+
+V11-EXPLICIT-INTENT-RETURN-JSON-APPLICATION:
+
+* Every field in the complete base schema + V11 extras is present with accurate, buildable values.
+* Name = "1960s Bowling Alley Snack Bar".
+* Room = {"width":10,"depth":12,"height":3}.
+* Items = [{"id":"counter_1","name":"Counter","category":"furniture","mount":"floor",
+"x":2,"z":6,"width":4,"depth":1.5,"height":0.8,"elevation":0.3,"rotation_deg":0,
+"fixed":true,"clearance_m":0.7,"description":"A practical counter for serving snacks."}],
+* Openings = [{"id":"door_1","kind":"door","wall":"west","offset":0.5,"width":0.9,
+"height":2.1,"sill_height":0}],
+* Camera = {"x":4,"y":3,"z":1,"target_x":0,"target_y":0,"target_z":0,"fov_deg":55}.
+* Circulation_notes = [].
+* Design_notes = ["Create a practical, buildable floor plan with clear circulation paths."].
+* Schema_version = "floor-plan/v11".
+* Relationships = [{"id":"stool_1","name":"Stool 1","category":"furniture","mount":"floor",
+"x":3.5,"z":7,"width":0.4,"depth":0.6,"height":0.8,"elevation":0.2,"rotation_deg":0,
+"fixed":false,"clearance_m":0.7,"description":"A practical stool for seating.",
+"kind":"adjacent_to","target_id":"counter_1","wall":null,"parameters_m":{},"weight":1,
+"relaxable":false}],
+* Opening_intents = [{"id":"door_1_intent","kind":"door","wall":"west","placement":
+"centered","corner":null,"margin_m":0.1}],
+* Camera_intent = {"id":"camera_1","kind":"corner","target_id":null,"inset_m":0.45,
+"eye_height_m":1.6,"target_height_m":0,"fov_deg":55}.
+* Zones = [{"id":"seating","name":"Seating","x":3,"z":7,"width":2,"depth":4}].
+* V11_extras = {"intents_achieved":["door_1_intent","camera_1"],
+"relations_achieved":["stool_1 adjacent_to counter_1"],
+"openings_achieved":["door_1"],"camera_achieved":true}.
+* Against_wall_m = 0.
+* Wall_gap_m = 0.
+* Distribution_m = 0.
+* Distribution_count = 0.
+* Distribution_span_m = 0.
+
+V11-EXPLICIT-INTENT-RETURN-JSON-VALIDATION:
+
+* Every base field is present, including name, room, items, openings, camera,
+  circulation_notes, design_notes, schema_version, relationships, opening_intents,
+  and camera_intent.
+* schema_version = "floor-plan/v11".
+* Against_wall + wall = "north" + along_offset_m = 0 + wall_gap_m places a centered north counter.
+* RELATION SEMANTICS apply correctly: adjacent_to / east_of / west_of / south_of / north_of /
+  above / around / centered are geometric operations, not natural-language synonyms.
+* Repeated rows use a directional/above relation plus distribution_index, distribution_count,
+  and distribution_span_m. Every repeated instance is separate.
+* Ceiling fixtures declare mount = "ceiling" and use above with distribution parameters.
+* fixed = true only for large built-in surfaces (counters, islands, built-in shelving). Everything
+  else is fixed = false.
+
+V11-EXPLICIT-INTENT-RETURN-JSON-Complete-APPLICATION:
+
+Return complete, valid JSON object with accurate, buildable values. Schema: {"name":"string",
+"room":{"width":number,"depth":number,"height":number},"items":[{"id":string,
+"name":string,"category":"furniture|fixture|architectural|decor","mount":"floor|wall|
+ceiling","x":number,"z":number,"width":number,"depth":number,"height":number,
+"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":
+"north|south|east|west","offset":number,"width":number,"height":number,"sill_height":number}],
+"camera":{"x":number,"y":number,"z":number,"target_x":number,"target_y":number,
+"target_z":number,"fov_deg":number},"circulation_notes":[string],"design_notes":
+[string],"schema_version":"floor-plan/v11","relationships":[{"id":string,"name":string,
+"category":"furniture|fixture|architectural|decor","mount":"floor|wall|ceiling",
+"x":number,"z":number,"width":number,"depth":number,"height":number,"elevation":number,
+"rotation_deg":number,"fixed":boolean,"clearance_m":number,"description":string,
+"kind":"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":{"number":
+"string"},"weight":number,"relaxable":boolean}], "opening_intents":[{"id":string,
+"kind":"door|window","wall":"north|south|east|west","placement":"centered|near_corner",
+"corner":string,"margin_m":number}], "camera_intent":{"id":string,"kind":"corner",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":number,
+"fov_deg":number},"zones":[{"id":string,"name":string,"x":number,"z":number,"width":
+number,"depth":number}], "v11_extras":{"intents_achieved":[string],"relations_achieved":
+[string],"openings_achieved":[string],"camera_achieved":boolean},"against_wall_m":number,
+"wall_gap_m":number,"distribution_m":number,"distribution_count":number,"distribution_span_m":number}
+
+V11-EXPLICIT-INTENT-RETURN-JSON-Complete-APPLICATION-RETURN:
+
+Return complete, valid JSON object with accurate, buildable values. Schema: {"name":"1960s
+Bowling Alley Snack Bar","room":{"width":10,"depth":12,"height":3},"items":[{"id":"counter_1",
+"name":"Counter","category":"furniture","mount":"floor","x":2,"z":6,"width":4,"depth":1.5,
+"height":0.8,"elevation":0.3,"rotation_deg":0,"fixed":true,"clearance_m":0.7,
+"description":"A practical counter for serving snacks."}], "openings":[{"id":"door_1",
+"kind":"door","wall":"west","offset":0.5,"width":0.9,"height":2.1,"sill_height":0}],
+"camera":{"x":4,"y":3,"z":1,"target_x":0,"target_y":0,"target_z":0,"fov_deg":55},
+"circulation_notes":[],"design_notes":["Create a practical, buildable floor plan with clear
+circulation paths."],"schema_version":"floor-plan/v11","relationships":[{"id":"stool_1",
+"name":"Stool 1","category":"furniture","mount":"floor","x":3.5,"z":7,"width":0.4,
+"depth":0.6,"height":0.8,"elevation":0.2,"rotation_deg":0,"fixed":false,"clearance_m":0.7,
+"description":"A practical stool for seating.","kind":"adjacent_to","target_id":"counter_1",
+"wall":null,"parameters_m":{},"weight":1,"relaxable":false}], "opening_intents":[{"id":
+"door_1_intent","kind":"door","wall":"west","placement":"centered","corner":null,
+"margin_m":0.1}], "camera_intent":{"id":"camera_1","kind":"corner","target_id":null,
+"inset_m":0.45,"eye_height_m":1.6,"target_height_m":0,"fov_deg":55},"zones":[{"id":
+"seating","name":"Seating","x":3,"z":7,"width":2,"depth":4}], "v11_extras":{"intents_achieved":
+["door_1_intent","camera_1"],"relations_achieved":["stool_1 adjacent_to counter_1"],
+"openings_achieved":["door_1"],"camera_achieved":true},"against_wall_m":0,"wall_gap_m":0,
+"distribution_m":0,"distribution_count":0,"distribution_span_m":0}

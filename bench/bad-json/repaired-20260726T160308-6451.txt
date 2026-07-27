@@ -1,0 +1,1047 @@
+error: Unterminated string starting at: line 1045 column 19 (char 33491)
+------------------------------------------------------------
+{
+    "name": "Escape Room Lobby",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "briefing_table_1",
+            "name": "Briefing Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.0,
+            "z": 3.0,
+            "width": 2.5,
+            "depth": 1.8,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "briefing_table_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                },
+                {
+                    "subject_id": "bench_1",
+                    "kind": "south_of",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_1",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0.5, "wall_gap_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_2",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_2",
+                    "kind": "adjacent_to",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_3",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_3",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_4",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 8.5,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_4",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_5",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.5,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_5",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_6",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 4.5,
+            "z": 4.5,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_6",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_1",
+            "name": "Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 6.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 0.9,
+            "height": 0.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_1",
+                    "kind": "south_of",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_1",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 5.0,
+            "z": 2.5,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "locker_7",
+            "name": "Locker",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 4.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "locker_7",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_2",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 3.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_2",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_3",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 4.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_3",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 2, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_4",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 5.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_4",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 3, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_5",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 6.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_5",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 4, "distribution_span_m": 2.4},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_6",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 7.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_6",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 5, "distribution_span_m": 3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_7",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 8.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_7",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 6, "distribution_span_m": 3.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_8",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 9.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_8",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 7, "distribution_span_m": 4.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_9",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 10.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_9",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 8, "distribution_span_m": 4.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_10",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 11.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_10",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 9, "distribution_span_m": 5.4},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_11",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 12.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_11",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 10, "distribution_span_m": 6.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_12",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 13.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_12",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 11, "distribution_span_m": 6.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_13",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 14.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_13",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 12, "distribution_span_m": 7.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_14",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 15.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_14",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 13, "distribution_span_m": 7.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_15",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 16.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_15",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 14, "distribution_span_m": 8.4},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_16",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 17.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_16",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 15, "distribution_span_m": 9.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_17",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 18.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_17",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 16, "distribution_span_m": 9.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_18",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 19.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_18",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 17, "distribution_span_m": 10.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_19",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 20.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_19",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 18, "distribution_span_m": 10.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_20",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 21.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_20",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 19, "distribution_span_m": 11.4},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_21",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 22.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_21",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 20, "distribution_span_m": 12.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_22",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 23.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_22",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 21, "distribution_span_m": 12.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_23",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 24.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_23",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 22, "distribution_span_m": 13.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_24",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 25.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_24",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 23, "distribution_span_m": 13.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_25",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 26.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_25",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 24, "distribution_span_m": 14.4},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_26",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 27.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_26",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 25, "distribution_span_m": 15.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_27",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 28.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_27",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 26, "distribution_span_m": 15.6},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_28",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 29.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_28",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 27, "distribution_span_m": 16.2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "countdown_clock_29",
+            "name": "Countdown Clock",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 30.0,
+            "width": 1.8,
+            "depth": 0.6,
+            "height": 1.2,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "countdown_clock_29",
+                    "kind": "above",
+                    "target_id": "briefing_table_1",
+                    "wall": null,
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 28, "distribution_span_m": 16.8},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "

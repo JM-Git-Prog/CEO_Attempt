@@ -1,0 +1,1087 @@
+error: Unterminated string starting at: line 1085 column 21 (char 32867)
+------------------------------------------------------------
+{
+    "name": "Small Gym",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "treadmill_1",
+            "name": "Treadmill 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "treadmill_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "treadmill_2",
+            "name": "Treadmill 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "treadmill_2",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "dumbbell_rack",
+            "name": "Dumbbell Rack",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 3.0,
+            "depth": 4.0,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "dumbbell_rack",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench",
+            "name": "Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 2.0,
+            "width": 3.0,
+            "depth": 4.0,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench",
+                    "kind": "adjacent_to",
+                    "target_id": "treadmill_1",
+                    "wall": null,
+                    "parameters_m": {"gap": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mirror_wall",
+            "name": "Mirror Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 3.0,
+            "depth": 4.0,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mirror_wall",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "treadmill_3",
+            "name": "Treadmill 3",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "treadmill_3",
+                    "kind": "south_of",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"gap": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "treadmill_4",
+            "name": "Treadmill 4",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "treadmill_4",
+                    "kind": "south_of",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"gap": 1.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_2",
+            "name": "Ceiling Light 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_2",
+                    "kind": "above",
+                    "target_id": "treadmill_3",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_3",
+            "name": "Ceiling Light 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_3",
+                    "kind": "above",
+                    "target_id": "treadmill_4",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_4",
+            "name": "Ceiling Light 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 6.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_4",
+                    "kind": "above",
+                    "target_id": "treadmill_3",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_5",
+            "name": "Ceiling Light 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 6.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_5",
+                    "kind": "above",
+                    "target_id": "treadmill_4",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_6",
+            "name": "Ceiling Light 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 6.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_6",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_7",
+            "name": "Ceiling Light 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 2.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_7",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_8",
+            "name": "Ceiling Light 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_8",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_9",
+            "name": "Ceiling Light 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": 0.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_9",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_10",
+            "name": "Ceiling Light 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": 0.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_10",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_11",
+            "name": "Ceiling Light 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": 0.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_11",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_12",
+            "name": "Ceiling Light 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -2.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_12",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_13",
+            "name": "Ceiling Light 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -2.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_13",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_14",
+            "name": "Ceiling Light 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -2.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_14",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_15",
+            "name": "Ceiling Light 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -4.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_15",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_16",
+            "name": "Ceiling Light 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -4.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_16",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_17",
+            "name": "Ceiling Light 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -4.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_17",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_18",
+            "name": "Ceiling Light 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -6.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_18",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_19",
+            "name": "Ceiling Light 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -6.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_19",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_20",
+            "name": "Ceiling Light 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -6.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_20",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_21",
+            "name": "Ceiling Light 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -8.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_21",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_22",
+            "name": "Ceiling Light 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -8.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_22",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_23",
+            "name": "Ceiling Light 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -8.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_23",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_24",
+            "name": "Ceiling Light 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -10.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_24",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_25",
+            "name": "Ceiling Light 25",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -10.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_25",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_26",
+            "name": "Ceiling Light 26",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -10.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_26",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_27",
+            "name": "Ceiling Light 27",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -12.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_27",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_28",
+            "name": "Ceiling Light 28",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -12.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_28",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_29",
+            "name": "Ceiling Light 29",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -12.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_29",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_30",
+            "name": "Ceiling Light 30",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -14.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_30",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_31",
+            "name": "Ceiling Light 31",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.0,
+            "z": -14.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_31",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_32",
+            "name": "Ceiling Light 32",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 7.5,
+            "z": -14.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_32",
+                    "kind": "above",
+                    "target_id": "bench",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_33",
+            "name": "Ceiling Light 33",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 2.5,
+            "z": -16.0,
+            "width": 1.0,
+            "depth": 1.0,
+            "height": 0.5,
+            "elevation": 2.3,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_33",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "wall": null,
+                    "parameters_m": {"radius_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable
