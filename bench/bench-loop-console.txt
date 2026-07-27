@@ -4229,3 +4229,41 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p100: error    (24.0s) 
   p001: blocked  (22.0s) physical_overlap,physical_overlap,opening_blocked
   p002: legal    (26.2s) 
+  p003: error    (22.5s) 
+  p004: legal    (17.4s) 
+  p005: error    (90.4s) 
+  LANE RESULT: 2/15 legal plans (13%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T200249.json
+[20:11:16] bench batch rc=0
+[20:11:16] ingest: ingest: +9 records | 756 already banked | 2450 plan-less rows skipped
+[20:12:46] batch: prompts 5..19 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p006: blocked  (20.5s) out_of_bounds,opening_blocked,opening_blocked
+  p007: blocked  (20.2s) physical_overlap,out_of_bounds,opening_blocked
+  p008: error    (21.8s) 
+  p009: blocked  (21.0s) physical_overlap,out_of_bounds,opening_blocked
+  p010: blocked  (29.5s) physical_overlap,physical_overlap,out_of_bounds
+  p011: blocked  (19.7s) physical_overlap,out_of_bounds,out_of_bounds
+  p012: blocked  (39.0s) opening_blocked,opening_blocked
+  p013: error    (96.8s) 
+  p014: blocked  (27.3s) physical_overlap,physical_overlap,physical_overlap
+  p015: blocked  (35.3s) physical_overlap,out_of_bounds,out_of_bounds
+  p016: blocked  (54.4s) out_of_bounds,physical_overlap,physical_overlap
+  p017: legal    (17.7s) 
+  p018: blocked  (43.8s) physical_overlap,physical_overlap,out_of_bounds
+  p019: blocked  (98.3s) physical_overlap,out_of_bounds,camera_inside_geometry
+  p020: blocked  (94.4s) physical_overlap,physical_overlap,physical_overlap
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260726T201246.json
+[20:23:26] bench batch rc=0
+[20:23:27] ingest: ingest: +13 records | 765 already banked | 2452 plan-less rows skipped
+[20:24:57] batch: prompts 20..34 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p021: blocked  (28.0s) physical_overlap
+  p022: error    (33.2s) 
+  p023: blocked  (87.7s) physical_overlap,physical_overlap,physical_overlap
+  p024: blocked  (28.8s) physical_overlap,physical_overlap,physical_overlap

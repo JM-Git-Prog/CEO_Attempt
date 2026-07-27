@@ -1,0 +1,1160 @@
+error: Unterminated string starting at: line 1158 column 13 (char 34032)
+------------------------------------------------------------
+{
+    "name": "1930s Train Station Waiting Room",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "bench_1",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_2",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_2",
+                    "kind": "adjacent_to",
+                    "target_id": "bench_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_3",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_3",
+                    "kind": "adjacent_to",
+                    "target_id": "bench_2",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ticket_counter",
+            "name": "Ticket Counter",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.5,
+            "depth": 0.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ticket_counter",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "wall_clock",
+            "name": "Wall Clock",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 1.0,
+            "width": 0.8,
+            "depth": 0.4,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "wall_clock",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "window_1",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "window_2",
+            "name": "Window",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 6.5,
+            "z": 4.0,
+            "width": 2.0,
+            "depth": 3.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "window_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "canon_camera",
+            "name": "Canon Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.1,
+            "depth": 0.1,
+            "height": 0.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "canon_camera",
+                    "kind": "above",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.3,
+            "depth": 0.3,
+            "height": 0.1,
+            "elevation": 2.7,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_4",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_4",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_5",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_5",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_6",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_6",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_7",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_7",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_8",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_8",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_9",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_9",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_10",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_10",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_11",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_11",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_12",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_12",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_13",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_13",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_14",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_14",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_15",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_15",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_16",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_16",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_17",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_17",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_18",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_18",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_19",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_19",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_20",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_20",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_21",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_21",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_22",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_22",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_23",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_23",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_24",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_24",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_25",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_25",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_26",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_26",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_27",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_27",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_28",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_28",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_29",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_29",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_30",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_30",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_31",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_31",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_32",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_32",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_33",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_33",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_34",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_34",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_35",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench_35",
+                    "kind": "south_of",
+                    "target_id": "ticket_counter",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench_36",
+            "name": "Wooden Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 7.5,
+            "z": 2.0,
+            "width": 2.0,
+            "depth": 0.8,
+            "height": 0.6,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships

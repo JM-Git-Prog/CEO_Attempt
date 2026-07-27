@@ -1,0 +1,1019 @@
+error: Unterminated string starting at: line 1017 column 29 (char 32442)
+------------------------------------------------------------
+{
+    "name": "Small Gym",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "treadmill_1",
+            "name": "Treadmill 1",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "treadmill_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0, "wall_gap_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "treadmill_2",
+            "name": "Treadmill 2",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 1.8,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "treadmill_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 1, "wall_gap_m": 0.3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "dumbbell_rack",
+            "name": "Dumbbell Rack",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 1.8,
+            "depth": 3.6,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "dumbbell_rack",
+                    "kind": "around",
+                    "target_id": "treadmill_1",
+                    "parameters_m": {"radius_m": 2},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "bench",
+            "name": "Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 6.8,
+            "width": 1.8,
+            "depth": 0.9,
+            "height": 0.9,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "bench",
+                    "kind": "south_of",
+                    "target_id": "treadmill_1",
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "mirror_wall",
+            "name": "Mirror Wall",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 2.5,
+            "z": 1.0,
+            "width": 6.0,
+            "depth": 3.6,
+            "height": 2.4,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "mirror_wall",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_1",
+            "name": "Lighting 1",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_1",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 0, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_2",
+            "name": "Lighting 2",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_2",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 1, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_3",
+            "name": "Lighting 3",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_3",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 2, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_4",
+            "name": "Lighting 4",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_4",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 3, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_5",
+            "name": "Lighting 5",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_5",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 4, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_6",
+            "name": "Lighting 6",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_6",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 5, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_7",
+            "name": "Lighting 7",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_7",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 6, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_8",
+            "name": "Lighting 8",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_8",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 7, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_9",
+            "name": "Lighting 9",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_9",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 8, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_10",
+            "name": "Lighting 10",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_10",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 9, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_11",
+            "name": "Lighting 11",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_11",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 10, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_12",
+            "name": "Lighting 12",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_12",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 11, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_13",
+            "name": "Lighting 13",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_13",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 12, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_14",
+            "name": "Lighting 14",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_14",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 13, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_15",
+            "name": "Lighting 15",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_15",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 14, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_16",
+            "name": "Lighting 16",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_16",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 15, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_17",
+            "name": "Lighting 17",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_17",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 16, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_18",
+            "name": "Lighting 18",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_18",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 17, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_19",
+            "name": "Lighting 19",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_19",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 18, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_20",
+            "name": "Lighting 20",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_20",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 19, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_21",
+            "name": "Lighting 21",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_21",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 20, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_22",
+            "name": "Lighting 22",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_22",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 21, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_23",
+            "name": "Lighting 23",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_23",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 22, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_24",
+            "name": "Lighting 24",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_24",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 23, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_25",
+            "name": "Lighting 25",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_25",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 24, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_26",
+            "name": "Lighting 26",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_26",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 25, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_27",
+            "name": "Lighting 27",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_27",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 26, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_28",
+            "name": "Lighting 28",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_28",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 27, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_29",
+            "name": "Lighting 29",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_29",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 28, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_30",
+            "name": "Lighting 30",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_30",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 29, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_31",
+            "name": "Lighting 31",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_31",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 30, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_32",
+            "name": "Lighting 32",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_32",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 31, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_33",
+            "name": "Lighting 33",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_33",
+                    "kind": "above",
+                    "target_id": "dumbbell_rack",
+                    "parameters_m": {"distribution_index": 32, "distribution_count": 2, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "lighting_34",
+            "name": "Lighting 34",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 6.0,
+            "height": 0.1,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "lighting_34",
+                    "kind": "
