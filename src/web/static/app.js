@@ -470,18 +470,20 @@ function buildSceneFromGraph(graph) {
   const room = graph.room;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#07090d');
-  scene.fog = new THREE.Fog('#07090d', 12, 28);
+  scene.fog = new THREE.Fog('#07090d', 20, 50);
   const addBox = (name, size, position, meshMaterial, cast = false) => {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), meshMaterial);
     mesh.name = name; mesh.position.set(...position); mesh.castShadow = cast; mesh.receiveShadow = true; scene.add(mesh); return mesh;
   };
-  addBox('Floor', [room.width,.08,room.depth], [0,-.04,0], material(room.floor_material,'#4e5055'));
+  // Large floor extending beyond room walls so player has ground to walk on
+  const floorSize = Math.max(room.width, room.depth) + 10;
+  addBox('Floor', [floorSize,.08,floorSize], [0,-.04,0], material(room.floor_material,'#4e5055'));
   const wallMaterial_ = material(room.wall_material,'#bbb5aa');
   const halfWidth = room.width / 2, halfDepth = room.depth / 2, halfHeight = room.height / 2;
   addBox('Back wall',[room.width,room.height,.12],[0,halfHeight,-halfDepth-.06],wallMaterial_);
   addBox('East wall',[.12,room.height,room.depth],[halfWidth+.06,halfHeight,0],wallMaterial_);
   addBox('West wall',[.12,room.height,room.depth],[-halfWidth-.06,halfHeight,0],wallMaterial_);
-  const grid = new THREE.GridHelper(Math.max(room.width,room.depth), Math.ceil(Math.max(room.width,room.depth)*2), 0x313947, 0x1c222c);
+  const grid = new THREE.GridHelper(floorSize, Math.ceil(floorSize * 2), 0x313947, 0x1c222c);
   grid.position.y = .006; scene.add(grid);
   (graph.objects || []).forEach(object => {
     let geometry;
@@ -611,9 +613,9 @@ function buildGameViewer(graph) {
 
   // Room boundaries for clamping (keep player inside walls)
   const room = graph.room;
-  const HALF_W = (room.width || 6) / 2 - 0.3;  // 0.3m margin from walls
-  const HALF_D = (room.depth || 6) / 2 - 0.3;
-  const ROOM_HEIGHT = room.height || 3;
+  const HALF_W = (room.width || 6) / 2 + 2.0;  // 2m beyond walls for exploration room
+  const HALF_D = (room.depth || 6) / 2 + 2.0;
+  const ROOM_HEIGHT = (room.height || 3) + 2;
   const FALL_RESET_Y = -10;  // If player falls below this, respawn
 
   const resize = () => {
