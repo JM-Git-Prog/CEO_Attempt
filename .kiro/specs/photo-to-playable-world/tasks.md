@@ -107,7 +107,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 3.3, 3.4, 3.5, 3.6, 3.7_
 
 
-- [ ] 4. Checkpoint — Ensure all tests pass
+- [x] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Object 3D Generation with Fallback Chain
@@ -292,7 +292,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any WorldContract from photo assembler, canonical_bytes() → deserialize → canonical_bytes() produces identical bytes
     - **Validates: Requirements 13.5**
 
-- [~] 12. Checkpoint — Ensure all tests pass
+- [x] 12. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 

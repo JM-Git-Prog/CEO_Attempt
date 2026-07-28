@@ -57,26 +57,52 @@ def valid_vertices(draw: st.DrawFn, num_vertices: int) -> np.ndarray:
 
     Vertices are finite float32 values in [-100, 100] range to avoid
     precision issues at extreme values while still exercising the format.
+    
+    Ensures vertices are not all coincident (which would create degenerate
+    geometry where trimesh cannot preserve normals during GLB roundtrip).
     """
-    return draw(finite_float32_arrays(shape=(num_vertices, 3), min_value=-100.0, max_value=100.0))
+    verts = draw(finite_float32_arrays(shape=(num_vertices, 3), min_value=-100.0, max_value=100.0))
+    
+    # Ensure at least some spatial extent - if all vertices are identical,
+    # add small offsets to make them distinct. This prevents degenerate 
+    # zero-area triangles that cause trimesh to recompute normals.
+    extent = np.ptp(verts, axis=0)  # range per axis
+    if np.all(extent < 1e-4):
+        # Add small deterministic offsets to spread vertices out
+        offsets = np.linspace(0, 0.1, num_vertices).reshape(-1, 1) * np.array([[1.0, 0.5, 0.25]])
+        verts = verts + offsets.astype(np.float32)
+    
+    return verts
 
 
 @st.composite
 def unit_normals(draw: st.DrawFn, num_normals: int) -> np.ndarray:
     """Generate unit normal vectors (magnitude ~1.0).
 
-    Strategy: generate random float32 vectors, then normalize to unit length.
-    Reject zero-vectors that cannot be normalized.
+    Strategy: generate random float32 vectors with at least one component
+    having significant magnitude, then normalize to unit length.
+    This avoids near-zero vectors that would be filtered out.
     """
-    raw = draw(
-        finite_float32_arrays(shape=(num_normals, 3), min_value=-1.0, max_value=1.0)
-    )
-    # Compute magnitudes
-    magnitudes = np.linalg.norm(raw, axis=1, keepdims=True)
-    # Ensure no zero-length vectors
-    min_mag = magnitudes.min()
-    assume(min_mag > 1e-6)
+    normals = []
+    for _ in range(num_normals):
+        # Generate a vector guaranteed to have magnitude > 0.1
+        # by ensuring at least one axis has abs value >= 0.1
+        axis = draw(st.integers(min_value=0, max_value=2))
+        components = [
+            draw(st.floats(min_value=-1.0, max_value=1.0, allow_nan=False,
+                           allow_infinity=False, allow_subnormal=False))
+            for _ in range(3)
+        ]
+        # Force the chosen axis to have significant magnitude
+        sign = draw(st.sampled_from([-1.0, 1.0]))
+        components[axis] = sign * draw(
+            st.floats(min_value=0.1, max_value=1.0, allow_nan=False,
+                      allow_infinity=False, allow_subnormal=False)
+        )
+        normals.append(components)
 
+    raw = np.array(normals, dtype=np.float32)
+    magnitudes = np.linalg.norm(raw, axis=1, keepdims=True)
     normalized = raw / magnitudes
     return normalized.astype(np.float32)
 
@@ -94,18 +120,31 @@ def valid_faces(draw: st.DrawFn, num_vertices: int, num_faces: int) -> np.ndarra
     """Generate valid triangle face indices referencing existing vertices.
 
     Each face is a triple of distinct vertex indices within [0, num_vertices).
+    Distinct indices ensure non-degenerate triangles (when combined with
+    non-coincident vertices).
     """
     faces = []
     for _ in range(num_faces):
-        # Draw 3 distinct indices
-        indices = draw(
-            st.lists(
-                st.integers(min_value=0, max_value=num_vertices - 1),
-                min_size=3,
-                max_size=3,
+        # Draw 3 distinct indices to avoid degenerate triangles
+        if num_vertices >= 3:
+            idx_list = draw(
+                st.lists(
+                    st.integers(min_value=0, max_value=num_vertices - 1),
+                    min_size=3,
+                    max_size=3,
+                    unique=True,
+                )
             )
-        )
-        faces.append(indices)
+        else:
+            # Fallback for very small vertex counts (shouldn't happen with min 4)
+            idx_list = draw(
+                st.lists(
+                    st.integers(min_value=0, max_value=num_vertices - 1),
+                    min_size=3,
+                    max_size=3,
+                )
+            )
+        faces.append(idx_list)
 
     return np.array(faces, dtype=np.int64)
 
@@ -185,6 +224,26 @@ def _write_and_read_glb(mesh: trimesh.Trimesh, tmp_dir: Path) -> trimesh.Trimesh
     return loaded
 
 
+def _write_and_read_glb_raw(mesh: trimesh.Trimesh, tmp_dir: Path) -> dict:
+    """Write mesh to GLB, then read it back using the low-level GLB loader.
+
+    Returns the raw geometry data dict which preserves the stored normals
+    exactly as they appear in the GLB file's NORMAL accessor, without
+    trimesh recomputing them from face geometry.
+    """
+    from trimesh.exchange.gltf import load_glb
+
+    glb_path = tmp_dir / "roundtrip_test.glb"
+    mesh.export(str(glb_path), file_type="glb")
+
+    with open(glb_path, "rb") as f:
+        kwargs = load_glb(f)
+
+    # Get first geometry (our exported mesh)
+    geom_data = next(iter(kwargs["geometry"].values()))
+    return geom_data
+
+
 # ---------------------------------------------------------------------------
 # Property 21: GLB Mesh Data Round-Trip
 # ---------------------------------------------------------------------------
@@ -208,7 +267,7 @@ class TestGLBMeshDataRoundTrip:
     @settings(
         max_examples=200,
         deadline=None,
-        suppress_health_check=[HealthCheck.too_slow],
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
     )
     def test_vertex_positions_survive_roundtrip(self, data: dict):
         """Vertex positions are preserved within 1e-6 absolute tolerance.
@@ -248,14 +307,15 @@ class TestGLBMeshDataRoundTrip:
     @settings(
         max_examples=200,
         deadline=None,
-        suppress_health_check=[HealthCheck.too_slow],
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
     )
     def test_normals_survive_roundtrip(self, data: dict):
         """Normal vectors are preserved within 1e-6 absolute tolerance.
 
         GLB stores normals as float32 unit vectors in the NORMAL accessor.
-        Since input normals are already normalized float32, the round-trip
-        should not introduce significant error.
+        We use the low-level GLB loader to read back the stored normals
+        directly (since trimesh recomputes vertex_normals from geometry
+        on high-level load).
         """
         vertices = data["vertices"]
         faces = data["faces"]
@@ -266,10 +326,12 @@ class TestGLBMeshDataRoundTrip:
 
         tmp_dir = Path(tempfile.mkdtemp(prefix="glb_rt_norm_"))
         try:
-            loaded = _write_and_read_glb(mesh, tmp_dir)
+            raw_data = _write_and_read_glb_raw(mesh, tmp_dir)
 
-            # trimesh stores vertex normals
-            loaded_normals = loaded.vertex_normals.astype(np.float32)
+            assert "vertex_normals" in raw_data, (
+                "vertex_normals not found in GLB raw data"
+            )
+            loaded_normals = raw_data["vertex_normals"].astype(np.float32)
 
             assert loaded_normals.shape == normals.shape, (
                 f"Normal shape mismatch: original {normals.shape} vs "
@@ -291,7 +353,7 @@ class TestGLBMeshDataRoundTrip:
     @settings(
         max_examples=200,
         deadline=None,
-        suppress_health_check=[HealthCheck.too_slow],
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
     )
     def test_uv_coordinates_survive_roundtrip(self, data: dict):
         """UV coordinates are preserved within 1e-6 absolute tolerance.
@@ -344,7 +406,7 @@ class TestGLBMeshDataRoundTrip:
     @settings(
         max_examples=200,
         deadline=None,
-        suppress_health_check=[HealthCheck.too_slow],
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
     )
     def test_all_mesh_attributes_roundtrip_simultaneously(self, data: dict):
         """Combined property: vertices, normals, AND UVs all survive round-trip.
@@ -365,7 +427,10 @@ class TestGLBMeshDataRoundTrip:
 
         tmp_dir = Path(tempfile.mkdtemp(prefix="glb_rt_all_"))
         try:
+            # Use high-level load for vertices and UVs
             loaded = _write_and_read_glb(mesh, tmp_dir)
+            # Use low-level load for normals (trimesh recomputes on high-level load)
+            raw_data = _write_and_read_glb_raw(mesh, tmp_dir)
 
             # Check vertices
             assert loaded.vertices.shape == vertices.shape, (
@@ -377,8 +442,11 @@ class TestGLBMeshDataRoundTrip:
                 f"{np.max(np.abs(loaded_verts - vertices))}"
             )
 
-            # Check normals
-            loaded_normals = loaded.vertex_normals.astype(np.float32)
+            # Check normals via raw GLB data
+            assert "vertex_normals" in raw_data, (
+                "vertex_normals not found in GLB raw data"
+            )
+            loaded_normals = raw_data["vertex_normals"].astype(np.float32)
             assert loaded_normals.shape == normals.shape, (
                 f"Normal shape mismatch: {normals.shape} vs {loaded_normals.shape}"
             )

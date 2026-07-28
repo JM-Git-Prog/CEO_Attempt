@@ -1,0 +1,20 @@
+error: Expecting ',' delimiter: line 10 column 53 (char 776)
+------------------------------------------------------------
+{"name":"Small Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":1.5,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A minimalist single bed with a simple headboard."},
+{"id":"nightstand","name":"Small Nightstand","category":"furniture","mount":"floor","x":1.8,"z":0.7,
+"width":0.7,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A small nightstand made of warm wood with a single, table lamp."},
+{"id":"closet_door","name":"Closet Door","category":"architectural","mount":"wall","x":3.1,"z":4.0,
+"width":1.0,"depth":0.2,"height":2.0,"elevation":2.7-0.9,"rotation_deg":0,"fixed":true,"clearance_m":0.5,
+"description":"A simple, flush-mounted closet door with a few strategically placed hooks."}],
+"openings":[{"id":"closet","kind":"door","wall":"west","offset":0,"width":1.0,"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":2.0,"z":1.5,"target_x":1.8,"target_y":1.0,"target_z":0.9,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a width of at least 0.8m.",
+"Nightstand is placed adjacent to the bed with equal gaps from neighboring furniture."],
+"design_notes":["Apply wall paint first, then install hardwood floor. Place recessed lights in ceiling.",
+"Table lamp on nightstand provides warm ambient light. Consider adding additional table lamps or floor lamps for further illumination."]}
+}

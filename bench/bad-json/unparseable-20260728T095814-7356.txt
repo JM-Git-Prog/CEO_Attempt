@@ -1,0 +1,25 @@
+error: Invalid control character at: line 13 column 97 (char 995)
+------------------------------------------------------------
+{"name":"Rustic Cozy Bedroom",
+"room":{"width":3.6,"depth":3.6,"height":2.4},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor","x":0.9,"z":1.8,
+"width":1.8,"depth":2.7,"height":0.5,"elevation":0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A natural wood bed frame with a plush comforter."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0.9,"width":0.8,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.5,"z":1.0,"target_x":0.9,"target_y":1.8,"target_z":0.5,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a minimum width of 0.8m.",
+"Nightstand is placed along the north wall with equal gaps from adjacent items."],
+"design_notes":["Apply warm, soft wood tones and creamy whites for a cozy atmosphere.",
+"Exposure: apply subtle highlighting to the bed frame, nightstand, and door to create depth.",
+"Composition: place the bed against the south wall, nightstand along the north wall, and door in
+the west wall. The woven basket will go on the floor near the bed."],
+"items":[{"id":"nightstand_1","name":"Nightstand","category":"furniture","mount":"floor",
+"x":0,"z":2.7,"width":0.8,"depth":0.6,"height":0.3,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.1,"description":"A small oak nightstand with a ceramic lamp on top."}],
+"items":[{"id":"woven_basket_1","name":"Woven Basket","category":"decor","mount":"floor",
+"x":1.7,"z":1.8,"width":0.4,"depth":0.4,"height":0.2,"elevation":0,"rotation_deg":0,
+"fixed":false,"clearance_m":0.05,"description":"A woven basket for storing books or magazines."}],
+"items":[{"id":"exposed_beam_1","name":"Exposure Beam","category":"architectural",
+"mount":"ceiling","x":1.8,"z":2.7,"width":0.3,"depth":0.3,"height":0.1,"elevation":2.29,
+"rotation_deg":0,"fixed":true,"clearance_m":0.05,"description":"An exposed wooden beam."}]}

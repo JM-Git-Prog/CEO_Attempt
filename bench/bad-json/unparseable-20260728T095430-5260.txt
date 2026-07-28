@@ -1,0 +1,10 @@
+error: Invalid control character at: line 7 column 87 (char 579)
+------------------------------------------------------------
+{"name":"Small Bedroom","room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor","x":0.9,
+"z":1.5,"width":1.8,"depth":2.0,"height":0.6,"elevation":0,"rotation_deg":0,"fixed":true,
+"clearance_m":0.3,"description":"A minimalist bed with a soft, white duvet."}],
+"openings":[{"id":"closet_door","kind":"door","wall":"west","offset":0,"width":0.8,
+"height":2.0,"sill_height":0.05}], "camera":{"x":-1.5,"y":1.7,"z":0.9,"target_x":0,
+"target_y":0,"target_z":0,"fov_deg":60},"circulation_notes":["Path from door to bed is
+clear."],"design_notes":[],"schema_version":"2023-12-01T00-00-00"}
