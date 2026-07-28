@@ -1,0 +1,52 @@
+error: Expecting ',' delimiter: line 20 column 59 (char 1565)
+------------------------------------------------------------
+{"name":"Cozy Bedroom",
+"room":{"width":3.6,"depth":3.6,"height":2.4},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":0.9,
+"z":1.8,"width":1.8,"depth":2.3,"height":0.7,"elevation":0.0,"rotation_deg":0,"fixed":true,
+"clearance_m":0.3,"description":"A simple wooden bed frame with a plush comforter and two pillows."},
+{"id":"nightstand","name":"Small Nightstand","category":"furniture","mount":"floor",
+"x":1.2,"z":0.6,"width":0.7,"depth":0.5,"height":0.7,"elevation":0.0,"rotation_deg":0,
+"fixed":false,"clearance_m":0.3,"description":"A small wooden nightstand with a ceramic lamp and a stack of books."},
+{"id":"door","name":"Wooden Door","category":"architectural","mount":"wall","wall":"west",
+"offset":0.1,"width":0.9,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"basket","name":"Woven Basket","category":"decor","mount":"floor","x":2.1,
+"z":1.8,"width":0.5,"depth":0.5,"height":0.3,"elevation":0.0,"rotation_deg":0,
+"fixed":false,"clearance_m":0.3,"description":"A woven basket for storing linens."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.1,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.8,"z":0.6,"target_x":0.9,"target_y":1.8,"target_z":0.0,
+"fov_deg":60},"circulation_notes":["Path from door to bed is clear with a width of 0.8m.",
+"Reaching the nightstand requires a slight squeeze past the bed."],
+"design_notes":["Apply warm, soft focus photography style.", "Add subtle sheen to hardwood floor.",
+"Use gentle white ceiling paint and soft blue wall paint."},
+"schema_version":"2023-12-01"}
+
+COORDINATE SYSTEM EXPLANATION:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11 EXPLANATION:
+- Every item has a unique ID, name, category, mount, x,z,w,d,h,elevation,rotation_deg,
+  fixed, clearance_m, and description.
+- Wall-mounted items have mount="wall" and x,z calculated relative to the wall surface.
+- Ceiling fixtures have mount="ceiling", height=0.1-0.5m typical, elevation=room_height - height,
+  and rotation_deg optional.
+- Fixed items remain in place; non-fixed items are placed relative to fixed items only.
+- Clearance_m is distance from nearest item edge to wall surface; apply before placing items.
+- Schema_version is implementation identifier only. Do not use for design decisions.
+
+DESIGN THINKING APPLICATION:
+1. ZONES: Bed, nightstand, door, and basket form functional zones.
+2. WALLS FIRST: Door goes in west wall with offset 0.1m from center.
+3. CIRCULATION: Path from door to bed is clear with width 0.8m.
+4. RELATIONSHIPS: Nightstand faces bed with x,z calculated relative to bed's center.
+5. SPACING: Basket distributes evenly along north wall with equal gaps from neighboring items.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of door. Door swing arc is completely unobstructed.
+7. WINDOW CLEARANCE: Not applicable (no windows).
+8. PROPORTIONS: Item dimensions are realistic: bed=1.8m×2.3m, nightstand=0.7m×0.5m, door=0.9m×2.0m,
+  basket=0.5m×0.5m.
+9. CAMERA: Places camera in northeast corner with clear diagonal view showing maximum number of objects.
