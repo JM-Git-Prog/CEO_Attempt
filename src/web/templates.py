@@ -61,9 +61,9 @@ def get_index_html(version: int = 11) -> str:
         if version >= 8 else ""
     )
     intro = (
-        '<div class="intro"><span class="eyebrow">TEXT or PHOTO → WORLD → GAME</span>'
-        '<h1>Build a room you can enter.</h1><p>Describe an interior with text, or upload a photo of a real room. '
-        'Both paths produce a playable 3D world via UPBGE.</p></div>'
+        '<div class="intro"><span class="eyebrow">DESCRIBE IT OR SHOW IT → WALK THROUGH IT</span>'
+        '<h1>Turn any room into a game.</h1><p>Type what you imagine, or drop in a photo of a real space. '
+        'We\'ll build a 3D world you can explore with full physics — right on your machine.</p></div>'
         if version == 12 else
         '<div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD → GAME</span>'
         '<h1>Build a room you can enter.</h1><p>Describe one interior. Approve its metric layout '
@@ -75,7 +75,7 @@ def get_index_html(version: int = 11) -> str:
         'camera first, then render a plan-conditioned canon and build the world.</p></div>'
     )
     footer = (
-        '<span>UPBGE primary</span><span>Photo + Text modes</span><span>Compiler · parity · QA evidence</span>'
+        '<span>Local-first</span><span>Text + Photo input</span><span>Physics · collision · interaction</span>'
         if version == 12 else
         '<span>UPBGE primary</span><span>Declared Godot fallback</span><span>Compiler · parity · QA evidence</span>'
         if version == 11 else
@@ -83,21 +83,21 @@ def get_index_html(version: int = 11) -> str:
     )
     photo_upload = (
         '<div class="input-mode-toggle" id="inputModeToggle">'
-        '<button type="button" class="mode-btn active" data-mode="text" onclick="setInputMode(\'text\')">✏️ Text</button>'
-        '<button type="button" class="mode-btn" data-mode="photo" onclick="setInputMode(\'photo\')">📷 Photo</button>'
+        '<button type="button" class="mode-btn active" data-mode="text" onclick="setInputMode(\'text\')">✏️ Imagine it</button>'
+        '<button type="button" class="mode-btn" data-mode="photo" onclick="setInputMode(\'photo\')">📷 Show it</button>'
         '</div>'
         '<div id="photoUploadZone" class="photo-upload-zone" style="display:none" role="region" aria-label="Photo upload">'
         '<div class="upload-dropzone" id="uploadDropzone" tabindex="0" aria-label="Drop a photo here or click to select">'
         '<span class="upload-icon">📷</span>'
-        '<p>Drop a photo of an indoor room here, or click to select</p>'
-        '<p class="upload-hint">JPEG or PNG, 512×512 to 8192×8192, max 50MB</p>'
+        '<p><strong>Drop a room photo here</strong>, or click to browse</p>'
+        '<p class="upload-hint">Any standard photo will work — JPEG or PNG</p>'
         '<input type="file" id="photoFileInput" accept="image/jpeg,image/png" hidden>'
         '</div>'
         '<div id="photoPreview" class="photo-preview" hidden>'
         '<img id="photoPreviewImg" alt="Selected photo preview">'
         '<button type="button" class="photo-remove-btn" onclick="removePhoto()">✕ Remove</button>'
         '</div>'
-        '<button type="button" id="photoGenerateBtn" class="photo-generate-btn" disabled onclick="sendPhoto()">Generate World from Photo ⚡</button>'
+        '<button type="button" id="photoGenerateBtn" class="photo-generate-btn" disabled onclick="sendPhoto()">Build my world ⚡</button>'
         '</div>'
         if version == 12 else ""
     )
