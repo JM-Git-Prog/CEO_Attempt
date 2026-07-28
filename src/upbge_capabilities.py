@@ -395,6 +395,21 @@ def approved_upbge_locations(environment: Mapping[str, str] | None = None) -> tu
                     base / "Programs" / "UPBGE" / "upbge.exe",
                     base / "Programs" / "UPBGE" / "blender.exe",
                 ))
+                # UPBGE 0.50 nested install directories (common pattern)
+                upbge_root = base / "UPBGE"
+                if upbge_root.is_dir():
+                    try:
+                        for subdir in upbge_root.iterdir():
+                            if subdir.is_dir() and "upbge" in subdir.name.lower():
+                                candidates.append(subdir / "blender.exe")
+                                candidates.append(subdir / "upbge.exe")
+                                # Handle double-nested (extracted zip)
+                                for nested in subdir.iterdir():
+                                    if nested.is_dir() and "upbge" in nested.name.lower():
+                                        candidates.append(nested / "blender.exe")
+                                        candidates.append(nested / "upbge.exe")
+                    except (PermissionError, OSError):
+                        pass
     elif sys_platform() == "darwin":
         candidates.extend((
             Path("/Applications/UPBGE.app/Contents/MacOS/UPBGE"),
