@@ -266,13 +266,13 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - **Validates: Requirements 12.6**
 
 - [ ] 11. Serialization Round-Trip Integrity
-  - [ ] 11.1 Implement pipeline manifest JSON serialization
+  - [x] 11.1 Implement pipeline manifest JSON serialization
     - Serialize `PipelineManifest` to JSON with canonical format (sorted keys, no whitespace, UTF-8)
     - Implement custom serializers for Path objects and enums
     - Ensure round-trip: serialize → deserialize produces structurally equal manifest
     - _Requirements: 13.1, 13.4_
 
-  - [ ] 11.2 Write property test for manifest JSON round-trip (Property 20)
+  - [x] 11.2 Write property test for manifest JSON round-trip (Property 20)
     - **Property 20: Pipeline Manifest JSON Round-Trip**
     - For any valid PipelineManifest, serialize → deserialize produces structurally equal instance
     - **Validates: Requirements 13.1, 13.4**

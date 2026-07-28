@@ -17,8 +17,14 @@ from src.photo_pipeline.models import (
     StageResult,
 )
 from src.photo_pipeline.reason_codes import ReasonCode
+from src.photo_pipeline.serialization import (
+    ManifestSerializationError,
+    deserialize_manifest,
+    serialize_manifest,
+)
 
 __all__ = [
+    "ManifestSerializationError",
     "ObjectManifestEntry",
     "PhotoPipelineConfig",
     "PhotoSessionMetadata",
@@ -28,4 +34,6 @@ __all__ = [
     "SceneParseResult",
     "SegmentedObject",
     "StageResult",
+    "deserialize_manifest",
+    "serialize_manifest",
 ]

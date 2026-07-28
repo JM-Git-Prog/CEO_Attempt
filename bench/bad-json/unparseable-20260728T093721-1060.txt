@@ -1,0 +1,27 @@
+error: Expecting ',' delimiter: line 11 column 99 (char 876)
+------------------------------------------------------------
+{"name":"Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.8,"elevation":0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, solid-wood bed frame with a plush comforter and two pillows."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.1,"width":0.8,"height":2.0,
+"sill_height":0.05}], "camera":{"x":0.7,"y":1.5,"z":0.7,"target_x":1.8,"target_y":2.0,
+"target_z":0.4,"fov_deg":60},"circulation_notes":["Path from door to bed is clear.",
+"Nightstand is accessible from both sides of the bed."],
+"design_notes":["Apply warm, soft-blue paint to walls. Install hardwood floor with subtle sheen.",
+"Expose ceiling beams for a natural, rustic look. Place ceramic lamp on nightstand for warm glow."}}
+
+V11 EXPLICIT-INTENT REVISION — applying design thinking:
+- ZONES: Bed = primary focal point. Nightstand supports it. Door wall remains clear.
+- WALLS FIRST: Bed against north wall. Nightstand against east wall relative to bed.
+- CIRCULATION: Path from door to bed is wide and clear. Nightstand does not impede circulation.
+- RELATIONSHIPS: Lamp on nightstand faces down. Woven basket on floor is optional, placing it
+  against a wall maintains symmetry.
+- SPACING: Repeated items (none applicable) = no operation.
+- DOOR CLEARANCE: Door wall remains completely clear with zero obstructions.
+- WINDOW CLEARANCE: Not applicable (no windows mentioned).
+- PROPORTIONS: Item dimensions are realistic: bed ~1.9m × 2.0m, nightstand ~0.7m × 0.4m, lamp ~0.3m,
+  woven basket ~0.4m diameter.
+- CAMERA: Places camera in southwest corner with diagonal view showing bed, nightstand, and door.
+  Never places camera behind or inside furniture.

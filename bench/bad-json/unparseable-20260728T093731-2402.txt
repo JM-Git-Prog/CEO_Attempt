@@ -1,0 +1,35 @@
+error: Expecting ',' delimiter: line 21 column 74 (char 1638)
+------------------------------------------------------------
+{"name":"Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, wooden bed frame with a plush comforter and two pillows."},
+{"id":"nightstand","name":"Oak Nightstand","category":"furniture","mount":"floor","x":0.7,"z":1.5,
+"width":0.7,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.2,
+"description":"A small, oak nightstand with a ceramic lamp on top."},
+{"id":"door","name":"Wooden Door","category":"architectural","mount":"wall","wall":"north",
+"offset":0.1,"width":0.9,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"basket","name":"Woven Basket","category":"decor","mount":"floor","x":2.5,"z":0.8,
+"width":0.4,"depth":0.3,"height":0.2,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.1,
+"description":"A small, woven basket for storing books or magazines."}],
+"openings":[{"id":"door","kind":"door","wall":"north","offset":0.1,"width":0.9,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.3,"y":1.7,"z":1.5,"target_x":1.8,"target_y":2.0,"target_z":0.0,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a width of at least 0.8m.",
+"Nightstand is placed adjacent to the bed for convenient access."],
+"design_notes":["Apply warm, soft blues and creamy whites to walls, floor, and ceiling.",
+"Add warm wood tones through furniture and built-ins.",
+"Exposure: apply subtle highlight to the ceramic lamp on the nightstand."},
+"schema_version":"2023-12-01"}
+
+V11 EXPLICIT-INTENT REASONING — applying design thinking principles:
+* ZONES: Bed = primary focal point. Nightstand supports zone for placing items.
+* WALLS FIRST: Door goes against north wall with a practical offset.
+* CIRCULATION: Path from door to bed is clear with a width of at least 0.8m.
+* SPACING: Basket distributes evenly along the east wall with equal gaps.
+* DOOR CLEARANCE: Nothing within 1.0m inward of the door.
+* WINDOW CLEARANCE: Not applicable (no exterior windows).
+* PROPORTIONS: Item dimensions are realistic: bed = 1.9m × 2.0m, nightstand = 0.7m × 0.6m,
+door = 0.9m × 2.0m, basket = 0.4m × 0.3m.
+* CAMERA: Places the camera in a corner with a clear diagonal view across the room.

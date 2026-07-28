@@ -1,0 +1,23 @@
+error: Extra data: line 21 column 1 (char 1615)
+------------------------------------------------------------
+{"name":"Cozy Traditional Bedroom",
+"room":{"width":3.6,"depth":3.6,"height":2.4},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor","x":0.9,"z":1.8,
+"width":1.8,"depth":2.7,"height":0.9,"elevation":0.3,"rotation_deg":0,"fixed":true,
+"clearance_m":0.2,"description":"A traditional wooden bed frame with a plush comforter."},
+{"id":"nightstand_1","name":"Nightstand","category":"furniture","mount":"floor","x":1.5,"z":0.3,
+"width":0.7,"depth":0.4,"height":0.7,"elevation":0.2,"rotation_deg":0,"fixed":false,
+"clearance_m":0.1,"description":"A small oak wood nightstand with a ceramic lamp on top."},
+{"id":"door_1","name":"Wooden Door","category":"architectural","mount":"wall","wall":"west",
+"offset":0,"width":0.9,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"fixture_1","name":"Overhead Light Fixture","category":"fixture","mount":"ceiling",
+"x":3.0,"z":1.5,"width":0.4,"depth":0.4,"height":0.2,"elevation":2.22,"rotation_deg":0,
+"fixed":true,"clearance_m":0.1,"description":"A warm white LED overhead light fixture."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.5,"z":0.8,"target_x":1.7,"target_y":0.3,"target_z":0.8,
+"fov_deg":60},"circulation_notes":["Path from door to bed is clear with a width of 0.8m.",
+"Nightstand is placed along the north wall with equal gaps from adjacent furniture."],
+"design_notes":["Apply traditional woodworking techniques to build the bed frame and nightstand.",
+"Use soft white paint on walls, warm wood for furniture, and creamy beige for trim."]}
+}

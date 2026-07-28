@@ -1,0 +1,46 @@
+error: Invalid control character at: line 4 column 83 (char 308)
+------------------------------------------------------------
+{"name":"Cozy Living Room","room":{"width":4,"depth":5,"height":2.7},
+"items":[{"id":"armchair_1","name":"Plush Armchair","category":"furniture",
+"mount":"floor","x":0.8,"z":1.5,"width":1,"depth":1,"height":0.7,"elevation":0,
+"rotation_deg":0,"fixed":false,"clearance_m":0.3,"description":"A comfortable seat
+for reading and relaxation."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2,"sill_height":0}], "camera":{"x":0.5,"y":1.4,"z":1.6,"target_x":0.8,
+"target_y":0.7,"target_z":0,"fov_deg":60},"circulation_notes":[],
+"design_notes":["Create a focal point with the fireplace.",
+"Support seating zones with furniture."],
+"schema_version":"2023-12-01T00:00:00Z"}
+
+V11 EXPLICIT-INTENT REVISION — applying design thinking:
+1. ZONES: Identify seating, work, circulation, display. Place primary furniture
+   first, then support pieces relative to it.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces
+   (tables, islands) go in the center. Never cluster everything at 0,0.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones.
+4. RELATIONSHIPS: Chairs face tables. Stools line up along counters/bars.
+5. SPACING: Repeated items distribute evenly along their parent surface with equal
+   gaps. Never stack them on top of each other.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of a door.
+7. WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior wall surfaces so
+   light enters freely.
+8. PROPORTIONS: Item dimensions must be realistic.
+9. CAMERA: Place the camera in a corner with a clear diagonal view across the room.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for
+  ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11 COMPLETE-DESIGN-INTENT-REVISION — applying practical application of schema:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema remains the same as initial request. This complete, practical plan applies design thinking and schema rules.

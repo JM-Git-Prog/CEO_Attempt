@@ -1,0 +1,38 @@
+error: Extra data: line 14 column 1 (char 795)
+------------------------------------------------------------
+{"name":"Small Bedroom Plan",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":1.5,
+"width":1.9,"depth":2.0,"height":0.7,"elevation":0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A minimalist bed with a simple headboard and a plush comforter in light gray."}],
+"openings":[{"id":"closet_door","kind":"door","wall":"west","offset":0.2,"width":0.8,"height":1.9,
+"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":0.3,"target_x":1.8,"target_y":1.5,"target_z":0.3,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a minimum width of 0.8m.",
+"Door swing arc for closet door is completely unobstructed."],
+"design_notes":[],
+"schema_version":"2023-12-01T00:00:00Z"}
+
+// Applying design thinking:
+- ZONES: Bed is the primary focal point. Closet is a secondary zone.
+- WALLS FIRST: Bed goes against the north wall. Closet door goes in the west wall.
+- CIRCULATION: Path from door to bed is clear with a minimum width of 0.8m.
+- RELATIONSHIPS: Nightstand would face bed, but there's no space for it. Perhaps place
+  it in a corner instead? This creates a practical, buildable plan with one focal-point
+  piece (the bed) and support pieces (closet door and potential nightstand).
+- SPACING: Repeated items (none applicable in this simple plan).
+- DOOR CLEARANCE: Closet door has a clear swing arc.
+- WINDOW CLEARANCE: None applicable (no windows mentioned).
+- PROPORTIONS: Item dimensions are realistic. Bed is ~1.9m × 2.0m, closet door is ~0.8m × 1.9m.
+- CAMERA: Places the camera in a corner with a clear diagonal view showing the bed and
+  closet door.
+
+Note: This plan is incomplete because we didn't place a nightstand. Let's add one:
+{"items":[{"id":"nightstand","name":"Small Nightstand","category":"furniture","mount":"floor",
+"x":0.7,"z":2.3,"width":0.7,"depth":0.5,"height":0.7,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.1,"description":"A small nightstand with a rounded leg and a simple wooden drawer."}],
+"design_notes":["Nightstand is placed in the southeast corner to create practical counter-space
+  against the wall. Perhaps add additional furniture pieces relative to this support surface?"]}
+
+Now we have a complete, buildable plan with one focal-point piece (the bed), support pieces
+(closet door and nightstand), and clear circulation paths.
