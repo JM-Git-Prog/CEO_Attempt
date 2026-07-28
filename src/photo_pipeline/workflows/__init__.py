@@ -19,6 +19,7 @@ AVAILABLE_WORKFLOWS: dict[str, str] = {
     "flux_inpaint": "flux_inpaint.json",
     "moge2_depth": "moge2_depth.json",
     "hunyuan3d_gen": "hunyuan3d_gen.json",
+    "trellis2_gen": "trellis2_gen.json",
     "unique3d_gen": "unique3d_gen.json",
     "triposr_gen": "triposr_gen.json",
     "audio_impact": "audio_impact.json",

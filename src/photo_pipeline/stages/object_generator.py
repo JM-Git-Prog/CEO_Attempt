@@ -275,8 +275,7 @@ class ObjectGenerator:
             ]
         ] = [
             ("hunyuan3d", "hunyuan3d_gen"),
-            ("unique3d", "unique3d_gen"),
-            ("triposr", "triposr_gen"),
+            ("trellis2", "trellis2_gen"),
         ]
 
         for method_name, workflow_name in methods:

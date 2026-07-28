@@ -1,0 +1,49 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "INPUT_IMAGE_PATH"
+    }
+  },
+  "2": {
+    "class_type": "Trellis2LoadModel",
+    "inputs": {
+      "model_name": "microsoft/TRELLIS.2-4B"
+    }
+  },
+  "3": {
+    "class_type": "Trellis2PreProcessImage",
+    "inputs": {
+      "image": ["1", 0],
+      "resolution": 512
+    }
+  },
+  "4": {
+    "class_type": "Trellis2MeshWithVoxelGenerator",
+    "inputs": {
+      "model": ["2", 0],
+      "image": ["3", 0],
+      "seed": 0,
+      "steps": 18,
+      "guidance": 4.0,
+      "texture_format": "pbr"
+    }
+  },
+  "5": {
+    "class_type": "Trellis2SimplifyMesh",
+    "inputs": {
+      "mesh": ["4", 0],
+      "target_triangles": 12000,
+      "preserve_uv": true
+    }
+  },
+  "6": {
+    "class_type": "Trellis2ExportMesh",
+    "inputs": {
+      "mesh": ["5", 0],
+      "filename_prefix": "MESH_OUTPUT_PREFIX",
+      "format": "glb",
+      "embed_textures": true
+    }
+  }
+}
