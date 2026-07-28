@@ -1798,13 +1798,13 @@ async function renderBrowserGame(sceneUrl) {
   const threeScene = new THREE.Scene();
   threeScene.background = new THREE.Color(0x1a1a2e);
 
+  // Room geometry
+  const room = scene.room;
+
   // Camera — frame the whole room from a sensible viewpoint (V7's behavior)
   const camera = new THREE.PerspectiveCamera(scene.camera.fov, container.clientWidth / container.clientHeight, 0.1, 100);
   // Position camera at room center, eye height, looking forward
   camera.position.set(0, 1.6, room.depth * 0.4);
-
-  // Room geometry
-  const room = scene.room;
   // Floor
   const floorGeo = new THREE.PlaneGeometry(room.width, room.depth);
   const floorMat = new THREE.MeshStandardMaterial({color: room.floor_color, roughness: 0.9});
