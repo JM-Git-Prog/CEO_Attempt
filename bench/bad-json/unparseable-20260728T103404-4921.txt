@@ -1,0 +1,30 @@
+error: Expecting ',' delimiter: line 14 column 67 (char 1143)
+------------------------------------------------------------
+{"name":"Small Mid-Century Modern Bedroom",
+"room":{"width":3.6,"depth":3.6,"height":2.4},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":0.9,
+"z":1.8,"width":1.8,"depth":2.0,"height":0.7,"elevation":0.3,"rotation_deg":0,"fixed":true,
+"clearance_m":0.8,"description":"A simple, low-profile bed with a sturdy frame and a comfortable mattress."},
+{"id":"nightstand","name":"Nightstand","category":"furniture","mount":"floor","x":1.2,"z":0.3,
+"width":0.7,"depth":0.5,"height":0.7,"elevation":0.3,"rotation_deg":0,"fixed":false,
+"clearance_m":0.4,"description":"A small, practical nightstand with a minimalist wooden frame and a single drawer."},
+{"id":"closet_door","name":"Closet Door","category":"architectural","mount":"wall",
+"wall":"north","x":1.8,"z":2.1,"width":0.9,"height":2.0,"sill_height":0.05,
+"elevation":2.1,"rotation_deg":0,"fixed":true,"clearance_m":0.7,
+"description":"A simple sliding door with a minimalist handle, leading to a large closet."},
+{"id":"table_lamp","name":"Table Lamp","category":"fixture","mount":"ceiling",
+"x":0,"z":2.4,"width":0.3,"depth":0.3,"height":0.5,"elevation":2.4-0.5,
+"rotation_deg":180,"fixed":false,"clearance_m":0.2,"description":"A small, practical table lamp with a minimalist metal base and a soft white shade."}],
+"openings":[{"id":"closet","kind":"door","wall":"north","offset":0,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.5,"z":1.0,"target_x":0.9,"target_y":1.8,"target_z":0.3,
+"fov_deg":60},"circulation_notes":["Circulates from the door to the bed without squeezing past furniture."],
+"design_notes":["Apply wall paint in soft gray. Install hardwood floor with a subtle sheen. Place ceiling vents strategically for maximum airflow."]}
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|
+east|west","offset":number,"width":number,"height":number,"sill_height":number}],
+"camera":{"x":number,"y":number,"z":number,"target_x":number,"target_y":number,
+"target_z":number,"fov_deg":number},"circulation_notes":[string],"design_notes":[string]}

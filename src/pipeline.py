@@ -2049,3 +2049,102 @@ class WorldBuilder:
             model_used=model_used,
             attempts=attempts,
         )
+
+
+# --- Pipeline Mode Routing ---
+
+
+async def run_pipeline(
+    *,
+    source_type: str = "text",
+    description: str | None = None,
+    source_image: Path | None = None,
+    session_id: str | None = None,
+    mode: SessionMode = SessionMode.MVP,
+    interface_version: int = 11,
+) -> dict:
+    """Unified pipeline entry point that routes to text or photo pipeline.
+
+    Routes to PhotoPipelineOrchestrator.run() when source_type="photo".
+    Routes to the existing WorldBuilder text pipeline when source_type="text".
+    The photo pipeline produces a WorldContract that feeds into the same
+    UPBGE compilation chain as text.
+
+    Requirements: 14.1, 14.2, 14.3, 14.4, 14.5
+
+    Parameters
+    ----------
+    source_type : str
+        "text" or "photo". Determines which pipeline runs.
+    description : str | None
+        Text description for the text pipeline. Required when source_type="text".
+    source_image : Path | None
+        Path to source RGB image. Required when source_type="photo".
+    session_id : str | None
+        Explicit session ID. Auto-generated if not provided.
+    mode : SessionMode
+        Pipeline execution mode (MVP or FULL).
+    interface_version : int
+        Interface version for text pipeline (default 11).
+
+    Returns
+    -------
+    dict
+        Result payload with session_id, source_type, and pipeline-specific fields.
+    """
+    if source_type == "photo":
+        from src.photo_pipeline.orchestrator import PhotoPipelineOrchestrator
+        from src.photo_pipeline.models import PhotoPipelineConfig
+
+        if source_image is None:
+            raise ValueError("source_image is required when source_type='photo'")
+
+        resolved_id = session_id or str(uuid.uuid4())[:8]
+        session_dir = OUTPUT_BASE / resolved_id
+        session_dir.mkdir(parents=True, exist_ok=True)
+
+        config = PhotoPipelineConfig()
+        orchestrator = PhotoPipelineOrchestrator(
+            config=config,
+            session_dir=session_dir,
+            session_id=resolved_id,
+        )
+
+        # Run the full pipeline including UPBGE compilation → parity → smoke → auto-launch
+        manifest, compilation_result = await orchestrator.run_full(source_image)
+
+        return {
+            "session_id": resolved_id,
+            "source_type": "photo",
+            "mode": mode.value,
+            "quality_classification": manifest.quality_classification,
+            "total_duration_s": manifest.total_duration_s,
+            "object_count": len(manifest.objects),
+            "world_contract_path": str(manifest.world_contract_path) if manifest.world_contract_path else None,
+            "compilation_success": compilation_result.success,
+            "compilation_reason_code": compilation_result.reason_code,
+            "runtime_candidate_path": str(compilation_result.runtime_candidate_path) if compilation_result.runtime_candidate_path else None,
+            "launch_pid": getattr(compilation_result.launch_result, "pid", None) if compilation_result.launch_result else None,
+        }
+
+    elif source_type == "text":
+        if not description:
+            raise ValueError("description is required when source_type='text'")
+
+        # Use existing WorldBuilder text pipeline — completely unchanged
+        builder = WorldBuilder(session_id=session_id, interface_version=interface_version)
+        builder.session.mode = mode
+        builder.session.source_type = "text"
+        builder.save_session()
+
+        return {
+            "session_id": builder.session.session_id,
+            "source_type": "text",
+            "mode": mode.value,
+            "interface_version": builder.session.interface_version,
+        }
+
+    else:
+        raise ValueError(
+            f"Unsupported source_type: {source_type!r}; expected 'text' or 'photo'"
+        )

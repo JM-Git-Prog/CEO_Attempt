@@ -9,6 +9,7 @@ import mimetypes
 import os
 import re
 import shutil
+import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from html import escape
@@ -515,6 +516,147 @@ async def create_session(request: Request):
         "interface_version": builder.session.interface_version,
         "workflow_profile_id": builder.session.workflow_profile_id,
         "workflow_url": f"/api/session/{builder.session.session_id}/workflow",
+    }
+
+
+@app.post("/api/session/photo")
+async def create_photo_session(request: Request):
+    """Create a photo pipeline session and run the photo-to-world pipeline.
+
+    Accepts a JSON body with:
+      - source_image: str (path to an RGB image on local disk)
+      - mode: "mvp" | "full" (optional, default "mvp")
+
+    Routes to PhotoPipelineOrchestrator.run() when source_type="photo".
+    The resulting WorldContract feeds into the same UPBGE compilation chain as text.
+
+    Requirements: 14.1, 14.2, 14.3, 14.4, 14.5
+    """
+    from src.photo_pipeline.orchestrator import (
+        PhotoPipelineOrchestrator,
+        PipelineError,
+        PipelineTimeoutError,
+        PipelineValidationError,
+    )
+    from src.photo_pipeline.models import PhotoPipelineConfig
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {"error": "Request body must be valid JSON with 'source_image' field"},
+            status_code=400,
+        )
+
+    source_image_str = body.get("source_image", "")
+    if not source_image_str:
+        return JSONResponse(
+            {"error": "source_image path is required"},
+            status_code=400,
+        )
+
+    source_image = Path(source_image_str)
+    if not source_image.exists():
+        return JSONResponse(
+            {"error": f"Source image not found: {source_image}"},
+            status_code=400,
+        )
+
+    # Parse mode (mvp/full)
+    raw_mode = str(body.get("mode", "mvp")).strip().lower()
+    if raw_mode == "full":
+        mode = SessionMode.FULL
+    elif raw_mode == "mvp":
+        mode = SessionMode.MVP
+    else:
+        return JSONResponse(
+            {"error": f"Unsupported mode: {raw_mode!r}; expected 'mvp' or 'full'"},
+            status_code=400,
+        )
+
+    # Create session with source_type="photo"
+    session_id = str(uuid.uuid4())[:8]
+    session_dir = OUTPUT_DIR / session_id
+    session_dir.mkdir(parents=True, exist_ok=True)
+
+    # Configure and run photo pipeline orchestrator (full chain including compilation)
+    config = PhotoPipelineConfig()
+    orchestrator = PhotoPipelineOrchestrator(
+        config=config,
+        session_dir=session_dir,
+        session_id=session_id,
+    )
+
+    try:
+        manifest, compilation_result = await orchestrator.run_full(source_image)
+    except PipelineValidationError as exc:
+        return JSONResponse(
+            {
+                "error": str(exc),
+                "session_id": session_id,
+                "source_type": "photo",
+                "stage": "input_validation",
+                "reason_code": "validation_failed",
+            },
+            status_code=400,
+        )
+    except PipelineTimeoutError as exc:
+        return JSONResponse(
+            {
+                "error": str(exc),
+                "session_id": session_id,
+                "source_type": "photo",
+                "stage": "pipeline",
+                "reason_code": "timeout",
+            },
+            status_code=504,
+        )
+    except PipelineError as exc:
+        return JSONResponse(
+            {
+                "error": str(exc),
+                "session_id": session_id,
+                "source_type": "photo",
+                "stage": "pipeline",
+                "reason_code": "pipeline_error",
+            },
+            status_code=500,
+        )
+
+    # Store session metadata with source_type="photo" for Requirement 14.5
+    session_meta = {
+        "session_id": session_id,
+        "source_type": "photo",
+        "mode": mode.value,
+        "source_image_path": str(source_image),
+        "quality_classification": manifest.quality_classification,
+        "total_duration_s": manifest.total_duration_s,
+        "object_count": len(manifest.objects),
+        "compilation_success": compilation_result.success,
+        "compilation_reason_code": compilation_result.reason_code,
+    }
+    (session_dir / "photo_session_meta.json").write_text(
+        json.dumps(session_meta, indent=2), encoding="utf-8"
+    )
+
+    # The WorldContract is already persisted by the orchestrator at
+    # session_dir / "world_contract.json". The compilation bridge produces
+    # artifacts in session_dir / "photo_compile/".
+    world_contract_path = manifest.world_contract_path
+
+    return {
+        "session_id": session_id,
+        "source_type": "photo",
+        "mode": mode.value,
+        "state": "completed" if compilation_result.success else "compilation_failed",
+        "quality_classification": manifest.quality_classification,
+        "total_duration_s": manifest.total_duration_s,
+        "object_count": len(manifest.objects),
+        "world_contract_path": str(world_contract_path) if world_contract_path else None,
+        "compilation_success": compilation_result.success,
+        "compilation_reason_code": compilation_result.reason_code,
+        "runtime_candidate_path": str(compilation_result.runtime_candidate_path) if compilation_result.runtime_candidate_path else None,
+        "launch_pid": getattr(compilation_result.launch_result, "pid", None) if compilation_result.launch_result else None,
     }
 
 

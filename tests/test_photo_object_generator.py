@@ -385,23 +385,23 @@ class TestPlaceholderGeometrySelection:
         )
 
     @given(
-        width=st.integers(min_value=1, max_value=4000),
-        height=st.integers(min_value=1, max_value=4000),
+        height=st.integers(min_value=3, max_value=4000),
         area_px=st.integers(min_value=1000, max_value=16000000),
+        data=st.data(),
     )
     @settings(
         max_examples=200,
         deadline=None,
-        suppress_health_check=[HealthCheck.too_slow],
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
     )
     def test_tall_narrow_returns_cylinder(
-        self, width: int, height: int, area_px: int
+        self, height: int, area_px: int, data
     ):
         """Tall/narrow objects (aspect < 0.5) with area >= 1000 get cylinder."""
-        assume(height > 0)
+        # Generate width directly to satisfy aspect < 0.5 constraint
+        max_width = max(1, int(height * 0.49))
+        width = data.draw(st.integers(min_value=1, max_value=max_width))
         aspect = width / height
-        assume(aspect < 0.5)
-        assume(area_px >= 1000)
 
         result = select_placeholder_type(width, height, area_px)
         assert result == "cylinder", (

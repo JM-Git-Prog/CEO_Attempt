@@ -22,6 +22,12 @@ from src.photo_pipeline.serialization import (
     deserialize_manifest,
     serialize_manifest,
 )
+from src.photo_pipeline.session_integration import (
+    create_photo_session,
+    get_session_source_type,
+    queue_for_compilation,
+    store_photo_session_metadata,
+)
 
 __all__ = [
     "ManifestSerializationError",
@@ -34,6 +40,10 @@ __all__ = [
     "SceneParseResult",
     "SegmentedObject",
     "StageResult",
+    "create_photo_session",
     "deserialize_manifest",
+    "get_session_source_type",
+    "queue_for_compilation",
     "serialize_manifest",
+    "store_photo_session_metadata",
 ]

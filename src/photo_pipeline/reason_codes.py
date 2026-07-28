@@ -43,5 +43,8 @@ class ReasonCode(str, Enum):
     # Assembly / validation failures
     WORLDCONTRACT_VALIDATION_FAILED = "WORLDCONTRACT_VALIDATION_FAILED"
 
+    # Compilation chain failures
+    COMPILATION_FAILED = "COMPILATION_FAILED"
+
     # Pipeline-level timeout
     PIPELINE_TIMEOUT = "PIPELINE_TIMEOUT"

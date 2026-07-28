@@ -225,6 +225,7 @@ class WorldSession(BaseModel):
 
     session_id: str
     mode: SessionMode = SessionMode.MVP  # default to MVP per Req 10.4
+    source_type: str = "text"  # "text" or "photo" — Req 14.5
     quality_label: str | None = None  # "smoke_structural", "smoke_skipped", "parity_only"
     game_pid: int | None = None  # PID of launched blenderplayer process
     interface_version: int = 11

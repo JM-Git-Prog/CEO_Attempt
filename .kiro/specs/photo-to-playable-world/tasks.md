@@ -296,8 +296,8 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
   - Ensure all tests pass, ask the user if questions arise.
 
 
-- [~] 13. Pipeline Orchestrator and Session Integration
-  - [ ] 13.1 Implement Pipeline Orchestrator (`src/photo_pipeline/orchestrator.py`)
+- [x] 13. Pipeline Orchestrator and Session Integration
+  - [x] 13.1 Implement Pipeline Orchestrator (`src/photo_pipeline/orchestrator.py`)
     - Implement `PhotoPipelineOrchestrator.run()` — top-level coordinator
     - Implement `_validate_input()` — call input validator, reject before inference
     - Implement `_check_comfyui_health()` — fail immediately if ComfyUI unreachable
@@ -309,14 +309,14 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Persist all intermediate artifacts in session output directory with consistent naming
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 11.2, 11.3, 11.4, 11.5, 11.7_
 
-  - [ ] 13.2 Implement session integration for photo pipeline
+  - [x] 13.2 Implement session integration for photo pipeline
     - Create session via existing `SessionManager.create_session()` with `source_type="photo"`
     - Store `PhotoSessionMetadata` alongside session (source_image_hash, resolution, quality classification)
     - Integrate with existing FIFO compilation queue — photo pipeline enters queue at WorldContract → UPBGE compilation stage
     - Distinguish photo sessions from text sessions via `source_type` field in session metadata
     - _Requirements: 11.1, 11.7, 14.5_
 
-  - [ ] 13.3 Implement graceful degradation logic in orchestrator
+  - [x] 13.3 Implement graceful degradation logic in orchestrator
     - Object_Generator failure for single object → substitute placeholder, continue remaining objects
     - Audio_Synthesizer failure for single object → assign silent placeholder, continue
     - Depth low-confidence (>30% invalid pixels) → attempt reconstruction with valid pixels + interpolation, fallback to flat-floor only if impossible
@@ -326,15 +326,15 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Classify final output: "full", "degraded", or "minimal"
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6_
 
-  - [ ] 13.4 Wire photo pipeline to existing UPBGE compilation chain
+  - [x] 13.4 Wire photo pipeline to existing UPBGE compilation chain
     - After WorldContract assembly: pass to existing `upbge_compile.py` sidecar (includes V-HACD, LOD at compile time)
     - Pass through existing parity gate → smoke validation → auto-launch via `auto_launch.py`
     - No modifications to existing compilation infrastructure
     - _Requirements: 1.2, 14.2, 14.3_
 
 
-- [~] 14. Physics Settle Pre-Player Validation
-  - [ ] 14.1 Implement Physics Settle stage (`src/photo_pipeline/stages/physics_settle.py`)
+- [x] 14. Physics Settle Pre-Player Validation
+  - [x] 14.1 Implement Physics Settle stage (`src/photo_pipeline/stages/physics_settle.py`)
     - Dedicated pre-player simulation pass using PyBullet
     - Create simplified convex hull collision shapes per dynamic object
     - Simulate gravity for up to 500 iterations, wall-time limit 10s for ≤30 objects
@@ -345,8 +345,8 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - If >50% dynamic objects unsettled: log warning but do NOT reject WorldContract
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
-- [~] 15. Existing Pipeline Preservation and Mode Routing
-  - [ ] 15.1 Add photo mode to pipeline interface
+- [x] 15. Existing Pipeline Preservation and Mode Routing
+  - [x] 15.1 Add photo mode to pipeline interface
     - Add "photo" input mode alongside existing "text" mode
     - Route to `PhotoPipelineOrchestrator.run()` when source_type="photo"
     - Existing text pipeline behavior (all V3-V11 interfaces, MVP mode, full mode) unchanged
@@ -354,38 +354,38 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Existing UPBGE compilation, parity gates, smoke validation, auto-launch reused without modification
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-- [~] 16. Checkpoint — Ensure all tests pass
+- [x] 16. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 17. Integration wiring and final verification
-  - [ ] 17.1 Wire complete photo pipeline end-to-end
+- [x] 17. Integration wiring and final verification
+  - [x] 17.1 Wire complete photo pipeline end-to-end
     - Connect: input validator → scene parser → depth estimator → room reconstructor → object generator → audio synthesizer → light estimator → scale calibrator → layout estimator → physics settle → assembler → UPBGE compile → parity → smoke → auto-launch
     - Verify each stage feeds into the next with correct data flow
     - Verify session artifacts are persisted at each stage with correct naming convention
     - Verify SSE events fire at each transition
     - _Requirements: 1.1, 1.2, 1.3, 11.2_
 
-  - [ ] 17.2 Write integration test for full photo pipeline with mocked ComfyUI
+  - [x] 17.2 Write integration test for full photo pipeline with mocked ComfyUI
     - Test end-to-end: source photo → scene parse (mocked) → depth (mocked) → objects (mocked) → audio (mocked) → assembly → WorldContract validation
     - Use deterministic test fixtures (sample masks, depth map, meshes)
     - Verify WorldContract output passes existing schema validators
     - Verify manifest records all stages and degradation paths
     - _Requirements: 1.1, 1.2, 8.1_
 
-  - [ ] 17.3 Write integration test for photo + text pipeline coexistence
+  - [x] 17.3 Write integration test for photo + text pipeline coexistence
     - Verify text pipeline session and photo pipeline session can run in same FIFO queue
     - Verify session isolation (different source_types, separate output directories)
     - Verify text pipeline behavior unchanged after photo pipeline addition
     - _Requirements: 14.4, 14.5_
 
-  - [ ] 17.4 Write integration test for degradation paths
+  - [x] 17.4 Write integration test for degradation paths
     - Test: all object generators fail → placeholder geometry → "degraded" classification
     - Test: zero objects segmented → room-only → "minimal" classification
     - Test: depth estimation fails → flat-floor heuristic → pipeline still completes
     - Verify WorldContract valid in all degradation scenarios
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.6_
 
-- [~] 18. Final checkpoint — Ensure all tests pass
+- [x] 18. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 

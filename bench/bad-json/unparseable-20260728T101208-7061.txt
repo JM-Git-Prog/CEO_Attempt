@@ -1,0 +1,44 @@
+error: Invalid control character at: line 5 column 81 (char 312)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","wall":"west","x":1.8,"z":0.9,"width":1.0,"depth":0.8,"height":1.5,
+"elevation":2.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A
+stunning stone fireplace with a wood mantel and hearth, perfect for cold winter nights."},
+{"id":"bookshelf","name":"Solid Wood Bookcase","category":"furniture",
+"mount":"wall","wall":"north","x":2.1,"z":1.5,"width":0.8,"depth":1.0,
+"height":2.4,"elevation":2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A beautifully crafted bookcase made of solid wood with ornate carvings,
+perfect for displaying favorite books and decorative items."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.2,"width":0.8,
+"height":1.9,"sill_height":0.05}],
+"camera":{"x":2.3,"y":1.7,"z":1.0,"target_x":2.3,"target_y":0.1,"target_z":0.0,
+"fov_deg":60},"circulation_notes":["Path from door to seating area is clear.",
+"Zones: seating, display, circulation."],
+"design_notes":["Exposure: apply warm, soft lighting to table lamps and floor lamp.
+Reinforce the focal point of the fireplace with additional highlighting.", "Relationships:
+armchair faces fireplace, ottoman places relative to armchair. Bookcase lines up along
+north wall."],
+"items":[{"id":"armchair","name":"Plush Armchair","category":"furniture",
+"mount":"floor","x":2.5,"z":1.3,"width":0.8,"depth":0.7,"height":0.9,
+"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,
+"description":"A comfortable armchair with plush cushions and a matching ottoman,
+perfect for relaxing by the fireplace."}],
+"items":[{"id":"ottoman","name":"Ottoman","category":"furniture",
+"mount":"floor","x":2.5,"z":1.3+0.7,"width":0.6,"depth":0.4,"height":0.4,
+"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"A matching ottan to the armchair, providing additional seating and
+support."}],
+"items":[{"id":"coffee_table","name":"Reclaimed Wood Coffee Table",
+"category":"furniture","mount":"floor","x":2.1,"z":0.5,"width":0.8,"depth":0.7,
+"height":0.4,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"A coffee table made of reclaimed wood with a glass top, perfect for
+placing drinks and snacks near the seating area."}],
+"items":[{"id":"floor_lamp","name":"Wooden Base Floor Lamp",
+"category":"fixture","mount":"ceiling","x":2.5,"z":1.8+0.3,"width":0.4,
+"depth":0.4,"height":0.7,"elevation":2.7-0.7,"rotation_deg":0,"fixed":true,
+"clearance_m":0.1,"description":"A warm, soft floor lamp with a wooden base and
+linen shade, providing additional lighting to the seating area."}],
+"openings":[{"id":"window","kind":"window","wall":"north","offset":0.4,
+"width":0.6,"height":0.8,"sill_height":0.05}]}
