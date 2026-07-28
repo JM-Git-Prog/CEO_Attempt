@@ -7,9 +7,9 @@ Implement the engine-neutral contract and safety boundary first, then add UPBGE 
 ## Current Execution
 
 - **Overall task:** `13. Complete release qualification` — **IN PROGRESS**
-- **Current subtask:** `13.5.3` — Tier 0/1 regression fixed (photo validator min-resolution, compiler inventory FileExistsError guard, e2e tests excluded from ratchet via `pytest.mark.e2e`). Ratchet should pass Tier 0/1 on next iteration. Awaiting model-quality improvement or lane escalation for 0% stochastic pass rate. TRAINING-REAIM identifies 3 solver/target fixes as critical path.
+- **Current subtask:** `13.5.3` — All 3 TRAINING-REAIM solver/target fixes applied: (A) against_wall slides past openings, adjacent_to clamped to bounds; (B) synthesized-centered replaced with distributed wall placement; (C) training target strips x/z/rotation_deg. Corpus pass rate: 22% → 84%. Training set regenerated (202 train, 50 holdout). Next: retrain LoRA on corrected target, then re-measure stochastic pass rate.
 - **MVP guardrail:** Deliver a usable end-to-end MVP within 6–8 active coding hours; timebox deep work and defer anything not blocking the clean V11 pass.
-- **Latest validated checkpoint:** Core tests passing (113/113 targeted, compileall+node clean). Deterministic failures were: (1) photo input validator missing min-resolution check, (2) upbge_compile._write_inventory crashing before file-existence guard, (3) floor_plan_builder test expected schema-repair prompt format but code now uses semantic-repair path, (4) test_playwright_game.py and test_e2e_text_to_world.py timing out in full suite (now excluded via `-m "not e2e"`). Commit `f103af6`.
+- **Latest validated checkpoint:** Tests passing (85/85 targeted suite, compileall+node clean). Solver fixes verified against full corpus (84.3% pass rate vs prior 22%). Training target regenerated without solver-owned fields. Commits: `f103af6` (Tier 0 fixes), `bbd97f8` (against_wall + adjacent_to), `ff74d8e` (centered default + training target).
 
 ## Tasks
 

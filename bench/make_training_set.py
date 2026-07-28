@@ -28,6 +28,27 @@ CORPUS_FILES = [
 OUT_DIR = ROOT / "data" / "flywheel" / "training"
 HOLDOUT_FRACTION = 0.2  # kept aside so eval is never on training data
 
+# Fields the solver overwrites — training the model on these teaches values
+# that get thrown away. See TRAINING-REAIM-2026-07-28.md Owner C.
+SOLVER_OWNED_ITEM_FIELDS = frozenset({"x", "z", "rotation_deg"})
+
+
+def _strip_solver_owned_fields(plan: dict) -> dict:
+    """Remove x/z/rotation_deg from items — the solver owns placement.
+
+    The model should learn relation-kind selection (which determines legality),
+    not coordinate prediction (which the solver immediately overwrites).
+    """
+    cleaned = dict(plan)
+    items = cleaned.get("items")
+    if isinstance(items, list):
+        cleaned["items"] = [
+            {k: v for k, v in item.items() if k not in SOLVER_OWNED_ITEM_FIELDS}
+            if isinstance(item, dict) else item
+            for item in items
+        ]
+    return cleaned
+
 
 def _corpus_lines():
     for path in CORPUS_FILES:
@@ -53,7 +74,9 @@ def main() -> int:
             "messages": [
                 {"role": "system", "content": V11_PLAN_SYSTEM},
                 {"role": "user", "content": description},
-                {"role": "assistant", "content": json.dumps(plan, separators=(",", ":"))},
+                {"role": "assistant", "content": json.dumps(
+                    _strip_solver_owned_fields(plan), separators=(",", ":")
+                )},
             ],
             "meta": {
                 "record_id": d.get("record_id"),
