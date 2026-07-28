@@ -96,17 +96,109 @@ def _wall_candidate(
     margin = parameters.get("wall_gap_m", max(0.03, item.clearance_m))
     authored_x = parameters.get("along_offset_m", item.transform.position_m.x)
     authored_z = parameters.get("along_offset_m", item.transform.position_m.z)
+
+    # Compute initial wall-perpendicular position
     if wall == Wall.NORTH:
-        x = max(-room.width_m / 2 + extent_x + margin, min(room.width_m / 2 - extent_x - margin, authored_x))
-        return _replace_transform(rotated, x=x, z=room.depth_m / 2 - extent_z - margin)
+        perp_z = room.depth_m / 2 - extent_z - margin
+        along_min = -room.width_m / 2 + extent_x + margin
+        along_max = room.width_m / 2 - extent_x - margin
+        along = max(along_min, min(along_max, authored_x))
+    elif wall == Wall.SOUTH:
+        perp_z = -room.depth_m / 2 + extent_z + margin
+        along_min = -room.width_m / 2 + extent_x + margin
+        along_max = room.width_m / 2 - extent_x - margin
+        along = max(along_min, min(along_max, authored_x))
+    elif wall == Wall.EAST:
+        perp_x = room.width_m / 2 - extent_x - margin
+        along_min = -room.depth_m / 2 + extent_z + margin
+        along_max = room.depth_m / 2 - extent_z - margin
+        along = max(along_min, min(along_max, authored_z))
+    else:  # WEST
+        perp_x = -room.width_m / 2 + extent_x + margin
+        along_min = -room.depth_m / 2 + extent_z + margin
+        along_max = room.depth_m / 2 - extent_z - margin
+        along = max(along_min, min(along_max, authored_z))
+
+    # Slide along the wall to avoid opening keep-clear volumes
+    along = _slide_past_openings(
+        along, extent_x if wall in {Wall.NORTH, Wall.SOUTH} else extent_z,
+        along_min, along_max, wall, contract, item.clearance_m,
+    )
+
+    if wall == Wall.NORTH:
+        return _replace_transform(rotated, x=along, z=perp_z)
     if wall == Wall.SOUTH:
-        x = max(-room.width_m / 2 + extent_x + margin, min(room.width_m / 2 - extent_x - margin, authored_x))
-        return _replace_transform(rotated, x=x, z=-room.depth_m / 2 + extent_z + margin)
+        return _replace_transform(rotated, x=along, z=perp_z)
     if wall == Wall.EAST:
-        z = max(-room.depth_m / 2 + extent_z + margin, min(room.depth_m / 2 - extent_z - margin, authored_z))
-        return _replace_transform(rotated, x=room.width_m / 2 - extent_x - margin, z=z)
-    z = max(-room.depth_m / 2 + extent_z + margin, min(room.depth_m / 2 - extent_z - margin, authored_z))
-    return _replace_transform(rotated, x=-room.width_m / 2 + extent_x + margin, z=z)
+        return _replace_transform(rotated, x=perp_x, z=along)
+    return _replace_transform(rotated, x=perp_x, z=along)
+
+
+def _slide_past_openings(
+    along: float, half_extent: float,
+    along_min: float, along_max: float,
+    wall: Wall, contract: WorldContract, clearance: float,
+) -> float:
+    """Slide an item's along-wall position to avoid opening keep-clear zones.
+
+    Returns the nearest valid position, preferring the original if it's clear.
+    """
+    # Collect opening intervals on this wall
+    blocked_intervals: list[tuple[float, float]] = []
+    for opening in contract.openings:
+        if opening.wall != wall:
+            continue
+        # Opening center is at offset_m along the wall
+        half_opening = opening.width_m / 2 + clearance
+        opening_center = opening.offset_m
+        blocked_intervals.append((
+            opening_center - half_opening - half_extent,
+            opening_center + half_opening + half_extent,
+        ))
+
+    if not blocked_intervals:
+        return along
+
+    # Check if current position overlaps any opening
+    def is_blocked(pos: float) -> bool:
+        for lo, hi in blocked_intervals:
+            if lo < pos < hi:
+                return True
+        return False
+
+    if not is_blocked(along):
+        return along
+
+    # Find nearest clear position by searching both directions
+    best = along
+    best_dist = float("inf")
+    for lo, hi in blocked_intervals:
+        for candidate in (lo, hi):
+            clamped = max(along_min, min(along_max, candidate))
+            if not is_blocked(clamped):
+                dist = abs(clamped - along)
+                if dist < best_dist:
+                    best_dist = dist
+                    best = clamped
+
+    # If all edge candidates are also blocked, do a sweep
+    if best_dist == float("inf"):
+        step = 0.1
+        for direction in (1.0, -1.0):
+            pos = along
+            for _ in range(200):
+                pos += direction * step
+                pos = max(along_min, min(along_max, pos))
+                if not is_blocked(pos):
+                    dist = abs(pos - along)
+                    if dist < best_dist:
+                        best_dist = dist
+                        best = pos
+                    break
+                if pos <= along_min or pos >= along_max:
+                    break
+
+    return best
 
 
 def _candidate(
@@ -152,28 +244,38 @@ def _candidate(
     distributed_x = distributed(anchor.x, anchor.width, source.width)
     distributed_z = distributed(anchor.z, anchor.depth, source.depth)
     if relation.kind in {RelationKind.ADJACENT_TO, RelationKind.EAST_OF}:
+        candidate_x = anchor.x + anchor.width / 2 + source.width / 2 + gap
+        # Clamp to room bounds to prevent chaining out of the room
+        half_room_x = room.width_m / 2
+        candidate_x = max(-half_room_x + source.width / 2, min(half_room_x - source.width / 2, candidate_x))
         return _replace_transform(
             item,
-            x=anchor.x + anchor.width / 2 + source.width / 2 + gap,
+            x=candidate_x,
             z=distributed_z,
         )
     if relation.kind == RelationKind.WEST_OF:
+        candidate_x = anchor.x - anchor.width / 2 - source.width / 2 - gap
+        candidate_x = max(-room.width_m / 2 + source.width / 2, min(room.width_m / 2 - source.width / 2, candidate_x))
         return _replace_transform(
             item,
-            x=anchor.x - anchor.width / 2 - source.width / 2 - gap,
+            x=candidate_x,
             z=distributed_z,
         )
     if relation.kind == RelationKind.NORTH_OF:
+        candidate_z = anchor.z + anchor.depth / 2 + source.depth / 2 + gap
+        candidate_z = max(-room.depth_m / 2 + source.depth / 2, min(room.depth_m / 2 - source.depth / 2, candidate_z))
         return _replace_transform(
             item,
             x=distributed_x,
-            z=anchor.z + anchor.depth / 2 + source.depth / 2 + gap,
+            z=candidate_z,
         )
     if relation.kind == RelationKind.SOUTH_OF:
+        candidate_z = anchor.z - anchor.depth / 2 - source.depth / 2 - gap
+        candidate_z = max(-room.depth_m / 2 + source.depth / 2, min(room.depth_m / 2 - source.depth / 2, candidate_z))
         return _replace_transform(
             item,
             x=distributed_x,
-            z=anchor.z - anchor.depth / 2 - source.depth / 2 - gap,
+            z=candidate_z,
         )
     if relation.kind == RelationKind.ABOVE:
         elevation = (

@@ -1,0 +1,23 @@
+error: Extra data: line 21 column 1 (char 1712)
+------------------------------------------------------------
+{"name":"Small Mid-Century Modern Bedroom",
+"room":{"width":3.6,"depth":3.0,"height":2.4},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":1.5,
+"width":1.0,"depth":2.0,"height":0.7,"elevation":0.3,"rotation_deg":0,"fixed":true,"clearance_m":0.4,
+"description":"A simple, low-profile bed with a minimalist headboard."},
+{"id":"nightstand","name":"Nightstand","category":"furniture","mount":"floor","x":1.2,"z":0.7,
+"width":0.5,"depth":0.6,"height":0.4,"elevation":0.2,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"A small, rounded-leg nightstand with a single drawer and a ceramic lamp."},
+{"id":"closet_door","name":"Closet Door","category":"architectural","mount":"wall","wall":"west",
+"offset":0.1,"width":0.8,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"dresser","name":"Dresser","category":"furniture","mount":"floor","x":0.6,"z":2.3,
+"width":0.9,"depth":1.0,"height":0.8,"elevation":0.4,"rotation_deg":0,"fixed":true,"clearance_m":0.4,
+"description":"A small, practical dresser with multiple drawers."}],
+"openings":[{"id":"closet","kind":"door","wall":"west","offset":0.1,"width":0.8,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.9,"z":1.3,"target_x":1.8,"target_y":1.5,"target_z":0.3,"fov_deg":60},
+"circulation_notes":["The bed is placed against the north wall with clear paths to the nightstand and closet door.",
+"The dresser is against the east wall, creating a practical work surface and storage area."],
+"design_notes":["Apply a soft gray paint to the walls, ceiling, and trim. Use hardwood flooring with a subtle sheen.",
+"Add a few strategically placed vents to create a sense of depth and visual interest."]}
+}

@@ -175,6 +175,8 @@ def test_impossible_layout_returns_blockers_and_no_overlapping_contract():
 
 def test_opening_camera_clearance_and_rotation_aware_bounds_are_hard_constraints():
     base = build_contract()
+    # An item placed against_wall south should slide past the door opening
+    # (the solver now avoids openings proactively)
     doorway_subject = _instance(
         base, "doorway_subject", x=-1.0, z=0.0,
         relations=(RelationIntent(kind="against_wall", wall="south"),),
@@ -185,8 +187,11 @@ def test_opening_camera_clearance_and_rotation_aware_bounds_are_hard_constraints
         update={"openings": (doorway,)}
     ).model_dump(mode="json"))
     doorway = solve_relationships(doorway_contract)
-    assert doorway.contract is None
-    assert any(
+    # With an 8m-wide room, the item can slide past the door — solver succeeds
+    assert doorway.contract is not None
+    assert doorway.report.success
+    # Verify the placed item does NOT overlap the opening keep-clear zone
+    assert not any(
         item.reason_code == "opening_keep_clear"
         for item in doorway.report.hard_constraints
     )

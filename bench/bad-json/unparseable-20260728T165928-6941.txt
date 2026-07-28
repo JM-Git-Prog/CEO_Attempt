@@ -1,0 +1,12 @@
+error: Invalid control character at: line 4 column 81 (char 303)
+------------------------------------------------------------
+{"name":"Cozy Living Room","room":{"width":4,"depth":5,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","wall":"west","x":1,"z":0,"width":0.8,"depth":0.9,"height":1.2,
+"elevation":2.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A
+sturdy stone fireplace with a wooden mantel."}],
+"openings":[{"id":"door","kind":"door","wall":"north","offset":0,"width":0.9,
+"height":2,"sill_height":0}],
+"camera":{"x":1.5,"y":1.6,"z":1.4,"target_x":1,"target_y":0,"target_z":0,
+"fov_deg":60},"circulation_notes":[],"design_notes":[],
+"schema_version":"2023-12-01T00-00-00"}
