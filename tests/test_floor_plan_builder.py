@@ -146,8 +146,12 @@ def test_v11_invalid_semantic_intent_gets_one_bounded_repair(monkeypatch):
     ))
 
     assert len(calls) == 2
-    assert "validation_errors" in calls[1]
-    assert "previous_response" in calls[1]
+    # The repair prompt uses semantic-repair format (previous_plan + blockers)
+    # or schema-repair format (validation_errors + previous_response)
+    repair_prompt = calls[1]
+    assert ("validation_errors" in repair_prompt or "previous_plan" in repair_prompt), (
+        "Second call should be either a schema repair or semantic repair prompt"
+    )
     assert report.valid
 
 

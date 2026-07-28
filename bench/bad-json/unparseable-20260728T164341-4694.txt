@@ -1,0 +1,50 @@
+error: Invalid control character at: line 4 column 76 (char 298)
+------------------------------------------------------------
+{"name":"Cozy Living Room","room":{"width":4,"depth":5,"height":2.7},
+"items":[{"id":"fireplace","name":"Brick Fireplace","category":"fixture",
+"mount":"wall","x":1,"z":0,"width":1,"depth":2.5,"height":1.5,"elevation":1.5,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Rustic brick
+surround with stone hearth."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2,"sill_height":0}],
+"camera":{"x":1.5,"y":1.4,"z":1.6,"target_x":1,"target_y":0,"target_z":0,
+"fov_deg":60},"circulation_notes":["Path from door to armchair is clear.",
+"Zones: seating (armchair + ottoman), work (coffee table), circulation."],
+"design_notes":["Exposure: ceiling has 3 fixed-point light fixtures. Wall
+fixtures support the rustic, warm atmosphere."],"items":[{"id":"bookshelf",
+"name":"Solid Oak Bookshelf","category":"furniture","mount":"wall","x":0,
+"z":1.5,"width":1,"depth":0.7,"height":2,"elevation":2,"rotation_deg":0,
+"fixed":true,"clearance_m":0.3,"description":"Tall, solid oak bookcase with
+four shelves."}],
+"items":[{"id":"armchair","name":"Plaid Armchair","category":"furniture",
+"mount":"floor","x":1.8,"z":2.5,"width":0.7,"depth":0.7,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"Comfortable armchair upholstered in warm plaid fabric."}],
+"items":[{"id":"ottoman","name":"Matching Ottoman","category":"furniture",
+"mount":"floor","x":1.8,"z":2.5+0.7,"width":0.7,"depth":0.7,"height":0.4,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"Matching ottoman for armchair."}],
+"items":[{"id":"coffee_table","name":"Reclaimed Wood Coffee Table",
+"category":"furniture","mount":"floor","x":1.8+0.7/2,"z":2.5-0.4-0.3,
+"width":0.7,"depth":0.9,"height":0.4,"elevation":0,"rotation_deg":0,
+"fixed":false,"clearance_m":0.3,"description":"Sturdy coffee table made from
+reclaimed wood."}],
+"items":[{"id":"floor_lamp","name":"Linen Shade Floor Lamp","category":
+"fixture","mount":"floor","x":0.5,"z":2.8,"width":0.2,"depth":0.2,"height"
+:0.7,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"Tall floor lamp with linen shade providing soft, warm light."}],
+"items":[{"id":"wall_fixture_1","name":"Exposed Bulb Wall Fixture",
+"category":"fixture","mount":"wall","x":2.5,"z":0,"width":0.1,"depth":0.1,
+"height":0.3,"elevation":2.7-0.3,"rotation_deg":0,"fixed":true,"clearance_m"
+:0.1,"description":"Simple wall fixture with exposed bulb providing overhead
+light."}],
+"items":[{"id":"wall_fixture_2","name":"Exposed Bulb Wall Fixture",
+"category":"fixture","mount":"wall","x":2.5+1,"z":0,"width":0.1,"depth":0.1,
+"height":0.3,"elevation":2.7-0.3,"rotation_deg":0,"fixed":true,"clearance_m"
+:0.1,"description":"Second wall fixture with exposed bulb providing overhead
+light."}],
+"items":[{"id":"wall_fixture_3","name":"Exposed Bulb Wall Fixture",
+"category":"fixture","mount":"wall","x":2.5+2,"z":0,"width":0.1,"depth":0.1,
+"height":0.3,"elevation":2.7-0.3,"rotation_deg":0,"fixed":true,"clearance_m"
+:0.1,"description":"Third wall fixture with exposed bulb providing overhead
+light."}]}

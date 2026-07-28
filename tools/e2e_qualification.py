@@ -256,7 +256,7 @@ def command_plan(mode: str, e2e_result_path: Path) -> list[tuple[str, list[str]]
         commands.extend([
             ("compileall", [python, "-m", "compileall", "-q", "src", "tools"]),
             ("node-check", ["node", "--check", "src/web/static/app.js"]),
-            ("full-tests", [python, "-m", "pytest", "tests", "-q"]),
+            ("full-tests", [python, "-m", "pytest", "tests", "-q", "-m", "not e2e"]),
         ])
     if mode == "full":
         commands.append((

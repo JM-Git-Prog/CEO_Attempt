@@ -9,9 +9,12 @@ Requires:
 - Playwright chromium browser installed
 """
 
+import pytest
 from playwright.sync_api import sync_playwright, expect
 import time
 import os
+
+pytestmark = [pytest.mark.e2e]
 
 SERVER_URL = "http://localhost:8000/?v=11"
 PROMPT = "A small cozy bedroom with a single bed, nightstand, and wooden door"

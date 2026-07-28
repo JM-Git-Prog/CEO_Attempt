@@ -381,6 +381,8 @@ def _configure_scene(bpy, contract, plan):
 def _write_inventory(output_dir, contract, plan, objects):
     """Write complete contract authority plus actual/converted UPBGE scene values."""
     path = output_dir / "scene_inventory.json"
+    if path.exists():
+        raise FileExistsError(f"Inventory already exists: {path}")
     plan_openings = {item["stable_id"]: item for item in plan["opening_gaps"]}
     plan_objects = {item["stable_id"]: item for item in objects}
 
@@ -463,7 +465,7 @@ def _write_inventory(output_dir, contract, plan, objects):
         "outputs": plan["outputs"],
         "expected_inventory_ids": plan["expected_inventory_ids"],
     }
-    with path.open("x", encoding="utf-8") as handle:
+    with path.open("w", encoding="utf-8") as handle:
         json.dump(inventory, handle, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 

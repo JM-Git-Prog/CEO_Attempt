@@ -156,9 +156,17 @@ def validate_photo_input(image_path: Path) -> InputValidationResult:
             ),
         )
 
-    # 5. Resolution — accept any size, pipeline will upscale small images
-    # (Removed minimum 512×512 requirement — real user photos may be smaller)
+    # 5. Resolution within 512×512 to 8192×8192 bounds
     width, height = img.size
+    if width < MIN_RESOLUTION or height < MIN_RESOLUTION:
+        return InputValidationResult(
+            valid=False,
+            reason_code=ReasonCode.INVALID_IMAGE_RESOLUTION,
+            diagnostic=(
+                f"Image resolution {width}×{height} is below minimum "
+                f"{MIN_RESOLUTION}×{MIN_RESOLUTION}"
+            ),
+        )
     if width > MAX_RESOLUTION or height > MAX_RESOLUTION:
         return InputValidationResult(
             valid=False,
