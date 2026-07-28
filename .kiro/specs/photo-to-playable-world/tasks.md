@@ -130,7 +130,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any bounding box dimensions, placeholder type is deterministically selected by aspect ratio; textured with average color from non-transparent pixels
     - **Validates: Requirements 4.4**
 
-- [ ] 6. Audio Synthesis
+- [x] 6. Audio Synthesis
   - [x] 6.1 Implement Audio Synthesizer (`src/photo_pipeline/stages/audio_synthesizer.py`)
     - Implement `AudioSynthesizer.synthesize()` — try ComfyUI audio nodes first, fallback to sound bank
     - Implement `_estimate_material()` — classify object into {wood, metal, glass, fabric, ceramic, plastic} from Object_PNG visual features (color histogram heuristic)
@@ -146,18 +146,18 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - All files: mono, 44100Hz, 16-bit, 0.1-2.0s duration, normalized to -3dBFS peak
     - _Requirements: 5.3_
 
-  - [~] 6.3 Write property test for audio format constraints (Property 8)
+  - [x] 6.3 Write property test for audio format constraints (Property 8)
     - **Property 8: Audio Output Format Constraints**
     - For any generated audio, output is mono, 44100Hz, 16-bit, duration in [0.1, 2.0] seconds
     - **Validates: Requirements 5.1**
 
 
-  - [~] 6.4 Write property test for audio normalization (Property 9)
+  - [x] 6.4 Write property test for audio normalization (Property 9)
     - **Property 9: Audio Normalization to Target Peak**
     - For any WAV with at least one non-zero sample, after normalization peak amplitude is within 0.1dB of -3.0dBFS
     - **Validates: Requirements 5.5**
 
-  - [~] 6.5 Write property test for material-to-sound mapping (Property 10)
+  - [x] 6.5 Write property test for material-to-sound mapping (Property 10)
     - **Property 10: Material-to-Sound Mapping Completeness**
     - For any valid material category in {wood, metal, glass, fabric, ceramic, plastic}, sound bank lookup returns a non-null path to an existing WAV file
     - **Validates: Requirements 5.3**
@@ -173,12 +173,12 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `LightEstimateResult` with all parameters and confidence score
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [~] 7.2 Write property test for light estimation bounds (Property 11)
+  - [x] 7.2 Write property test for light estimation bounds (Property 11)
     - **Property 11: Light Estimation Output Validity**
     - For any valid RGB image, output has: sun_direction magnitude in [0.99, 1.01], color_temperature in [1800, 12000], intensity in [0.0, 100.0], and produces at minimum one directional + one ambient light
     - **Validates: Requirements 6.1, 6.2, 6.4**
 
-  - [~] 7.3 Implement Scale Calibrator (`src/photo_pipeline/stages/scale_calibrator.py`)
+  - [x] 7.3 Implement Scale Calibrator (`src/photo_pipeline/stages/scale_calibrator.py`)
     - Implement `ScaleCalibrator.calibrate()` — compute real-world dimensions from pixel footprint, depth, and FOV
     - Implement `_pixel_to_meters()` — single axis conversion using depth and focal length
     - Implement `_clamp_dimensions()` — clamp each axis to [0.01m, room_dimension_on_that_axis]

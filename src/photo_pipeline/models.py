@@ -202,6 +202,20 @@ class LightEstimateResult:
 
 
 @dataclass(frozen=True)
+class ScaleResult:
+    """Result of scale calibration for a single segmented object.
+
+    Contains computed real-world dimensions in meters, the overall scale
+    factor applied, and a confidence score indicating reliability of the
+    calibration (based on depth plausibility and pixel footprint).
+    """
+
+    dimensions_m: tuple[float, float, float]  # width, height, depth
+    scale_factor: float
+    confidence: float  # 0.0-1.0
+
+
+@dataclass(frozen=True)
 class PhotoSessionMetadata:
     """Session metadata extension for photo-pipeline sessions.
 
