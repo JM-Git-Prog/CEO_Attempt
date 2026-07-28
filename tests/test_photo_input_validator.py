@@ -114,26 +114,23 @@ class TestGrayscaleImagesRejected:
         assert len(result.diagnostic) > 0
 
 
-class TestResolutionBelowMinimumRejected:
-    """Property: valid RGB PNG with resolution below 512 in any dimension is rejected."""
+class TestResolutionBelowMinimumAccepted:
+    """Property: valid RGB PNG with resolution below 512 is accepted (upscaled downstream)."""
 
     @given(
         width=st.integers(min_value=1, max_value=511),
         height=st.integers(min_value=512, max_value=1024),
     )
     @settings(max_examples=100, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
-    def test_width_below_minimum_rejected(
+    def test_width_below_minimum_accepted(
         self, width: int, height: int, tmp_path: Path
     ):
-        """For any RGB PNG with width < 512, validator rejects with INVALID_IMAGE_RESOLUTION."""
+        """For any RGB PNG with width < 512, validator accepts (orchestrator upscales)."""
         file_path = _write_png(tmp_path, "RGB", width, height)
 
         result = validate_photo_input(file_path)
-        assert not result.valid, (
-            f"Width {width} below minimum should be rejected"
-        )
-        assert result.reason_code == ReasonCode.INVALID_IMAGE_RESOLUTION, (
-            f"Expected INVALID_IMAGE_RESOLUTION, got {result.reason_code}"
+        assert result.valid, (
+            f"Width {width} below 512 should still be accepted (upscaled later)"
         )
 
     @given(
@@ -141,18 +138,15 @@ class TestResolutionBelowMinimumRejected:
         height=st.integers(min_value=1, max_value=511),
     )
     @settings(max_examples=100, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
-    def test_height_below_minimum_rejected(
+    def test_height_below_minimum_accepted(
         self, width: int, height: int, tmp_path: Path
     ):
-        """For any RGB PNG with height < 512, validator rejects with INVALID_IMAGE_RESOLUTION."""
+        """For any RGB PNG with height < 512, validator accepts (orchestrator upscales)."""
         file_path = _write_png(tmp_path, "RGB", width, height)
 
         result = validate_photo_input(file_path)
-        assert not result.valid, (
-            f"Height {height} below minimum should be rejected"
-        )
-        assert result.reason_code == ReasonCode.INVALID_IMAGE_RESOLUTION, (
-            f"Expected INVALID_IMAGE_RESOLUTION, got {result.reason_code}"
+        assert result.valid, (
+            f"Height {height} below 512 should still be accepted (upscaled later)"
         )
 
 
