@@ -24,11 +24,11 @@ LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
 # Reasoning models (gpt-oss:20b, qwen3-coder-next) burn tokens on internal
 # chain-of-thought before emitting content. With 8192 context the thinking
 # consumes all available budget leaving nothing for the actual plan output.
-# 16384 context + 8192 predict balances output quality vs VRAM pressure.
-# The RTX 4090 can't do 32k context when ComfyUI FLUX is also loaded (~10GB).
-# Tunable via env if you unload ComfyUI first.
-OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "16384"))
-OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "8192"))
+# Flash attention (OLLAMA_FLASH_ATTENTION=1) halves KV cache VRAM, so 24k
+# context is safe even with ComfyUI loaded. Ollama spills to 96GB system RAM
+# when VRAM is full (OLLAMA_MAX_LOADED_MODELS=4 enables shared-memory caching).
+OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "24576"))
+OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "12288"))
 
 
 class LLMError(Exception):
