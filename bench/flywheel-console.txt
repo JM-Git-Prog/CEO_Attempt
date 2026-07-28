@@ -4577,3 +4577,41 @@ ingest: +0 records | 830 already banked | 2490 plan-less rows skipped
 [05:49:09] waiting: 12/50 new corpus rows since last cycle (978 total)
 [05:59:09] waiting: 42/50 new corpus rows since last cycle (1008 total)
 [06:09:09] waiting: 42/50 new corpus rows since last cycle (1008 total)
+[06:19:09] threshold met (53 new rows, 1019 total) - starting a cycle
+[06:19:09] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (44.3s) out_of_bounds,out_of_bounds,camera_inside_geometry
+  p002: blocked  (85.5s) camera_inside_geometry
+  p003: legal    (34.3s) 
+  p004: legal    (35.3s) 
+  p005: legal    (36.0s) 
+  p006: legal    (72.1s) 
+  p007: error    (105.9s) 
+  p008: blocked  (43.7s) physical_overlap,camera_inside_geometry
+  p009: error    (55.3s) 
+  p010: legal    (68.5s) 
+  p011: blocked  (46.4s) out_of_bounds,out_of_bounds,opening_blocked
+  p012: error    (109.2s) 
+  p013: legal    (37.0s) 
+  p014: error    (114.0s) 
+  p015: error    (106.8s) 
+  LANE RESULT: 6/11 legal plans (55%)   [4 backend errors excluded]
+
+=== LANE kimi-k2.6:cloud — 15 prompts ===
+  p001: error    (78.2s) 
+  p002: error    (74.0s) 
+  p003: error    (88.0s) 
+  !! LANE ABORTED after 3 consecutive backend errors. Infrastructure failure, not a model score.
+  LANE RESULT: NO SCORE - all 3 calls failed at the backend. Fix the backend, then re-run.
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260728T061909.json
+ingest: +10 records | 883 already banked | 4416 plan-less rows skipped
+[06:39:45] ingest rc=0
+[06:39:45] pausing the llama3.1 harvester for the training window
+[06:39:45] launching the training chain (make_training_set -> train -> register -> exam)
+[06:39:45] chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)
+[06:39:45] waiting (census done=True, gpu 100%, quiet votes 0/3)
+[06:40:45] waiting (census done=True, gpu 100%, quiet votes 0/3)
+[06:41:05] training chain finished rc=3221225786
+[06:41:05] resumed the llama3.1 harvester

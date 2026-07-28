@@ -584,3 +584,6 @@
 [03:06:11] waiting (census done=True, gpu 46%, quiet votes 0/3)
 [03:07:11] waiting (census done=True, gpu 47%, quiet votes 0/3)
 [03:08:11] waiting (census done=True, gpu 49%, quiet votes 0/3)
+[06:39:45] chain started - waiting for census + a mostly-quiet GPU (2 of 3 checks)
+[06:39:45] waiting (census done=True, gpu 100%, quiet votes 0/3)
+[06:40:45] waiting (census done=True, gpu 100%, quiet votes 0/3)

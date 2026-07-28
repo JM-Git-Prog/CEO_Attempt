@@ -7342,3 +7342,26 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p080: timeout  (120.0s) 
   p081: timeout  (120.0s) 
   p082: timeout  (120.0s) 
+  p083: timeout  (120.0s) 
+  p084: timeout  (120.0s) 
+  p085: timeout  (120.0s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260728T055218.json
+[06:16:39] bench batch rc=0
+[06:16:39] ingest: ingest: +11 records | 872 already banked | 4387 plan-less rows skipped
+[06:18:09] batch: prompts 85..99 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p086: timeout  (120.0s) 
+  p087: timeout  (120.0s) 
+  p088: timeout  (120.0s) 
+  p089: timeout  (120.0s) 
+  p090: timeout  (120.0s) 
+  p091: timeout  (120.0s) 
+  p092: timeout  (120.0s) 
+  p093: timeout  (120.0s) 
+  p094: timeout  (120.0s) 
+  p095: timeout  (120.0s) 
+  p096: timeout  (120.0s) 
+[06:41:05] bench batch rc=3221225786

@@ -1,0 +1,24 @@
+{
+  "generated": "2026-07-28 06:31:01",
+  "failing_plans": 691,
+  "by_cell_size": {
+    "0.25": {
+      "legal": 97,
+      "unplaceable": 28,
+      "rate": 0.14,
+      "seconds": 0.8
+    },
+    "0.5": {
+      "legal": 98,
+      "unplaceable": 31,
+      "rate": 0.142,
+      "seconds": 0.3
+    },
+    "0.75": {
+      "legal": 162,
+      "unplaceable": 127,
+      "rate": 0.234,
+      "seconds": 0.3
+    }
+  }
+}

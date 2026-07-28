@@ -1,0 +1,7 @@
+plans: 691   could not fit on the grid: 31
+
+blocker                      before    after   change
+physical_overlap               1870      594   -68%
+out_of_bounds                   899      553   -38%
+opening_blocked                 653      315   -52%
+camera_inside_geometry          215      263   +22%
