@@ -351,7 +351,14 @@ def _repair_wiring():
                     continue
                 if not (row.get("blockers") or []):
                     continue
-                plan = FloorPlanV11.model_validate(row["plan"])
+                try:
+                    plan = FloorPlanV11.model_validate(row["plan"])
+                except Exception:
+                    # Some archived plans cannot even be loaded (e.g. a negative
+                    # elevation the schema rejects). That is a property of old
+                    # data, not of the repair pass - skip and keep looking for a
+                    # replayable one instead of failing the whole check.
+                    continue
                 before = validate_floor_plan(plan, tolerance="strict")
                 if before.valid:
                     continue
@@ -451,7 +458,8 @@ def _stuck_detector():
             return False, "a genuinely frozen flywheel would NOT be detected - guard too broad"
         return True, (f"stale progress ({age_h:.1f}h old) correctly ignored, "
                       "real freezes still caught")
-    return True, f"progress file is current ({age_h:.1f}h old), nothing to ignore"
+    return True, (f"stage={data.get('stage')!r} ({age_h:.1f}h old) - not a training "
+                  "stage, so there is nothing for the detector to act on")
 
 
 # ----------------------------------------------------------- 7. dashboard

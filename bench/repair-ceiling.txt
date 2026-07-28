@@ -1,0 +1,10 @@
+archived failing plans replayable: 664 (of 665)
+
+  nudge cap   iters   rescued          note
+    0.3m       3       48/664 ( 7.2%)   current setting - keeps rows intact
+    0.5m       3       54/664 ( 8.1%)   
+   0.75m       3       64/664 ( 9.6%)   
+    1.0m       3       76/664 (11.4%)   
+    1.5m       3       85/664 (12.8%)   moves items far enough to break the described layout
+    1.5m       8       91/664 (13.7%)   moves items far enough to break the described layout
+    2.5m       8       91/664 (13.7%)   moves items far enough to break the described layout

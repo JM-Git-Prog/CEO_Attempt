@@ -1,0 +1,1096 @@
+error: Expecting property name enclosed in double quotes: line 1094 column 22 (char 32501)
+------------------------------------------------------------
+{
+    "name": "Conference Room",
+    "room": {
+        "width": 10.0,
+        "depth": 8.0,
+        "height": 2.8
+    },
+    "items": [
+        {
+            "id": "table_1",
+            "name": "Long Conference Table",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 10.0,
+            "depth": 2.5,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "table_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_1",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 2.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_1",
+                    "kind": "adjacent_to",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_2",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_2",
+                    "kind": "adjacent_to",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_3",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 2.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_3",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "wall_screen",
+            "name": "Wall Screen",
+            "category": "fixture",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 2.0,
+            "depth": 1.0,
+            "height": 1.5,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "wall_screen",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "credenza",
+            "name": "Credenza",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.5,
+            "z": 3.8,
+            "width": 2.0,
+            "depth": 1.5,
+            "height": 2.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "credenza",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "west",
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_4",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 6.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_4",
+                    "kind": "south_of",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": -2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_5",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 7.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_5",
+                    "kind": "south_of",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": -2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_6",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 6.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_6",
+                    "kind": "south_of",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_7",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 7.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_7",
+                    "kind": "south_of",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "chair_8",
+            "name": "Conference Chair",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 3.5,
+            "z": 4.8,
+            "width": 0.6,
+            "depth": 0.4,
+            "height": 1.0,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": false,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "chair_8",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_1",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_1",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_2",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_2",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_3",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_3",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": -2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_4",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_4",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": -2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_5",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_5",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "pendant_light_6",
+            "name": "Pendant Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.0,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "pendant_light_6",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "door_1",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 1.2,
+            "depth": 2.1,
+            "height": 0.0,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_1",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_1",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_2",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_2",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_3",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_3",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": -2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_4",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_4",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": -2.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_5",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_5",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": 0.5, "z": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "camera_6",
+            "name": "Camera",
+            "category": "decor",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.8,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "camera_6",
+                    "kind": "above",
+                    "target_id": "table_1",
+                    "wall": null,
+                    "parameters_m": {"x": -0.5, "z": -3.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_1",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_2",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_2",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_3",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_3",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_4",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_4",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_5",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_5",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_6",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_6",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_7",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_7",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_8",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_8",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_9",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_9",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_10",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_10",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_11",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_11",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_12",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_12",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_13",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_13",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_14",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_14",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_15",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_15",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_16",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,
+            "z": 3.8,
+            "width": 0.2,
+            "depth": 0.2,
+            "height": 0.6,
+            "elevation": 2.5,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "speaker_16",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"x": -0.6, "z": 0.0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "speaker_17",
+            "name": "Speaker",
+            "category": "decor",
+            "mount": "wall",
+            "x": 5.5,

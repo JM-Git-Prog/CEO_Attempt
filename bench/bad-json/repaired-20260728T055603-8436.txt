@@ -1,0 +1,973 @@
+error: Unterminated string starting at: line 971 column 21 (char 31999)
+------------------------------------------------------------
+{
+    "name": "Pharmacy Counter Area",
+    "room": {
+        "width": 6.0,
+        "depth": 8.0,
+        "height": 2.5
+    },
+    "items": [
+        {
+            "id": "service_counter_1",
+            "name": "Service Counter",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 1.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "service_counter_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "shelf_wall_1",
+            "name": "Shelf Wall",
+            "category": "furniture",
+            "mount": "wall",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 1.8,
+            "depth": 2.5,
+            "height": 2.5,
+            "elevation": 0.0,
+            "rotation_deg": 90.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "shelf_wall_1",
+                    "kind": "centered",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "waiting_bench_1",
+            "name": "Waiting Bench",
+            "category": "furniture",
+            "mount": "floor",
+            "x": 5.0,
+            "z": 4.0,
+            "width": 2.5,
+            "depth": 1.8,
+            "height": 1.2,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "waiting_bench_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "south",
+                    "parameters_m": {"along_offset_m": 0.0, "wall_gap_m": 0.5},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_1",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_1",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_2",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_2",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 0, "distribution_count": 1, "distribution_span_m": 0},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_3",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_3",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 1, "distribution_count": 2, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_4",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_4",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 0, "distribution_count": 2, "distribution_span_m": 0.6},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_5",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_5",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 0.9},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_6",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_6",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 2, "distribution_count": 3, "distribution_span_m": 0.9},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_7",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_7",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 3, "distribution_count": 4, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_8",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_8",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 3, "distribution_count": 4, "distribution_span_m": 1.2},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_9",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_9",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 4, "distribution_count": 5, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_10",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_10",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 4, "distribution_count": 5, "distribution_span_m": 1.5},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_11",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_11",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 5, "distribution_count": 6, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_12",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_12",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 5, "distribution_count": 6, "distribution_span_m": 1.8},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_13",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_13",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 6, "distribution_count": 7, "distribution_span_m": 2.1},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_14",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_14",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 6, "distribution_count": 7, "distribution_span_m": 2.1},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_15",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_15",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 7, "distribution_count": 8, "distribution_span_m": 2.4},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_16",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_16",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 7, "distribution_count": 8, "distribution_span_m": 2.4},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_17",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_17",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 8, "distribution_count": 9, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_18",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 3.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_18",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 8, "distribution_count": 9, "distribution_span_m": 2.7},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_19",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 4.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_19",
+                    "kind": "above",
+                    "target_id": "waiting_bench_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 9, "distribution_count": 10, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_20",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 5.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_20",
+                    "kind": "above",
+                    "target_id": "shelf_wall_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 9, "distribution_count": 10, "distribution_span_m": 3},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "door_1",
+            "name": "Door",
+            "category": "architectural",
+            "mount": "floor",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 1.2,
+            "depth": 2.1,
+            "height": 2.1,
+            "elevation": 0.0,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "door_1",
+                    "kind": "against_wall",
+                    "target_id": null,
+                    "wall": "north",
+                    "parameters_m": {"along_offset_m": 0.5, "wall_gap_m": 0},
+                    "weight": 1.0,
+                    "relaxable": false
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_21",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_21",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 10, "distribution_count": 11, "distribution_span_m": 3.3},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_22",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_22",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 11, "distribution_count": 12, "distribution_span_m": 3.6},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_23",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_23",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 12, "distribution_count": 13, "distribution_span_m": 3.9},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_24",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_24",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 13, "distribution_count": 14, "distribution_span_m": 4.2},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_25",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_25",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 14, "distribution_count": 15, "distribution_span_m": 4.5},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_26",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_26",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 15, "distribution_count": 16, "distribution_span_m": 4.8},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_27",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_27",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 16, "distribution_count": 17, "distribution_span_m": 5.1},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_28",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_28",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 17, "distribution_count": 18, "distribution_span_m": 5.4},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_29",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_29",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 18, "distribution_count": 19, "distribution_span_m": 5.7},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_30",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_30",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 19, "distribution_count": 20, "distribution_span_m": 6},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_31",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_31",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 20, "distribution_count": 21, "distribution_span_m": 6.3},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_32",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_32",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 21, "distribution_count": 22, "distribution_span_m": 6.6},
+                    "weight": 1.0,
+                    "relaxable": true
+                }
+            ]
+        },
+        {
+            "id": "ceiling_light_33",
+            "name": "Ceiling Light",
+            "category": "fixture",
+            "mount": "ceiling",
+            "x": 4.5,
+            "z": 2.0,
+            "width": 0.6,
+            "depth": 0.6,
+            "height": 1.8,
+            "elevation": 2.4,
+            "rotation_deg": 0.0,
+            "fixed": true,
+            "clearance_m": 0.75,
+            "description": "",
+            "relationships": [
+                {
+                    "subject_id": "ceiling_light_33",
+                    "kind": "above",
+                    "target_id": "door_1",
+                    "parameters_m": {"radius_m": 0.3, "distribution_index": 22, "distribution_count": 23, "distribution_span_m": 6.9},
+                    "weight": 1.0,
+                    "relax

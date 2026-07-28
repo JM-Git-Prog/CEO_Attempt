@@ -90,17 +90,37 @@ def main() -> int:
         else:
             print(f"\n  >>> got content OK: {content[:120]}")
 
-    print("\n[same request with a SMALL context - is num_ctx=16384 the problem?]")
+    print("\n[same request with a SMALL context - 4096]")
     payload["options"] = {"temperature": 0.15, "num_predict": 512, "num_ctx": 4096}
-    status, body = post("/api/chat", payload)
-    print(f"  HTTP {status}")
-    if isinstance(body, dict):
-        content = (body.get("message") or {}).get("content") or ""
-        print(f"  error={body.get('error')!r}  content={content[:120]!r}")
-        if content.strip():
-            print("\n  >>> IT WORKS AT 4096 BUT NOT AT 16384 - the context size is the cause.")
-    else:
-        print(f"  {body}")
+    status, small = post("/api/chat", payload)
+    small_ok = isinstance(small, dict) and ((small.get("message") or {}).get("content") or "").strip()
+    print(f"  HTTP {status}  ok={bool(small_ok)}")
+    if not small_ok:
+        print(f"  {small if not isinstance(small, dict) else small.get('error')}")
+
+    # A cold big-context request differs from a warm small one in TWO ways -
+    # size AND load state - so "4096 worked, 16384 did not" does not by itself
+    # prove the context size is at fault. Now that the model is warm, retry the
+    # big context. If it succeeds warm, the real cost is the cold load; if it
+    # still fails, the context size genuinely is the problem.
+    print("\n[big context AGAIN, now that the model is warm - controls for cold-load time]")
+    payload["options"] = {"temperature": 0.15, "num_predict": 512, "num_ctx": 16384}
+    status, big = post("/api/chat", payload)
+    big_ok = isinstance(big, dict) and ((big.get("message") or {}).get("content") or "").strip()
+    print(f"  HTTP {status}  ok={bool(big_ok)}")
+    if isinstance(big, dict):
+        print(f"  load_duration_ms={round((big.get('load_duration') or 0)/1e6)} "
+              f"total_duration_ms={round((big.get('total_duration') or 0)/1e6)}")
+
+    print("\n  >>> VERDICT:")
+    if small_ok and big_ok:
+        print("      16384 works once the model is WARM. The failure is cold-load")
+        print("      time, not the context size - keep the model resident.")
+    elif small_ok and not big_ok:
+        print("      4096 works, 16384 fails even warm. The CONTEXT SIZE is the")
+        print("      cause - OLLAMA_NUM_CTX is now the knob (default 8192).")
+    elif not small_ok:
+        print("      even 4096 fails - this is not about context size at all.")
     return 0
 
 

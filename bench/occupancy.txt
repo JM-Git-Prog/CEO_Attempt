@@ -1,0 +1,11 @@
+PASSING plans  (n=195)
+   furniture footprint / room area : median 11%   p90 27%   max 50%
+   + door/window keep-clear zones  : median 2% of the room
+   items per plan                  : median 6
+   plans where furniture+keep-clear > 75% of the floor : 0/195 (0%)
+
+FAILING plans  (n=687)
+   furniture footprint / room area : median 25%   p90 51%   max 112%
+   + door/window keep-clear zones  : median 3% of the room
+   items per plan                  : median 6
+   plans where furniture+keep-clear > 75% of the floor : 12/687 (2%)

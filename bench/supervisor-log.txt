@@ -937,3 +937,9 @@
 [16:16:05] training-progress.json has not moved in 30+ min while claiming to be training - treating as frozen
 [16:16:08] flywheel (pid 45972) confirmed gone
 [16:16:08] flywheel started (pid=46468, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)
+[05:36:26] supervisor starting
+[05:36:26] harvester started (pid=49644, interpreter=python)
+[05:36:26] flywheel started (pid=52888, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)
+[05:39:09] supervisor starting
+[05:39:09] harvester started (pid=11848, interpreter=python)
+[05:39:09] flywheel started (pid=14524, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)

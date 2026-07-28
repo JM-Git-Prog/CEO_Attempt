@@ -1,0 +1,7 @@
+groups of repeated identical items : 888
+     623  NO distribution params at all  (70%)
+     241  full distribution params  (27%)
+      24  partial distribution params  (3%)
+
+groups where EVERY copy sits at the identical x,z : 109 (12%)
+groups where copies physically intersect          : 243 (27%)

@@ -1,0 +1,1146 @@
+{
+ "started": "2026-07-28 05:52:18",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 12,
+   "attempted": 12,
+   "backend_errors": 0,
+   "backend_healthy": true,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "out_of_bounds": 5,
+    "opening_blocked": 3,
+    "physical_overlap": 2,
+    "camera_inside_geometry": 1,
+    "error:ValidationError": 1
+   },
+   "rows": [
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p071"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 2,
+     "seconds": 103.9,
+     "plan": {
+      "name": "Pharmacy Counter Area",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.5
+      },
+      "items": [
+       {
+        "id": "service_counter_1",
+        "name": "Service Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.0500000000000003,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "waiting_bench_1",
+        "name": "Waiting Bench",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -3.0500000000000003,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 3.0500000000000003,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "service_counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "waiting_bench_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "service_counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 1,
+     "prompt_id": "p072"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 8,
+     "seconds": 38.6,
+     "plan": {
+      "name": "1920s Jazz Club Stage Corner",
+      "room": {
+       "width": 10.0,
+       "depth": 12.0,
+       "height": 3.2
+      },
+      "items": [
+       {
+        "id": "piano_1",
+        "name": "Piano",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.8,
+        "depth": 1.9,
+        "height": 2.3,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "table_1",
+        "name": "Cafe Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.5999999999999996,
+        "z": 0.0,
+        "width": 1.4,
+        "depth": 1.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "table_2",
+        "name": "Cafe Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.9500000000000002,
+        "z": 1.6454482671904334,
+        "width": 1.4,
+        "depth": 1.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "table_3",
+        "name": "Cafe Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.9499999999999995,
+        "z": 1.6454482671904336,
+        "width": 1.4,
+        "depth": 1.3,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_1",
+        "name": "Bentwood Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.5999999999999996,
+        "z": 2.5,
+        "width": 0.6,
+        "depth": 0.7,
+        "height": 1.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_2",
+        "name": "Bentwood Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.5717582782094415e-16,
+        "z": -1.4,
+        "width": 0.6,
+        "depth": 0.7,
+        "height": 1.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_3",
+        "name": "Bentwood Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.9,
+        "z": 0.0,
+        "width": 0.6,
+        "depth": 0.7,
+        "height": 1.1,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "spotlight_1",
+        "name": "Spotlight",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.2,
+        "height": 1.8,
+        "elevation": 1.4000000000000001,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.1,
+        "height": 2.3,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 4.55,
+       "y": 1.6,
+       "z": 5.55,
+       "target_x": 0.0,
+       "target_y": 2.3,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 1.2m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use a neutral color palette to create a timeless look."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "piano_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "adjacent_to",
+        "target_id": "piano_1",
+        "wall": null,
+        "parameters_m": {
+         "x": 0.5,
+         "z": -0.8
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "table_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "chair_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "spotlight_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "piano_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.3,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 5,
+     "prompt_id": "p073"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "out_of_bounds",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 7,
+     "seconds": 60.0,
+     "plan": {
+      "name": "University Study Room",
+      "room": {
+       "width": 6.0,
+       "depth": 4.5,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "table_1",
+        "name": "Large Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.6,
+        "depth": 2.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_1",
+        "name": "Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.251666049839541,
+        "z": 0.5500000000000007,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_2",
+        "name": "Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.1,
+        "z": 0.8500000000000001,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_3",
+        "name": "Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.1,
+        "z": -1.4499999999999997,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_4",
+        "name": "Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.85,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_5",
+        "name": "Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.1,
+        "z": 1.85,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "chair_6",
+        "name": "Chair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.1,
+        "z": -0.44999999999999973,
+        "width": 0.6,
+        "depth": 0.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "east",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 1.8,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "east_of",
+        "target_id": "chair_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_3",
+        "kind": "south_of",
+        "target_id": "chair_2",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_4",
+        "kind": "north_of",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_5",
+        "kind": "east_of",
+        "target_id": "chair_4",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_6",
+        "kind": "south_of",
+        "target_id": "chair_5",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "east",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 1,
+     "prompt_id": "p074"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 2,
+     "items": 3,
+     "seconds": 23.8,
+     "plan": {
+      "name": "Barn Workshop",
+      "room": {
+       "width": 10.0,
+       "depth": 15.0,
+       "height": 3.5
+      },
+      "items": [
+       {
+        "id": "workbench_1",
+        "name": "Tractor-Part Workbench",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 4.45,
+        "width": 3.0,
+        "depth": 6.0,
+        "height": 1.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "hay_bale_stack_1",
+        "name": "Hay Bale Stack",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 3.75,
+        "z": 4.45,
+        "width": 1.5,
+        "depth": 6.0,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light_shaft_1",
+        "name": "Light Shaft",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 6.0,
+        "height": 1.8,
+        "elevation": 1.7,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 2.5,
+        "height": 3.5,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -4.55,
+       "y": 1.6,
+       "z": 7.05,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 4.45,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "workbench_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "hay_bale_stack_1",
+        "kind": "adjacent_to",
+        "target_id": "workbench_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light_shaft_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "workbench_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 1,
+     "prompt_id": "p075"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p076"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'tv', 'kin...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nrelationships.3.parame",
+     "seconds": 47.3,
+     "prompt_id": "p077"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 9,
+     "seconds": 106.7,
+     "plan": {
+      "name": "Microbrew Coffee Lab",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.5
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Brewing Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "scale_1",
+        "name": "Scale Station 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.1,
+        "width": 1.2,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "scale_2",
+        "name": "Scale Station 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": -3.1,
+        "width": 1.2,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "cupping_table",
+        "name": "Cupping Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 1.8,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_1",
+        "name": "Stool 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.8,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_2",
+        "name": "Stool 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.7000000000000001,
+        "z": 1.212435565298214,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_3",
+        "name": "Stool 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 8.572527594031472e-17,
+        "z": 1.4,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "stool_4",
+        "name": "Stool 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.6999999999999996,
+        "z": 1.2124355652982142,
+        "width": 0.4,
+        "depth": 0.6,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light_1",
+        "name": "Daylight Bulb",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.1,
+        "elevation": 2.4,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 2.5,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "The brewing counter should be centered in the room, with the scales stations on either side.",
+       "The cupping table should be placed near the center of the room, with four stools arranged around it.",
+       "Daylight bulbs should be installed above the brewing counter and scales stations."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "scale_1",
+        "kind": "north_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "offset": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "scale_2",
+        "kind": "south_of",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "offset": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "cupping_table",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "around",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 4.0,
+         "distribution_span_m": 1.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "above",
+        "target_id": "cupping_table",
+        "wall": null,
+        "parameters_m": {
+         "height": 0.8,
+         "spacing": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light_1",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "height": 0.1,
+         "spacing": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "cupping_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 2.5,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 2,
+     "prompt_id": "p078"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p079"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p080"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p081"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p082"
+    }
+   ]
+  }
+ }
+}

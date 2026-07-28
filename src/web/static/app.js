@@ -609,6 +609,13 @@ function buildGameViewer(graph) {
   const raycaster = new THREE.Raycaster();
   const clock = new THREE.Clock();
 
+  // Room boundaries for clamping (keep player inside walls)
+  const room = graph.room;
+  const HALF_W = (room.width || 6) / 2 - 0.3;  // 0.3m margin from walls
+  const HALF_D = (room.depth || 6) / 2 - 0.3;
+  const ROOM_HEIGHT = room.height || 3;
+  const FALL_RESET_Y = -10;  // If player falls below this, respawn
+
   const resize = () => {
     const rect = stageBody.getBoundingClientRect();
     camera.aspect = rect.width / Math.max(rect.height, 1);
@@ -657,8 +664,25 @@ function buildGameViewer(graph) {
         camera.position.y = intersects[0].point.y + PLAYER_HEIGHT;
         velocity.y = 0;
         onFloor = true;
+      } else if (camera.position.y <= PLAYER_HEIGHT) {
+        // Fallback: if no raycast hit but at floor level, stay on floor
+        camera.position.y = PLAYER_HEIGHT;
+        velocity.y = 0;
+        onFloor = true;
       } else {
         onFloor = false;
+      }
+
+      // Boundary clamping — keep player inside the room walls
+      camera.position.x = Math.max(-HALF_W, Math.min(HALF_W, camera.position.x));
+      camera.position.z = Math.max(-HALF_D, Math.min(HALF_D, camera.position.z));
+      camera.position.y = Math.min(camera.position.y, ROOM_HEIGHT - 0.2);
+
+      // Fall reset — if player somehow falls into the void, respawn at center
+      if (camera.position.y < FALL_RESET_Y) {
+        camera.position.set(0, PLAYER_HEIGHT, 0);
+        velocity.set(0, 0, 0);
+        onFloor = true;
       }
 
       // Jump

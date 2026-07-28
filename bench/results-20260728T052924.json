@@ -4,16 +4,17 @@
  "lanes": {
   "llama3.1": {
    "legal": 1,
-   "total": 4,
-   "attempted": 4,
+   "total": 5,
+   "attempted": 5,
    "backend_errors": 0,
    "backend_healthy": true,
-   "legal_rate": 0.25,
+   "legal_rate": 0.2,
    "violation_census": {
-    "physical_overlap": 2,
-    "opening_blocked": 2,
-    "camera_inside_geometry": 1,
-    "error:ValidationError": 1
+    "opening_blocked": 4,
+    "physical_overlap": 3,
+    "camera_inside_geometry": 2,
+    "error:ValidationError": 1,
+    "out_of_bounds": 1
    },
    "rows": [
     {
@@ -567,8 +568,184 @@
       }
      },
      "prompt_id": "p004"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 4,
+     "seconds": 30.1,
+     "plan": {
+      "name": "1920s Study",
+      "room": {
+       "width": 4.5,
+       "depth": 3.6,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "desk_1",
+        "name": "Heavy Oak Desk",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.1500000000000001,
+        "width": 2.4,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "armchair_1",
+        "name": "Leather Armchair",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.8,
+        "z": 1.1500000000000001,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 1.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "globe_stand_1",
+        "name": "Globe Stand",
+        "category": "fixture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 1.1500000000000001,
+        "width": 0.6,
+        "depth": 0.4,
+        "height": 1.8,
+        "elevation": 2.4,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "lamp_1",
+        "name": "Brass Desk Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 1.1500000000000001,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 1.8,
+        "elevation": 0.9999999999999998,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.8,
+       "y": 1.6,
+       "z": 1.35,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 1.1500000000000001,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "The room is designed to be a functional study with a heavy oak desk, a leather armchair, and a globe stand."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "desk_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "armchair_1",
+        "kind": "adjacent_to",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "globe_stand_1",
+        "kind": "above",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "lamp_1",
+        "kind": "above",
+        "target_id": "desk_1",
+        "wall": null,
+        "parameters_m": {
+         "m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "desk_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p005"
     }
    ]
   }
- }
+ },
+ "finished": "2026-07-28 05:31:58"
 }

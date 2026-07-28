@@ -1,0 +1,9 @@
+PASSING (n=195)
+   footprint WITH clearance / room : median 74%  p90 149%  max 242%
+   plans needing MORE than the whole floor: 59/195 (30%)
+   most common clearance_m values: [(0.75, 808), (0.8, 156), (0.5, 61), (0.6, 59)]
+
+FAILING (n=687)
+   footprint WITH clearance / room : median 113%  p90 228%  max 341%
+   plans needing MORE than the whole floor: 391/687 (57%)
+   most common clearance_m values: [(0.75, 3732), (0.8, 146), (0.6, 136), (0.5, 130)]

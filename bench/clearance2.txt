@@ -1,0 +1,8 @@
+effective footprint (validator padding = min(0.4, clearance/2)):
+   PASSING plans                      median   34%   over 100%: 9/195 (5%)
+   FAILING plans                      median   62%   over 100%: 131/687 (19%)
+
+same FAILING plans, if clearance were capped:
+   clearance capped at 0.5 m          median   47%   over 100%: 44/687 (6%)
+   clearance capped at 0.3 m          median   38%   over 100%: 8/687 (1%)
+   clearance capped at 0.15 m         median   31%   over 100%: 2/687 (0%)

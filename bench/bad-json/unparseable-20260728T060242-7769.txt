@@ -1,0 +1,86 @@
+error: Extra data: line 34 column 1 (char 1879)
+------------------------------------------------------------
+{"description": "A practical, buildable floor plan based on the initial design.",
+"concept": {"era": "1970s",
+"mood": "relaxing",
+"palette": ["warm beige", "rich wood", "vibrant orange"],
+"architecture_notes": "single rectangular room with standard walls and floor",
+"key_objects": ["sofa", "coffee table", "floor lamp", "shag rug"],
+"lighting_notes": "simple daylight + warm table lamp",
+"image_prompt": "A practical, buildable 1970s living room."},
+"room": {"width": 6.0, "depth": 8.0, "height": 2.7},
+"items": [{"id": "sofa_1", "name": "Sofa", "category": "furniture",
+"mount": "floor", "x": 0.5, "z": 3.0, "width": 2.8, "depth": 1.0, "height": 0.7,
+"elevation": 0.0, "rotation_deg": 0, "fixed": true, "clearance_m": 0.75,
+"description": "A low, comfortable orange sofa."}],
+"openings": [{"id": "door_1", "kind": "door", "wall": "west",
+"offset": 0.0, "width": 0.9, "height": 2.1, "sill_height": 0.0}],
+"camera": {"x": 3.0, "y": 1.6, "z": 1.7, "target_x": 0.5, "target_y": 0.8,
+"target_z": 0.0, "fov_deg": 55},
+"circulation_notes": ["Circulates from the west door to the sofa."],
+"design_notes": ["Apply practical buildability rules before placing anything."],
+"schema_version": "floor-plan/v11",
+"relationships": [{"id": "sofa_1-against_wall", "subject_id": "sofa_1",
+"kind": "against_wall", "wall": "north", "parameters_m": {},
+"weight": 1.0, "relaxable": false}],
+"opening_intents": [{"id": "door_1-intent", "opening_id": "door_1",
+"wall": "west", "placement": "centered", "corner": null, "margin_m": 0.1}],
+"camera_intent": {"id": "camera-intent", "corner": "northwest",
+"target_id": null, "inset_m": 0.45, "eye_height_m": 1.6, "target_height_m": 1.2,
+"fov_deg": 55},
+"v11_exPLICIT-INTENT-EXTENSION": {"base_schema": "floor-plan/v11",
+"complete_base_schema_mandatory": true,
+"add_schema_version": "floor-plan/v11",
+"augment_base_schema": true, "return_json_only": true}}
+
+V11 RELATION SEMANTICS — apply these geometric operations before placing anything:
+1. ZONES: Identify functional zones (seating, work, circulation, display). Place primary furniture first.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables, islands) go in the center.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones.
+4. RELATION SEMANTICS — apply these geometric operations:
+    * adjacent_to / east_of: places subject EAST of target (x increases).
+    * west_of: places subject WEST of target.
+    * south_of: places subject SOUTH of target (z decreases).
+    * north_of: places subject NORTH of target.
+    * above: places subject directly above target at ceiling.
+    * around: distributes subjects in a circle around target.
+5. SPACING — apply these rules after placing focal-point pieces:
+    * Repeated rows use a directional/above relation plus zero-based distribution_index,
+      distribution_count, and distribution_span_m. Keep every repeated instance separate.
+    * Ceiling fixtures MUST declare mount="ceiling" and use above with distribution parameters.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is the X-axis span, depth is the Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,
+"clearance_m":number,"description":string}], "openings":[{"id":string,"kind":
+"door|window","wall":"north|south|east|west","offset":number,"width":number,
+"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":
+number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":
+"floor-plan/v11","relationships":[{"id":string,"subject_id":string,"kind":
+"centered|against_wall|adjacent_to|north_of|south_of|east_of|west_of|around|
+above|facing|near_corner","target_id":string,"wall":string,"parameters_m":
+{number},"weight":number,"relaxable":boolean}], "opening_intents":[{"id":
+string,"opening_id":string,"wall":"north|south|east|west","placement":
+"centered|near_corner","corner":string,"margin_m":number}], "camera_intent":
+{"id":string,"corner":"northwest|northeast|southwest|southeast",
+"target_id":string,"inset_m":number,"eye_height_m":number,"target_height_m":
+number,"fov_deg":number},"v11_exPLICIT-INTENT-EXTENSION":{"base_schema":
+"floor-plan/v11","complete_base_schema_mandatory":boolean,"add_schema_version":
+"floor-plan/v11","augment_base_schema":boolean,"return_json_only":boolean}}.

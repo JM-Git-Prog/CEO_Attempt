@@ -7299,3 +7299,45 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260727T065222.json
 [06:52:33] bench batch rc=0
 [06:52:33] ingest: ingest: +0 records | 842 already banked | 4353 plan-less rows skipped
+[05:36:26] bench loop up - waiting for training chain to finish first
+[05:36:26] GPU turn acquired - continuous benching begins
+[05:36:26] PAUSE-BENCH.txt present - sleeping 5 min
+[05:39:09] bench loop up - waiting for training chain to finish first
+[05:39:09] GPU turn acquired - continuous benching begins
+[05:39:09] batch: prompts 55..69 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p056: timeout  (120.0s) 
+  p057: legal    (15.1s) 
+  p058: blocked  (47.0s) opening_blocked
+  p059: error    (43.0s) 
+  p060: blocked  (32.0s) physical_overlap,physical_overlap,physical_overlap
+  p061: error    (92.1s) 
+  p062: legal    (12.9s) 
+  p063: blocked  (29.8s) physical_overlap,physical_overlap,physical_overlap
+  p064: error    (30.6s) 
+  p065: blocked  (28.4s) physical_overlap,out_of_bounds,opening_blocked
+  p066: blocked  (37.5s) out_of_bounds,opening_blocked,camera_inside_geometry
+  p067: blocked  (108.3s) physical_overlap,physical_overlap,physical_overlap
+  p068: blocked  (32.0s) physical_overlap,opening_blocked
+  p069: legal    (34.1s) 
+  p070: error    (35.7s) 
+  LANE RESULT: 3/15 legal plans (20%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260728T053909.json
+[05:50:48] bench batch rc=0
+[05:50:48] ingest: ingest: +30 records | 842 already banked | 4364 plan-less rows skipped
+[05:52:18] batch: prompts 70..84 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p071: timeout  (120.0s) 
+  p072: blocked  (103.9s) opening_blocked
+  p073: blocked  (38.6s) physical_overlap
+  p074: blocked  (60.0s) out_of_bounds,out_of_bounds,camera_inside_geometry
+  p075: blocked  (23.8s) opening_blocked
+  p076: timeout  (120.0s) 
+  p077: error    (47.3s) 
+  p078: blocked  (106.7s) physical_overlap,out_of_bounds,out_of_bounds
+  p079: timeout  (120.0s) 
+  p080: timeout  (120.0s) 
+  p081: timeout  (120.0s) 

@@ -1,0 +1,13 @@
+plans blocked on physical_overlap : 414
+  genuinely intersecting          : 414  (100%)
+  ONLY the clearance ring touches : 0  (0%)
+
+most common clearance-only collisions:
+    133  Stool  <->  Stool
+    115  Lantern  <->  Lighting
+     71  Lantern  <->  Lantern
+     57  Lighting  <->  Lighting
+     54  Computer Desk  <->  Office Chair
+     50  Counter  <->  Stool
+     35  Seat  <->  Seat
+     24  Bar Stool  <->  Round Table
