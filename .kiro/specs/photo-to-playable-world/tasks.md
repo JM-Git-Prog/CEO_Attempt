@@ -210,7 +210,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any set of objects with overlapping bounding boxes, after settle the total interpenetration volume is ≤ initial (monotone non-increasing)
     - **Validates: Requirements 7.4, 10.2**
 
-- [ ] 8. Checkpoint — Ensure all tests pass
+- [x] 8. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 9. Collision Generation and LOD
