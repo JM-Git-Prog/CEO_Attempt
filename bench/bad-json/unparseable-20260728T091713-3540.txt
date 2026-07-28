@@ -1,0 +1,54 @@
+error: Extra data: line 13 column 1 (char 738)
+------------------------------------------------------------
+{"name":"Traditional Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, traditional wooden bed with a plush comforter and two matching pillows."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.2,"width":0.8,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":1.0,"target_x":1.8,"target_y":1.0,"target_z":0.0,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a width of at least 0.8m."],
+"design_notes":[],
+"schema_version":"2023-12-01T00:00:00"}
+
+V11 EXPLICIT-INTENT REASONING — applying design thinking principles before placing anything:
+1. ZONES: Identify functional zones (seating, work, circulation). Place primary furniture first (bed).
+2. WALLS FIRST: Large furniture belongs against walls. The bed goes against the north wall.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. Place the nightstand
+   relative to the bed with enough clearance for a person to walk by.
+4. RELATIONSHIPS: Chairs face tables. Stools line up along counters/bars. Pendant lights hang above
+   the surface they illuminate. Apply these rules only when applicable; otherwise, items are placed
+   relative to the wall with no additional placement logic.
+5. SPACING: Repeated items (stools, chairs) distribute evenly along their parent surface with equal gaps.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of a door. The door swing arc must be completely unobstructed.
+7. WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light enters freely.
+8. PROPORTIONS: Item dimensions must be realistic. A stool is ~0.4m wide. A pendant light is ~0.3m tall.
+9. CAMERA: Place the camera in a corner with a clear diagonal view across the room showing the maximum
+   number of objects. Never place the camera behind or inside furniture.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is the X-axis span, depth is the Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+V11 APPLICATION — applying coordinate system and rules:
+- Items = furniture + built-ins + freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+V11 RESULT — complete, valid JSON object with practical floor plan:
+{"name":"Traditional Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, traditional wooden bed with a plush comforter and two matching pillows."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.2,"width":0.8,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":1.0,"target_x":1.8,"target_y":1.0,"target_z":0.0,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a width of at least 0.8m."],
+"design_notes":[],
+"schema_version":"2023-12-01T00:00:00"}

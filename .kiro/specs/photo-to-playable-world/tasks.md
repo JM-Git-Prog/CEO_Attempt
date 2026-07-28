@@ -236,8 +236,8 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any input mesh, LOD produces exactly 4 levels; LOD0 = original face count; each level ≤ previous; no level < 4 faces
     - **Validates: Requirements 9.3, 9.4**
 
-- [-] 10. WorldContract Assembly and Physics Settle Integration
-  - [-] 10.1 Implement WorldContract Assembler (`src/photo_pipeline/stages/assembler.py`)
+- [x] 10. WorldContract Assembly and Physics Settle Integration
+  - [x] 10.1 Implement WorldContract Assembler (`src/photo_pipeline/stages/assembler.py`)
     - Implement `PhotoWorldContractAssembler.assemble()` — map all stage outputs to existing WorldContract schema
     - `_build_room_shell()`: map Room_Mesh to RoomShell entry with dimensions and material from Room_Plate texture
     - `_build_instance()`: map each Object_Mesh to WorldInstance (stable ID from mask_id, transform from layout, dimensions from scale, geometry_strategy="asset")
@@ -250,17 +250,17 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
 
 
-  - [ ] 10.2 Write property test for WorldContract assembly validity (Property 15)
+  - [x] 10.2 Write property test for WorldContract assembly validity (Property 15)
     - **Property 15: WorldContract Assembly Validity**
     - For any valid combination of stage outputs (room mesh + zero or more object meshes + light params + camera), assembled WorldContract passes all Pydantic validators (coordinate system, ID uniqueness, dangling references)
     - **Validates: Requirements 8.1, 8.2, 8.3**
 
-  - [ ] 10.3 Write property test for physics mode assignment (Property 16)
+  - [x] 10.3 Write property test for physics mode assignment (Property 16)
     - **Property 16: Physics Mode Assignment from Material and Volume**
     - For any object with mass > 50kg → STATIC; mass ≤ 50kg and not architectural → DYNAMIC with mass = volume × density (±tolerance)
     - **Validates: Requirements 8.4**
 
-  - [ ] 10.4 Write property test for quality classification (Property 19)
+  - [x] 10.4 Write property test for quality classification (Property 19)
     - **Property 19: Quality Classification Determinism**
     - "full" if all objects used primary method; "degraded" if ≥1 fallback but ≥1 mesh exists; "minimal" if zero object meshes
     - **Validates: Requirements 12.6**
