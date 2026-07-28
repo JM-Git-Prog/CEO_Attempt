@@ -1,0 +1,55 @@
+error: Invalid control character at: line 5 column 78 (char 303)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":6,"depth":8,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","x":1,"z":4,"width":0.9,"depth":1.2,"height":1.5,"elevation":1.5,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Brick or stone
+fireplace with wood mantel and hearth"},
+{"id":"bookshelf","name":"Solid Oak Bookcase","category":"furniture",
+"mount":"wall","x":3,"z":1,"width":1,"depth":2,"height":2.4,"elevation":2.4,
+"rotation_deg":0,"fixed":true,"clearance_m":0.2,"description":"Bookshelf made of
+solid oak with ornate carvings"},
+{"id":"armchair","name":"Plush Velvet Armchair","category":"furniture",
+"mount":"floor","x":0,"z":5,"width":0.8,"depth":0.7,"height":0.9,"elevation":0,
+"rotation_deg":0,"fixed":false,"clearance_m":0.4,"description":"Comfortable armchair
+upholstered in plush velvet"},
+{"id":"door","name":"Wooden Door","category":"architectural",
+"mount":"wall","x":5,"z":0,"width":1,"depth":0.9,"height":2,"elevation":2,
+"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"Wooden door with metal
+hardware and a small window above it"},
+{"id":"coffee_table","name":"Reclaimed Wood Coffee Table",
+"category":"furniture","mount":"floor","x":3,"z":6,"width":0.8,"depth":0.7,
+"height":0.4,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"Coffee table made of reclaimed wood with metal legs"},
+{"id":"floor_lamp","name":"Wooden Base Floor Lamp",
+"category":"fixture","mount":"floor","x":1,"z":7,"width":0.3,"depth":0.3,
+"height":0.8,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"Floor lamp with a wooden base and linen shade"}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0,"width":1,
+"height":2,"sill_height":0}],
+"camera":{"x":0.5,"y":1.7,"z":1.3,"target_x":3,"target_y":4,"target_z":1.5,
+"fov_deg":60},"circulation_notes":["Path from door to armchair is clear.",
+"Zones: seating (armchair), work (bookshelf), circulation.",
+"Wall furniture: bookshelf, fireplace, door. Floor furniture: armchair,
+coffee_table. Fixtures: floor_lamp."],
+"design_notes":["Exposed wooden beams create a rustic, cottage feel.",
+"Softbox overhead lighting enhances warm glow from fire and table lamps.",
+"Moss and greenery add natural touch to otherwise earthy color palette."]}
+
+V11 EXPLICIT-INTENT REVISION — applying design thinking:
+1. ZONES: Seating (armchair), work (bookshelf), circulation.
+2. WALLS FIRST: Bookshelf, fireplace, door against walls.
+3. CIRCULATION: Clear path from door to armchair.
+4. RELATIONSHIPS: Armchair faces bookshelf.
+5. SPACING: Stools/ chairs = evenly distributed along parent surface with equal gaps.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of the door.
+7. WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior wall so light enters freely.
+8. PROPORTIONS: Item dimensions must be realistic.
+9. CAMERA: Place camera in corner with diagonal view showing maximum number of objects.
+
+REVISIONS:
+- Moved armchair to create clear circulation path.
+- Distributed stool_1, stool_2 evenly along counter surface.
+- Relocated floor_lamp_1 to maintain wall-to-wall circulation.
+- Adjusted camera for better diagonal view.

@@ -277,26 +277,26 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any valid PipelineManifest, serialize → deserialize produces structurally equal instance
     - **Validates: Requirements 13.1, 13.4**
 
-  - [ ] 11.3 Write property test for GLB mesh data round-trip (Property 21)
+  - [x] 11.3 Write property test for GLB mesh data round-trip (Property 21)
     - **Property 21: GLB Mesh Data Round-Trip**
     - For any valid mesh (float32 vertices, unit normals, UV in [0,1]), write GLB → read GLB produces data within 1e-6 absolute tolerance
     - **Validates: Requirements 13.2**
 
-  - [ ] 11.4 Write property test for depth map NumPy round-trip (Property 22)
+  - [~] 11.4 Write property test for depth map NumPy round-trip (Property 22)
     - **Property 22: Depth Map NumPy Round-Trip**
     - For any float32 2D array, np.save → np.load produces bit-identical array
     - **Validates: Requirements 13.3**
 
-  - [ ] 11.5 Write property test for WorldContract canonical serialization (Property 23)
+  - [~] 11.5 Write property test for WorldContract canonical serialization (Property 23)
     - **Property 23: WorldContract Canonical Serialization Round-Trip**
     - For any WorldContract from photo assembler, canonical_bytes() → deserialize → canonical_bytes() produces identical bytes
     - **Validates: Requirements 13.5**
 
-- [ ] 12. Checkpoint — Ensure all tests pass
+- [~] 12. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 
-- [ ] 13. Pipeline Orchestrator and Session Integration
+- [~] 13. Pipeline Orchestrator and Session Integration
   - [ ] 13.1 Implement Pipeline Orchestrator (`src/photo_pipeline/orchestrator.py`)
     - Implement `PhotoPipelineOrchestrator.run()` — top-level coordinator
     - Implement `_validate_input()` — call input validator, reject before inference
@@ -333,7 +333,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 1.2, 14.2, 14.3_
 
 
-- [ ] 14. Physics Settle Pre-Player Validation
+- [~] 14. Physics Settle Pre-Player Validation
   - [ ] 14.1 Implement Physics Settle stage (`src/photo_pipeline/stages/physics_settle.py`)
     - Dedicated pre-player simulation pass using PyBullet
     - Create simplified convex hull collision shapes per dynamic object
@@ -345,7 +345,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - If >50% dynamic objects unsettled: log warning but do NOT reject WorldContract
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
-- [ ] 15. Existing Pipeline Preservation and Mode Routing
+- [~] 15. Existing Pipeline Preservation and Mode Routing
   - [ ] 15.1 Add photo mode to pipeline interface
     - Add "photo" input mode alongside existing "text" mode
     - Route to `PhotoPipelineOrchestrator.run()` when source_type="photo"
@@ -354,10 +354,10 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Existing UPBGE compilation, parity gates, smoke validation, auto-launch reused without modification
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-- [ ] 16. Checkpoint — Ensure all tests pass
+- [~] 16. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 17. Integration wiring and final verification
+- [~] 17. Integration wiring and final verification
   - [ ] 17.1 Wire complete photo pipeline end-to-end
     - Connect: input validator → scene parser → depth estimator → room reconstructor → object generator → audio synthesizer → light estimator → scale calibrator → layout estimator → physics settle → assembler → UPBGE compile → parity → smoke → auto-launch
     - Verify each stage feeds into the next with correct data flow
@@ -385,7 +385,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Verify WorldContract valid in all degradation scenarios
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.6_
 
-- [ ] 18. Final checkpoint — Ensure all tests pass
+- [~] 18. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 
