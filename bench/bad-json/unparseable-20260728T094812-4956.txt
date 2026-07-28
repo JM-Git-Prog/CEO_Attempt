@@ -1,0 +1,41 @@
+error: Expecting ',' delimiter: line 15 column 84 (char 1262)
+------------------------------------------------------------
+{"name":"Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, solid-wood bed frame with a plush comforter and two matching pillows."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.2,"width":0.8,"height":2.0,
+"sill_height":0.05}], "camera":{"x":1.3,"y":1.7,"z":1.0,"target_x":1.8,"target_y":0.5,
+"target_z":0.0,"fov_deg":60},"circulation_notes":["Path from door to bed is clear.",
+"Nightstand is within reaching distance of bed."],
+"design_notes":["Apply a soft blue-gray paint to the walls.", "Install hardwood flooring with a subtle sheen."],
+"items":[{"id":"nightstand","name":"Small Oak Nightstand","category":"furniture","mount":"floor",
+"x":0.7,"z":1.5,"width":0.7,"depth":0.6,"height":0.8,"elevation":0.0,"rotation_deg":0,
+"fixed":true,"clearance_m":0.2,"description":"A solid-oak nightstand with a drawer and a lamp on top."}],
+"items":[{"id":"window_1","name":"North Window","category":"architectural","mount":"wall",
+"wall":"north","x":1.9,"z":3.0,"width":0.8,"depth":0.2,"height":0.9,"elevation":2.7-0.9,
+"rotation_deg":0,"fixed":false,"clearance_m":0.1,"description":"A small window with simple white trim and curtains."}],
+"items":[{"id":"window_2","name":"South Window","category":"architectural","mount":"wall",
+"wall":"south","x":1.3,"z":0.2,"width":0.8,"depth":0.2,"height":0.9,"elevation":2.7-0.9,
+"rotation_deg":0,"fixed":false,"clearance_m":0.1,"description":"A small window with simple white trim and curtains."}],
+"items":[{"id":"table_lamp","name":"Table Lamp","category":"fixture","mount":"ceiling",
+"x":0.5,"z":2.3,"width":0.4,"depth":0.4,"height":0.7,"elevation":2.7-0.7,"rotation_deg":0,
+"fixed":false,"clearance_m":0.2,"description":"A simple table lamp casting a warm glow."}],
+"design_notes":["Add two small pendant lights above the bed for additional task lighting.",
+"Consider adding built-in shelving or a large piece of furniture against a wall to create a focal point."]}
+
+COORDINATE-AGNOSTIC EXPLANATION:
+- The bed is placed against the east wall with some clearance.
+- The nightstand is placed near the bed with equal clearance on both sides.
+- The door is centered in the west wall.
+- Two small windows are placed one above the other on the north and south walls.
+- A table lamp is placed on the ceiling above the nightstand.
+
+CIRCULATION:
+- A person can walk from the door to the bed without squeezing past furniture.
+- The path from the door to the nightstand is clear.
+
+LIGHTING:
+- The table lamp provides warm task lighting near the bed.
+- Natural light enters through the two windows.

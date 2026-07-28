@@ -265,7 +265,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - "full" if all objects used primary method; "degraded" if ≥1 fallback but ≥1 mesh exists; "minimal" if zero object meshes
     - **Validates: Requirements 12.6**
 
-- [ ] 11. Serialization Round-Trip Integrity
+- [x] 11. Serialization Round-Trip Integrity
   - [x] 11.1 Implement pipeline manifest JSON serialization
     - Serialize `PipelineManifest` to JSON with canonical format (sorted keys, no whitespace, UTF-8)
     - Implement custom serializers for Path objects and enums
@@ -282,12 +282,12 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any valid mesh (float32 vertices, unit normals, UV in [0,1]), write GLB → read GLB produces data within 1e-6 absolute tolerance
     - **Validates: Requirements 13.2**
 
-  - [~] 11.4 Write property test for depth map NumPy round-trip (Property 22)
+  - [x] 11.4 Write property test for depth map NumPy round-trip (Property 22)
     - **Property 22: Depth Map NumPy Round-Trip**
     - For any float32 2D array, np.save → np.load produces bit-identical array
     - **Validates: Requirements 13.3**
 
-  - [~] 11.5 Write property test for WorldContract canonical serialization (Property 23)
+  - [x] 11.5 Write property test for WorldContract canonical serialization (Property 23)
     - **Property 23: WorldContract Canonical Serialization Round-Trip**
     - For any WorldContract from photo assembler, canonical_bytes() → deserialize → canonical_bytes() produces identical bytes
     - **Validates: Requirements 13.5**
