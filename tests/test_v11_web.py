@@ -49,14 +49,14 @@ def client(tmp_path, monkeypatch):
     web.sessions.clear()
 
 
-def test_v12_is_default_and_invalid_versions_are_rejected(client):
+def test_v13_is_default_and_invalid_versions_are_rejected(client):
     page = client.get("/")
     assert page.status_code == 200
-    assert "window.APP_VERSION=12" in page.text
-    assert "UPBGE primary" in page.text
-    assert 'href="/?v=11"' in page.text and 'href="/?v=12"' in page.text
+    assert "window.APP_VERSION=13" in page.text
+    assert "In-browser 3D" in page.text
+    assert 'href="/?v=12"' in page.text and 'href="/?v=13"' in page.text
 
-    for value in ("nope", "3.0", "02", "2", "13"):
+    for value in ("nope", "3.0", "02", "2", "14"):
         response = client.get("/", params={"v": value})
         assert response.status_code == 400
         assert "interface version" in response.text
@@ -71,12 +71,12 @@ def test_v12_is_default_and_invalid_versions_are_rejected(client):
     assert "window.APP_VERSION=11" in v11.text
 
 
-def test_api_header_defaults_to_v12_and_never_coerces(client):
+def test_api_header_defaults_to_v13_and_never_coerces(client):
     created = client.post("/api/session")
     assert created.status_code == 200
-    assert created.json()["interface_version"] == 12
+    assert created.json()["interface_version"] == 13
 
-    for value in ("future", "3.0", "02", "2", "13"):
+    for value in ("future", "3.0", "02", "2", "14"):
         response = client.get(
             "/api/session/missing/status", headers={"X-App-Version": value}
         )

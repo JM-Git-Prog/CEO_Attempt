@@ -1,0 +1,101 @@
+error: Expecting ',' delimiter: line 5 column 16 (char 261)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"furniture|architectural",
+"mount":"wall","wall":"west","x":1.3,"z":0,"width":1.0,"depth":2.4,"height":2.0,
+"elevation":2.7-2.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Exposed
+stone with a wooden mantel and hearth."},
+{"id":"bookshelf","name":"Solid Wood Bookcase","category":"furniture",
+"mount":"wall","wall":"north","x":2.1,"z":0,"width":1.0,"depth":0.8,"height":2.4,
+"elevation":2.7-2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Made
+of solid wood with ornate carvings."},
+{"id":"armchair","name":"Comfortable Armchair","category":"furniture",
+"mount":"floor","x":0.7,"z":2.5,"width":0.8,"depth":0.7,"height":0.9,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,"description":"Plush
+cushions in a rich brown fabric."},
+{"id":"coffee_table","name":"Wooden Coffee Table","category":"furniture",
+"mount":"floor","x":2.3,"z":1.7,"width":0.8,"depth":0.6,"height":0.4,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"Distressed
+wood finish."},
+{"id":"floor_lamp_1","name":"Linen Shade Floor Lamp","category":"fixture",
+"mount":"ceiling","x":3.4,"z":2.9,"width":0.3,"depth":0.3,"height":0.7,
+"elevation":2.7-0.7,"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"Wooden
+base with a linen shade."},
+{"id":"floor_lamp_2","name":"Linen Shade Floor Lamp","category":"fixture",
+"mount":"ceiling","x":1.1,"z":2.9,"width":0.3,"depth":0.3,"height":0.7,
+"elevation":2.7-0.7,"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"Wooden
+base with a linen shade."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.4,"width":0.8,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.0,"target_x":1.3,"target_y":0,"target_z":0,
+"fov_deg":60},"circulation_notes":["Path from door to armchair is clear.",
+"Bookshelf creates a focal point against the north wall."],
+"design_notes":["Exposed wooden beams on ceiling create a rustic, natural feel.",
+"Brick or stone fireplace with wooden mantel adds warmth and texture.",
+"Area rug adds visual interest and defines the seating area."]}
+}
+
+V11 EXPLICIT-INTENT REVISION — applies design thinking principles to create a buildable plan:
+1. ZONES: Identify functional zones (seating, work, circulation). Place primary furniture
+   first, then support pieces relative to it.
+2. WALLS FIRST: Large furniture belongs against walls. Only focal-point pieces (tables,
+   islands) go in the center. Never cluster everything at 0,0.
+3. CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones.
+4. SPACING: Repeated items (stools, chairs, cabinets) distribute evenly along their parent
+   surface with equal gaps. Never stack them on top of each other.
+5. DOOR CLEARANCE: Nothing within 1.0m inward of a door. The door swing arc must be completely
+   unobstructed.
+6. WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light enters freely.
+
+V11 APPLICATION — applies design thinking principles to the existing plan:
+- Places the armchair in a clear circulation path from the door to the seating area.
+- Distributes the stool_1, stool_2, and stool_3 evenly along the counter with equal gaps.
+- Relocates the pendant_light_1 so it is at least 0.3m from the north exterior wall, ensuring
+  maximum light entry.
+- Places the arcade_cabinet_1 against the south wall with clear circulation paths to nearby
+  seating areas.
+
+V11 OUTPUT — the revised, buildable plan:
+{"name":"Revised Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"furniture|architectural",
+"mount":"wall","wall":"west","x":1.3,"z":0,"width":1.0,"depth":2.4,"height":2.0,
+"elevation":2.7-2.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Exposed
+stone with a wooden mantel and hearth."},
+{"id":"bookshelf","name":"Solid Wood Bookcase","category":"furniture",
+"mount":"wall","wall":"north","x":2.1,"z":0,"width":1.0,"depth":0.8,"height":2.4,
+"elevation":2.7-2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Made
+of solid wood with ornate carvings."},
+{"id":"armchair","name":"Comfortable Armchair","category":"furniture",
+"mount":"floor","x":1.7,"z":2.5,"width":0.8,"depth":0.7,"height":0.9,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,"description":"Plush
+cushions in a rich brown fabric."},
+{"id":"stool_1","name":"Bar Stool","category":"furniture",
+"mount":"floor","x":0.3,"z":1.7,"width":0.4,"depth":0.5,"height":0.9,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"Padded
+seat with a wooden frame."},
+{"id":"stool_2","name":"Bar Stool","category":"furniture",
+"mount":"floor","x":1.9,"z":1.7,"width":0.4,"depth":0.5,"height":0.9,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"Padded
+seat with a wooden frame."},
+{"id":"stool_3","name":"Bar Stool","category":"furniture",
+"mount":"floor","x":3.5,"z":1.7,"width":0.4,"depth":0.5,"height":0.9,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"Padded
+seat with a wooden frame."},
+{"id":"counter","name":"Kitchen Counter","category":"furniture",
+"mount":"wall","wall":"south","x":2.1,"z":0,"width":3.0,"depth":0.7,
+"elevation":2.7-0.7,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Solid
+surface made of granite or quartz."},
+{"id":"pendant_light_1","name":"Hanging Pendant Light","category":"fixture",
+"mount":"ceiling","x":2.4,"z":2.9,"width":0.3,"depth":0.3,"height":0.5,
+"elevation":2.7-0.5,"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"Metal
+fixture with a glass shade."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.4,"width":0.8,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.0,"target_x":1.3,"target_y":0,"target_z":0,
+"fov_deg":60},"circulation_notes":["Path from door to armchair is clear.",
+"Stools distribute evenly along the counter."],
+"design_notes":["Exposed wooden beams on ceiling create a rustic, natural feel.",
+"Brick or stone fireplace with wooden mantel adds warmth and texture.",
+"Area rug adds visual interest and defines the seating area."]}

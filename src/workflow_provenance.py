@@ -444,6 +444,7 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         10: "v10-bounded-review-r1",
         11: "v11-upbge-contract-r1",
         12: "v12-photo-world-r1",
+        13: "v13-browser-game-r1",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -458,11 +459,12 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         10: "v10-bounded-review-r1",
         11: "v11-upbge-contract-r1",
         12: "v12-photo-world-r1",
+        13: "v13-browser-game-r1",
     }
 )
 
 
-LATEST_INTERFACE_VERSION = 12
+LATEST_INTERFACE_VERSION = 13
 
 
 class UnsupportedInterfaceVersion(ValueError):

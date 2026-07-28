@@ -1691,8 +1691,10 @@ async function sendPhoto() {
     // Show pipeline progress
     const pipelineWait = progress('Running photo pipeline: segmentation → depth → objects → audio → assembly…');
 
-    // Now trigger the photo pipeline with the uploaded path
-    const data = await fetchJson('/api/session/photo', {
+    // V13: use browser endpoint (no external launch), V12: use standard photo endpoint
+    const endpoint = appVersion >= 13 ? '/api/session/photo/browser' : '/api/session/photo';
+
+    const data = await fetchJson(endpoint, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({source_image: uploadResult.path, mode: 'mvp'}),
@@ -1701,35 +1703,48 @@ async function sendPhoto() {
     pipelineWait.remove();
     sessionId = data.session_id;
 
-    // Show result
-    const quality = data.quality_classification || 'unknown';
-    const objects = data.object_count || 0;
-    const duration = data.total_duration_s ? data.total_duration_s.toFixed(1) : '?';
-    const compiled = data.compilation_success ? '✓ Game launched' : '⚠ Compilation pending';
+    // V13: render in-browser 3D game
+    if (appVersion >= 13 && data.scene_url) {
+      const quality = data.quality_classification || 'unknown';
+      const objects = data.object_count || 0;
+      const duration = data.total_duration_s ? data.total_duration_s.toFixed(1) : '?';
+      addMessage('system', `
+        <strong>Photo pipeline complete</strong><br>
+        Quality: <code>${escapeHtml(quality)}</code> · Objects: ${objects} · Duration: ${duration}s<br>
+        Launching in-browser 3D…
+      `);
+      await renderBrowserGame(data.scene_url);
+    } else {
+      // V12 fallback: show result panel
+      const quality = data.quality_classification || 'unknown';
+      const objects = data.object_count || 0;
+      const duration = data.total_duration_s ? data.total_duration_s.toFixed(1) : '?';
+      const compiled = data.compilation_success ? '✓ Game launched' : '⚠ Compilation pending';
 
-    addMessage('system', `
-      <strong>Photo pipeline complete</strong><br>
-      Quality: <code>${escapeHtml(quality)}</code> · Objects: ${objects} · Duration: ${duration}s<br>
-      ${compiled}
-    `);
+      addMessage('system', `
+        <strong>Photo pipeline complete</strong><br>
+        Quality: <code>${escapeHtml(quality)}</code> · Objects: ${objects} · Duration: ${duration}s<br>
+        ${compiled}
+      `);
 
-    setStage('game');
-    stageTitle.textContent = 'Photo World Ready';
-    stageBody.innerHTML = `
-      <div class="photo-result">
-        <div class="photo-result-summary">
-          <h3>Photo → Playable World</h3>
-          <dl>
-            <dt>Session</dt><dd>${escapeHtml(data.session_id)}</dd>
-            <dt>Quality</dt><dd>${escapeHtml(quality)}</dd>
-            <dt>Objects detected</dt><dd>${objects}</dd>
-            <dt>Pipeline duration</dt><dd>${duration}s</dd>
-            <dt>Compilation</dt><dd>${data.compilation_success ? 'Success' : 'Failed: ' + escapeHtml(data.compilation_reason_code || '')}</dd>
-            ${data.launch_pid ? `<dt>Game PID</dt><dd>${data.launch_pid}</dd>` : ''}
-          </dl>
+      setStage('game');
+      stageTitle.textContent = 'Photo World Ready';
+      stageBody.innerHTML = `
+        <div class="photo-result">
+          <div class="photo-result-summary">
+            <h3>Photo → Playable World</h3>
+            <dl>
+              <dt>Session</dt><dd>${escapeHtml(data.session_id)}</dd>
+              <dt>Quality</dt><dd>${escapeHtml(quality)}</dd>
+              <dt>Objects detected</dt><dd>${objects}</dd>
+              <dt>Pipeline duration</dt><dd>${duration}s</dd>
+              <dt>Compilation</dt><dd>${data.compilation_success ? 'Success' : 'Failed: ' + escapeHtml(data.compilation_reason_code || '')}</dd>
+              ${data.launch_pid ? `<dt>Game PID</dt><dd>${data.launch_pid}</dd>` : ''}
+            </dl>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
 
   } catch (error) {
     wait?.remove();
@@ -1741,6 +1756,183 @@ async function sendPhoto() {
   }
 }
 
+// --- V13: In-browser 3D game renderer ---
+
+async function renderBrowserGame(sceneUrl) {
+  const resp = await fetch(sceneUrl);
+  const scene = await resp.json();
+
+  setStage('game');
+  stageTitle.textContent = 'Your World';
+  stageState.textContent = 'PLAYING';
+  stageState.className = 'stage-state ready';
+
+  const container = document.createElement('div');
+  container.className = 'browser-game-container';
+  container.id = 'gameContainer';
+  container.innerHTML = '<div class="game-overlay" id="gameOverlay"><p>Click to enter</p><p class="game-controls-hint">WASD to move · Mouse to look · ESC to exit</p></div>';
+  stageBody.innerHTML = '';
+  stageBody.appendChild(container);
+
+  // Initialize Three.js scene
+  const renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+  container.appendChild(renderer.domElement);
+
+  const threeScene = new THREE.Scene();
+  threeScene.background = new THREE.Color(0x1a1a2e);
+
+  // Camera
+  const camera = new THREE.PerspectiveCamera(scene.camera.fov, container.clientWidth / container.clientHeight, 0.1, 100);
+  camera.position.set(...scene.camera.position);
+
+  // Room geometry
+  const room = scene.room;
+  // Floor
+  const floorGeo = new THREE.PlaneGeometry(room.width, room.depth);
+  const floorMat = new THREE.MeshStandardMaterial({color: room.floor_color, roughness: 0.9});
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  threeScene.add(floor);
+
+  // Walls
+  const wallMat = new THREE.MeshStandardMaterial({color: room.wall_color, roughness: 0.7, side: THREE.DoubleSide});
+  // Back wall
+  const backWall = new THREE.Mesh(new THREE.PlaneGeometry(room.width, room.height), wallMat);
+  backWall.position.set(0, room.height/2, -room.depth/2);
+  threeScene.add(backWall);
+  // Left wall
+  const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(room.depth, room.height), wallMat);
+  leftWall.position.set(-room.width/2, room.height/2, 0);
+  leftWall.rotation.y = Math.PI/2;
+  threeScene.add(leftWall);
+  // Right wall
+  const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(room.depth, room.height), wallMat);
+  rightWall.position.set(room.width/2, room.height/2, 0);
+  rightWall.rotation.y = -Math.PI/2;
+  threeScene.add(rightWall);
+  // Ceiling
+  const ceilGeo = new THREE.PlaneGeometry(room.width, room.depth);
+  const ceilMat = new THREE.MeshStandardMaterial({color: room.ceiling_color, roughness: 0.6});
+  const ceiling = new THREE.Mesh(ceilGeo, ceilMat);
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.y = room.height;
+  threeScene.add(ceiling);
+
+  // Objects
+  for (const obj of scene.objects) {
+    let geo;
+    const [w, h, d] = obj.dimensions;
+    if (obj.shape === 'cylinder') geo = new THREE.CylinderGeometry(w/2, w/2, h, 16);
+    else if (obj.shape === 'sphere') geo = new THREE.SphereGeometry(Math.max(w,h,d)/2, 16, 16);
+    else geo = new THREE.BoxGeometry(w, h, d);
+
+    const mat = new THREE.MeshStandardMaterial({
+      color: obj.color,
+      roughness: obj.roughness,
+      metalness: obj.metallic,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(...obj.position);
+    mesh.rotation.set(
+      obj.rotation[0] * Math.PI/180,
+      obj.rotation[1] * Math.PI/180,
+      obj.rotation[2] * Math.PI/180
+    );
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    threeScene.add(mesh);
+  }
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0x404040, 0.5);
+  threeScene.add(ambient);
+  for (const light of scene.lights) {
+    if (light.type === 'directional') {
+      const dl = new THREE.DirectionalLight(light.color, light.intensity / 100);
+      dl.position.set(...light.position);
+      dl.castShadow = true;
+      threeScene.add(dl);
+    } else {
+      const pl = new THREE.PointLight(light.color, light.intensity / 100, 20);
+      pl.position.set(...light.position);
+      threeScene.add(pl);
+    }
+  }
+
+  // First-person controls (pointer lock)
+  const velocity = new THREE.Vector3();
+  const direction = new THREE.Vector3();
+  const keys = {w: false, a: false, s: false, d: false};
+  let euler = new THREE.Euler(0, 0, 0, 'YXZ');
+  let locked = false;
+
+  const overlay = document.getElementById('gameOverlay');
+
+  renderer.domElement.addEventListener('click', () => {
+    renderer.domElement.requestPointerLock();
+  });
+
+  document.addEventListener('pointerlockchange', () => {
+    locked = document.pointerLockElement === renderer.domElement;
+    overlay.style.display = locked ? 'none' : '';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!locked) return;
+    euler.setFromQuaternion(camera.quaternion);
+    euler.y -= e.movementX * 0.002;
+    euler.x -= e.movementY * 0.002;
+    euler.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, euler.x));
+    camera.quaternion.setFromEuler(euler);
+  });
+
+  document.addEventListener('keydown', (e) => { if (keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = true; });
+  document.addEventListener('keyup', (e) => { if (keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
+
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+
+    if (locked) {
+      const speed = 0.05;
+      direction.set(0, 0, 0);
+      if (keys.w) direction.z -= 1;
+      if (keys.s) direction.z += 1;
+      if (keys.a) direction.x -= 1;
+      if (keys.d) direction.x += 1;
+      direction.normalize();
+
+      // Move relative to camera orientation (Y-locked)
+      const forward = new THREE.Vector3();
+      camera.getWorldDirection(forward);
+      forward.y = 0;
+      forward.normalize();
+      const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0));
+
+      camera.position.addScaledVector(forward, -direction.z * speed);
+      camera.position.addScaledVector(right, direction.x * speed);
+      camera.position.y = 1.6; // Lock to eye height
+    }
+
+    renderer.render(threeScene, camera);
+  }
+  animate();
+
+  // Handle resize
+  const resizeObserver = new ResizeObserver(() => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+  resizeObserver.observe(container);
+
+  logEvent('process', 'browser_game_entered', {objects: scene.objects.length, quality: scene.quality});
+}
+
 // Initialize photo upload on load
 if (appVersion >= 12) {
   document.addEventListener('DOMContentLoaded', initPhotoUpload);
@@ -1748,7 +1940,7 @@ if (appVersion >= 12) {
 
 // ─── End V12 Photo Mode ───────────────────────────────────────────────────────
 
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp, enterGame, setInputMode, removePhoto, sendPhoto});
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp, enterGame, setInputMode, removePhoto, sendPhoto, renderBrowserGame});
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);

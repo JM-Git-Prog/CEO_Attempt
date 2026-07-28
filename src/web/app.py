@@ -703,6 +703,151 @@ async def create_photo_session(request: Request):
     }
 
 
+@app.post("/api/session/photo/browser")
+async def create_photo_session_browser(request: Request):
+    """Photo pipeline for browser-embedded game (no external launch)."""
+    from src.photo_pipeline.orchestrator import (
+        PhotoPipelineOrchestrator,
+        PipelineError,
+        PipelineTimeoutError,
+        PipelineValidationError,
+    )
+    from src.photo_pipeline.models import PhotoPipelineConfig
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "Invalid JSON"}, status_code=400)
+
+    source_image_str = body.get("source_image", "")
+    if not source_image_str:
+        return JSONResponse({"error": "source_image required"}, status_code=400)
+
+    source_image = Path(source_image_str)
+    if not source_image.exists():
+        return JSONResponse({"error": f"Not found: {source_image}"}, status_code=400)
+
+    session_id = str(uuid.uuid4())[:8]
+    session_dir = OUTPUT_DIR / session_id
+    session_dir.mkdir(parents=True, exist_ok=True)
+
+    config = PhotoPipelineConfig()
+    orchestrator = PhotoPipelineOrchestrator(
+        config=config,
+        session_dir=session_dir,
+        session_id=session_id,
+    )
+
+    try:
+        # Use run() NOT run_full() — skip UPBGE compilation
+        manifest = await orchestrator.run(source_image)
+    except PipelineValidationError as exc:
+        return JSONResponse({"error": str(exc), "session_id": session_id}, status_code=400)
+    except PipelineTimeoutError as exc:
+        return JSONResponse({"error": str(exc), "session_id": session_id}, status_code=504)
+    except (PipelineError, Exception) as exc:
+        import traceback; traceback.print_exc()
+        return JSONResponse({"error": str(exc), "session_id": session_id}, status_code=500)
+
+    # Build browser-friendly scene descriptor from WorldContract
+    wc_path = manifest.world_contract_path
+    scene_data = _build_browser_scene(wc_path, session_dir, manifest)
+
+    # Save scene data for the frontend to fetch
+    scene_json_path = session_dir / "browser_scene.json"
+    scene_json_path.write_text(json.dumps(scene_data, indent=2), encoding="utf-8")
+
+    return {
+        "session_id": session_id,
+        "source_type": "photo",
+        "quality_classification": manifest.quality_classification,
+        "total_duration_s": manifest.total_duration_s,
+        "object_count": len(manifest.objects),
+        "scene_url": f"/api/session/{session_id}/browser_scene",
+    }
+
+
+@app.get("/api/session/{session_id}/browser_scene")
+async def get_browser_scene(session_id: str):
+    """Return the Three.js scene descriptor for in-browser rendering."""
+    scene_path = OUTPUT_DIR / session_id / "browser_scene.json"
+    if not scene_path.exists():
+        return JSONResponse({"error": "No browser scene for this session"}, status_code=404)
+    return JSONResponse(json.loads(scene_path.read_text(encoding="utf-8")))
+
+
+def _build_browser_scene(wc_path, session_dir, manifest):
+    """Convert WorldContract into a Three.js-friendly scene descriptor."""
+    wc = json.loads(wc_path.read_text(encoding="utf-8"))
+
+    room = wc.get("room", {})
+    dims = room.get("dimensions", {})
+
+    # Build material lookup
+    mat_lookup = {}
+    for mat in wc.get("materials", []):
+        mat_lookup[mat["id"]] = mat
+
+    # Build scene objects
+    objects = []
+    for inst in wc.get("instances", []):
+        mat = mat_lookup.get(inst.get("material_id"), {})
+        transform = inst.get("transform", {})
+        pos = transform.get("position_m", {})
+        rot = transform.get("rotation_deg", {})
+        dim = inst.get("dimensions", {})
+
+        objects.append({
+            "id": inst["id"],
+            "name": inst.get("name", ""),
+            "shape": inst.get("primitive_shape", "box"),
+            "position": [pos.get("x", 0), pos.get("y", 0), pos.get("z", 0)],
+            "rotation": [rot.get("x", 0), rot.get("y", 0), rot.get("z", 0)],
+            "dimensions": [dim.get("width_m", 1), dim.get("height_m", 1), dim.get("depth_m", 1)],
+            "color": mat.get("base_color", "#808080"),
+            "metallic": mat.get("metallic", 0),
+            "roughness": mat.get("roughness", 0.8),
+        })
+
+    # Lights
+    lights = []
+    for light in wc.get("lights", []):
+        pos = light.get("position_m", {})
+        dir_v = light.get("direction", {})
+        lights.append({
+            "id": light["id"],
+            "type": light.get("light_type", "point"),
+            "position": [pos.get("x", 0), pos.get("y", 0), pos.get("z", 0)],
+            "direction": [dir_v.get("x", 0), dir_v.get("y", -1), dir_v.get("z", 0)],
+            "color": light.get("color", "#FFFFFF"),
+            "intensity": light.get("intensity", 50),
+        })
+
+    # Room materials
+    floor_mat = mat_lookup.get(room.get("floor_material_id"), {})
+    wall_mat = mat_lookup.get(room.get("wall_material_id"), {})
+    ceiling_mat = mat_lookup.get(room.get("ceiling_material_id"), {})
+
+    return {
+        "version": "browser-scene/v1",
+        "room": {
+            "width": dims.get("width_m", 5),
+            "height": dims.get("height_m", 2.7),
+            "depth": dims.get("depth_m", 4),
+            "floor_color": floor_mat.get("base_color", "#8b7355"),
+            "wall_color": wall_mat.get("base_color", "#d0c8b8"),
+            "ceiling_color": ceiling_mat.get("base_color", "#e8e0d8"),
+        },
+        "objects": objects,
+        "lights": lights,
+        "camera": {
+            "position": [0, 1.6, 3],
+            "fov": 60,
+        },
+        "quality": manifest.quality_classification,
+    }
+
+
 @app.get("/api/session/latest/snapshot")
 async def latest_session_snapshot():
     if sessions:

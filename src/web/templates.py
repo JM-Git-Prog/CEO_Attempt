@@ -25,15 +25,16 @@ def get_index_html(version: int = 11) -> str:
         f'<a class="{"selected" if version == 9 else ""}" {current_page(version == 9)} href="/?v=9">V9</a>'
         f'<a class="{"selected" if version == 10 else ""}" {current_page(version == 10)} href="/?v=10">V10</a>'
         f'<a class="{"selected" if version == 11 else ""}" {current_page(version == 11)} href="/?v=11">V11</a>'
-        f'<a class="{"selected" if version == 12 else ""}" {current_page(version == 12)} href="/?v=12">V12</a></nav>'
+        f'<a class="{"selected" if version == 12 else ""}" {current_page(version == 12)} href="/?v=12">V12</a>'
+        f'<a class="{"selected" if version == 13 else ""}" {current_page(version == 13)} href="/?v=13">V13</a></nav>'
     )
-    workspace_attr = ' id="workspace"' if version in (7, 8, 9, 10, 11, 12) else ""
+    workspace_attr = ' id="workspace"' if version in (7, 8, 9, 10, 11, 12, 13) else ""
     splitter = (
         '<div id="workspaceSplitter" class="workspace-splitter" role="separator" tabindex="0" '
         'aria-label="Resize chat and preview panes" aria-orientation="vertical" '
         'aria-valuemin="25" aria-valuenow="44" aria-valuemax="70" aria-valuetext="44% chat width">'
         '<span aria-hidden="true"></span></div>'
-        if version in (7, 8, 9, 10, 11, 12) else ""
+        if version in (7, 8, 9, 10, 11, 12, 13) else ""
     )
     stage_rail = (
         '<nav class="stage-rail" aria-label="Build stages">'
@@ -63,6 +64,10 @@ def get_index_html(version: int = 11) -> str:
     intro = (
         '<div class="intro"><span class="eyebrow">DESCRIBE IT OR SHOW IT → WALK THROUGH IT</span>'
         '<h1>Turn any room into a game.</h1><p>Type what you imagine, or drop in a photo of a real space. '
+        'We\'ll build a 3D world you can explore with full physics — right in your browser.</p></div>'
+        if version == 13 else
+        '<div class="intro"><span class="eyebrow">DESCRIBE IT OR SHOW IT → WALK THROUGH IT</span>'
+        '<h1>Turn any room into a game.</h1><p>Type what you imagine, or drop in a photo of a real space. '
         'We\'ll build a 3D world you can explore with full physics — right on your machine.</p></div>'
         if version == 12 else
         '<div class="intro"><span class="eyebrow">TEXT → PLAN → BLOCKOUT → CANON → WORLD → GAME</span>'
@@ -75,6 +80,8 @@ def get_index_html(version: int = 11) -> str:
         'camera first, then render a plan-conditioned canon and build the world.</p></div>'
     )
     footer = (
+        '<span>In-browser 3D</span><span>Text + Photo</span><span>First-person controls</span>'
+        if version == 13 else
         '<span>Local-first</span><span>Text + Photo input</span><span>Physics · collision · interaction</span>'
         if version == 12 else
         '<span>UPBGE primary</span><span>Declared Godot fallback</span><span>Compiler · parity · QA evidence</span>'
@@ -99,7 +106,7 @@ def get_index_html(version: int = 11) -> str:
         '</div>'
         '<button type="button" id="photoGenerateBtn" class="photo-generate-btn" disabled onclick="sendPhoto()">Build my world ⚡</button>'
         '</div>'
-        if version == 12 else ""
+        if version >= 12 else ""
     )
     return (
         INDEX_HTML.replace("__VERSION__", str(version))
@@ -116,7 +123,8 @@ def get_index_html(version: int = 11) -> str:
         .replace("__V8_HISTORY_UI__", history_ui)
         .replace(
             "__V8_SCOPE__",
-            " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo" if version == 12
+            " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo ui-v13-browser" if version == 13
+            else " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo" if version == 12
             else " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime" if version == 11
             else " ui-v8-scoped ui-v9-camera ui-v10-bounded" if version == 10
             else " ui-v8-scoped ui-v9-camera" if version == 9
@@ -138,7 +146,7 @@ INDEX_HTML = """<!doctype html>
       const url = new URL(window.location.href);
       const requested = url.searchParams.get('v');
       if (requested === null) {
-        url.searchParams.set('v', '12');
+        url.searchParams.set('v', '13');
         window.location.replace(url);
       }
     })();
