@@ -177,6 +177,19 @@ class TelemetryRecorder:
         except Exception:
             pass
 
+    def update_substep(self, stage: str, elapsed_s: float) -> None:
+        """Update telemetry state for MVP SSE progress without full substep lifecycle."""
+        if not self.enabled:
+            return
+        try:
+            token = {"stage": _safe_name(stage), "substep": _safe_name(stage),
+                     "started_at": _utc_now(), "started_monotonic": time.monotonic() - elapsed_s}
+            with self._lock:
+                self._active = token
+                self._write_state("active", token, elapsed_s)
+        except Exception:
+            pass
+
     def record_compiler_event(
         self,
         *,

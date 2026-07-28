@@ -1601,10 +1601,14 @@ class WorldBuilder:
 
         In the MVP, this writes to the session progress log and prints to stdout.
         The web layer reads session.progress_messages for SSE delivery.
+        Also updates telemetry so the right-panel status bar stays in sync.
         """
         elapsed_s = round(time.monotonic() - self._mvp_started_at, 1) if hasattr(self, "_mvp_started_at") else 0
-        msg = f"sse:{stage}:{elapsed_s}s"
+        msg = f"sse:{stage}:{elapsed_s}"
         self.session.progress_messages.append(msg)
+        # Keep telemetry recorder in sync for the right-panel status bar
+        if hasattr(self, "telemetry"):
+            self.telemetry.update_substep(stage, elapsed_s)
         print(f"[{self.session.session_id}] SSE → {stage} (elapsed {elapsed_s}s)")
 
     async def run_mvp(self, description: str, *, session_manager: SessionManager | None = None) -> MVPPipelineResult:

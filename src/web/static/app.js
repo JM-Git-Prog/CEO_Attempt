@@ -1891,12 +1891,25 @@ async function renderBrowserGame(sceneUrl) {
   const overlay = document.getElementById('gameOverlay');
 
   renderer.domElement.addEventListener('click', () => {
-    renderer.domElement.requestPointerLock();
+    if (document.pointerLockElement === renderer.domElement) return;
+    try {
+      renderer.domElement.requestPointerLock();
+    } catch (e) {
+      // Pointer lock unavailable — show fallback message
+      overlay.innerHTML = '<p>⚠️ Your browser blocked pointer lock.</p><p class="game-controls-hint">Try clicking the game area again, or use a different browser. Some browsers require a user gesture or fullscreen first.</p>';
+      overlay.style.display = '';
+    }
   });
 
   document.addEventListener('pointerlockchange', () => {
     locked = document.pointerLockElement === renderer.domElement;
     overlay.style.display = locked ? 'none' : '';
+  });
+
+  document.addEventListener('pointerlockerror', () => {
+    locked = false;
+    overlay.innerHTML = '<p>⚠️ Pointer lock failed</p><p class="game-controls-hint">Your browser may require clicking the game area while in fullscreen. Try pressing F11 first, then click again.</p>';
+    overlay.style.display = '';
   });
 
   document.addEventListener('mousemove', (e) => {
