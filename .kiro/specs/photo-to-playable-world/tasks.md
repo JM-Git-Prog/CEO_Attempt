@@ -107,7 +107,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 3.3, 3.4, 3.5, 3.6, 3.7_
 
 
-- [~] 4. Checkpoint — Ensure all tests pass
+- [ ] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Object 3D Generation with Fallback Chain
@@ -162,7 +162,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any valid material category in {wood, metal, glass, fabric, ceramic, plastic}, sound bank lookup returns a non-null path to an existing WAV file
     - **Validates: Requirements 5.3**
 
-- [ ] 7. Light Estimation, Scale Calibration, and Layout
+- [x] 7. Light Estimation, Scale Calibration, and Layout
   - [x] 7.1 Implement Light Estimator (`src/photo_pipeline/stages/light_estimator.py`)
     - Implement `LightEstimator.estimate()` — CPU-based heuristic from source image
     - Analyze shadow directions to estimate primary light direction vector (normalized)
@@ -185,12 +185,12 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Record scale_factor and confidence (0.0-1.0); flag confidence < 0.3 in manifest
     - _Requirements: 7.1, 7.2, 7.7_
 
-  - [~] 7.4 Write property test for scale calibration clamping (Property 12)
+  - [x] 7.4 Write property test for scale calibration clamping (Property 12)
     - **Property 12: Scale Calibration Produces Clamped Metric Dimensions**
     - For any pixel footprint > 0, positive depth, valid FOV (0°-180°), and room dimensions, output dims are clamped to [0.01, room_dim] per axis
     - **Validates: Requirements 7.1, 7.2**
 
-  - [~] 7.5 Implement Layout Estimator (`src/photo_pipeline/stages/layout_estimator.py`)
+  - [x] 7.5 Implement Layout Estimator (`src/photo_pipeline/stages/layout_estimator.py`)
     - Implement `LayoutEstimator.estimate()` — back-project 2D centroids to 3D positions using depth + camera model
     - Implement `_back_project()` using camera intrinsics formula: x = (u-cx)*d/fx, y = -(v-cy)*d/fy, z = -d
     - Implement `_physics_settle()` using PyBullet: create convex hull shapes, simulate gravity for up to 500 iterations or 5s wall time
@@ -200,21 +200,21 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 7.3, 7.4, 7.5, 7.6_
 
 
-  - [~] 7.6 Write property test for back-projection camera model inverse (Property 13)
+  - [x] 7.6 Write property test for back-projection camera model inverse (Property 13)
     - **Property 13: Back-Projection Satisfies Camera Model Inverse**
     - For any pixel (u,v) within bounds, positive depth d, and valid camera params, back-projecting then re-projecting yields original pixel within ±0.5px tolerance
     - **Validates: Requirements 7.3**
 
-  - [~] 7.7 Write property test for physics settle convergence (Property 14)
+  - [x] 7.7 Write property test for physics settle convergence (Property 14)
     - **Property 14: Physics Settle Convergence**
     - For any set of objects with overlapping bounding boxes, after settle the total interpenetration volume is ≤ initial (monotone non-increasing)
     - **Validates: Requirements 7.4, 10.2**
 
-- [~] 8. Checkpoint — Ensure all tests pass
+- [ ] 8. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 9. Collision Generation and LOD
-  - [~] 9.1 Implement Collision and LOD Generator (`src/photo_pipeline/stages/collision_lod.py`)
+  - [x] 9.1 Implement Collision and LOD Generator (`src/photo_pipeline/stages/collision_lod.py`)
     - Implement `CollisionLODGenerator.generate_collision()`:
       - For meshes with > 100 faces: run V-HACD decomposition (max 16 hulls, 10000 voxel resolution, 30s timeout)
       - For meshes with ≤ 100 faces: use direct convex hull
@@ -226,18 +226,18 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `CollisionResult` and `LODResult` with paths and metadata
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-  - [~] 9.2 Write property test for collision method selection (Property 17)
+  - [ ] 9.2 Write property test for collision method selection (Property 17)
     - **Property 17: Collision Method Selection by Face Count**
     - For any mesh with face_count > 100 → V-HACD (max 16 hulls); face_count ≤ 100 → convex hull
     - **Validates: Requirements 9.1, 9.2**
 
-  - [~] 9.3 Write property test for LOD generation invariants (Property 18)
+  - [ ] 9.3 Write property test for LOD generation invariants (Property 18)
     - **Property 18: LOD Generation Invariants**
     - For any input mesh, LOD produces exactly 4 levels; LOD0 = original face count; each level ≤ previous; no level < 4 faces
     - **Validates: Requirements 9.3, 9.4**
 
 - [ ] 10. WorldContract Assembly and Physics Settle Integration
-  - [~] 10.1 Implement WorldContract Assembler (`src/photo_pipeline/stages/assembler.py`)
+  - [ ] 10.1 Implement WorldContract Assembler (`src/photo_pipeline/stages/assembler.py`)
     - Implement `PhotoWorldContractAssembler.assemble()` — map all stage outputs to existing WorldContract schema
     - `_build_room_shell()`: map Room_Mesh to RoomShell entry with dimensions and material from Room_Plate texture
     - `_build_instance()`: map each Object_Mesh to WorldInstance (stable ID from mask_id, transform from layout, dimensions from scale, geometry_strategy="asset")
@@ -250,54 +250,54 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
 
 
-  - [~] 10.2 Write property test for WorldContract assembly validity (Property 15)
+  - [ ] 10.2 Write property test for WorldContract assembly validity (Property 15)
     - **Property 15: WorldContract Assembly Validity**
     - For any valid combination of stage outputs (room mesh + zero or more object meshes + light params + camera), assembled WorldContract passes all Pydantic validators (coordinate system, ID uniqueness, dangling references)
     - **Validates: Requirements 8.1, 8.2, 8.3**
 
-  - [~] 10.3 Write property test for physics mode assignment (Property 16)
+  - [ ] 10.3 Write property test for physics mode assignment (Property 16)
     - **Property 16: Physics Mode Assignment from Material and Volume**
     - For any object with mass > 50kg → STATIC; mass ≤ 50kg and not architectural → DYNAMIC with mass = volume × density (±tolerance)
     - **Validates: Requirements 8.4**
 
-  - [~] 10.4 Write property test for quality classification (Property 19)
+  - [ ] 10.4 Write property test for quality classification (Property 19)
     - **Property 19: Quality Classification Determinism**
     - "full" if all objects used primary method; "degraded" if ≥1 fallback but ≥1 mesh exists; "minimal" if zero object meshes
     - **Validates: Requirements 12.6**
 
 - [ ] 11. Serialization Round-Trip Integrity
-  - [~] 11.1 Implement pipeline manifest JSON serialization
+  - [ ] 11.1 Implement pipeline manifest JSON serialization
     - Serialize `PipelineManifest` to JSON with canonical format (sorted keys, no whitespace, UTF-8)
     - Implement custom serializers for Path objects and enums
     - Ensure round-trip: serialize → deserialize produces structurally equal manifest
     - _Requirements: 13.1, 13.4_
 
-  - [~] 11.2 Write property test for manifest JSON round-trip (Property 20)
+  - [ ] 11.2 Write property test for manifest JSON round-trip (Property 20)
     - **Property 20: Pipeline Manifest JSON Round-Trip**
     - For any valid PipelineManifest, serialize → deserialize produces structurally equal instance
     - **Validates: Requirements 13.1, 13.4**
 
-  - [~] 11.3 Write property test for GLB mesh data round-trip (Property 21)
+  - [ ] 11.3 Write property test for GLB mesh data round-trip (Property 21)
     - **Property 21: GLB Mesh Data Round-Trip**
     - For any valid mesh (float32 vertices, unit normals, UV in [0,1]), write GLB → read GLB produces data within 1e-6 absolute tolerance
     - **Validates: Requirements 13.2**
 
-  - [~] 11.4 Write property test for depth map NumPy round-trip (Property 22)
+  - [ ] 11.4 Write property test for depth map NumPy round-trip (Property 22)
     - **Property 22: Depth Map NumPy Round-Trip**
     - For any float32 2D array, np.save → np.load produces bit-identical array
     - **Validates: Requirements 13.3**
 
-  - [~] 11.5 Write property test for WorldContract canonical serialization (Property 23)
+  - [ ] 11.5 Write property test for WorldContract canonical serialization (Property 23)
     - **Property 23: WorldContract Canonical Serialization Round-Trip**
     - For any WorldContract from photo assembler, canonical_bytes() → deserialize → canonical_bytes() produces identical bytes
     - **Validates: Requirements 13.5**
 
-- [~] 12. Checkpoint — Ensure all tests pass
+- [ ] 12. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 
 - [ ] 13. Pipeline Orchestrator and Session Integration
-  - [~] 13.1 Implement Pipeline Orchestrator (`src/photo_pipeline/orchestrator.py`)
+  - [ ] 13.1 Implement Pipeline Orchestrator (`src/photo_pipeline/orchestrator.py`)
     - Implement `PhotoPipelineOrchestrator.run()` — top-level coordinator
     - Implement `_validate_input()` — call input validator, reject before inference
     - Implement `_check_comfyui_health()` — fail immediately if ComfyUI unreachable
@@ -309,14 +309,14 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Persist all intermediate artifacts in session output directory with consistent naming
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 11.2, 11.3, 11.4, 11.5, 11.7_
 
-  - [~] 13.2 Implement session integration for photo pipeline
+  - [ ] 13.2 Implement session integration for photo pipeline
     - Create session via existing `SessionManager.create_session()` with `source_type="photo"`
     - Store `PhotoSessionMetadata` alongside session (source_image_hash, resolution, quality classification)
     - Integrate with existing FIFO compilation queue — photo pipeline enters queue at WorldContract → UPBGE compilation stage
     - Distinguish photo sessions from text sessions via `source_type` field in session metadata
     - _Requirements: 11.1, 11.7, 14.5_
 
-  - [~] 13.3 Implement graceful degradation logic in orchestrator
+  - [ ] 13.3 Implement graceful degradation logic in orchestrator
     - Object_Generator failure for single object → substitute placeholder, continue remaining objects
     - Audio_Synthesizer failure for single object → assign silent placeholder, continue
     - Depth low-confidence (>30% invalid pixels) → attempt reconstruction with valid pixels + interpolation, fallback to flat-floor only if impossible
@@ -326,7 +326,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Classify final output: "full", "degraded", or "minimal"
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6_
 
-  - [~] 13.4 Wire photo pipeline to existing UPBGE compilation chain
+  - [ ] 13.4 Wire photo pipeline to existing UPBGE compilation chain
     - After WorldContract assembly: pass to existing `upbge_compile.py` sidecar (includes V-HACD, LOD at compile time)
     - Pass through existing parity gate → smoke validation → auto-launch via `auto_launch.py`
     - No modifications to existing compilation infrastructure
@@ -334,7 +334,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
 
 
 - [ ] 14. Physics Settle Pre-Player Validation
-  - [~] 14.1 Implement Physics Settle stage (`src/photo_pipeline/stages/physics_settle.py`)
+  - [ ] 14.1 Implement Physics Settle stage (`src/photo_pipeline/stages/physics_settle.py`)
     - Dedicated pre-player simulation pass using PyBullet
     - Create simplified convex hull collision shapes per dynamic object
     - Simulate gravity for up to 500 iterations, wall-time limit 10s for ≤30 objects
@@ -346,7 +346,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
 - [ ] 15. Existing Pipeline Preservation and Mode Routing
-  - [~] 15.1 Add photo mode to pipeline interface
+  - [ ] 15.1 Add photo mode to pipeline interface
     - Add "photo" input mode alongside existing "text" mode
     - Route to `PhotoPipelineOrchestrator.run()` when source_type="photo"
     - Existing text pipeline behavior (all V3-V11 interfaces, MVP mode, full mode) unchanged
@@ -354,38 +354,38 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Existing UPBGE compilation, parity gates, smoke validation, auto-launch reused without modification
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-- [~] 16. Checkpoint — Ensure all tests pass
+- [ ] 16. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 17. Integration wiring and final verification
-  - [~] 17.1 Wire complete photo pipeline end-to-end
+  - [ ] 17.1 Wire complete photo pipeline end-to-end
     - Connect: input validator → scene parser → depth estimator → room reconstructor → object generator → audio synthesizer → light estimator → scale calibrator → layout estimator → physics settle → assembler → UPBGE compile → parity → smoke → auto-launch
     - Verify each stage feeds into the next with correct data flow
     - Verify session artifacts are persisted at each stage with correct naming convention
     - Verify SSE events fire at each transition
     - _Requirements: 1.1, 1.2, 1.3, 11.2_
 
-  - [~] 17.2 Write integration test for full photo pipeline with mocked ComfyUI
+  - [ ] 17.2 Write integration test for full photo pipeline with mocked ComfyUI
     - Test end-to-end: source photo → scene parse (mocked) → depth (mocked) → objects (mocked) → audio (mocked) → assembly → WorldContract validation
     - Use deterministic test fixtures (sample masks, depth map, meshes)
     - Verify WorldContract output passes existing schema validators
     - Verify manifest records all stages and degradation paths
     - _Requirements: 1.1, 1.2, 8.1_
 
-  - [~] 17.3 Write integration test for photo + text pipeline coexistence
+  - [ ] 17.3 Write integration test for photo + text pipeline coexistence
     - Verify text pipeline session and photo pipeline session can run in same FIFO queue
     - Verify session isolation (different source_types, separate output directories)
     - Verify text pipeline behavior unchanged after photo pipeline addition
     - _Requirements: 14.4, 14.5_
 
-  - [~] 17.4 Write integration test for degradation paths
+  - [ ] 17.4 Write integration test for degradation paths
     - Test: all object generators fail → placeholder geometry → "degraded" classification
     - Test: zero objects segmented → room-only → "minimal" classification
     - Test: depth estimation fails → flat-floor heuristic → pipeline still completes
     - Verify WorldContract valid in all degradation scenarios
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.6_
 
-- [~] 18. Final checkpoint — Ensure all tests pass
+- [ ] 18. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 

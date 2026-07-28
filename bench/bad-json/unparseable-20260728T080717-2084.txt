@@ -1,0 +1,70 @@
+error: Invalid control character at: line 5 column 81 (char 310)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Brick Fireplace","category":"fixture",
+"mount":"wall","wall":"west","x":1.3,"z":0,"width":0.8,"depth":1.9,"height":1.4,
+"elevation":2.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A
+brick-built fireplace with a stone surround and functional chimney."},
+{"id":"stone_surround","name":"Stone Fireplace Surround",
+"category":"fixture","mount":"wall","wall":"west","x":1.3,"z":0.4,
+"width":0.8,"depth":1.1,"height":0.9,"elevation":2.5,"rotation_deg":0,"fixed":true,
+"clearance_m":0.2,"description":"A decorative stone surround for the fireplace."},
+{"id":"bookshelf","name":"Solid Wood Bookcase",
+"category":"furniture","mount":"wall","wall":"north","x":1.7,"z":2.5,
+"width":1.0,"depth":0.8,"height":2.3,"elevation":2.6,"rotation_deg":0,"fixed":true,
+"clearance_m":0.4,"description":"A sturdy bookcase made of solid wood with ornate
+carvings."},
+{"id":"armchair","name":"Wooden Armchair",
+"category":"furniture","mount":"floor","x":2.9,"z":1.3,"width":0.7,
+"depth":0.6,"height":0.8,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.3,"description":"A comfortable armchair with plush cushions and
+solid wooden frame."},
+{"id":"coffee_table","name":"Reclaimed Wood Coffee Table",
+"category":"furniture","mount":"floor","x":2.1,"z":3.4,"width":0.8,
+"depth":0.7,"height":0.4,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.2,"description":"A practical coffee table made from reclaimed
+wood."},
+{"id":"floor_lamp","name":"Linen Shade Floor Lamp",
+"category":"fixture","mount":"floor","x":3.1,"z":1.7,"width":0.4,
+"depth":0.4,"height":1.2,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.3,"description":"A practical floor lamp with a natural linen
+shade."},
+{"id":"wooden_door","name":"Wooden Door",
+"category":"fixture","mount":"wall","wall":"east","x":0.7,"z":0,
+"width":1.0,"depth":0.9,"height":2.0,"elevation":0,"rotation_deg":0,"fixed":true,
+"clearance_m":0.4,"description":"A sturdy wooden door with metal hardware."},
+{"id":"area_rug","name":"Natural Fiber Area Rug",
+"category":"fixture","mount":"floor","x":2.5,"z":3.1,"width":1.8,
+"depth":1.8,"height":0.1,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.2,"description":"A practical area rug made from natural fibers."}],
+"openings":[{"id":"door","kind":"door","wall":"east","offset":0.5,
+"width":1.0,"height":2.0,"sill_height":0.05}],
+"camera":{"x":3.4,"y":1.7,"z":1.0,"target_x":2.9,"target_y":1.3,
+"target_z":0.8,"fov_deg":60},
+"circulation_notes":["Circulates around the furniture with clear paths.",
+"Door is located in an east wall for maximum visibility."],
+"design_notes":["Exposed wooden beams create a warm, inviting ceiling.",
+"Stone surround adds depth to the fireplace.",
+"Reclaimed wood coffee table complements the armchair.",
+"Linen shade floor lamp provides soft, natural light."]}
+
+V11 EXPLICIT-INTENT REVISION — applies design thinking principles to create a buildable plan.
+ZONES: Identify seating (armchair), work (coffee table), circulation, and display zones.
+WALLS FIRST: Place large furniture against walls. The brick fireplace goes in the west
+wall. The stone surround supports the fireplace, so it stays in the west wall as well.
+CIRCULATION: Maintain at least 0.8m clear paths between the door and all zones. The
+armchair is placed with a clear path to the door. The coffee table is centered in the
+seating zone with equal gaps from the wall and armchair.
+RELATIONSHIPS: Chairs face tables. The armchair faces the coffee table.
+SPACING: Repeated items (bookshelves) distribute evenly along their parent surface with
+equal gaps. One bookshelf is placed in the north wall.
+DOOR CLEARANCE: Nothing within 1.0m inward of a door. The door is located in an east
+wall with maximum visibility.
+WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior window walls so light
+enters freely. There are no windows in this design.
+PROPORTIONS: Item dimensions must be realistic. A stool is ~0.4m wide. A pendant light
+is ~0.3m tall. An arcade cabinet is ~0.7m wide × 0.8m deep. A bed is ~2.0m × 1.6m.
+CAMERA: Place the camera in a corner with a clear diagonal view across the room showing
+the maximum number of objects. The camera is placed in the southwest corner with a clear
+view of the furniture, fixtures, and door.

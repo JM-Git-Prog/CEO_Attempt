@@ -216,6 +216,49 @@ class ScaleResult:
 
 
 @dataclass(frozen=True)
+class LayoutResult:
+    """Result of layout estimation for a single object.
+
+    Contains the final 3D position and rotation after physics settle,
+    whether the physics converged, and the original pre-settle position
+    for debugging.
+    """
+
+    position_m: tuple[float, float, float]
+    rotation_deg: tuple[float, float, float]
+    settled: bool  # True if physics converged
+    pre_settle_position_m: tuple[float, float, float]
+
+
+@dataclass(frozen=True)
+class CollisionResult:
+    """Result of collision mesh generation for a single object.
+
+    Records the path to the collision GLB, which method was used
+    (V-HACD decomposition, direct convex hull, or bounding box fallback),
+    and the number of convex hulls produced.
+    """
+
+    collision_mesh_path: Path
+    method: Literal["vhacd", "convex_hull", "bounding_box"]
+    hull_count: int
+
+
+@dataclass(frozen=True)
+class LODResult:
+    """Result of LOD (Level-of-Detail) generation for a single object.
+
+    Contains paths to each LOD level GLB file and the face counts
+    at each level. Level 0 is the full-detail original, with subsequent
+    levels at 50%, 25%, and 10% of original face count (clamped to
+    minimum 4 faces).
+    """
+
+    lod_paths: dict[int, Path]  # level → GLB path (0=full, 1=50%, 2=25%, 3=10%)
+    face_counts: dict[int, int]
+
+
+@dataclass(frozen=True)
 class PhotoSessionMetadata:
     """Session metadata extension for photo-pipeline sessions.
 

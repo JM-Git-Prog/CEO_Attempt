@@ -1,0 +1,42 @@
+error: Invalid control character at: line 5 column 84 (char 309)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":6,"depth":8,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","x":1,"z":4,"width":0.8,"depth":1.5,"height":1.9,"elevation":2.3,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A large, stone-built
+fireplace with a wood mantel."},
+{"id":"door_1","name":"Wooden Door","category":"architectural",
+"mount":"wall","x":5,"z":0,"width":0.9,"depth":0.2,"height":2.0,"elevation":2.4,
+"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"A wooden door with a
+frosted glass panel."},
+{"id":"bookshelf_1","name":"Bookshelf (Solid Oak)","category":"furniture",
+"mount":"wall","x":0,"z":3,"width":0.8,"depth":0.7,"height":2.4,"elevation":2.5,
+"rotation_deg":0,"fixed":true,"clearance_m":0.2,"description":"A sturdy, solid-oak
+bookshelf with four shelves."},
+{"id":"armchair_1","name":"Armchair (Leather and Wooden Frame)",
+"category":"furniture","mount":"floor","x":3,"z":5,"width":0.6,"depth":0.7,
+"height":0.8,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,
+"description":"A comfortable armchair with a leather seat and wooden frame."},
+{"id":"coffee_table_1","name":"Coffee Table (Reclaimed Wood)",
+"category":"furniture","mount":"floor","x":3,"z":2,"width":0.7,"depth":0.5,
+"height":0.4,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"A rustic coffee table made from reclaimed wood."},
+{"id":"floor_lamp_1","name":"Floor Lamp (Metal Shade on Wooden Base)",
+"category":"fixture","mount":"floor","x":4,"z":6,"width":0.2,"depth":0.2,
+"height":1.0,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"A floor lamp with a metal shade on a wooden base."},
+{"id":"vase_1","name":"Vase with Fresh Flowers",
+"category":"decor","mount":"floor","x":2,"z":4,"width":0.1,"depth":0.1,
+"height":0.5,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A vase filled with fresh flowers."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":3,"y":1.7,"z":3,"target_x":3,"target_y":4,"target_z":0,
+"fov_deg":60},"circulation_notes":["Circulate around the armchair and coffee table.
+The path from the door to the seating area is clear."],
+"design_notes":["Exposure: Place the fireplace wall in a corner for maximum impact.
+Seating: Place the armchair in front of the fireplace. Side tables: Place one at 0,z=2
+and the other at width, z=2. Lighting: Place the floor lamp at x=4, z=6. Decor:
+Place the vase at x=2, z=4."]}
+}
