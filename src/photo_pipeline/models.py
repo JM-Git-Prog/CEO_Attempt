@@ -127,6 +127,21 @@ class PipelineManifest:
 
 
 @dataclass(frozen=True)
+class ObjectMeshResult:
+    """Result of 3D mesh generation for a single segmented object.
+
+    Records the output GLB path, which generation method succeeded,
+    the time taken, and mesh statistics (face/vertex counts).
+    """
+
+    mesh_path: Path  # GLB
+    method_used: Literal["hunyuan3d", "unique3d", "triposr", "placeholder"]
+    generation_time_s: float
+    face_count: int
+    vertex_count: int
+
+
+@dataclass(frozen=True)
 class DepthResult:
     """Result of the depth estimation stage (MoGe-2 metric depth).
 
@@ -139,6 +154,21 @@ class DepthResult:
     normal_map_path: Path  # .npy float32 array, [H, W, 3]
     valid_pixel_ratio: float  # 0.0-1.0
     depth_range_m: tuple[float, float]  # min, max valid depth
+
+
+@dataclass(frozen=True)
+class RoomMeshResult:
+    """Result of room mesh reconstruction from depth map and room plate.
+
+    Contains the path to the GLB mesh, room dimensions in meters,
+    vertex/face counts, and whether the heuristic fallback was used.
+    """
+
+    mesh_path: Path  # GLB
+    dimensions_m: tuple[float, float, float]  # width, height, depth
+    vertex_count: int
+    face_count: int
+    used_heuristic: bool  # True if flat-floor fallback was used
 
 
 @dataclass(frozen=True)

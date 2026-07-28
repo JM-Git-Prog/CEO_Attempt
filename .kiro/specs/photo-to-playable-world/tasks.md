@@ -75,7 +75,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any source RGB image and binary mask of matching dimensions, extracted RGBA has transparent pixels exactly where mask is 0
     - **Validates: Requirements 2.4**
 
-- [ ] 3. Depth Estimation and Room Mesh Reconstruction
+- [x] 3. Depth Estimation and Room Mesh Reconstruction
   - [x] 3.1 Implement Depth Estimator (`src/photo_pipeline/stages/depth_estimator.py`)
     - Implement `DepthEstimator.estimate()` — submits MoGe-2 workflow via ComfyUI client
     - Retrieve depth map output as float32 numpy array (meters)
@@ -86,17 +86,17 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `DepthResult` with paths, valid_pixel_ratio, depth_range
     - _Requirements: 3.1, 3.2, 3.6_
 
-  - [~] 3.2 Write property test for normal map unit vectors (Property 4)
+  - [x] 3.2 Write property test for normal map unit vectors (Property 4)
     - **Property 4: Normal Map Contains Unit Vectors**
     - For any valid depth map (positive finite float32 values), computed normals have magnitude within [0.99, 1.01]
     - **Validates: Requirements 3.2**
 
-  - [~] 3.3 Write property test for depth fallback threshold (Property 5)
+  - [x] 3.3 Write property test for depth fallback threshold (Property 5)
     - **Property 5: Depth Fallback Threshold**
     - For any depth map where >50% pixels are invalid → flat-floor heuristic; ≤50% invalid → use actual depth
     - **Validates: Requirements 3.6**
 
-  - [~] 3.4 Implement Room Mesh Reconstructor (`src/photo_pipeline/stages/room_reconstructor.py`)
+  - [x] 3.4 Implement Room Mesh Reconstructor (`src/photo_pipeline/stages/room_reconstructor.py`)
     - Implement `RoomReconstructor.reconstruct()` using trimesh
     - Convert depth map to point cloud, then to mesh via Poisson or Delaunay triangulation
     - Texture mesh with Room_Plate image (UV mapping from pixel coordinates)
@@ -111,7 +111,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Object 3D Generation with Fallback Chain
-  - [~] 5.1 Implement Object Generator (`src/photo_pipeline/stages/object_generator.py`)
+  - [x] 5.1 Implement Object Generator (`src/photo_pipeline/stages/object_generator.py`)
     - Implement `ObjectGenerator.generate()` with full fallback chain: Hunyuan3D 2.0 → Unique3D → TripoSR → placeholder
     - Each neural generator: submit ComfyUI workflow, retrieve GLB, validate mesh (≥4 faces, ≥4 vertices, ≤5% zero-area faces)
     - Per-object timeout (configurable, default 120s) — fall to next method on timeout
