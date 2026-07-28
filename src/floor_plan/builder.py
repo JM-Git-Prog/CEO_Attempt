@@ -202,15 +202,29 @@ def _reconcile_v11_relations(raw: dict) -> tuple[dict, dict]:
         placed.add(subject)
         kept.append(relation)
 
-    for item_id in item_ids:
-        if item_id in placed:
-            continue
-        # "centered" is the only kind needing neither a wall nor a target, and
-        # relaxable lets the solver move it rather than declaring the whole
-        # contract unsatisfiable. It is a placeholder, not a design choice.
-        kept.append({"subject_id": item_id, "kind": "centered",
-                     "parameters_m": {}, "relaxable": True})
-        synthesized += 1
+    # Distribute unplaced items along available wall space rather than stacking
+    # them all at "centered" (0,0). This was the single largest overlap source:
+    # 430 synthesized centered relations with 64% overlapping (TRAINING-REAIM).
+    unplaced = [item_id for item_id in item_ids if item_id not in placed]
+    if unplaced:
+        # Assign each unplaced item to a wall slot, cycling through walls
+        # with offsets so they don't land on the same spot.
+        walls = ["south", "east", "north", "west"]
+        for index, item_id in enumerate(unplaced):
+            wall = walls[index % len(walls)]
+            # Spread items along the wall using fractional offsets
+            slot = (index // len(walls)) + 1
+            offset = slot * 0.8  # 0.8m spacing between synthesized placements
+            # Alternate left/right of center
+            sign = 1.0 if (slot % 2 == 1) else -1.0
+            along_offset = sign * offset
+            kept.append({
+                "subject_id": item_id, "kind": "against_wall",
+                "wall": wall,
+                "parameters_m": {"along_offset_m": along_offset, "wall_gap_m": 0.05},
+                "relaxable": True,
+            })
+            synthesized += 1
 
     payload["relationships"] = kept
     stats = {}

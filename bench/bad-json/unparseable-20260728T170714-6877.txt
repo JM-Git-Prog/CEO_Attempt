@@ -1,0 +1,15 @@
+error: Invalid control character at: line 4 column 81 (char 307)
+------------------------------------------------------------
+{"name":"Cozy Living Room","room":{"width":4,"depth":5,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","x":1.5,"z":0,"width":0.8,"depth":1.2,"height":1.5,"elevation":1.5,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A stone fireplace
+with a wood mantel and hearth."},{"id":"bookshelf","name":"Solid Oak Bookshelf",
+"category":"furniture","mount":"wall","x":2.7,"z":1.5,"width":0.8,"depth":1.0,
+"height":2.4,"elevation":2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A bookshelf made of solid oak with leather-bound books."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0,"width":0.8,
+"height":2,"sill_height":0.05}], "camera":{"x":1,"y":1.5,"z":1,"target_x":1.5,
+"target_y":1.5,"target_z":0,"fov_deg":60},"circulation_notes":[],
+"design_notes":["Exposure: Place furniture in a U-shape around the fireplace for
+maximum wall exposure."],"schema_version":"2023-12-01T00-00-00"}
