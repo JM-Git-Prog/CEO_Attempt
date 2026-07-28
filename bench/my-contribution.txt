@@ -1,0 +1,5 @@
+failing plans examined                  : 687
+plans with MORE THAN ONE centered item  : 201 (29%)
+
+centered relations the MODEL wrote      : 539   of which overlapping: 278 (52%)
+centered relations MY reconciler added  : 430   of which overlapping: 277 (64%)

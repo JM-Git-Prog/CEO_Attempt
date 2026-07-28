@@ -148,6 +148,13 @@ async def generate(
         # substituting fake output into a measurement run.
         raise LLMError("all configured LLM backends failed -> " + " | ".join(failures))
 
+    if not failures and os.getenv("ALLOW_MOCK_LLM", "") != "1":
+        # No backends configured at all — refuse to silently mock
+        raise LLMError(
+            "No LLM backends configured (OLLAMA_URL and OPENAI_API_URL both empty). "
+            "Set ALLOW_MOCK_LLM=1 to use the deterministic diner fallback."
+        )
+
     from src.orchestrator.mock_llm import mock_generate
     return mock_generate(system, user)
 
@@ -319,10 +326,17 @@ async def generate_json(
         async with asyncio.timeout(max(0.1, float(timeout_seconds))):
             return await run_attempts()
     except TimeoutError:
-        from src.orchestrator.mock_llm import mock_generate
-
-        print(f"[LLM] Timeout after {timeout_seconds}s — using deterministic fallback")
-        return _parse_json(mock_generate(system, user))
+        # Do NOT silently substitute mock data — the user's actual prompt matters.
+        # If the LLM times out, raise so the pipeline reports a clear failure.
+        if os.getenv("ALLOW_MOCK_LLM", "") == "1":
+            from src.orchestrator.mock_llm import mock_generate
+            print(f"[LLM] Timeout after {timeout_seconds}s — using deterministic fallback (ALLOW_MOCK_LLM=1)")
+            return _parse_json(mock_generate(system, user))
+        raise LLMError(
+            f"LLM timed out after {timeout_seconds}s. "
+            f"Check that Ollama is running and the model is loaded. "
+            f"Retry or increase LLM_TIMEOUT."
+        )
 
 
 async def generate_vision_json(
