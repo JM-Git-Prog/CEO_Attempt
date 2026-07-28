@@ -110,7 +110,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
 - [~] 4. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Object 3D Generation with Fallback Chain
+- [x] 5. Object 3D Generation with Fallback Chain
   - [x] 5.1 Implement Object Generator (`src/photo_pipeline/stages/object_generator.py`)
     - Implement `ObjectGenerator.generate()` with full fallback chain: Hunyuan3D 2.0 → Unique3D → TripoSR → placeholder
     - Each neural generator: submit ComfyUI workflow, retrieve GLB, validate mesh (≥4 faces, ≥4 vertices, ≤5% zero-area faces)
@@ -120,18 +120,18 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `ObjectMeshResult` with GLB path, method, timing, face/vertex counts
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7_
 
-  - [~] 5.2 Write property test for mesh validation (Property 6)
+  - [x] 5.2 Write property test for mesh validation (Property 6)
     - **Property 6: Mesh Validation Correctness**
     - For any mesh, validation returns True iff faces ≥ 4, vertices ≥ 4, and zero-area face ratio ≤ 0.05
     - **Validates: Requirements 4.6**
 
-  - [~] 5.3 Write property test for placeholder geometry selection (Property 7)
+  - [x] 5.3 Write property test for placeholder geometry selection (Property 7)
     - **Property 7: Placeholder Geometry Selection by Aspect Ratio**
     - For any bounding box dimensions, placeholder type is deterministically selected by aspect ratio; textured with average color from non-transparent pixels
     - **Validates: Requirements 4.4**
 
 - [ ] 6. Audio Synthesis
-  - [~] 6.1 Implement Audio Synthesizer (`src/photo_pipeline/stages/audio_synthesizer.py`)
+  - [x] 6.1 Implement Audio Synthesizer (`src/photo_pipeline/stages/audio_synthesizer.py`)
     - Implement `AudioSynthesizer.synthesize()` — try ComfyUI audio nodes first, fallback to sound bank
     - Implement `_estimate_material()` — classify object into {wood, metal, glass, fabric, ceramic, plastic} from Object_PNG visual features (color histogram heuristic)
     - Implement `_lookup_sound_bank()` — map material category to WAV file in `assets/sound_bank/`
@@ -163,7 +163,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - **Validates: Requirements 5.3**
 
 - [ ] 7. Light Estimation, Scale Calibration, and Layout
-  - [~] 7.1 Implement Light Estimator (`src/photo_pipeline/stages/light_estimator.py`)
+  - [x] 7.1 Implement Light Estimator (`src/photo_pipeline/stages/light_estimator.py`)
     - Implement `LightEstimator.estimate()` — CPU-based heuristic from source image
     - Analyze shadow directions to estimate primary light direction vector (normalized)
     - Estimate color temperature from image white balance (1800K-12000K)

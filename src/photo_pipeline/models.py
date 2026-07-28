@@ -142,6 +142,20 @@ class ObjectMeshResult:
 
 
 @dataclass(frozen=True)
+class AudioResult:
+    """Result of audio synthesis for a single segmented object.
+
+    Records the output WAV path, generation method used, audio duration,
+    and estimated material category.
+    """
+
+    wav_path: Path
+    method_used: Literal["comfyui_audio", "sound_bank", "default"]
+    duration_s: float
+    material_category: str  # wood, metal, glass, fabric, ceramic, plastic
+
+
+@dataclass(frozen=True)
 class DepthResult:
     """Result of the depth estimation stage (MoGe-2 metric depth).
 
@@ -169,6 +183,22 @@ class RoomMeshResult:
     vertex_count: int
     face_count: int
     used_heuristic: bool  # True if flat-floor fallback was used
+
+
+@dataclass(frozen=True)
+class LightEstimateResult:
+    """Result of the light estimation stage.
+
+    Contains estimated primary light direction, color temperature, intensity,
+    ambient parameters, and a confidence score indicating estimation quality.
+    """
+
+    sun_direction: tuple[float, float, float]  # normalized 3D vector (WorldContract coords)
+    color_temperature_k: int  # 1800-12000
+    intensity: float  # 0.0-100.0
+    ambient_intensity: float  # 0.0-1.0
+    ambient_color: str  # hex color
+    confidence: float  # 0.0-1.0
 
 
 @dataclass(frozen=True)
