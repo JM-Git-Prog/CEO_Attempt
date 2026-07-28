@@ -19,6 +19,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 LLM_MODEL = os.getenv("LLM_MODEL", "llama3.1")
 LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
 
+# 16384 was hardcoded and it does not work on this machine: a cold request at
+# that size times out entirely, while the identical request at 4096 answers in
+# under a second (check_ollama, 2026-07-27). A bigger KV cache also competes
+# with training for the same card. 8192 is the compromise - still well above
+# the plan prompt plus schema - and it is now tunable without a code edit.
+OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
+
 
 class LLMError(Exception):
     pass
@@ -37,7 +44,7 @@ async def _call_ollama(
         "options": {
             "temperature": 0.15 if json_mode else 0.7,
             "num_predict": 8192,
-            "num_ctx": 16384,
+            "num_ctx": OLLAMA_NUM_CTX,
         },
     }
     if json_mode:
@@ -344,7 +351,10 @@ async def generate_vision_json(
             ],
             "stream": False,
             "format": "json",
-            "options": {"temperature": 0.1, "num_predict": 8192, "num_ctx": 24576},
+            # was a hardcoded 24576 - even larger than the 16384 that times out
+            # cold on this card. Same tunable, same reason.
+            "options": {"temperature": 0.1, "num_predict": 8192,
+                        "num_ctx": OLLAMA_NUM_CTX},
         }
         async with httpx.AsyncClient(timeout=max(LLM_TIMEOUT, 300)) as client:
             response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
