@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This specification defines the minimum viable path to a working "type a sentence → get a playable 3D game" experience. The user types a natural-language room description, and the system **launches a playable 3D game** — not a file to download, not a project to open in an editor, not a rendered image. The game starts. The user is inside the room they described. They walk around with WASD, look with the mouse, open doors. That is the deliverable.
+This specification defines the minimum viable path to ,utut
 
 The MVP leverages existing pipeline stages (LLM interpretation, floor plan generation, scene graph construction, world contract, UPBGE compiler) and focuses on: (1) making the UPBGE compilation script produce a real playable runtime, (2) relaxing overly-strict validation gates so LLM plans actually pass, (3) auto-launching the compiled game so the user never touches a file manually.
 

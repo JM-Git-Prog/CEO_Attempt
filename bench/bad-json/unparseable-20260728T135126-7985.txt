@@ -1,0 +1,58 @@
+error: Expecting ',' delimiter: line 5 column 16 (char 245)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","wall":"west","x":1.8,"z":0,"width":1.0,"depth":0.9,"height":2.1,
+"elevation":2.7-2.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Exposes
+to the north with a large stone surround and a wooden mantel."},
+{"id":"bookshelf","name":"Solid Wood Bookcase","category":"furniture",
+"mount":"wall","wall":"north","x":2.1,"z":2.5,"width":0.8,"depth":0.7,"height":2.4,
+"elevation":2.7-2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"Tall
+cabinet with ornate carvings and solid wood construction."},
+{"id":"armchair","name":"Rich Brown Leather Armchair",
+"category":"furniture","mount":"floor","x":1.7,"z":2.8,"width":0.6,"depth":0.5,
+"height":0.7,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,
+"description":"Comfortable seating with a sturdy frame and rich brown leather upholstery."},
+{"id":"coffee_table","name":"Wooden Coffee Table",
+"category":"furniture","mount":"floor","x":2.3,"z":1.7,"width":0.8,"depth":0.6,
+"height":0.4,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"Simple wooden table with a woven basket underneath."},
+{"id":"floor_lamp","name":"Linen Shade Floor Lamp",
+"category":"fixture","mount":"floor","x":2.9,"z":1.4,"width":0.4,"depth":0.4,
+"height":1.0,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"Tall lamp with a natural linen shade and a sturdy metal base."},
+{"id":"area_rug","name":"Natural Fiber Area Rug",
+"category":"decor","mount":"floor","x":1.4,"z":2.9,"width":1.8,"depth":1.8,
+"height":0.1,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"Large, natural fiber rug adding warmth and texture to the space."},
+{"id":"wooden_door","name":"Wooden Door with Frosted Glass",
+"category":"fixture","mount":"wall","wall":"east","x":3.1,"z":0,"width":0.9,
+"depth":0.9,"height":2.0,"elevation":2.7-2.0,"rotation_deg":0,"fixed":true,
+"clearance_m":0.3,"description":"Sturdy wooden door with a frosted glass panel."}],
+"openings":[{"id":"door","kind":"door","wall":"east","offset":0,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.3,"target_x":2.8,"target_y":1.4,"target_z":0.5,
+"fov_deg":60},"circulation_notes":["Walk from the door to the armchair without squeezing
+past furniture. The path is clear with a minimum width of 0.8m."],
+"design_notes":[],"schema_version":"2023-12-01T00-00-00"}
+
+V11 EXPLICIT-INTENT REVISION — applies design thinking principles to create a practical, buildable floor plan.
+ZONES: Identify seating (armchair), work (coffee table), circulation, and display zones.
+WALLS FIRST: Place the fireplace against the west wall. The bookshelf goes against the north
+wall with equal distance from the door and fireplace. The wooden door belongs against the east
+wall.
+CIRCULATION: Maintain a clear path from the door to the armchair. The coffee table is placed
+relative to the armchair so it does not block circulation. The floor lamp supports the seating
+zone without impeding walkways.
+RELATIONSHIPS: The armchair faces the coffee table. The pendant light (floor_lamp) hangs above
+the coffee table.
+SPACING: Repeated items (stools, chairs, cabinets) distribute evenly along their parent surface
+with equal gaps. Never stack them on top of each other.
+DOOR CLEARANCE: Nothing within 1.0m inward of the door. The door swing arc must be completely
+unobstructed.
+WINDOW CLEARANCE: Keep furniture at least 0.3m from exterior wall surfaces so light enters freely.
+PROPORTIONS: Item dimensions must be realistic. A stool is ~0.4m wide. A pendant light is ~0.3m
+tall. An arcade cabinet is ~0.7m wide × 0.8m deep. A bed is ~2.0m × 1.6m.
+CAMERA: Place the camera in a corner with a clear diagonal view across the room showing the
+maximum number of objects. Never place the camera behind or inside furniture.

@@ -327,8 +327,29 @@ class PhotoWorldContractAssembler:
         # Build dimensions from scale calibration
         w, h, d = obj.scale_m
 
-        # Asset registry ID from the mesh path (sanitized)
-        asset_id = f"asset:{obj.mask_id}"
+        # Asset registry ID from the mesh path — only set for real meshes
+        # Placeholder meshes use geometry_strategy="primitive"
+        has_real_mesh = (
+            obj.mesh_path is not None
+            and obj.mesh_method not in (None, "placeholder")
+        )
+        asset_id = f"asset:{obj.mask_id}" if has_real_mesh else None
+        geometry_strategy = "asset" if has_real_mesh else "primitive"
+
+        # Determine primitive shape for placeholder geometry
+        primitive_shape: str | None = None
+        if geometry_strategy == "primitive":
+            # Map placeholder method info or default to box
+            if w > 0 and h > 0:
+                aspect = w / h
+                if aspect < 0.5:
+                    primitive_shape = "cylinder"
+                elif h < 0.2 and w < 0.2 and d < 0.2:
+                    primitive_shape = "sphere"
+                else:
+                    primitive_shape = "box"
+            else:
+                primitive_shape = "box"
 
         return WorldInstance(
             id=instance_id,
@@ -343,7 +364,8 @@ class PhotoWorldContractAssembler:
             dimensions=Dimensions(width_m=w, height_m=h, depth_m=d),
             material_id=material_id,
             physics_intent_id=physics_id,
-            geometry_strategy="asset",
+            geometry_strategy=geometry_strategy,
+            primitive_shape=primitive_shape,
             asset_registry_id=asset_id,
         )
 

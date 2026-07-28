@@ -22,6 +22,7 @@ from src.camera_contract import (
     normalize_image_frame,
 )
 from src.models import SceneConcept
+from src.orchestrator.net_guard import checked_url
 from src.workflow_provenance import (
     artifact_metadata,
     profile_by_id,
@@ -337,8 +338,9 @@ async def _generate_with_comfyui(
 
 async def _generate_with_api(prompt: str, output_path: Path) -> Path:
     headers = {"Authorization": f"Bearer {IMAGE_API_KEY}"} if IMAGE_API_KEY else {}
+    endpoint = checked_url("IMAGE_API_URL")
     async with httpx.AsyncClient(timeout=COMFYUI_TIMEOUT) as client:
-        response = await client.post(f"{IMAGE_API_URL}/images/generations", headers=headers, json={"prompt": prompt, "n": 1, "size": "1024x768"})
+        response = await client.post(f"{endpoint}/images/generations", headers=headers, json={"prompt": prompt, "n": 1, "size": "1024x768"})
         response.raise_for_status()
         item = response.json()["data"][0]
         if item.get("b64_json"):

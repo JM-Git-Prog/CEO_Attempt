@@ -1,0 +1,12 @@
+error: Invalid control character at: line 8 column 87 (char 655)
+------------------------------------------------------------
+{"name":"bedroom-plan-1","room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor",
+"x":0.9,"z":1.5,"width":1.8,"depth":2.0,"height":0.7,"elevation":0,"rotation_deg":0,
+"fixed":true,"clearance_m":0.3,"description":"A simple single bed with a white headboard."}],
+"openings":[{"id":"closet-door","kind":"door","wall":"west","offset":0,"width":0.8,
+"height":2.0,"sill_height":0.05}], "camera":{"x":1.7,"y":1.6,"z":2.3,"target_x":1.7,
+"target_y":0.1,"target_z":0.7,"fov_deg":60},"circulation_notes":[],
+"design_notes":["Zones: bed + nightstand + circulation path","Walls first: bed against
+north wall, nightstand against east wall","Circulation: clear path from door to bed"],
+"schema_version":"2023-12-01T00-00-00"}

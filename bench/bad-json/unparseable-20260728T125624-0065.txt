@@ -1,0 +1,31 @@
+error: Invalid control character at: line 4 column 87 (char 311)
+------------------------------------------------------------
+{"name":"Cozy Living Room","room":{"width":4,"depth":5,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","x":1,"z":0,"width":0.8,"depth":0.9,"height":1.2,"elevation":1.4,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A warm, brick fireplace
+with a wooden mantel."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2,"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":1.4,"target_x":1,"target_y":0,"target_z":0,
+"fov_deg":60},"circulation_notes":[],
+"design_notes":[],"schema_version":"complete-plan-v1"}
+
+V11 EXPLICIT-INTENT REVISION — applying design thinking:
+1. ZONES: Seating (armchair + ottoman), work (coffee table), display (bookshelf).
+2. WALLS FIRST: Fireplace against north wall. Door against west wall.
+3. CIRCULATION: Path from door to seating area is clear (1.0m wide).
+4. RELATIONSHIPS: Armchair faces coffee table. Ottoman is adjacent to armchair.
+5. SPACING: Stools = 0 (not applicable). Pendant lights = 0 (not applicable).
+6. DOOR CLEARANCE: Nothing within 1.0m inward of door.
+7. WINDOW CLEARANCE: N/A (no windows).
+8. PROPORTIONS: Item dimensions are realistic.
+9. CAMERA: Places camera in corner with diagonal view showing maximum number of objects.
+
+V11 COMPLETE-PLAN-REVISION — adding missing schema fields:
+* name, room, items, openings, camera, circulation_notes, design_notes,
+  schema_version are mandatory.
+* against_wall + wall = complete wall placement.
+* z + height + elevation = realistic ceiling fixture hanging size.
+* fixed + wall + against_wall = large built-in surface.
+* clearance_m is optional but practical for buildability notes.

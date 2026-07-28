@@ -1,0 +1,24 @@
+error: Expecting ',' delimiter: line 12 column 66 (char 953)
+------------------------------------------------------------
+{"name":"Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, wooden bed frame with a plush comforter and two pillows."},
+{"id":"nightstand","name":"Nightstand","category":"furniture","mount":"floor","x":0.7,"z":1.5,
+"width":0.7,"depth":0.6,"height":0.7,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.2,
+"description":"A small, wooden nightstand with a ceramic lamp and a stack of books."},
+{"id":"door","name":"Wooden Door","category":"architectural","mount":"wall","wall":"west",
+"offset":0.1,"width":0.9,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"closet","name":"Closet","category":"furniture","mount":"wall","wall":"north",
+"offset":0.3,"width":0.8,"depth":1.0,"height":0.9,"elevation":2.7-0.9,"rotation_deg":0,
+"fixed":true,"clearance_m":0.4,"description":"A small, wooden closet with a wooden door."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0.1,"width":0.9,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":1.0,"target_x":1.8,"target_y":0.5,"target_z":0.0,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a width of at least 0.8m.",
+"Nightstand is placed along the south wall with equal gaps from adjacent furniture."],
+"design_notes":["Apply soft blue paint to walls for a calming atmosphere.",
+"Place ceramic lamp on nightstand for warm, inviting light.",
+"Add stack of books to nightstand for visual interest."]}
+}

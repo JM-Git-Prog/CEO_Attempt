@@ -1,0 +1,45 @@
+error: Invalid control character at: line 5 column 81 (char 312)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","wall":"west","x":1.8,"z":0.9,"width":0.8,"depth":0.6,"height":1.2,
+"elevation":2.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A
+brick or stone fireplace with a wooden mantel."},
+{"id":"door","name":"Wooden Door","category":"furniture",
+"mount":"wall","wall":"north","x":2.3,"z":1.5,"width":0.9,"depth":0.6,
+"height":2.0,"elevation":2.7-2.0,"rotation_deg":0,"fixed":true,"clearance_m":0.1,
+"description":"A wooden door with a frosted glass panel."},
+{"id":"bookshelf","name":"Solid Wood Bookcase","category":"furniture",
+"mount":"wall","wall":"east","x":0.5,"z":2.3,"width":1.0,"depth":0.7,
+"height":2.4,"elevation":2.7-2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.2,
+"description":"A bookcase made of solid wood with ornate carvings."},
+{"id":"armchair","name":"Plush Armchair","category":"furniture",
+"mount":"floor","x":1.8,"z":3.5,"width":0.7,"depth":0.6,"height":0.9,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,"description":"A
+comfortable armchair in rich brown leather."},
+{"id":"ottoman","name":"Matching Ottoman","category":"furniture",
+"mount":"floor","x":1.8,"z":2.9,"width":0.7,"depth":0.6,"height":0.5,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,"description":"A
+matching ottoman for the armchair."},
+{"id":"coffee_table","name":"Reclaimed Wood Coffee Table",
+"category":"furniture","mount":"floor","x":2.7,"z":1.5,"width":0.8,
+"depth":0.6,"height":0.4,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.2,"description":"A coffee table made of reclaimed wood."},
+{"id":"floor_lamp","name":"Wooden Base Floor Lamp",
+"category":"fixture","mount":"ceiling","x":3.5,"z":1.8,"width":0.4,
+"depth":0.4,"height":0.7,"elevation":2.7-0.7,"rotation_deg":0,"fixed":true,
+"clearance_m":0.1,"description":"A floor lamp with a wooden base and linen shade."}],
+"openings":[{"id":"door_opening","kind":"door","wall":"north","offset":0,
+"width":0.9,"height":2.0,"sill_height":0.05}],
+"camera":{"x":0.7,"y":1.6,"z":0.8,"target_x":2.3,"target_y":1.5,
+"target_z":0.8,"fov_deg":60},
+"circulation_notes":["Circulate around the armchair and ottoman from north to south.
+The door is located near the center of the north wall, creating a clear path from
+the door to the seating area."],
+"design_notes":["Exposure: Place the camera in a corner with a diagonal view across
+the room showing the maximum number of objects. Never place the camera behind or
+inside furniture.\nZones: Identify functional zones (seating, work, circulation,
+display). Place primary furniture first, then support pieces relative to it.\nWall
+First: Large furniture belongs against walls. Only focal-point pieces (tables,
+islands) go in the center. Never cluster everything at 0,0."}]

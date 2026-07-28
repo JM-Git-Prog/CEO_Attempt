@@ -644,6 +644,27 @@ async def create_photo_session(request: Request):
             },
             status_code=500,
         )
+    except Exception as exc:
+        # Catch any unhandled exception (ComfyUI node errors, etc.)
+        import traceback
+        traceback.print_exc()
+        error_msg = str(exc)
+        # Provide user-friendly messages for known infrastructure issues
+        if "missing_node_type" in error_msg or "not found" in error_msg.lower():
+            error_msg = (
+                "The photo pipeline requires ComfyUI custom nodes that are not installed. "
+                "Please install the required nodes (SAM, MoGe-2, Hunyuan3D) in ComfyUI."
+            )
+        return JSONResponse(
+            {
+                "error": error_msg,
+                "session_id": session_id,
+                "source_type": "photo",
+                "stage": "pipeline",
+                "reason_code": "infrastructure_error",
+            },
+            status_code=503,
+        )
 
     # Store session metadata with source_type="photo" for Requirement 14.5
     session_meta = {

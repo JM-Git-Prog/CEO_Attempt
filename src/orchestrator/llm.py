@@ -13,6 +13,8 @@ from typing import Optional
 
 import httpx
 
+from src.orchestrator.net_guard import checked_url
+
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 OPENAI_API_URL = os.getenv("OPENAI_API_URL", "")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
@@ -49,8 +51,9 @@ async def _call_ollama(
     }
     if json_mode:
         payload["format"] = "json"
+    endpoint = checked_url("OLLAMA_URL", "http://localhost:11434")
     async with httpx.AsyncClient(timeout=LLM_TIMEOUT) as client:
-        response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
+        response = await client.post(f"{endpoint}/api/chat", json=payload)
         if response.status_code != 200:
             raise LLMError(f"Ollama returned {response.status_code}: {response.text}")
         body = response.json()
@@ -99,9 +102,10 @@ async def _call_openai_compatible(
     }
     if json_mode:
         payload["response_format"] = {"type": "json_object"}
+    endpoint = checked_url("OPENAI_API_URL")
     async with httpx.AsyncClient(timeout=LLM_TIMEOUT) as client:
         response = await client.post(
-            f"{OPENAI_API_URL}/v1/chat/completions", headers=headers, json=payload
+            f"{endpoint}/v1/chat/completions", headers=headers, json=payload
         )
         if response.status_code != 200:
             raise LLMError(f"API returned {response.status_code}: {response.text}")
@@ -370,8 +374,9 @@ async def generate_vision_json(
             "options": {"temperature": 0.1, "num_predict": 8192,
                         "num_ctx": OLLAMA_NUM_CTX},
         }
+        endpoint = checked_url("OLLAMA_URL", "http://localhost:11434")
         async with httpx.AsyncClient(timeout=max(LLM_TIMEOUT, 300)) as client:
-            response = await client.post(f"{OLLAMA_URL}/api/chat", json=payload)
+            response = await client.post(f"{endpoint}/api/chat", json=payload)
         if response.status_code != 200:
             raise LLMError(f"Vision model returned {response.status_code}: {response.text[:500]}")
         raw = response.json()["message"]["content"]

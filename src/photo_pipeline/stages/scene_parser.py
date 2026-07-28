@@ -309,32 +309,113 @@ class SceneParser:
     ) -> list[np.ndarray]:
         """Submit SAM ViT-H workflow and retrieve per-object masks.
 
-        Parameters
-        ----------
-        source_image : Path
-            Input image path.
-        config : PhotoPipelineConfig
-            Pipeline configuration.
-
-        Returns
-        -------
-        list[np.ndarray]
-            List of binary masks (uint8, H×W) from SAM output.
+        Tries ComfyUI first; if it fails (missing nodes), falls back to
+        running SAM locally in Python, then to OpenCV contour detection.
         """
-        workflow = load_workflow("sam_segment")
+        # Try ComfyUI path first
+        try:
+            workflow = load_workflow("sam_segment")
+            placeholders = {
+                "INPUT_IMAGE_PATH": str(source_image).replace("\\", "/"),
+                "OUTPUT_DIR": str(self.output_dir / "sam_raw").replace("\\", "/"),
+            }
+            prompt_id = await self.client.submit_workflow(
+                workflow, placeholders=placeholders
+            )
+            await self.client.wait_for_completion(prompt_id)
+            return self._load_sam_output_masks()
+        except (ComfyUIError, Exception) as exc:
+            logger.warning(
+                "ComfyUI SAM failed (%s) — trying local SAM", exc
+            )
 
-        placeholders = {
-            "INPUT_IMAGE_PATH": str(source_image).replace("\\", "/"),
-            "OUTPUT_DIR": str(self.output_dir / "sam_raw").replace("\\", "/"),
-        }
+        # Fallback: run SAM locally via segment_anything
+        return await self._run_local_sam(source_image, config)
 
-        prompt_id = await self.client.submit_workflow(
-            workflow, placeholders=placeholders
-        )
-        await self.client.wait_for_completion(prompt_id)
+    async def _run_local_sam(
+        self, source_image: Path, config: PhotoPipelineConfig
+    ) -> list[np.ndarray]:
+        """Run SAM ViT-H locally when ComfyUI nodes unavailable."""
+        import asyncio
 
-        # Retrieve SAM output masks from the output directory
-        return self._load_sam_output_masks()
+        try:
+            import torch
+            from segment_anything import SamAutomaticMaskGenerator, sam_model_registry
+
+            sam_path = self._find_sam_model()
+            if sam_path is None:
+                logger.warning("SAM model not found — using contour fallback")
+                return await self._run_contour_fallback(source_image)
+
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            logger.info("Loading SAM ViT-H on %s from %s", device, sam_path)
+
+            def _run():
+                sam = sam_model_registry["vit_h"](checkpoint=str(sam_path))
+                sam.to(device=device)
+                gen = SamAutomaticMaskGenerator(
+                    sam,
+                    points_per_side=32,
+                    pred_iou_thresh=0.86,
+                    stability_score_thresh=0.92,
+                    min_mask_region_area=100,
+                )
+                img = np.array(Image.open(source_image).convert("RGB"))
+                logger.info("Running SAM automatic mask generation...")
+                results = gen.generate(img)
+                logger.info("SAM produced %d masks", len(results))
+                return [(m["segmentation"].astype(np.uint8) * 255) for m in results]
+
+            loop = asyncio.get_running_loop()
+            return await loop.run_in_executor(None, _run)
+
+        except ImportError:
+            logger.warning("segment_anything not installed — contour fallback")
+            return await self._run_contour_fallback(source_image)
+        except Exception as exc:
+            logger.warning("Local SAM failed (%s) — contour fallback", exc)
+            return await self._run_contour_fallback(source_image)
+
+    def _find_sam_model(self) -> Path | None:
+        """Search standard locations for SAM ViT-H checkpoint."""
+        candidates = [
+            Path("C:/Users/JohnM/ComfyUI-Installs/ComfyUI/ComfyUI/models/sams/sam_vit_h_4b8939.pth"),
+            Path("models/sams/sam_vit_h_4b8939.pth"),
+            Path.home() / ".cache" / "sam" / "sam_vit_h_4b8939.pth",
+        ]
+        for p in candidates:
+            if p.exists():
+                return p
+        return None
+
+    async def _run_contour_fallback(self, source_image: Path) -> list[np.ndarray]:
+        """OpenCV contour detection as final fallback (no ML models needed)."""
+        import asyncio
+        import cv2
+
+        def _detect():
+            img = cv2.imread(str(source_image))
+            if img is None:
+                return []
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            blurred = cv2.GaussianBlur(gray, (11, 11), 0)
+            edges = cv2.Canny(blurred, 30, 100)
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+            dilated = cv2.dilate(edges, kernel, iterations=2)
+            contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            h, w = img.shape[:2]
+            masks = []
+            for contour in contours:
+                if cv2.contourArea(contour) < 500:
+                    continue
+                mask = np.zeros((h, w), dtype=np.uint8)
+                cv2.drawContours(mask, [contour], -1, 255, -1)
+                masks.append(mask)
+            logger.info("Contour fallback found %d regions", len(masks))
+            return masks
+
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, _detect)
 
     def _load_sam_output_masks(self) -> list[np.ndarray]:
         """Load binary masks from SAM's output directory.

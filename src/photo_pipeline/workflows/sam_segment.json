@@ -6,7 +6,7 @@
     }
   },
   "2": {
-    "class_type": "SAMModelLoader",
+    "class_type": "SAMModelLoader (segment anything)",
     "inputs": {
       "model_name": "sam_vit_h_4b8939.pth"
     }

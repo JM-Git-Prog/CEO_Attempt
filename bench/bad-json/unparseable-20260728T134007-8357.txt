@@ -1,0 +1,56 @@
+error: Extra data: line 21 column 1 (char 1272)
+------------------------------------------------------------
+{"name":"Bedroom-1",
+"room":{"width":3.6,"depth":3.0,"height":2.7},
+"items":[{"id":"bed_1","name":"Single Bed",
+"category":"furniture","mount":"floor","x":0.9,"z":1.5,"width":1.8,"depth":1.9,
+"height":0.9,"elevation":0,"rotation_deg":0,"fixed":true,"clearance_m":0.2,
+"description":"A simple, low-profile bed with a white headboard and warm wood tone frame."},
+{"id":"nightstand_1","name":"Nightstand",
+"category":"furniture","mount":"floor","x":1.5,"z":0.3,"width":0.7,"depth":0.6,
+"height":0.7,"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A small, creamy-white nightstand with a built-in lamp."},
+{"id":"closet_door_1","name":"Closet Door",
+"category":"architectural","mount":"wall","x":3.0,"z":2.7,"width":0.9,"depth":0,
+"height":2.0,"elevation":2.7,"rotation_deg":90,"fixed":true,"clearance_m":0.1,
+"description":"A simple sliding closet door with a minimalist handle."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.0,"target_x":0.9,"target_y":1.5,"target_z":0,
+"fov_deg":60},"circulation_notes":["Path from door to bed is clear.",
+"Nightstand is within reach from bed."],
+"design_notes":[],"schema_version":"2023-12-01T00-00-00"}
+V11 EXPLICIT-INTENT REVISION — applying design thinking:
+* ZONES: Bed + nightstand + closet door = 3 functional zones. Place bed first, then support pieces relative to it.
+* WALLS FIRST: Closet door goes against wall. Nightstand belongs adjacent to bed, not in the center.
+* CIRCULATION: Maintain clear path from door to bed. Nightstand is within reach from bed.
+* RELATIONSHIPS: Pendant light would hang above nightstand, creating a focal point. Never place focal-point pieces at 0,0.
+* SPACING: Repeated items (stools, chairs) distribute evenly along parent surface with equal gaps. Never stack them on top of each other.
+* DOOR CLEARANCE: Nothing within 1.0m inward of door_1. Door swing arc is completely unobstructed.
+* WINDOW CLEARANCE: N/A (no exterior windows).
+* PROPORTIONS: Item dimensions are realistic. A bed is ~2.0m × 1.6m, nightstand is ~0.7m wide × 0.6m deep, closet door is ~0.9m wide × 2.0m tall.
+* CAMERA: Place camera in corner with clear diagonal view showing maximum number of objects. Never place camera behind or inside furniture.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are item's CENTER position in meters.
+- width is X-axis span, depth is Z-axis span.
+- elevation is bottom of item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates item around its center (0 = front faces south).
+
+RULES:
+- Return one valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string],"schema_version":string}
