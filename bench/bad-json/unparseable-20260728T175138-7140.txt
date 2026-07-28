@@ -1,0 +1,64 @@
+error: Invalid control character at: line 5 column 89 (char 300)
+------------------------------------------------------------
+{"name":"Diner-1",
+"room":{"width":8,"depth":10,"height":3},
+"items":[{"id":"booth_1","name":"Red Vinyl Booth","category":"furniture",
+"mount":"wall","wall":"west","x":0,"z":2,"width":2,"depth":1.5,"height":0.9,
+"elevation":2.7,"rotation_deg":0,"fixed":true,"clearance_m":0.8,"description":"A classic
+1950s red vinyl booth with chrome accents."},
+{"id":"booth_2","name":"Red Vinyl Booth","category":"furniture",
+"mount":"wall","wall":"west","x":2,"z":2,"width":2,"depth":1.5,"height":0.9,
+"elevation":2.7,"rotation_deg":0,"fixed":true,"clearance_m":0.8,"description":"A classic
+1950s red vinyl booth with chrome accents."},
+{"id":"stool_1","name":"Chrome Stool","category":"furniture",
+"mount":"floor","x":4,"z":5,"width":0.4,"depth":0.3,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A
+chrome-plated stool with a comfortable cushion."},
+{"id":"stool_2","name":"Chrome Stool","category":"furniture",
+"mount":"floor","x":4.4,"z":5,"width":0.4,"depth":0.3,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A
+chrome-plated stool with a comfortable cushion."},
+{"id":"stool_3","name":"Chrome Stool","category":"furniture",
+"mount":"floor","x":4.8,"z":5,"width":0.4,"depth":0.3,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A
+chrome-plated stool with a comfortable cushion."},
+{"id":"stool_4","name":"Chrome Stool","category":"furniture",
+"mount":"floor","x":5.2,"z":5,"width":0.4,"depth":0.3,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A
+chrome-plated stool with a comfortable cushion."},
+{"id":"stool_5","name":"Chrome Stool","category":"furniture",
+"mount":"floor","x":5.6,"z":5,"width":0.4,"depth":0.3,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A
+chrome-plated stool with a comfortable cushion."},
+{"id":"stool_6","name":"Chrome Stool","category":"furniture",
+"mount":"floor","x":6,"z":5,"width":0.4,"depth":0.3,"height":0.7,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A
+chrome-plated stool with a comfortable cushion."},
+{"id":"counter","name":"Chrome Counter","category":"furniture",
+"mount":"wall","wall":"south","x":4,"z":0,"width":6,"depth":1,
+"height":0.9,"elevation":0.9,"rotation_deg":0,"fixed":true,"clearance_m":0.8,
+"description":"A long, chrome-plated counter with six stools."},
+{"id":"floor","name":"Black and White Checkerboard Floor",
+"category":"architectural","mount":"floor","x":0,"z":0,"width":8,"depth":10,
+"height":0.01,"elevation":0,"rotation_deg":0,"fixed":true,"clearance_m":0.9,
+"description":"A classic black and white checkerboard linoleum floor."},
+{"id":"neon_sign",
+"name":"Neon Window Sign","category":"fixture",
+"mount":"wall","wall":"north","x":4,"z":3,"width":1,"depth":0.5,
+"height":0.2,"elevation":2.8,"rotation_deg":0,"fixed":true,"clearance_m":0.6,
+"description":"A colorful neon sign above the window."},
+{"id":"jukebox",
+"name":"Vintage Jukebox","category":"furniture",
+"mount":"floor","x":7,"z":9,"width":1,"depth":1.5,"height":2,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,"description":"A
+vintage jukebox with a glass face and spinning records."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":1,
+"height":2,"sill_height":0.05}],
+"camera":{"x":3,"y":1.5,"z":3,"target_x":4,"target_y":0,"target_z":1.5,
+"fov_deg":60},"circulation_notes":["Circulates from the door along the wall to
+the counter, then turns east along the counter to the stools. From there, it continues
+south to the jukebox in the corner."],
+"design_notes":["Create a warm, nostalgic atmosphere with practical furniture
+placement. Apply the principles of zone creation, wall placement, circulation, and
+clearance."]}
+}
