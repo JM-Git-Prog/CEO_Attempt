@@ -1,0 +1,43 @@
+error: Invalid control character at: line 10 column 95 (char 737)
+------------------------------------------------------------
+{"name":"Bedroom-1",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":0.9,
+"z":1.65,"width":1.8,"depth":2.0,"height":0.7,"elevation":0,"rotation_deg":0,"fixed":true,
+"clearance_m":0.3,"description":"A simple wooden bed frame with a plush comforter."}],
+"openings":[{"id":"closet-door","kind":"door","wall":"west","offset":0,"width":0.8,
+"height":1.9,"sill_height":0.05}], "camera":{"x":1.7,"y":2.0,"z":2.5,"target_x":1.7,
+"target_y":0.5,"target_z":0.5,"fov_deg":60},"circulation_notes":["Path from door to bed is clear.",
+"Nightstand is within reach of bed."],
+"design_notes":["Apply wall paint in soft gray before installing furniture.", "Recessed lights
+go in ceiling first, then table lamp on nightstand."},
+"items":[{"id":"nightstand","name":"Nightstand","category":"furniture","mount":"floor",
+"x":1.7,"z":0.8,"width":0.6,"depth":0.4,"height":0.7,"elevation":0,"rotation_deg":0,
+"fixed":false,"clearance_m":0.2,"description":"A simple wooden nightstand with a small lamp
+on top."}],
+"items":[{"id":"recessed-light-1","name":"Recessed Light 1","category":"fixture",
+"mount":"ceiling","x":1.8,"z":2.5,"width":0.3,"depth":0.3,"height":0.1,
+"elevation":2.6,"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"A
+recessed light fixture providing soft illumination."}],
+"items":[{"id":"recessed-light-2","name":"Recessed Light 2","category":"fixture",
+"mount":"ceiling","x":0.3,"z":2.5,"width":0.3,"depth":0.3,"height":0.1,
+"elevation":2.6,"rotation_deg":0,"fixed":true,"clearance_m":0.1,"description":"A
+recessed light fixture providing soft illumination."}],
+"items":[{"id":"wall-photograph-1","name":"Wall Photograph 1","category":"decor",
+"mount":"wall","x":2.1,"z":0.7,"width":0.6,"depth":0.1,"height":0.8,
+"elevation":2.3,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A framed
+photograph hanging on the wall."}],
+"items":[{"id":"wall-photograph-2","name":"Wall Photograph 2","category":"decor",
+"mount":"wall","x":1.0,"z":3.4,"width":0.6,"depth":0.1,"height":0.8,
+"elevation":2.3,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A framed
+photograph hanging on the wall."}],
+"items":[{"id":"wall-photograph-3","name":"Wall Photograph 3","category":"decor",
+"mount":"wall","x":0.5,"z":1.2,"width":0.6,"depth":0.1,"height":0.8,
+"elevation":2.3,"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A framed
+photograph hanging on the wall."}],
+"items":[{"id":"lamp","name":"Table Lamp","category":"fixture","mount":"floor",
+"x":1.7,"z":0.4,"width":0.3,"depth":0.3,"height":0.5,"elevation":0,
+"rotation_deg":0,"fixed":false,"clearance_m":0.2,"description":"A small table lamp on
+the nightstand."}],
+"openings":[{"id":"door","kind":"door","wall":"north","offset":0,"width":0.8,
+"height":2.0,"sill_height":0.05}]}
