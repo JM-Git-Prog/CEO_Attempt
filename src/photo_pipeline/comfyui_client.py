@@ -61,6 +61,7 @@ class ComfyUIClient:
         self.base_url = base_url.rstrip("/")
         self.timeout_s = timeout_s
         self.poll_interval_s = poll_interval_s
+        self._unavailable_nodes: set[str] = set()
 
     async def health_check(self) -> bool:
         """Check if ComfyUI is reachable by hitting /system_stats.
@@ -76,6 +77,34 @@ class ComfyUIClient:
                 return response.status_code == 200
         except (httpx.HTTPError, OSError):
             return False
+
+    def has_node(self, class_type: str) -> bool:
+        """Check whether a ComfyUI node class_type is believed to be available.
+
+        Returns False if a prior submission already failed with a
+        'missing_node_type' error for this class_type.
+        """
+        return class_type not in self._unavailable_nodes
+
+    def check_workflow_nodes(self, workflow: dict[str, Any]) -> str | None:
+        """Scan a workflow dict for node class_types known to be unavailable.
+
+        Parameters
+        ----------
+        workflow : dict
+            ComfyUI workflow graph (node id → node definition mapping).
+
+        Returns
+        -------
+        str | None
+            The first unavailable class_type found, or None if all are available.
+        """
+        for node_def in workflow.values():
+            if isinstance(node_def, dict):
+                class_type = node_def.get("class_type")
+                if class_type and class_type in self._unavailable_nodes:
+                    return class_type
+        return None
 
     async def submit_workflow(
         self,
@@ -119,6 +148,14 @@ class ComfyUIClient:
         # Apply placeholder substitution if provided
         if placeholders:
             workflow = self._substitute_placeholders(workflow, placeholders)
+
+        # Fast-fail if any node class_type is already known to be missing
+        missing = self.check_workflow_nodes(workflow)
+        if missing:
+            raise ComfyUIError(
+                f"Skipped submission: node type '{missing}' is unavailable "
+                f"(cached from prior missing_node_type error)"
+            )
 
         return await self._submit_with_oom_retry(
             workflow, client_id, effective_timeout
@@ -366,6 +403,21 @@ class ComfyUIClient:
                 error_text = response.text[:500]
                 if _is_oom_error(error_text):
                     raise ComfyUIVRAMError(f"VRAM OOM on submit: {error_text}")
+
+                # Detect missing node types and cache them for fast-fail
+                if response.status_code == 400:
+                    missing_type = _extract_missing_node_type(
+                        error_text, response
+                    )
+                    if missing_type:
+                        self._unavailable_nodes.add(missing_type)
+                        logger.info(
+                            "Cached unavailable node type: %s "
+                            "(%d total cached)",
+                            missing_type,
+                            len(self._unavailable_nodes),
+                        )
+
                 raise ComfyUIError(
                     f"ComfyUI rejected workflow ({response.status_code}): "
                     f"{error_text}"
@@ -465,3 +517,64 @@ def _is_oom_error(error_text: str) -> bool:
     )
     lower = error_text.lower()
     return any(indicator.lower() in lower for indicator in oom_indicators)
+
+
+def _extract_missing_node_type(
+    error_text: str, response: httpx.Response
+) -> str | None:
+    """Extract the missing node class_type from a ComfyUI 400 error.
+
+    ComfyUI returns errors like:
+      {"error": {"type": "missing_node_type", "message": "...",
+                 "details": "...", "extra_info": {"class_type": "SAM2Segmentation"}}}
+    or embeds class_type info in the message/details text.
+
+    Returns the class_type string if found, else None.
+    """
+    import json
+    import re
+
+    # Try parsing the structured JSON response
+    try:
+        data = response.json()
+    except (json.JSONDecodeError, ValueError):
+        data = None
+
+    if isinstance(data, dict):
+        error_info = data.get("error", {})
+        if isinstance(error_info, dict):
+            # Direct type check
+            if error_info.get("type") == "missing_node_type":
+                # Try extra_info.class_type first
+                extra = error_info.get("extra_info", {})
+                if isinstance(extra, dict) and extra.get("class_type"):
+                    return extra["class_type"]
+                # Try details or message for the class name
+                for field in ("details", "message"):
+                    text = error_info.get(field, "")
+                    if text:
+                        match = re.search(r"'([^']+)'", text)
+                        if match:
+                            return match.group(1)
+
+        # Also check node_errors for missing types
+        node_errors = data.get("node_errors", {})
+        if isinstance(node_errors, dict):
+            for _node_id, node_err in node_errors.items():
+                if isinstance(node_err, dict):
+                    class_type = node_err.get("class_type")
+                    errors = node_err.get("errors", [])
+                    if class_type and errors:
+                        for err in errors:
+                            if isinstance(err, dict) and "missing" in str(
+                                err.get("message", "")
+                            ).lower():
+                                return class_type
+
+    # Fallback: regex on raw text for common patterns
+    if "missing_node_type" in error_text.lower():
+        match = re.search(r'"class_type"\s*:\s*"([^"]+)"', error_text)
+        if match:
+            return match.group(1)
+
+    return None

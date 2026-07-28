@@ -23,6 +23,7 @@ from __future__ import annotations
 import hashlib
 import logging
 import math
+from pathlib import Path
 from typing import Literal
 
 from pydantic import ValidationError
@@ -77,6 +78,45 @@ _STATIC_MASS_THRESHOLD_KG = 50.0
 
 # Placeholder SHA-256 hash (64 hex chars)
 _PLACEHOLDER_HASH = "0" * 64
+
+# Metal-like material categories that get a non-zero metallic value
+_METALLIC_CATEGORIES = frozenset({"metal"})
+
+
+# ---------------------------------------------------------------------------
+# Helper: dominant color extraction from object PNGs
+# ---------------------------------------------------------------------------
+
+
+def _extract_dominant_color(obj: ObjectManifestEntry) -> str:
+    """Extract the dominant color from an object's PNG as a hex string.
+
+    Reads the object PNG, ignores transparent pixels, computes the average
+    color of opaque pixels, and returns as '#rrggbb'.
+    Falls back to '#808080' if the file doesn't exist or is unreadable.
+    """
+    try:
+        from PIL import Image
+        import numpy as np
+
+        png_path = Path(obj.object_png_path)
+        if not png_path.exists():
+            return "#808080"
+
+        img = Image.open(png_path).convert("RGBA")
+        arr = np.array(img)
+        # Get opaque pixels only (alpha > 128)
+        opaque_mask = arr[:, :, 3] > 128
+        if not np.any(opaque_mask):
+            return "#808080"
+
+        opaque_pixels = arr[opaque_mask][:, :3]  # RGB only
+        avg_r = int(opaque_pixels[:, 0].mean())
+        avg_g = int(opaque_pixels[:, 1].mean())
+        avg_b = int(opaque_pixels[:, 2].mean())
+        return f"#{avg_r:02x}{avg_g:02x}{avg_b:02x}"
+    except Exception:
+        return "#808080"
 
 
 # ---------------------------------------------------------------------------
@@ -273,24 +313,112 @@ class PhotoWorldContractAssembler:
         return contract
 
     def _build_materials(self) -> list[MaterialIntent]:
-        """Build material list: room materials + one per object."""
-        materials = [
-            MaterialIntent(id="material:room:floor", base_color="#8B7355", roughness=0.9),
-            MaterialIntent(id="material:room:wall", base_color="#F5F5DC", roughness=0.7),
-            MaterialIntent(id="material:room:ceiling", base_color="#FFFFFF", roughness=0.6),
-        ]
+        """Build material list: room materials + one per object.
+
+        Object materials use actual dominant colors sampled from their PNGs.
+        Room materials are derived from the object color palette for cohesion.
+        """
+        # Build per-object materials first so we can derive room colors
+        object_materials: list[MaterialIntent] = []
+        object_hex_colors: list[str] = []
 
         for obj in self._objects:
             if obj.mesh_path is None:
                 continue
             material_id = f"material:instance:{obj.mask_id}"
-            # Map material category to a base color heuristic
-            color = _material_color(obj.material_category)
-            materials.append(
-                MaterialIntent(id=material_id, base_color=color, roughness=0.7)
+            # Sample actual color from the object's extracted PNG
+            color = _extract_dominant_color(obj)
+            object_hex_colors.append(color)
+
+            # Metallic depends on material category
+            metallic = 0.3 if obj.material_category.lower() in _METALLIC_CATEGORIES else 0.0
+            object_materials.append(
+                MaterialIntent(
+                    id=material_id,
+                    base_color=color,
+                    roughness=0.7,
+                    metallic=metallic,
+                )
             )
 
+        # Derive room colors from object palette (or use warm defaults)
+        floor_color, wall_color, ceiling_color = self._sample_room_colors(
+            object_hex_colors
+        )
+
+        materials = [
+            MaterialIntent(
+                id="material:room:floor",
+                base_color=floor_color,
+                roughness=0.9,
+                metallic=0.0,
+            ),
+            MaterialIntent(
+                id="material:room:wall",
+                base_color=wall_color,
+                roughness=0.7,
+                metallic=0.0,
+            ),
+            MaterialIntent(
+                id="material:room:ceiling",
+                base_color=ceiling_color,
+                roughness=0.6,
+                metallic=0.0,
+            ),
+        ]
+        materials.extend(object_materials)
         return materials
+
+    def _sample_room_colors(
+        self, object_hex_colors: list[str]
+    ) -> tuple[str, str, str]:
+        """Derive floor, wall, ceiling colors from the object color palette.
+
+        Strategy: compute the average color of all objects, then produce
+        three desaturated/shifted variants:
+        - Floor: darker, slightly warmer version of the average.
+        - Wall: lighter, desaturated version.
+        - Ceiling: very light, near-white tinted version.
+
+        Falls back to warm neutral defaults if no object colors are available.
+        """
+        if not object_hex_colors:
+            return ("#a08060", "#d0c8b8", "#e8e0d8")
+
+        try:
+            # Parse all hex colors into RGB tuples
+            rs, gs, bs = [], [], []
+            for hx in object_hex_colors:
+                hx = hx.lstrip("#")
+                rs.append(int(hx[0:2], 16))
+                gs.append(int(hx[2:4], 16))
+                bs.append(int(hx[4:6], 16))
+
+            avg_r = sum(rs) / len(rs)
+            avg_g = sum(gs) / len(gs)
+            avg_b = sum(bs) / len(bs)
+
+            # Floor: darken by 40%, warm-shift slightly
+            floor_r = int(min(255, avg_r * 0.6 + 20))
+            floor_g = int(min(255, avg_g * 0.55 + 10))
+            floor_b = int(min(255, avg_b * 0.5))
+            floor_color = f"#{floor_r:02x}{floor_g:02x}{floor_b:02x}"
+
+            # Wall: lighten and desaturate (blend 60% toward white)
+            wall_r = int(avg_r * 0.4 + 255 * 0.6)
+            wall_g = int(avg_g * 0.4 + 255 * 0.6)
+            wall_b = int(avg_b * 0.4 + 255 * 0.6)
+            wall_color = f"#{wall_r:02x}{wall_g:02x}{wall_b:02x}"
+
+            # Ceiling: very light, 80% toward white
+            ceil_r = int(avg_r * 0.2 + 255 * 0.8)
+            ceil_g = int(avg_g * 0.2 + 255 * 0.8)
+            ceil_b = int(avg_b * 0.2 + 255 * 0.8)
+            ceiling_color = f"#{ceil_r:02x}{ceil_g:02x}{ceil_b:02x}"
+
+            return (floor_color, wall_color, ceiling_color)
+        except Exception:
+            return ("#a08060", "#d0c8b8", "#e8e0d8")
 
     def _build_room_shell(self) -> RoomShell:
         """Map RoomMeshResult to RoomShell with dimensions and materials."""
