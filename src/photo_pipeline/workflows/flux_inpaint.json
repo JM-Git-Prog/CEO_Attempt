@@ -1,0 +1,41 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "INPUT_IMAGE_PATH"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "MASK_PATH"
+    }
+  },
+  "3": {
+    "class_type": "FluxFillModelLoader",
+    "inputs": {
+      "model_name": "flux1-fill-dev.safetensors",
+      "dtype": "float16"
+    }
+  },
+  "4": {
+    "class_type": "FluxFillInpaint",
+    "inputs": {
+      "model": ["3", 0],
+      "image": ["1", 0],
+      "mask": ["2", 0],
+      "steps": 20,
+      "cfg_scale": 7.0,
+      "denoise_strength": 1.0,
+      "seed": 42
+    }
+  },
+  "5": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["4", 0],
+      "filename_prefix": "room_plate",
+      "output_dir": "OUTPUT_DIR"
+    }
+  }
+}

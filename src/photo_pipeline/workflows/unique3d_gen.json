@@ -1,0 +1,34 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "INPUT_IMAGE_PATH"
+    }
+  },
+  "2": {
+    "class_type": "Unique3DModelLoader",
+    "inputs": {
+      "model_name": "unique3d-v1",
+      "dtype": "float16"
+    }
+  },
+  "3": {
+    "class_type": "Unique3DGenerate",
+    "inputs": {
+      "model": ["2", 0],
+      "image": ["1", 0],
+      "steps": 30,
+      "guidance_scale": 5.0,
+      "seed": 42,
+      "output_format": "glb"
+    }
+  },
+  "4": {
+    "class_type": "SaveMesh",
+    "inputs": {
+      "mesh": ["3", 0],
+      "filename_prefix": "MESH_OUTPUT_PREFIX",
+      "output_dir": "OUTPUT_DIR"
+    }
+  }
+}

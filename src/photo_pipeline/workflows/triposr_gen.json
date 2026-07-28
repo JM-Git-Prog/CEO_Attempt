@@ -1,0 +1,33 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "INPUT_IMAGE_PATH"
+    }
+  },
+  "2": {
+    "class_type": "TripoSRModelLoader",
+    "inputs": {
+      "model_name": "triposr-v1",
+      "chunk_size": 8192
+    }
+  },
+  "3": {
+    "class_type": "TripoSRGenerate",
+    "inputs": {
+      "model": ["2", 0],
+      "image": ["1", 0],
+      "resolution": 256,
+      "threshold": 25.0,
+      "output_format": "glb"
+    }
+  },
+  "4": {
+    "class_type": "SaveMesh",
+    "inputs": {
+      "mesh": ["3", 0],
+      "filename_prefix": "MESH_OUTPUT_PREFIX",
+      "output_dir": "OUTPUT_DIR"
+    }
+  }
+}

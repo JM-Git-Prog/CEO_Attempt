@@ -1,0 +1,29 @@
+{
+  "1": {
+    "class_type": "AudioImpactGenerator",
+    "inputs": {
+      "material_category": "MATERIAL_CATEGORY",
+      "duration_s": 1.0,
+      "sample_rate": 44100,
+      "channels": 1,
+      "bit_depth": 16,
+      "seed": 42
+    }
+  },
+  "2": {
+    "class_type": "AudioNormalize",
+    "inputs": {
+      "audio": ["1", 0],
+      "target_dbfs": -3.0
+    }
+  },
+  "3": {
+    "class_type": "SaveAudio",
+    "inputs": {
+      "audio": ["2", 0],
+      "filename_prefix": "AUDIO_OUTPUT_PREFIX",
+      "output_dir": "OUTPUT_DIR",
+      "format": "wav"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "INPUT_IMAGE_PATH"
+    }
+  },
+  "2": {
+    "class_type": "SAMModelLoader",
+    "inputs": {
+      "model_name": "sam_vit_h_4b8939.pth"
+    }
+  },
+  "3": {
+    "class_type": "SAMPredictor",
+    "inputs": {
+      "sam_model": ["2", 0],
+      "image": ["1", 0],
+      "detection_hint": "auto",
+      "mask_threshold": 0.5,
+      "max_masks": 30
+    }
+  },
+  "4": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["3", 0],
+      "filename_prefix": "sam_masks",
+      "output_dir": "OUTPUT_DIR"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "INPUT_IMAGE_PATH"
+    }
+  },
+  "2": {
+    "class_type": "MoGeModelLoader",
+    "inputs": {
+      "model_name": "moge2_vitl.pth",
+      "dtype": "float16"
+    }
+  },
+  "3": {
+    "class_type": "MoGeInference",
+    "inputs": {
+      "model": ["2", 0],
+      "image": ["1", 0],
+      "output_type": "metric_depth",
+      "resolution_level": 1
+    }
+  },
+  "4": {
+    "class_type": "SaveEXR",
+    "inputs": {
+      "image": ["3", 0],
+      "filename_prefix": "depth_map",
+      "output_dir": "OUTPUT_DIR"
+    }
+  },
+  "5": {
+    "class_type": "MoGeNormals",
+    "inputs": {
+      "depth": ["3", 0],
+      "image": ["1", 0]
+    }
+  },
+  "6": {
+    "class_type": "SaveEXR",
+    "inputs": {
+      "image": ["5", 0],
+      "filename_prefix": "normal_map",
+      "output_dir": "OUTPUT_DIR"
+    }
+  },
+  "7": {
+    "class_type": "MoGeMesh",
+    "inputs": {
+      "depth": ["3", 0],
+      "image": ["1", 0],
+      "output_format": "glb"
+    }
+  },
+  "8": {
+    "class_type": "SaveMesh",
+    "inputs": {
+      "mesh": ["7", 0],
+      "filename_prefix": "room_mesh",
+      "output_dir": "OUTPUT_DIR"
+    }
+  }
+}
