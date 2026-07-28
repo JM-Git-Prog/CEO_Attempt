@@ -1157,6 +1157,20 @@ async function loadV8Stages(id = v8SelectedSessionId()) {
 
 async function loadV8Stage(stage, revision = '') {
   if (appVersion < 8) return;
+  // GAME is a client-side-only stage — no server fetch needed
+  if (stage === 'game') {
+    setStage('game');
+    v8CurrentStage = 'game';
+    if (lastSceneGraph) {
+      buildGameViewer(lastSceneGraph);
+    } else {
+      stageTitle.textContent = 'Game mode';
+      stageState.textContent = 'WAITING';
+      stageState.className = 'stage-state';
+      stageBody.innerHTML = '<div class="empty-stage"><p>Build a world first, then enter game mode to walk around with WASD + mouse look.</p></div>';
+    }
+    return;
+  }
   const requestToken = appVersion >= 9 ? ++v9StageRequestToken : 0;
   if (appVersion >= 9) {
     v9StageAbortController?.abort();
@@ -1484,17 +1498,30 @@ async function sendDescriptionMvp() {
 
           // Update the right panel (stage area) with the result
           stageTitle.textContent = payload.game_running ? 'Game Running' : 'Walkable World Ready';
-          stageBody.innerHTML = payload.state === 'ready'
-            ? `<div class="mvp-stage-result">
-                <div class="mvp-stage-icon">${payload.game_running ? '🎮' : '📦'}</div>
-                <h3>${payload.game_running ? 'Game is running in fullscreen' : 'Your world is compiled and ready'}</h3>
-                <p>${payload.quality_label ? 'Quality: ' + payload.quality_label : ''}</p>
-                ${payload.download_url ? `<a class="download" href="${payload.download_url}" download>Download .blend</a>` : ''}
-              </div>`
-            : `<div class="mvp-stage-result mvp-stage-error">
+          
+          // Fetch scene graph so GAME tab can build a first-person view
+          if (payload.state === 'ready') {
+            fetchJson(`/api/session/${sessionId}/scene`).then(sceneData => {
+              if (sceneData && sceneData.room) {
+                lastSceneGraph = sceneData;
+                buildViewer(sceneData, payload.download_url || '');
+              }
+            }).catch(() => {
+              // Scene fetch failed — show static result instead
+              stageBody.innerHTML = `<div class="mvp-stage-result">
+                  <div class="mvp-stage-icon">${payload.game_running ? '🎮' : '📦'}</div>
+                  <h3>${payload.game_running ? 'Game is running in fullscreen' : 'Your world is compiled and ready'}</h3>
+                  <p>${payload.quality_label ? 'Quality: ' + payload.quality_label : ''}</p>
+                  <p class="game-cta">Click <b>GAME</b> tab or <b>ENTER GAME ▶</b> to walk around in first person.</p>
+                  ${payload.download_url ? `<a class="download" href="${payload.download_url}" download>Download .blend</a>` : ''}
+                </div>`;
+            });
+          } else {
+            stageBody.innerHTML = `<div class="mvp-stage-result mvp-stage-error">
                 <h3>Pipeline Failed: ${payload.failure_stage || 'unknown'}</h3>
                 <p>${payload.error || 'An error occurred'}</p>
               </div>`;
+          }
 
           setBusy(false);
           input.focus();
