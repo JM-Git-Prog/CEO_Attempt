@@ -1,0 +1,25 @@
+error: Invalid control character at: line 21 column 95 (char 1773)
+------------------------------------------------------------
+{"name":"Small Bedroom",
+"room":{"width":3.6,"depth":3.6,"height":2.4},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":1.8,
+"width":1.9,"depth":1.9,"height":0.7,"elevation":0.3,"rotation_deg":0,"fixed":true,"clearance_m":0.2,
+"description":"A simple, low-profile bed with a sturdy frame and a comfortable mattress."},
+{"id":"nightstand","name":"Nightstand","category":"furniture","mount":"floor","x":1.0,"z":0.8,
+"width":0.7,"depth":0.4,"height":0.7,"elevation":0.3,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A small, practical nightstand with a single drawer and a surface for displaying personal items."},
+{"id":"closet_door","name":"Closet Door","category":"architectural","mount":"wall","wall":"west",
+"offset":0.0,"width":1.0,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"fixture_1","name":"Table Lamp","category":"fixture","mount":"ceiling","x":2.3,"z":1.9,
+"height":0.3,"elevation":2.1,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A warm, inviting table lamp with a soft white shade and a sturdy base."}],
+"openings":[{"id":"closet","kind":"door","wall":"west","offset":0.0,"width":1.0,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.9,"z":0.8,"target_x":1.8,"target_y":1.8,"target_z":0.3,
+"fov_deg":60},"circulation_notes":["Path from door to bed is clear with a width of at least 0.8m.",
+"Nightstand is placed against the north wall with equal distance from bed and door."],
+"design_notes":["Apply mid-century modern aesthetic: clean lines, minimal ornamentation.",
+"Use soft gray paint on walls, hardwood floor, and white ceiling to create a calm atmosphere.",
+"Place furniture in practical zones: bed against wall, nightstand adjacent to bed, closet door
+against wall with maximum clear path."]}
+}

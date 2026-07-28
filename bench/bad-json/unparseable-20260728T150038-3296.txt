@@ -1,0 +1,17 @@
+error: Invalid control character at: line 4 column 87 (char 311)
+------------------------------------------------------------
+{"name":"Cozy Living Room","room":{"width":4,"depth":5,"height":2.7},
+"items":[{"id":"fireplace","name":"Stone Fireplace","category":"fixture",
+"mount":"wall","x":1,"z":0,"width":0.8,"depth":1.2,"height":1.5,"elevation":2.1,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A warm, stone fireplace
+with a wood mantel."},{"id":"door","name":"Wooden Door","category":"architectural",
+"mount":"wall","x":3.1,"z":2.5,"width":0.9,"depth":0.2,"height":2,"elevation":2.7,
+"rotation_deg":0,"fixed":true,"clearance_m":0.05,"description":"A sturdy, wooden door
+with metal hardware."},{"id":"bookshelf","name":"Solid Oak Bookcase",
+"category":"furniture","mount":"wall","x":1.5,"z":4.2,"width":0.8,"depth":0.7,
+"height":2.5,"elevation":2.7,"rotation_deg":0,"fixed":true,"clearance_m":0.2,
+"description":"A built-in bookcase made of solid oak with leather-bound books."}],
+"openings":[{"id":"door","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2,"sill_height":0.05}], "camera":{"x":1,"y":1.5,"z":1,"target_x":1,
+"target_y":1.5,"target_z":1,"fov_deg":60},"circulation_notes":["Path from door to
+armchair is clear."],"design_notes":[],"schema_version":"2023-12-01T00:00:00"}
