@@ -125,7 +125,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - For any mesh, validation returns True iff faces ≥ 4, vertices ≥ 4, and zero-area face ratio ≤ 0.05
     - **Validates: Requirements 4.6**
 
-  - [ ]* 5.3 Write property test for placeholder geometry selection (Property 7)
+  - [ ] 5.3 Write property test for placeholder geometry selection (Property 7)
     - **Property 7: Placeholder Geometry Selection by Aspect Ratio**
     - For any bounding box dimensions, placeholder type is deterministically selected by aspect ratio; textured with average color from non-transparent pixels
     - **Validates: Requirements 4.4**
@@ -146,18 +146,18 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - All files: mono, 44100Hz, 16-bit, 0.1-2.0s duration, normalized to -3dBFS peak
     - _Requirements: 5.3_
 
-  - [ ]* 6.3 Write property test for audio format constraints (Property 8)
+  - [ ] 6.3 Write property test for audio format constraints (Property 8)
     - **Property 8: Audio Output Format Constraints**
     - For any generated audio, output is mono, 44100Hz, 16-bit, duration in [0.1, 2.0] seconds
     - **Validates: Requirements 5.1**
 
 
-  - [ ]* 6.4 Write property test for audio normalization (Property 9)
+  - [ ] 6.4 Write property test for audio normalization (Property 9)
     - **Property 9: Audio Normalization to Target Peak**
     - For any WAV with at least one non-zero sample, after normalization peak amplitude is within 0.1dB of -3.0dBFS
     - **Validates: Requirements 5.5**
 
-  - [ ]* 6.5 Write property test for material-to-sound mapping (Property 10)
+  - [ ] 6.5 Write property test for material-to-sound mapping (Property 10)
     - **Property 10: Material-to-Sound Mapping Completeness**
     - For any valid material category in {wood, metal, glass, fabric, ceramic, plastic}, sound bank lookup returns a non-null path to an existing WAV file
     - **Validates: Requirements 5.3**
@@ -173,7 +173,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `LightEstimateResult` with all parameters and confidence score
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ]* 7.2 Write property test for light estimation bounds (Property 11)
+  - [ ] 7.2 Write property test for light estimation bounds (Property 11)
     - **Property 11: Light Estimation Output Validity**
     - For any valid RGB image, output has: sun_direction magnitude in [0.99, 1.01], color_temperature in [1800, 12000], intensity in [0.0, 100.0], and produces at minimum one directional + one ambient light
     - **Validates: Requirements 6.1, 6.2, 6.4**
@@ -185,7 +185,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Record scale_factor and confidence (0.0-1.0); flag confidence < 0.3 in manifest
     - _Requirements: 7.1, 7.2, 7.7_
 
-  - [ ]* 7.4 Write property test for scale calibration clamping (Property 12)
+  - [ ] 7.4 Write property test for scale calibration clamping (Property 12)
     - **Property 12: Scale Calibration Produces Clamped Metric Dimensions**
     - For any pixel footprint > 0, positive depth, valid FOV (0°-180°), and room dimensions, output dims are clamped to [0.01, room_dim] per axis
     - **Validates: Requirements 7.1, 7.2**
@@ -200,12 +200,12 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 7.3, 7.4, 7.5, 7.6_
 
 
-  - [ ]* 7.6 Write property test for back-projection camera model inverse (Property 13)
+  - [ ] 7.6 Write property test for back-projection camera model inverse (Property 13)
     - **Property 13: Back-Projection Satisfies Camera Model Inverse**
     - For any pixel (u,v) within bounds, positive depth d, and valid camera params, back-projecting then re-projecting yields original pixel within ±0.5px tolerance
     - **Validates: Requirements 7.3**
 
-  - [ ]* 7.7 Write property test for physics settle convergence (Property 14)
+  - [ ] 7.7 Write property test for physics settle convergence (Property 14)
     - **Property 14: Physics Settle Convergence**
     - For any set of objects with overlapping bounding boxes, after settle the total interpenetration volume is ≤ initial (monotone non-increasing)
     - **Validates: Requirements 7.4, 10.2**
@@ -226,12 +226,12 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `CollisionResult` and `LODResult` with paths and metadata
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-  - [ ]* 9.2 Write property test for collision method selection (Property 17)
+  - [ ] 9.2 Write property test for collision method selection (Property 17)
     - **Property 17: Collision Method Selection by Face Count**
     - For any mesh with face_count > 100 → V-HACD (max 16 hulls); face_count ≤ 100 → convex hull
     - **Validates: Requirements 9.1, 9.2**
 
-  - [ ]* 9.3 Write property test for LOD generation invariants (Property 18)
+  - [ ] 9.3 Write property test for LOD generation invariants (Property 18)
     - **Property 18: LOD Generation Invariants**
     - For any input mesh, LOD produces exactly 4 levels; LOD0 = original face count; each level ≤ previous; no level < 4 faces
     - **Validates: Requirements 9.3, 9.4**
@@ -250,17 +250,17 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
 
 
-  - [ ]* 10.2 Write property test for WorldContract assembly validity (Property 15)
+  - [ ] 10.2 Write property test for WorldContract assembly validity (Property 15)
     - **Property 15: WorldContract Assembly Validity**
     - For any valid combination of stage outputs (room mesh + zero or more object meshes + light params + camera), assembled WorldContract passes all Pydantic validators (coordinate system, ID uniqueness, dangling references)
     - **Validates: Requirements 8.1, 8.2, 8.3**
 
-  - [ ]* 10.3 Write property test for physics mode assignment (Property 16)
+  - [ ] 10.3 Write property test for physics mode assignment (Property 16)
     - **Property 16: Physics Mode Assignment from Material and Volume**
     - For any object with mass > 50kg → STATIC; mass ≤ 50kg and not architectural → DYNAMIC with mass = volume × density (±tolerance)
     - **Validates: Requirements 8.4**
 
-  - [ ]* 10.4 Write property test for quality classification (Property 19)
+  - [ ] 10.4 Write property test for quality classification (Property 19)
     - **Property 19: Quality Classification Determinism**
     - "full" if all objects used primary method; "degraded" if ≥1 fallback but ≥1 mesh exists; "minimal" if zero object meshes
     - **Validates: Requirements 12.6**
@@ -272,22 +272,22 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Ensure round-trip: serialize → deserialize produces structurally equal manifest
     - _Requirements: 13.1, 13.4_
 
-  - [ ]* 11.2 Write property test for manifest JSON round-trip (Property 20)
+  - [ ] 11.2 Write property test for manifest JSON round-trip (Property 20)
     - **Property 20: Pipeline Manifest JSON Round-Trip**
     - For any valid PipelineManifest, serialize → deserialize produces structurally equal instance
     - **Validates: Requirements 13.1, 13.4**
 
-  - [ ]* 11.3 Write property test for GLB mesh data round-trip (Property 21)
+  - [ ] 11.3 Write property test for GLB mesh data round-trip (Property 21)
     - **Property 21: GLB Mesh Data Round-Trip**
     - For any valid mesh (float32 vertices, unit normals, UV in [0,1]), write GLB → read GLB produces data within 1e-6 absolute tolerance
     - **Validates: Requirements 13.2**
 
-  - [ ]* 11.4 Write property test for depth map NumPy round-trip (Property 22)
+  - [ ] 11.4 Write property test for depth map NumPy round-trip (Property 22)
     - **Property 22: Depth Map NumPy Round-Trip**
     - For any float32 2D array, np.save → np.load produces bit-identical array
     - **Validates: Requirements 13.3**
 
-  - [ ]* 11.5 Write property test for WorldContract canonical serialization (Property 23)
+  - [ ] 11.5 Write property test for WorldContract canonical serialization (Property 23)
     - **Property 23: WorldContract Canonical Serialization Round-Trip**
     - For any WorldContract from photo assembler, canonical_bytes() → deserialize → canonical_bytes() produces identical bytes
     - **Validates: Requirements 13.5**
