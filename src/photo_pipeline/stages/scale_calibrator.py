@@ -113,7 +113,11 @@ def clamp_dimensions(
     dims: tuple[float, float, float],
     room_dims: tuple[float, float, float],
 ) -> tuple[float, float, float]:
-    """Clamp each dimension axis to [0.01m, room_dimension_on_that_axis].
+    """Clamp each dimension axis to [0.01m, 0.5 * room_dimension_on_that_axis].
+
+    Objects larger than half the room in any dimension are almost certainly
+    depth-estimation artifacts. Clamping to 50% prevents room-filling boxes
+    while still allowing large furniture (e.g., a king bed in a 4m-wide room).
 
     Parameters
     ----------
@@ -125,11 +129,11 @@ def clamp_dimensions(
     Returns
     -------
     tuple[float, float, float]
-        Clamped dimensions where each axis is in [0.01, room_dim_axis].
+        Clamped dimensions where each axis is in [0.01, 0.5 * room_dim_axis].
     """
     clamped = []
     for dim, room_dim in zip(dims, room_dims):
-        upper = max(_MIN_DIMENSION_M, room_dim)
+        upper = max(_MIN_DIMENSION_M, room_dim * 0.5)
         clamped_val = max(_MIN_DIMENSION_M, min(dim, upper))
         clamped.append(clamped_val)
     return (clamped[0], clamped[1], clamped[2])

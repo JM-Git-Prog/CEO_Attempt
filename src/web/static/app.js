@@ -223,7 +223,14 @@ async function refreshOutput() {
 
 async function sendDescription() {
   const description = input.value.trim();
-  if (!description || busy) return;
+  if (busy) return;
+  if (!description) {
+    input.classList.add('input-error');
+    input.setAttribute('aria-invalid', 'true');
+    input.placeholder = 'Please describe a room first — include layout, era, materials, lighting.';
+    setTimeout(() => { input.classList.remove('input-error'); input.removeAttribute('aria-invalid'); input.placeholder = 'A sunken 1970s lounge with walnut walls, amber lamps and rain against a wide window…'; }, 3000);
+    return;
+  }
   currentDescription = description;
   addMessage('user', escapeHtml(description));
   input.value = '';
@@ -1409,7 +1416,7 @@ function renderMvpProgress(currentStage, elapsed) {
     const cls = active ? 'mvp-step active' : done ? 'mvp-step done' : 'mvp-step';
     return `<span class="${cls}" data-stage="${escapeHtml(s)}">${mvpStageLabel(s)}</span>`;
   }).join('');
-  const elapsedText = elapsed ? ` · ${escapeHtml(elapsed)}s` : '';
+  const elapsedText = elapsed ? ` · ${escapeHtml(String(elapsed).replace(/s$/, ''))}s` : '';
   return `<div class="mvp-progress-bar">${steps}</div><div class="mvp-progress-status"><span class="spinner"></span> <strong>${mvpStageLabel(currentStage)}</strong>${elapsedText}</div>`;
 }
 
@@ -1460,7 +1467,14 @@ function closeMvpEventSource() {
 
 async function sendDescriptionMvp() {
   const description = input.value.trim();
-  if (!description || busy) return;
+  if (busy) return;
+  if (!description) {
+    input.classList.add('input-error');
+    input.setAttribute('aria-invalid', 'true');
+    input.placeholder = 'Please describe a room first — include layout, era, materials, lighting.';
+    setTimeout(() => { input.classList.remove('input-error'); input.removeAttribute('aria-invalid'); input.placeholder = 'A sunken 1970s lounge with walnut walls, amber lamps and rain against a wide window…'; }, 3000);
+    return;
+  }
   currentDescription = description;
   addMessage('user', escapeHtml(description));
   input.value = '';
@@ -1784,9 +1798,10 @@ async function renderBrowserGame(sceneUrl) {
   const threeScene = new THREE.Scene();
   threeScene.background = new THREE.Color(0x1a1a2e);
 
-  // Camera
+  // Camera — frame the whole room from a sensible viewpoint (V7's behavior)
   const camera = new THREE.PerspectiveCamera(scene.camera.fov, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(...scene.camera.position);
+  // Position camera at room center, eye height, looking forward
+  camera.position.set(0, 1.6, room.depth * 0.4);
 
   // Room geometry
   const room = scene.room;
@@ -1847,17 +1862,20 @@ async function renderBrowserGame(sceneUrl) {
     threeScene.add(mesh);
   }
 
-  // Lights
-  const ambient = new THREE.AmbientLight(0x404040, 0.5);
+  // Lights — balanced ambient + scene lights for correct material color reading
+  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
   threeScene.add(ambient);
+  // Hemisphere light for natural indoor fill
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
+  threeScene.add(hemi);
   for (const light of scene.lights) {
     if (light.type === 'directional') {
-      const dl = new THREE.DirectionalLight(light.color, light.intensity / 100);
+      const dl = new THREE.DirectionalLight(light.color, Math.min(light.intensity / 100, 2.0));
       dl.position.set(...light.position);
       dl.castShadow = true;
       threeScene.add(dl);
     } else {
-      const pl = new THREE.PointLight(light.color, light.intensity / 100, 20);
+      const pl = new THREE.PointLight(light.color, Math.min(light.intensity / 100, 2.0), 20);
       pl.position.set(...light.position);
       threeScene.add(pl);
     }

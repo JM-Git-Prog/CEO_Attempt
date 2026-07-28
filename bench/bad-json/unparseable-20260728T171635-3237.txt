@@ -1,0 +1,40 @@
+error: Expecting ',' delimiter: line 5 column 16 (char 247)
+------------------------------------------------------------
+{"name":"Cozy Living Room",
+"room":{"width":4.5,"depth":5.0,"height":2.7},
+"items":[{"id":"fireplace","name":"Brick Fireplace","category":"fixture",
+"mount":"wall","wall":"west","x":1.8,"z":0.0,"width":0.9,"depth":1.8,"height":1.5,
+"elevation":2.7-1.5,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A
+brick-built fireplace with a stone surround and functional chimney."},
+{"id":"door_1","name":"Wooden Door","category":"furniture",
+"mount":"wall","wall":"north","x":2.4,"z":4.0,"width":0.9,"depth":0.3,
+"height":2.0,"elevation":2.7-2.0,"rotation_deg":0,"fixed":true,"clearance_m":0.1,
+"description":"A rustic wooden door with a frosted glass panel."},
+{"id":"bookshelf","name":"Solid Oak Bookcase","category":"furniture",
+"mount":"wall","wall":"east","x":0.0,"z":0.0,"width":1.2,"depth":0.8,
+"height":2.4,"elevation":2.7-2.4,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A sturdy bookcase made of solid oak with leather-bound books."},
+{"id":"armchair","name":"Mossy Green Velvet Armchair",
+"category":"furniture","mount":"floor","x":1.8,"z":2.5,"width":0.7,"depth":0.7,
+"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.4,
+"description":"A plush armchair upholstered in mossy green velvet."},
+{"id":"coffee_table","name":"Reclaimed Wood Coffee Table",
+"category":"furniture","mount":"floor","x":2.7,"z":3.5,"width":1.0,"depth":0.6,
+"height":0.4,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A coffee table made from reclaimed wood with a smooth, worn surface."},
+{"id":"floor_lamp","name":"Linen Shade Floor Lamp",
+"category":"fixture","mount":"floor","x":3.9,"z":1.8,"width":0.4,"depth":0.4,
+"height":1.2,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,
+"description":"A floor lamp with a natural linen shade providing warm, soft light."}],
+"openings":[{"id":"door_1","kind":"door","wall":"north","offset":0.45,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":2.5,"y":1.7,"z":1.0,"target_x":2.5,"target_y":0.0,"target_z":0.0,
+"fov_deg":60},"circulation_notes":["Walk from the door to the armchair along the
+east wall. The bookcase is against the east wall, with clear circulation paths on either
+side. The coffee table is in the center of the room, with chairs placed relative to it.
+The fireplace is against the west wall, creating a focal point in the room."],
+"design_notes":["Exposure: Place furniture against walls first, then support pieces
+relative to the focal point. Never cluster everything at 0,0.","Circulation:
+Maintain at least 0.8m clear paths between the door and all zones. A person must walk
+from the door to any seat without squeezing past furniture."]}
+}

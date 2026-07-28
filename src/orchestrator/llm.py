@@ -21,12 +21,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 LLM_MODEL = os.getenv("LLM_MODEL", "llama3.1")
 LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
 
-# 16384 was hardcoded and it does not work on this machine: a cold request at
-# that size times out entirely, while the identical request at 4096 answers in
-# under a second (check_ollama, 2026-07-27). A bigger KV cache also competes
-# with training for the same card. 8192 is the compromise - still well above
-# the plan prompt plus schema - and it is now tunable without a code edit.
-OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
+# Reasoning models (gpt-oss:20b, qwen3-coder-next) burn tokens on internal
+# chain-of-thought before emitting content. With 8192 context the thinking
+# consumes all available budget leaving nothing for the actual plan output.
+# 32768 context + 16384 predict gives room for ~16k thinking + ~16k content.
+# Tunable via env: the RTX 4090 handles 32k context fine for 8B-20B models.
+OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "32768"))
+OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "16384"))
 
 
 class LLMError(Exception):
@@ -45,7 +46,7 @@ async def _call_ollama(
         "stream": False,
         "options": {
             "temperature": 0.15 if json_mode else 0.7,
-            "num_predict": 8192,
+            "num_predict": OLLAMA_NUM_PREDICT,
             "num_ctx": OLLAMA_NUM_CTX,
         },
     }
@@ -371,7 +372,7 @@ async def generate_vision_json(
             "format": "json",
             # was a hardcoded 24576 - even larger than the 16384 that times out
             # cold on this card. Same tunable, same reason.
-            "options": {"temperature": 0.1, "num_predict": 8192,
+            "options": {"temperature": 0.1, "num_predict": OLLAMA_NUM_PREDICT,
                         "num_ctx": OLLAMA_NUM_CTX},
         }
         endpoint = checked_url("OLLAMA_URL", "http://localhost:11434")

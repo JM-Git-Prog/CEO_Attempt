@@ -449,11 +449,31 @@ class PhotoWorldContractAssembler:
         category = _infer_category(obj)
 
         # Build transform from layout result
-        pos = obj.position_m
+        # Back-projection gives camera-space coords (z = -depth).
+        # Remap to room-centered coords and clamp to room bounds.
+        raw_x, raw_y, raw_z = obj.position_m
         rot = obj.rotation_deg
 
         # Build dimensions from scale calibration
         w, h, d = obj.scale_m
+
+        room_w = self._room_mesh.dimensions_m[0]
+        room_h = self._room_mesh.dimensions_m[1]
+        room_d = self._room_mesh.dimensions_m[2]
+
+        # Remap: if z is negative (camera-space back-projection), flip to room-space
+        pos_z = -raw_z if raw_z < 0 else raw_z
+
+        # Clamp x to room bounds with margin for object extent
+        margin_x = w / 2 + 0.05
+        pos_x = max(-room_w / 2 + margin_x, min(room_w / 2 - margin_x, raw_x))
+
+        # y: floor-mount (half object height) if raw y is at or below 0
+        pos_y = h / 2 if raw_y <= 0 else min(raw_y, room_h - h / 2)
+
+        # Clamp z to room bounds
+        margin_z = d / 2 + 0.05
+        pos_z = max(-room_d / 2 + margin_z, min(room_d / 2 - margin_z, pos_z))
 
         # Asset registry ID from the mesh path — only set for real meshes
         # Placeholder meshes use geometry_strategy="primitive"
@@ -485,7 +505,7 @@ class PhotoWorldContractAssembler:
             category=category,
             mount="floor",
             transform=Transform(
-                position_m=Vector3(x=pos[0], y=pos[1], z=pos[2]),
+                position_m=Vector3(x=pos_x, y=pos_y, z=pos_z),
                 rotation_deg=Vector3(x=rot[0], y=rot[1], z=rot[2]),
                 scale=Vector3(x=1.0, y=1.0, z=1.0),
             ),
