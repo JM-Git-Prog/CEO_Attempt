@@ -1,0 +1,23 @@
+error: Expecting ',' delimiter: line 10 column 17 (char 806)
+------------------------------------------------------------
+{"name":"Rustic Bedroom","room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor","x":0.9,
+"z":1.65,"width":1.8,"depth":2.0,"height":0.5,"elevation":0,"rotation_deg":0,
+"fixed":true,"clearance_m":0.3,"description":"A single bed with a plush comforter and two matching pillows."},
+{"id":"nightstand_1","name":"Nightstand","category":"furniture","mount":"floor",
+"x":1.8,"z":2.7,"width":0.5,"depth":0.7,"height":0.3,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.2,"description":"A small nightstand made of solid oak with a simple drawer and a reading lamp on top."},
+{"id":"door_1","name":"Wooden Door","category":"architectural","mount":"wall",
+"wall":"west","x":3.0,"z":0,"width":0.9,"depth":0.9,"height":2.0,
+"elevation":2.7 - 2.0,"rotation_deg":0,"fixed":true,"clearance_m":0.1,
+"description":"A wooden door with a small window above it and a delicate metal latch."},
+{"id":"basket_1","name":"Woven Basket","category":"furniture","mount":"floor",
+"x":0.9 + 1.8/2,"z":1.65 + 0.5,"width":0.4,"depth":0.3,"height":0.2,
+"elevation":0,"rotation_deg":0,"fixed":false,"clearance_m":0.1,
+"description":"A woven basket on the floor next to the bed for storing books or magazines."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.0,"target_x":1.7,"target_y":0.3,
+"target_z":0.5,"fov_deg":60},"circulation_notes":["Circulates around bed and nightstand.
+Path from door to bed is clear."],"design_notes":[],
+"schema_version":"2023-12-01T00:00:00Z"}

@@ -1,0 +1,26 @@
+error: Expecting ',' delimiter: line 23 column 101 (char 1842)
+------------------------------------------------------------
+{"name":"Rustic Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor","x":0.9,"z":1.8,
+"width":1.8,"depth":2.7,"height":0.6,"elevation":0,"rotation_deg":0,"fixed":true,
+"clearance_m":0.3,"description":"A solid oak bed with a plush comforter and two matching pillows."},
+{"id":"nightstand_1","name":"Nightstand","category":"furniture","mount":"floor","x":1.5,"z":2.7,
+"width":0.6,"depth":0.4,"height":0.3,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.2,"description":"A small, solid oak nightstand with a simple drawer and a reading lamp on top."},
+{"id":"door_1","name":"Wooden Door","category":"architectural","mount":"wall","wall":"west",
+"offset":0,"width":0.9,"height":2.0,"sill_height":0.05,"kind":"door"},
+{"id":"window_1","name":"Small Window Above Door","category":"architectural","mount":"wall",
+"wall":"west","offset":0.4,"width":0.3,"height":0.6,"sill_height":0.05,"kind":"window"},
+{"id":"basket_1","name":"Woven Basket","category":"decor","mount":"floor","x":0.9,"z":0.8,
+"width":0.4,"depth":0.4,"height":0.2,"elevation":0,"rotation_deg":0,"fixed":false,
+"clearance_m":0.1,"description":"A woven basket for storing books or magazines."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.9,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.0,"target_x":0.9,"target_y":1.8,"target_z":0.3,
+"fov_deg":60},"circulation_notes":["Path from door to bed is clear with a width of 0.8m.",
+"Nightstand is placed against wall with equal distance from bed and door."],
+"design_notes":["Apply warm, soft wood tones to furniture and built-ins.",
+"Use creamy whites and warm beige for walls and ceiling.",
+"Exposure: photograph the room from the north with a slight angle to capture the worn wooden floor."}]
+}
