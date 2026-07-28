@@ -69,7 +69,7 @@ def _normalize_requested_version(value: str | None, source: str) -> int:
     version = normalize_interface_version(value)
     if version != int(value):
         raise ValueError(
-            f"Unsupported {source} interface version {value}; supported versions are 3-11"
+            f"Unsupported {source} interface version {value}; supported versions are 3-{normalize_interface_version(None)}"
         )
     return version
 
@@ -517,6 +517,28 @@ async def create_session(request: Request):
         "workflow_profile_id": builder.session.workflow_profile_id,
         "workflow_url": f"/api/session/{builder.session.session_id}/workflow",
     }
+
+
+@app.post("/api/session/photo/upload")
+async def upload_photo(request: Request):
+    """Accept a photo file upload and save it to a temp location."""
+    import tempfile
+    form = await request.form()
+    photo = form.get("photo")
+    if not photo:
+        return JSONResponse({"error": "No photo file provided"}, status_code=400)
+
+    # Save to a temp file in the output directory
+    upload_dir = OUTPUT_DIR / "_uploads"
+    upload_dir.mkdir(exist_ok=True)
+
+    suffix = ".png" if "png" in (photo.content_type or "") else ".jpg"
+    dest = upload_dir / f"{uuid.uuid4().hex[:12]}{suffix}"
+
+    contents = await photo.read()
+    dest.write_bytes(contents)
+
+    return {"path": str(dest), "size": len(contents), "filename": photo.filename}
 
 
 @app.post("/api/session/photo")

@@ -229,3 +229,132 @@
 .game-hud{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:6px 16px;border-radius:6px;font-size:.8rem;color:#aaa;pointer-events:none;z-index:5}
 .enter-game{position:absolute;right:12px;top:12px;padding:9px 11px;border:1px solid #28523d;background:#0d1a14;color:var(--green);cursor:pointer;font:800 10px ui-monospace,monospace;z-index:4}
 .enter-game:hover{border-color:var(--green);background:#153d26;color:#a1ffc7}
+
+
+/* --- V12 Photo Mode --- */
+.input-mode-toggle {
+  display: flex;
+  gap: 0;
+  margin: 0 0 0.75rem;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  width: fit-content;
+}
+.mode-btn {
+  padding: 0.4rem 1rem;
+  background: rgba(255,255,255,0.03);
+  border: none;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s, color 0.15s;
+}
+.mode-btn.active {
+  background: rgba(99,102,241,0.2);
+  color: #a5b4fc;
+}
+.mode-btn:hover:not(.active) {
+  background: rgba(255,255,255,0.06);
+}
+.photo-upload-zone {
+  padding: 1rem;
+}
+.upload-dropzone {
+  border: 2px dashed rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.upload-dropzone:hover, .upload-dropzone.dragover {
+  border-color: #6366f1;
+  background: rgba(99,102,241,0.05);
+}
+.upload-dropzone:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+.upload-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+.upload-dropzone p {
+  margin: 0.25rem 0;
+  color: rgba(255,255,255,0.7);
+}
+.upload-hint {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4) !important;
+}
+.photo-preview {
+  position: relative;
+  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 300px;
+}
+.photo-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+.photo-remove-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0,0,0,0.7);
+  border: none;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.photo-generate-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.photo-generate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.photo-generate-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.photo-indicator {
+  display: inline-block;
+  margin-right: 0.3em;
+}
+.photo-result {
+  padding: 1.5rem;
+}
+.photo-result h3 {
+  margin: 0 0 1rem;
+  color: #a5b4fc;
+}
+.photo-result dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.4rem 1rem;
+}
+.photo-result dt {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+}
+.photo-result dd {
+  margin: 0;
+  font-family: monospace;
+}

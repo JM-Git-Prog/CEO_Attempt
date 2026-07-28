@@ -1588,7 +1588,167 @@ async function sendDescriptionMvp() {
 
 // ─── End MVP Pipeline Mode ────────────────────────────────────────────────────
 
-Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp, enterGame});
+// --- V12 Photo Mode ---
+
+let inputMode = 'text';
+let selectedPhotoFile = null;
+
+function setInputMode(mode) {
+  inputMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  const composer = $('#composer');
+  const photoZone = $('#photoUploadZone');
+  if (!composer || !photoZone) return;
+  if (mode === 'photo') {
+    composer.style.display = 'none';
+    photoZone.style.display = '';
+  } else {
+    composer.style.display = '';
+    photoZone.style.display = 'none';
+  }
+  logEvent('click', 'input_mode_change', {mode});
+}
+
+function initPhotoUpload() {
+  if (appVersion < 12) return;
+  const dropzone = $('#uploadDropzone');
+  const fileInput = $('#photoFileInput');
+  if (!dropzone || !fileInput) return;
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) handlePhotoSelect(file);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handlePhotoSelect(fileInput.files[0]);
+  });
+}
+
+function handlePhotoSelect(file) {
+  selectedPhotoFile = file;
+  const preview = $('#photoPreview');
+  const previewImg = $('#photoPreviewImg');
+  const generateBtn = $('#photoGenerateBtn');
+  const dropzone = $('#uploadDropzone');
+
+  previewImg.src = URL.createObjectURL(file);
+  preview.hidden = false;
+  dropzone.style.display = 'none';
+  generateBtn.disabled = false;
+  logEvent('click', 'photo_selected', {name: file.name, size: file.size});
+}
+
+function removePhoto() {
+  selectedPhotoFile = null;
+  const preview = $('#photoPreview');
+  const dropzone = $('#uploadDropzone');
+  const generateBtn = $('#photoGenerateBtn');
+  const fileInput = $('#photoFileInput');
+
+  preview.hidden = true;
+  dropzone.style.display = '';
+  generateBtn.disabled = true;
+  fileInput.value = '';
+  logEvent('click', 'photo_removed');
+}
+
+async function sendPhoto() {
+  if (!selectedPhotoFile || busy) return;
+  setBusy(true, 'Processing photo');
+  setStage('brief');
+  addMessage('user', `<span class="photo-indicator">📷</span> Uploaded: ${escapeHtml(selectedPhotoFile.name)}`);
+
+  const wait = progress('Uploading photo and starting photo-to-world pipeline…');
+
+  try {
+    // Upload the file to the server first
+    const formData = new FormData();
+    formData.append('photo', selectedPhotoFile);
+
+    const uploadResp = await fetch('/api/session/photo/upload', {
+      method: 'POST',
+      headers: {'X-App-Version': String(appVersion)},
+      body: formData,
+    });
+    if (!uploadResp.ok) {
+      const err = await uploadResp.json().catch(() => ({error: 'Upload failed'}));
+      throw new Error(err.error || `Upload failed (${uploadResp.status})`);
+    }
+    const uploadResult = await uploadResp.json();
+
+    wait.remove();
+
+    // Show pipeline progress
+    const pipelineWait = progress('Running photo pipeline: segmentation → depth → objects → audio → assembly…');
+
+    // Now trigger the photo pipeline with the uploaded path
+    const data = await fetchJson('/api/session/photo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({source_image: uploadResult.path, mode: 'mvp'}),
+    });
+
+    pipelineWait.remove();
+    sessionId = data.session_id;
+
+    // Show result
+    const quality = data.quality_classification || 'unknown';
+    const objects = data.object_count || 0;
+    const duration = data.total_duration_s ? data.total_duration_s.toFixed(1) : '?';
+    const compiled = data.compilation_success ? '✓ Game launched' : '⚠ Compilation pending';
+
+    addMessage('system', `
+      <strong>Photo pipeline complete</strong><br>
+      Quality: <code>${escapeHtml(quality)}</code> · Objects: ${objects} · Duration: ${duration}s<br>
+      ${compiled}
+    `);
+
+    setStage('game');
+    stageTitle.textContent = 'Photo World Ready';
+    stageBody.innerHTML = `
+      <div class="photo-result">
+        <div class="photo-result-summary">
+          <h3>Photo → Playable World</h3>
+          <dl>
+            <dt>Session</dt><dd>${escapeHtml(data.session_id)}</dd>
+            <dt>Quality</dt><dd>${escapeHtml(quality)}</dd>
+            <dt>Objects detected</dt><dd>${objects}</dd>
+            <dt>Pipeline duration</dt><dd>${duration}s</dd>
+            <dt>Compilation</dt><dd>${data.compilation_success ? 'Success' : 'Failed: ' + escapeHtml(data.compilation_reason_code || '')}</dd>
+            ${data.launch_pid ? `<dt>Game PID</dt><dd>${data.launch_pid}</dd>` : ''}
+          </dl>
+        </div>
+      </div>
+    `;
+
+  } catch (error) {
+    wait?.remove();
+    addMessage('error', `<strong>Photo pipeline failed</strong><br>${escapeHtml(error.message)}`);
+    stageState.textContent = 'ERROR';
+  } finally {
+    stopPolling();
+    setBusy(false);
+  }
+}
+
+// Initialize photo upload on load
+if (appVersion >= 12) {
+  document.addEventListener('DOMContentLoaded', initPhotoUpload);
+}
+
+// ─── End V12 Photo Mode ───────────────────────────────────────────────────────
+
+Object.assign(window, {approvePlan, revisePlan, editDescription, showPlanArtifact, refreshOutput, approveImage, rejectImage, reviseWorld, adjudicateV11QA, resetLockedCamera, logEvent, sendDescriptionMvp, enterGame, setInputMode, removePhoto, sendPhoto});
 logEvent('lifecycle', 'app_loaded', {path:window.location.pathname});
 loadReadiness();
 setInterval(loadReadiness, 15000);

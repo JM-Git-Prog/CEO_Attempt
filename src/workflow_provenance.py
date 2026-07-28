@@ -276,6 +276,81 @@ _PROFILE_VALUES = (
         "source": "V11 engine-neutral contract with isolated UPBGE compiler and explicit Godot fallback",
         "status": "experimental",
     },
+    {
+        "id": "v12-photo-world-r1",
+        "interface_version": 12,
+        "release_commit": None,
+        "supersedes": "v11-upbge-contract-r1",
+        "stages": {
+            "plan": {
+                "validation": "relationship-solver/v1",
+                "placement": "explicit-semantic-relations/v1",
+                "block_on_unresolved_geometry": True,
+                "composition_policy": {
+                    "method": "full-rotated-bounds/v1",
+                    "image_width": 1024,
+                    "image_height": 768,
+                    "safe_margin_ratio": 0.005,
+                    "minimum_inset_m": 0.22,
+                    "inset_offsets_m": [-0.449, -0.4, -0.35, -0.3, -0.2, 0.0],
+                    "target_x_offsets_m": [0.0, -0.5, 0.5, -1.0, -1.5, -2.0],
+                    "target_y_offsets_m": [0.0, -0.3, 0.3, -0.6, 0.6, -0.9, -1.2],
+                    "target_z_offsets_m": [0.0, 0.5, 1.0, 1.5, 2.0],
+                    "require_openings": False,
+                },
+            },
+            "canon": {
+                "conditioning": "reference_latent",
+                "prompt": "immutable-plan-conditioning/v1",
+                "latent": "encoded_blockout",
+                "sigma_schedule": "partial_after_step_8",
+                "appearance_transform": "full_photoreal_resynthesis",
+                "camera_contract": "v11-camera-1",
+                "blockout_detail": "articulated",
+                "alignment_policy": {
+                    "method": "bounded-camera-review-v1",
+                    "aligned_min_edge_iou": 0.04,
+                    "aligned_max_drift_px": 12.0,
+                    "misaligned_max_drift_px": 20.0,
+                    "misaligned_max_edge_iou": 0.015,
+                    "max_retries": 2,
+                    "manual_review_for_inconclusive": True,
+                },
+                "qa": "qwen2.5vl-seven-category/v1",
+            },
+            "photo": {
+                "source_type": "photo",
+                "pipeline": "photo-pipeline-orchestrator/v1",
+                "comfyui_required": True,
+                "compilation": "upbge-compilation-bridge/v1",
+            },
+            "world": {
+                "contract": "world-contract/v1",
+                "commands": "semantic-command/v1",
+                "primary_adapter": "upbge",
+                "fallback_adapter": "godot",
+                "fallback_triggers": [
+                    "unavailable", "incompatible", "timeout", "process_failure",
+                    "unsupported_required_feature"
+                ],
+                "outputs": {
+                    "render": True,
+                    "blend": True,
+                    "glb": True,
+                    "runtime": True,
+                    "godot": True,
+                    "three_js": True,
+                },
+                "runtime_required_for_native": True,
+                "qa_required": True,
+                "compiler": "upbge-compiler-plan/v1",
+                "runtime": "upbge-runtime/v1",
+                "parity": "structural-parity-report/v1",
+            },
+        },
+        "source": "V12 adds photo-to-playable-world pipeline alongside text",
+        "status": "experimental",
+    },
 )
 _PROFILE_DOCUMENTS = MappingProxyType(
     {value["id"]: json.dumps(value, sort_keys=True) for value in _PROFILE_VALUES}
@@ -291,6 +366,7 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         9: "v9-camera-locked-photoreal-r3",
         10: "v10-bounded-review-r1",
         11: "v11-upbge-contract-r1",
+        12: "v12-photo-world-r1",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -304,11 +380,12 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         9: "v9-camera-locked-photoreal-r2",
         10: "v10-bounded-review-r1",
         11: "v11-upbge-contract-r1",
+        12: "v12-photo-world-r1",
     }
 )
 
 
-LATEST_INTERFACE_VERSION = 11
+LATEST_INTERFACE_VERSION = 12
 
 
 class UnsupportedInterfaceVersion(ValueError):
