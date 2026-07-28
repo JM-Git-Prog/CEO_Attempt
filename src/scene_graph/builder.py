@@ -145,15 +145,60 @@ def _validate_scene(scene: SceneGraph) -> None:
             print(f"  - {e}", file=sys.stderr)
 
 
-def _infer_primitive_shape(name: str, category: str) -> str:
-    """Infer a primitive shape from an item's name/category for visual variety."""
-    combined = f"{name} {category}".lower()
-    if any(token in combined for token in ("lamp", "light", "candle", "lantern", "vase", "bottle")):
+def _infer_primitive_shape(name: str, category: str = "", description: str = "") -> str:
+    """Infer a primitive shape from an item's name/category/description for visual variety.
+
+    Mapping logic:
+      cylinder → tall/narrow objects: lamps, candles, vases, bottles, stools, pillars, columns, poles, mugs, cups
+      sphere   → round objects: globes, balls, ornaments, orbs
+      capsule  → humanoid shapes: people, mannequins, figures, statues
+      box      → everything else (most versatile for furniture/architectural)
+    """
+    import re
+
+    combined = f"{name} {description}".lower()
+
+    # Cylinder: tall/narrow or round-profile objects
+    _cylinder_tokens = (
+        "lamp", "light", "candle", "lantern", "vase", "bottle", "jar",
+        "cup", "mug", "stool", "barstool",
+        "pedestal", "pillar", "column", "pole",
+        "pipe", "chimney", "drum", "barrel", "bucket",
+        "cylinder", "planter", "pot",
+        "chalice", "goblet", "tumbler", "thermos",
+        "umbrella", "parasol", "torch", "sconce", "bollard",
+    )
+    # Multi-word patterns checked against the full combined string
+    _cylinder_phrases = (
+        "round table", "circular table", "cafe table", "bistro table",
+        "bar stool",
+    )
+    if any(re.search(r'\b' + re.escape(token) + r's?\b', combined) for token in _cylinder_tokens):
         return "cylinder"
-    if any(token in combined for token in ("ball", "globe", "sphere", "orb")):
+    if any(phrase in combined for phrase in _cylinder_phrases):
+        return "cylinder"
+
+    # Sphere: round/globular objects
+    _sphere_tokens = (
+        "ball", "globe", "sphere", "orb", "ornament", "bauble",
+        "pumpkin", "melon", "bowl",
+    )
+    if any(re.search(r'\b' + re.escape(token) + r's?\b', combined) for token in _sphere_tokens):
         return "sphere"
-    if any(token in combined for token in ("rug", "carpet", "mat", "placemat")):
-        return "box"  # will be flattened by compiler
+
+    # Capsule: humanoid/organic tall shapes
+    _capsule_tokens = (
+        "person", "people", "mannequin", "figure", "statue", "bust",
+        "human", "character", "avatar", "doll", "puppet",
+    )
+    if any(re.search(r'\b' + re.escape(token) + r's?\b', combined) for token in _capsule_tokens):
+        return "capsule"
+
+    # Flat box (let the renderer handle proportions): rugs, mats
+    if any(re.search(r'\b' + re.escape(token) + r's?\b', combined)
+           for token in ("rug", "carpet", "mat", "placemat", "tatami")):
+        return "box"
+
     # Default: box (most versatile for furniture/architectural)
     return "box"
 
@@ -191,7 +236,7 @@ def _apply_plan_constraints(
         if obj is None:
             # Fallback: generate a default SceneObject from plan item geometry
             # Choose primitive shape based on item category/name for variety
-            primitive = _infer_primitive_shape(item.name, item.category)
+            primitive = _infer_primitive_shape(item.name, item.category, item.description or "")
             obj = SceneObject(
                 id=item.id,
                 name=item.name,
@@ -215,6 +260,12 @@ def _apply_plan_constraints(
         obj.scale = Vec3(x=1.0, y=1.0, z=1.0)
         obj.dimensions = Vec3(x=item.width, y=item.height, z=item.depth)
         obj.description = item.description or obj.description
+        # Override primitive_shape if the LLM defaulted to "box" but the item's
+        # name/description clearly indicates a more appropriate shape
+        if obj.primitive_shape == "box":
+            inferred = _infer_primitive_shape(item.name, item.category, item.description or "")
+            if inferred != "box":
+                obj.primitive_shape = inferred
         if item.fixed:
             obj.physics.body_type = PhysicsBody.STATIC
         constrained.append(obj)

@@ -101,6 +101,15 @@ You must output valid JSON with this structure:
   "ambient_energy": 0.3
 }
 
+PRIMITIVE SHAPE SELECTION — choose the shape that best matches the object's real-world silhouette:
+- "cylinder" for: lamps, lanterns, candles, vases, bottles, jars, cups, mugs, stools, bar stools,
+  pedestals, pillars, columns, poles, barrels, drums, bins, planters, pots, round tables, café tables
+- "sphere" for: globes, balls, orbs, ornaments, bowls, fruit, pumpkins
+- "capsule" for: people, mannequins, figures, statues, busts, dolls
+- "box" for: tables (rectangular), desks, cabinets, shelves, counters, beds, doors, screens,
+  panels, books, TVs, monitors, rugs (very flat box), mats, crates, boxes
+DO NOT default everything to "box". Use variety — a scene with all boxes looks wrong.
+
 SPATIAL RULES:
 - Y is UP. Floor is at y=0. Objects sit ON the floor (position.y = 0 for floor-standing items).
 - Position is the CENTER BOTTOM of the object (feet on floor).
