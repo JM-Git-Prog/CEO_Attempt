@@ -1,0 +1,116 @@
+error: Unterminated string starting at: line 114 column 5 (char 2400)
+------------------------------------------------------------
+{
+  "name": "Japanese Tea Room Plan",
+  "room": {
+    "width": 4,
+    "depth": 3,
+    "height": 2.5
+  },
+  "items": [
+    {
+      "id": "table_1",
+      "name": "Low wooden tea table",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0,
+      "z": 0,
+      "width": 1.2,
+      "depth": 0.8,
+      "height": 0.35,
+      "elevation": 0,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Rounded low wooden table at room center."
+    },
+    {
+      "id": "teapot_1",
+      "name": "Ceramic tea pot",
+      "category": "decor",
+      "mount": "floor",
+      "x": 0,
+      "z": 0,
+      "width": 0.2,
+      "depth": 0.2,
+      "height": 0.15,
+      "elevation": 0.35,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Ceramic tea pot on table."
+    },
+    {
+      "id": "cushion_1",
+      "name": "Round sitting cushion",
+      "category": "furniture",
+      "mount": "floor",
+      "x": 0,
+      "z": 0,
+      "width": 0.6,
+      "depth": 0.6,
+      "height": 0.15,
+      "elevation": 0,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Cushion in front of table."
+    },
+    {
+      "id": "lantern_1",
+      "name": "Paper lantern 1",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 0,
+      "z": 0,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.4,
+      "elevation": 2.1,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Paper lantern hanging above table."
+    },
+    {
+      "id": "lantern_2",
+      "name": "Paper lantern 2",
+      "category": "fixture",
+      "mount": "ceiling",
+      "x": 0,
+      "z": 0,
+      "width": 0.3,
+      "depth": 0.3,
+      "height": 0.4,
+      "elevation": 2.1,
+      "rotation_deg": 0,
+      "fixed": false,
+      "clearance_m": 0.75,
+      "description": "Paper lantern hanging above table."
+    }
+  ],
+  "openings": [
+    {
+      "id": "door_east",
+      "kind": "door",
+      "wall": "east",
+      "offset": 0.75,
+      "width": 1.5,
+      "height": 2.4,
+      "sill_height": 0
+    }
+  ],
+  "camera": {
+    "x": 0,
+    "y": 1.6,
+    "z": 0,
+    "target_x": 0,
+    "target_y": 0.35,
+    "target_z": 0,
+    "fov_deg": 55
+  },
+  "circulation_notes": [
+    "Clear path from east door to table center 0.8m"
+  ],
+  "design_notes": [
+    "Tatami mats cover floor, low wooden table at center, paper lanterns hanging above, cushion in front of table, sliding shoji doors on east wall. Natural wood tones and soft pastel accents create calm

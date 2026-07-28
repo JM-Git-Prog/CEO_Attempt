@@ -380,6 +380,19 @@ class PhotoPipelineOrchestrator:
         # Get image dimensions for later use
         img = Image.open(source_image)
         image_width, image_height = img.size
+
+        # Upscale small images for better pipeline results
+        MIN_DIM = 512
+        if image_width < MIN_DIM or image_height < MIN_DIM:
+            scale_factor = max(768 / image_width, 768 / image_height)
+            new_w = int(image_width * scale_factor)
+            new_h = int(image_height * scale_factor)
+            img_resized = img.resize((new_w, new_h), Image.LANCZOS)
+            upscaled_path = self.session_dir / "source_upscaled.png"
+            img_resized.save(upscaled_path)
+            source_image = upscaled_path
+            image_width, image_height = new_w, new_h
+            logger.info("Upscaled small image from original to %dx%d", new_w, new_h)
         img.close()
 
         # --- Stage 1: Scene Parsing (GPU - SAM) ---

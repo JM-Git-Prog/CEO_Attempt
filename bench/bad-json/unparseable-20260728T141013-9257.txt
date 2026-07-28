@@ -1,0 +1,14 @@
+error: Invalid control character at: line 4 column 77 (char 290)
+------------------------------------------------------------
+{"name":"Cozy Bedroom","room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed_1","name":"Bed","category":"furniture","mount":"floor",
+"x":0.9,"z":1.8,"width":2.0,"depth":2.0,"height":0.7,"elevation":0,
+"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A comfortable
+single bed with a plush comforter and two pillows."}],
+"openings":[{"id":"door_1","kind":"door","wall":"west","offset":0,"width":0.8,
+"height":2.0,"sill_height":0.05}],
+"camera":{"x":1.7,"y":1.6,"z":1.0,"target_x":0.9,"target_y":1.8,
+"target_z":0.0,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear.",
+"Nightstand is accessible from both sides of the bed."],
+"design_notes":[],"schema_version":"2023-12-01T00:00:00Z"}

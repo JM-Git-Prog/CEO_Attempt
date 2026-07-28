@@ -389,7 +389,7 @@ class SceneParser:
         return None
 
     async def _run_contour_fallback(self, source_image: Path) -> list[np.ndarray]:
-        """OpenCV contour detection as final fallback (no ML models needed)."""
+        """Improved contour/color fallback segmentation (no ML models needed)."""
         import asyncio
         import cv2
 
@@ -397,22 +397,67 @@ class SceneParser:
             img = cv2.imread(str(source_image))
             if img is None:
                 return []
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            blurred = cv2.GaussianBlur(gray, (11, 11), 0)
-            edges = cv2.Canny(blurred, 30, 100)
-            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-            dilated = cv2.dilate(edges, kernel, iterations=2)
-            contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             h, w = img.shape[:2]
+            image_area = h * w
+
+            # Method 1: Color-based segmentation via K-means
+            pixels = img.reshape(-1, 3).astype(np.float32)
+            criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+            k = min(6, max(3, int(image_area / 50000)))  # Adaptive k
+            _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 3, cv2.KMEANS_PP_CENTERS)
+            labels = labels.reshape(h, w)
+
+            # Method 2: Edge-aware contours
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+            edges = cv2.Canny(blurred, 50, 150)
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+            closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel, iterations=2)
+
             masks = []
+            min_area = int(0.02 * image_area)  # 2% minimum
+            max_area = int(0.40 * image_area)  # 40% maximum
+
+            # Extract masks from color clusters (skip background/largest cluster)
+            cluster_areas = [(np.sum(labels == i), i) for i in range(k)]
+            cluster_areas.sort(reverse=True)
+            # Skip the largest cluster (likely background/walls)
+            for area, cluster_id in cluster_areas[1:]:
+                if area < min_area or area > max_area:
+                    continue
+                mask = ((labels == cluster_id).astype(np.uint8)) * 255
+                # Clean up with morphology
+                mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+                mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=1)
+                if np.sum(mask > 0) >= min_area:
+                    masks.append(mask)
+
+            # Also add edge-based contours
+            contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             for contour in contours:
-                if cv2.contourArea(contour) < 500:
+                area = cv2.contourArea(contour)
+                if area < min_area or area > max_area:
                     continue
                 mask = np.zeros((h, w), dtype=np.uint8)
                 cv2.drawContours(mask, [contour], -1, 255, -1)
                 masks.append(mask)
-            logger.info("Contour fallback found %d regions", len(masks))
-            return masks
+
+            # Deduplicate overlapping masks (keep larger ones)
+            unique_masks = []
+            for mask in sorted(masks, key=lambda m: np.sum(m > 0), reverse=True)[:10]:
+                # Check IoU with existing masks
+                overlap = False
+                for existing in unique_masks:
+                    intersection = np.sum((mask > 0) & (existing > 0))
+                    union = np.sum((mask > 0) | (existing > 0))
+                    if union > 0 and intersection / union > 0.5:
+                        overlap = True
+                        break
+                if not overlap:
+                    unique_masks.append(mask)
+
+            logger.info("Improved contour fallback found %d regions", len(unique_masks))
+            return unique_masks
 
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, _detect)
