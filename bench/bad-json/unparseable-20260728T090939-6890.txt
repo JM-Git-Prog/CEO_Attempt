@@ -1,0 +1,61 @@
+error: Expecting ',' delimiter: line 13 column 69 (char 1039)
+------------------------------------------------------------
+{"name":"Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, wooden bed frame with a plush comforter and two pillows."},
+{"id":"nightstand","name":"Small Nightstand","category":"furniture","mount":"floor","x":0.7,"z":1.5,
+"width":0.6,"depth":0.4,"height":0.7,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.2,
+"description":"A small, wooden nightstand with a ceramic lamp and a book."},
+{"id":"door","name":"Wooden Door","category":"architectural","mount":"wall","wall":"north",
+"offset":0.1,"width":0.9,"height":2.0,"sill_height":0.05,"fixed":true,"clearance_m":0.4,
+"description":"A solid, wooden door with a simple handle."},
+{"id":"fairy_lights","name":"String of Fairy Lights","category":"fixture","mount":"ceiling",
+"x":1.9,"z":3.2,"width":0.5,"depth":0.1,"height":0.1,"elevation":2.7-0.1,"rotation_deg":0,
+"fixed":false,"clearance_m":0.05,"description":"A delicate string of fairy lights adding warm ambiance."}],
+"openings":[{"id":"door","kind":"door","wall":"north","offset":0.1,"width":0.9,"height":2.0,
+"sill_height":0.05}],
+"camera":{"x":1.3,"y":1.7,"z":1.0,"target_x":1.8,"target_y":0.5,"target_z":0.0,"fov_deg":60},
+"circulation_notes":["The bed is placed against the east wall, creating a clear path from the door to the nightstand.",
+"The nightstand is positioned beside the bed, allowing for easy access to the lamp and book."],
+"design_notes":["Apply a soft blue paint to the walls and ceiling to create a calming atmosphere.",
+"Worn, polished wood flooring adds warmth and texture to the space."]}
+}
+
+V11 EXPLICIT-INTENT REVISION — applies design thinking principles + practical buildability:
+1. ZONES: Bed = focal point against east wall. Nightstand = supports bed with equal distance.
+2. WALLS FIRST: Door = north wall, centered. Fairy lights = ceiling, diagonal from door.
+3. CIRCULATION: Path from door to nightstand is clear (0.8m wide). Bed does not block the path.
+4. RELATIONSHIPS: Nightstand faces bed. Door handle is visible from across the room.
+5. SPACING: Repeated items (fairy lights) distribute evenly along ceiling with equal gaps.
+6. DOOR CLEARANCE: Nothing within 1.0m inward of the door. The door swing arc is completely unobstructed.
+7. WINDOW CLEARANCE: Not applicable (no windows).
+8. PROPORTIONS: Item dimensions are realistic. Bed = 1.9m × 2.0m. Nightstand = 0.6m × 0.4m. Door = 0.9m × 2.0m.
+9. CAMERA: Places the camera in a corner with a clear diagonal view across the room showing the maximum number of objects.
+
+COORDINATE SYSTEM:
+- Room center is (0, 0). North is +Z, East is +X.
+- x,z are the item's CENTER position in meters.
+- width is the X-axis span, depth is the Z-axis span.
+- elevation is bottom of the item (0 for floor items, room_height - item_height for ceiling items).
+- rotation_deg rotates the item around its center (0 = front faces south).
+
+RULES:
+- One valid JSON object only. No commentary.
+- One item per physical instance: four stools = stool_1, stool_2, stool_3, stool_4.
+- Items = furniture, built-ins, freestanding fixtures only. Never put floor/wall/ceiling/door/window in items.
+- Doors and windows go in "openings" only.
+- Ceiling fixtures: set mount="ceiling", height = realistic hanging size (0.1-0.5m typical), elevation = room_height - height.
+- fixed=true only for large built-in surfaces (counters, islands, built-in shelving). Everything else is fixed=false.
+
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},
+"items":[{"id":string,"name":string,"category":"furniture|fixture|architectural|decor",
+"mount":"floor|wall|ceiling","x":number,"z":number,"width":number,"depth":number,
+"height":number,"elevation":number,"rotation_deg":number,"fixed":boolean,"clearance_m":number,
+"description":string}], "openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west",
+"offset":number,"width":number,"height":number,"sill_height":number}], "camera":{"x":number,
+"y":number,"z":number,"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},
+"circulation_notes":[string],"design_notes":[string]}
+
+V11 EXPLICIT-INTENT REVISION — practical, buildable floor plan applying design thinking principles. Never code against this output; always generate it first.

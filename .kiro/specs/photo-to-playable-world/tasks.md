@@ -213,7 +213,7 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
 - [x] 8. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Collision Generation and LOD
+- [x] 9. Collision Generation and LOD
   - [x] 9.1 Implement Collision and LOD Generator (`src/photo_pipeline/stages/collision_lod.py`)
     - Implement `CollisionLODGenerator.generate_collision()`:
       - For meshes with > 100 faces: run V-HACD decomposition (max 16 hulls, 10000 voxel resolution, 30s timeout)
@@ -226,18 +226,18 @@ New code goes in `src/photo_pipeline/` with ComfyUI workflow templates in `src/p
     - Return `CollisionResult` and `LODResult` with paths and metadata
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-  - [ ] 9.2 Write property test for collision method selection (Property 17)
+  - [x] 9.2 Write property test for collision method selection (Property 17)
     - **Property 17: Collision Method Selection by Face Count**
     - For any mesh with face_count > 100 → V-HACD (max 16 hulls); face_count ≤ 100 → convex hull
     - **Validates: Requirements 9.1, 9.2**
 
-  - [ ] 9.3 Write property test for LOD generation invariants (Property 18)
+  - [x] 9.3 Write property test for LOD generation invariants (Property 18)
     - **Property 18: LOD Generation Invariants**
     - For any input mesh, LOD produces exactly 4 levels; LOD0 = original face count; each level ≤ previous; no level < 4 faces
     - **Validates: Requirements 9.3, 9.4**
 
-- [ ] 10. WorldContract Assembly and Physics Settle Integration
-  - [ ] 10.1 Implement WorldContract Assembler (`src/photo_pipeline/stages/assembler.py`)
+- [-] 10. WorldContract Assembly and Physics Settle Integration
+  - [-] 10.1 Implement WorldContract Assembler (`src/photo_pipeline/stages/assembler.py`)
     - Implement `PhotoWorldContractAssembler.assemble()` — map all stage outputs to existing WorldContract schema
     - `_build_room_shell()`: map Room_Mesh to RoomShell entry with dimensions and material from Room_Plate texture
     - `_build_instance()`: map each Object_Mesh to WorldInstance (stable ID from mask_id, transform from layout, dimensions from scale, geometry_strategy="asset")
