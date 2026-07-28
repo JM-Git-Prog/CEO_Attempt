@@ -1,0 +1,8 @@
+failing plans replayed            : 687
+  had repeated items to spread    : 127
+  nothing to fix (no repeats)     : 560
+  groups given a spread           : 154
+  NOW LEGAL after auto-distribute : 9  (1.3% of all failures, 7.1% of eligible)
+  cost                            : 0.5s for 687 plans
+
+wrote /sessions/bold-lucid-knuth/mnt/Kiro/CEO_Kiro/CEO_Attempt/bench/auto-distribute-proof.json

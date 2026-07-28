@@ -1,0 +1,11 @@
+{
+  "generated": "2026-07-28 06:12:03",
+  "failing_plans_replayed": 687,
+  "plans_with_repeated_items_to_fix": 127,
+  "plans_with_nothing_to_fix": 560,
+  "groups_given_a_spread": 154,
+  "now_legal": 9,
+  "rate_of_all_failures": 0.013,
+  "rate_of_eligible": 0.071,
+  "seconds_total": 0.5
+}

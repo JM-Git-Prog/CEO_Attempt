@@ -1,0 +1,26 @@
+relation-kind mix   PASSING(n=1192)   FAILING(n=4358)
+   against_wall    31.4%    22.3%   
+   centered        15.0%    22.2%   
+   adjacent_to      5.3%    17.6%   <== over-represented in failures
+   above           13.7%    17.0%   
+   south_of        20.4%     8.5%   
+   north_of         4.7%     6.2%   
+   east_of          4.9%     2.8%   
+   west_of          2.9%     1.6%   
+   facing           0.2%     1.1%   <== over-represented in failures
+   around           1.2%     0.3%   
+   near_corner      0.3%     0.3%   
+
+blocker attributed to the relation that placed the item:
+     555  centered       -> overlap
+     415  against_wall   -> blocks_opening
+     401  adjacent_to    -> out_of_bounds
+     332  against_wall   -> overlap
+     330  adjacent_to    -> overlap
+     310  above          -> overlap
+     123  against_wall   -> out_of_bounds
+     118  south_of       -> out_of_bounds
+      81  above          -> blocks_opening
+      64  east_of        -> out_of_bounds
+      63  north_of       -> overlap
+      63  north_of       -> out_of_bounds

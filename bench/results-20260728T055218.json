@@ -4,8 +4,8 @@
  "lanes": {
   "llama3.1": {
    "legal": 0,
-   "total": 12,
-   "attempted": 12,
+   "total": 13,
+   "attempted": 13,
    "backend_errors": 0,
    "backend_healthy": true,
    "legal_rate": 0.0,
@@ -1139,6 +1139,11 @@
      "status": "timeout",
      "seconds": 120.0,
      "prompt_id": "p082"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p083"
     }
    ]
   }
