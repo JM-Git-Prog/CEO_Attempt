@@ -1,0 +1,191 @@
+{
+ "started": "2026-07-28 05:29:24",
+ "prompts": 5,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 1,
+   "attempted": 1,
+   "backend_errors": 0,
+   "backend_healthy": true,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "opening_blocked": 2,
+    "physical_overlap": 1,
+    "camera_inside_geometry": 1
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "opening_blocked",
+      "opening_blocked",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 4,
+     "seconds": 24.5,
+     "plan": {
+      "name": "1980s Cottage Kitchen",
+      "room": {
+       "width": 4.5,
+       "depth": 3.6,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "Simple Wooden Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 1.3,
+        "width": 3.6,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "table_1",
+        "name": "Two-Seat Breakfast Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.4,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "fridge_1",
+        "name": "Fridge",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 0.5,
+        "width": 0.9,
+        "depth": 2.5,
+        "height": 2.0,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "light_1",
+        "name": "Pendant Light",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.5,
+        "elevation": 2.3,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.8,
+       "y": 1.6,
+       "z": 1.35,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 1.3,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [],
+      "design_notes": [],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fridge_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "light_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 1,
+     "prompt_id": "p001"
+    }
+   ]
+  }
+ }
+}

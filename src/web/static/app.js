@@ -1501,7 +1501,7 @@ async function sendDescriptionMvp() {
           
           // Fetch scene graph so GAME tab can build a first-person view
           if (payload.state === 'ready') {
-            fetchJson(`/api/session/${sessionId}/scene`).then(sceneData => {
+            fetchJson(`/api/session/${sessionId}/scene_data`).then(sceneData => {
               if (sceneData && sceneData.room) {
                 lastSceneGraph = sceneData;
                 buildViewer(sceneData, payload.download_url || '');
