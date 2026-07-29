@@ -150,7 +150,7 @@ class TestV14PhotoEndpoint:
         img.write_bytes(b"\xff\xd8\xff" + b"\x00" * 100)
 
         with patch(
-            "src.photo_pipeline.orchestrator.PhotoPipelineOrchestrator"
+            "src.photo_pipeline.orchestrator_v14.V14Orchestrator"
         ) as MockOrch:
             mock_instance = AsyncMock()
             MockOrch.return_value = mock_instance

@@ -1598,6 +1598,44 @@ async def mvp_result(session_id: str):
 _v14_material_connections: dict[str, list[WebSocket]] = {}
 
 
+@app.post("/api/session/v14/upload-photo")
+async def v14_upload_photo(request: Request):
+    """Upload a photo from the browser for V14 pipeline processing.
+
+    Accepts a multipart form with a 'photo' file field.
+    Persists the file into a temporary upload directory and returns the
+    server-side path for use with the /api/session/v14/photo endpoint.
+    """
+    from starlette.datastructures import UploadFile as StarletteUpload
+
+    form = await request.form()
+    photo = form.get("photo")
+    if photo is None or not hasattr(photo, "read"):
+        return JSONResponse(
+            {"error": "Missing 'photo' file in multipart form"}, status_code=400
+        )
+
+    # Validate file type
+    filename = getattr(photo, "filename", "upload.jpg") or "upload.jpg"
+    ext = Path(filename).suffix.lower()
+    if ext not in (".jpg", ".jpeg", ".png", ".webp"):
+        return JSONResponse(
+            {"error": f"Unsupported file type: {ext}. Use JPEG or PNG."},
+            status_code=400,
+        )
+
+    # Persist into uploads directory
+    upload_dir = OUTPUT_DIR / "_uploads"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    safe_name = f"{uuid.uuid4().hex[:12]}_{Path(filename).stem}{ext}"
+    dest = upload_dir / safe_name
+
+    content = await photo.read()
+    dest.write_bytes(content)
+
+    return {"server_path": str(dest), "filename": filename, "size_bytes": len(content)}
+
+
 @app.post("/api/session/v14/photo")
 async def create_v14_photo_session(request: Request):
     """V14 photo pipeline endpoint — accepts photo upload and starts V14 pipeline.
@@ -1613,13 +1651,12 @@ async def create_v14_photo_session(request: Request):
 
     Requirements: 8.4, 8.6, 12.1, 12.4, 12.5
     """
-    from src.photo_pipeline.orchestrator import (
-        PhotoPipelineOrchestrator,
-        PipelineError,
-        PipelineTimeoutError,
-        PipelineValidationError,
+    from src.photo_pipeline.orchestrator_v14 import (
+        V14Orchestrator,
+        V14PipelineError,
+        V14ValidationError,
     )
-    from src.photo_pipeline.models import PhotoPipelineConfig
+    from src.photo_pipeline.models_v14 import V14PipelineConfig
 
     try:
         body = await request.json()
@@ -1674,12 +1711,60 @@ async def create_v14_photo_session(request: Request):
         json.dumps(session_meta, indent=2), encoding="utf-8"
     )
 
-    # Configure and run photo pipeline orchestrator (V14 pipeline)
-    config = PhotoPipelineConfig()
-    orchestrator = PhotoPipelineOrchestrator(
+    # Configure and run V14 pipeline orchestrator (real Hunyuan3D + Trellis2)
+    config = V14PipelineConfig()
+
+    # SSE event callback: translate orchestrator events to V14 SSE schema and
+    # append to session JSONL for the SSE endpoint to poll.
+    async def _v14_event_cb(event: dict) -> None:
+        """Translate V14Orchestrator events to V14 SSE schema.
+
+        Orchestrator emits: {event, stage, status, session_id, elapsed_s, ...}
+        SSE endpoint expects: {type: stage_change|object_complete|room_shell_ready|done|error, ...}
+        """
+        stage = event.get("stage", "")
+        status = event.get("status", "")
+
+        sse_event: dict | None = None
+
+        if status == "started":
+            sse_event = {
+                "type": "stage_change",
+                "stage": stage,
+                "total_objects": event.get("total_objects"),
+            }
+        elif status == "completed" and stage == "pipeline":
+            sse_event = {
+                "type": "done",
+                "object_count": event.get("object_count", 0),
+                "quality_classification": event.get("quality_classification"),
+            }
+        elif status == "completed" and stage == "room_shell_reconstruction":
+            sse_event = {"type": "room_shell_ready"}
+        elif status == "object_completed":
+            mask_id = event.get("mask_id", "")
+            sse_event = {
+                "type": "object_complete",
+                "object_id": mask_id,
+                "mesh_url": f"/api/session/{session_id}/mesh/{mask_id}",
+                "position": [0, 0, 0],
+                "rotation": [0, 0, 0],
+                "scale": [1, 1, 1],
+            }
+        elif status == "completed":
+            sse_event = {"type": "stage_change", "stage": stage}
+
+        if sse_event is not None:
+            events_path = session_dir / "v14_events.jsonl"
+            line = json.dumps(sse_event, default=str) + "\n"
+            with open(events_path, "a", encoding="utf-8") as f:
+                f.write(line)
+
+    orchestrator = V14Orchestrator(
         config=config,
         session_dir=session_dir,
         session_id=session_id,
+        event_callback=_v14_event_cb,
     )
 
     # Start pipeline in background, return immediately for SSE streaming
@@ -1696,7 +1781,7 @@ async def create_v14_photo_session(request: Request):
             (session_dir / "session_meta.json").write_text(
                 json.dumps(session_meta, indent=2), encoding="utf-8"
             )
-        except (PipelineValidationError, PipelineTimeoutError, PipelineError) as exc:
+        except (V14ValidationError, V14PipelineError) as exc:
             session_meta.update({"state": "error", "error": str(exc)})
             (session_dir / "session_meta.json").write_text(
                 json.dumps(session_meta, indent=2), encoding="utf-8"

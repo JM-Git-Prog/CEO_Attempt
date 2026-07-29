@@ -8,7 +8,7 @@
   "2": {
     "class_type": "DownloadAndLoadDepthAnythingV2Model",
     "inputs": {
-      "model": "depth_anything_v2_metric_hypersim_vitl.safetensors"
+      "model": "depth_anything_v2_metric_hypersim_vitl_fp32.safetensors"
     }
   },
   "3": {

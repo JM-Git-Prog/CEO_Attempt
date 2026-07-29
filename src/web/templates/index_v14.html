@@ -569,22 +569,31 @@
         buildBtn.addEventListener('click', async function() {
           if (!selectedFile) return;
 
-          // For now, use the file name as the source_image path
-          // In production, this would upload the file first
-          var formData = new FormData();
-          formData.append('photo', selectedFile);
-
           // Hide upload, show progress
           if (uploadSection) uploadSection.classList.add('hidden');
           if (progressOverlay) progressOverlay.classList.remove('hidden');
 
           try {
-            // Submit via JSON API with file path
-            // Note: real implementation would upload file then pass server-side path
+            // Upload the file to the server first, then start the pipeline
+            var formData = new FormData();
+            formData.append('photo', selectedFile);
+
+            var uploadResp = await fetch('/api/session/v14/upload-photo', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (!uploadResp.ok) {
+              var errData = await uploadResp.json().catch(function() { return { error: 'Upload failed' }; });
+              throw new Error(errData.error || 'Upload failed: ' + uploadResp.status);
+            }
+
+            var uploadData = await uploadResp.json();
+            // uploadData has { server_path, session_id, ... } — start pipeline
             var resp = await fetch('/api/session/v14/photo', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ source_image: selectedFile.name, mode: 'mvp' }),
+              body: JSON.stringify({ source_image: uploadData.server_path, mode: 'full' }),
             });
             var data = await resp.json();
 
