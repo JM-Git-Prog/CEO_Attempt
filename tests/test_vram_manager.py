@@ -83,17 +83,17 @@ class TestAcquireModel:
     async def test_acquire_releases_previous_model(
         self, manager: VRAMManager, mock_client: ComfyUIClient
     ) -> None:
-        """If a model is already loaded, acquire should release it first."""
+        """If a model is already loaded, acquire transitions without /free (warm cache)."""
         with patch.object(manager, "_wait_for_vram_free", new_callable=AsyncMock):
             with patch.object(manager, "wait_for_ram_available", new_callable=AsyncMock):
                 await manager.acquire_model("flux_klein", 8.0)
                 assert manager.current_model == "flux_klein"
 
-                # Now acquire a different model — should release first
+                # Now acquire a different model — warm cache: NO /free call
                 await manager.acquire_model("hunyuan3d_v2.1", 12.0)
 
-        # The /free should have been called to release flux_klein
-        mock_client._free_vram.assert_called()
+        # Warm caching: /free is NOT called (model stays in CPU RAM)
+        mock_client._free_vram.assert_not_called()
         assert manager.current_model == "hunyuan3d_v2.1"
         assert manager.estimated_usage_gb == 12.0
 
@@ -119,17 +119,17 @@ class TestReleaseModel:
     async def test_release_clears_state(
         self, manager: VRAMManager, mock_client: ComfyUIClient
     ) -> None:
-        """Releasing a model should clear state and call /free."""
+        """Releasing a model should clear state (soft-release, no /free)."""
         with patch.object(manager, "_wait_for_vram_free", new_callable=AsyncMock):
             with patch.object(manager, "wait_for_ram_available", new_callable=AsyncMock):
                 await manager.acquire_model("hunyuan3d_v2.1", 12.0)
 
-        with patch.object(manager, "_wait_for_vram_free", new_callable=AsyncMock):
-            await manager.release_model()
+        await manager.release_model()
 
         assert manager.current_model is None
         assert manager.estimated_usage_gb == 0.0
-        mock_client._free_vram.assert_called()
+        # Warm caching: /free is NOT called (model stays in CPU RAM)
+        mock_client._free_vram.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_release_noop_when_no_model(

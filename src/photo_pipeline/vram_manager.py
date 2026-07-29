@@ -1,8 +1,16 @@
-"""VRAM Manager — sequential model loading with VRAM budget on RTX 4090 24GB.
+"""VRAM Manager — sequential model loading with warm CPU caching on RTX 4090 24GB.
 
-Enforces single-model exclusion, explicit /free + wait between transitions,
-flash attention flag, system RAM monitoring (pause at 80GB / resume at 72GB),
-and OOM retry logic (call /free, wait 5s, retry once).
+Enforces single-model exclusion for VRAM, but keeps previously loaded models
+warm in system RAM (CPU offload) for fast reload. ComfyUI natively handles
+CPU↔GPU model migration — we just need to avoid aggressive /free calls that
+evict models entirely from RAM.
+
+Strategy:
+- On model transition: let ComfyUI's built-in model management handle offload
+  (current model moves to CPU RAM automatically when new model loads)
+- Only call /free when VRAM is genuinely exhausted (OOM) or system RAM > 80GB
+- This turns ~30s disk→RAM→VRAM loads into ~2-5s RAM→VRAM transfers
+- With 96GB system RAM, we can comfortably cache all pipeline models (~24GB total)
 
 Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7
 """
@@ -48,6 +56,11 @@ RAM_POLL_INTERVAL_S: float = 2.0
 VRAM_WAIT_TIMEOUT_S: float = 60.0
 """Maximum seconds to wait for VRAM to drop below threshold."""
 
+# Warm cache: models kept in system RAM for fast GPU reload
+# Total ~24GB in RAM out of 96GB available — well within budget
+WARM_CACHE_MAX_MODELS: int = 5
+"""Maximum number of models to keep warm in CPU RAM."""
+
 
 # ---------------------------------------------------------------------------
 # VRAMManager
@@ -55,11 +68,13 @@ VRAM_WAIT_TIMEOUT_S: float = 60.0
 
 
 class VRAMManager:
-    """Enforces sequential model loading with VRAM budget on RTX 4090 24GB.
+    """Enforces sequential model loading with warm CPU caching on RTX 4090 24GB.
 
     Guarantees:
-    - Only one large model loaded at a time (single-model exclusion)
-    - Explicit /free + wait between transitions
+    - Only one large model loaded in VRAM at a time (single-model exclusion)
+    - Previously used models stay warm in system RAM (fast ~2-5s reload)
+    - ComfyUI handles CPU↔GPU migration natively when new workflow submitted
+    - /free only called for OOM recovery or system RAM pressure
     - Flash attention enabled for all inference
     - System RAM monitoring (pause at 80GB / resume at 72GB)
     - OOM retry: call /free, wait 5s, retry once
@@ -79,6 +94,8 @@ class VRAMManager:
         self._estimated_usage_gb: float = 0.0
         self._flash_attention_enabled: bool = True
         self._lock = asyncio.Lock()
+        # Track models that should be warm in CPU RAM
+        self._warm_models: list[str] = []
 
     # ------------------------------------------------------------------
     # Properties
@@ -122,10 +139,15 @@ class VRAMManager:
     async def acquire_model(self, model_name: str, estimated_gb: float) -> None:
         """Acquire exclusive access to load a model into VRAM.
 
-        If another model is currently loaded, it is released first via /free.
-        Then waits until VRAM usage drops below 4GB before signaling ready.
+        Uses warm CPU caching: if another model is loaded, we do NOT call
+        /free (which evicts from RAM entirely). Instead, ComfyUI's native
+        model management will offload the current model to CPU RAM when the
+        new workflow is submitted. This keeps previous models warm for fast
+        reload (~2-5s from RAM instead of ~30s from disk).
 
-        Also checks system RAM and pauses if over the 80GB threshold.
+        Only calls /free if:
+        - System RAM exceeds the 80GB threshold
+        - An OOM error occurs during execution
 
         Parameters
         ----------
@@ -135,34 +157,82 @@ class VRAMManager:
             Estimated VRAM usage of this model in GB.
         """
         async with self._lock:
-            # Check system RAM before proceeding
-            await self.wait_for_ram_available()
-
-            # If a model is already loaded, release it first (single-model exclusion)
-            if self._current_model is not None:
+            # Check system RAM — only evict if we're under pressure
+            ram_ok = await self.check_system_ram()
+            if not ram_ok:
+                # System RAM pressure: evict models from CPU cache
                 logger.info(
-                    "Releasing current model '%s' before loading '%s'",
-                    self._current_model,
+                    "System RAM pressure detected, calling /free to evict "
+                    "models from CPU cache before loading '%s'",
                     model_name,
                 )
-                await self._do_release()
+                await self._do_hard_release()
+                await self.wait_for_ram_available()
 
-            # Wait for VRAM to settle below threshold
-            await self._wait_for_vram_free()
+            # If same model already loaded, no-op (fast path)
+            if self._current_model == model_name:
+                logger.debug("Model '%s' already loaded, skipping acquire", model_name)
+                return
 
-            # Record new model as loaded
+            # If different model loaded, let ComfyUI handle the swap via
+            # its native model management — just update our bookkeeping.
+            # ComfyUI will offload the old model to CPU RAM when the new
+            # workflow is submitted, giving us warm caching for free.
+            if self._current_model is not None:
+                old_model = self._current_model
+                logger.info(
+                    "Transitioning '%s' → '%s' (old model stays warm in CPU RAM)",
+                    old_model,
+                    model_name,
+                )
+                # Track warm model (ComfyUI keeps it in system RAM)
+                if old_model not in self._warm_models:
+                    self._warm_models.append(old_model)
+                # Evict oldest warm model if we exceed the cache limit
+                while len(self._warm_models) > WARM_CACHE_MAX_MODELS:
+                    evicted = self._warm_models.pop(0)
+                    logger.debug("Warm cache full, oldest '%s' may be evicted", evicted)
+
+            # Record new model as the VRAM-active one
             self._current_model = model_name
             self._estimated_usage_gb = estimated_gb
             logger.info(
-                "Acquired model '%s' (estimated %.1f GB VRAM)",
+                "Acquired model '%s' (estimated %.1f GB VRAM, %d warm in RAM)",
                 model_name,
                 estimated_gb,
+                len(self._warm_models),
             )
 
     async def release_model(self) -> None:
-        """Release the current model by calling /free and waiting for VRAM < 4GB."""
+        """Soft-release: mark model as idle but keep it warm in CPU RAM.
+
+        Does NOT call /free — the model stays in system RAM for fast reload.
+        ComfyUI will automatically offload it to CPU when the next model loads.
+        """
         async with self._lock:
-            await self._do_release()
+            if self._current_model is None:
+                return
+
+            model_name = self._current_model
+            logger.info(
+                "Soft-releasing model '%s' (stays warm in CPU RAM for fast reload)",
+                model_name,
+            )
+
+            # Track as warm in CPU RAM
+            if model_name not in self._warm_models:
+                self._warm_models.append(model_name)
+
+            self._current_model = None
+            self._estimated_usage_gb = 0.0
+
+    async def hard_release(self) -> None:
+        """Hard-release: call /free to fully evict all models from RAM and VRAM.
+
+        Use this when system RAM is under pressure or for cleanup at session end.
+        """
+        async with self._lock:
+            await self._do_hard_release()
 
     async def check_system_ram(self) -> bool:
         """Check whether system RAM usage is within acceptable bounds.
@@ -213,8 +283,8 @@ class VRAMManager:
     ) -> Any:
         """Execute an inference call with OOM retry logic.
 
-        If the call raises ComfyUIVRAMError (OOM), calls /free, waits 5s,
-        and retries exactly once.
+        If the call raises ComfyUIVRAMError (OOM), calls /free to evict warm
+        cache, waits 5s, and retries exactly once.
 
         Parameters
         ----------
@@ -237,26 +307,25 @@ class VRAMManager:
             return await inference_fn(*args, **kwargs)
         except ComfyUIVRAMError as exc:
             logger.warning(
-                "OOM error during inference, attempting recovery: %s", exc
+                "OOM error during inference — evicting warm cache and retrying: %s",
+                exc,
             )
-            # OOM retry: call /free, wait 5s, retry once
+            # OOM recovery: hard-evict all warm models from CPU RAM
             await self._client._free_vram()
+            self._warm_models.clear()
             await asyncio.sleep(OOM_RETRY_WAIT_S)
 
-            logger.info("Retrying inference after OOM recovery")
+            logger.info("Retrying inference after OOM recovery (warm cache cleared)")
             return await inference_fn(*args, **kwargs)
 
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
 
-    async def _do_release(self) -> None:
-        """Internal: call /free and wait for VRAM to settle, update state."""
-        if self._current_model is None:
-            return
-
-        model_name = self._current_model
-        logger.info("Releasing model '%s' via /free", model_name)
+    async def _do_hard_release(self) -> None:
+        """Hard evict: call /free, clear warm cache, wait for VRAM to settle."""
+        model_name = self._current_model or "(idle)"
+        logger.info("Hard-releasing all models via /free (current: '%s')", model_name)
 
         await self._client._free_vram()
 
@@ -265,7 +334,8 @@ class VRAMManager:
 
         self._current_model = None
         self._estimated_usage_gb = 0.0
-        logger.info("Model '%s' released, VRAM cleared", model_name)
+        self._warm_models.clear()
+        logger.info("Hard release complete — all models evicted from RAM + VRAM")
 
     async def _wait_for_vram_free(self) -> None:
         """Poll until VRAM usage drops below the free threshold (4GB).
