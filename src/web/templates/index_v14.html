@@ -778,12 +778,15 @@
 
               // Set camera inside room
               if (scene.camera) {
-                var camPos = scene.camera.position || [0, 1.6, 2];
+                var camPos = scene.camera.position || [0, 1.6, -0.5];
                 viewer.camera.position.set(camPos[0], camPos[1], camPos[2]);
                 viewer.camera.fov = scene.camera.fov || 60;
                 viewer.camera.updateProjectionMatrix();
                 if (viewer.orbitControls) {
-                  viewer.orbitControls.target.set(0, (scene.room.height || 2.7) / 2, -(scene.room.depth || 4) / 2);
+                  // Orbit target at room center: (0, height/2, -depth/2)
+                  var roomH = scene.room.height || 2.7;
+                  var roomD = scene.room.depth || 4;
+                  viewer.orbitControls.target.set(0, roomH / 2, -roomD / 2);
                   viewer.orbitControls.update();
                 }
               }

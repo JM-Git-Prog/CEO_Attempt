@@ -671,11 +671,11 @@ export class V14WorldViewer {
     const roomGroup = new THREE.Group();
     roomGroup.name = 'parametric_room';
 
-    // Center the room so floor is at y=0, centered on x/z
+    // WorldContract coords: camera at z=0 looking -Z, room extends z=0 to z=-depth
+    // Floor at y=0, ceiling at y=height, walls at x=±width/2
     const halfW = width / 2;
-    const halfD = depth / 2;
 
-    // Floor
+    // Floor (horizontal at y=0, from z=0 to z=-depth)
     const floorGeo = new THREE.PlaneGeometry(width, depth);
     const floorMat = new THREE.MeshStandardMaterial({
       color: roomData.floor_color || '#8b7355',
@@ -685,11 +685,11 @@ export class V14WorldViewer {
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = 0;
+    floor.position.set(0, 0, -depth / 2);
     floor.receiveShadow = true;
     roomGroup.add(floor);
 
-    // Ceiling
+    // Ceiling (at y=height)
     const ceilGeo = new THREE.PlaneGeometry(width, depth);
     const ceilMat = new THREE.MeshStandardMaterial({
       color: roomData.ceiling_color || '#e8e0d8',
@@ -699,7 +699,7 @@ export class V14WorldViewer {
     });
     const ceiling = new THREE.Mesh(ceilGeo, ceilMat);
     ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.y = height;
+    ceiling.position.set(0, height, -depth / 2);
     ceiling.receiveShadow = true;
     roomGroup.add(ceiling);
 
@@ -713,17 +713,16 @@ export class V14WorldViewer {
     // Back wall (z = -depth)
     const backGeo = new THREE.PlaneGeometry(width, height);
     const backWall = new THREE.Mesh(backGeo, wallMat.clone());
-    backWall.position.set(0, height / 2, -halfD);
+    backWall.position.set(0, height / 2, -depth);
     backWall.receiveShadow = true;
     roomGroup.add(backWall);
 
-    // Front wall (z = +depth) — typically the viewing wall, may be omitted for camera
-    // We skip the front wall so the camera can see inside
+    // No front wall — camera looks in from z=0
 
     // Left wall (x = -halfW)
     const leftGeo = new THREE.PlaneGeometry(depth, height);
     const leftWall = new THREE.Mesh(leftGeo, wallMat.clone());
-    leftWall.position.set(-halfW, height / 2, 0);
+    leftWall.position.set(-halfW, height / 2, -depth / 2);
     leftWall.rotation.y = Math.PI / 2;
     leftWall.receiveShadow = true;
     roomGroup.add(leftWall);
@@ -731,7 +730,7 @@ export class V14WorldViewer {
     // Right wall (x = +halfW)
     const rightGeo = new THREE.PlaneGeometry(depth, height);
     const rightWall = new THREE.Mesh(rightGeo, wallMat.clone());
-    rightWall.position.set(halfW, height / 2, 0);
+    rightWall.position.set(halfW, height / 2, -depth / 2);
     rightWall.rotation.y = -Math.PI / 2;
     rightWall.receiveShadow = true;
     roomGroup.add(rightWall);
