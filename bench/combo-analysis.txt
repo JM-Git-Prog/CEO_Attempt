@@ -1,0 +1,11 @@
+BEST-OF-N, per prompt, by scope
+
+  everything                             prompts= 87 never-legal=11  N1= 22.6% N3= 46.9% N5= 59.9% N8= 70.7% 
+  occupancy < 20%                        prompts= 52 never-legal= 6  N1= 34.3% N3= 62.8% N5= 74.1% N8= 81.3% 
+  no adjacent_to                         prompts= 52 never-legal= 6  N1= 35.8% N3= 63.1% N5= 73.9% N8= 81.2% 
+  occ<20% AND no adjacent_to             prompts= 39 never-legal= 5  N1= 44.7% N3= 71.9% N5= 80.2% N8= 84.4% 
+
+SANITY: is the mixing across lanes faking the stochasticity?
+  llama3.1             repeated prompts= 85  mixed= 71 (84% stochastic WITHIN one lane)
+  glm-5.2:cloud        repeated prompts= 14  mixed= 13 (93% stochastic WITHIN one lane)
+  planner-probe-v1     no prompt attempted 4+ times within this lane alone

@@ -1,0 +1,85 @@
+{
+  "q1": {
+    "repeated": 87,
+    "always": 0,
+    "never": 11,
+    "mixed": 76,
+    "pooled_rate": 0.2339,
+    "best_of_n": {
+      "1": 0.2256,
+      "2": 0.3692,
+      "3": 0.4692,
+      "5": 0.5991,
+      "8": 0.7072,
+      "12": 0.7806
+    }
+  },
+  "q4": {
+    "everything (today)": {
+      "n": 895,
+      "rate": 0.2246
+    },
+    "<=5 items": {
+      "n": 408,
+      "rate": 0.2279
+    },
+    "<=5 items, no ceiling items": {
+      "n": 233,
+      "rate": 0.2403
+    },
+    "<=5 items, no repeats": {
+      "n": 257,
+      "rate": 0.2646
+    },
+    "<=5, no ceiling, no repeats": {
+      "n": 146,
+      "rate": 0.2671
+    },
+    "<=5, none of the above + no adjacent_to": {
+      "n": 87,
+      "rate": 0.3218
+    },
+    "occupancy < 20%": {
+      "n": 432,
+      "rate": 0.3519
+    },
+    "<=5 items AND occupancy < 20%": {
+      "n": 172,
+      "rate": 0.3779
+    }
+  },
+  "separation": [
+    {
+      "feature": "occupancy",
+      "cohen_d": 0.924
+    },
+    {
+      "feature": "adjacent_to",
+      "cohen_d": 0.613
+    },
+    {
+      "feature": "n_openings",
+      "cohen_d": 0.542
+    },
+    {
+      "feature": "centered",
+      "cohen_d": 0.329
+    },
+    {
+      "feature": "area",
+      "cohen_d": 0.135
+    },
+    {
+      "feature": "n_items",
+      "cohen_d": 0.077
+    },
+    {
+      "feature": "n_repeats",
+      "cohen_d": 0.075
+    },
+    {
+      "feature": "n_ceiling",
+      "cohen_d": 0.062
+    }
+  ]
+}
