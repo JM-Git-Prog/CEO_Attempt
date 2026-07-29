@@ -2,13 +2,24 @@
 
 ## Introduction
 
-This specification defines an LLM-directed world-building architecture that uses UPBGE as a hidden scene compiler and optional real-time runtime while preserving an engine-neutral source of truth. The LLM expresses intent through typed semantic commands; deterministic application code owns geometry, validation, physics, execution, persistence, and export. The same approved world contract can produce an UPBGE `.blend` and playable package, Godot output, and GLB assets for Three.js without exposing engine complexity in the product interface.
+This specification defines an LLM-directed world-building architecture that uses UPBGE as an optional high-quality scene compiler and runtime while preserving an engine-neutral WorldContract as the source of truth. The WorldContract is produced by EITHER the text-to-world path (LLM semantic commands → relationship solver) OR the photo-to-world path (V14 pipeline → depth/layout → WorldContract assembly). Both paths converge at the same WorldContract, which can then be compiled to UPBGE, exported to Godot, or rendered via Three.js.
 
-The feature replaces neither the approved Plan nor the immutable Camera_Contract. It integrates the existing Blender prototype only after correcting its opening, physics, provenance, portability, and pipeline gaps. Existing released interfaces and workflow profiles remain behaviorally stable. Any user-visible release requires a new query version and a clean zero-state qualification pass.
+The feature preserves existing released interfaces. Any user-visible release requires a new query version and a clean zero-state qualification pass.
+
+### Relationship to V14 (Photo-to-Real-3D-World)
+
+V14 produces a WorldContract from a photograph. This spec governs what happens AFTER the WorldContract exists:
+- Optional UPBGE compilation for high-quality `.blend` + playable runtime
+- Godot export adapter
+- GLB export with metadata sidecar
+- Structural parity validation between WorldContract and compiled output
+- Runtime smoke testing for playable packages
+
+The text-to-world path (LLM semantic commands) remains available for prompt-based world generation but is secondary to the photo path for now.
 
 ## Glossary
 
-- **World_Contract**: Engine-neutral, versioned description of room geometry, instances, transforms, materials, lights, cameras, physics intent, interactions, and export policy.
+- **World_Contract**: Engine-neutral, versioned description of room geometry, instances, transforms, materials, lights, cameras, physics intent, interactions, and export policy. Produced by EITHER the text-to-world LLM path OR the V14 photo pipeline.
 - **Semantic_Command**: Allowlisted typed operation proposed by the LLM against a World_Contract; never arbitrary executable code.
 - **Command_Validator**: Deterministic component that validates authorization, schema, references, units, limits, and invariants before applying a Semantic_Command.
 - **Scene_Compiler**: Deterministic sidecar that translates an approved World_Contract into engine artifacts through UPBGE's Blender-compatible Python API.
@@ -19,10 +30,6 @@ The feature replaces neither the approved Plan nor the immutable Camera_Contract
 - **Compiler_Manifest**: Immutable record binding inputs, versions, profile, camera, command log, outputs, hashes, diagnostics, and validation results.
 - **Structural_Parity_Report**: Machine-checkable comparison of identities, counts, dimensions, transforms, openings, camera, and relationships across artifacts.
 - **Runtime_Smoke_Report**: Result of loading a package, spawning the player, moving, colliding, and exercising required interactions.
-- **LLM_Director**: Model that interprets user intent and proposes semantic changes without controlling simulation frames or executing code.
-- **Deterministic_Authority**: Application component that owns exact transforms, collisions, simulation, export, and artifact acceptance.
-- **Retained_Interface**: Previously released query-versioned UI whose behavior remains stable.
-- **Workflow_Profile**: Immutable version-specific generation and compilation contract persisted with a session.
 - **Graceful_Fallback**: Explicit continuation through the existing Godot assembler or another approved adapter when UPBGE is unavailable or compilation fails.
 
 ## Requirements
@@ -34,7 +41,7 @@ The feature replaces neither the approved Plan nor the immutable Camera_Contract
 #### Acceptance Criteria
 
 1. THE World_Contract SHALL represent stable object identities, room geometry, openings, transforms, dimensions, materials, lights, cameras, physics intent, interactions, and export targets without UPBGE-specific types.
-2. WHEN a Plan, Scene_Graph, or Camera_Contract is approved, THE World_Contract SHALL preserve its authoritative metric values and identifiers.
+2. WHEN a WorldContract is produced (by either V14 photo pipeline or LLM text path), THE World_Contract SHALL preserve its authoritative metric values and identifiers.
 3. THE Scene_Compiler SHALL treat the World_Contract as read-only input.
 4. IF an Export_Adapter cannot represent a World_Contract feature, THEN it SHALL return a structured unsupported-feature result rather than silently changing semantics.
 5. WHEN identical canonical World_Contract bytes and compiler configuration are supplied, THE compilation plan SHALL be identical.
@@ -78,7 +85,7 @@ The feature replaces neither the approved Plan nor the immutable Camera_Contract
 
 ### Requirement 5: Compile Structurally Faithful Scenes
 
-**User Story:** As a pipeline reviewer, I want the compiled scene to match the approved world exactly, so that the Blockout, Canon, and playable World retain one identity.
+**User Story:** As a pipeline reviewer, I want the compiled scene to match the approved world exactly, so that exported artifacts retain structural identity with the source WorldContract.
 
 #### Acceptance Criteria
 
@@ -92,7 +99,7 @@ The feature replaces neither the approved Plan nor the immutable Camera_Contract
 
 ### Requirement 6: Provide a Playable UPBGE Runtime
 
-**User Story:** As a user, I want the generated world to be immediately explorable, so that world creation results in an interactive experience rather than only a rendered model.
+**User Story:** As a user, I want the generated world to be immediately explorable via UPBGE, so that world creation results in an interactive experience beyond the Three.js browser view.
 
 #### Acceptance Criteria
 
@@ -109,7 +116,7 @@ The feature replaces neither the approved Plan nor the immutable Camera_Contract
 
 #### Acceptance Criteria
 
-1. THE system SHALL retain the existing Godot Export_Adapter while introducing the UPBGE Export_Adapter.
+1. THE system SHALL retain the existing Godot Export_Adapter while supporting the UPBGE Export_Adapter.
 2. WHEN GLB export is requested, THE Export_Adapter SHALL export meshes, materials, cameras, punctual lights, stable identifiers as extras, units, and axis metadata supported by the target contract.
 3. THE system SHALL store gameplay and physics semantics in sidecar metadata when GLB cannot represent them portably.
 4. WHEN Godot or Three.js output is requested, THE corresponding adapter SHALL consume the same World_Contract rather than reverse-engineering `.blend` output.
@@ -137,78 +144,29 @@ The feature replaces neither the approved Plan nor the immutable Camera_Contract
 
 1. BEFORE compilation, THE system SHALL write an immutable prepared Compiler_Manifest.
 2. WHEN compilation terminates, THE system SHALL write an immutable completed, failed, timed-out, or rejected Compiler_Manifest.
-3. THE Compiler_Manifest SHALL record session ID, interface version, Workflow_Profile, World_Contract version and hash, Plan revision, Camera_Contract ID, compiler script hash, UPBGE identity and versions, configuration, command-log hash, timings, diagnostics, and artifact metadata.
+3. THE Compiler_Manifest SHALL record session ID, interface version, World_Contract version and hash, compiler script hash, UPBGE identity and versions, configuration, timings, diagnostics, and artifact metadata.
 4. WHEN an Engine_Artifact is produced, THE Compiler_Manifest SHALL record its path, bytes, SHA-256 hash, media type, and target role.
 5. WHEN a persisted session is restored, THE system SHALL reject profile or contract content that differs from the immutable registry identity.
 6. Recompiling a historical session SHALL NOT overwrite its prior manifests or artifacts.
 
-### Requirement 10: Gate Artifacts with Automated and Human QA
+### Requirement 10: Gate Artifacts with Structural and Runtime QA
 
-**User Story:** As a quality owner, I want structural, runtime, visual, and human checks, so that attractive but incorrect worlds cannot pass as successful.
+**User Story:** As a quality owner, I want structural and runtime checks before artifact acceptance, so that incorrect compiled output cannot pass as successful.
 
 #### Acceptance Criteria
 
-1. BEFORE Canon generation advances, THE system SHALL verify Plan and Blockout structural validity under the selected Workflow_Profile.
-2. AFTER Floor Plan, Blockout, and Canon are available, THE QA process SHALL evaluate Spatial Accuracy, Aesthetic Quality, Prompt Adherence, Artifacts and Glitches, Information Representation, Camera Perspective versus Blueprint, and Asset Fidelity.
-3. WHEN local vision screening is used, THE system SHALL require `pass=true` and confidence of at least `0.8` for automatic acceptance.
-4. IF local vision screening fails, is unavailable, or has confidence below `0.8`, THEN the artifact SHALL require explicit adjudication rather than automatic approval.
-5. BEFORE a world artifact is accepted, THE system SHALL require a passing Structural_Parity_Report and applicable Runtime_Smoke_Report.
-6. Human QA SHALL bind verdicts to artifact hashes, interface version, Workflow_Profile, plan revision, and Canon attempt, and SHALL support superseding earlier verdicts without deleting history.
+1. BEFORE an Engine_Artifact is accepted, THE system SHALL require a passing Structural_Parity_Report comparing compiled output against the source World_Contract.
+2. WHEN UPBGE runtime output is produced, THE system SHALL require a passing Runtime_Smoke_Report (load, spawn, movement, collision, opening traversal).
+3. THE system SHALL distinguish successful native UPBGE output, successful fallback output, partial export, and failure.
+4. A fallback result can never be represented as native UPBGE success.
 
 ### Requirement 11: Preserve Versioned Behavior and Fallbacks
 
-**User Story:** As a maintainer, I want the integration introduced without rewriting history, so that existing sessions and released interfaces remain trustworthy.
+**User Story:** As a maintainer, I want the UPBGE integration introduced without breaking existing interfaces, so that prior sessions and released versions remain trustworthy.
 
 #### Acceptance Criteria
 
-1. THE implementation SHALL introduce UPBGE behavior through a new immutable Workflow_Profile and SHALL NOT mutate existing V9 or V10 profile documents.
-2. IF user-visible controls or stage behavior change, THEN the implementation SHALL increment the query interface version, retain the preceding version, make the newest released version the default, and show version-switch links.
-3. WHEN an older session is restored, THE pipeline SHALL use its persisted or historical Workflow_Profile and SHALL NOT route it through UPBGE unless that profile requires UPBGE.
-4. WHEN UPBGE compilation fails and the profile permits fallback, THE pipeline SHALL use the declared adapter and record that fallback in provenance and the user-visible status.
-5. THE system SHALL distinguish successful native UPBGE output, successful fallback output, partial export, and failure.
-6. THE system SHALL reject unsupported future interface versions rather than silently normalizing them to an older version.
-
-### Requirement 12: Qualify Release from a Fresh Zero-State Session
-
-**User Story:** As a release owner, I want a complete clean run before release, so that the new architecture is proven from user intent to playable output.
-
-#### Acceptance Criteria
-
-1. BEFORE release, THE release process SHALL create a brand-new empty session and run the canonical prompt without restoring prior state.
-2. THE release process SHALL inspect Brief, Plan, Blockout, Canon, World, Compare, Compiler_Manifest, Structural_Parity_Report, and Runtime_Smoke_Report as applicable.
-3. IF any defect appears, THEN the release process SHALL record the defect, fix it, discard that session as release evidence, and restart with another empty session.
-4. THE release process SHALL validate retained interfaces, relevant APIs, static JavaScript, Python diagnostics, compiler capability detection, GLB loading, UPBGE runtime startup, and Godot fallback.
-5. THE release process SHALL prohibit release classification until one complete zero-state pass succeeds on the exact target commit.
-6. THE release process SHALL record the clean-version URL, fresh session URL, exact canonical prompt, workflow profile, UPBGE version, artifact hashes, and commit hash.
-
-### Requirement 13: Qualify Composition and Realism Deterministically
-
-**User Story:** As a creative owner, I want every approved Canon to be completely framed and intentionally rendered as hyperrealistic or stylized-realistic, so that attractive output cannot hide missing geometry or drift from the requested visual mode.
-
-#### Acceptance Criteria
-
-1. BEFORE Camera_Contract approval, THE Composition_Sidecar SHALL evaluate all eight rotation-aware 3D bounds corners of every required Plan instance at the fixed raster, aspect, and vertical field of view.
-2. THE Composition_Sidecar SHALL preserve the typed camera corner and field of view and MAY search only profile-bounded corner inset and target aim offsets without moving Plan geometry.
-3. WHEN a candidate is accepted, every required instance SHALL be fully inside the configured safe-frame margin, and the sidecar SHALL emit immutable canonical candidate evidence with deterministic ordering, scores, per-instance projected bounds, and a stable hash.
-4. IF no candidate satisfies full required-instance coverage, THEN Plan approval SHALL fail with structured clipped-instance evidence; the system SHALL NOT silently widen field of view, move geometry, or approve center-point-only coverage.
-5. THE Plan and relationship solvers SHALL use one documented clearance contract: each instance contributes one half of its declared clearance to pairwise separation, matching strict Plan validation.
-6. THE workflow SHALL represent appearance mode as typed `hyperrealistic` or `stylized_realistic` intent and SHALL build immutable mode-specific conditioning from approved appearance, material, lighting, and weather intent without changing geometry.
-7. Visual QA SHALL judge realism quality against the selected appearance mode while deterministic structural and composition evidence remains authoritative.
-8. THE Composition_Sidecar and realism conditioning path SHALL be isolated to the new workflow profile and SHALL NOT change retained V3–V10 behavior.
-
-### Requirement 14: Continuously Qualify the Working Tree
-
-**User Story:** As a release owner, I want one repeatable local qualification loop after every relevant code update, so regressions are detected with durable evidence before a candidate can be released.
-
-#### Acceptance Criteria
-
-1. THE Qualification_Loop SHALL run once on startup and in watch mode after debounced relevant source, test, spec, or static-file changes.
-2. THE Qualification_Loop SHALL serialize iterations, never overlap runs, and coalesce any number of edits during an active iteration into exactly one pending rerun.
-3. EACH iteration SHALL bind a source fingerprint to fast static checks, focused tests, full tests, and—unless tests-only—a brand-new zero-state V11 E2E session that is never restored or reused.
-4. THE deterministic E2E adapter SHALL inspect Brief, Plan, Blockout, Canon, World, Compare when applicable, compiler manifests, UPBGE capability, declared Godot fallback, parity, runtime applicability, QA evidence, and recorded downloads.
-5. THE Qualification_Loop SHALL write append-only JSONL events plus atomic canonical JSON and Markdown summaries containing commands, timings, exits, stage verdicts, source hashes, session identity, artifact hashes, and regression deltas.
-6. IF source changes during an iteration, THEN that iteration SHALL be labeled stale and SHALL NOT qualify the newer source fingerprint.
-7. THE tool SHALL use a recoverable single-process lock, sanitized subprocess environment, argv without `shell=True`, bounded timeouts, graceful cancellation, and Windows-safe filenames.
-8. Optional local model analysis MAY summarize deterministic evidence but SHALL NOT override a failed gate or create release evidence.
-9. THE tool SHALL support `--once`, `--watch`, `--tests-only`, `--e2e-only`, changed-file scoping, output-root selection, debounce, timeout, and bounded iteration count.
-10. THE Qualification_Loop SHALL never stage, commit, delete diagnostic sessions, modify retained interfaces, or claim native UPBGE success without exact evidence.
+1. IF user-visible controls or stage behavior change, THEN the implementation SHALL increment the query interface version, retain the preceding version, make the newest released version the default, and show version-switch links.
+2. WHEN an older session is restored, THE pipeline SHALL use its persisted Workflow_Profile and SHALL NOT route it through UPBGE unless that profile requires UPBGE.
+3. WHEN UPBGE compilation fails and the profile permits fallback, THE pipeline SHALL use the declared adapter and record that fallback in provenance and the user-visible status.
+4. THE system SHALL reject unsupported future interface versions rather than silently normalizing them to an older version.

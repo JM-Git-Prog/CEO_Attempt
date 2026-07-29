@@ -211,13 +211,17 @@ Errors use stable stages and reason codes: `contract`, `command_validation`, `co
 - Partial artifacts are not presented as playable output.
 - Existing accepted artifacts remain immutable when later compilation fails.
 
-## Continuous Qualification Loop
+## V14 Integration Path
 
-`tools/e2e_qualification.py` owns a portable exclusive lock, relevant-file polling, debounce/coalescing, source fingerprints, bounded argv-only subprocess execution, and append-only/atomic evidence. It runs one iteration at startup; watch mode compares the post-run fingerprint with the bound pre-run fingerprint and schedules exactly one rerun when edits occurred while commands were active. A stale iteration remains diagnostic but cannot qualify the newer tree.
+The UPBGE compilation path consumes a WorldContract produced by either the text-to-world LLM path or the V14 photo pipeline. V14's WorldContract includes real textured GLB meshes (from Hunyuan3D/Trellis2), PBR materials, dynamic/static physics classification, and a depth-reconstructed room shell. The UPBGE compiler imports these assets rather than generating primitive geometry.
 
-`tools/v11_e2e_adapter.py` owns one zero-state API pass. Every invocation creates a new V11 session and records its identity before executing the canonical release prompt. Deterministic inspectors evaluate composition evidence, Plan validation, stage artifacts, compiler outcome, parity, runtime applicability, QA, fallback truthfulness, and downloads. Failed sessions remain in `output/` as immutable diagnostics and are never supplied to a later invocation.
+Key integration points:
+- V14 `geometry_strategy: "asset"` with `asset_registry_id` → UPBGE imports the real GLB mesh
+- V14 `PhysicsIntent` (body_mode, mass_kg, friction, restitution, can_topple) → UPBGE rigid body config
+- V14 Room_Shell_Mesh GLB → UPBGE room geometry (replaces procedural wall generation)
+- V14 PBR materials (metallic, roughness, normal) → UPBGE Eevee material nodes
 
-The evidence root contains append-only `events.jsonl` plus one atomically written canonical JSON and Markdown report per iteration. Source hashes, argv, exits, durations, session IDs, stage verdicts, artifact hashes, and prior-iteration deltas are acceptance inputs. Optional Ollama summaries are annotations only and cannot change a deterministic verdict.
+Structural parity and runtime smoke gates apply identically to V14-sourced WorldContracts.
 
 ## Security Model
 
@@ -239,17 +243,17 @@ The existing Godot path remains available as a profile-selected adapter and fall
 
 ## Migration Strategy
 
-### Phase 1: Offline compiler spike
+### Phase 1: COMPLETE — Offline compiler + parity + runtime
 
-Compile one known approved session from World_Contract and prove room openings, counts, transforms, camera, GLB extras, and manifest output. No web or default-pipeline change.
+UPBGE compilation infrastructure is operational: scene compiler, runtime templates, export adapters, structural parity gates, and interface version (V11). All completed in tasks 1-12.
 
-### Phase 2: Runtime and parity
+### Phase 2: CURRENT — V14 WorldContract integration
 
-Add first-person runtime templates, physics, interaction smoke checks, structural parity, and Godot/GLB comparison. Keep routing opt-in and profile-bound.
+After V14 stabilizes, verify that V14's real-mesh WorldContract feeds correctly into the UPBGE compiler. Import real GLB assets, map PBR materials to Eevee, apply physics classification. Run structural parity and runtime smoke.
 
-### Phase 3: Product integration
+### Phase 3: FUTURE — Photo-to-2D-CAD SLM training
 
-Introduce a new query-versioned interface and immutable profile. Expose build status and artifacts while preserving prior versions. Apply the full fresh-session release loop.
+Use V14 pipeline outputs as a data factory for training a small vision model that converts room photos directly to 2D CAD floor plans. See `self-learning-flywheel-design.md`.
 
 ## Correctness Properties
 

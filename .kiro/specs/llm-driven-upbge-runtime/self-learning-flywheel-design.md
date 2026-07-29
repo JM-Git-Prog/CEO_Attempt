@@ -1,171 +1,160 @@
-# Self-Learning Flywheel — toward a near-perfect scene→world model
+# Self-Learning Flywheel — Photo-to-2D-CAD Floor Plan SLM
 
-## Overview
+## North Star
 
-**North star (John, 2026-07-22):** the engine continuously learns from itself until a local
-SLM/LLM is near-perfect at ONE task — converting a user's scene description into a walkable, playable 3D game world - physics, doors, interactions included.
+Train an ultra-efficient, near-perfect small language model (SLM) that excels at ONE task:
+converting a photograph of a room with objects into a precise 2D CAD floor plan drawing
+(including all furniture positions, dimensions, and identifiers).
 
-**Why this is credible, not hype:** this pipeline already contains the two hard parts of
-self-training — a *generator* (the qualification loop mass-produces attempts) and a *free,
-objective labeler* (the deterministic gates: validation, composition, alignment, parity,
-runtime smoke). Attempts + verdicts = training data nobody has to hand-label. Text→typed-JSON
-plan generation is exactly the narrow task small local models fine-tune well on.
+This leverages V14's existing infrastructure — segmentation, depth estimation, scale
+calibration, and layout estimation — as both a data generator and an objective labeler.
+The V14 pipeline mass-produces structured outputs (depth maps, object positions, real-world
+dimensions) that can be converted into ground-truth 2D CAD representations without manual
+annotation.
 
-**Prime guardrail:** the V11 MVP qualification (tasks.md 13.x) outranks everything here.
-Only Phase F0 runs before `QUALIFIED.md` exists. Idle resources only — the loop preempts.
+## Why This Is Credible
 
----
-
-## Phases (each gated; never skip a gate)
-
-### F0 · Corpus capture — START NOW (passive, zero GPU)
-- A small extractor tool walks `output/qualification/*/v11-e2e.json` + session dirs and
-  appends one JSONL record per trial to `data/flywheel/corpus.jsonl` (append-only):
-  `{description, plan, world_contract?, per-gate verdicts, failure signatures, repair
-  actions applied, model lane, source fingerprint, timestamps}`.
-- Backfill everything already on disk tonight, then run at idle after each iteration.
-- Honest inventory at design time: ~35 iterations, only ~2 accepted plans — the factory
-  exists, the warehouse is nearly empty. Volume arrives as the loop runs at scale.
-
-### F0.5 · Diversity harvest (idle-GPU, pre-QUALIFIED permitted)
-- After F0 extraction and briefing complete, the watch's idle callback runs **continuous**
-  diagnostic trials from `data/flywheel/prompt-set-v1.json`, cycling least-sampled-first,
-  back-to-back until preempted by a qualification round, source change, or agent activity.
-- Idle threshold lowered to **3 minutes** (harvest only — qualification config unchanged).
-- Every gate verdict is banked to the corpus via the normal extractor.
-- Harvest sessions are marked `qualification_mode: "harvest"` — they are NEVER
-  qualification evidence and NEVER release evidence.
-- **Planner lane:** `glm-5.2:cloud` (Ollama Pro, pause-on-cap-exhaustion) so planning
-  overlaps local ComfyUI image generation. The local GPU handles only FLUX renders and
-  qwen2.5vl:7b vision QA during harvest.
-- Qualification rounds always preempt harvest immediately via the same `stop_requested`
-  callback (source change, agent activity, or active qualification lock).
-- This phase requires ComfyUI + Ollama availability (same as Tier 2 trials) but uses
-  the existing single watch process and lock — no second loop or lock contention.
-- **VRAM headroom (measured 2026-07-23):** RTX 4090 24 GB total. Harvest peak is
-  ComfyUI FLUX (~10 GB) + qwen2.5vl (~7 GB) = ~17 GB, leaving ~7 GB margin. K=2
-  workers is safe; K=3 is borderline (OOM risk if vision QA and render fully overlap).
-  Recommend K=2 until explicit under-load measurement confirms K=3 headroom.
-- Purpose: build corpus volume across diverse prompts while awaiting a model-quality
-  improvement that unblocks the canonical prompt's 0% pass rate.
-
-### F1 · Exemplar mining (after QUALIFIED.md; zero training)
-- Mine the best gate-passing plans into few-shot exemplars for the V11 prompts.
-- A/B through the existing lane ladder; keep only if measured pass-rate rises.
-
-### F2 · Local LoRA fine-tune (gate: ≥500 accepted plans + ≥2,000 labeled rejections)
-- LoRA on a small local base (llama3.1-8B / qwen-class) on the 4090, task-only:
-  description → plan JSON. Rejected samples with signatures become contrastive data.
-- Eval = gate pass-rate on a held-out prompt set, run through the normal trial machinery.
-- The tuned model enters the lane ladder as a new rung; it must BEAT the incumbent lanes
-  on pass-rate to be promoted (cheapest-rung discipline applies to our own model too).
-
-### F3 · Dedicated SLM (only if F2 plateaus below target)
-- Distillation + curriculum built from the signature taxonomy (hard-negative classes get
-  oversampled). This is the end-state John described; do not start it on ambition alone —
-  start it when F2's ceiling is measured and insufficient.
-
-## External data lanes (John authorized web gathering, 2026-07-22)
-
-- **L2 · Web datasets → local deep-dive repo** at `data/research-corpus/<source>/` with a
-  mandatory per-source `LICENSE-NOTES.md`. Candidates to evaluate first: 3D-FRONT,
-  Structured3D, HyperSim, SceneScript-style scene-language corpora, floor-plan datasets.
-  **Rule: every download is proposed to John with source, size, and license BEFORE
-  fetching** (constitution). Conversion into description→plan training pairs happens
-  locally (AnythingLLM/qwen lanes), and converted pairs are gate-validated before they
-  may enter the training corpus — web data never bypasses the labeler.
-- **L3 · Play traces (later):** a Play-QA-style agent plays finished worlds (spawn, roam,
-  collide, doors) and its traces label *playability* — the quality the geometry gates
-  can't see. Feeds F2/F3 as preference/reward data. Borrow the pattern from the
-  play-game-test-suite already proven on the CEO-3D-World project.
-
-## Idle-GPU scheduler rules
-1. Idle = watch loop quiet >10 min AND no ComfyUI model download AND no active agent turn.
-2. Idle jobs (extraction, conversion, later LoRA) log to `data/flywheel/idle-jobs.log`
-   and MUST yield within seconds when the loop wakes — the Ratchet always has the GPU.
-3. Nothing here ever edits pipeline code or evidence; the flywheel only reads evidence
-   and writes its own corpus files.
-
-## Ownership
-- Kiro: implement the F0 extractor + idle trigger now (small, isolated); F1+ blocked on
-  `QUALIFIED.md`.
-- Claude (Cowork): dataset scouting via AnythingLLM research lane; license verification;
-  download proposals to John; corpus audits (offloaded-model output verified before it
-  enters any ledger, per constitution).
+1. **Free labeler exists:** V14's depth-to-layout pipeline produces metric 3D positions and
+   real-world dimensions for every object. Projecting these onto the floor plane gives
+   a ground-truth 2D CAD layout — no human labeling needed.
+2. **Data factory exists:** every photo submission through V14 generates a complete labeled
+   example (photo → segmentation → depth → layout → floor plan projection).
+3. **Task is narrow and well-defined:** photo → structured JSON/DXF describing a top-down
+   floor plan with walls, doors, windows, and furniture footprints with dimensions.
+4. **Small models fine-tune well on narrow tasks:** the vision-to-structured-output pattern
+   (image → JSON schema) is exactly what 1-3B parameter vision-language models handle.
 
 ## Architecture
 
-The qualification Ratchet is the producer and deterministic labeler. F0 reads immutable trial and session evidence, normalizes it into an append-only local corpus, and yields whenever qualification resumes. F1–F3 consume only gate-qualified records and remain disabled until their phase gates are met. External datasets and play traces enter through separate provenance-preserving lanes and never bypass deterministic validation.
+```
+V14 Pipeline (data factory)
+    │
+    ├── Source Photo ─────────────────────────┐
+    ├── Segmented Objects + Masks             │
+    ├── Depth Map (metric, meters)            │
+    ├── Scale Calibrator (real-world dims)    │
+    ├── Layout Estimator (3D positions)       │
+    └── Physics Classification               │
+         │                                    │
+         v                                    v
+    Floor Plan Projector              Training Pair
+    (3D→2D top-down projection)       (photo, floor_plan_json)
+         │                                    │
+         v                                    v
+    Ground Truth CAD JSON             Corpus (append-only)
+                                              │
+                                              v
+                                    SLM Fine-Tune (LoRA)
+                                              │
+                                              v
+                                    Eval: photo → predicted CAD
+                                    vs. V14 ground truth
+```
 
-The dependency direction is one-way: qualification evidence → corpus capture → exemplar mining → local training → lane evaluation. Flywheel jobs never mutate qualification evidence, approved plans, WorldContracts, pipeline source, or release state.
+## Phases
 
-## Components and Interfaces
+### F0 · Corpus Capture (passive, runs alongside V14)
 
-- **Qualification evidence reader (`tools/flywheel_corpus.py`):** discovers completed trial results and their bound session artifacts using root-scoped paths.
-- **Corpus writer:** appends deduplicated records to `data/flywheel/corpus.jsonl` and never rewrites accepted history.
-- **Idle scheduler (`tools/e2e_qualification.py`):** starts F0 only after the quiet threshold and supplies a preemption callback for source, agent, or qualification activity.
-- **Briefing job (`tools/qualification_briefing.py`):** produces evidence-cited, explicitly unverified summaries and non-applied local patch drafts; model failure must degrade to deterministic fallback text.
-- **Lane evaluator:** uses the existing Ratchet lane configuration, fresh sessions, and deterministic gates to compare incumbents, exemplars, or tuned models.
-- **External-data intake:** requires source, license, size, and local validation metadata before any converted record can enter a training corpus.
+Every V14 session produces a training example:
+- **Input:** source photo (resized to model input resolution)
+- **Label:** 2D CAD floor plan JSON containing:
+  - Room boundary polygon (walls projected to floor plane)
+  - Door/window positions and widths
+  - Furniture footprints (bounding rectangles on floor plane with ID, category, dimensions)
+  - Scale bar / room dimensions in meters
 
-## Data Models
+The projector converts V14's 3D layout to a 2D top-down representation:
+- Object (x, z) positions become CAD (x, y) coordinates
+- Object width/depth from ScaleResult become footprint rectangles
+- Room shell depth map → wall boundary polygon
+- Openings from scene parse → door/window markers
 
-The F0 corpus is JSONL with one immutable record per fresh trial. Each record contains the source description, typed Plan, optional WorldContract, per-gate verdicts, stable failure signatures, applied repair metadata, model lane, source fingerprint, evidence paths, and timestamps. A deterministic identity derived from source evidence prevents duplicate appends.
+**Storage:** `data/flywheel/corpus.jsonl` — append-only, one record per session.
 
-Idle-job records are JSONL events containing job name, status, counts, duration, timestamp, and error totals. Later-phase datasets must additionally bind provenance, license metadata, split identity, transformation version, and deterministic gate results. Generated briefings and patch drafts are advisory artifacts, not corpus truth or release evidence.
+### F1 · Diversity Expansion (idle-GPU, after V14 stabilizes)
 
-## Correctness Properties
+- Run V14 on diverse room photos (sourced from public datasets: 3D-FRONT renders,
+  ScanNet, HyperSim, or user submissions)
+- Cycle through varied room types: bedrooms, living rooms, kitchens, offices
+- Each successful V14 run → one training example added to corpus
+- Target: 500+ labeled pairs before training
 
-### Property 1: Append-only evidence
+### F2 · SLM Fine-Tune (gate: ≥500 labeled pairs)
 
-An existing corpus record is never modified or deleted by extraction.
+- Base model: small vision-language model (e.g., Qwen2-VL-2B, PaliGemma-3B, or similar)
+- Task: photo → CAD floor plan JSON
+- Method: LoRA fine-tune on RTX 4090 (fits in 24GB for 2-3B models)
+- Eval metric: IoU of predicted furniture footprints vs. V14 ground truth
+  - Per-object position error (meters)
+  - Per-object dimension error (%)
+  - Room boundary IoU
+  - Object count accuracy
 
-**Validates: Requirements 9.1, 9.2, 9.3, 9.4**
+### F3 · Continuous Improvement Loop
 
-### Property 2: Deterministic deduplication
+Once the SLM is trained:
+1. Run SLM on new photos → predicted CAD
+2. Run V14 on same photos → ground truth CAD
+3. Compare: where SLM disagrees with V14, that's a hard example
+4. Add hard examples to training corpus (curriculum learning)
+5. Retrain periodically as corpus grows
+6. Track eval metrics on held-out test set
 
-The same trial evidence cannot produce more than one corpus record.
+## Output Format: CAD Floor Plan JSON
 
-**Validates: Requirements 9.1, 10.1**
+```json
+{
+  "version": "cad-floor-plan/v1",
+  "room": {
+    "boundary_m": [[0,0], [4.2,0], [4.2,3.8], [0,3.8]],
+    "ceiling_height_m": 2.7
+  },
+  "openings": [
+    {"type": "door", "wall": "south", "center_m": [2.1, 0], "width_m": 0.9},
+    {"type": "window", "wall": "east", "center_m": [4.2, 1.9], "width_m": 1.2}
+  ],
+  "furniture": [
+    {
+      "id": "sofa_1",
+      "category": "props",
+      "label": "three-seat sofa",
+      "footprint_m": {"center": [2.1, 3.2], "width": 2.0, "depth": 0.9},
+      "rotation_deg": 0
+    },
+    {
+      "id": "table_1",
+      "category": "props",
+      "label": "coffee table",
+      "footprint_m": {"center": [2.1, 2.4], "width": 1.0, "depth": 0.5},
+      "rotation_deg": 0
+    }
+  ],
+  "source_photo_hash": "sha256:..."
+}
+```
 
-### Property 3: Provenance completeness
+## Relationship to Other Specs
 
-Every record resolves to its trial/session evidence and source fingerprint.
+- **photo-to-real-3d-world-v14:** The DATA FACTORY — produces labeled training examples
+- **llm-driven-upbge-runtime:** The SLM's output (2D CAD) can feed the WorldContract
+  builder, which can then compile to UPBGE or export to Godot/GLB
+- **text-to-playable-world-mvp:** A trained SLM replaces the text LLM for photo inputs
 
-**Validates: Requirements 9.1, 9.2, 9.3, 9.4**
+## Guardrails
 
-### Property 4: Fail-closed promotion
+- V14 implementation takes absolute priority — flywheel is passive data collection only
+  until V14 is stable and producing reliable outputs
+- No training runs that block the GPU during V14 pipeline execution
+- Corpus is append-only; no deletion of validated examples
+- The SLM is evaluated against V14 ground truth, never self-evaluated
+- No cloud data uploads without explicit approval
 
-No exemplar or tuned lane is promoted without passing the existing deterministic gates on fresh sessions.
+## Success Criteria
 
-**Validates: Requirements 10.1, 10.2, 10.3**
-
-### Property 5: Phase ordering
-
-F1+ cannot run before `output/qualification/QUALIFIED.md` exists and its additional data thresholds are met.
-
-**Validates: Requirements 10.1, 10.2**
-
-### Property 6: Qualification priority
-
-Active qualification, source changes, model downloads, or agent activity preempt flywheel work within seconds.
-
-**Validates: Requirements 10.1, 10.2, 11.5**
-
-### Property 7: Authority isolation
-
-Flywheel jobs cannot edit pipeline code, qualification evidence, approved Plan data, or WorldContract state.
-
-**Validates: Requirements 1.2, 2.5, 9.4**
-
-## Error Handling
-
-Missing, malformed, or incomplete evidence is skipped with a structured error count and log entry; it is never converted into synthetic success data. Interrupted extraction leaves previously appended JSONL records valid and resumes through deduplication. Local-model unavailability, timeout, or invalid output produces an explicitly labeled fallback briefing or `NEEDS-JUDGMENT` draft and never blocks the Ratchet. External data with unknown or unacceptable licensing is quarantined until John approves a documented intake proposal.
-
-## Testing Strategy
-
-- Unit-test root-scoped discovery, schema extraction, stable identities, deduplication, append-only writes, and malformed-evidence handling.
-- Test idle-threshold activation and immediate preemption for source changes, agent activity, qualification ownership, and model downloads.
-- Test briefing model failures, timeouts, Unicode output, evidence citations, atomic writes, and the guarantee that drafts are never applied automatically.
-- Run deterministic Tier 0 and mock Tier 1 after implementation changes, followed by the full test suite and static checks.
-- Evaluate F1–F3 only with held-out prompts, fresh sessions, existing lane caps, and measured gate pass rates; never use training examples as release evidence.
+The SLM is "near-perfect" when:
+- Object position error < 0.15m mean on held-out test set
+- Object dimension error < 15% mean
+- Room boundary IoU > 0.85
+- Object count accuracy > 90%
+- Inference time < 3 seconds per photo on RTX 4090
+- Model size < 4B parameters (fits alongside V14 pipeline in VRAM)
