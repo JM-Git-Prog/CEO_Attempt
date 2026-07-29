@@ -754,45 +754,76 @@
         var viewer = window._v14viewer;
         if (!viewer) return;
 
-        // Check session state
+        // Try loading the pre-built browser scene first (proper parametric room)
         try {
-          var metaResp = await fetch('/api/session/' + sessionId + '/v14/events');
-          // If session is still running, connect SSE
-          var stateResp = await fetch('/api/session/' + sessionId + '/room_shell');
+          var sceneResp = await fetch('/api/session/' + sessionId + '/browser_scene');
+          if (sceneResp.ok) {
+            var scene = await sceneResp.json();
+            if (scene && scene.room) {
+              // Build parametric room
+              viewer._buildParametricRoom(scene.room.width, scene.room.height, scene.room.depth, scene.room);
 
-          // Try loading room shell
+              // Load objects with proper WorldContract positions
+              for (var obj of (scene.objects || [])) {
+                try {
+                  var meshUrl = obj.mesh_url || '/api/session/' + sessionId + '/mesh/' + obj.id;
+                  await viewer.loadObject(
+                    obj.id, meshUrl,
+                    obj.position || [0, 0, 0],
+                    obj.rotation || [0, 0, 0],
+                    obj.scale || [1, 1, 1]
+                  );
+                } catch (e) { console.warn('Object load failed:', obj.id, e); }
+              }
+
+              // Set camera inside room
+              if (scene.camera) {
+                var camPos = scene.camera.position || [0, 1.6, 2];
+                viewer.camera.position.set(camPos[0], camPos[1], camPos[2]);
+                viewer.camera.fov = scene.camera.fov || 60;
+                viewer.camera.updateProjectionMatrix();
+                if (viewer.orbitControls) {
+                  viewer.orbitControls.target.set(0, (scene.room.height || 2.7) / 2, -(scene.room.depth || 4) / 2);
+                  viewer.orbitControls.update();
+                }
+              }
+
+              // Show controls
+              var nav = document.getElementById('nav-controls');
+              if (nav) nav.classList.remove('hidden');
+              var hud = document.getElementById('info-hud');
+              if (hud) hud.classList.remove('hidden');
+
+              loadSessionList();
+              return; // Done — proper room loaded
+            }
+          }
+        } catch (e) { console.warn('browser_scene fetch failed, falling back:', e); }
+
+        // Fallback: old approach (raw GLBs) for sessions without browser_scene.json
+        try {
           try { await viewer.loadRoomShell('/api/session/' + sessionId + '/room_shell'); } catch (e) { console.warn('No room shell:', e); }
 
-          // Load all objects (try 001-015, skip missing ones)
           var loadedCount = 0;
           for (var i = 1; i <= 15; i++) {
             var objId = String(i).padStart(3, '0');
             try {
               var meshResp = await fetch('/api/session/' + sessionId + '/mesh/' + objId);
               if (meshResp.ok) {
-                // Convert response to blob URL for GLTFLoader
                 var blob = await meshResp.blob();
                 var blobUrl = URL.createObjectURL(blob);
                 await viewer.loadObject(objId, blobUrl);
                 loadedCount++;
               }
-              // Don't break — there may be gaps (e.g., 005 placeholder failed but 006 exists)
-            } catch (e) { /* skip this object */ }
+            } catch (e) { /* skip */ }
           }
 
-          // Update HUD
-          var hud = document.getElementById('info-hud');
-          if (hud) hud.classList.remove('hidden');
-
-          // Show nav controls
           var nav = document.getElementById('nav-controls');
           if (nav) nav.classList.remove('hidden');
+          var hud = document.getElementById('info-hud');
+          if (hud) hud.classList.remove('hidden');
+        } catch (e) { console.error('Error loading session:', e); }
 
-        } catch (e) {
-          console.error('Error loading session:', e);
-        }
-
-        // Refresh panel to show active state
         loadSessionList();
       }
 
