@@ -46,13 +46,13 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 
 #### Acceptance Criteria
 
-1. WHEN the Hunyuan3D_Generator receives an Object_PNG, THE Hunyuan3D_Generator SHALL submit the proven ComfyUI workflow (ImageOnlyCheckpointLoader → ModelSamplingAuraFlow → CLIPVisionEncode → Hunyuan3Dv2Conditioning → KSampler at 30 steps → VAEDecodeHunyuan3D → VoxelToMesh → SaveGLB) and produce a textured GLB mesh
+1. WHEN the Hunyuan3D_Generator receives an Object_PNG, THE Hunyuan3D_Generator SHALL submit the proven ComfyUI workflow (ImageOnlyCheckpointLoader → ModelSamplingAuraFlow → CLIPVisionEncode → Hunyuan3Dv2Conditioning → KSampler at 50 steps, cfg=7.0 → VAEDecodeHunyuan3D at octree_resolution=384 → VoxelToMesh → SaveGLB) and produce a textured GLB mesh
 2. WHEN Hunyuan3D 2.1 generation succeeds, THE Hunyuan3D_Generator SHALL validate the output mesh contains at least 100 faces, at least 50 vertices, and embedded texture data before accepting the result
-3. IF Hunyuan3D 2.1 fails, times out after 60 seconds, or produces a mesh failing validation, THEN THE Photo_Pipeline_V14 SHALL attempt generation using the Trellis2_Generator as fallback
+3. IF Hunyuan3D 2.1 fails or produces a mesh failing validation, THEN THE Photo_Pipeline_V14 SHALL attempt generation using the Trellis2_Generator as fallback — there is no per-object time limit that sacrifices quality (only a 180-second stall-detection timeout triggers fallback)
 4. WHEN the Trellis2_Generator receives an Object_PNG, THE Trellis2_Generator SHALL submit the Trellis2 ComfyUI workflow (Trellis2LoadModel → Trellis2PreProcessImage → Trellis2MeshWithVoxelGenerator at 18 steps → Trellis2SimplifyMesh at 12000 triangles → Trellis2ExportMesh as GLB with embedded textures) and produce a textured GLB mesh
 5. IF both Hunyuan3D 2.1 and Trellis2 fail for an object, THEN THE Photo_Pipeline_V14 SHALL produce a Placeholder_Geometry primitive (box, cylinder, or sphere by aspect ratio) textured with the average color from the Object_PNG
 6. THE Hunyuan3D_Generator SHALL record generation method (hunyuan3d_v2.1, trellis2, or placeholder), generation time in seconds, face count, and vertex count for each object in the pipeline manifest
-7. THE Hunyuan3D_Generator SHALL produce meshes within 25-35 seconds per object at 30 sampling steps on the RTX 4090
+7. THE Hunyuan3D_Generator SHALL use maximum quality settings (50 steps, cfg=7.0, octree_resolution=384) to produce the best possible mesh topology — generation time of 60-90 seconds per object is acceptable
 
 ### Requirement 2: VRAM Management and Sequential Model Loading
 
@@ -149,16 +149,17 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 
 ### Requirement 9: Pipeline Orchestration and Timing
 
-**User Story:** As a developer, I want the V14 pipeline to complete within 8-12 minutes for a typical room with 7 objects, so that the user gets full quality results in a reasonable timeframe.
+**User Story:** As a developer, I want the V14 pipeline to run end-to-end reliably without time pressure, prioritizing quality over speed, so that every generated mesh is the best the hardware can produce.
 
 #### Acceptance Criteria
 
-1. THE Photo_Pipeline_V14 SHALL complete all stages (segmentation through WorldContract assembly and initial Three.js scene load) within 12 minutes for scenes containing up to 10 segmented objects on the RTX 4090
-2. THE Photo_Pipeline_V14 SHALL execute stages in the required VRAM-safe order: SAM segmentation (~5s) → FLUX inpainting (~10s) → FLUX unload → Depth Anything 3 (~5s) → depth unload → Hunyuan3D 2.1 per object sequentially (25-35s each) → Hunyuan3D unload → Pass 1 textures (2s each, CPU) → layout + physics settle (5-10s, CPU) → WorldContract assembly (1s, CPU)
-3. THE Photo_Pipeline_V14 SHALL target 4-5 minutes for mesh generation of 7 objects (7 × 30s average per Hunyuan3D call plus model load/unload overhead)
-4. THE Photo_Pipeline_V14 SHALL emit SSE progress events at each stage transition and per-object completion, delivering each event within 2 seconds of the state change
-5. IF the total pipeline exceeds a 15-minute hard timeout, THEN THE Photo_Pipeline_V14 SHALL terminate remaining GPU inference tasks, apply placeholder geometry to incomplete objects, and proceed with WorldContract assembly using whatever meshes are available
-6. THE Photo_Pipeline_V14 SHALL begin Pass 2 PBR material estimation only after the V14_Interface has loaded and displayed all Pass 1 textured meshes — Pass 2 runs as a non-blocking background enhancement
+1. THE Photo_Pipeline_V14 SHALL complete all stages (segmentation through WorldContract assembly and initial Three.js scene load) reliably for scenes containing up to 15 segmented objects on the RTX 4090 — there is no hard time cap that sacrifices quality
+2. THE Photo_Pipeline_V14 SHALL execute stages in the required VRAM-safe order: SAM segmentation → FLUX inpainting → FLUX unload → Depth Anything 3 → depth unload → Hunyuan3D 2.1 per object sequentially (at maximum quality settings: 50 steps, octree_resolution 384) → Hunyuan3D unload → Pass 1 textures → layout + physics settle → WorldContract assembly
+3. THE Photo_Pipeline_V14 SHALL use maximum quality settings for mesh generation: KSampler steps=50 (not 30), octree_resolution=384 (not 256), and cfg=7.0 for sharper detail — accepting longer generation time per object (~60-90s) for significantly better mesh topology
+4. THE Photo_Pipeline_V14 SHALL emit SSE progress events at each stage transition and per-object completion, delivering each event within 2 seconds of the state change, with accurate elapsed time and "X of N objects complete" counters
+5. THE Photo_Pipeline_V14 SHALL NOT terminate or time out based on wall-clock duration — if Hunyuan3D takes 90 seconds per object and there are 15 objects, the pipeline runs for 22+ minutes and that is acceptable
+6. THE Photo_Pipeline_V14 SHALL begin Pass 2 PBR material estimation only after the V14_Interface has loaded and displayed all Pass 1 textured meshes — Pass 2 runs as a non-blocking background enhancement with no time pressure
+7. IF a single object's Hunyuan3D generation exceeds 180 seconds (indicating a stalled inference), THEN the pipeline SHALL fall to Trellis2 for that object only — this is an error recovery timeout, not a quality tradeoff
 
 ### Requirement 10: Always Fresh Generation
 
