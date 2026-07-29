@@ -86,7 +86,7 @@ def _build_hunyuan3d_v2_workflow(
         "2": {
             "class_type": "ImageOnlyCheckpointLoader",
             "inputs": {
-                "ckpt_name": "hunyuan3d-2.1-mv.safetensors",
+                "ckpt_name": "hunyuan_3d_v2.1.safetensors",
             },
         },
         "3": {
@@ -101,22 +101,29 @@ def _build_hunyuan3d_v2_workflow(
             "inputs": {
                 "clip_vision": ["2", 1],
                 "image": ["1", 0],
+                "crop": "center",
             },
         },
         "5": {
             "class_type": "Hunyuan3Dv2Conditioning",
             "inputs": {
                 "clip_vision_output": ["4", 0],
-                "model": ["3", 0],
+            },
+        },
+        "10": {
+            "class_type": "EmptyLatentHunyuan3Dv2",
+            "inputs": {
+                "resolution": 3072,
+                "batch_size": 1,
             },
         },
         "6": {
             "class_type": "KSampler",
             "inputs": {
-                "model": ["5", 0],
-                "positive": ["5", 1],
-                "negative": ["5", 2],
-                "latent_image": ["5", 3],
+                "model": ["3", 0],
+                "positive": ["5", 0],
+                "negative": ["5", 1],
+                "latent_image": ["10", 0],
                 "seed": seed,
                 "steps": steps,
                 "cfg": cfg,
@@ -130,6 +137,7 @@ def _build_hunyuan3d_v2_workflow(
             "inputs": {
                 "samples": ["6", 0],
                 "vae": ["2", 2],
+                "num_chunks": 8000,
                 "octree_resolution": octree_resolution,
             },
         },
@@ -137,6 +145,8 @@ def _build_hunyuan3d_v2_workflow(
             "class_type": "VoxelToMesh",
             "inputs": {
                 "voxel": ["7", 0],
+                "algorithm": "surface net",
+                "threshold": 0.6,
             },
         },
         "9": {
@@ -213,10 +223,12 @@ class Hunyuan3DV2Generator:
         start_time = time.monotonic()
 
         try:
-            # Build the workflow with image path using forward slashes
-            image_path = str(object_png).replace("\\", "/")
+            # Upload image to ComfyUI's input folder first
+            uploaded_name = await self.client.upload_image(object_png)
+
+            # Build the workflow with the uploaded filename
             workflow = _build_hunyuan3d_v2_workflow(
-                image_path=image_path,
+                image_path=uploaded_name,
                 steps=steps,
                 cfg=cfg,
                 octree_resolution=octree_resolution,
@@ -324,10 +336,10 @@ class Hunyuan3DV2Generator:
             return None
 
     def validate_output(self, mesh_path: Path) -> bool:
-        """Validate: ≥100 faces, ≥50 vertices, has embedded texture data.
+        """Validate: ≥100 faces, ≥50 vertices.
 
-        Delegates to the shared mesh_validator module which applies the
-        V14 quality thresholds.
+        Hunyuan3D 2.1 produces geometry-only GLBs (textures applied later
+        by the Pass 1 material stage). We skip the texture check here.
 
         Parameters
         ----------
@@ -337,9 +349,43 @@ class Hunyuan3DV2Generator:
         Returns
         -------
         bool
-            True if the mesh passes all validation checks.
+            True if the mesh passes geometry validation checks.
         """
-        return validate_mesh(mesh_path)
+        import trimesh
+
+        if not mesh_path.exists():
+            logger.warning("Mesh file does not exist: %s", mesh_path)
+            return False
+
+        try:
+            loaded = trimesh.load(str(mesh_path), process=False)
+        except Exception as exc:
+            logger.warning("Failed to load mesh %s: %s", mesh_path, exc)
+            return False
+
+        if isinstance(loaded, trimesh.Scene):
+            meshes = [g for g in loaded.geometry.values()
+                      if isinstance(g, trimesh.Trimesh)]
+            if not meshes:
+                logger.warning("Scene %s contains no mesh geometry", mesh_path)
+                return False
+            total_faces = sum(len(m.faces) for m in meshes)
+            total_verts = sum(len(m.vertices) for m in meshes)
+        elif isinstance(loaded, trimesh.Trimesh):
+            total_faces = len(loaded.faces)
+            total_verts = len(loaded.vertices)
+        else:
+            logger.warning("Loaded object is not Trimesh/Scene: %s", mesh_path)
+            return False
+
+        if total_faces < 100:
+            logger.warning("Mesh %s has %d faces (need ≥100)", mesh_path, total_faces)
+            return False
+        if total_verts < 50:
+            logger.warning("Mesh %s has %d verts (need ≥50)", mesh_path, total_verts)
+            return False
+
+        return True
 
     def _get_mesh_stats(
         self, mesh_path: Path

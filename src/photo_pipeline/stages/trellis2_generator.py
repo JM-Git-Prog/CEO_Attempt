@@ -167,10 +167,10 @@ class Trellis2Generator:
         start_time = time.monotonic()
 
         try:
-            # Build the workflow with image path using forward slashes
-            image_path = str(object_png).replace("\\", "/")
+            # Upload image to ComfyUI's input folder first
+            uploaded_name = await self.client.upload_image(object_png)
             workflow = _build_trellis2_workflow(
-                image_path=image_path,
+                image_path=uploaded_name,
                 steps=steps,
                 target_triangles=target_triangles,
             )

@@ -106,6 +106,49 @@ class ComfyUIClient:
                     return class_type
         return None
 
+    async def upload_image(self, image_path: Path) -> str:
+        """Upload an image to ComfyUI's input folder and return the filename.
+
+        ComfyUI's LoadImage node requires images to exist in its input/
+        directory. This method uploads via the /upload/image API endpoint
+        and returns the filename that should be used in workflow JSON.
+
+        Parameters
+        ----------
+        image_path : Path
+            Local filesystem path to the image file.
+
+        Returns
+        -------
+        str
+            The filename as stored in ComfyUI's input folder (use this
+            in the LoadImage node's 'image' input field).
+
+        Raises
+        ------
+        ComfyUIError
+            If the upload fails.
+        """
+        import httpx
+
+        url = f"{self.base_url}/upload/image"
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                with open(image_path, "rb") as f:
+                    files = {"image": (image_path.name, f, "image/png")}
+                    resp = await client.post(url, files=files)
+
+            if resp.status_code != 200:
+                raise ComfyUIError(
+                    f"Image upload failed ({resp.status_code}): {resp.text[:200]}"
+                )
+
+            data = resp.json()
+            # ComfyUI returns {"name": "filename.png", "subfolder": "", "type": "input"}
+            return data.get("name", image_path.name)
+        except httpx.HTTPError as exc:
+            raise ComfyUIError(f"Image upload HTTP error: {exc}") from exc
+
     async def submit_workflow(
         self,
         workflow: dict[str, Any],
@@ -488,9 +531,11 @@ class ComfyUIClient:
         node_id: str | None,
     ) -> dict[str, str] | None:
         """Find the first mesh/3D output in workflow outputs."""
+        # Keys that SaveGLB and similar nodes may use for mesh outputs
+        mesh_keys = ("3d", "meshes", "gltffiles", "files")
+
         if node_id and node_id in outputs:
-            # Check for meshes (gltf/glb files) or generic files
-            for key in ("meshes", "gltffiles", "files"):
+            for key in mesh_keys:
                 items = outputs[node_id].get(key, [])
                 if items:
                     return items[0]
@@ -498,7 +543,7 @@ class ComfyUIClient:
 
         # Search all output nodes
         for node_outputs in outputs.values():
-            for key in ("meshes", "gltffiles", "files"):
+            for key in mesh_keys:
                 items = node_outputs.get(key, [])
                 if items:
                     return items[0]
