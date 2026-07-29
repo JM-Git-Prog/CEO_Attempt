@@ -495,7 +495,110 @@
     window.dispatchEvent(new Event('v14-three-ready'));
   </script>
 
-  <!-- V14 Application Logic -->
-  <script src="/static/app_v14.js?v=14"></script>
+  <!-- V14 Application Logic (ES Module) -->
+  <script type="module" src="/static/app_v14.js?v=14"></script>
+
+  <!-- Initialize scene immediately after modules load -->
+  <script type="module">
+    import { V14WorldViewer, initV14Viewer } from '/static/app_v14.js?v=14';
+
+    // Create viewer immediately for responsive UX
+    const viewer = new V14WorldViewer('canvas-container');
+    window._v14viewer = viewer;
+
+    // Show nav controls immediately
+    const nav = document.getElementById('nav-controls');
+    if (nav) nav.classList.remove('hidden');
+  </script>
+
+  <!-- Initialize Three.js scene immediately for responsive UX -->
+  <script>
+    // Initialize viewer as soon as Three.js modules are ready
+    window.addEventListener('v14-three-ready', function() {
+      // Create the viewer immediately — shows empty lit room while waiting
+      if (window.V14WorldViewer) {
+        window._v14viewer = new window.V14WorldViewer('canvas-container');
+        // Show nav controls immediately (even with empty scene)
+        var nav = document.getElementById('nav-controls');
+        if (nav) nav.classList.remove('hidden');
+      }
+    });
+
+    // Wire up the "Build my world" button to submit photo
+    document.addEventListener('DOMContentLoaded', function() {
+      var buildBtn = document.getElementById('build-btn');
+      var fileInput = document.getElementById('photo-file-input');
+      var uploadSection = document.getElementById('upload-section');
+      var progressOverlay = document.getElementById('progress-overlay');
+      var previewDiv = document.getElementById('photo-preview');
+      var previewImg = document.getElementById('preview-img');
+      var removeBtn = document.getElementById('remove-photo-btn');
+      var dropzone = document.getElementById('upload-dropzone');
+
+      var selectedFile = null;
+
+      // File input change handler
+      if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+          if (e.target.files && e.target.files[0]) {
+            selectedFile = e.target.files[0];
+            previewImg.src = URL.createObjectURL(selectedFile);
+            previewDiv.style.display = 'block';
+            dropzone.style.display = 'none';
+          }
+        });
+      }
+
+      // Dropzone click opens file picker
+      if (dropzone) {
+        dropzone.addEventListener('click', function() { fileInput.click(); });
+      }
+
+      // Remove photo button
+      if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+          selectedFile = null;
+          previewDiv.style.display = 'none';
+          dropzone.style.display = 'block';
+          fileInput.value = '';
+        });
+      }
+
+      // Build button — submit to API
+      if (buildBtn) {
+        buildBtn.addEventListener('click', async function() {
+          if (!selectedFile) return;
+
+          // For now, use the file name as the source_image path
+          // In production, this would upload the file first
+          var formData = new FormData();
+          formData.append('photo', selectedFile);
+
+          // Hide upload, show progress
+          if (uploadSection) uploadSection.classList.add('hidden');
+          if (progressOverlay) progressOverlay.classList.remove('hidden');
+
+          try {
+            // Submit via JSON API with file path
+            // Note: real implementation would upload file then pass server-side path
+            var resp = await fetch('/api/session/v14/photo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ source_image: selectedFile.name, mode: 'mvp' }),
+            });
+            var data = await resp.json();
+
+            if (data.session_id && window._v14viewer) {
+              window._v14viewer.connectSSE(data.session_id);
+            }
+          } catch (err) {
+            console.error('Build failed:', err);
+            var stage = document.getElementById('progress-stage');
+            if (stage) stage.textContent = 'Error: ' + err.message;
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
