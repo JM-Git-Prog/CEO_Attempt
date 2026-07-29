@@ -17,3 +17,6 @@ __pycache__/
 bench/trained/**/*.safetensors
 bench/trained/**/*.gguf
 unsloth_compiled_cache/
+
+# V14 Asset Warehouse (generated GLB meshes — large binaries, append-only)
+assets/
