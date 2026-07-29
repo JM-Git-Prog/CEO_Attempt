@@ -467,6 +467,16 @@ export class V14WorldViewer {
       // SSE connection lost — will auto-reconnect
       this._updateStageText('Reconnecting...');
     };
+
+    // Start a 1-second timer to keep elapsed/ETA updated between events
+    this._progressTimer = setInterval(() => {
+      if (!this.isComplete) {
+        this._updateElapsedTime();
+        this._updateETA();
+      } else {
+        clearInterval(this._progressTimer);
+      }
+    }, 1000);
   }
 
   /**
@@ -570,12 +580,18 @@ export class V14WorldViewer {
     if (this._progressOverlay) {
       this._progressOverlay.style.display = 'flex';
     }
+    // Also show the HTML progress overlay
+    const htmlOverlay = document.getElementById('progress-overlay');
+    if (htmlOverlay) htmlOverlay.classList.remove('hidden');
   }
 
   _hideProgress() {
     if (this._progressOverlay) {
       this._progressOverlay.style.display = 'none';
     }
+    // Also hide the HTML progress overlay
+    const htmlOverlay = document.getElementById('progress-overlay');
+    if (htmlOverlay) htmlOverlay.classList.add('hidden');
   }
 
   _updateProgress() {
@@ -583,11 +599,20 @@ export class V14WorldViewer {
     this._updateObjectCount();
     this._updateElapsedTime();
     this._updateETA();
+    // Update progress bar fill
+    const bar = document.getElementById('progress-bar');
+    if (bar && this.totalObjects > 0) {
+      const pct = Math.min(100, (this.loadedObjects / this.totalObjects) * 100);
+      bar.style.width = pct + '%';
+    }
   }
 
   _updateStageText(text) {
     const el = document.getElementById('v14-stage');
     if (el) el.textContent = text;
+    // Also update the HTML progress overlay
+    const htmlEl = document.getElementById('progress-stage');
+    if (htmlEl) htmlEl.textContent = text;
   }
 
   _updateObjectCount() {
@@ -599,26 +624,40 @@ export class V14WorldViewer {
         el.textContent = '';
       }
     }
+    // Also update HTML overlay
+    const htmlEl = document.getElementById('progress-objects');
+    if (htmlEl) {
+      htmlEl.textContent = this.totalObjects > 0
+        ? `${this.loadedObjects} / ${this.totalObjects}`
+        : '0 / 0';
+    }
   }
 
   _updateElapsedTime() {
     const el = document.getElementById('v14-time');
+    const elapsed = this.startTime ? (Date.now() - this.startTime) / 1000 : 0;
+    const formatted = this._formatDuration(elapsed);
     if (el && this.startTime) {
-      const elapsed = (Date.now() - this.startTime) / 1000;
-      el.textContent = `Elapsed: ${this._formatDuration(elapsed)}`;
+      el.textContent = `Elapsed: ${formatted}`;
     }
+    // Also update HTML overlay
+    const htmlEl = document.getElementById('progress-elapsed');
+    if (htmlEl) htmlEl.textContent = formatted;
   }
 
   _updateETA() {
     const el = document.getElementById('v14-eta');
-    if (el && this.startTime && this.totalObjects > 0 && this.loadedObjects > 0) {
+    let etaText = '—';
+    if (this.startTime && this.totalObjects > 0 && this.loadedObjects > 0) {
       const elapsed = (Date.now() - this.startTime) / 1000;
       const rate = elapsed / this.loadedObjects;
       const remaining = (this.totalObjects - this.loadedObjects) * rate;
-      el.textContent = `ETA: ~${this._formatDuration(remaining)}`;
-    } else if (el) {
-      el.textContent = '';
+      etaText = `~${this._formatDuration(remaining)}`;
     }
+    if (el) el.textContent = this.loadedObjects > 0 ? `ETA: ${etaText}` : '';
+    // Also update HTML overlay
+    const htmlEl = document.getElementById('progress-eta');
+    if (htmlEl) htmlEl.textContent = etaText;
   }
 
   _formatDuration(seconds) {
