@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28 05:40:22",
+  "generated": "2026-07-29 07:45:30",
   "live": true,
   "passed": 12,
   "failed": 0,
@@ -14,7 +14,7 @@
       "check": "2 training interpreter",
       "ok": true,
       "detail": "torch 2.11.0+cu126, CUDA available",
-      "seconds": 3.7
+      "seconds": 8.8
     },
     {
       "check": "3 relation reconciler",
@@ -61,20 +61,20 @@
     {
       "check": "6 stuck detector",
       "ok": true,
-      "detail": "stage='done' (36.2h old) - not a training stage, so there is nothing for the detector to act on",
+      "detail": "stage='done' (62.3h old) - not a training stage, so there is nothing for the detector to act on",
       "seconds": 0.0
     },
     {
       "check": "7 dashboard",
       "ok": true,
-      "detail": "flywheel-dashboard.html generated (7641 bytes)",
-      "seconds": 0.6
+      "detail": "flywheel-dashboard.html generated (7547 bytes)",
+      "seconds": 0.5
     },
     {
       "check": "8 live end-to-end",
       "ok": true,
-      "detail": "real generation -> blocked (1 relations synthesized)",
-      "seconds": 67.8
+      "detail": "real generation -> blocked (2 relations synthesized)",
+      "seconds": 22.5
     }
   ]
 }

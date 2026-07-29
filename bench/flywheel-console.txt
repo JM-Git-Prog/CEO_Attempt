@@ -4615,3 +4615,10 @@ ingest: +10 records | 883 already banked | 4416 plan-less rows skipped
 [06:40:45] waiting (census done=True, gpu 100%, quiet votes 0/3)
 [06:41:05] training chain finished rc=3221225786
 [06:41:05] resumed the llama3.1 harvester
+[07:44:58] flywheel loop up - waiting for corpus growth before the first cycle
+[07:44:58] threshold met (63 new rows, 1029 total) - starting a cycle
+[07:44:58] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)
+
+=== LANE glm-5.2:cloud — 15 prompts ===
+  p001: blocked  (30.2s) out_of_bounds,out_of_bounds,out_of_bounds
+  p002: legal    (26.6s) 

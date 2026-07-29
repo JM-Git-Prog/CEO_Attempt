@@ -1126,3 +1126,6 @@
 [06:39:45] launching the training chain (make_training_set -> train -> register -> exam)
 [06:41:05] training chain finished rc=3221225786
 [06:41:05] resumed the llama3.1 harvester
+[07:44:58] flywheel loop up - waiting for corpus growth before the first cycle
+[07:44:58] threshold met (63 new rows, 1029 total) - starting a cycle
+[07:44:58] synthetic top-up: 15 prompts on glm-5.2:cloud + kimi-k2.6:cloud (higher legal-rate lanes, same $0 sub as RUN-PLAN-BENCH.bat)

@@ -1,0 +1,575 @@
+{
+ "started": "2026-07-29 07:44:58",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 0,
+   "total": 2,
+   "attempted": 2,
+   "backend_errors": 0,
+   "backend_healthy": true,
+   "legal_rate": 0.0,
+   "violation_census": {
+    "physical_overlap": 11,
+    "opening_blocked": 8,
+    "out_of_bounds": 6,
+    "camera_inside_geometry": 1
+   },
+   "rows": [
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "physical_overlap",
+      "out_of_bounds",
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked",
+      "opening_blocked",
+      "opening_blocked",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 13,
+     "items": 11,
+     "seconds": 54.1,
+     "plan": {
+      "name": "Cooking Class Kitchen",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.5
+      },
+      "items": [
+       {
+        "id": "demo_island_1",
+        "name": "Demo Island",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.5,
+        "depth": 1.8,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "student_station_1",
+        "name": "Student Station",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.5000000000000004,
+        "z": 2.1339745962155616,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "student_station_2",
+        "name": "Student Station",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.4,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "student_station_3",
+        "name": "Student Station",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.4,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "student_station_4",
+        "name": "Student Station",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.4,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "student_station_5",
+        "name": "Student Station",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.4,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "student_station_6",
+        "name": "Student Station",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.4,
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "overhead_strip_1",
+        "name": "Overhead Strip",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.8,
+        "z": -3.6500000000000004,
+        "width": 2.5,
+        "depth": 0.6,
+        "height": 1.8,
+        "elevation": 0.7,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "overhead_strip_2",
+        "name": "Overhead Strip",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 2.6500000000000004,
+        "z": 0.8,
+        "width": 2.5,
+        "depth": 0.6,
+        "height": 1.8,
+        "elevation": 0.7,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "overhead_strip_3",
+        "name": "Overhead Strip",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.8,
+        "z": 3.6500000000000004,
+        "width": 2.5,
+        "depth": 0.6,
+        "height": 1.8,
+        "elevation": 0.7,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "overhead_strip_4",
+        "name": "Overhead Strip",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": -2.6500000000000004,
+        "z": 0.8,
+        "width": 2.5,
+        "depth": 0.6,
+        "height": 1.8,
+        "elevation": 0.7,
+        "rotation_deg": 90.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.2,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "demo_island_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "student_station_1",
+        "kind": "north_of",
+        "target_id": "demo_island_1",
+        "wall": null,
+        "parameters_m": {
+         "z": 2.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "student_station_2",
+        "kind": "north_of",
+        "target_id": "student_station_1",
+        "wall": null,
+        "parameters_m": {
+         "z": 4.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "student_station_3",
+        "kind": "north_of",
+        "target_id": "student_station_2",
+        "wall": null,
+        "parameters_m": {
+         "z": 6.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "student_station_4",
+        "kind": "north_of",
+        "target_id": "student_station_3",
+        "wall": null,
+        "parameters_m": {
+         "z": 8.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "student_station_5",
+        "kind": "north_of",
+        "target_id": "student_station_4",
+        "wall": null,
+        "parameters_m": {
+         "z": 10.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "student_station_6",
+        "kind": "north_of",
+        "target_id": "student_station_5",
+        "wall": null,
+        "parameters_m": {
+         "z": 12.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "overhead_strip_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "south",
+        "parameters_m": {
+         "along_offset_m": 0.8,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "overhead_strip_2",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "east",
+        "parameters_m": {
+         "along_offset_m": 0.8,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "overhead_strip_3",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.8,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": true
+       },
+       {
+        "subject_id": "overhead_strip_4",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "west",
+        "parameters_m": {
+         "along_offset_m": 0.8,
+         "wall_gap_m": 0.05
+        },
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "demo_island_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "synthesized_relations": 4,
+     "prompt_id": "p086"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked",
+      "camera_inside_geometry"
+     ],
+     "advisories": [],
+     "warnings": 1,
+     "items": 3,
+     "seconds": 19.8,
+     "plan": {
+      "name": "1970s Van Conversion",
+      "room": {
+       "width": 4.5,
+       "depth": 6.2,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "bench_bed_1",
+        "name": "Bench Bed",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 2.3500000000000005,
+        "width": 2.8,
+        "depth": 1.4,
+        "height": 0.9,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "mini_kitchenette_1",
+        "name": "Mini Kitchenette",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 1.35,
+        "z": 2.1500000000000004,
+        "width": 1.8,
+        "depth": 1.9,
+        "height": 2.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": ""
+       },
+       {
+        "id": "fold_table_1",
+        "name": "Fold Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.39999999999999925,
+        "z": 0.5045517328095672,
+        "width": 1.8,
+        "depth": 0.9,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": ""
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.8,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "south",
+        "offset": 1.25,
+        "width": 1.8,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": 1.8,
+       "y": 1.6,
+       "z": 2.65,
+       "target_x": 0.39999999999999925,
+       "target_y": 1.2,
+       "target_z": 0.5045517328095672,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "bench_bed_1",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "mini_kitchenette_1",
+        "kind": "adjacent_to",
+        "target_id": "bench_bed_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "fold_table_1",
+        "kind": "above",
+        "target_id": "mini_kitchenette_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 1.0,
+         "distribution_span_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northeast",
+       "target_id": "fold_table_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p087"
+    }
+   ]
+  }
+ }
+}

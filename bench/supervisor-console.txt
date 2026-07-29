@@ -943,4 +943,7 @@
 [05:39:09] supervisor starting
 [05:39:09] harvester started (pid=11848, interpreter=python)
 [05:39:09] flywheel started (pid=14524, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)
+^C[07:44:58] supervisor starting
+[07:44:58] harvester started (pid=2340, interpreter=python)
+[07:44:58] flywheel started (pid=5408, interpreter=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\venv-train\Scripts\python.exe)
 ^C
