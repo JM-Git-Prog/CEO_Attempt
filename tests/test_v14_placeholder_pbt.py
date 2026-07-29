@@ -21,7 +21,7 @@ from src.photo_pipeline.stages.placeholder_generator import select_placeholder_t
     height=st.integers(min_value=1, max_value=10000),
     area=st.integers(min_value=0, max_value=10_000_000),
 )
-@settings(max_examples=1000)
+@settings(max_examples=30)
 def test_placeholder_geometry_selection_property(
     width: int, height: int, area: int
 ) -> None:

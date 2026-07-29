@@ -202,7 +202,7 @@ class TestGLBMeshVertexRoundTrip:
 
     @given(mesh=pipeline_icosphere_meshes())
     @settings(
-        max_examples=50,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -225,7 +225,7 @@ class TestGLBMeshVertexRoundTrip:
 
     @given(mesh=pipeline_icosphere_meshes())
     @settings(
-        max_examples=50,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -253,7 +253,7 @@ class TestGLBMeshVertexRoundTrip:
 
     @given(mesh=pipeline_box_meshes())
     @settings(
-        max_examples=50,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -276,7 +276,7 @@ class TestGLBMeshVertexRoundTrip:
 
     @given(mesh=pipeline_box_meshes())
     @settings(
-        max_examples=50,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

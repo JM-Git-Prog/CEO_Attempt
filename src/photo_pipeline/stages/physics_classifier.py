@@ -1,35 +1,39 @@
-"""Physics classification based on estimated weight.
+"""Physics classification stage for the Photo-to-Real-3D-World V14 pipeline.
 
-Classifies objects as dynamic (grabbable/pushable) or static (immovable)
-based on their estimated mass computed from volume × material density,
-with an architectural override for structural elements.
+Determines whether a reconstructed object should be treated as a dynamic or
+static rigid-body based on estimated mass from volume × material density.
 
 Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
 """
-
 from __future__ import annotations
 
 from src.photo_pipeline.models_v14 import PhysicsClassification
 
 
 class PhysicsClassifier:
-    """Classify objects as dynamic or static based on estimated weight.
+    """Classify an object's physics profile from geometry + material hints.
 
     Rules:
-    - mass ≤ 25kg → DYNAMIC (grabbable/pushable)
+    - mass <= 25kg → DYNAMIC (grabbable/pushable)
     - mass > 25kg → STATIC (immovable)
     - Architectural objects → always STATIC regardless of mass
     """
 
     DENSITY_TABLE: dict[str, float] = {
-        "wood": 600,
-        "metal": 7800,
-        "glass": 2500,
-        "fabric": 200,
-        "ceramic": 2300,
-        "plastic": 950,
+        "wood": 600.0,
+        "metal": 7800.0,
+        "glass": 2500.0,
+        "fabric": 200.0,
+        "ceramic": 2300.0,
+        "plastic": 950.0,
     }
+    DEFAULT_DENSITY: float = 950.0
     MASS_THRESHOLD_KG: float = 25.0
+
+    _DYNAMIC_FRICTION: float = 0.5
+    _DYNAMIC_RESTITUTION: float = 0.2
+    _STATIC_FRICTION: float = 0.6
+    _STATIC_RESTITUTION: float = 0.1
 
     def classify(
         self,
@@ -37,18 +41,20 @@ class PhysicsClassifier:
         material: str,
         is_architectural: bool,
     ) -> PhysicsClassification:
-        """Compute mass from volume × density, apply threshold.
+        """Compute mass from volume × density, apply threshold and overrides.
 
-        Args:
-            dimensions_m: Object dimensions (width, height, depth) in meters.
-            material: Primary material name for density lookup.
-            is_architectural: Whether the object has architectural function.
-
-        Returns:
-            PhysicsClassification with body_mode, mass, friction, restitution, etc.
+        Parameters
+        ----------
+        dimensions_m
+            (width, height, depth) in metres from ScaleResult.
+        material
+            Lower-case material label used as key into DENSITY_TABLE.
+        is_architectural
+            True for walls, doors, built-in items — always STATIC.
         """
-        volume = dimensions_m[0] * dimensions_m[1] * dimensions_m[2]
-        density = self.DENSITY_TABLE.get(material, 950.0)  # default to plastic
+        w, h, d = dimensions_m
+        volume = w * h * d
+        density = self.DENSITY_TABLE.get(material.lower(), self.DEFAULT_DENSITY)
         mass = volume * density
 
         if is_architectural:
@@ -57,8 +63,8 @@ class PhysicsClassifier:
                 mass_kg=0.0,
                 volume_m3=volume,
                 material_density=density,
-                friction=0.6,
-                restitution=0.1,
+                friction=self._STATIC_FRICTION,
+                restitution=self._STATIC_RESTITUTION,
                 can_topple=False,
                 override_reason="architectural_function",
             )
@@ -69,19 +75,19 @@ class PhysicsClassifier:
                 mass_kg=mass,
                 volume_m3=volume,
                 material_density=density,
-                friction=0.5,
-                restitution=0.2,
+                friction=self._DYNAMIC_FRICTION,
+                restitution=self._DYNAMIC_RESTITUTION,
                 can_topple=True,
                 override_reason=None,
             )
-        else:
-            return PhysicsClassification(
-                body_mode="STATIC",
-                mass_kg=0.0,
-                volume_m3=volume,
-                material_density=density,
-                friction=0.6,
-                restitution=0.1,
-                can_topple=False,
-                override_reason=None,
-            )
+
+        return PhysicsClassification(
+            body_mode="STATIC",
+            mass_kg=0.0,
+            volume_m3=volume,
+            material_density=density,
+            friction=self._STATIC_FRICTION,
+            restitution=self._STATIC_RESTITUTION,
+            can_topple=False,
+            override_reason=None,
+        )

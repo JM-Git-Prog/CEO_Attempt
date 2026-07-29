@@ -1,12 +1,10 @@
-"""Camera math utilities for back-projection and position clamping.
+"""Camera geometry utilities for the Photo-to-Real-3D-World V14 pipeline.
 
-Provides pure functions for converting 2D pixel coordinates to 3D world
-positions via the pinhole camera model, and for clamping 3D positions
-within room bounding volumes.
+Provides back-projection from pixel coordinates to 3D world space using
+the pinhole camera model, and position clamping within room bounds.
 
 Requirements: 4.1, 4.2, 4.4
 """
-
 from __future__ import annotations
 
 
@@ -19,25 +17,19 @@ def back_project(
     cx: float,
     cy: float,
 ) -> tuple[float, float, float]:
-    """Back-project a 2D pixel coordinate to a 3D world position.
+    """Back-project pixel (u, v) at depth d to camera-space 3D.
 
-    Uses the pinhole camera model with the convention that the camera
-    looks along -Z in a right-handed coordinate system (Y-up).
+    Uses the pinhole camera model with right-handed convention:
+    - x = (u - cx) * d / fx
+    - y = -(v - cy) * d / fy
+    - z = -d
 
-    Args:
-        u: Pixel x-coordinate (column).
-        v: Pixel y-coordinate (row).
-        d: Metric depth at (u, v) in meters (positive).
-        fx: Focal length in pixels (horizontal).
-        fy: Focal length in pixels (vertical).
-        cx: Principal point x (image center x).
-        cy: Principal point y (image center y).
-
-    Returns:
-        A tuple (x, y, z) representing the 3D world position in meters.
-        x = (u - cx) * d / fx
-        y = -(v - cy) * d / fy   (negated: image Y is inverted)
-        z = -d                    (camera looks along -Z)
+    Parameters
+    ----------
+    u, v : Pixel coordinates (origin top-left, +v downward).
+    d : Metric depth along the optical axis (positive, metres).
+    fx, fy : Focal lengths in pixels.
+    cx, cy : Principal point in pixels.
     """
     x = (u - cx) * d / fx
     y = -(v - cy) * d / fy
@@ -51,22 +43,20 @@ def clamp_to_bounds(
     bbox_max: tuple[float, float, float],
     margin: float = 0.05,
 ) -> tuple[float, float, float]:
-    """Clamp a 3D position to within a bounding volume with margin.
+    """Clamp position inside the axis-aligned bounding box with margin.
 
-    Ensures the returned position lies within
-    [bbox_min + margin, bbox_max - margin] on each axis.
-
-    Args:
-        position: The (x, y, z) position to clamp.
-        bbox_min: Minimum corner of the bounding box (x, y, z).
-        bbox_max: Maximum corner of the bounding box (x, y, z).
-        margin: Inward margin in meters on each axis (default 0.05m).
-
-    Returns:
-        A tuple (x, y, z) guaranteed to be inside the bounded volume
-        minus the margin on all sides.
+    Parameters
+    ----------
+    position : (x, y, z) to clamp.
+    bbox_min : Lower corner of the bounding volume.
+    bbox_max : Upper corner of the bounding volume.
+    margin : Inward margin on all axes (default 0.05m).
     """
-    return tuple(
-        max(lo + margin, min(hi - margin, p))
-        for p, lo, hi in zip(position, bbox_min, bbox_max)
-    )  # type: ignore[return-value]
+    px, py, pz = position
+    bx_min, by_min, bz_min = bbox_min
+    bx_max, by_max, bz_max = bbox_max
+
+    cx = max(bx_min + margin, min(bx_max - margin, px))
+    cy = max(by_min + margin, min(by_max - margin, py))
+    cz = max(bz_min + margin, min(bz_max - margin, pz))
+    return (cx, cy, cz)

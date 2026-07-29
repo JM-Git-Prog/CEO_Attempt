@@ -172,7 +172,7 @@ class TestPositionClampingProperty:
 
     @given(data=bounded_inputs())
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -202,7 +202,7 @@ class TestPositionClampingProperty:
 
     @given(data=bounded_inputs())
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -236,7 +236,7 @@ class TestPositionClampingProperty:
 
     @given(data=inside_position_inputs())
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

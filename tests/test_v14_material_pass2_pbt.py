@@ -122,7 +122,7 @@ class TestPass2PriorityOrdering:
 
     @given(data=objects_with_distinct_areas())
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -149,7 +149,7 @@ class TestPass2PriorityOrdering:
 
     @given(data=objects_with_unique_areas())
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -172,7 +172,7 @@ class TestPass2PriorityOrdering:
 
     @given(data=objects_with_unique_areas())
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

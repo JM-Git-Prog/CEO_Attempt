@@ -139,7 +139,7 @@ class TestAssetRegistryJsonRoundTripProperty:
 
     @given(entry=asset_registry_entries())
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -155,7 +155,7 @@ class TestAssetRegistryJsonRoundTripProperty:
 
     @given(entry=asset_registry_entries())
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

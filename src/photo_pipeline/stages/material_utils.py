@@ -1,37 +1,36 @@
-"""Material utility functions for the V14 pipeline.
+"""Material and PBR utility helpers for the Photo-to-Real-3D-World V14 pipeline.
 
-Pure functions for texture size selection and PBR value clamping.
-No external dependencies — used by the MaterialProcessor and property tests.
+Provides texture size selection based on screen-space footprint and
+PBR value clamping to valid ranges.
 
 Requirements: 11.4, 5.3
 """
+from __future__ import annotations
 
 
 def select_texture_size(area_pct: float) -> tuple[int, int]:
-    """Select texture dimensions by object screen-space footprint.
+    """Select texture resolution from object's screen-space area fraction.
 
-    area_pct is the fraction of image area (0.0 to 1.0 scale, NOT percentage).
-    Thresholds:
-        - < 0.02  → 256×256  (small objects, less than 2% of image)
-        - 0.02 to 0.10 → 512×512  (medium objects, 2%-10% of image)
-        - > 0.10  → 1024×1024 (large objects, more than 10% of image)
+    Parameters
+    ----------
+    area_pct
+        Fraction of the image area that the object occupies, in [0, 1].
 
-    All dimensions are powers of two for WebGL compatibility.
+    Returns
+    -------
+    (width, height) in pixels — always a power of two.
     """
     if area_pct < 0.02:
         return (256, 256)
-    elif area_pct <= 0.10:
+    if area_pct <= 0.10:
         return (512, 512)
-    else:
-        return (1024, 1024)
+    return (1024, 1024)
 
 
-def clamp_pbr_values(metallic: float, roughness: float) -> tuple[float, float]:
-    """Clamp PBR metallic and roughness values to valid [0.0, 1.0] range.
-
-    Ensures material parameters stay within physically-based rendering bounds
-    regardless of upstream estimation noise.
-    """
-    metallic_clamped = max(0.0, min(1.0, metallic))
-    roughness_clamped = max(0.0, min(1.0, roughness))
-    return (metallic_clamped, roughness_clamped)
+def clamp_pbr_values(
+    metallic: float, roughness: float
+) -> tuple[float, float]:
+    """Clamp PBR scalars into the physically valid [0.0, 1.0] range."""
+    m = max(0.0, min(1.0, float(metallic)))
+    r = max(0.0, min(1.0, float(roughness)))
+    return (m, r)

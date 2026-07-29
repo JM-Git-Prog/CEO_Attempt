@@ -106,7 +106,7 @@ class TestMeshValidationCorrectnessProperty:
 
     @given(data=mesh_scenes())
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

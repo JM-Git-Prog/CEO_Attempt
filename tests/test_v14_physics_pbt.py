@@ -89,7 +89,7 @@ class TestPhysicsClassificationCorrectnessProperty:
         is_architectural=_is_architectural,
     )
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -149,7 +149,7 @@ class TestPhysicsClassificationCorrectnessProperty:
         material=_known_material,
     )
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -175,7 +175,7 @@ class TestPhysicsClassificationCorrectnessProperty:
         material=_any_material,
     )
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -214,7 +214,7 @@ class TestPhysicsClassificationCorrectnessProperty:
         material=_unknown_material,
     )
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

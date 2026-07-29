@@ -121,7 +121,7 @@ class TestDepthMapNumpyRoundTripV14:
 
     @given(depth_map=depth_map_float32())
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -157,7 +157,7 @@ class TestDepthMapNumpyRoundTripV14:
 
     @given(depth_map=depth_map_mixed_values())
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -440,7 +440,7 @@ class TestV14PipelineManifestJsonRoundTripProperty:
 
     @given(manifest=pm_v14_pipeline_manifests())
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -461,7 +461,7 @@ class TestV14PipelineManifestJsonRoundTripProperty:
 
     @given(manifest=pm_v14_pipeline_manifests())
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

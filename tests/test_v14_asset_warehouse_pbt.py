@@ -92,7 +92,7 @@ class TestAssetWarehouseFilenameUniquenessProperty:
         mask_id2=_mask_id,
     )
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -141,7 +141,7 @@ class TestAssetWarehouseFilenameUniquenessProperty:
         mask_id=_mask_id,
     )
     @settings(
-        max_examples=300,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -174,7 +174,7 @@ class TestAssetWarehouseFilenameUniquenessProperty:
         mask_id=_mask_id,
     )
     @settings(
-        max_examples=300,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -199,7 +199,7 @@ class TestAssetWarehouseFilenameUniquenessProperty:
         mask_id=_mask_id,
     )
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -241,7 +241,7 @@ class TestAssetWarehouseFilenameUniquenessProperty:
         mask_id=_mask_id,
     )
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

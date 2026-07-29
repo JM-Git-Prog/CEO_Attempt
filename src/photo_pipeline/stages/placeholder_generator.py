@@ -1,175 +1,124 @@
-"""Placeholder geometry generation for the V14 fallback path.
+"""Placeholder primitive generator for the Photo-to-Real-3D-World V14 pipeline.
 
-When both Hunyuan3D 2.1 and Trellis2 fail for an object, this module produces
-a simple colored primitive (sphere, cylinder, or box) based on the object's
-bounding box aspect ratio and pixel area.
+When both Hunyuan3D and Trellis2 fail for an object, this module produces a
+colored primitive (box, cylinder, or sphere) as a stand-in.
 
 Requirements: 1.5
 """
-
 from __future__ import annotations
 
-import tempfile
+import logging
 from pathlib import Path
 
 import numpy as np
 import trimesh
 from PIL import Image
 
+log = logging.getLogger(__name__)
+
+# Area threshold for sphere selection (in pixels)
+SPHERE_AREA_THRESHOLD: int = 1000
+
+# Aspect ratio thresholds
+THIN_ASPECT: float = 0.5
+TALL_ASPECT: float = 2.0
+SQUARE_LOW: float = 0.8
+SQUARE_HIGH: float = 1.2
+
 
 def select_placeholder_type(width: int, height: int, area: int) -> str:
-    """Select placeholder geometry type based on bounding box and pixel area.
-
-    Decision rules (evaluated in order):
-    - area < 1000px → "sphere" (small objects)
-    - aspect_ratio (width/height) < 0.5 → "cylinder" (tall narrow)
-    - aspect_ratio > 2.0 → "box" (wide)
-    - aspect_ratio in [0.8, 1.2] → "box" (roughly square)
-    - otherwise → "box" (default)
+    """Pick a primitive type from image-space statistics of the object mask.
 
     Parameters
     ----------
-    width : int
-        Bounding box width in pixels.
-    height : int
-        Bounding box height in pixels.
-    area : int
-        Object mask area in pixels.
+    width, height
+        Bounding-box dimensions of the object's 2D mask, in pixels.
+    area
+        Total mask area in pixels.
 
     Returns
     -------
-    str
-        One of "sphere", "cylinder", or "box".
+    One of "sphere", "cylinder", or "box".
     """
-    if area < 1000:
+    if area < SPHERE_AREA_THRESHOLD:
         return "sphere"
 
-    aspect_ratio = width / height
-    if aspect_ratio < 0.5:
+    if height == 0:
+        aspect = 1.0
+    else:
+        aspect = width / height
+
+    if aspect < THIN_ASPECT:
         return "cylinder"
-    if aspect_ratio > 2.0:
-        return "box"
-    if 0.8 <= aspect_ratio <= 1.2:
+
+    if aspect > TALL_ASPECT or (SQUARE_LOW <= aspect <= SQUARE_HIGH):
         return "box"
 
     return "box"
 
 
+def _average_color(image_path: Path) -> np.ndarray:
+    """Return the mean RGB colour of image_path as float array [R, G, B]."""
+    with Image.open(str(image_path)) as img:
+        rgb = img.convert("RGB")
+        arr = np.asarray(rgb, dtype=np.float32)
+        if arr.size == 0:
+            return np.array([200.0, 200.0, 200.0], dtype=np.float32)
+        avg = arr.reshape(-1, 3).mean(axis=0)
+        return np.clip(avg, 0, 255)
+
+
 def generate_placeholder(
-    object_png: Path,
-    dimensions_m: tuple[float, float, float],
+    object_png: Path, dimensions_m: tuple[float, float, float]
 ) -> Path:
-    """Generate a colored GLB placeholder primitive.
-
-    Reads the average color from the object PNG (ignoring transparent pixels),
-    creates a trimesh primitive scaled to the given dimensions, applies the
-    average color as a simple material, and exports as a GLB file.
+    """Generate a colored GLB primitive placeholder.
 
     Parameters
     ----------
-    object_png : Path
-        Path to the RGBA object PNG image.
-    dimensions_m : tuple[float, float, float]
-        Target dimensions (width, height, depth) in meters.
+    object_png
+        Path to the segmented object RGBA image.
+    dimensions_m
+        (width, height, depth) in metres.
 
     Returns
     -------
-    Path
-        Path to the exported GLB file.
+    Path to the written .glb file.
     """
-    # Read average color from object PNG, ignoring transparent pixels
-    avg_color = _compute_average_color(object_png)
+    with Image.open(str(object_png)) as img:
+        width, height = img.size
+        # Estimate mask area from alpha channel
+        if img.mode in ("RGBA", "LA") or (
+            img.mode == "P" and "transparency" in img.info
+        ):
+            rgba = img.convert("RGBA")
+            alpha = np.asarray(rgba)[..., 3]
+            area = int((alpha > 0).sum())
+        else:
+            area = width * height
 
-    # Determine placeholder type from image dimensions
-    img = Image.open(object_png)
-    img_width, img_height = img.size
+    ptype = select_placeholder_type(width, height, area)
+    color = _average_color(object_png)
 
-    # Compute area from non-transparent pixels
-    if img.mode == "RGBA":
-        alpha = np.array(img)[:, :, 3]
-        area = int(np.sum(alpha > 0))
+    w, h, d = dimensions_m
+    w = max(w, 1e-6)
+    h = max(h, 1e-6)
+    d = max(d, 1e-6)
+
+    if ptype == "sphere":
+        radius = max(w, h, d) / 2.0
+        mesh = trimesh.creation.uv_sphere(radius=radius, count=[32, 16])
+    elif ptype == "cylinder":
+        radius = max(w, d) / 2.0
+        mesh = trimesh.creation.cylinder(radius=radius, height=h, sections=48)
     else:
-        area = img_width * img_height
+        mesh = trimesh.creation.box(extents=[w, h, d])
 
-    placeholder_type = select_placeholder_type(img_width, img_height, area)
+    # Apply average color as vertex colors
+    rgba = np.append(color, 255.0).astype(np.uint8)
+    vertex_colors = np.tile(rgba, (len(mesh.vertices), 1))
+    mesh.visual = trimesh.visual.ColorVisuals(mesh=mesh, vertex_colors=vertex_colors)
 
-    # Create primitive mesh
-    mesh = _create_primitive(placeholder_type, dimensions_m)
-
-    # Apply average color as face color material
-    mesh.visual = trimesh.visual.ColorVisuals(
-        mesh=mesh,
-        face_colors=np.tile(avg_color, (len(mesh.faces), 1)),
-    )
-
-    # Export as GLB to temp file
-    output_path = Path(tempfile.mktemp(suffix=".glb"))
+    output_path = object_png.parent / (object_png.stem + "_placeholder.glb")
     mesh.export(str(output_path), file_type="glb")
-
+    log.info("Generated %s placeholder → %s", ptype, output_path)
     return output_path
-
-
-def _compute_average_color(object_png: Path) -> np.ndarray:
-    """Compute the average RGB color from non-transparent pixels.
-
-    Parameters
-    ----------
-    object_png : Path
-        Path to the RGBA object PNG.
-
-    Returns
-    -------
-    np.ndarray
-        RGBA color array with shape (4,), values in [0, 255].
-    """
-    img = Image.open(object_png).convert("RGBA")
-    pixels = np.array(img)
-
-    # Mask for non-transparent pixels (alpha > 0)
-    alpha_mask = pixels[:, :, 3] > 0
-
-    if not np.any(alpha_mask):
-        # All transparent — fallback to mid-gray
-        return np.array([128, 128, 128, 255], dtype=np.uint8)
-
-    # Average RGB of visible pixels
-    visible_pixels = pixels[alpha_mask][:, :3]
-    avg_rgb = np.mean(visible_pixels, axis=0).astype(np.uint8)
-
-    return np.array([avg_rgb[0], avg_rgb[1], avg_rgb[2], 255], dtype=np.uint8)
-
-
-def _create_primitive(
-    primitive_type: str,
-    dimensions_m: tuple[float, float, float],
-) -> trimesh.Trimesh:
-    """Create a trimesh primitive scaled to the given dimensions.
-
-    Parameters
-    ----------
-    primitive_type : str
-        One of "sphere", "cylinder", or "box".
-    dimensions_m : tuple[float, float, float]
-        Target dimensions (width, height, depth) in meters.
-
-    Returns
-    -------
-    trimesh.Trimesh
-        The created and scaled mesh primitive.
-    """
-    width, height, depth = dimensions_m
-
-    if primitive_type == "sphere":
-        # Sphere with radius = half of the largest dimension
-        radius = max(width, height, depth) / 2.0
-        mesh = trimesh.creation.icosphere(subdivisions=2, radius=radius)
-
-    elif primitive_type == "cylinder":
-        # Cylinder: height along Y, radius from width/depth
-        radius = max(width, depth) / 2.0
-        mesh = trimesh.creation.cylinder(radius=radius, height=height)
-
-    else:  # "box"
-        mesh = trimesh.creation.box(extents=(width, height, depth))
-
-    return mesh

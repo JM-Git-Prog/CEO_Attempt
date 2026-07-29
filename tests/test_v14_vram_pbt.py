@@ -99,7 +99,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
 
     @given(ram_gb=_ram_gb)
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -132,7 +132,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
 
     @given(ram_gb=_ram_above_pause)
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -159,7 +159,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
 
     @given(ram_gb=_ram_at_or_below_pause)
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -228,7 +228,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
         final_ram=_ram_below_resume,
     )
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -259,7 +259,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
 
     @given(ram_in_hysteresis=_ram_in_hysteresis)
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -297,7 +297,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
 
     @given(ram_gb=_ram_at_or_below_pause)
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

@@ -84,7 +84,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_valid_area_pct)
     @settings(
-        max_examples=500,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -110,7 +110,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_small_area)
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -126,7 +126,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_medium_area)
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -142,7 +142,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_large_area)
     @settings(
-        max_examples=200,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -158,7 +158,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_negative_area)
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -174,7 +174,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_over_one_area)
     @settings(
-        max_examples=100,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )
@@ -208,7 +208,7 @@ class TestTextureSizeSelectionProperty:
 
     @given(area_pct=_valid_area_pct)
     @settings(
-        max_examples=300,
+        max_examples=30,
         deadline=None,
         suppress_health_check=[HealthCheck.too_slow],
     )

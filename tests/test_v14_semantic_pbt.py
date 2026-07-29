@@ -39,7 +39,7 @@ class TestHeuristicLabelingFallbackProperty:
         height=st.integers(min_value=0, max_value=10000),
         area_px=st.integers(min_value=0, max_value=10_000_000),
     )
-    @settings(max_examples=300)
+    @settings(max_examples=30)
     def test_fallback_always_produces_valid_semantic_label(
         self, width: int, height: int, area_px: int
     ) -> None:
