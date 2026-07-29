@@ -381,6 +381,79 @@
     }
 
     #crosshair.visible { display: block; }
+
+    /* --- Session List Panel --- */
+    #session-panel {
+      position: fixed;
+      top: 48px;
+      right: 0;
+      bottom: 0;
+      width: 320px;
+      z-index: 90;
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(12px);
+      border-left: 1px solid rgba(255, 255, 255, 0.06);
+      overflow-y: auto;
+      padding: 16px;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    #session-panel.open { transform: translateX(0); }
+
+    #session-panel h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .session-card {
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .session-card:hover {
+      background: rgba(119, 170, 255, 0.08);
+      border-color: rgba(119, 170, 255, 0.3);
+    }
+
+    .session-card.active {
+      border-color: #7af;
+      background: rgba(119, 170, 255, 0.1);
+    }
+
+    .session-card .session-id { font-size: 12px; font-weight: 600; color: #7af; font-family: monospace; }
+    .session-card .session-meta { font-size: 11px; color: #888; margin-top: 4px; }
+    .session-card .session-status { font-size: 11px; font-weight: 500; margin-top: 2px; }
+    .session-card .session-status.completed { color: #5d8; }
+    .session-card .session-status.started { color: #fa5; }
+    .session-card .session-status.error { color: #f55; }
+
+    .sessions-toggle {
+      position: fixed;
+      top: 8px;
+      right: 180px;
+      z-index: 101;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .sessions-toggle:hover { color: #ccc; background: rgba(255, 255, 255, 0.1); }
   </style>
 </head>
 <body>
@@ -405,6 +478,15 @@
       <a class="selected" aria-current="page" href="/?v=14">V14</a>
     </nav>
   </header>
+
+  <!-- Sessions Toggle Button -->
+  <button class="sessions-toggle" id="sessions-toggle" title="View past sessions">Sessions ▾</button>
+
+  <!-- Session List Panel -->
+  <aside id="session-panel">
+    <h3>V14 Sessions</h3>
+    <div id="session-list">Loading...</div>
+  </aside>
 
   <!-- WebGL Canvas Container -->
   <div id="canvas-container"></div>
@@ -608,6 +690,117 @@
         });
       }
     });
+  </script>
+
+  <!-- Session loading and panel logic -->
+  <script>
+    (function() {
+      var panel = document.getElementById('session-panel');
+      var toggle = document.getElementById('sessions-toggle');
+      var listEl = document.getElementById('session-list');
+
+      // Toggle panel
+      if (toggle) {
+        toggle.addEventListener('click', function() {
+          panel.classList.toggle('open');
+          if (panel.classList.contains('open')) loadSessionList();
+        });
+      }
+
+      // Load session list from API
+      async function loadSessionList() {
+        try {
+          var resp = await fetch('/api/v14/sessions');
+          if (!resp.ok) { listEl.textContent = 'Failed to load sessions'; return; }
+          var sessions = await resp.json();
+          if (!sessions.length) { listEl.textContent = 'No sessions yet'; return; }
+
+          listEl.innerHTML = '';
+          sessions.forEach(function(s) {
+            var card = document.createElement('div');
+            card.className = 'session-card' + (s.session_id === currentSessionId ? ' active' : '');
+            var statusClass = s.state || 'started';
+            var duration = s.total_duration_s ? Math.round(s.total_duration_s) + 's' : '—';
+            var objects = s.object_count != null ? s.object_count + ' objects' : '—';
+            var quality = s.quality_classification || '—';
+            card.innerHTML =
+              '<div class="session-id">' + s.session_id + '</div>' +
+              '<div class="session-meta">' + objects + ' · ' + duration + ' · ' + quality + '</div>' +
+              '<div class="session-status ' + statusClass + '">' + statusClass.toUpperCase() + '</div>';
+            card.addEventListener('click', function() { loadSession(s.session_id); });
+            listEl.appendChild(card);
+          });
+        } catch (e) {
+          listEl.textContent = 'Error: ' + e.message;
+        }
+      }
+
+      var currentSessionId = null;
+
+      // Load a completed (or running) session into the viewer
+      async function loadSession(sessionId) {
+        currentSessionId = sessionId;
+        // Update URL without reload
+        var url = new URL(window.location);
+        url.searchParams.set('session', sessionId);
+        history.replaceState(null, '', url);
+
+        // Hide upload, show viewer
+        var upload = document.getElementById('upload-section');
+        if (upload) upload.classList.add('hidden');
+        var progress = document.getElementById('progress-overlay');
+        if (progress) progress.classList.add('hidden');
+
+        var viewer = window._v14viewer;
+        if (!viewer) return;
+
+        // Check session state
+        try {
+          var metaResp = await fetch('/api/session/' + sessionId + '/v14/events');
+          // If session is still running, connect SSE
+          var stateResp = await fetch('/api/session/' + sessionId + '/room_shell');
+
+          // Try loading room shell
+          try { await viewer.loadRoomShell('/api/session/' + sessionId + '/room_shell'); } catch (e) { console.warn('No room shell:', e); }
+
+          // Load all objects (try 001-015)
+          for (var i = 1; i <= 15; i++) {
+            var objId = String(i).padStart(3, '0');
+            try {
+              var checkResp = await fetch('/api/session/' + sessionId + '/mesh/' + objId, { method: 'HEAD' });
+              if (checkResp.ok) {
+                await viewer.loadObject(objId, '/api/session/' + sessionId + '/mesh/' + objId);
+              } else {
+                break; // No more objects
+              }
+            } catch (e) { break; }
+          }
+
+          // Update HUD
+          var hud = document.getElementById('info-hud');
+          if (hud) hud.classList.remove('hidden');
+
+        } catch (e) {
+          console.error('Error loading session:', e);
+        }
+
+        // Refresh panel to show active state
+        loadSessionList();
+      }
+
+      // On page load: check for ?session= parameter
+      var params = new URLSearchParams(window.location.search);
+      var sessionParam = params.get('session');
+      if (sessionParam) {
+        // Wait for viewer to be ready, then load
+        var waitForViewer = setInterval(function() {
+          if (window._v14viewer) {
+            clearInterval(waitForViewer);
+            loadSession(sessionParam);
+          }
+        }, 200);
+      }
+    })();
   </script>
 </body>
 </html>

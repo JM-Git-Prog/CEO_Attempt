@@ -1274,10 +1274,25 @@ async def revise_world(session_id: str, request: Request):
 
 @app.get("/api/session/{session_id}/mesh/{obj_id}")
 async def get_mesh(session_id: str, obj_id: str):
-    mesh_path = OUTPUT_DIR / session_id / "meshes" / f"{obj_id}.glb"
-    if not mesh_path.exists():
-        return JSONResponse({"error": "Mesh not found"}, status_code=404)
-    return FileResponse(mesh_path, media_type="model/gltf-binary")
+    """Serve a mesh GLB for a V14 session object.
+
+    Searches multiple naming conventions used by different generators:
+    - {obj_id}_hunyuan3d.glb (Hunyuan3D output)
+    - {obj_id}_trellis2.glb (Trellis2 output)
+    - obj_{obj_id}_placeholder.glb (placeholder fallback)
+    - meshes/{obj_id}.glb (legacy path)
+    """
+    session_dir = OUTPUT_DIR / session_id
+    candidates = [
+        session_dir / "objects" / f"{obj_id}_hunyuan3d.glb",
+        session_dir / "objects" / f"{obj_id}_trellis2.glb",
+        session_dir / "objects" / f"obj_{obj_id}_placeholder.glb",
+        session_dir / "meshes" / f"{obj_id}.glb",
+    ]
+    for mesh_path in candidates:
+        if mesh_path.exists():
+            return FileResponse(mesh_path, media_type="model/gltf-binary")
+    return JSONResponse({"error": "Mesh not found"}, status_code=404)
 
 
 @app.get("/api/session/{session_id}/scene_data")
