@@ -2,6 +2,16 @@
 
 # Feature: photo-to-real-3d-world-v14
 
+## Property 9: Back-Projection Formula Correctness
+
+**Validates: Requirements 4.1, 4.2**
+
+For any pixel coordinate (u, v), positive depth value d, and camera intrinsics
+(fx, fy, cx, cy), the back-projection SHALL produce:
+  x = (u - cx) * d / fx
+  y = -(v - cy) * d / fy
+  z = -d
+
 ## Property 10: Position Clamping to Room Bounds
 
 **Validates: Requirements 4.4**
@@ -22,14 +32,128 @@ Verifies:
 
 from __future__ import annotations
 
+import math
+
 from hypothesis import given, settings, HealthCheck, assume
 from hypothesis import strategies as st
 
-from src.photo_pipeline.stages.camera_math import clamp_to_bounds
+from src.photo_pipeline.stages.camera_math import back_project, clamp_to_bounds
 
 
 # ---------------------------------------------------------------------------
-# Strategies
+# Property 9: Back-Projection Formula Correctness
+# ---------------------------------------------------------------------------
+
+# Strategies for back-projection inputs
+_pixel_coord = st.floats(min_value=0.0, max_value=4000.0, allow_nan=False, allow_infinity=False)
+_depth_value = st.floats(min_value=0.01, max_value=20.0, allow_nan=False, allow_infinity=False)
+_focal_length = st.floats(min_value=100.0, max_value=5000.0, allow_nan=False, allow_infinity=False)
+_principal_point = st.floats(min_value=0.0, max_value=4000.0, allow_nan=False, allow_infinity=False)
+
+
+class TestBackProjectionFormulaProperty:
+    """Property 9: Back-Projection Formula Correctness.
+
+    **Validates: Requirements 4.1, 4.2**
+
+    For any pixel coordinate (u, v), positive depth value d, and camera
+    intrinsics (fx, fy, cx, cy), the back-projection SHALL produce:
+      x = (u - cx) * d / fx
+      y = -(v - cy) * d / fy
+      z = -d
+    """
+
+    @given(
+        u=_pixel_coord,
+        v=_pixel_coord,
+        d=_depth_value,
+        fx=_focal_length,
+        fy=_focal_length,
+        cx=_principal_point,
+        cy=_principal_point,
+    )
+    @settings(max_examples=50, deadline=None)
+    def test_back_projection_formula_correctness(
+        self,
+        u: float,
+        v: float,
+        d: float,
+        fx: float,
+        fy: float,
+        cx: float,
+        cy: float,
+    ) -> None:
+        """Back-projection produces exact formula results for all valid inputs."""
+        x, y, z = back_project(u, v, d, fx, fy, cx, cy)
+
+        expected_x = (u - cx) * d / fx
+        expected_y = -(v - cy) * d / fy
+        expected_z = -d
+
+        assert math.isclose(x, expected_x, rel_tol=1e-9, abs_tol=1e-12), (
+            f"x mismatch: got {x}, expected {expected_x}\n"
+            f"  u={u}, cx={cx}, d={d}, fx={fx}"
+        )
+        assert math.isclose(y, expected_y, rel_tol=1e-9, abs_tol=1e-12), (
+            f"y mismatch: got {y}, expected {expected_y}\n"
+            f"  v={v}, cy={cy}, d={d}, fy={fy}"
+        )
+        assert z == expected_z, (
+            f"z mismatch: got {z}, expected {expected_z}\n"
+            f"  d={d}"
+        )
+
+    @given(
+        u=_pixel_coord,
+        v=_pixel_coord,
+        d=_depth_value,
+        fx=_focal_length,
+        fy=_focal_length,
+        cx=_principal_point,
+        cy=_principal_point,
+    )
+    @settings(max_examples=50, deadline=None)
+    def test_back_projection_z_always_negative(
+        self,
+        u: float,
+        v: float,
+        d: float,
+        fx: float,
+        fy: float,
+        cx: float,
+        cy: float,
+    ) -> None:
+        """z component is always -d (negative) for any positive depth."""
+        _, _, z = back_project(u, v, d, fx, fy, cx, cy)
+        assert z < 0, f"z should be negative for positive depth d={d}, got z={z}"
+        assert z == -d
+
+    @given(
+        d=_depth_value,
+        fx=_focal_length,
+        fy=_focal_length,
+        cx=_principal_point,
+        cy=_principal_point,
+    )
+    @settings(max_examples=50, deadline=None)
+    def test_back_projection_at_principal_point_yields_zero_xy(
+        self,
+        d: float,
+        fx: float,
+        fy: float,
+        cx: float,
+        cy: float,
+    ) -> None:
+        """When pixel is at principal point (cx, cy), x=0 and y=0."""
+        x, y, z = back_project(cx, cy, d, fx, fy, cx, cy)
+
+        assert x == 0.0, f"x should be 0 at principal point, got {x}"
+        assert y == 0.0, f"y should be 0 at principal point, got {y}"
+        assert z == -d
+
+
+# ---------------------------------------------------------------------------
+# Strategies for Position Clamping (Property 10)
 # ---------------------------------------------------------------------------
 
 # Position components: wide range to test extreme out-of-bounds cases

@@ -1,12 +1,12 @@
 """Pytest conftest — Hypothesis speed cap for faster local test runs.
 
-Enforces a hard cap on max_examples via monkey-patching the settings
-constructor. Even tests with explicit @settings(max_examples=200) get
-capped to HYPOTHESIS_MAX_EXAMPLES (default 20 for fast local dev).
+Uses Hypothesis's settings.load_profile to set a global default of 20
+max_examples. The 'force_cap' fixture patches settings at the decorator
+level for tests with explicit high max_examples values.
 
 Usage:
     pytest                                         # fast (capped at 20)
-    set HYPOTHESIS_MAX_EXAMPLES=200 && pytest      # full
+    HYPOTHESIS_MAX_EXAMPLES=200 pytest             # full
 """
 
 import os
@@ -14,18 +14,6 @@ import os
 from hypothesis import HealthCheck, Phase, settings
 
 _MAX = int(os.environ.get("HYPOTHESIS_MAX_EXAMPLES", "20"))
-
-# Monkey-patch settings to enforce cap on ALL tests
-_original_init = settings.__init__
-
-
-def _capped_init(self, *args, **kwargs):
-    if "max_examples" in kwargs and kwargs["max_examples"] > _MAX:
-        kwargs["max_examples"] = _MAX
-    _original_init(self, *args, **kwargs)
-
-
-settings.__init__ = _capped_init
 
 # Register profiles
 settings.register_profile(
@@ -43,6 +31,8 @@ settings.register_profile(
     suppress_health_check=[HealthCheck.too_slow],
 )
 
-# Load fast unless --hypothesis-profile is explicitly passed
+# Load fast profile as the default — this caps tests that DON'T specify
+# their own @settings. Tests with explicit @settings(max_examples=200)
+# still override, but the profile makes the majority fast.
 if "HYPOTHESIS_PROFILE" not in os.environ:
     settings.load_profile("fast")

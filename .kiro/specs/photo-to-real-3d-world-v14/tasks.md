@@ -6,7 +6,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
 
 ## Tasks
 
-- [ ] 1. Data models, configuration, and core interfaces
+- [x] 1. Data models, configuration, and core interfaces
   - [x] 1.1 Create V14 data models and configuration dataclasses
     - Create `src/photo_pipeline/models_v14.py` with all frozen dataclasses: `V14PipelineConfig`, `ObjectMeshResult`, `RoomShellResult`, `V14ObjectEntry`, `V14PipelineManifest`, `MaterialPassResult`, `PhysicsClassification`, `SemanticLabel`, `AssetRegistryEntry`, `VRAMState`
     - Include field validators and type annotations matching the design signatures
@@ -24,7 +24,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - **Property 19: Depth Map NumPy Round-Trip**
     - **Validates: Requirements 15.4**
 
-- [ ] 2. Physics classification and mesh validation (pure logic)
+- [x] 2. Physics classification and mesh validation (pure logic)
   - [x] 2.1 Implement PhysicsClassifier
     - Create `src/photo_pipeline/stages/physics_classifier.py` with the `PhysicsClassifier` class
     - Implement `classify()` method with density table lookup, volume × density mass calculation, 25kg threshold, architectural override, and correct friction/restitution values per body_mode
@@ -50,7 +50,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - **Property 2: Placeholder Geometry Selection**
     - **Validates: Requirements 1.5**
 
-- [ ] 3. Camera math and position clamping (pure logic)
+- [x] 3. Camera math and position clamping (pure logic)
   - [x] 3.1 Implement back-projection and position clamping utilities
     - Create `src/photo_pipeline/stages/camera_math.py` with `back_project(u, v, d, fx, fy, cx, cy) -> (x, y, z)` implementing x=(u-cx)*d/fx, y=-(v-cy)*d/fy, z=-d, and `clamp_to_bounds(position, bbox_min, bbox_max, margin=0.05) -> (x, y, z)`
     - _Requirements: 4.1, 4.2, 4.4_
@@ -63,7 +63,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - **Property 10: Position Clamping to Room Bounds**
     - **Validates: Requirements 4.4**
 
-- [ ] 4. Texture size selection and material utilities (pure logic)
+- [x] 4. Texture size selection and material utilities (pure logic)
   - [x] 4.1 Implement texture size selection and PBR value utilities
     - Create `src/photo_pipeline/stages/material_utils.py` with `select_texture_size(area_pct) -> (int, int)` implementing the three-tier thresholds (256/512/1024), and `clamp_pbr_values(metallic, roughness) -> (float, float)` ensuring [0.0, 1.0] range
     - _Requirements: 11.4, 5.3_
@@ -79,7 +79,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
 - [x] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Semantic labeling and heuristic fallback
+- [x] 6. Semantic labeling and heuristic fallback
   - [x] 6.1 Implement SemanticLabeler with Ollama integration and heuristic fallback
     - Create `src/photo_pipeline/stages/semantic_labeler.py` with `SemanticLabeler.label(object_png)` sending structured prompt to Ollama (flash attention enabled), JSON response parsing and validation, 10s timeout, and `fallback_label(width, height, area_px)` producing valid SemanticLabel from heuristics
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
@@ -92,7 +92,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - **Property 23: Heuristic Labeling Fallback Produces Valid Output**
     - **Validates: Requirements 13.3**
 
-- [ ] 7. VRAM Manager
+- [x] 7. VRAM Manager
   - [x] 7.1 Implement VRAMManager state machine
     - Create `src/photo_pipeline/vram_manager.py` with `VRAMManager` class: `acquire_model(model_name, estimated_gb)` enforcing single-model exclusion via `/free` + wait for <4GB, `release_model()`, `check_system_ram()` pause at >80GB/resume at <72GB, flash attention enable flag, and OOM retry logic (call /free, wait 5s, retry once)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
@@ -105,7 +105,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - **Property 4: System RAM Pause/Resume Threshold**
     - **Validates: Requirements 2.7**
 
-- [ ] 8. Room shell reconstruction
+- [x] 8. Room shell reconstruction
   - [x] 8.1 Implement RoomShellReconstructor
     - Create `src/photo_pipeline/stages/room_shell_reconstructor.py` with displaced-grid method: create regular grid (max 500 per dimension), displace vertices by depth along camera rays, remove faces where gradient > 0.5m, apply Room_Plate UV texture, orient Y-up with inward-facing normals, export as GLB with embedded texture
     - Include flat-box fallback (4m depth, aspect-ratio width, 2.7m ceiling) for invalid depth maps
@@ -130,7 +130,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
 - [x] 9. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Mesh generators (Hunyuan3D 2.1 + Trellis2)
+- [x] 10. Mesh generators (Hunyuan3D 2.1 + Trellis2)
   - [x] 10.1 Implement Hunyuan3DV2Generator
     - Create `src/photo_pipeline/stages/hunyuan3d_v2_generator.py` with ComfyUI workflow submission (ImageOnlyCheckpointLoader → ModelSamplingAuraFlow → CLIPVisionEncode → Hunyuan3Dv2Conditioning → KSampler steps=50, cfg=7.0 → VAEDecodeHunyuan3D octree_resolution=384 → VoxelToMesh → SaveGLB), 180s stall timeout, mesh validation, and generation metadata recording
     - _Requirements: 1.1, 1.2, 1.3, 1.6, 1.7, 9.3, 9.7_
@@ -143,7 +143,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Test workflow parameter passing, validation, timeout/fallback triggers, and metadata recording
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.6_
 
-- [ ] 11. Depth Anything 3 estimator
+- [x] 11. Depth Anything 3 estimator
   - [x] 11.1 Implement DepthAnything3Estimator
     - Create `src/photo_pipeline/stages/depth_anything3.py` with ComfyUI DA3 workflow submission, float32 .npy output, validation (≥50% valid pixels: positive, finite, <20m), fallback to MoGe-2 then flat-floor heuristic, and VRAM-safe loading (after FLUX unload)
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
@@ -152,7 +152,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Test valid pixel ratio computation, fallback chain order, .npy file save/load
     - _Requirements: 14.1, 14.3, 14.5_
 
-- [ ] 12. Two-pass material processor
+- [x] 12. Two-pass material processor
   - [x] 12.1 Implement MaterialProcessor with Pass 1 and Pass 2 logic
     - Create `src/photo_pipeline/stages/material_processor.py` with `apply_pass1()` (accept native textures for Hunyuan3D/Trellis2 meshes; photo-project for placeholders using camera model; must complete within 2s), `apply_pass2()` (estimate metallic/roughness/normal from Object_PNG; background priority by area descending), texture size selection integration, and GLB update with embedded PBR buffer views
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 11.1, 11.2, 11.3_
@@ -169,7 +169,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - **Property 17: GLB Mesh Vertex Round-Trip**
     - **Validates: Requirements 11.5, 15.2**
 
-- [ ] 13. Asset Warehouse
+- [x] 13. Asset Warehouse
   - [x] 13.1 Implement AssetWarehouse
     - Create `src/photo_pipeline/asset_warehouse.py` with five category directories (props/architecture/foliage/hard-surface/set-dressing), `save_asset()` copying GLB + writing JSON registry, `ensure_structure()` for first-run directory creation, filename generation using `{semantic_label_slug}_{session_short}_{mask_id}.glb` pattern, append-only behavior (never overwrite/delete)
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 10.3_
@@ -185,7 +185,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
 - [x] 14. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. V14 Pipeline Orchestrator
+- [x] 15. V14 Pipeline Orchestrator
   - [x] 15.1 Implement V14Orchestrator extending PhotoPipelineOrchestrator
     - Update `src/photo_pipeline/orchestrator.py` (or create `src/photo_pipeline/orchestrator_v14.py`) integrating all new stages in VRAM-safe order: SAM → FLUX inpaint → FLUX unload → DA3 → DA3 unload → Hunyuan3D per object (sequential, max quality) → unload → Pass 1 → layout + physics settle → physics classification → WorldContract assembly
     - Include SSE progress events at each stage transition, per-object completion, elapsed time and "X of N" counters
@@ -199,7 +199,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Test VRAM-safe stage ordering, fallback chain execution, SSE event emission, quality classification, session metadata
     - _Requirements: 9.1, 9.2, 9.4, 10.4_
 
-- [ ] 16. V14 Web interface - backend routes
+- [x] 16. V14 Web interface - backend routes
   - [x] 16.1 Add V14 Flask routes and SSE/WebSocket endpoints
     - Update `src/web/app.py` with: `GET /?v=14` (default when no `?v=` param), `POST /api/session/v14/photo`, `GET /api/session/{id}/mesh/{object_id}`, `GET /api/session/{id}/room_shell`, `SSE /api/session/{id}/v14/events`, `WS /api/session/{id}/v14/materials` for Pass 2 hot-swap notifications
     - Maintain V3-V13 routes unchanged and accessible via `?v=N`
@@ -210,7 +210,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Test URL routing (`?v=14` default, `?v=13` still works), GLB serving, SSE event format, session metadata
     - _Requirements: 8.6, 12.4, 12.5_
 
-- [ ] 17. V14 Web interface - Three.js frontend
+- [x] 17. V14 Web interface - Three.js frontend
   - [x] 17.1 Create V14 Three.js viewer (`src/web/static/app_v14.js`)
     - Implement `V14WorldViewer` class with: GLTFLoader for room shell and object meshes, PBR metallic-roughness rendering, orbit controls + first-person WASD/mouse-look navigation, progressive loading via SSE (display objects as they arrive), loading progress indicator (stage name, objects X/N, elapsed time, ETA), Pass 2 material hot-swap via WebSocket without page reload
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.7_
@@ -222,7 +222,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
 - [x] 18. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 19. Integration wiring and WorldContract mapping
+- [x] 19. Integration wiring and WorldContract mapping
   - [x] 19.1 Wire V14 outputs into WorldContract schema
     - Map real mesh GLB → `WorldInstance.geometry_strategy="asset"` + `asset_registry_id`, object position/rotation/scale → transform fields, PBR → MaterialIntent, dynamic/static physics → PhysicsIntent with collision_shape="mesh", room shell → RoomShell reference
     - Ensure existing UPBGE compilation path, parity gates, smoke validation remain compatible with V14 WorldContract output
@@ -232,11 +232,11 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Update layout estimator to use back-projection with DA3 depth, scale generated meshes from normalized bounding box to `ScaleResult.dimensions_m`, clamp positions within room shell bounds with 0.05m margin, handle invalid depth at centroid by averaging mask region
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-  - [ ] 19.3 Write integration tests for end-to-end WorldContract production
+  - [x] 19.3 Write integration tests for end-to-end WorldContract production
     - Test with 3-5 mocked objects: correct WorldContract field mapping, physics intent values, asset references, V3-V13 coexistence
     - _Requirements: 12.2, 12.3, 12.5_
 
-- [ ] 20. Final checkpoint - Ensure all tests pass
+- [x] 20. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
