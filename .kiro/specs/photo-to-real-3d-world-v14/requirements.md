@@ -24,12 +24,15 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 - **Hunyuan3D_Generator**: The primary 3D mesh generation stage using the Hunyuan3D 2.1 model via ComfyUI (ImageOnlyCheckpointLoader → ModelSamplingAuraFlow → CLIPVisionEncode → Hunyuan3Dv2Conditioning → KSampler → VAEDecodeHunyuan3D → VoxelToMesh → SaveGLB workflow)
 - **Trellis2_Generator**: The fallback 3D mesh generation stage using Microsoft Trellis2 4B model via ComfyUI when Hunyuan3D fails
 - **Object_PNG**: An isolated RGBA image of a single segmented object on transparent background, produced by SAM segmentation
+- **Room_Plate**: The Source_Image with all segmented objects inpainted out using FLUX, leaving only the room shell surfaces (walls, floor, ceiling) visible. Produced by the scene parsing stage (SAM segmentation + FLUX inpainting) and stored as `SceneParseResult.room_plate_path`. Used as the texture source for the Room_Shell_Mesh
 - **Room_Shell_Mesh**: A textured GLB mesh representing the room environment (floor, walls, ceiling) reconstructed from a depth-displaced grid, textured with the inpainted Room_Plate
 - **Depth_Grid_Mesh**: The room shell reconstruction method that converts a depth map into a displaced-grid mesh (NOT Poisson reconstruction)
+- **Scale_Calibrator**: The existing component (`src/photo_pipeline/stages/scale_calibrator.py`) that converts pixel footprints to real-world meters using the pinhole camera model with metric depth. Computes real-world dimensions (width, height, depth) for each segmented object by combining pixel bounding box size, depth at centroid, and camera FOV. Outputs a `ScaleResult` with `dimensions_m`, `scale_factor`, and `confidence`
+- **Layout_Estimator**: The existing component (`src/photo_pipeline/stages/layout_estimator.py`) that back-projects 2D pixel centroids to 3D world positions using the pinhole camera model, then runs PyBullet physics settle to resolve floating objects and interpenetration. Produces final position AND rotation (via quaternion-to-euler from physics simulation) for each object
 - **Asset_Warehouse**: The persistent, append-only, session-independent library that catalogs every generated GLB asset with extensive metadata
 - **Asset_Registry**: The JSON metadata file per asset stored in the Asset_Warehouse containing name, semantic label, category, era, condition, material type, dimensions, weight estimate, generation method, source photo hash, and source session
 - **VRAM_Manager**: The component that enforces sequential model loading/unloading to prevent VRAM exhaustion on the RTX 4090 (24GB)
-- **Two_Pass_Materials**: The material quality strategy where Pass 1 applies immediate photo-projected textures and Pass 2 estimates full PBR parameters (metallic, roughness, normal) in the background when GPU is free
+- **Two_Pass_Materials**: The material quality strategy where Pass 1 accepts native generator textures (for Hunyuan3D/Trellis2 meshes) or applies photo-projected textures (for placeholder geometry only), and Pass 2 estimates full PBR parameters (metallic, roughness, normal) in the background when GPU is free
 - **V14_Interface**: The new web interface version using Three.js GLTFLoader for rendering real textured meshes in-browser, replacing primitive box rendering from V13
 - **GLTFLoader**: The Three.js loader that imports GLB files with embedded PBR textures for real-time WebGL rendering
 - **Dynamic_Physics**: The physics classification system that assigns dynamic (grabbable/pushable) or static (immovable) physics bodies based on estimated object weight
@@ -37,6 +40,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 - **PBR_Materials**: Physically-Based Rendering material properties (base color, metallic, roughness, normal map) embedded in GLB files for realistic Three.js rendering
 - **Semantic_Label**: A human-readable category label assigned to each object by Ollama vision analysis (e.g., "wooden dining chair", "ceramic floor vase")
 - **Game_Industry_Taxonomy**: The asset categorization system following standard game development conventions: Props/Static Meshes, Foliage/Flora, Hard Surface Assets, Set Dressing/Decor, Modular Architecture Kit Pieces
+- **Camera_FOV_Model**: The pinhole camera model used throughout the pipeline, where intrinsics are derived from vertical FOV: fy = fx = image_height / (2 × tan(fov_v / 2)), cx = image_width / 2, cy = image_height / 2. A default 60° vertical FOV is assumed unless overridden by depth model output
 
 ## Requirements
 
@@ -52,7 +56,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 4. WHEN the Trellis2_Generator receives an Object_PNG, THE Trellis2_Generator SHALL submit the Trellis2 ComfyUI workflow (Trellis2LoadModel → Trellis2PreProcessImage → Trellis2MeshWithVoxelGenerator at 18 steps → Trellis2SimplifyMesh at 12000 triangles → Trellis2ExportMesh as GLB with embedded textures) and produce a textured GLB mesh
 5. IF both Hunyuan3D 2.1 and Trellis2 fail for an object, THEN THE Photo_Pipeline_V14 SHALL produce a Placeholder_Geometry primitive (box, cylinder, or sphere by aspect ratio) textured with the average color from the Object_PNG
 6. THE Hunyuan3D_Generator SHALL record generation method (hunyuan3d_v2.1, trellis2, or placeholder), generation time in seconds, face count, and vertex count for each object in the pipeline manifest
-7. THE Hunyuan3D_Generator SHALL use maximum quality settings (50 steps, cfg=7.0, octree_resolution=384) to produce the best possible mesh topology — generation time of 60-90 seconds per object is acceptable
+7. THE Hunyuan3D_Generator SHALL use maximum quality settings (50 steps, cfg=7.0, octree_resolution=384) to produce the best possible mesh topology — generation time of 60-90 seconds per object is acceptable. At octree_resolution=384, meshes typically produce 20,000-80,000 faces
 
 ### Requirement 2: VRAM Management and Sequential Model Loading
 
@@ -74,12 +78,14 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 
 #### Acceptance Criteria
 
-1. WHEN the depth map is available from Depth Anything 3, THE Photo_Pipeline_V14 SHALL reconstruct the Room_Shell_Mesh using a displaced-grid method: create a regular grid mesh at the source image resolution (or downsampled to maximum 500×500 vertices), displace each vertex along the camera ray by its depth value, and export as GLB
+1. WHEN the depth map is available from Depth Anything 3, THE Photo_Pipeline_V14 SHALL reconstruct the Room_Shell_Mesh using a displaced-grid method: create a regular grid mesh at the source image resolution (or downsampled to maximum 500 vertices per grid dimension, up to 250,000 total vertices), displace each vertex along the camera ray by its depth value, and export as GLB
 2. THE Room_Shell_Mesh SHALL be textured with the inpainted Room_Plate image using UV coordinates that map directly from the grid vertex positions to the corresponding pixel locations in the Room_Plate
 3. THE Room_Shell_Mesh SHALL NOT use Poisson surface reconstruction — the displacement grid method preserves the direct relationship between pixels and mesh vertices for accurate texture mapping
 4. WHEN the Room_Shell_Mesh is generated, THE system SHALL orient the mesh in WorldContract coordinates (right-handed, Y-up, meters) with the camera viewpoint at the origin looking along negative-Z
-5. IF Depth Anything 3 fails or produces a depth map where more than 50% of pixels have invalid values (zero, negative, or infinite), THEN THE system SHALL fall back to a flat box room (4m depth, width from aspect ratio, 2.7m ceiling height) textured with the Room_Plate
+5. IF Depth Anything 3 fails or produces a depth map where more than 50% of pixels have invalid values (zero, negative, or infinite), THEN THE system SHALL fall back to a flat box room (4m depth, width = 4m × image_aspect_ratio, 2.7m ceiling height) textured with the Room_Plate using planar UV projection from the camera viewpoint
 6. THE Room_Shell_Mesh SHALL have vertex count between 10000 and 250000 to balance reconstruction detail against WebGL rendering performance in the V14_Interface
+7. THE Room_Shell_Mesh SHALL remove or split faces where the depth gradient between adjacent vertices exceeds 0.5m over one grid cell, to prevent stretched "bridge" triangles at depth discontinuities (wall edges, door frames, object boundaries)
+8. THE Room_Shell_Mesh face winding SHALL produce normals pointing toward the camera origin (inward-facing), enabling correct interior rendering with standard back-face culling in the V14_Interface
 
 ### Requirement 4: Object Placement via Depth Back-Projection
 
@@ -92,6 +98,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 3. WHEN initial 3D positions are computed for all objects, THE Layout_Estimator SHALL run a physics settle pass (gravity simulation, maximum 500 iterations or 5 seconds wall time) to resolve floating objects and interpenetration
 4. THE Layout_Estimator SHALL clamp each object's final position to within the Room_Shell_Mesh bounding volume with a 0.05m margin to prevent objects from appearing outside the room
 5. IF the depth value at an object's centroid is invalid (zero or infinite), THEN THE Layout_Estimator SHALL estimate depth by averaging valid depth values within the object's mask region
+6. WHEN a mesh is generated by Hunyuan3D or Trellis2, THE pipeline SHALL scale the mesh from its normalized bounding box to real-world dimensions (meters) using the Scale_Calibrator's `ScaleResult.dimensions_m` before placement in the WorldContract coordinate system
 
 ### Requirement 5: Two-Pass Material Quality
 
@@ -99,7 +106,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 
 #### Acceptance Criteria
 
-1. WHEN a 3D mesh is generated for an object, THE Two_Pass_Materials system SHALL immediately apply Pass 1 textures by projecting the Object_PNG onto the mesh surface using the camera model (photo-projection), producing a usable textured GLB within 2 seconds of mesh generation
+1. WHEN a 3D mesh is generated for an object by Hunyuan3D or Trellis2, THE Two_Pass_Materials system SHALL accept the native generator textures as Pass 1 (these are already conditioned on the Object_PNG input image and provide full-surface coverage). For placeholder geometry only, Pass 1 SHALL apply photo-projected textures by projecting the Object_PNG onto the mesh surface using the Camera_FOV_Model. In both cases, a usable textured GLB SHALL be available within 2 seconds of mesh generation completion
 2. WHEN all objects have Pass 1 textures applied and the GPU is free (no active inference tasks), THE Two_Pass_Materials system SHALL queue Pass 2 PBR estimation for each object in background priority order (largest objects first)
 3. WHEN Pass 2 processes an object, THE Two_Pass_Materials system SHALL estimate metallic (0.0-1.0), roughness (0.0-1.0), and normal map parameters from the Object_PNG using a material classification heuristic and update the GLB file with embedded PBR textures
 4. THE V14_Interface SHALL display Pass 1 textures immediately and hot-swap to Pass 2 PBR materials via WebSocket notification when background processing completes, without requiring page refresh
@@ -113,7 +120,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 #### Acceptance Criteria
 
 1. WHEN assembling the WorldContract, THE Photo_Pipeline_V14 SHALL classify each object as dynamic (grabbable/pushable) or static (immovable) based on its estimated mass: objects with estimated mass at or below 25kg SHALL be dynamic, objects above 25kg SHALL be static
-2. THE Photo_Pipeline_V14 SHALL estimate object mass using the formula: mass_kg = volume_m3 × material_density, where volume is computed from the Scale_Calibrator dimensions and material_density is looked up from the semantic label (wood=600, metal=7800, glass=2500, fabric=200, ceramic=2300, plastic=950 kg/m³)
+2. THE Photo_Pipeline_V14 SHALL estimate object mass using the formula: mass_kg = volume_m3 × material_density, where volume is computed from the Scale_Calibrator dimensions (`ScaleResult.dimensions_m`: width × height × depth) and material_density is looked up from the semantic label (wood=600, metal=7800, glass=2500, fabric=200, ceramic=2300, plastic=950 kg/m³)
 3. WHEN an object is classified as dynamic, THE WorldContract physics intent SHALL include: body_mode=DYNAMIC, mass_kg set to the estimated value, friction=0.5, restitution=0.2, can_topple=True
 4. WHEN an object is classified as static, THE WorldContract physics intent SHALL include: body_mode=STATIC, mass_kg=0, friction=0.6, restitution=0.1, can_topple=False
 5. THE physics classification SHALL override to STATIC for any object whose semantic label indicates architectural function (walls, doors, built-in shelving, countertops, large appliances) regardless of estimated mass
@@ -181,7 +188,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 1. THE Hunyuan3D_Generator and Trellis2_Generator SHALL produce GLB files (binary glTF) with textures embedded as buffer views rather than external file references
 2. WHEN Pass 1 photo-projection is applied, THE system SHALL embed the projected texture as a base color map within the GLB's material using the glTF metallic-roughness PBR model
 3. WHEN Pass 2 PBR estimation completes, THE system SHALL update the GLB file to include: baseColorTexture, metallicRoughnessTexture, and normalTexture as embedded buffer views following the glTF 2.0 specification
-4. THE GLB files SHALL use texture dimensions that are powers of two (256×256, 512×512, or 1024×1024) to ensure WebGL compatibility and efficient GPU memory usage in the V14_Interface
+4. THE GLB files SHALL use texture dimensions selected by object screen-space footprint: 256×256 for objects covering less than 2% of image area, 512×512 for objects covering 2-10%, and 1024×1024 for objects covering more than 10% of image area — all dimensions are powers of two to ensure WebGL compatibility and efficient GPU memory usage in the V14_Interface
 5. FOR ALL GLB files produced by the pipeline, loading the GLB with Three.js GLTFLoader and re-exporting with Three.js GLTFExporter SHALL produce a file whose vertex positions differ by less than 1e-5 from the original (round-trip integrity)
 
 ### Requirement 12: Existing Pipeline Preservation and V14 Coexistence
@@ -191,7 +198,7 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 #### Acceptance Criteria
 
 1. THE Photo_Pipeline_V14 SHALL operate as a new interface version alongside existing versions V3-V13 — all previous versions SHALL remain accessible via their respective `?v=N` query parameters with identical behavior
-2. THE WorldContract schema SHALL remain unchanged — the V14 pipeline maps its outputs (real meshes, PBR materials, dynamic physics) into the existing schema fields without requiring schema modifications
+2. THE WorldContract schema SHALL remain unchanged — the V14 pipeline maps its outputs (real meshes, PBR materials, dynamic physics) into the existing schema fields without requiring schema modifications. The existing `WorldInstance.geometry_strategy: "asset"` with `asset_registry_id`, and `PhysicsIntent` fields (body_mode, mass_kg, friction, restitution, can_topple, collision_shape: "mesh") already accommodate V14 outputs
 3. THE existing UPBGE compilation path, parity gates, smoke validation, and auto-launch chain SHALL remain available for V14 sessions that request UPBGE export, operating on the same WorldContract produced by the V14 pipeline
 4. THE V14_Interface SHALL be the default interface version when no `?v=` parameter is supplied, with V13 remaining accessible at `?v=13`
 5. THE session management system SHALL distinguish V14 sessions via interface_version=14 in session metadata while using the same FIFO queue, session lifecycle, and TTL cleanup as all other versions
