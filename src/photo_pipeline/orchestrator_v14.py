@@ -53,6 +53,7 @@ from src.photo_pipeline.models_v14 import (
     V14PipelineManifest,
 )
 from src.photo_pipeline.reason_codes import ReasonCode
+from src.photo_pipeline.stages.assembler_v14 import V14WorldContractAssembler
 from src.photo_pipeline.stages.camera_math import back_project, clamp_to_bounds
 from src.photo_pipeline.stages.depth_anything3 import DepthAnything3Estimator
 from src.photo_pipeline.stages.hunyuan3d_v2_generator import Hunyuan3DV2Generator
@@ -831,8 +832,62 @@ class V14Orchestrator:
     ) -> Path | None:
         """Assemble and save the WorldContract JSON.
 
-        Maps V14 outputs into the existing WorldContract schema fields.
+        Maps V14 outputs into the existing WorldContract schema using the
+        V14WorldContractAssembler, producing a validated Pydantic WorldContract
+        that is compatible with the UPBGE compilation path, parity gates,
+        smoke validation, and export adapters.
+
         Returns the path to the saved JSON file, or None on failure.
+
+        Requirements: 12.2, 12.3, 4.6
+        """
+        try:
+            assembler = V14WorldContractAssembler(
+                session_id=self.session_id,
+                room_shell=room_shell,
+                objects=objects,
+                source_image_hash=source_image_hash,
+                image_width_px=getattr(self, "_image_width", 1920),
+                image_height_px=getattr(self, "_image_height", 1080),
+                vertical_fov_deg=60.0,
+            )
+            contract = assembler.assemble()
+
+            # Write the canonical WorldContract JSON (compatible with UPBGE compile)
+            contract_path = self.session_dir / "world_contract_v14.json"
+            contract_path.write_text(
+                contract.model_dump_json(indent=2),
+                encoding="utf-8",
+            )
+
+            # Also write the canonical (minified) version for hash verification
+            canonical_path = self.session_dir / "world_contract_v14_canonical.json"
+            canonical_path.write_bytes(contract.canonical_bytes())
+
+            logger.info(
+                "V14 WorldContract assembled: %d instances, hash=%s",
+                len(contract.instances),
+                contract.content_hash()[:16],
+            )
+            return contract_path
+        except (ValueError, Exception) as exc:
+            logger.error("Failed to assemble V14 WorldContract: %s", exc)
+            # Fall back to the legacy dict-based output for resilience
+            return self._assemble_world_contract_legacy(
+                objects, room_shell, source_image_hash
+            )
+
+    def _assemble_world_contract_legacy(
+        self,
+        objects: list[V14ObjectEntry],
+        room_shell: RoomShellResult,
+        source_image_hash: str,
+    ) -> Path | None:
+        """Legacy dict-based WorldContract assembly (fallback).
+
+        Produces a plain JSON file when the formal assembler fails validation.
+        This output is NOT compatible with the UPBGE compilation path but
+        is sufficient for the V14 Three.js interface.
         """
         contract = {
             "session_id": self.session_id,
@@ -878,9 +933,12 @@ class V14Orchestrator:
                 json.dumps(contract, indent=2, ensure_ascii=False),
                 encoding="utf-8",
             )
+            logger.warning(
+                "V14 WorldContract saved as legacy dict (formal validation failed)"
+            )
             return contract_path
         except Exception as exc:
-            logger.error("Failed to write WorldContract: %s", exc)
+            logger.error("Failed to write legacy WorldContract: %s", exc)
             return None
 
     # ------------------------------------------------------------------

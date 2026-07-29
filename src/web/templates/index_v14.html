@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>The Living Room · V14 Real 3D World</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* --- WebGL Canvas --- */
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    #canvas-container canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* --- Top Navigation Bar --- */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .topbar .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar .brand-mark {
+      font-weight: 700;
+      font-size: 14px;
+      color: #7af;
+      background: rgba(119, 170, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .topbar .brand-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ccc;
+    }
+
+    .version-nav {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .version-nav a {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .version-nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ccc;
+    }
+
+    .version-nav a.selected {
+      background: rgba(119, 170, 255, 0.15);
+      color: #7af;
+    }
+
+    /* --- Progress Overlay --- */
+    #progress-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(12px);
+      transition: opacity 0.4s ease;
+    }
+
+    #progress-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .progress-content {
+      text-align: center;
+      max-width: 420px;
+    }
+
+    .progress-content h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e0e0e0;
+      margin-bottom: 24px;
+    }
+
+    .progress-stage {
+      font-size: 13px;
+      color: #7af;
+      font-weight: 500;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .progress-bar-track {
+      width: 300px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin: 12px auto;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #7af, #5df);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-details {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    .progress-details span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .progress-details strong {
+      color: #bbb;
+      font-weight: 500;
+    }
+
+    /* --- Photo Upload Section (shown when no session active) --- */
+    #upload-section {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 10, 15, 0.95);
+    }
+
+    #upload-section.hidden {
+      display: none;
+    }
+
+    .upload-content {
+      text-align: center;
+      max-width: 480px;
+    }
+
+    .upload-content h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #e0e0e0;
+      margin-bottom: 8px;
+    }
+
+    .upload-content p {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .upload-dropzone {
+      border: 2px dashed rgba(119, 170, 255, 0.3);
+      border-radius: 12px;
+      padding: 48px 32px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .upload-dropzone:hover,
+    .upload-dropzone.dragover {
+      border-color: #7af;
+      background: rgba(119, 170, 255, 0.04);
+    }
+
+    .upload-dropzone .icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .upload-dropzone .label {
+      font-size: 14px;
+      color: #bbb;
+      margin-bottom: 4px;
+    }
+
+    .upload-dropzone .hint {
+      font-size: 12px;
+      color: #666;
+    }
+
+    #photo-file-input { display: none; }
+
+    #photo-preview {
+      margin-top: 16px;
+      display: none;
+    }
+
+    #photo-preview img {
+      max-width: 300px;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #photo-preview .actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: #7af;
+      color: #0a0a0f;
+    }
+
+    .btn-primary:hover { background: #8bf; }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ccc;
+    }
+
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+
+    /* --- Navigation Controls --- */
+    #nav-controls {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    #nav-controls.hidden { display: none; }
+
+    .nav-mode-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #888;
+      background: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-mode-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ccc;
+    }
+
+    .nav-mode-btn.active {
+      background: rgba(119, 170, 255, 0.15);
+      color: #7af;
+    }
+
+    .nav-hint {
+      font-size: 11px;
+      color: #555;
+      margin-left: 8px;
+      padding-left: 8px;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* --- Object Info HUD (bottom-right) --- */
+    #info-hud {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      font-size: 11px;
+      color: #666;
+      text-align: right;
+    }
+
+    #info-hud.hidden { display: none; }
+
+    /* --- Crosshair for first-person mode --- */
+    #crosshair {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      width: 20px;
+      height: 20px;
+      display: none;
+    }
+
+    #crosshair::before,
+    #crosshair::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    #crosshair::before {
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      transform: translateY(-50%);
+    }
+
+    #crosshair::after {
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      transform: translateX(-50%);
+    }
+
+    #crosshair.visible { display: block; }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">LR</span>
+      <span class="brand-text">The Living Room · V14</span>
+    </div>
+    <nav class="version-nav" aria-label="Interface version">
+      <a href="/?v=3">V3</a>
+      <a href="/?v=4">V4</a>
+      <a href="/?v=5">V5</a>
+      <a href="/?v=6">V6</a>
+      <a href="/?v=7">V7</a>
+      <a href="/?v=8">V8</a>
+      <a href="/?v=9">V9</a>
+      <a href="/?v=10">V10</a>
+      <a href="/?v=11">V11</a>
+      <a href="/?v=12">V12</a>
+      <a href="/?v=13">V13</a>
+      <a class="selected" aria-current="page" href="/?v=14">V14</a>
+    </nav>
+  </header>
+
+  <!-- WebGL Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- Crosshair for first-person navigation -->
+  <div id="crosshair"></div>
+
+  <!-- Photo Upload Section -->
+  <section id="upload-section" aria-label="Photo upload">
+    <div class="upload-content">
+      <h1>Your photo, made real in 3D.</h1>
+      <p>Drop a photo of any room. We'll generate real textured 3D meshes
+         with Hunyuan3D and let you walk through the reconstructed space.</p>
+      <div class="upload-dropzone" id="upload-dropzone" tabindex="0"
+           aria-label="Drop a photo here or click to select">
+        <div class="icon">📷</div>
+        <div class="label"><strong>Drop a room photo here</strong>, or click to browse</div>
+        <div class="hint">JPEG or PNG — any standard room photograph</div>
+      </div>
+      <input type="file" id="photo-file-input" accept="image/jpeg,image/png">
+      <div id="photo-preview">
+        <img id="preview-img" alt="Selected photo preview">
+        <div class="actions">
+          <button class="btn btn-secondary" id="remove-photo-btn">Remove</button>
+          <button class="btn btn-primary" id="build-btn">Build my world ⚡</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progress Overlay -->
+  <div id="progress-overlay" class="hidden">
+    <div class="progress-content">
+      <h2>Building your 3D world…</h2>
+      <div class="progress-stage" id="progress-stage">Initializing</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <div class="progress-details">
+        <span><strong id="progress-objects">0 / 0</strong> objects</span>
+        <span><strong id="progress-elapsed">0:00</strong> elapsed</span>
+        <span><strong id="progress-eta">—</strong> ETA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Mode Controls -->
+  <div id="nav-controls" class="hidden">
+    <button class="nav-mode-btn active" id="btn-orbit" data-mode="orbit">Orbit</button>
+    <button class="nav-mode-btn" id="btn-firstperson" data-mode="firstperson">First-Person</button>
+    <span class="nav-hint" id="nav-hint">Scroll to zoom · Drag to rotate</span>
+  </div>
+
+  <!-- Info HUD -->
+  <div id="info-hud" class="hidden">
+    <div id="hud-objects">Objects: 0</div>
+    <div id="hud-meshes">Meshes: 0</div>
+    <div class="hud-tag">Real 3D meshes · Hunyuan3D · PBR</div>
+  </div>
+
+  <!-- Three.js via ES Module importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    // Import Three.js and addons
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+    // Make available globally for app_v14.js
+    window.THREE = THREE;
+    window.GLTFLoader = GLTFLoader;
+    window.OrbitControls = OrbitControls;
+    window.PointerLockControls = PointerLockControls;
+
+    window.APP_VERSION=14;
+    window.V14_READY = true;
+
+    // Signal that Three.js modules are loaded
+    window.dispatchEvent(new Event('v14-three-ready'));
+  </script>
+
+  <!-- V14 Application Logic -->
+  <script src="/static/app_v14.js?v=14"></script>
+</body>
+</html>

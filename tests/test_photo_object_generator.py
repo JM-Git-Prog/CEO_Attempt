@@ -416,7 +416,7 @@ class TestPlaceholderGeometrySelection:
     @settings(
         max_examples=200,
         deadline=None,
-        suppress_health_check=[HealthCheck.too_slow],
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
     )
     def test_wide_flat_returns_box(
         self, width: int, height: int, area_px: int

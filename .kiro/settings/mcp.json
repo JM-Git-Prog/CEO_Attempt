@@ -6,7 +6,7 @@
         "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\vendor\\ollama-mcp\\node_modules\\ollama-mcp\\dist\\index.js"
       ],
       "env": {
-        "OLLAMA_BASE_URL": "http://localhost:11434",     
+        "OLLAMA_BASE_URL": "http://localhost:11434",
         "OLLAMA_API_KEY": "c3d26dff37694b93818cdee811c48188.iOymESiaxnkfswa-Qtqxnq3a"
       },
       "disabled": false,
@@ -23,10 +23,14 @@
     },
     "fetch": {
       "command": "uvx",
-      "args": ["mcp-server-fetch@latest"],
+      "args": [
+        "mcp-server-fetch@latest"
+      ],
       "env": {},
-      "disabled": false,
-      "autoApprove": ["fetch"]
+      "disabled": true,
+      "autoApprove": [
+        "fetch"
+      ]
     },
     "kirograph": {
       "command": "kirograph",

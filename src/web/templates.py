@@ -1,6 +1,11 @@
 """HTML shell for The Living Room web application."""
 
+from pathlib import Path
+
 from src.workflow_provenance import normalize_interface_version
+
+# V14 uses a dedicated Three.js template file (full-viewport WebGL canvas)
+_V14_TEMPLATE_PATH = Path(__file__).parent / "templates" / "index_v14.html"
 
 
 def get_index_html(version: int = 11) -> str:
@@ -8,6 +13,10 @@ def get_index_html(version: int = 11) -> str:
     if normalized != version:
         raise ValueError(f"Unsupported interface version: {version}")
     version = normalized
+
+    # V14 serves a dedicated Three.js full-viewport template
+    if version == 14:
+        return _V14_TEMPLATE_PATH.read_text(encoding="utf-8")
     refresh_control = '<button class="refresh-output" onclick="refreshOutput()">REFRESH OUTPUT ↻</button>' if version >= 4 else ""
     plan_attr = ' role="button" tabindex="0" onclick="showPlanArtifact(\'floor\')"' if version >= 4 else ""
     blockout_attr = ' role="button" tabindex="0" onclick="showPlanArtifact(\'blockout\')"' if version >= 4 else ""

@@ -115,7 +115,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
         with patch.object(
             VRAMManager, "_get_system_ram_used_gb", return_value=ram_gb
         ):
-            result = asyncio.get_event_loop().run_until_complete(
+            result = asyncio.run(
                 manager.check_system_ram()
             )
 
@@ -148,7 +148,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
         with patch.object(
             VRAMManager, "_get_system_ram_used_gb", return_value=ram_gb
         ):
-            result = asyncio.get_event_loop().run_until_complete(
+            result = asyncio.run(
                 manager.check_system_ram()
             )
 
@@ -175,7 +175,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
         with patch.object(
             VRAMManager, "_get_system_ram_used_gb", return_value=ram_gb
         ):
-            result = asyncio.get_event_loop().run_until_complete(
+            result = asyncio.run(
                 manager.check_system_ram()
             )
 
@@ -253,7 +253,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
             side_effect=lambda: next(ram_sequence),
         ):
             with patch("src.photo_pipeline.vram_manager.RAM_POLL_INTERVAL_S", 0.001):
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     manager.wait_for_ram_available()
                 )
 
@@ -285,7 +285,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
             side_effect=lambda: next(ram_sequence),
         ):
             with patch("src.photo_pipeline.vram_manager.RAM_POLL_INTERVAL_S", 0.001):
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     manager.wait_for_ram_available()
                 )
 
@@ -321,7 +321,7 @@ class TestSystemRAMPauseResumeThresholdProperty:
         with patch.object(
             VRAMManager, "_get_system_ram_used_gb", side_effect=mock_ram
         ):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 manager.wait_for_ram_available()
             )
 

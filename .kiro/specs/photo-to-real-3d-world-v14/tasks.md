@@ -195,40 +195,40 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Pass 2 starts only after all Pass 1 meshes loaded in V14 interface
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 10.1, 10.2, 10.3, 10.4, 12.2_
 
-  - [ ] 15.2 Write integration tests for V14 orchestrator with mocked stages
+  - [x] 15.2 Write integration tests for V14 orchestrator with mocked stages
     - Test VRAM-safe stage ordering, fallback chain execution, SSE event emission, quality classification, session metadata
     - _Requirements: 9.1, 9.2, 9.4, 10.4_
 
 - [ ] 16. V14 Web interface - backend routes
-  - [ ] 16.1 Add V14 Flask routes and SSE/WebSocket endpoints
+  - [x] 16.1 Add V14 Flask routes and SSE/WebSocket endpoints
     - Update `src/web/app.py` with: `GET /?v=14` (default when no `?v=` param), `POST /api/session/v14/photo`, `GET /api/session/{id}/mesh/{object_id}`, `GET /api/session/{id}/room_shell`, `SSE /api/session/{id}/v14/events`, `WS /api/session/{id}/v14/materials` for Pass 2 hot-swap notifications
     - Maintain V3-V13 routes unchanged and accessible via `?v=N`
     - Session metadata includes interface_version=14, same FIFO queue and TTL cleanup
     - _Requirements: 8.4, 8.5, 8.6, 8.7, 12.1, 12.3, 12.4, 12.5_
 
-  - [ ] 16.2 Write unit tests for V14 web routes
+  - [x] 16.2 Write unit tests for V14 web routes
     - Test URL routing (`?v=14` default, `?v=13` still works), GLB serving, SSE event format, session metadata
     - _Requirements: 8.6, 12.4, 12.5_
 
 - [ ] 17. V14 Web interface - Three.js frontend
-  - [ ] 17.1 Create V14 Three.js viewer (`src/web/static/app_v14.js`)
+  - [x] 17.1 Create V14 Three.js viewer (`src/web/static/app_v14.js`)
     - Implement `V14WorldViewer` class with: GLTFLoader for room shell and object meshes, PBR metallic-roughness rendering, orbit controls + first-person WASD/mouse-look navigation, progressive loading via SSE (display objects as they arrive), loading progress indicator (stage name, objects X/N, elapsed time, ETA), Pass 2 material hot-swap via WebSocket without page reload
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.7_
 
-  - [ ] 17.2 Create V14 HTML template
+  - [x] 17.2 Create V14 HTML template
     - Create `src/web/templates/index_v14.html` with Three.js imports (GLTFLoader, OrbitControls, PointerLockControls), WebGL canvas, progress overlay, navigation mode toggle, and version switching links
     - _Requirements: 8.1, 8.6_
 
-- [ ] 18. Checkpoint - Ensure all tests pass
+- [x] 18. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 19. Integration wiring and WorldContract mapping
-  - [ ] 19.1 Wire V14 outputs into WorldContract schema
+  - [x] 19.1 Wire V14 outputs into WorldContract schema
     - Map real mesh GLB → `WorldInstance.geometry_strategy="asset"` + `asset_registry_id`, object position/rotation/scale → transform fields, PBR → MaterialIntent, dynamic/static physics → PhysicsIntent with collision_shape="mesh", room shell → RoomShell reference
     - Ensure existing UPBGE compilation path, parity gates, smoke validation remain compatible with V14 WorldContract output
     - _Requirements: 12.2, 12.3, 4.6_
 
-  - [ ] 19.2 Implement layout estimation updates for V14
+  - [x] 19.2 Implement layout estimation updates for V14
     - Update layout estimator to use back-projection with DA3 depth, scale generated meshes from normalized bounding box to `ScaleResult.dimensions_m`, clamp positions within room shell bounds with 0.05m margin, handle invalid depth at centroid by averaging mask region
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
