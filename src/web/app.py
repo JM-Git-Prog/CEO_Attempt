@@ -1613,6 +1613,226 @@ async def mvp_result(session_id: str):
 _v14_material_connections: dict[str, list[WebSocket]] = {}
 
 
+async def _v14_build_room(
+    session_dir: Path,
+    session_id: str,
+    manifest,
+    event_cb,
+) -> None:
+    """Wire V14 WorldContract into the existing room-building path.
+
+    After the V14 orchestrator produces its WorldContract, this function:
+      1. Builds browser_scene.json (parametric room with positioned objects)
+         for proper Three.js rendering with walls/floor/ceiling + object placement.
+      2. Runs the existing UPBGE compilation bridge (same chain as V11-V13)
+         for native runtime and GLB export.
+      3. Emits a 'world_built' SSE event so the V14 viewer switches from
+         raw-GLB-at-origin mode to proper room rendering.
+
+    This is the integration layer that connects:
+      V14 pipeline output → existing WorldBuilder compilation infrastructure
+    """
+    from src.photo_pipeline.compilation_bridge import (
+        CompilationBridgeResult,
+        run_compilation_chain,
+    )
+    from src.world_contract import WorldContract
+
+    # Locate the V14 WorldContract
+    wc_path = session_dir / "world_contract_v14.json"
+    if not wc_path.exists():
+        # Try manifest's path if available
+        if manifest and manifest.world_contract_path:
+            wc_path = manifest.world_contract_path
+    if not wc_path.exists():
+        # Cannot proceed without a WorldContract
+        await event_cb({
+            "event": "room_build",
+            "stage": "room_compilation",
+            "status": "failed",
+            "session_id": session_id,
+            "reason": "world_contract_not_found",
+        })
+        return
+
+    # --- Step 1: Build browser_scene.json (parametric room for Three.js) ---
+    try:
+        wc_data = json.loads(wc_path.read_text(encoding="utf-8"))
+        quality = getattr(manifest, "quality_classification", "full") if manifest else "full"
+        scene_data = _build_v14_browser_scene(wc_data, session_id, quality)
+        scene_json_path = session_dir / "browser_scene.json"
+        scene_json_path.write_text(json.dumps(scene_data, indent=2), encoding="utf-8")
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        await event_cb({
+            "event": "room_build",
+            "stage": "browser_scene",
+            "status": "failed",
+            "session_id": session_id,
+            "reason": str(exc),
+        })
+        return
+
+    # --- Step 2: Emit world_built SSE event ---
+    # This tells the V14 viewer to switch to proper room rendering
+    events_path = session_dir / "v14_events.jsonl"
+    world_built_event = {
+        "type": "world_built",
+        "browser_scene_url": f"/api/session/{session_id}/browser_scene",
+        "room": scene_data.get("room", {}),
+        "object_count": len(scene_data.get("objects", [])),
+    }
+    with open(events_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(world_built_event, default=str) + "\n")
+
+    # --- Step 3: Run UPBGE compilation bridge (same path as V11-V13) ---
+    try:
+        contract = WorldContract.model_validate_json(wc_path.read_text(encoding="utf-8"))
+
+        # Run compilation in executor (it's synchronous)
+        loop = asyncio.get_running_loop()
+        compilation_result: CompilationBridgeResult = await loop.run_in_executor(
+            None,
+            lambda: run_compilation_chain(
+                contract,
+                session_dir,
+                fullscreen=False,  # Browser session — no auto-launch
+                launch_timeout_s=10.0,
+                smoke_timeout_s=15.0,
+            ),
+        )
+
+        # Emit compilation result SSE event
+        compile_event = {
+            "type": "compilation_complete",
+            "success": compilation_result.success,
+            "reason_code": compilation_result.reason_code,
+            "runtime_candidate": str(compilation_result.runtime_candidate_path)
+            if compilation_result.runtime_candidate_path
+            else None,
+        }
+        with open(events_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(compile_event, default=str) + "\n")
+
+        # Update session metadata with compilation results
+        meta_path = session_dir / "session_meta.json"
+        if meta_path.exists():
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+            meta.update({
+                "compilation_success": compilation_result.success,
+                "compilation_reason_code": compilation_result.reason_code,
+            })
+            meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        # Compilation failure is non-fatal — browser scene still works
+        fail_event = {
+            "type": "compilation_complete",
+            "success": False,
+            "reason_code": "compilation_exception",
+            "error": str(exc),
+        }
+        with open(events_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(fail_event, default=str) + "\n")
+
+
+def _build_v14_browser_scene(wc_data: dict, session_id: str, quality: str) -> dict:
+    """Build a Three.js browser scene from a V14 WorldContract dict.
+
+    Produces the same browser-scene/v1 format as _build_browser_scene but:
+    - Includes mesh_url for each object (V14 has real GLB meshes)
+    - Uses the WorldContract's camera if available
+    - Preserves object positions from the WorldContract transform data
+    """
+    room = wc_data.get("room", {})
+    dims = room.get("dimensions", {})
+
+    # Build material lookup
+    mat_lookup = {}
+    for mat in wc_data.get("materials", []):
+        mat_lookup[mat["id"]] = mat
+
+    # Build scene objects with mesh URLs and proper positioning
+    objects = []
+    for inst in wc_data.get("instances", []):
+        mat = mat_lookup.get(inst.get("material_id"), {})
+        transform = inst.get("transform", {})
+        pos = transform.get("position_m", {})
+        rot = transform.get("rotation_deg", {})
+        dim = inst.get("dimensions", {})
+        scale = transform.get("scale", {})
+
+        obj_entry = {
+            "id": inst["id"],
+            "name": inst.get("name", ""),
+            "shape": inst.get("primitive_shape", "box"),
+            "position": [pos.get("x", 0), pos.get("y", 0), pos.get("z", 0)],
+            "rotation": [rot.get("x", 0), rot.get("y", 0), rot.get("z", 0)],
+            "scale": [scale.get("x", 1), scale.get("y", 1), scale.get("z", 1)],
+            "dimensions": [
+                dim.get("width_m", 1),
+                dim.get("height_m", 1),
+                dim.get("depth_m", 1),
+            ],
+            "color": mat.get("base_color", "#808080"),
+            "metallic": mat.get("metallic", 0),
+            "roughness": mat.get("roughness", 0.8),
+            # V14 has real GLB meshes — include mesh URL
+            "mesh_url": f"/api/session/{session_id}/mesh/{inst['id']}",
+        }
+        objects.append(obj_entry)
+
+    # Lights
+    lights = []
+    for light in wc_data.get("lights", []):
+        pos = light.get("position_m", {})
+        dir_v = light.get("direction", {})
+        lights.append({
+            "id": light["id"],
+            "type": light.get("light_type", "point"),
+            "position": [pos.get("x", 0), pos.get("y", 0), pos.get("z", 0)],
+            "direction": [dir_v.get("x", 0), dir_v.get("y", -1), dir_v.get("z", 0)],
+            "color": light.get("color", "#FFFFFF"),
+            "intensity": light.get("intensity", 50),
+        })
+
+    # Room materials for walls/floor/ceiling
+    floor_mat = mat_lookup.get(room.get("floor_material_id"), {})
+    wall_mat = mat_lookup.get(room.get("wall_material_id"), {})
+    ceiling_mat = mat_lookup.get(room.get("ceiling_material_id"), {})
+
+    # Camera from WorldContract (or sensible default)
+    camera_data = wc_data.get("camera", {})
+    cam_pos = camera_data.get("position_m", {})
+    camera = {
+        "position": [
+            cam_pos.get("x", 0),
+            cam_pos.get("y", 1.6),
+            cam_pos.get("z", 3),
+        ],
+        "fov": camera_data.get("fov_deg", 60),
+    }
+
+    return {
+        "version": "browser-scene/v1",
+        "source": "v14-world-contract",
+        "room": {
+            "width": dims.get("width_m", 5),
+            "height": dims.get("height_m", 2.7),
+            "depth": dims.get("depth_m", 4),
+            "floor_color": floor_mat.get("base_color", "#8b7355"),
+            "wall_color": wall_mat.get("base_color", "#d0c8b8"),
+            "ceiling_color": ceiling_mat.get("base_color", "#e8e0d8"),
+        },
+        "objects": objects,
+        "lights": lights,
+        "camera": camera,
+        "quality": quality,
+    }
+
 @app.post("/api/session/v14/upload-photo")
 async def v14_upload_photo(request: Request):
     """Upload a photo from the browser for V14 pipeline processing.
@@ -1796,6 +2016,13 @@ async def create_v14_photo_session(request: Request):
             (session_dir / "session_meta.json").write_text(
                 json.dumps(session_meta, indent=2), encoding="utf-8"
             )
+
+            # --- V14 Room Building: Wire WorldContract → browser scene + UPBGE ---
+            # This is the critical integration that produces a proper walkable 3D
+            # room with parametric geometry, positioned objects, and textures —
+            # matching what V11-V13 sessions produce via the same path.
+            await _v14_build_room(session_dir, session_id, manifest, _v14_event_cb)
+
         except (V14ValidationError, V14PipelineError) as exc:
             session_meta.update({"state": "error", "error": str(exc)})
             (session_dir / "session_meta.json").write_text(

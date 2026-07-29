@@ -524,12 +524,25 @@ export class V14WorldViewer {
         break;
       }
 
+      case 'world_built':
+        // WorldContract has been assembled — rebuild scene with proper room
+        await this._handleWorldBuilt(data);
+        break;
+
+      case 'compilation_complete':
+        // UPBGE compilation finished (informational)
+        console.log('V14: UPBGE compilation', data.success ? 'succeeded' : 'failed', data.reason_code);
+        break;
+
       case 'done':
         this.isComplete = true;
         this.totalObjects = data.object_count || this.totalObjects;
-        this._hideProgress();
-        this._eventSource.close();
-        this._eventSource = null;
+        this._updateStageText('Loading room...');
+        // Don't hide progress yet — wait for world_built event
+        if (this._eventSource) {
+          // Keep listening for world_built and compilation_complete
+          // They arrive after 'done'
+        }
         // Connect WebSocket for Pass 2 material updates
         this._connectMaterialsWebSocket();
         break;
@@ -552,6 +565,181 @@ export class V14WorldViewer {
       console.warn('V14WorldViewer: Failed to load room shell:', err);
     }
   }
+
+  /**
+   * Handle the 'world_built' event — rebuild scene with proper parametric room
+   * geometry and correctly positioned objects from the WorldContract.
+   *
+   * This replaces the depth-mesh room shell with a proper box room (walls, floor,
+   * ceiling) and repositions all loaded objects to their WorldContract transforms.
+   */
+  async _handleWorldBuilt(data) {
+    this._updateStageText('Building room...');
+
+    try {
+      // Fetch the full browser scene descriptor
+      const resp = await fetch(data.browser_scene_url);
+      if (!resp.ok) {
+        console.warn('V14: Failed to fetch browser scene:', resp.status);
+        this._hideProgress();
+        return;
+      }
+      const scene = await resp.json();
+
+      // Remove the depth-based room shell
+      if (this.roomShell) {
+        this.scene.remove(this.roomShell);
+        this._disposeObject(this.roomShell);
+        this.roomShell = null;
+      }
+
+      // Build parametric room geometry (walls, floor, ceiling)
+      const room = scene.room || {};
+      const w = room.width || 5;
+      const h = room.height || 2.7;
+      const d = room.depth || 4;
+      this._buildParametricRoom(w, h, d, room);
+
+      // Reposition loaded objects according to WorldContract positions
+      const sceneObjects = scene.objects || [];
+      for (const objData of sceneObjects) {
+        const existing = this.objects.get(objData.id);
+        if (existing) {
+          // Apply correct transform from WorldContract
+          existing.position.set(
+            objData.position[0],
+            objData.position[1],
+            objData.position[2]
+          );
+          existing.rotation.set(
+            THREE.MathUtils.degToRad(objData.rotation[0]),
+            THREE.MathUtils.degToRad(objData.rotation[1]),
+            THREE.MathUtils.degToRad(objData.rotation[2])
+          );
+          if (objData.scale) {
+            existing.scale.set(objData.scale[0], objData.scale[1], objData.scale[2]);
+          }
+        } else if (objData.mesh_url) {
+          // Object not yet loaded — load it with proper position
+          try {
+            await this.loadObject(
+              objData.id,
+              objData.mesh_url,
+              objData.position,
+              objData.rotation,
+              objData.scale || [1, 1, 1]
+            );
+          } catch (err) {
+            console.warn(`V14: Failed to load object ${objData.id}:`, err);
+          }
+        }
+      }
+
+      // Set camera from WorldContract
+      if (scene.camera) {
+        const camPos = scene.camera.position || [0, 1.6, 3];
+        this.camera.position.set(camPos[0], camPos[1], camPos[2]);
+        this.camera.fov = scene.camera.fov || 60;
+        this.camera.updateProjectionMatrix();
+
+        // Update orbit target to room center
+        if (this.orbitControls) {
+          this.orbitControls.target.set(0, h / 2, -d / 2);
+          this.orbitControls.update();
+        }
+      }
+
+      // Close SSE — everything is loaded
+      if (this._eventSource) {
+        this._eventSource.close();
+        this._eventSource = null;
+      }
+
+      this._hideProgress();
+      console.log('V14: Room built with', sceneObjects.length, 'positioned objects');
+
+    } catch (err) {
+      console.error('V14: Error building room:', err);
+      this._hideProgress();
+    }
+  }
+
+  /**
+   * Build a parametric room box (floor, walls, ceiling) with colored materials.
+   */
+  _buildParametricRoom(width, height, depth, roomData) {
+    const roomGroup = new THREE.Group();
+    roomGroup.name = 'parametric_room';
+
+    // Center the room so floor is at y=0, centered on x/z
+    const halfW = width / 2;
+    const halfD = depth / 2;
+
+    // Floor
+    const floorGeo = new THREE.PlaneGeometry(width, depth);
+    const floorMat = new THREE.MeshStandardMaterial({
+      color: roomData.floor_color || '#8b7355',
+      roughness: 0.9,
+      metalness: 0.0,
+      side: THREE.DoubleSide,
+    });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = 0;
+    floor.receiveShadow = true;
+    roomGroup.add(floor);
+
+    // Ceiling
+    const ceilGeo = new THREE.PlaneGeometry(width, depth);
+    const ceilMat = new THREE.MeshStandardMaterial({
+      color: roomData.ceiling_color || '#e8e0d8',
+      roughness: 0.95,
+      metalness: 0.0,
+      side: THREE.DoubleSide,
+    });
+    const ceiling = new THREE.Mesh(ceilGeo, ceilMat);
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.y = height;
+    ceiling.receiveShadow = true;
+    roomGroup.add(ceiling);
+
+    const wallMat = new THREE.MeshStandardMaterial({
+      color: roomData.wall_color || '#d0c8b8',
+      roughness: 0.85,
+      metalness: 0.0,
+      side: THREE.DoubleSide,
+    });
+
+    // Back wall (z = -depth)
+    const backGeo = new THREE.PlaneGeometry(width, height);
+    const backWall = new THREE.Mesh(backGeo, wallMat.clone());
+    backWall.position.set(0, height / 2, -halfD);
+    backWall.receiveShadow = true;
+    roomGroup.add(backWall);
+
+    // Front wall (z = +depth) — typically the viewing wall, may be omitted for camera
+    // We skip the front wall so the camera can see inside
+
+    // Left wall (x = -halfW)
+    const leftGeo = new THREE.PlaneGeometry(depth, height);
+    const leftWall = new THREE.Mesh(leftGeo, wallMat.clone());
+    leftWall.position.set(-halfW, height / 2, 0);
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.receiveShadow = true;
+    roomGroup.add(leftWall);
+
+    // Right wall (x = +halfW)
+    const rightGeo = new THREE.PlaneGeometry(depth, height);
+    const rightWall = new THREE.Mesh(rightGeo, wallMat.clone());
+    rightWall.position.set(halfW, height / 2, 0);
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.receiveShadow = true;
+    roomGroup.add(rightWall);
+
+    this.roomShell = roomGroup;
+    this.scene.add(roomGroup);
+  }
+
 
   // -------------------------------------------------------------------------
   // WebSocket — Pass 2 Material Hot-Swap
@@ -809,9 +997,68 @@ export class V14WorldViewer {
 export function initV14Viewer(containerId, sessionId) {
   const viewer = new V14WorldViewer(containerId);
   if (sessionId) {
-    viewer.connectSSE(sessionId);
+    // Check if the session already has a completed browser scene (reload case)
+    _tryLoadCompletedScene(viewer, sessionId).then(loaded => {
+      if (!loaded) {
+        // Scene not yet built — connect SSE for progressive loading
+        viewer.connectSSE(sessionId);
+      }
+    });
   }
   return viewer;
+}
+
+/**
+ * Attempt to load a pre-built browser scene for a completed V14 session.
+ * Returns true if the scene was loaded (session already finished), false otherwise.
+ */
+async function _tryLoadCompletedScene(viewer, sessionId) {
+  try {
+    const resp = await fetch(`/api/session/${sessionId}/browser_scene`);
+    if (!resp.ok) return false;
+    const scene = await resp.json();
+    if (!scene || !scene.room) return false;
+
+    // Build the parametric room
+    const room = scene.room;
+    viewer._buildParametricRoom(room.width, room.height, room.depth, room);
+
+    // Load all objects with proper positions
+    for (const obj of (scene.objects || [])) {
+      try {
+        const meshUrl = obj.mesh_url || `/api/session/${sessionId}/mesh/${obj.id}`;
+        await viewer.loadObject(
+          obj.id, meshUrl,
+          obj.position || [0, 0, 0],
+          obj.rotation || [0, 0, 0],
+          obj.scale || [1, 1, 1]
+        );
+      } catch (err) {
+        console.warn(`V14: Failed to load completed object ${obj.id}:`, err);
+      }
+    }
+
+    // Set camera
+    if (scene.camera) {
+      const camPos = scene.camera.position || [0, 1.6, 3];
+      viewer.camera.position.set(camPos[0], camPos[1], camPos[2]);
+      viewer.camera.fov = scene.camera.fov || 60;
+      viewer.camera.updateProjectionMatrix();
+      if (viewer.orbitControls) {
+        viewer.orbitControls.target.set(0, (room.height || 2.7) / 2, -(room.depth || 4) / 2);
+        viewer.orbitControls.update();
+      }
+    }
+
+    viewer.isComplete = true;
+    viewer._hideProgress();
+    // Connect materials WebSocket for hot-swap in case Pass 2 is still running
+    viewer.sessionId = sessionId;
+    viewer._connectMaterialsWebSocket();
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
 
 // ---------------------------------------------------------------------------
