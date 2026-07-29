@@ -7,186 +7,186 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
 ## Tasks
 
 - [ ] 1. Data models, configuration, and core interfaces
-  - [ ] 1.1 Create V14 data models and configuration dataclasses
+  - [x] 1.1 Create V14 data models and configuration dataclasses
     - Create `src/photo_pipeline/models_v14.py` with all frozen dataclasses: `V14PipelineConfig`, `ObjectMeshResult`, `RoomShellResult`, `V14ObjectEntry`, `V14PipelineManifest`, `MaterialPassResult`, `PhysicsClassification`, `SemanticLabel`, `AssetRegistryEntry`, `VRAMState`
     - Include field validators and type annotations matching the design signatures
     - _Requirements: 1.6, 2.7, 3.1, 6.6, 7.2, 9.1, 15.1, 15.3_
 
-  - [ ]* 1.2 Write property test for Asset Registry JSON round-trip
+  - [x] 1.2 Write property test for Asset Registry JSON round-trip
     - **Property 16: Asset Registry JSON Round-Trip**
     - **Validates: Requirements 15.1, 15.5**
 
-  - [ ]* 1.3 Write property test for Pipeline Manifest JSON round-trip
+  - [x] 1.3 Write property test for Pipeline Manifest JSON round-trip
     - **Property 18: Pipeline Manifest JSON Round-Trip**
     - **Validates: Requirements 15.3**
 
-  - [ ]* 1.4 Write property test for Depth Map NumPy round-trip
+  - [x] 1.4 Write property test for Depth Map NumPy round-trip
     - **Property 19: Depth Map NumPy Round-Trip**
     - **Validates: Requirements 15.4**
 
 - [ ] 2. Physics classification and mesh validation (pure logic)
-  - [ ] 2.1 Implement PhysicsClassifier
+  - [x] 2.1 Implement PhysicsClassifier
     - Create `src/photo_pipeline/stages/physics_classifier.py` with the `PhysicsClassifier` class
     - Implement `classify()` method with density table lookup, volume × density mass calculation, 25kg threshold, architectural override, and correct friction/restitution values per body_mode
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
-  - [ ]* 2.2 Write property test for physics classification correctness
+  - [x] 2.2 Write property test for physics classification correctness
     - **Property 11: Physics Classification Correctness**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4, 6.5**
 
-  - [ ] 2.3 Implement mesh validation utility
+  - [x] 2.3 Implement mesh validation utility
     - Create `src/photo_pipeline/stages/mesh_validator.py` with `validate_mesh(mesh_path) -> bool` checking ≥100 faces, ≥50 vertices, and embedded texture data using trimesh
     - _Requirements: 1.2_
 
-  - [ ]* 2.4 Write property test for mesh validation correctness
+  - [x] 2.4 Write property test for mesh validation correctness
     - **Property 1: Mesh Validation Correctness**
     - **Validates: Requirements 1.2**
 
-  - [ ] 2.5 Implement placeholder geometry selection
+  - [x] 2.5 Implement placeholder geometry selection
     - Create `src/photo_pipeline/stages/placeholder_generator.py` with `select_placeholder_type(width, height, area)` returning sphere/cylinder/box based on aspect ratio rules, and `generate_placeholder(object_png, dimensions_m) -> Path` producing a colored GLB
     - _Requirements: 1.5_
 
-  - [ ]* 2.6 Write property test for placeholder geometry selection
+  - [x] 2.6 Write property test for placeholder geometry selection
     - **Property 2: Placeholder Geometry Selection**
     - **Validates: Requirements 1.5**
 
 - [ ] 3. Camera math and position clamping (pure logic)
-  - [ ] 3.1 Implement back-projection and position clamping utilities
+  - [x] 3.1 Implement back-projection and position clamping utilities
     - Create `src/photo_pipeline/stages/camera_math.py` with `back_project(u, v, d, fx, fy, cx, cy) -> (x, y, z)` implementing x=(u-cx)*d/fx, y=-(v-cy)*d/fy, z=-d, and `clamp_to_bounds(position, bbox_min, bbox_max, margin=0.05) -> (x, y, z)`
     - _Requirements: 4.1, 4.2, 4.4_
 
-  - [ ]* 3.2 Write property test for back-projection formula
+  - [x] 3.2 Write property test for back-projection formula
     - **Property 9: Back-Projection Formula Correctness**
     - **Validates: Requirements 4.1, 4.2**
 
-  - [ ]* 3.3 Write property test for position clamping
+  - [x] 3.3 Write property test for position clamping
     - **Property 10: Position Clamping to Room Bounds**
     - **Validates: Requirements 4.4**
 
 - [ ] 4. Texture size selection and material utilities (pure logic)
-  - [ ] 4.1 Implement texture size selection and PBR value utilities
+  - [x] 4.1 Implement texture size selection and PBR value utilities
     - Create `src/photo_pipeline/stages/material_utils.py` with `select_texture_size(area_pct) -> (int, int)` implementing the three-tier thresholds (256/512/1024), and `clamp_pbr_values(metallic, roughness) -> (float, float)` ensuring [0.0, 1.0] range
     - _Requirements: 11.4, 5.3_
 
-  - [ ]* 4.2 Write property test for texture size selection
+  - [x] 4.2 Write property test for texture size selection
     - **Property 14: Texture Size Selection**
     - **Validates: Requirements 11.4**
 
-  - [ ]* 4.3 Write property test for PBR value ranges
+  - [x] 4.3 Write property test for PBR value ranges
     - **Property 13: PBR Value Ranges**
     - **Validates: Requirements 5.3**
 
-- [ ] 5. Checkpoint - Ensure all tests pass
+- [x] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 6. Semantic labeling and heuristic fallback
-  - [ ] 6.1 Implement SemanticLabeler with Ollama integration and heuristic fallback
+  - [x] 6.1 Implement SemanticLabeler with Ollama integration and heuristic fallback
     - Create `src/photo_pipeline/stages/semantic_labeler.py` with `SemanticLabeler.label(object_png)` sending structured prompt to Ollama (flash attention enabled), JSON response parsing and validation, 10s timeout, and `fallback_label(width, height, area_px)` producing valid SemanticLabel from heuristics
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
 
-  - [ ]* 6.2 Write property test for semantic label validation
+  - [x] 6.2 Write property test for semantic label validation
     - **Property 22: Semantic Label Validation**
     - **Validates: Requirements 13.5**
 
-  - [ ]* 6.3 Write property test for heuristic labeling fallback
+  - [x] 6.3 Write property test for heuristic labeling fallback
     - **Property 23: Heuristic Labeling Fallback Produces Valid Output**
     - **Validates: Requirements 13.3**
 
 - [ ] 7. VRAM Manager
-  - [ ] 7.1 Implement VRAMManager state machine
+  - [x] 7.1 Implement VRAMManager state machine
     - Create `src/photo_pipeline/vram_manager.py` with `VRAMManager` class: `acquire_model(model_name, estimated_gb)` enforcing single-model exclusion via `/free` + wait for <4GB, `release_model()`, `check_system_ram()` pause at >80GB/resume at <72GB, flash attention enable flag, and OOM retry logic (call /free, wait 5s, retry once)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
 
-  - [ ]* 7.2 Write property test for VRAM model exclusion invariant
+  - [x] 7.2 Write property test for VRAM model exclusion invariant
     - **Property 3: VRAM Model Exclusion Invariant**
     - **Validates: Requirements 2.1, 14.2**
 
-  - [ ]* 7.3 Write property test for system RAM pause/resume threshold
+  - [x] 7.3 Write property test for system RAM pause/resume threshold
     - **Property 4: System RAM Pause/Resume Threshold**
     - **Validates: Requirements 2.7**
 
 - [ ] 8. Room shell reconstruction
-  - [ ] 8.1 Implement RoomShellReconstructor
+  - [x] 8.1 Implement RoomShellReconstructor
     - Create `src/photo_pipeline/stages/room_shell_reconstructor.py` with displaced-grid method: create regular grid (max 500 per dimension), displace vertices by depth along camera rays, remove faces where gradient > 0.5m, apply Room_Plate UV texture, orient Y-up with inward-facing normals, export as GLB with embedded texture
     - Include flat-box fallback (4m depth, aspect-ratio width, 2.7m ceiling) for invalid depth maps
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8_
 
-  - [ ]* 8.2 Write property test for room shell vertex count bounds
+  - [x] 8.2 Write property test for room shell vertex count bounds
     - **Property 5: Room Shell Vertex Count Bounds**
     - **Validates: Requirements 3.6**
 
-  - [ ]* 8.3 Write property test for room shell inward-facing normals
+  - [x] 8.3 Write property test for room shell inward-facing normals
     - **Property 6: Room Shell Inward-Facing Normals**
     - **Validates: Requirements 3.8**
 
-  - [ ]* 8.4 Write property test for depth gradient face removal
+  - [x] 8.4 Write property test for depth gradient face removal
     - **Property 7: Depth Gradient Face Removal**
     - **Validates: Requirements 3.7**
 
-  - [ ]* 8.5 Write property test for depth validity threshold
+  - [x] 8.5 Write property test for depth validity threshold
     - **Property 8: Depth Validity Threshold**
     - **Validates: Requirements 3.5, 14.3**
 
-- [ ] 9. Checkpoint - Ensure all tests pass
+- [x] 9. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Mesh generators (Hunyuan3D 2.1 + Trellis2)
-  - [ ] 10.1 Implement Hunyuan3DV2Generator
+  - [x] 10.1 Implement Hunyuan3DV2Generator
     - Create `src/photo_pipeline/stages/hunyuan3d_v2_generator.py` with ComfyUI workflow submission (ImageOnlyCheckpointLoader → ModelSamplingAuraFlow → CLIPVisionEncode → Hunyuan3Dv2Conditioning → KSampler steps=50, cfg=7.0 → VAEDecodeHunyuan3D octree_resolution=384 → VoxelToMesh → SaveGLB), 180s stall timeout, mesh validation, and generation metadata recording
     - _Requirements: 1.1, 1.2, 1.3, 1.6, 1.7, 9.3, 9.7_
 
-  - [ ] 10.2 Implement Trellis2Generator
+  - [x] 10.2 Implement Trellis2Generator
     - Create `src/photo_pipeline/stages/trellis2_generator.py` with ComfyUI workflow (Trellis2LoadModel → Trellis2PreProcessImage → Trellis2MeshWithVoxelGenerator steps=18 → Trellis2SimplifyMesh triangles=12000 → Trellis2ExportMesh GLB), validation, and metadata recording
     - _Requirements: 1.4, 1.5_
 
-  - [ ]* 10.3 Write unit tests for mesh generators with mocked ComfyUI
+  - [x] 10.3 Write unit tests for mesh generators with mocked ComfyUI
     - Test workflow parameter passing, validation, timeout/fallback triggers, and metadata recording
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.6_
 
 - [ ] 11. Depth Anything 3 estimator
-  - [ ] 11.1 Implement DepthAnything3Estimator
+  - [x] 11.1 Implement DepthAnything3Estimator
     - Create `src/photo_pipeline/stages/depth_anything3.py` with ComfyUI DA3 workflow submission, float32 .npy output, validation (≥50% valid pixels: positive, finite, <20m), fallback to MoGe-2 then flat-floor heuristic, and VRAM-safe loading (after FLUX unload)
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-  - [ ]* 11.2 Write unit tests for depth estimator with validation and fallback logic
+  - [x] 11.2 Write unit tests for depth estimator with validation and fallback logic
     - Test valid pixel ratio computation, fallback chain order, .npy file save/load
     - _Requirements: 14.1, 14.3, 14.5_
 
 - [ ] 12. Two-pass material processor
-  - [ ] 12.1 Implement MaterialProcessor with Pass 1 and Pass 2 logic
+  - [x] 12.1 Implement MaterialProcessor with Pass 1 and Pass 2 logic
     - Create `src/photo_pipeline/stages/material_processor.py` with `apply_pass1()` (accept native textures for Hunyuan3D/Trellis2 meshes; photo-project for placeholders using camera model; must complete within 2s), `apply_pass2()` (estimate metallic/roughness/normal from Object_PNG; background priority by area descending), texture size selection integration, and GLB update with embedded PBR buffer views
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 11.1, 11.2, 11.3_
 
-  - [ ]* 12.2 Write property test for Pass 2 priority ordering
+  - [x] 12.2 Write property test for Pass 2 priority ordering
     - **Property 12: Pass 2 Priority Ordering**
     - **Validates: Requirements 5.2**
 
-  - [ ]* 12.3 Write property test for GLB embedded textures (no external references)
+  - [x] 12.3 Write property test for GLB embedded textures (no external references)
     - **Property 15: GLB Embedded Textures (No External References)**
     - **Validates: Requirements 11.1**
 
-  - [ ]* 12.4 Write property test for GLB mesh vertex round-trip
+  - [x] 12.4 Write property test for GLB mesh vertex round-trip
     - **Property 17: GLB Mesh Vertex Round-Trip**
     - **Validates: Requirements 11.5, 15.2**
 
 - [ ] 13. Asset Warehouse
-  - [ ] 13.1 Implement AssetWarehouse
+  - [x] 13.1 Implement AssetWarehouse
     - Create `src/photo_pipeline/asset_warehouse.py` with five category directories (props/architecture/foliage/hard-surface/set-dressing), `save_asset()` copying GLB + writing JSON registry, `ensure_structure()` for first-run directory creation, filename generation using `{semantic_label_slug}_{session_short}_{mask_id}.glb` pattern, append-only behavior (never overwrite/delete)
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 10.3_
 
-  - [ ]* 13.2 Write property test for Asset Warehouse append-only invariant
+  - [x] 13.2 Write property test for Asset Warehouse append-only invariant
     - **Property 20: Asset Warehouse Append-Only Invariant**
     - **Validates: Requirements 7.4, 10.3**
 
-  - [ ]* 13.3 Write property test for Asset Warehouse filename uniqueness
+  - [x] 13.3 Write property test for Asset Warehouse filename uniqueness
     - **Property 21: Asset Warehouse Filename Uniqueness**
     - **Validates: Requirements 7.7**
 
-- [ ] 14. Checkpoint - Ensure all tests pass
+- [x] 14. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 15. V14 Pipeline Orchestrator
-  - [ ] 15.1 Implement V14Orchestrator extending PhotoPipelineOrchestrator
+  - [x] 15.1 Implement V14Orchestrator extending PhotoPipelineOrchestrator
     - Update `src/photo_pipeline/orchestrator.py` (or create `src/photo_pipeline/orchestrator_v14.py`) integrating all new stages in VRAM-safe order: SAM → FLUX inpaint → FLUX unload → DA3 → DA3 unload → Hunyuan3D per object (sequential, max quality) → unload → Pass 1 → layout + physics settle → physics classification → WorldContract assembly
     - Include SSE progress events at each stage transition, per-object completion, elapsed time and "X of N" counters
     - Support up to 15 objects, no hard time cap, 180s stall detection only
@@ -195,7 +195,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Pass 2 starts only after all Pass 1 meshes loaded in V14 interface
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 10.1, 10.2, 10.3, 10.4, 12.2_
 
-  - [ ]* 15.2 Write integration tests for V14 orchestrator with mocked stages
+  - [ ] 15.2 Write integration tests for V14 orchestrator with mocked stages
     - Test VRAM-safe stage ordering, fallback chain execution, SSE event emission, quality classification, session metadata
     - _Requirements: 9.1, 9.2, 9.4, 10.4_
 
@@ -206,7 +206,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Session metadata includes interface_version=14, same FIFO queue and TTL cleanup
     - _Requirements: 8.4, 8.5, 8.6, 8.7, 12.1, 12.3, 12.4, 12.5_
 
-  - [ ]* 16.2 Write unit tests for V14 web routes
+  - [ ] 16.2 Write unit tests for V14 web routes
     - Test URL routing (`?v=14` default, `?v=13` still works), GLB serving, SSE event format, session metadata
     - _Requirements: 8.6, 12.4, 12.5_
 
@@ -232,7 +232,7 @@ This plan builds the V14 pipeline incrementally: starting with data models and p
     - Update layout estimator to use back-projection with DA3 depth, scale generated meshes from normalized bounding box to `ScaleResult.dimensions_m`, clamp positions within room shell bounds with 0.05m margin, handle invalid depth at centroid by averaging mask region
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-  - [ ]* 19.3 Write integration tests for end-to-end WorldContract production
+  - [ ] 19.3 Write integration tests for end-to-end WorldContract production
     - Test with 3-5 mocked objects: correct WorldContract field mapping, physics intent values, asset references, V3-V13 coexistence
     - _Requirements: 12.2, 12.3, 12.5_
 

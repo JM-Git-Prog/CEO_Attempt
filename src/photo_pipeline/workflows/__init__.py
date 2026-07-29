@@ -18,6 +18,7 @@ AVAILABLE_WORKFLOWS: dict[str, str] = {
     "sam_segment": "sam_segment.json",
     "flux_inpaint": "flux_inpaint.json",
     "moge2_depth": "moge2_depth.json",
+    "depth_anything3": "depth_anything3.json",
     "hunyuan3d_gen": "hunyuan3d_gen.json",
     "trellis2_gen": "trellis2_gen.json",
     "unique3d_gen": "unique3d_gen.json",

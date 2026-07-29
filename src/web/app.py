@@ -16,7 +16,7 @@ from html import escape
 from pathlib import Path
 
 import httpx
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -229,7 +229,8 @@ async def log_session_api(request: Request, call_next):
         return JSONResponse({"error": str(exc)}, status_code=400)
     is_session_api = path.startswith("/api/session")
     history_roots = {
-        "/api/v8/sessions", "/api/v9/sessions", "/api/v10/sessions", "/api/v11/sessions"
+        "/api/v8/sessions", "/api/v9/sessions", "/api/v10/sessions", "/api/v11/sessions",
+        "/api/v14/sessions",
     }
     is_history_api = (
         path in history_roots
@@ -237,6 +238,7 @@ async def log_session_api(request: Request, call_next):
         or path.startswith("/api/v9/session/")
         or path.startswith("/api/v10/session/")
         or path.startswith("/api/v11/session/")
+        or path.startswith("/api/v14/session/")
     )
     if not (is_session_api or is_history_api):
         return await call_next(request)
@@ -1588,3 +1590,394 @@ async def mvp_result(session_id: str):
             result["download_url"] = f"/api/session/{session_id}/download_blend"
 
     return result
+
+
+# --- V14 Routes (Requirements 8.4, 8.5, 8.6, 8.7, 12.1, 12.3, 12.4, 12.5) ---
+
+# Track active V14 material WebSocket connections per session
+_v14_material_connections: dict[str, list[WebSocket]] = {}
+
+
+@app.post("/api/session/v14/photo")
+async def create_v14_photo_session(request: Request):
+    """V14 photo pipeline endpoint — accepts photo upload and starts V14 pipeline.
+
+    Creates a session with interface_version=14 and initiates the real 3D mesh
+    generation pipeline (Hunyuan3D 2.1 with Trellis2 fallback).
+
+    Accepts a JSON body with:
+      - source_image: str (path to an RGB image on local disk)
+      - mode: "mvp" | "full" (optional, default "mvp")
+
+    Returns immediately with session_id and events_url for SSE progress.
+
+    Requirements: 8.4, 8.6, 12.1, 12.4, 12.5
+    """
+    from src.photo_pipeline.orchestrator import (
+        PhotoPipelineOrchestrator,
+        PipelineError,
+        PipelineTimeoutError,
+        PipelineValidationError,
+    )
+    from src.photo_pipeline.models import PhotoPipelineConfig
+
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {"error": "Request body must be valid JSON with 'source_image' field"},
+            status_code=400,
+        )
+
+    source_image_str = body.get("source_image", "")
+    if not source_image_str:
+        return JSONResponse(
+            {"error": "source_image path is required"},
+            status_code=400,
+        )
+
+    source_image = Path(source_image_str)
+    if not source_image.exists():
+        return JSONResponse(
+            {"error": f"Source image not found: {source_image}"},
+            status_code=400,
+        )
+
+    # Parse mode (mvp/full)
+    raw_mode = str(body.get("mode", "mvp")).strip().lower()
+    if raw_mode == "full":
+        mode = SessionMode.FULL
+    elif raw_mode == "mvp":
+        mode = SessionMode.MVP
+    else:
+        return JSONResponse(
+            {"error": f"Unsupported mode: {raw_mode!r}; expected 'mvp' or 'full'"},
+            status_code=400,
+        )
+
+    # Create V14 session with interface_version=14 (Req 12.5)
+    session_id = str(uuid.uuid4())[:8]
+    session_dir = OUTPUT_DIR / session_id
+    session_dir.mkdir(parents=True, exist_ok=True)
+
+    # Store V14 session metadata (Req 12.5 — same FIFO queue and TTL cleanup)
+    session_meta = {
+        "session_id": session_id,
+        "interface_version": 14,
+        "source_type": "photo",
+        "mode": mode.value,
+        "source_image_path": str(source_image),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "state": "started",
+    }
+    (session_dir / "session_meta.json").write_text(
+        json.dumps(session_meta, indent=2), encoding="utf-8"
+    )
+
+    # Configure and run photo pipeline orchestrator (V14 pipeline)
+    config = PhotoPipelineConfig()
+    orchestrator = PhotoPipelineOrchestrator(
+        config=config,
+        session_dir=session_dir,
+        session_id=session_id,
+    )
+
+    # Start pipeline in background, return immediately for SSE streaming
+    async def _run_v14_pipeline():
+        try:
+            manifest = await orchestrator.run(source_image)
+            # Update session metadata with results
+            session_meta.update({
+                "state": "completed",
+                "quality_classification": manifest.quality_classification,
+                "total_duration_s": manifest.total_duration_s,
+                "object_count": len(manifest.objects),
+            })
+            (session_dir / "session_meta.json").write_text(
+                json.dumps(session_meta, indent=2), encoding="utf-8"
+            )
+        except (PipelineValidationError, PipelineTimeoutError, PipelineError) as exc:
+            session_meta.update({"state": "error", "error": str(exc)})
+            (session_dir / "session_meta.json").write_text(
+                json.dumps(session_meta, indent=2), encoding="utf-8"
+            )
+        except Exception as exc:
+            session_meta.update({"state": "error", "error": str(exc)})
+            (session_dir / "session_meta.json").write_text(
+                json.dumps(session_meta, indent=2), encoding="utf-8"
+            )
+
+    task = asyncio.create_task(_run_v14_pipeline())
+    _mvp_tasks[session_id] = task
+
+    return {
+        "session_id": session_id,
+        "interface_version": 14,
+        "source_type": "photo",
+        "mode": mode.value,
+        "state": "started",
+        "events_url": f"/api/session/{session_id}/v14/events",
+        "mesh_url_template": f"/api/session/{session_id}/mesh/{{object_id}}",
+        "room_shell_url": f"/api/session/{session_id}/room_shell",
+        "materials_ws_url": f"/api/session/{session_id}/v14/materials",
+    }
+
+
+@app.get("/api/session/{session_id}/room_shell")
+async def get_room_shell(session_id: str):
+    """Serve the room shell GLB for a V14 session.
+
+    Returns the reconstructed room environment mesh (walls, floor, ceiling)
+    generated from depth-displaced grid with Room_Plate texture.
+
+    Requirements: 8.5, 3.1, 3.2
+    """
+    room_shell_path = OUTPUT_DIR / session_id / "room_shell.glb"
+    if not room_shell_path.exists():
+        return JSONResponse(
+            {"error": "Room shell mesh not found for this session"},
+            status_code=404,
+        )
+    return FileResponse(
+        room_shell_path,
+        media_type="model/gltf-binary",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@app.get("/api/session/{session_id}/v14/events")
+async def v14_session_events(session_id: str):
+    """V14-specific SSE endpoint delivering real-time pipeline progress.
+
+    Streams stage transitions and per-object mesh completion events for the
+    V14 real-3D-mesh pipeline. Each event is a JSON object with fields:
+      - type: "stage_change" | "object_complete" | "room_shell_ready" | "done" | "error"
+      - stage: current stage name
+      - elapsed: elapsed time string
+      - objects_complete / objects_total: progress counters (for object_complete events)
+      - mesh_url: URL to download the completed object mesh (for object_complete events)
+      - object_id: the completed object's identifier
+
+    Terminal event has type='done' with final state and download URLs,
+    or type='error' with failure information.
+
+    Requirements: 8.4, 8.5, 9.4
+    """
+    session_dir = OUTPUT_DIR / session_id
+    meta_path = session_dir / "session_meta.json"
+
+    if not session_dir.exists():
+        # Also check if it's a standard session
+        builder = _restore_builder(session_id)
+        if not builder:
+            return JSONResponse({"error": "Session not found"}, status_code=404)
+
+    async def v14_event_generator():
+        """Generate SSE events by polling session progress files."""
+        last_event_index = 0
+        start_time = asyncio.get_event_loop().time()
+
+        while True:
+            elapsed = asyncio.get_event_loop().time() - start_time
+
+            # Check for V14 progress events file
+            events_path = session_dir / "v14_events.jsonl"
+            if events_path.exists():
+                try:
+                    lines = events_path.read_text(encoding="utf-8").strip().split("\n")
+                    new_lines = lines[last_event_index:]
+                    for line in new_lines:
+                        if line.strip():
+                            event_data = json.loads(line)
+                            event_data["elapsed"] = f"{elapsed:.1f}s"
+                            yield f"data: {json.dumps(event_data)}\n\n"
+                    last_event_index = len(lines)
+                except (OSError, json.JSONDecodeError):
+                    pass
+
+            # Check session meta for terminal state
+            if meta_path.exists():
+                try:
+                    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                    state = meta.get("state", "")
+                    if state == "completed":
+                        terminal = {
+                            "type": "done",
+                            "state": "completed",
+                            "elapsed": f"{elapsed:.1f}s",
+                            "object_count": meta.get("object_count", 0),
+                            "quality_classification": meta.get("quality_classification"),
+                            "room_shell_url": f"/api/session/{session_id}/room_shell",
+                        }
+                        yield f"data: {json.dumps(terminal)}\n\n"
+                        return
+                    elif state == "error":
+                        error_event = {
+                            "type": "error",
+                            "state": "error",
+                            "elapsed": f"{elapsed:.1f}s",
+                            "error": meta.get("error", "Unknown error"),
+                        }
+                        yield f"data: {json.dumps(error_event)}\n\n"
+                        return
+                except (OSError, json.JSONDecodeError):
+                    pass
+
+            # Timeout after 30 minutes of inactivity (generous for multi-object generation)
+            if elapsed > 1800:
+                timeout_event = {
+                    "type": "error",
+                    "state": "timeout",
+                    "elapsed": f"{elapsed:.1f}s",
+                    "error": "SSE stream timed out after 30 minutes",
+                }
+                yield f"data: {json.dumps(timeout_event)}\n\n"
+                return
+
+            await asyncio.sleep(1.0)
+
+    return StreamingResponse(
+        v14_event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@app.websocket("/api/session/{session_id}/v14/materials")
+async def v14_materials_ws(session_id: str, websocket: WebSocket):
+    """WebSocket endpoint for Pass 2 PBR material hot-swap notifications.
+
+    When Pass 2 PBR estimation completes for an object, the server sends a
+    JSON message through this WebSocket so the V14_Interface can hot-swap
+    the object's material without reloading the full scene.
+
+    Message format (server → client):
+    {
+        "type": "material_update",
+        "object_id": "...",
+        "mesh_url": "/api/session/{session_id}/mesh/{object_id}",
+        "pass": 2,
+        "pbr_channels": ["baseColor", "metallicRoughness", "normal"]
+    }
+
+    Requirements: 8.7, 5.1, 5.2
+    """
+    await websocket.accept()
+
+    # Register this connection for the session
+    if session_id not in _v14_material_connections:
+        _v14_material_connections[session_id] = []
+    _v14_material_connections[session_id].append(websocket)
+
+    try:
+        # Keep connection alive, listen for client messages (heartbeat/close)
+        while True:
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
+                # Client can send ping/pong or close
+                if data == "ping":
+                    await websocket.send_text("pong")
+            except asyncio.TimeoutError:
+                # Send keepalive ping every 30s
+                try:
+                    await websocket.send_text(json.dumps({"type": "keepalive"}))
+                except Exception:
+                    break
+    except WebSocketDisconnect:
+        pass
+    except Exception:
+        pass
+    finally:
+        # Unregister connection
+        if session_id in _v14_material_connections:
+            connections = _v14_material_connections[session_id]
+            if websocket in connections:
+                connections.remove(websocket)
+            if not connections:
+                del _v14_material_connections[session_id]
+
+
+async def notify_v14_material_update(session_id: str, object_id: str, pbr_channels: list[str] | None = None):
+    """Notify connected V14 clients that Pass 2 materials are ready for an object.
+
+    Called by the V14 pipeline when Pass 2 PBR estimation completes.
+    Broadcasts to all WebSocket connections for the given session.
+
+    Requirements: 8.7
+    """
+    if session_id not in _v14_material_connections:
+        return
+
+    message = json.dumps({
+        "type": "material_update",
+        "object_id": object_id,
+        "mesh_url": f"/api/session/{session_id}/mesh/{object_id}",
+        "pass": 2,
+        "pbr_channels": pbr_channels or ["baseColor", "metallicRoughness", "normal"],
+    })
+
+    connections = _v14_material_connections[session_id][:]
+    for ws in connections:
+        try:
+            await ws.send_text(message)
+        except Exception:
+            # Remove dead connections
+            if ws in _v14_material_connections.get(session_id, []):
+                _v14_material_connections[session_id].remove(ws)
+
+
+# V14 sessions list endpoint (mirrors V8-V11 pattern)
+@app.get("/api/v14/sessions")
+async def v14_sessions():
+    return list_sessions(OUTPUT_DIR, version_filter=14)
+
+
+@app.get("/api/v14/session/{session_id}/stages")
+async def v14_session_stages(session_id: str):
+    try:
+        return get_session_stages(OUTPUT_DIR, session_id)
+    except (FileNotFoundError, ValueError) as exc:
+        return _v8_error(exc)
+
+
+@app.get("/api/v14/session/{session_id}/stage/{stage}")
+async def v14_stage(session_id: str, stage: str, revision: str | None = None):
+    try:
+        return get_stage_evidence(OUTPUT_DIR, session_id, stage, revision)
+    except (FileNotFoundError, ValueError) as exc:
+        return _v8_error(exc)
+
+
+@app.get("/api/v14/session/{session_id}/stage/{stage}/artifact")
+async def v14_stage_artifact(session_id: str, stage: str, revision: str | None = None):
+    try:
+        path, media_type, verification = resolve_verified_artifact(
+            OUTPUT_DIR, session_id, stage, revision
+        )
+    except (ArtifactVerificationError, FileNotFoundError, ValueError) as exc:
+        return _v8_error(exc)
+    headers = {
+        "Cache-Control": "no-store",
+        "X-Artifact-Integrity": "verified" if verification["verified"] else "unverified",
+        "X-Artifact-SHA256": verification["sha256"],
+    }
+    return FileResponse(path, media_type=media_type, headers=headers)
+
+
+@app.get("/api/v14/session/{session_id}/telemetry")
+async def v14_telemetry(session_id: str):
+    try:
+        stages = get_session_stages(OUTPUT_DIR, session_id)
+    except (FileNotFoundError, ValueError) as exc:
+        return _v8_error(exc)
+    payload = read_telemetry(OUTPUT_DIR / session_id)
+    payload.update(
+        session_id=session_id,
+        interface_version=stages.get("interface_version"),
+        availability="recorded" if payload["enabled"] else "not_recorded",
+    )
+    return payload

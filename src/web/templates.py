@@ -26,15 +26,16 @@ def get_index_html(version: int = 11) -> str:
         f'<a class="{"selected" if version == 10 else ""}" {current_page(version == 10)} href="/?v=10">V10</a>'
         f'<a class="{"selected" if version == 11 else ""}" {current_page(version == 11)} href="/?v=11">V11</a>'
         f'<a class="{"selected" if version == 12 else ""}" {current_page(version == 12)} href="/?v=12">V12</a>'
-        f'<a class="{"selected" if version == 13 else ""}" {current_page(version == 13)} href="/?v=13">V13</a></nav>'
+        f'<a class="{"selected" if version == 13 else ""}" {current_page(version == 13)} href="/?v=13">V13</a>'
+        f'<a class="{"selected" if version == 14 else ""}" {current_page(version == 14)} href="/?v=14">V14</a></nav>'
     )
-    workspace_attr = ' id="workspace"' if version in (7, 8, 9, 10, 11, 12, 13) else ""
+    workspace_attr = ' id="workspace"' if version in (7, 8, 9, 10, 11, 12, 13, 14) else ""
     splitter = (
         '<div id="workspaceSplitter" class="workspace-splitter" role="separator" tabindex="0" '
         'aria-label="Resize chat and preview panes" aria-orientation="vertical" '
         'aria-valuemin="25" aria-valuenow="44" aria-valuemax="70" aria-valuetext="44% chat width">'
         '<span aria-hidden="true"></span></div>'
-        if version in (7, 8, 9, 10, 11, 12, 13) else ""
+        if version in (7, 8, 9, 10, 11, 12, 13, 14) else ""
     )
     stage_rail = (
         '<nav class="stage-rail" aria-label="Build stages">'
@@ -62,6 +63,10 @@ def get_index_html(version: int = 11) -> str:
         if version >= 8 else ""
     )
     intro = (
+        '<div class="intro"><span class="eyebrow">PHOTOGRAPH IT → REAL 3D MESHES → WALK THROUGH IT</span>'
+        '<h1>Your photo, made real in 3D.</h1><p>Drop a photo of any room. We\'ll generate real textured 3D meshes '
+        'with Hunyuan3D and let you walk through the reconstructed space — right in your browser.</p></div>'
+        if version == 14 else
         '<div class="intro"><span class="eyebrow">DESCRIBE IT OR SHOW IT → WALK THROUGH IT</span>'
         '<h1>Turn any room into a game.</h1><p>Type what you imagine, or drop in a photo of a real space. '
         'We\'ll build a 3D world you can explore with full physics — right in your browser.</p></div>'
@@ -80,6 +85,8 @@ def get_index_html(version: int = 11) -> str:
         'camera first, then render a plan-conditioned canon and build the world.</p></div>'
     )
     footer = (
+        '<span>Real 3D meshes</span><span>Photo → Hunyuan3D</span><span>PBR materials · WASD navigation</span>'
+        if version == 14 else
         '<span>In-browser 3D</span><span>Text + Photo</span><span>First-person controls</span>'
         if version == 13 else
         '<span>Local-first</span><span>Text + Photo input</span><span>Physics · collision · interaction</span>'
@@ -123,7 +130,8 @@ def get_index_html(version: int = 11) -> str:
         .replace("__V8_HISTORY_UI__", history_ui)
         .replace(
             "__V8_SCOPE__",
-            " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo ui-v13-browser" if version == 13
+            " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo ui-v13-browser ui-v14-real3d" if version == 14
+            else " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo ui-v13-browser" if version == 13
             else " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime ui-v12-photo" if version == 12
             else " ui-v8-scoped ui-v9-camera ui-v10-bounded ui-v11-runtime" if version == 11
             else " ui-v8-scoped ui-v9-camera ui-v10-bounded" if version == 10
@@ -146,7 +154,7 @@ INDEX_HTML = """<!doctype html>
       const url = new URL(window.location.href);
       const requested = url.searchParams.get('v');
       if (requested === null) {
-        url.searchParams.set('v', '13');
+        url.searchParams.set('v', '14');
         window.location.replace(url);
       }
     })();

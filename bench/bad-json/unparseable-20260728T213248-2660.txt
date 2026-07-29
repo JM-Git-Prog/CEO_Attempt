@@ -1,0 +1,58 @@
+error: Expecting ',' delimiter: line 17 column 69 (char 1321)
+------------------------------------------------------------
+{"name":"Small Cozy Bedroom",
+"room":{"width":3.6,"depth":4.0,"height":2.7},
+"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,
+"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,
+"description":"A simple, wooden bed frame with a soft, cream-colored duvet."}],
+"openings":[{"id":"closet_door","kind":"door","wall":"west","offset":0.2,"width":0.8,"height":1.9,
+"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":1.0,"target_x":1.8,"target_y":1.0,"target_z":0.0,"fov_deg":60},
+"circulation_notes":["Path from door to bed is clear with a minimum width of 0.8m.",
+"Nightstand is placed against the east wall with equal distance from bed and door."],
+"design_notes":["Recessed lights in ceiling create a calm, serene atmosphere.",
+"Hardwood floor adds warmth and texture to the space."],
+"items":[{"id":"nightstand","name":"Small Nightstand","category":"furniture","mount":"floor",
+"x":0.8,"z":1.2,"width":0.7,"depth":0.4,"height":0.6,"elevation":0.0,"rotation_deg":0,
+"fixed":false,"clearance_m":0.3,"description":"A simple, minimalist nightstand with a rounded leg."},
+{"id":"recessed_light_1","name":"Recessed Light 1","category":"fixture","mount":"ceiling",
+"x":2.9,"z":1.5,"width":0.2,"depth":0.2,"height":0.1,"elevation":2.7-0.1,"rotation_deg":0,
+"fixed":true,"clearance_m":0.3,"description":"A small recessed light fixture in the ceiling."},
+{"id":"recessed_light_2","name":"Recessed Light 2","category":"fixture","mount":"ceiling",
+"x":1.1,"z":1.5,"width":0.2,"depth":0.2,"height":0.1,"elevation":2.7-0.1,"rotation_deg":0,
+"fixed":true,"clearance_m":0.3,"description":"A small recessed light fixture in the ceiling."}],
+"openings":[{"id":"window","kind":"window","wall":"north","offset":0.4,"width":0.8,"height":1.0,
+"sill_height":0.05}],
+"camera":{"x":1.5,"y":1.7,"z":1.0,"target_x":1.8,"target_y":1.0,"target_z":0.0,"fov_deg":60},
+"design_notes":[],"circulation_notes":[],"room":{"width":3.6,"depth":4.0,"height":2.7},"items":[{"id":"bed","name":"Single Bed","category":"furniture","mount":"floor","x":1.8,"z":2.0,"width":1.9,"depth":2.0,"height":0.9,"elevation":0.0,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A simple, wooden bed frame with a soft, cream-colored duvet."},{"id":"nightstand","name":"Small Nightstand","category":"furniture","mount":"floor","x":0.8,"z":1.2,"width":0.7,"depth":0.4,"height":0.6,"elevation":0.0,"rotation_deg":0,"fixed":false,"clearance_m":0.3,"description":"A simple, minimalist nightstand with a rounded leg."},{"id":"recessed_light_1","name":"Recessed Light 1","category":"fixture","mount":"ceiling","x":2.9,"z":1.5,"width":0.2,"depth":0.2,"height":0.1,"elevation":2.7-0.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A small recessed light fixture in the ceiling."},{"id":"recessed_light_2","name":"Recessed Light 2","category":"fixture","mount":"ceiling","x":1.1,"z":1.5,"width":0.2,"depth":0.2,"height":0.1,"elevation":2.7-0.1,"rotation_deg":0,"fixed":true,"clearance_m":0.3,"description":"A small recessed light fixture in the ceiling."},{"id":"window","kind":"window","wall":"north","offset":0.4,"width":0.8,"height":1.0,"sill_height":0.05}],"openings":[{"id":"closet_door","kind":"door","wall":"west","offset":0.2,"width":0.8,"height":1.9,"sill_height":0.05},{"id":"window","kind":"window","wall":"north","offset":0.4,"width":0.8,"height":1.0,"sill_height":0.05}],"camera":{"x":1.5,"y":1.7,"z":1.0,"target_x":1.8,"target_y":1.0,"target_z":0.0,"fov_deg":60},"design_notes":[],"circulation_notes":[],"schema":"item_schema",
+"schema_version":"1.0"}
+V11 applying practical design rules — EXPLICIT-INTENT OVERWRITE
+WALLS FIRST — placing furniture against walls before filling the center
+* Bed goes against south wall: x = width/2, z = depth - bed_height = 2.0 - 0.9 = 1.1
+* Nightstand goes against east wall with equal distance from bed and door: x = depth - nightstand_width/2 = 4.0 - 0.7/2 = 3.15, z = bed_z + half_bed_width = 2.0 + 0.95 = 2.95
+CIRCULATION — maintaining clear paths between the door and all zones
+* Path from door to bed is clear with a minimum width of 0.8m.
+* Nightstand does not block the path from door to bed.
+DOOR CLEARANCE — nothing within 1.0m inward of a door
+* Closet door wall: x = 0, z = depth - door_height = 4.0 - 1.9 = 2.1. Nothing placed within 1.0m of (0, 2.1).
+WINDOW CLEARANCE — keep furniture at least 0.3m from exterior window walls
+* North wall: x = 0, z = 0. Place nightstand at x = 3.15, z = 0 + half_nightstand_depth = 0 + 0.2 = 0.2. Nightstand is 0.3m from north wall.
+RELATIONSHIPS — chairs face tables, stools line up along counters/bars, pendant lights hang above the surface they illuminate
+* None applicable in this empty room.
+SPACING — repeated items distribute evenly along their parent surface with equal gaps
+* None applicable (only one nightstand).
+PROPORTIONS — item dimensions must be realistic
+* Bed: width = 1.9m, depth = 2.0m, height = 0.9m. Realistic.
+* Nightstand: width = 0.7m, depth = 0.4m, height = 0.6m. Realistic.
+* Recessed light: width = 0.2m, depth = 0.2m, height = 0.1m. Realistic.
+CAMERA — place the camera in a corner with a clear diagonal view across the room showing the maximum number of objects
+* Place camera at (0, 0, 1.0) with target (1.8, 1.0, 0.0) for a diagonal view showing the bed and nightstand.
+V11 applying practical design rules — EXPLICIT-INTENT OVERWRITE
+Schema: {"name":string,"room":{"width":number,"depth":number,"height":number},"items":[{"id":string,
+"name":string,"category":"furniture|fixture|architectural|decor","mount":"floor|wall|ceiling",
+"x":number,"z":number,"width":number,"depth":number,"height":number,"elevation":number,
+"rotation_deg":number,"fixed":boolean,"clearance_m":number,"description":string}],
+"openings":[{"id":string,"kind":"door|window","wall":"north|south|east|west","offset":number,
+"width":number,"height":number,"sill_height":number}], "camera":{"x":number,"y":number,"z":number,
+"target_x":number,"target_y":number,"target_z":number,"fov_deg":number},"circulation_notes":[string],
+"design_notes":[string]}
