@@ -763,22 +763,30 @@
           // Try loading room shell
           try { await viewer.loadRoomShell('/api/session/' + sessionId + '/room_shell'); } catch (e) { console.warn('No room shell:', e); }
 
-          // Load all objects (try 001-015)
+          // Load all objects (try 001-015, skip missing ones)
+          var loadedCount = 0;
           for (var i = 1; i <= 15; i++) {
             var objId = String(i).padStart(3, '0');
             try {
-              var checkResp = await fetch('/api/session/' + sessionId + '/mesh/' + objId, { method: 'HEAD' });
-              if (checkResp.ok) {
-                await viewer.loadObject(objId, '/api/session/' + sessionId + '/mesh/' + objId);
-              } else {
-                break; // No more objects
+              var meshResp = await fetch('/api/session/' + sessionId + '/mesh/' + objId);
+              if (meshResp.ok) {
+                // Convert response to blob URL for GLTFLoader
+                var blob = await meshResp.blob();
+                var blobUrl = URL.createObjectURL(blob);
+                await viewer.loadObject(objId, blobUrl);
+                loadedCount++;
               }
-            } catch (e) { break; }
+              // Don't break — there may be gaps (e.g., 005 placeholder failed but 006 exists)
+            } catch (e) { /* skip this object */ }
           }
 
           // Update HUD
           var hud = document.getElementById('info-hud');
           if (hud) hud.classList.remove('hidden');
+
+          // Show nav controls
+          var nav = document.getElementById('nav-controls');
+          if (nav) nav.classList.remove('hidden');
 
         } catch (e) {
           console.error('Error loading session:', e);
@@ -799,6 +807,32 @@
             loadSession(sessionParam);
           }
         }, 200);
+      }
+
+      // Wire up nav mode buttons
+      var btnOrbit = document.getElementById('btn-orbit');
+      var btnFps = document.getElementById('btn-firstperson');
+      var navHint = document.getElementById('nav-hint');
+
+      if (btnOrbit) {
+        btnOrbit.addEventListener('click', function() {
+          if (window._v14viewer) {
+            window._v14viewer.enableOrbitControls();
+            btnOrbit.classList.add('active');
+            if (btnFps) btnFps.classList.remove('active');
+            if (navHint) navHint.textContent = 'Scroll to zoom · Drag to rotate';
+          }
+        });
+      }
+      if (btnFps) {
+        btnFps.addEventListener('click', function() {
+          if (window._v14viewer) {
+            window._v14viewer.enableFirstPersonControls();
+            btnFps.classList.add('active');
+            if (btnOrbit) btnOrbit.classList.remove('active');
+            if (navHint) navHint.textContent = 'WASD to move · Mouse to look · ESC to exit';
+          }
+        });
       }
     })();
   </script>

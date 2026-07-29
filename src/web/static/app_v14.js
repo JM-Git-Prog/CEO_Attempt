@@ -314,6 +314,22 @@ export class V14WorldViewer {
     });
 
     this.scene.add(this.roomShell);
+
+    // Auto-fit camera to room shell bounding box
+    const box = new THREE.Box3().setFromObject(this.roomShell);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+
+    // Position camera at the room entrance (front-center, eye level)
+    this.camera.position.set(center.x, 1.6, center.z + size.z * 0.4);
+    this.camera.lookAt(center.x, 1.4, center.z - size.z * 0.3);
+
+    // Update orbit target to room center
+    if (this.orbitControls) {
+      this.orbitControls.target.set(center.x, center.y, center.z);
+      this.orbitControls.update();
+    }
+
     return this.roomShell;
   }
 
