@@ -10,9 +10,7 @@
         "command": "cmd /c call \"C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\WATCH-KEEPALIVE.bat\" & type \"C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\qualification\\NEXT.md\""
       },
       "timeout": 30,
-      "enabled": false,
-      "_disabled_note": "2026-07-29 John: ratchet + telemetry OFF until further notice (GPU needed for the paint line). Re-enable by setting enabled:true; original saved as .bak-2026-07-29-pre-disable.",
-      "_disabled_by": "Claude, at John's request in chat"
+      "enabled": true
     },
     {
       "name": "ratchet-keepalive-on-stop",
@@ -23,8 +21,7 @@
         "command": "cmd /c call \"C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\WATCH-KEEPALIVE.bat\""
       },
       "timeout": 30,
-      "enabled": false,
-      "_disabled_note": "2026-07-29 John: OFF until further notice - see sibling note above."
+      "enabled": true
     }
   ]
 }

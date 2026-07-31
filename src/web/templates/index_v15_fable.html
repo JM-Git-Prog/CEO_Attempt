@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>v15_Fable · The Living Room</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{--bg:#0e1116;--panel:#161b23;--ink:#e8e4da;--dim:#8b93a1;--acc:#e0a020;--ok:#4caf7d;--bad:#e05a4e;--line:#242b36}
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif;overflow:hidden}
+  #hud{position:fixed;top:0;left:0;right:0;z-index:12;display:flex;gap:14px;align-items:center;
+       padding:10px 16px;background:linear-gradient(#0e1116f0,#0e111600);pointer-events:none}
+  #hud>*{pointer-events:auto}
+  .logo{font-weight:700;letter-spacing:.12em;color:var(--acc)}
+  .tag{color:var(--dim);font-size:12px}
+  #stage{position:fixed;inset:0}
+  .panel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+         gap:18px;background:var(--bg);z-index:6;padding:24px}
+  .law{color:var(--dim);font-size:12px;letter-spacing:.06em;max-width:560px;text-align:center}
+  #prompt{width:min(680px,90vw);padding:14px 16px;font-size:16px;color:var(--ink);
+          background:var(--panel);border:1px solid var(--line);border-radius:10px;outline:none}
+  #prompt:focus{border-color:var(--acc)}
+  button{padding:10px 22px;font-size:14px;font-weight:600;color:#10131a;background:var(--acc);
+         border:0;border-radius:8px;cursor:pointer}
+  button:disabled{opacity:.4;cursor:wait}
+  button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  button.good{background:var(--ok)}
+  button.bad{background:transparent;color:var(--bad);border:1px solid var(--bad)}
+  #btn-back{padding:4px 13px;font-size:15px}
+  #status{color:var(--dim);font-size:13px;min-height:20px}
+  #canonimg{max-width:min(1100px,92vw);max-height:62vh;border-radius:12px;border:1px solid var(--line)}
+  .wait{width:min(900px,90vw);height:42vh;display:flex;align-items:center;justify-content:center;
+        background:var(--panel);border:1px dashed var(--line);border-radius:12px;color:var(--dim);
+        font-size:15px;text-align:center;padding:20px;animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+  .qrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  #walkhud{position:fixed;left:16px;bottom:14px;z-index:10;color:var(--dim);font-size:12px;display:none}
+  #crosshair{position:fixed;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;
+             background:#ffffff88;z-index:9;display:none}
+  #dock{position:fixed;right:12px;top:46px;bottom:12px;width:352px;z-index:11;display:none;
+        background:#161b23ee;border:1px solid var(--line);border-radius:12px;overflow-y:auto;padding:10px}
+  #dock h4{font-size:11px;letter-spacing:.1em;color:var(--dim);margin:2px 0 8px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}
+  .card .q{font-size:13px;font-weight:600;margin:6px 0}
+  .card img{width:100%;border-radius:6px;display:block;background:#fff}
+  .card .duo{display:flex;gap:6px}
+  .card .duo>div{flex:1;text-align:center;font-size:10px;color:var(--dim)}
+  .card .brow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .card .brow button{flex:1;padding:7px 8px;font-size:12px;min-width:90px}
+  .spin{color:var(--dim);font-size:12px;padding:14px 4px;text-align:center}
+  .mini{font-size:11px;color:var(--dim)}
+  .okline{color:var(--ok);font-size:12px}
+  #toast{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);z-index:20;background:var(--panel);
+         border:1px solid var(--acc);border-radius:8px;padding:8px 16px;font-size:13px;display:none}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="hud">
+  <button id="btn-back" class="ghost" title="go back one stage">←</button>
+  <button id="btn-fwd" class="ghost" title="sessions — branch &amp; ride" style="padding:4px 13px;font-size:15px">→</button>
+  <span class="logo">v15_FABLE</span><span class="tag">canon first → the world → THE LINE</span>
+  <span class="tag" id="hudinfo"></span>
+</div>
+
+<div class="panel" id="p-prompt">
+  <div class="law">THE CANON COMES FIRST — describe the room and its dream image appears before any geometry.
+    Approve the canon, and the walkable world + the prop line follow, with your verdict at every gate.</div>
+  <input id="prompt" placeholder="Describe the room you imagine… (e.g. Danny Tornado's tiny 1970s kitchenette…)" autofocus>
+  <button id="go">Dream the room</button>
+  <div id="status"></div>
+</div>
+
+<div class="panel hidden" id="p-canon">
+  <div class="law" id="canoncap">THE CANON — this image is the room's identity. Everything downstream must match it.</div>
+  <div id="canonwait" class="wait">🎨 Painting the canon…</div>
+  <img id="canonimg" class="hidden" alt="the room canon">
+  <div id="canonchips" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:920px"></div>
+  <div class="q" id="canonq" style="font-weight:600">Is this the room?</div>
+  <div class="qrow">
+    <button id="c-approve" class="good">✓ This is canon — build the room</button>
+    <button id="c-redream" class="ghost">↻ Re-dream</button>
+    <button id="c-remeasure" class="ghost">📐 Re-measure</button>
+    <button id="c-reword" class="ghost">✎ Reword</button>
+  </div>
+  <div id="status-c" style="color:var(--dim);font-size:13px;min-height:20px"></div>
+</div>
+
+<div id="stage"></div>
+<div id="crosshair"></div>
+<div id="walkhud">click to walk · WASD move · mouse look · ESC frees the mouse</div>
+<div id="dock"><h4>THE LINE — every verdict is yours</h4><div id="dockhead"></div><div id="linecards"></div></div>
+<div id="toast"></div>
+<div id="sess" class="hidden" style="position:fixed;left:12px;top:46px;z-index:13;width:330px;max-height:70vh;
+     overflow-y:auto;background:#161b23f2;border:1px solid var(--line);border-radius:12px;padding:10px">
+  <h4 style="font-size:11px;letter-spacing:.1em;color:var(--dim);margin:2px 0 8px">SESSIONS — branch &amp; ride</h4>
+  <div style="display:flex;gap:6px;margin-bottom:8px"><button id="sess-branch" style="flex:1;font-size:12px;padding:7px">⑂ Branch this session</button></div>
+  <div id="sessrows"></div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.162.0/three.module.min.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {PointerLockControls} from 'three/addons/controls/PointerLockControls.js';
+
+const $=id=>document.getElementById(id);
+const API='/api/v15fable';
+let PROMPT='', LOCKED=null, ASSETS={}, SID=null, ROLL=0;
+let QUEUE=[], CUR=0, SUB={}, POLL=null, RUNNER={busy:false}, RECON=null;
+let VIEW='prompt';               // prompt | canon | world  (the back button walks this)
+let WORLD_EPOCH=0;
+
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3200);}
+
+// ---------------- BACK — one button, one stage at a time ----------------
+$('btn-back').onclick=()=>{
+  if(VIEW==='world'){
+    if(QUEUE.length&&CUR>0){CUR--;renderCard();toast('back one object');return;}
+    showCanonPanel(false); return;
+  }
+  if(VIEW==='canon'){ $('p-canon').classList.add('hidden'); $('p-prompt').classList.remove('hidden'); VIEW='prompt'; return; }
+  toast('this is the beginning');
+};
+
+// ---------------- stage 1: prompt → (hidden plan) → CANON FIRST ----------------
+$('go').onclick=draft; $('prompt').onkeydown=e=>{if(e.key==='Enter')draft();};
+$('c-redream').onclick=()=>{ROLL++;showCanonPanel(true);};
+$('c-remeasure').onclick=()=>measureCanon();
+$('c-reword').onclick=()=>{$('p-canon').classList.add('hidden');$('p-prompt').classList.remove('hidden');VIEW='prompt';};
+$('c-approve').onclick=approveCanon;
+
+async function draft(){
+  PROMPT=$('prompt').value.trim(); if(!PROMPT)return;
+  disposeWorld(); QUEUE=[]; CUR=0; SUB={}; stopPoll();
+  $('go').disabled=true; $('status').textContent='The local LLM is reading your room… (~10s)';
+  try{
+    const r=await fetch(API+'/plans',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({prompt:PROMPT})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||r.status);
+    $('status').textContent='Locking the plan · matching the warehouse…';
+    const r2=await fetch(API+'/lock',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({plan:d.plans[0],prompt:PROMPT,engine:d.engines[0]})});
+    const l=await r2.json();
+    if(!r2.ok)throw new Error(l.error||r2.status);
+    LOCKED=l.plan; ASSETS=l.assets; SID=l.session_id; ROLL=0;
+    try{localStorage.setItem('v15f_sid',SID);localStorage.setItem('v15f_prompt',PROMPT);}catch(_){}
+    $('hudinfo').textContent=`session ${SID} · planner ${d.engines[0]} · ${Object.keys(ASSETS).length}/${LOCKED.objects.length} props already in the warehouse`;
+    $('p-prompt').classList.add('hidden');
+    await showCanonPanel(true);
+  }catch(e){ $('status').textContent='Backend error: '+e.message; }
+  $('go').disabled=false;
+}
+
+function applyEvidence(d){
+  // riding an old canon: load its saved validation instead of re-running the census
+  if(!d||!d.evidence||!d.evidence.verdict)return false;
+  const e=d.evidence;
+  RECON={verdict:e.verdict,measured:e.measured,of:e.of,plan:LOCKED,present:e.present||[],
+         missing:e.missing||[],notes:e.notes||[],unplaced:e.unplaced||[]};
+  const found={};(e.present||[]).forEach(n=>found[n]=true);(e.missing||[]).forEach(n=>found[n]=false);
+  renderChips(found);
+  $('canonq').textContent=(e.missing&&e.missing.length)
+    ?`Missing from the picture: ${e.missing.join(', ')} — re-dream, or approve anyway?`
+    :'Everything you asked for is in the picture. Is this the room?';
+  $('status-c').textContent=`📐 ${e.verdict.toUpperCase()} (saved) · ${(e.present||[]).length}/${e.of} present · ${e.measured} placed by the photo`;
+  return true;
+}
+function chipHTML(name,state){
+  const c=state===true?'var(--ok)':state===false?'var(--bad)':'var(--dim)';
+  const m=state===true?'✓ ':state===false?'✕ ':'· ';
+  return `<span style="border:1px solid ${c};color:${c};border-radius:20px;padding:2px 10px;font-size:11px">${m}${name}</span>`;
+}
+function renderChips(found){
+  const names=LOCKED?LOCKED.objects.filter(o=>o.category!=='clutter').map(o=>o.name):[];
+  $('canonchips').innerHTML=names.map(n=>chipHTML(n,found&&(n in found)?found[n]:undefined)).join('');
+}
+async function measureCanon(){
+  // FIRST measure, THEN John's verdict (John 2026-07-30): validate the canon
+  // actually CONTAINS what the prompt asked before it can be approved.
+  $('c-approve').disabled=true;
+  renderChips({});
+  const st=$('status-c');
+  st.textContent='📐 validating the canon against your prompt… (SAM3 census, ~15s per object)';
+  const pp=setInterval(async()=>{try{
+    const r=await fetch(API+'/reconcile-progress/'+SID); if(!r.ok)return;
+    const p=await r.json(); if(p.found)renderChips(p.found);
+    if(p.total)st.textContent=`📐 validating… ${p.done}/${p.total} — ${p.current||''}`;
+  }catch(_){}} ,1200);
+  try{
+    const r=await fetch(API+'/reconcile/'+SID,{method:'POST'});
+    const d=await r.json();
+    clearInterval(pp);
+    if(!r.ok)throw new Error(d.error||r.status);
+    RECON=d; LOCKED=d.plan;
+    const found={};(d.present||[]).forEach(n=>found[n]=true);(d.missing||[]).forEach(n=>found[n]=false);
+    renderChips(found);
+    $('canonq').textContent=(d.missing&&d.missing.length)
+      ?`Missing from the picture: ${d.missing.join(', ')} — re-dream, or approve anyway?`
+      :'Everything you asked for is in the picture. Is this the room?';
+    st.textContent=`📐 ${d.verdict.toUpperCase()} · ${(d.present||[]).length}/${d.of} asked-for objects present · ${d.measured} placed by the photo`;
+    if(d.notes&&d.notes.length)st.textContent+=' · '+d.notes.join(' · ');
+  }catch(e){clearInterval(pp);st.textContent='validation failed: '+e.message+' — judge by eye';}
+  $('c-approve').disabled=false;
+}
+async function showCanonPanel(render){
+  VIEW='canon'; $('p-canon').classList.remove('hidden');
+  const st=$('status-c'), img=$('canonimg'), wait=$('canonwait');
+  const showImg=()=>{wait.classList.add('hidden');img.classList.remove('hidden');};
+  const showWait=t=>{img.classList.add('hidden');wait.classList.remove('hidden');wait.textContent=t;};
+  img.onload=showImg;                                   // the image only appears once it EXISTS
+  img.onerror=()=>showWait('🎨 …still painting — it will appear here by itself');
+  if(render){
+    $('c-approve').disabled=$('c-redream').disabled=true;
+    $('canonq').textContent='Is this the room?';
+    showWait('🎨 Painting the canon on the Z-Image engine… (~20–60s)');
+    st.textContent=ROLL>0?`dream #${ROLL+1} — every previous dream is kept on disk`:'';
+    let ok=false;
+    try{
+      const r=await fetch(API+'/canon/'+SID+'?roll='+ROLL,{method:'POST'});
+      const d=await r.json();
+      if(r.ok)ok=true; else showWait(''+(d.error||r.status));
+    }catch(e){showWait('canon engine unreachable: '+e.message);}
+    $('c-redream').disabled=false;
+    if(!ok)return;                                       // honest wait text stands; ↻ resumes, not restarts
+    img.src=API+'/canon/'+SID+'?t='+Date.now();
+    await measureCanon();                                // the pre-verdict runs BEFORE approve unlocks
+  } else {
+    st.textContent='';
+    img.src=API+'/canon/'+SID+'?t='+Date.now();
+    try{const r=await fetch(API+'/reconcile-progress/'+SID);const p=await r.json();if(p.found)renderChips(p.found);}catch(_){}
+  }
+}
+
+function approveCanon(){
+  // The measuring + pre-verdict already ran BEFORE this button unlocked.
+  if(RECON)toast(RECON.verdict==='green'?'📐 GREEN pairing — building the measured room'
+    :RECON.verdict==='amber'?'📐 AMBER — partial measurement applied'
+    :'📐 RED — blueprint is the LLM guess (labeled)');
+  $('p-canon').classList.add('hidden'); VIEW='world';
+  if(!renderer) buildWorld(); else addProps();
+  showDock();
+}
+
+// ---------------- THE LINE dock — one question at a time ----------------
+async function showDock(){
+  $('dock').style.display='block';
+  await refreshLine();                                   // the disk remembers cut objects across reloads
+  $('dockhead').innerHTML=
+    `<div class="card"><div class="duo">`+
+    `<div><img src="${API}/canon/${SID}?t=${Date.now()}" style="cursor:pointer" id="dk-canon" title="back to the canon"><span>room canon</span></div>`+
+    `<div id="dk-bp" style="overflow:hidden">${planSVG(LOCKED,150)}<span>the paired blueprint</span></div>`+
+    `</div>`+
+    (RECON?`<div class="mini" style="margin-top:6px;color:${RECON.verdict==='green'?'var(--ok)':RECON.verdict==='amber'?'var(--acc)':'var(--bad)'}">`+
+      `📐 ${RECON.verdict.toUpperCase()} — ${RECON.measured}/${RECON.of} objects placed by the photo`+
+      `${RECON.verdict==='red'?' · this blueprint is the LLM\'s guess, NOT the photo':''}</div>`+
+      (RECON.notes&&RECON.notes.length?`<div class="mini" style="margin-top:2px">${RECON.notes.join(' · ')}</div>`:''):'')+
+    `</div>`;
+  $('dk-canon').onclick=()=>showCanonPanel(false);
+  if(!QUEUE.length){
+    $('linecards').innerHTML=
+      `<div class="card"><div class="q">The room stands. Now its objects.</div>
+       <div class="mini">Every object not already in the warehouse gets CUT from the canon, completed,
+       and walked past you: photo → mesh → paint. Your call at every step.</div>
+       <div class="brow"><button id="ln-start">🏭 Cut the objects from the canon</button></div>
+       <div class="mini" id="ln-st" style="margin-top:6px"></div></div>`;
+    $('ln-start').onclick=identifyAll;
+  } else { startPoll(); renderCard(); }
+}
+
+async function identifyAll(){
+  const st=$('ln-st'); $('ln-start').disabled=true;
+  st.textContent='SAM3 is cutting each object out of the canon… (~15s per object)';
+  try{
+    const r=await fetch(API+'/identify/'+SID,{method:'POST'});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||r.status);
+    if(d.queued===0){st.textContent='The warehouse already covers every object — nothing to build.';return;}
+    await refreshLine();
+    CUR=0; startPoll(); renderCard();
+  }catch(e){st.textContent='identify failed: '+e.message; $('ln-start').disabled=false;}
+}
+
+async function refreshLine(){
+  const r=await fetch(API+'/line/'+SID);
+  const d=await r.json();
+  QUEUE=d.objects||[]; RUNNER=d.runner||{busy:false};
+}
+
+function startPoll(){ stopPoll(); POLL=setInterval(async()=>{
+  const o=QUEUE[CUR]; const was=o&&stageOf(o);
+  await refreshLine();
+  const now=QUEUE[CUR]&&stageOf(QUEUE[CUR]);
+  if(was!==now&&!SUB[QUEUE[CUR]?.slug]) renderCard();
+},3000);}
+function stopPoll(){ if(POLL){clearInterval(POLL);POLL=null;} }
+
+function stageOf(o){
+  if(!o.photo_approved) return o.completed?'photoPick':'cutQ';
+  if(!o.mesh) return (RUNNER.busy&&RUNNER.slug===o.slug)?'meshing':'meshQ';
+  if(!o.mesh_approved) return 'meshVerdict';
+  if(!o.painted) return 'painting';
+  if(!o.paint_approved) return 'paintVerdict';
+  return 'done';
+}
+
+function renderCard(){
+  killSpin();
+  const box=$('linecards');
+  if(!QUEUE.length)return;
+  if(CUR<QUEUE.length&&!POLL)startPoll();               // stepping back re-arms the poll (2026-07-30 stall)
+  if(CUR>=QUEUE.length){
+    box.innerHTML=`<div class="card"><div class="q">The line is walked. 🏁</div>
+      <div class="mini">Every prop was born from your canon and passed your gates. Click the world and walk it —
+      then flag anything that reads wrong; routes handle the rest.</div></div>`;
+    stopPoll(); return;
+  }
+  const o=QUEUE[CUR], s=SUB[o.slug]||stageOf(o), t=Date.now();
+  const head=`<div class="mini">object ${CUR+1} of ${QUEUE.length} · <b style="color:var(--ink)">${o.object||o.slug}</b></div>`;
+  const img=w=>`<img src="${API}/photo/${SID}/${o.slug}?which=${w}&t=${t}">`;
+  let html='';
+  if(s==='cutQ') html=`${head}${img('cutout')}
+    <div class="q">This is the raw cut. Complete its hidden parts first?</div>
+    <div class="brow"><button id="b-am">🪄 Complete hidden parts</button>
+    <button id="b-asis" class="ghost">✓ It's whole — approve as-is</button>
+    <button id="b-pflag" class="bad">🚩 Flag the photo</button>
+    <button id="b-skip" class="ghost">⏭ Skip</button></div>`;
+  else if(s==='completing') html=`${head}${img('cutout')}
+    <div class="spin">🪄 Flux-Fill is imagining the hidden parts… (~1–3 min, watching 8188)</div>`;
+  else if(s==='photoPick') html=`${head}
+    <div class="duo"><div>${img('original')}<span>original cut</span></div>
+    <div>${img('completed')}<span>completed</span></div></div>
+    <div class="q">Which photo is the truth? It becomes this object's CANON.</div>
+    <div class="brow"><button id="b-okC" class="good">★ The completed one</button>
+    <button id="b-okO" class="ghost">★ The original</button>
+    <button id="b-rr" class="ghost">↻ Re-roll</button></div>`;
+  else if(s==='meshQ') html=`${head}${img('completed')}
+    <div class="okline">★ OBJECT CANON approved — identity locked, provenance filed.</div>
+    <div class="q">Send it to the factory?</div>
+    <div class="brow"><button id="b-run">⚙ Mesh &amp; paint it</button>
+    <button id="b-unapp" class="ghost">↩ Back to photo</button>
+    <button id="b-skip" class="ghost">⏭ Skip</button></div>`;
+  else if(s==='meshing') html=`${head}
+    <div class="spin">⚙ The mesh engine is sculpting… (~1 min)</div>${resumeRow()}`;
+  else if(s==='meshVerdict') html=`${head}<div id="spinbox" style="height:210px"></div>
+    <div class="mini">${o.mesh_kb} KB mesh · drag to orbit</div>
+    <div class="q">Is the SHAPE right? (paint comes next)</div>
+    <div class="brow"><button id="b-mok" class="good">✓ Shape is right → paint</button>
+    <button id="b-mbad" class="bad">🚩 Flag the mesh</button>
+    <button id="b-skip" class="ghost">⏭ Skip</button></div>`;
+  else if(s==='painting') html=`${head}
+    <div class="spin">🎨 Painting from the object canon — 6 views… (~4–15 min)</div>${resumeRow()}`;
+  else if(s==='paintVerdict') html=`${head}<div id="spinbox" style="height:210px"></div>
+    <div class="mini">${o.painted_kb} KB painted · drag to orbit</div>
+    <div class="q">Last look. Seat it in the room?</div>
+    <div class="brow"><button id="b-pok" class="good">✓ Approve — seat it</button>
+    <button id="b-pbad" class="bad">🚩 Flag the paint</button>
+    <button id="b-skip" class="ghost">⏭ Skip</button></div>`;
+  else html=`${head}<div class="okline">✔ Seated in the room.</div>
+    <div class="brow"><button id="b-next" class="ghost">next object →</button></div>`;
+  box.innerHTML=`<div class="card">${html}</div>`;
+
+  function resumeRow(){return RUNNER.busy?'':
+    `<div class="brow"><button id="b-resume" class="ghost">▶ Factory idle — resume this object</button></div>`;}
+  const on=(id,fn)=>{const b=$(id);if(b)b.onclick=fn;};
+  on('b-resume',()=>lineRun(o));
+  on('b-skip',()=>{CUR++;renderCard();});
+  on('b-next',()=>{CUR++;renderCard();});
+  on('b-am',()=>amodal(o,0));
+  on('b-pflag',()=>flag(o,'render'));
+  on('b-unapp',async()=>{try{
+    const r=await fetch(`${API}/photo-unapprove/${SID}/${o.slug}`,{method:'POST'});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
+    toast('↩ photo approval reversed');}catch(e){toast(e.message);}
+    await refreshLine(); renderCard();});
+  on('b-rr',()=>amodal(o,(o._rolls||0)+1));
+  on('b-asis',()=>photoApprove(o,'original'));
+  on('b-okC',()=>photoApprove(o,'completed'));
+  on('b-okO',()=>photoApprove(o,'original'));
+  on('b-run',()=>lineRun(o));
+  on('b-mok',()=>verdict(o,'mesh',true));
+  on('b-mbad',()=>flag(o,'mesh'));
+  on('b-pok',()=>paintApproveSeat(o));
+  on('b-pbad',()=>flag(o,'paint'));
+  if(s==='meshVerdict')spinGLB($('spinbox'),`${API}/line-glb/${o.slug}?kind=mesh&t=${t}`);
+  if(s==='paintVerdict')spinGLB($('spinbox'),`${API}/line-glb/${o.slug}?kind=painted&t=${t}`);
+}
+
+async function amodal(o,roll){
+  SUB[o.slug]='completing'; o._rolls=roll; renderCard();
+  try{
+    const r=await fetch(`${API}/amodal/${SID}/${o.slug}?roll=${roll}`,{method:'POST'});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||r.status);
+    toast('completion ready — your pick');
+  }catch(e){toast('completion failed: '+e.message);}
+  delete SUB[o.slug]; await refreshLine(); renderCard();
+}
+async function photoApprove(o,choice){
+  try{
+    const r=await fetch(`${API}/photo-approve/${SID}/${o.slug}`,{method:'POST',
+      headers:{'content-type':'application/json'},body:JSON.stringify({choice})});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
+    toast('★ object canon filed — provenance written');
+  }catch(e){toast('approve failed: '+e.message);}
+  await refreshLine(); renderCard();
+}
+async function lineRun(o){
+  try{
+    const r=await fetch(`${API}/line-run/${SID}/${o.slug}`,{method:'POST'});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
+    toast('factory running: '+o.slug);
+  }catch(e){toast(e.message);}
+  await refreshLine(); renderCard();
+}
+async function verdict(o,stage,ok,reason){
+  try{
+    const r=await fetch(`${API}/verdict/${o.slug}`,{method:'POST',
+      headers:{'content-type':'application/json'},body:JSON.stringify({stage,ok,reason})});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
+  }catch(e){toast('verdict failed: '+e.message);return false;}
+  await refreshLine(); renderCard(); return true;
+}
+function askReason(title){
+  // in-game popup (John 2026-07-30): native dialogs freeze the page for automation
+  // and look like Windows, not the world. This one is part of the game.
+  return new Promise(res=>{
+    const w=document.createElement('div');
+    w.style.cssText='position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:#000a';
+    w.innerHTML=`<div style="background:var(--panel);border:1px solid var(--acc);border-radius:12px;padding:16px;width:min(480px,90vw);box-shadow:0 8px 40px #000c">
+      <div style="font-size:14px;font-weight:650;margin-bottom:8px">🚩 ${title}</div>
+      <textarea id="fm-t" rows="3" style="width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px;font-family:inherit;outline:none" placeholder="what's wrong? this text gets researched + routed"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button id="fm-ok" style="flex:1">🚩 Flag it</button>
+        <button id="fm-x" class="ghost" style="flex:1">cancel</button></div></div>`;
+    document.body.appendChild(w);
+    const done=v=>{w.remove();res(v);};
+    w.querySelector('#fm-ok').onclick=()=>done(w.querySelector('#fm-t').value.trim());
+    w.querySelector('#fm-x').onclick=()=>done(null);
+    setTimeout(()=>w.querySelector('#fm-t').focus(),50);
+  });
+}
+async function flag(o,stage){
+  const reason=await askReason(`Flag the ${stage} — ${o.object||o.slug}`);
+  if(!reason)return;
+  if(await verdict(o,stage,false,reason)){toast('🚩 flagged + routed — moving on');CUR++;renderCard();}
+}
+async function paintApproveSeat(o){
+  if(!await verdict(o,'paint',true))return;
+  try{
+    const r=await fetch(`${API}/rematch/${SID}`,{method:'POST'});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
+    ASSETS=d.assets; addProps();
+    toast('✔ seated — the room just got more real');
+  }catch(e){toast('seating failed: '+e.message);}
+  CUR++; renderCard();
+}
+
+// ---------------- forward = ⑂ sessions: branch & ride ----------------
+$('btn-fwd').onclick=async()=>{
+  const p=$('sess');
+  if(!p.classList.contains('hidden')){p.classList.add('hidden');return;}
+  p.classList.remove('hidden'); await loadSessions();
+};
+async function loadSessions(){
+  const box=$('sessrows'); box.innerHTML='<div class="mini">loading…</div>';
+  try{
+    const r=await fetch(API+'/sessions'); const d=await r.json();
+    box.innerHTML='';
+    (d.sessions||[]).forEach(s=>{
+      const row=document.createElement('div');
+      row.className='card'; row.style.cursor='pointer'; row.style.padding='7px'; row.style.marginBottom='6px';
+      row.innerHTML=`<div style="font-size:12px"><b style="color:${s.session===SID?'var(--acc)':'var(--ink)'}">${s.session}</b>${s.session===SID?' · riding':''}</div>`+
+        `<div class="mini">${(s.prompt||'').slice(0,46)||'(no prompt)'}</div>`+
+        `<div class="mini">${s.branched_from?'⑂ from '+s.branched_from+' · ':''}${s.has_canon?'canon ✓':'no canon'}`+
+        `${s.reconcile?' · 📐 '+s.reconcile.verdict:''}${s.has_queue?' · line started':''}</div>`;
+      row.onclick=()=>switchSession(s.session);
+      box.appendChild(row);
+    });
+    if(!box.children.length)box.innerHTML='<div class="mini">no sessions yet — dream one</div>';
+  }catch(e){box.innerHTML='<div class="mini">'+e.message+'</div>';}
+}
+async function switchSession(sid){
+  if(sid===SID){$('sess').classList.add('hidden');return;}
+  try{
+    const r=await fetch(API+'/session/'+sid); if(!r.ok){toast('session unreadable');return;}
+    const d=await r.json();
+    stopPoll(); disposeWorld(); QUEUE=[]; CUR=0; SUB={}; RECON=null; ROLL=0;
+    SID=sid; LOCKED=d.plan; ASSETS=d.assets; PROMPT=d.prompt||'';
+    try{localStorage.setItem('v15f_sid',SID);}catch(_){}
+    $('prompt').value=PROMPT;
+    $('sess').classList.add('hidden');
+    $('hudinfo').textContent=`riding session ${SID}`;
+    if(d.has_canon){$('p-prompt').classList.add('hidden');await showCanonPanel(false);
+      if(!applyEvidence(d))await measureCanon();}        // validate-first applies to old canons too
+    else{$('p-canon').classList.add('hidden');$('p-prompt').classList.remove('hidden');VIEW='prompt';}
+    toast('now riding '+sid);
+  }catch(e){toast(e.message);}
+}
+$('sess-branch').onclick=async()=>{
+  if(!SID){toast('nothing to branch yet');return;}
+  try{
+    const r=await fetch(API+'/branch/'+SID,{method:'POST'});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
+    toast(`⑂ ${SID} → ${d.session_id} — the original stays pristine`);
+    await switchSession(d.session_id);
+  }catch(e){toast('branch failed: '+e.message);}
+};
+
+// ---------------- refresh-proof: restore the last session from disk ----------------
+(async function restore(){
+  const sid=(()=>{try{return localStorage.getItem('v15f_sid');}catch(_){return null;}})();
+  if(!sid)return;
+  try{
+    const r=await fetch(API+'/session/'+sid); if(!r.ok)return;
+    const d=await r.json();
+    SID=sid; LOCKED=d.plan; ASSETS=d.assets; PROMPT=d.prompt||'';
+    $('prompt').value=PROMPT;
+    $('hudinfo').textContent=`session ${SID} restored · ${Object.keys(ASSETS).length}/${LOCKED.objects.length} props from the warehouse`;
+    if(d.has_canon){ $('p-prompt').classList.add('hidden'); await showCanonPanel(false);
+      if(!applyEvidence(d))await measureCanon(); }       // validate-first applies on restore too
+    toast('session restored — nothing was lost');
+  }catch(_){}
+})();
+
+// ---------------- tiny orbit viewer for mesh/paint verdicts ----------------
+let SPIN=null;
+function killSpin(){ if(SPIN){cancelAnimationFrame(SPIN.raf);SPIN.renderer.dispose();SPIN=null;} }
+function spinGLB(el,url){
+  if(!el)return;
+  const w=el.clientWidth||330,h=210;
+  const ren=new THREE.WebGLRenderer({antialias:true,alpha:true}); ren.setSize(w,h);
+  el.appendChild(ren.domElement);
+  const sc=new THREE.Scene(), cam=new THREE.PerspectiveCamera(40,w/h,.01,50);
+  sc.add(new THREE.HemisphereLight(0xffffff,0x555555,1.1));
+  const dl=new THREE.DirectionalLight(0xffffff,1.6); dl.position.set(2,3,2); sc.add(dl);
+  let yaw=0,drag=false,px=0;
+  ren.domElement.onmousedown=e=>{drag=true;px=e.clientX;};
+  addEventListener('mouseup',()=>drag=false);
+  ren.domElement.onmousemove=e=>{if(drag){yaw+=(e.clientX-px)*.01;px=e.clientX;}};
+  new GLTFLoader().load(url,g=>{
+    const m=g.scene,bb=new THREE.Box3().setFromObject(m),sz=bb.getSize(new THREE.Vector3()),c=bb.getCenter(new THREE.Vector3());
+    m.position.sub(c); sc.add(m);
+    const d=Math.max(sz.x,sz.y,sz.z); cam.position.set(0,d*.35,d*1.5);
+    cam.lookAt(0,0,0);
+    SPIN={renderer:ren,raf:0};
+    (function t(){ if(!SPIN||SPIN.renderer!==ren)return;
+      if(!drag)yaw+=.006; m.rotation.y=yaw; ren.render(sc,cam); SPIN.raf=requestAnimationFrame(t); })();
+  },undefined,()=>{el.innerHTML='<div class="spin">GLB not readable yet — one moment…</div>';});
+}
+
+// ---------------- 2D blueprint (kept from var-001) ----------------
+function planSVG(p,W){
+  const scale=W/Math.max(p.width_m,p.depth_m), w=p.width_m*scale, d=p.depth_m*scale, pad=14;
+  let s=`<svg width="${w+pad*2}" height="${d+pad*2}" xmlns="http://www.w3.org/2000/svg">`;
+  s+=`<rect x="${pad}" y="${pad}" width="${w}" height="${d}" fill="#0c0f14" stroke="#e8e4da" stroke-width="3"/>`;
+  const wallPt=(o,off)=>({N:[pad+off*scale,pad],S:[pad+off*scale,pad+d],W:[pad,pad+off*scale],E:[pad+w,pad+off*scale]}[o.wall]);
+  for(const o of p.doors){const [x,y]=wallPt(o,o.offset_m),ww=o.width_m*scale,hz=('NS'.includes(o.wall));
+    s+=`<line x1="${hz?x-ww/2:x-6}" y1="${hz?y-6:y-ww/2}" x2="${hz?x+ww/2:x+6}" y2="${hz?y+6:y+ww/2}" stroke="#0c0f14" stroke-width="8"/>`;
+    s+=`<circle cx="${x}" cy="${y}" r="${ww/2}" fill="none" stroke="#e0a020" stroke-width="1.5" stroke-dasharray="3 3"/>`;}
+  for(const o of p.windows){const [x,y]=wallPt(o,o.offset_m),ww=o.width_m*scale,hz=('NS'.includes(o.wall));
+    s+=`<line x1="${hz?x-ww/2:x}" y1="${hz?y:y-ww/2}" x2="${hz?x+ww/2:x}" y2="${hz?y:y+ww/2}" stroke="#7fb4d8" stroke-width="5"/>`;}
+  for(const o of p.objects){const ox=pad+o.x_m*scale,oy=pad+o.z_m*scale,ow=o.w_m*scale,od=o.d_m*scale;
+    const dash=o._measured===false?' stroke-dasharray="4 3" fill-opacity="0.3"':'';   // dashed = unphoto-placed GUESS
+    s+=`<g transform="rotate(${o.rot_deg} ${ox} ${oy})"><rect x="${ox-ow/2}" y="${oy-od/2}" width="${ow}" height="${od}"
+        fill="${p.palette.accent}33" stroke="${p.palette.accent}" stroke-width="1.2" rx="2"${dash}/></g>`;}
+  return s+'</svg>';
+}
+
+// ---------------- the walkable world (var-001 QA-proven code, props re-seatable) ----------------
+let scene,camera,renderer,controls,colliders=[],propColliders=[],propsGroup=null;
+const move={f:0,b:0,l:0,r:0};
+
+function disposeWorld(){
+  if(!renderer)return;
+  WORLD_EPOCH++;
+  renderer.domElement.remove(); renderer.dispose(); renderer=null; scene=null;
+  colliders=[]; propColliders=[]; propsGroup=null;
+  $('walkhud').style.display='none'; $('crosshair').style.display='none';
+  $('dock').style.display='none';
+}
+
+function addProps(){
+  if(!scene)return;
+  const p=LOCKED, pal=p.palette;
+  if(propsGroup){scene.remove(propsGroup);}
+  propsGroup=new THREE.Group(); scene.add(propsGroup); propColliders.length=0;
+  const loader=new GLTFLoader();
+  p.objects.forEach((o,i)=>{
+    const yaw=-o.rot_deg*Math.PI/180, asset=ASSETS[String(i)];
+    if(asset){
+      loader.load(asset.url+'?t='+Date.now(),g=>{
+        const m=g.scene, bb=new THREE.Box3().setFromObject(m), sz=bb.getSize(new THREE.Vector3());
+        const s=Math.min(o.w_m/sz.x,o.h_m/sz.y,o.d_m/sz.z);
+        m.scale.setScalar(s); bb.setFromObject(m);
+        m.position.set(o.x_m-(bb.min.x+bb.max.x)/2, -bb.min.y, o.z_m-(bb.min.z+bb.max.z)/2);
+        m.rotation.y=yaw; m.traverse(n=>{if(n.isMesh){n.castShadow=n.receiveShadow=true;}});
+        propsGroup.add(m);
+        if(o.category!=='decoration'&&o.category!=='clutter')
+          propColliders.push(new THREE.Box3().setFromObject(m));
+      });
+    }else{
+      const guess=(o._measured===false);                 // ghost = position is a GUESS, not the photo
+      const solid=!guess&&o.category!=='decoration'&&o.category!=='clutter';
+      const flat=(o.category==='decoration'&&o.h_m<0.1);
+      const mat=new THREE.MeshStandardMaterial({color:pal.accent,
+        roughness:o.category==='clutter'?.9:.6,
+        transparent:guess||o.category==='clutter',opacity:guess?0.45:(o.category==='clutter'?.85:1)});
+      const m=new THREE.Mesh(new THREE.BoxGeometry(o.w_m,flat?0.02:o.h_m,o.d_m),mat);
+      m.position.set(o.x_m,(flat?0.02:o.h_m)/2,o.z_m); m.rotation.y=yaw;
+      m.castShadow=m.receiveShadow=true; propsGroup.add(m);
+      if(solid)propColliders.push(new THREE.Box3().setFromObject(m));
+    }
+  });
+}
+
+function buildWorld(){
+  const p=LOCKED, W=p.width_m, D=p.depth_m, H=p.height_m, pal=p.palette;
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x87a8c8); scene.fog=new THREE.Fog(0x87a8c8,40,140);
+  camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.05,300);
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.shadowMap.enabled=true; renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  $('stage').appendChild(renderer.domElement);
+
+  const sun=new THREE.DirectionalLight(0xfff3e0,2.6); sun.position.set(30,42,18);
+  sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+  Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30}); scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xbdd4ea,0x6a5a44,.85));
+  const bulb=new THREE.PointLight(0xffe0b0,30,18,1.8); bulb.position.set(W/2,H-.35,D/2);
+  bulb.castShadow=true; scene.add(bulb);
+
+  const terr=new THREE.PlaneGeometry(160,160,96,96); terr.rotateX(-Math.PI/2);
+  const pos=terr.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i)-W/2, z=pos.getZ(i)-D/2;
+    const inPad=x>-W/2-4&&x<W/2+4&&z>-D/2-4&&z<D/2+4;
+    const n=Math.sin(x*.11)*Math.cos(z*.13)*1.6+Math.sin(x*.031+z*.043)*3.2;
+    pos.setY(i,inPad?0:n*Math.min(1,(Math.hypot(Math.max(0,Math.abs(x)-W/2-4),Math.max(0,Math.abs(z)-D/2-4)))/14));
+  }
+  terr.computeVertexNormals();
+  const ground=new THREE.Mesh(terr,new THREE.MeshStandardMaterial({color:0x5e7a4e,roughness:1}));
+  ground.position.set(W/2,-.02,D/2); ground.receiveShadow=true; scene.add(ground);
+
+  const wallMat=new THREE.MeshStandardMaterial({color:pal.wall,roughness:.9});
+  const trimMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.6});
+  const floorMat=new THREE.MeshStandardMaterial({color:pal.floor,roughness:.75});
+  const glassMat=new THREE.MeshStandardMaterial({color:0x9fc8e8,transparent:true,opacity:.28,roughness:.1,metalness:.4});
+  const box=(w,h,d,mat,x,y,z,solid=true)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+    m.position.set(x,y,z); m.castShadow=m.receiveShadow=true; scene.add(m);
+    if(solid)colliders.push(new THREE.Box3().setFromObject(m)); return m;};
+  box(W+.4,.22,D+.4,floorMat,W/2,-.11,D/2,false);
+  const t=.15;
+  function wallRun(axis,fixed,length,openings){
+    const segs=[]; let cur=0;
+    const spans=openings.map(o=>({a:o.offset_m-o.width_m/2,b:o.offset_m+o.width_m/2,o})).sort((a,b)=>a.a-b.a);
+    for(const s of spans){ if(s.a>cur)segs.push([cur,s.a]); cur=Math.max(cur,s.b); }
+    if(cur<length)segs.push([cur,length]);
+    for(const[a,b]of segs){const len=b-a,mid=a+len/2;
+      if(axis==='x')box(len,H,t,wallMat,mid,H/2,fixed); else box(t,H,len,wallMat,fixed,H/2,mid);}
+    for(const s of spans){const o=s.o,mid=o.offset_m,len=o.width_m;
+      if(o.sill_m!==undefined){
+        const sill=o.sill_m,head=Math.min(H-.3,sill+1.2);
+        if(axis==='x'){box(len,sill,t,wallMat,mid,sill/2,fixed);box(len,H-head,t,wallMat,mid,head+(H-head)/2,fixed);
+          box(len,head-sill,.02,glassMat,mid,sill+(head-sill)/2,fixed,false);}
+        else{box(t,sill,len,wallMat,fixed,sill/2,mid);box(t,H-head,len,wallMat,fixed,head+(H-head)/2,mid);
+          box(.02,head-sill,len,glassMat,fixed,sill+(head-sill)/2,mid,false);}
+      }else{
+        if(axis==='x')box(len,H-2.1,t,wallMat,mid,2.1+(H-2.1)/2,fixed);
+        else box(t,H-2.1,len,wallMat,fixed,2.1+(H-2.1)/2,mid);}
+    }
+  }
+  const on=w=>[...p.doors,...p.windows].filter(o=>o.wall===w);
+  wallRun('x',0,W,on('N')); wallRun('x',D,W,on('S'));
+  wallRun('z',0,D,on('W')); wallRun('z',W,D,on('E'));
+  for(const[len,x,z,ax]of[[W,W/2,t/2,'x'],[W,W/2,D-t/2,'x'],[D,t/2,D/2,'z'],[D,W-t/2,D/2,'z']])
+    ax==='x'?box(len,.09,.03,trimMat,x,.045,z,false):box(.03,.09,len,trimMat,x,.045,z,false);
+  box(W+.4,.12,D+.4,new THREE.MeshStandardMaterial({color:0xf2ede2,roughness:1}),W/2,H+.06,D/2,false);
+
+  addProps();
+
+  controls=new PointerLockControls(camera,renderer.domElement);
+  controls.pointerSpeed=0.5;
+  const door=p.doors[0], [dx,dz]={N:[door.offset_m,1.4],S:[door.offset_m,D-1.4],
+                                  W:[1.4,door.offset_m],E:[W-1.4,door.offset_m]}[door.wall];
+  camera.position.set(dx,1.65,dz);
+  camera.lookAt(W/2,1.5,D/2);
+  let fallbackLook=false;
+  const hud=$('walkhud');
+  const setHud=()=>{hud.innerHTML=fallbackLook
+    ? 'mouse capture unavailable — <b>drag to look</b> · WASD/arrows move · Shift sprint · Space jump'
+    : (controls.isLocked
+       ? 'walking — WASD/arrows · <b>Shift</b> sprint · <b>Space</b> jump · ESC frees the mouse'
+       : 'click to walk · WASD move · mouse look · ESC frees the mouse')
+    +' &nbsp;·&nbsp; look speed <input id="sens" type="range" min="0.2" max="1.2" step="0.1" value="'+controls.pointerSpeed+'" style="width:90px;vertical-align:middle">';
+    const s=document.getElementById('sens'); if(s)s.oninput=e=>controls.pointerSpeed=parseFloat(e.target.value);};
+  const clearKeys=()=>{move.f=move.b=move.l=move.r=0;sprint=false;};
+  controls.addEventListener('lock',()=>{$('crosshair').style.display='block';setHud();});
+  controls.addEventListener('unlock',()=>{$('crosshair').style.display='none';clearKeys();setHud();});
+  addEventListener('blur',clearKeys); document.addEventListener('visibilitychange',clearKeys);
+  document.addEventListener('pointerlockerror',()=>{fallbackLook=true;setHud();});
+  renderer.domElement.onclick=()=>{if(!fallbackLook){try{const r=renderer.domElement.requestPointerLock();
+    if(r&&r.catch)r.catch(()=>{fallbackLook=true;setHud();});}catch(_){fallbackLook=true;setHud();}}};
+  let dragging=false;
+  renderer.domElement.addEventListener('mousedown',()=>{if(fallbackLook)dragging=true;});
+  addEventListener('mouseup',()=>dragging=false);
+  addEventListener('mousemove',e=>{if(fallbackLook&&dragging){
+    const eu=new THREE.Euler(0,0,0,'YXZ').setFromQuaternion(camera.quaternion);
+    eu.y-=e.movementX*.002*controls.pointerSpeed*2; eu.x-=e.movementY*.002*controls.pointerSpeed*2;
+    eu.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,eu.x)); camera.quaternion.setFromEuler(eu);}});
+  hud.style.display='block'; setHud();
+  let sprint=false, vy=0, grounded=true;
+  const KEYMAP={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'};
+  onkeydown=e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;
+    if(KEYMAP[e.code])move[KEYMAP[e.code]]=1;
+    if(e.code==='ShiftLeft'||e.code==='ShiftRight')sprint=true;
+    if(e.code==='Space'&&grounded){vy=4.0;grounded=false;e.preventDefault();}};
+  onkeyup=e=>{if(KEYMAP[e.code])move[KEYMAP[e.code]]=0;
+    if(e.code==='ShiftLeft'||e.code==='ShiftRight')sprint=false;};
+  onresize=()=>{if(!renderer)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);};
+
+  window.__V15={camera,controls,colliders,propColliders,move,plan:LOCKED,sid:SID,forceFallback:()=>{fallbackLook=true;setHud();}};
+  const clock=new THREE.Clock(), R=.28, vel=new THREE.Vector2(0,0);
+  const myEpoch=WORLD_EPOCH, myRenderer=renderer;
+  (function tick(){
+    if(myEpoch!==WORLD_EPOCH||renderer!==myRenderer)return;
+    requestAnimationFrame(tick);
+    const dt=Math.min(clock.getDelta(),.05);
+    if(controls.isLocked||fallbackLook){
+      const inF=move.f-move.b, inR=move.r-move.l, len=Math.hypot(inF,inR)||1;
+      const speed=(sprint?4.2:2.0), target=new THREE.Vector2(inF/len*speed,inR/len*speed);
+      vel.lerp(target,Math.min(1,dt/0.12));
+      controls.moveForward(vel.x*dt); controls.moveRight(vel.y*dt);
+      vy-=12*dt; camera.position.y+=vy*dt;
+      if(camera.position.y<=1.65){camera.position.y=1.65;vy=0;grounded=true;}
+      const c=camera.position, feet=c.y-1.65;
+      for(const b of [...colliders,...propColliders]){
+        if(b.min.y>feet+1.7||b.max.y<feet+0.45)continue;
+        if(c.x>b.min.x-R&&c.x<b.max.x+R&&c.z>b.min.z-R&&c.z<b.max.z+R){
+          const px=Math.min(c.x-(b.min.x-R),(b.max.x+R)-c.x), pz=Math.min(c.z-(b.min.z-R),(b.max.z+R)-c.z);
+          if(px<pz)c.x+=(c.x-(b.min.x+b.max.x)/2>0?px:-px); else c.z+=(c.z-(b.min.z+b.max.z)/2>0?pz:-pz);
+        }
+      }
+    }
+    renderer.render(scene,camera);
+  })();
+}
+</script>
+</body>
+</html>

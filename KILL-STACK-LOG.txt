@@ -1,0 +1,23 @@
+KILL-STACK  Thu 07/30/2026 22:50:56.29
+ERROR: The process "23028" not found.
+ERROR: The process "4200" not found.
+ERROR: The process "42088" not found.
+ERROR: The process "27092" not found.
+ERROR: The process "27024" not found.
+SUCCESS: The process with PID 40344 has been terminated.
+ERROR: The process "19228" not found.
+ERROR: The process "36644" not found.
+ERROR: The process "1656" not found.
+SUCCESS: The process with PID 36004 has been terminated.
+SUCCESS: The process with PID 45808 has been terminated.
+SUCCESS: The process with PID 44292 has been terminated.
+SUCCESS: The process with PID 21468 has been terminated.
+SUCCESS: The process with PID 43628 has been terminated.
+SUCCESS: The process with PID 44900 has been terminated.
+SUCCESS: The process with PID 27256 has been terminated.
+SUCCESS: The process with PID 4708 has been terminated.
+SUCCESS: The process with PID 47140 has been terminated.
+=== listeners after the kill ===
+=== (empty above = port truly clear) ===
+=== listeners after fresh boot ===
+  TCP    0.0.0.0:8000           0.0.0.0:0              LISTENING       27412

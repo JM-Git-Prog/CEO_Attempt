@@ -59,6 +59,11 @@ sessions: dict[str, WorldBuilder] = {}
 session_locks: dict[str, asyncio.Lock] = {}
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# --- v15_Fable (2026-07-30): ADDITIVE hook only — standalone routes in src/v15_fable.py,
+# --- standalone page in templates/index_v15_fable.html. No v3-v14 behavior is changed.
+from src.v15_fable import router as _v15_fable_router  # noqa: E402
+app.include_router(_v15_fable_router)
+
 
 def _normalize_requested_version(value: str | None, source: str) -> int:
     """Normalize a canonical interface version without silently coercing input."""
@@ -367,6 +372,11 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    # v15_Fable (2026-07-30): additive early branch — non-numeric version, standalone page.
+    if request.query_params.get("v") == "15_Fable":
+        page = Path(__file__).parent / "templates" / "index_v15_fable.html"
+        return HTMLResponse(page.read_text(encoding="utf-8"),
+                            headers={"Cache-Control": "no-store"})
     try:
         version = _normalize_requested_version(request.query_params.get("v"), "page")
     except ValueError as exc:

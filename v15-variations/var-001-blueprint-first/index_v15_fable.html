@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>v15_Fable · The Living Room</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{--bg:#0e1116;--panel:#161b23;--ink:#e8e4da;--dim:#8b93a1;--acc:#e0a020;--ok:#4caf7d;--line:#242b36}
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif;overflow:hidden}
+  #hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;gap:14px;align-items:center;
+       padding:10px 16px;background:linear-gradient(#0e1116f0,#0e111600);pointer-events:none}
+  #hud>*{pointer-events:auto}
+  .logo{font-weight:700;letter-spacing:.12em;color:var(--acc)}
+  .tag{color:var(--dim);font-size:12px}
+  #stage{position:fixed;inset:0}
+  .panel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+         gap:18px;background:var(--bg);z-index:5;padding:24px}
+  .law{color:var(--dim);font-size:12px;letter-spacing:.06em;max-width:560px;text-align:center}
+  #prompt{width:min(680px,90vw);padding:14px 16px;font-size:16px;color:var(--ink);
+          background:var(--panel);border:1px solid var(--line);border-radius:10px;outline:none}
+  #prompt:focus{border-color:var(--acc)}
+  button{padding:10px 22px;font-size:14px;font-weight:600;color:#10131a;background:var(--acc);
+         border:0;border-radius:8px;cursor:pointer}
+  button:disabled{opacity:.4;cursor:wait}
+  button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  #plans{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
+  .plancard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;
+            cursor:pointer;transition:border-color .15s, transform .15s}
+  .plancard:hover{border-color:var(--acc);transform:translateY(-3px)}
+  .plancard h3{font-size:13px;margin-bottom:6px}
+  .plancard .meta{color:var(--dim);font-size:11px;margin-top:6px}
+  #status{color:var(--dim);font-size:13px;min-height:20px}
+  #walkhud{position:fixed;left:16px;bottom:14px;z-index:10;color:var(--dim);font-size:12px;display:none}
+  #crosshair{position:fixed;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;
+             background:#ffffff88;z-index:9;display:none}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="hud">
+  <span class="logo">v15_FABLE</span><span class="tag">prompt → blueprints → locked plan → walkable world</span>
+  <span class="tag" id="hudinfo"></span>
+</div>
+
+<div class="panel" id="p-prompt">
+  <div class="law">THE PLAN IS THE ONLY GEOMETRY TRUTH — you will pick a blueprint before anything expensive happens,
+    and nothing downstream may contradict it. Real props come from John's painted warehouse.</div>
+  <input id="prompt" placeholder="Describe the room you imagine… (e.g. a cozy 1950s diner with a jukebox)" autofocus>
+  <button id="go">Draft three blueprints</button>
+  <div id="status"></div>
+</div>
+
+<div class="panel hidden" id="p-plans">
+  <div class="law">Three drafts, sanitized to be legal and walkable. Click one to lock it as truth.</div>
+  <div id="plans"></div>
+  <button class="ghost" id="redo">↻ Different drafts</button>
+  <div id="status2"></div>
+</div>
+
+<div id="stage"></div>
+<div id="crosshair"></div>
+<div id="walkhud">click to walk · WASD move · mouse look · ESC frees the mouse</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.162.0/three.module.min.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {PointerLockControls} from 'three/addons/controls/PointerLockControls.js';
+
+const $=id=>document.getElementById(id);
+let PROMPT='', ENGINES=[], LOCKED=null, ASSETS={};
+
+// ---------------- stage 1: prompt → 3 plans ----------------
+$('go').onclick=draft; $('prompt').onkeydown=e=>{if(e.key==='Enter')draft();};
+$('redo').onclick=()=>{$('p-plans').classList.add('hidden');$('p-prompt').classList.remove('hidden');};
+
+async function draft(){
+  PROMPT=$('prompt').value.trim(); if(!PROMPT)return;
+  $('go').disabled=true; $('status').textContent='Asking the local LLM for three takes… (falls back to procedural if Ollama is idle)';
+  try{
+    const r=await fetch('/api/v15fable/plans',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({prompt:PROMPT})});
+    const data=await r.json(); ENGINES=data.engines;
+    $('hudinfo').textContent=`planner: ${data.engines[0]} · warehouse: ${data.warehouse_assets} painted props · ${data.elapsed_s}s`;
+    showPlans(data.plans);
+  }catch(e){ $('status').textContent='Backend error: '+e.message; }
+  $('go').disabled=false;
+}
+
+function planSVG(p,W){ // 2D blueprint: walls, door arcs, window ticks, object footprints
+  const scale=W/Math.max(p.width_m,p.depth_m), w=p.width_m*scale, d=p.depth_m*scale, pad=18;
+  let s=`<svg width="${w+pad*2}" height="${d+pad*2}" xmlns="http://www.w3.org/2000/svg">`;
+  s+=`<rect x="${pad}" y="${pad}" width="${w}" height="${d}" fill="#0c0f14" stroke="#e8e4da" stroke-width="3"/>`;
+  const wallPt=(o,off)=>({N:[pad+off*scale,pad],S:[pad+off*scale,pad+d],W:[pad,pad+off*scale],E:[pad+w,pad+off*scale]}[o.wall]);
+  for(const o of p.doors){const [x,y]=wallPt(o,o.offset_m),ww=o.width_m*scale,hz=('NS'.includes(o.wall));
+    s+=`<line x1="${hz?x-ww/2:x-6}" y1="${hz?y-6:y-ww/2}" x2="${hz?x+ww/2:x+6}" y2="${hz?y+6:y+ww/2}" stroke="#0c0f14" stroke-width="8"/>`;
+    s+=`<circle cx="${x}" cy="${y}" r="${ww/2}" fill="none" stroke="#e0a020" stroke-width="1.5" stroke-dasharray="3 3"/>`;}
+  for(const o of p.windows){const [x,y]=wallPt(o,o.offset_m),ww=o.width_m*scale,hz=('NS'.includes(o.wall));
+    s+=`<line x1="${hz?x-ww/2:x}" y1="${hz?y:y-ww/2}" x2="${hz?x+ww/2:x}" y2="${hz?y:y+ww/2}" stroke="#7fb4d8" stroke-width="5"/>`;}
+  for(const o of p.objects){const ox=pad+o.x_m*scale,oy=pad+o.z_m*scale,ow=o.w_m*scale,od=o.d_m*scale;
+    s+=`<g transform="rotate(${o.rot_deg} ${ox} ${oy})"><rect x="${ox-ow/2}" y="${oy-od/2}" width="${ow}" height="${od}"
+        fill="${p.palette.accent}33" stroke="${p.palette.accent}" stroke-width="1.2" rx="2"/></g>`;
+    s+=`<text x="${ox}" y="${oy+3}" fill="#e8e4da" font-size="8.5" text-anchor="middle">${o.name}</text>`;}
+  return s+'</svg>';
+}
+
+function showPlans(plans){
+  $('p-prompt').classList.add('hidden'); $('p-plans').classList.remove('hidden');
+  const box=$('plans'); box.innerHTML='';
+  plans.forEach((p,i)=>{
+    const c=document.createElement('div'); c.className='plancard';
+    c.innerHTML=`<h3>${i+1}. ${p.name}</h3>${planSVG(p,240)}
+      <div class="meta">${p.width_m}×${p.depth_m}m · ${p.objects.length} objects · ${p.palette.mood} · ${ENGINES[i]}</div>`;
+    c.onclick=()=>lock(p,ENGINES[i]);
+    box.appendChild(c);
+  });
+}
+
+// ---------------- stage 2: lock → build world FROM THE PLAN ----------------
+async function lock(plan,engine){
+  $('status2').textContent='Locking plan… matching warehouse props…';
+  const r=await fetch('/api/v15fable/lock',{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({plan,prompt:PROMPT,engine})});
+  const data=await r.json(); LOCKED=data.plan; ASSETS=data.assets;
+  $('hudinfo').textContent=`session ${data.session_id} · plan locked · `+
+    `${Object.keys(ASSETS).length}/${LOCKED.objects.length} props from the real warehouse`;
+  $('p-plans').classList.add('hidden');
+  buildWorld();
+  requestCanon(data.session_id);        // style truth, painted FROM the locked plan (never blocks walking)
+}
+
+async function requestCanon(sid){
+  const box=document.createElement('div');
+  box.id='canonbox';
+  box.style.cssText='position:fixed;right:14px;top:44px;z-index:11;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;max-width:300px;font-size:11px;color:var(--dim)';
+  box.textContent='CANON — painting the style truth from the locked plan…';
+  document.body.appendChild(box);
+  try{
+    const r=await fetch('/api/v15fable/canon/'+sid,{method:'POST'});
+    if(!r.ok){const e=await r.json();box.textContent='CANON — '+(e.error||'unavailable')+' (world unaffected: the plan is the geometry truth)';return;}
+    box.innerHTML='<div style="margin-bottom:5px">CANON — the style truth (click to open)</div>'+
+      `<a href="/api/v15fable/canon/${sid}" target="_blank"><img src="/api/v15fable/canon/${sid}?t=${Date.now()}" style="width:280px;border-radius:6px;display:block"></a>`+
+      `<button id="btn-identify" style="margin-top:7px;width:100%;font-size:12px;padding:6px">🏭 Build missing props from the canon</button>`+
+      `<div id="idstatus" style="margin-top:4px"></div>`;
+    document.getElementById('btn-identify').onclick=async()=>{
+      const st=document.getElementById('idstatus');
+      st.textContent='Cutting placeholders out of the canon (SAM3) + writing factory prompts…';
+      try{
+        const r=await fetch('/api/v15fable/identify/'+sid,{method:'POST'});
+        const d=await r.json();
+        if(!r.ok){st.textContent='identify failed: '+(d.error||r.status);return;}
+        st.innerHTML=d.queued===0?'Warehouse already covers everything — nothing to build.'
+          :`<b>${d.queued} props queued.</b> Cutouts placed as paint references.<br>`+
+           `Run <b>RUN-FABLE-FACTORY-${sid}.bat</b> in CEO-3D-World to build them ($0, ~8 min each),`+
+           ` then re-lock this plan — placeholders become real painted props.<br>`+
+           d.items.map(i=>`· ${i.object} → <i>${i.subject}</i>`).join('<br>');
+      }catch(e){st.textContent='identify failed: '+e.message;}
+    };
+  }catch(e){box.textContent='CANON — engine offline (world unaffected)';}
+}
+
+let scene,camera,renderer,controls,colliders=[];
+const move={f:0,b:0,l:0,r:0};
+
+function buildWorld(){
+  const p=LOCKED, W=p.width_m, D=p.depth_m, H=p.height_m, pal=p.palette;
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x87a8c8); scene.fog=new THREE.Fog(0x87a8c8,40,140);
+  camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.05,300);
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.shadowMap.enabled=true; renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  $('stage').appendChild(renderer.domElement);
+
+  // --- light: sun + sky + warm interior tuned by palette mood
+  const sun=new THREE.DirectionalLight(0xfff3e0,2.6); sun.position.set(30,42,18);
+  sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+  Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30}); scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xbdd4ea,0x6a5a44,.85));
+  const bulb=new THREE.PointLight(0xffe0b0,30,18,1.8); bulb.position.set(W/2,H-.35,D/2);
+  bulb.castShadow=true; scene.add(bulb);
+
+  // --- TERRAIN: noise heightfield, flattened building pad (real ground, not a void)
+  const terr=new THREE.PlaneGeometry(160,160,96,96); terr.rotateX(-Math.PI/2);
+  const pos=terr.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i)-W/2, z=pos.getZ(i)-D/2;
+    const inPad=x>-W/2-4&&x<W/2+4&&z>-D/2-4&&z<D/2+4;
+    const n=Math.sin(x*.11)*Math.cos(z*.13)*1.6+Math.sin(x*.031+z*.043)*3.2;
+    pos.setY(i,inPad?0:n*Math.min(1,(Math.hypot(Math.max(0,Math.abs(x)-W/2-4),Math.max(0,Math.abs(z)-D/2-4)))/14));
+  }
+  terr.computeVertexNormals();
+  const ground=new THREE.Mesh(terr,new THREE.MeshStandardMaterial({color:0x5e7a4e,roughness:1}));
+  ground.position.set(W/2,-.02,D/2); ground.receiveShadow=true; scene.add(ground);
+
+  // --- architecture, straight from plan data (walls sliced around openings)
+  const wallMat=new THREE.MeshStandardMaterial({color:pal.wall,roughness:.9});
+  const trimMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.6});
+  const floorMat=new THREE.MeshStandardMaterial({color:pal.floor,roughness:.75});
+  const glassMat=new THREE.MeshStandardMaterial({color:0x9fc8e8,transparent:true,opacity:.28,roughness:.1,metalness:.4});
+  const box=(w,h,d,mat,x,y,z,solid=true)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+    m.position.set(x,y,z); m.castShadow=m.receiveShadow=true; scene.add(m);
+    if(solid)colliders.push(new THREE.Box3().setFromObject(m)); return m;};
+  box(W+.4,.22,D+.4,floorMat,W/2,-.11,D/2,false);                       // slab
+  const t=.15;                                                          // wall thickness
+  function wallRun(axis,fixed,length,openings){                          // slice a wall around its openings
+    const segs=[]; let cur=0;
+    const spans=openings.map(o=>({a:o.offset_m-o.width_m/2,b:o.offset_m+o.width_m/2,o})).sort((a,b)=>a.a-b.a);
+    for(const s of spans){ if(s.a>cur)segs.push([cur,s.a]); cur=Math.max(cur,s.b); }
+    if(cur<length)segs.push([cur,length]);
+    for(const[a,b]of segs){const len=b-a,mid=a+len/2;
+      if(axis==='x')box(len,H,t,wallMat,mid,H/2,fixed); else box(t,H,len,wallMat,fixed,H/2,mid);}
+    for(const s of spans){const o=s.o,mid=o.offset_m,len=o.width_m;
+      if(o.sill_m!==undefined){                                          // window: sill below, header above, glass
+        const sill=o.sill_m,head=Math.min(H-.3,sill+1.2);
+        if(axis==='x'){box(len,sill,t,wallMat,mid,sill/2,fixed);box(len,H-head,t,wallMat,mid,head+(H-head)/2,fixed);
+          box(len,head-sill,.02,glassMat,mid,sill+(head-sill)/2,fixed,false);}
+        else{box(t,sill,len,wallMat,fixed,sill/2,mid);box(t,H-head,len,wallMat,fixed,head+(H-head)/2,mid);
+          box(.02,head-sill,len,glassMat,fixed,sill+(head-sill)/2,mid,false);}
+      }else{                                                             // door: header only — opening stays passable
+        if(axis==='x')box(len,H-2.1,t,wallMat,mid,2.1+(H-2.1)/2,fixed);
+        else box(t,H-2.1,len,wallMat,fixed,2.1+(H-2.1)/2,mid);}
+    }
+  }
+  const on=w=>[...p.doors,...p.windows].filter(o=>o.wall===w);
+  wallRun('x',0,W,on('N')); wallRun('x',D,W,on('S'));
+  wallRun('z',0,D,on('W')); wallRun('z',W,D,on('E'));
+  for(const[len,x,z,ax]of[[W,W/2,t/2,'x'],[W,W/2,D-t/2,'x'],[D,t/2,D/2,'z'],[D,W-t/2,D/2,'z']])
+    ax==='x'?box(len,.09,.03,trimMat,x,.045,z,false):box(.03,.09,len,trimMat,x,.045,z,false); // baseboards (finish pass)
+  box(W+.4,.12,D+.4,new THREE.MeshStandardMaterial({color:0xf2ede2,roughness:1}),W/2,H+.06,D/2,false); // roof cap
+
+  // --- props: REAL warehouse GLBs where matched, tidy placeholders otherwise
+  const loader=new GLTFLoader();
+  p.objects.forEach((o,i)=>{
+    const yaw=-o.rot_deg*Math.PI/180, asset=ASSETS[String(i)];
+    if(asset){
+      loader.load(asset.url,g=>{
+        const m=g.scene, bb=new THREE.Box3().setFromObject(m), sz=bb.getSize(new THREE.Vector3());
+        const s=Math.min(o.w_m/sz.x,o.h_m/sz.y,o.d_m/sz.z);            // scale to the PLAN's size
+        m.scale.setScalar(s); bb.setFromObject(m);
+        m.position.set(o.x_m-(bb.min.x+bb.max.x)/2, -bb.min.y, o.z_m-(bb.min.z+bb.max.z)/2);
+        m.rotation.y=yaw; m.traverse(n=>{if(n.isMesh){n.castShadow=n.receiveShadow=true;}});
+        scene.add(m);
+        // QA 2026-07-30: collider from the VISIBLE scaled bounds, not the plan cell.
+        // Taxonomy: decorations and clutter NEVER block the player.
+        if(o.category!=='decoration'&&o.category!=='clutter')
+          colliders.push(new THREE.Box3().setFromObject(m));
+      });
+    }else{
+      const solid=o.category!=='decoration'&&o.category!=='clutter';
+      const flat=(o.category==='decoration'&&o.h_m<0.1);               // rugs lie flat
+      const mat=new THREE.MeshStandardMaterial({color:pal.accent,
+        roughness:o.category==='clutter'?.9:.6,
+        transparent:o.category==='clutter',opacity:o.category==='clutter'?.85:1});
+      const m=box(o.w_m,flat?0.02:o.h_m,o.d_m,mat,o.x_m,(flat?0.02:o.h_m)/2,o.z_m,solid);
+      m.rotation.y=yaw;
+    }
+  });
+
+  // --- first-person: PointerLock (with fallback) + plan-box collision — one truth
+  controls=new PointerLockControls(camera,renderer.domElement);
+  controls.pointerSpeed=0.5;                                           // QA: 0.004 rad/px was double default
+  const door=p.doors[0], [dx,dz]={N:[door.offset_m,1.4],S:[door.offset_m,D-1.4],
+                                  W:[1.4,door.offset_m],E:[W-1.4,door.offset_m]}[door.wall];
+  camera.position.set(dx,1.65,dz);
+  camera.lookAt(W/2,1.5,D/2);
+  let fallbackLook=false;                                              // QA: pointer lock needs a failure path
+  const hud=$('walkhud');
+  const setHud=()=>{hud.innerHTML=fallbackLook
+    ? 'mouse capture unavailable — <b>drag to look</b> · WASD/arrows move · Shift sprint · Space jump'
+    : (controls.isLocked
+       ? 'walking — WASD/arrows · <b>Shift</b> sprint · <b>Space</b> jump · ESC frees the mouse'
+       : 'click to walk · WASD move · mouse look · ESC frees the mouse')
+    +' &nbsp;·&nbsp; look speed <input id="sens" type="range" min="0.2" max="1.2" step="0.1" value="'+controls.pointerSpeed+'" style="width:90px;vertical-align:middle">';
+    const s=document.getElementById('sens'); if(s)s.oninput=e=>controls.pointerSpeed=parseFloat(e.target.value);};
+  const clearKeys=()=>{move.f=move.b=move.l=move.r=0;sprint=false;};   // QA: keys stuck across unlock/blur
+  controls.addEventListener('lock',()=>{$('crosshair').style.display='block';setHud();});
+  controls.addEventListener('unlock',()=>{$('crosshair').style.display='none';clearKeys();setHud();});
+  addEventListener('blur',clearKeys); document.addEventListener('visibilitychange',clearKeys);
+  document.addEventListener('pointerlockerror',()=>{fallbackLook=true;setHud();});
+  renderer.domElement.onclick=()=>{if(!fallbackLook){try{const r=renderer.domElement.requestPointerLock();
+    if(r&&r.catch)r.catch(()=>{fallbackLook=true;setHud();});}catch(_){fallbackLook=true;setHud();}}};
+  let dragging=false;                                                  // fallback: drag-to-look
+  renderer.domElement.addEventListener('mousedown',()=>{if(fallbackLook)dragging=true;});
+  addEventListener('mouseup',()=>dragging=false);
+  addEventListener('mousemove',e=>{if(fallbackLook&&dragging){
+    const eu=new THREE.Euler(0,0,0,'YXZ').setFromQuaternion(camera.quaternion);
+    eu.y-=e.movementX*.002*controls.pointerSpeed*2; eu.x-=e.movementY*.002*controls.pointerSpeed*2;
+    eu.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,eu.x)); camera.quaternion.setFromEuler(eu);}});
+  hud.style.display='block'; setHud();
+  let sprint=false, vy=0, grounded=true;
+  const KEYMAP={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'};
+  onkeydown=e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;   // QA: guard UI focus
+    if(KEYMAP[e.code])move[KEYMAP[e.code]]=1;
+    if(e.code==='ShiftLeft'||e.code==='ShiftRight')sprint=true;
+    if(e.code==='Space'&&grounded){vy=4.0;grounded=false;e.preventDefault();}};
+  onkeyup=e=>{if(KEYMAP[e.code])move[KEYMAP[e.code]]=0;
+    if(e.code==='ShiftLeft'||e.code==='ShiftRight')sprint=false;};
+  onresize=()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);};
+
+  window.__V15={camera,controls,colliders,move,plan:LOCKED,forceFallback:()=>{fallbackLook=true;setHud();}}; // official dev hook for walk QA
+  const clock=new THREE.Clock(), R=.28, vel=new THREE.Vector2(0,0);
+  (function tick(){
+    requestAnimationFrame(tick);
+    const dt=Math.min(clock.getDelta(),.05);
+    if(controls.isLocked||fallbackLook){
+      // QA: normalize the input vector (diagonals were sqrt(2) faster) + 120ms ease
+      const inF=move.f-move.b, inR=move.r-move.l, len=Math.hypot(inF,inR)||1;
+      const speed=(sprint?4.2:2.0), target=new THREE.Vector2(inF/len*speed,inR/len*speed);
+      vel.lerp(target,Math.min(1,dt/0.12));
+      controls.moveForward(vel.x*dt); controls.moveRight(vel.y*dt);
+      vy-=12*dt; camera.position.y+=vy*dt;                             // simple jump/gravity
+      if(camera.position.y<=1.65){camera.position.y=1.65;vy=0;grounded=true;}
+      const c=camera.position, feet=c.y-1.65;                          // feet height (jumping clears low props)
+      for(const b of colliders){
+        // QA: height band — ignore boxes entirely above the head (door headers!)
+        // and boxes below the knee (a 23cm register must not be a wall)
+        if(b.min.y>feet+1.7||b.max.y<feet+0.45)continue;
+        if(c.x>b.min.x-R&&c.x<b.max.x+R&&c.z>b.min.z-R&&c.z<b.max.z+R){
+          const px=Math.min(c.x-(b.min.x-R),(b.max.x+R)-c.x), pz=Math.min(c.z-(b.min.z-R),(b.max.z+R)-c.z);
+          if(px<pz)c.x+=(c.x-(b.min.x+b.max.x)/2>0?px:-px); else c.z+=(c.z-(b.min.z+b.max.z)/2>0?pz:-pz);
+        }
+      }
+    }
+    renderer.render(scene,camera);
+  })();
+}
+</script>
+</body>
+</html>

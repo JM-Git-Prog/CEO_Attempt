@@ -238,3 +238,102 @@ The system always generates fresh meshes per photo (no reuse lookup). The existi
 3. FOR ALL pipeline manifest instances, serializing to JSON (sorted keys, UTF-8) then deserializing SHALL produce a structurally equal manifest
 4. FOR ALL depth maps saved as NumPy .npy files, np.save followed by np.load SHALL produce bit-identical float32 arrays
 5. THE Asset_Registry JSON format SHALL use sorted keys, 2-space indentation, and UTF-8 encoding for human readability and deterministic diffs across sessions
+
+---
+
+## Corrective V15 Authority Tranche
+
+This tranche is an additive correction to the historical V14 requirements. Requirements 1–15 remain preserved as implementation history. For `?v=15`, Requirements 16–22 below take precedence wherever a V14 requirement would allow photo-derived or neural geometry, camera estimates, browser logic, or compiler logic to bypass the solved planning authority. This correction does not alter the behavior or release record of `?v=14`.
+
+### Requirement 16: Evidence Boundary and FloorPlanV11 Intent
+
+**User Story:** As a user, I want photographs and neural reconstructions to inform the world without becoming unvalidated spatial authority, so that the published result is coherent, reproducible, and safe to compile.
+
+#### Acceptance Criteria
+
+1. THE V15 pipeline SHALL treat the Source_Image, segmentation masks, depth maps, neural meshes, room plates, semantic labels, and all other neural outputs as evidence or asset candidates only; none of them SHALL directly authorize final room dimensions, collision geometry, object transforms, openings, circulation, or camera transforms.
+2. WHEN photo evidence implies architectural or furnishing layout, THE pipeline SHALL express that evidence as FloorPlanV11-compatible intent with explicit provenance, confidence, and plan revision before any world is built.
+3. THE pipeline SHALL reject publication when the intent provenance revision or approved plan revision is zero, missing, synthetic-placeholder-only, or not traceable to the submitted evidence and approval decision.
+4. FOR `?v=15`, any V14 behavior that back-projects evidence directly into final authoritative transforms SHALL be treated as a proposal generator only and SHALL pass through the V15 solve chain before publication.
+5. THE pipeline SHALL retain enough evidence-to-intent linkage to explain which photo or neural observation proposed each approved room, opening, object, asset, and camera target without allowing that evidence to override solved constraints.
+
+### Requirement 17: Mandatory Solve Chain and Canonical WorldContract
+
+**User Story:** As a developer, I want one deterministic authority chain from approved intent to a hash-bound contract, so that every consumer receives the same validated world.
+
+#### Acceptance Criteria
+
+1. EVERY publishable V15 world SHALL execute this dependency order without bypass: `solve_explicit_plan` → normalization → validation → immutable `CameraContract` construction → constrained `SceneGraph` construction → `build_world_contract` → `solve_relationships` → canonical serialization and hashing of the final `WorldContract`.
+2. IF normalization or validation changes plan content, THEN the changed plan SHALL receive a new nonzero revision and SHALL be validated again before downstream construction.
+3. ONCE created for a solve attempt, THE `CameraContract` SHALL be immutable; downstream stages and consumers SHALL neither mutate it nor substitute an independently inferred camera.
+4. THE constrained `SceneGraph` SHALL contain only nodes and relationships admitted by the approved normalized plan and SHALL carry solved transforms rather than raw photo-space transforms.
+5. `build_world_contract` and `solve_relationships` SHALL operate on the same plan revision, immutable camera, and constrained scene graph; a revision mismatch SHALL fail closed.
+6. THE final `WorldContract` hash SHALL be computed from a deterministic canonical serialization after relationship solving, and the hash SHALL bind the plan revision, camera, room authority, instances, transforms, relationships, materials, physics, and approved asset bindings.
+7. NO browser payload, compiler plan, sidecar, final object event, or published artifact SHALL claim final status until the canonical hash-bound `WorldContract` exists and all V15 gates pass.
+
+### Requirement 18: Parametric Room Authority and Optional Depth Reference
+
+**User Story:** As a user, I want the approved plan to define architecture and collision while depth reconstruction remains optional visual evidence, so that the room cannot contradict its own floor plan.
+
+#### Acceptance Criteria
+
+1. THE parametric room generated from the approved normalized Plan SHALL be the sole authority for architectural dimensions, walls, floor, ceiling, openings, room extents, navigable boundaries, and architectural collision in V15.
+2. A depth-derived room GLB MAY be attached as an optional reference visualization only; when present it SHALL be labeled non-authoritative, SHALL have collision disabled, and SHALL NOT contribute room dimensions, openings, object placement, camera placement, navigation bounds, or physics.
+3. THE depth-derived reference SHALL be omitted rather than promoted when it cannot be aligned within the solved room extents or when its provenance, units, or coordinate frame cannot be verified.
+4. THE browser and compiler SHALL render and compile the authoritative parametric room even when no depth GLB exists or when the depth GLB is rejected.
+5. THE pipeline SHALL fail publication if more than one source claims architectural or collision authority for the same room element.
+
+### Requirement 19: Shared Consumer Authority and Approved Assets
+
+**User Story:** As a developer, I want the browser and UPBGE compiler to consume the same solved camera, dimensions, transforms, and verified assets, so that preview and compiled world cannot drift.
+
+#### Acceptance Criteria
+
+1. THE V15 browser payload and UPBGE compiler plan SHALL derive exclusively from the same canonical hash-bound `WorldContract` and its immutable `CameraContract`.
+2. THE browser and UPBGE paths SHALL NOT independently estimate, default, rescale, clamp, rotate, offset, or otherwise replace room dimensions, object transforms, opening transforms, or camera values.
+3. EVERY real GLB used in a final V15 world SHALL resolve through an `ApprovedAsset(path, sha256, triangle_count)` registry binding with a nonempty path, a verified SHA-256 digest, and a positive triangle count.
+4. THE exact `ApprovedAsset` binding SHALL be passed to both the compiler plan and its sidecar, and both SHALL carry the canonical `WorldContract` hash.
+5. EACH approved GLB SHALL be normalized to its contract dimensions exactly once before consumer derivation; neither browser nor compiler SHALL perform a second normalization.
+6. THE asset binding gate SHALL reject missing files, digest mismatches, nonpositive triangle counts, duplicate/conflicting registry bindings, and sidecar/compiler-plan disagreement.
+7. MATERIAL bindings SHALL resolve to verifiable GLB materials or approved material records; a mesh with geometry but no verifiable material or texture pass SHALL be labeled honestly degraded and SHALL NOT be presented as photoreal or fully materialized.
+
+### Requirement 20: Hard Pre-Publication Gates
+
+**User Story:** As a release owner, I want objective gates before anything is called final, so that structurally invalid or cross-runtime-divergent worlds cannot be published.
+
+#### Acceptance Criteria
+
+1. BEFORE final publication, THE pipeline SHALL pass a provenance gate proving nonzero evidence provenance revision and nonzero approved plan revision with an unbroken evidence → intent → plan → contract chain.
+2. BEFORE final publication, THE pipeline SHALL pass an extent-containment gate proving every authoritative room element, opening, collision volume, solved object extent, and valid camera point lies within its permitted solved bounds and tolerances.
+3. BEFORE final publication, THE pipeline SHALL pass overlap, opening, and circulation gates proving forbidden solid overlaps are absent, openings remain unoccluded and attached to valid hosts, and required circulation paths meet configured clearance.
+4. BEFORE final publication, THE pipeline SHALL pass a camera-interior-validity gate proving the immutable camera origin lies in navigable interior space, outside collision solids, with a valid near/far range and a target or forward ray that observes the solved interior.
+5. BEFORE final publication, THE pipeline SHALL pass asset and material binding gates for every final real mesh and every material claim.
+6. BEFORE final publication, THE pipeline SHALL pass browser/compiler parity proving both payloads carry the same canonical `WorldContract` hash and equivalent contract-derived camera, room dimensions, instance transforms, asset bindings, and material bindings.
+7. FAILURE of any gate SHALL prevent final publication, UPBGE compile release, final-status events, and release qualification; the system MAY expose diagnostics or an explicitly provisional preview.
+8. EACH gate result SHALL be recorded with the canonical contract hash, plan revision, pass/fail state, and focused failure details sufficient to identify the offending node or binding.
+
+### Requirement 21: Event Finality and Hash Binding
+
+**User Story:** As a client, I want events to state whether transforms are provisional or solved, so that I never mistake intermediate neural placement for the final world.
+
+#### Acceptance Criteria
+
+1. EVERY object event emitted before canonical contract creation SHALL be explicitly marked `provisional` and SHALL NOT claim a canonical contract hash or final transform authority.
+2. EVERY event marked `final` SHALL contain transforms copied from the solved `WorldContract`, the nonzero plan revision, and the exact canonical `WorldContract` hash.
+3. THE pipeline SHALL reject or downgrade an attempted final event when its transform, asset binding, material binding, camera reference, plan revision, or contract hash differs from the canonical contract.
+4. EVENT ordering SHALL ensure that a client can never observe a final object event before the corresponding hash-bound contract and passing gate report are available.
+5. Replayed, SSE, WebSocket, browser, sidecar, and compiler event representations SHALL preserve the same provisional/final classification and hash binding.
+
+### Requirement 22: V15 Coexistence and Release Qualification
+
+**User Story:** As a user, I want a corrected V15 interface without losing stable access to V14 or earlier releases, and I want release evidence to come from clean reproducible sessions.
+
+#### Acceptance Criteria
+
+1. THE corrected interface SHALL be accessible at `?v=15`, SHALL become the default when no `v` is supplied, and SHALL provide clear navigation links among retained interface versions.
+2. `?v=14` SHALL remain accessible and behaviorally stable, and V3–V13 SHALL remain preserved at their existing query versions.
+3. V15 release qualification SHALL begin with a brand-new empty session and a fresh zero-state smoke that traverses Brief, Plan, Blockout, Canon, World, and Compare where applicable; restored, reused, or previous-version sessions SHALL NOT qualify a release.
+4. AFTER the zero-state smoke passes, qualification SHALL run five successful headless Playwright rounds followed by five successful human-like Playwright rounds against fresh eligible sessions, with contract-hash parity and all V15 gates checked in every round.
+5. IF any smoke or Playwright round fails, THEN that session SHALL be retained only as diagnostic evidence, SHALL NOT count toward the required rounds, and qualification SHALL restart from a new empty session after correction.
+6. Session `2f1c92dc` SHALL be recorded as diagnostic-only evidence and SHALL never be cited as V15 release, parity, smoke, or qualification evidence.
+7. V15 SHALL NOT be declared complete or release-qualified until all C0–C7 corrective tasks and their focused tests are complete and one uninterrupted clean qualification sequence satisfies Criteria 22.3–22.5.
