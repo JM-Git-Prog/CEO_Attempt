@@ -773,6 +773,10 @@ function buildWorld(){
 
   addProps();
 
+  // 2026-07-31 dev hook (the sanctioned window-hook pattern): whole-room QA needs the
+  // camera/renderer for canon-pose captures — never dynamic-import module state.
+  window.__v15={get scene(){return scene},get camera(){return camera},get renderer(){return renderer},get plan(){return LOCKED}};
+
   controls=new PointerLockControls(camera,renderer.domElement);
   controls.pointerSpeed=0.5;
   const door=p.doors[0], [dx,dz]={N:[door.offset_m,1.4],S:[door.offset_m,D-1.4],

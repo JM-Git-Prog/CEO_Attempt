@@ -1,4 +1,6 @@
 # THE LINE — as-built architecture of the v15_Fable proving line
+**VERSION 1 · validated 2026-07-31** — version manifest: `CEO-3D-World/workflows/THE-LINE-VERSIONS.json`;
+snapshots: `CEO-3D-World/workflows/line-history/`. This live file is ALWAYS the newest validated version.
 **Recorded 2026-07-31 (the crash-night rebuild).** This documents what IS RUNNING.
 Authority note: `00-Vision-Index.md` says which doc owns what — doc 30 owns *what to
 build next*, `BUILD-RULES.md` owns *how 5173 code is written*. This file owns neither;
