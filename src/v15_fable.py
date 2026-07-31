@@ -1332,7 +1332,7 @@ async def line_run(sid: str, slug: str, lane: str = ""):
     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
     if lane == "trellis":
         import sys as _sys
-        cmd = [_sys.executable, "tools/trellis-prop.py", slug]
+        cmd = [_sys.executable, "-u", "tools/trellis-prop.py", slug]  # -u: unbuffered — a silent log hid the Q6_K failure for 2 min
     else:
         cmd = ["node", "tools/make-prop.mjs", e["subject"]]
     proc = subprocess.Popen(cmd, cwd=str(CEO_3D), stdout=log, stderr=subprocess.STDOUT,

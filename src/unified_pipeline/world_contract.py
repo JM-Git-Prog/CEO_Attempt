@@ -18,6 +18,8 @@ from dataclasses import dataclass, field, fields
 from enum import Enum
 from typing import Any
 
+from .camera_contract import CameraContract
+
 
 # ---------------------------------------------------------------------------
 # Supporting enums and value types
@@ -316,6 +318,7 @@ class WorldContract:
     # Binding references
     plan_revision: str = ""           # revision identifier (e.g. "rev-3")
     camera_hash: str = ""             # SHA-256 of the CameraContract
+    camera: CameraContract | None = None  # exact immutable projection; no consumer inference
     room_shell_ref: str = ""          # path/hash reference to room shell mesh
 
     # Instances
@@ -339,6 +342,7 @@ class WorldContract:
         return {
             "plan_revision": self.plan_revision,
             "camera_hash": self.camera_hash,
+            "camera": self.camera.to_dict() if self.camera is not None else None,
             "room_shell_ref": self.room_shell_ref,
             "instances": [inst.to_dict() for inst in self.instances],
             "relationships": [rel.to_dict() for rel in self.relationships],
@@ -354,6 +358,10 @@ class WorldContract:
         return cls(
             plan_revision=str(data.get("plan_revision", "")),
             camera_hash=str(data.get("camera_hash", "")),
+            camera=(
+                CameraContract.from_dict(data["camera"])
+                if data.get("camera") is not None else None
+            ),
             room_shell_ref=str(data.get("room_shell_ref", "")),
             instances=tuple(
                 ObjectInstance.from_dict(d) for d in data.get("instances", [])

@@ -287,7 +287,7 @@ class WorldContractAssembler:
         )
         trace.append("constrained_scene_graph")
 
-        draft = self._build_contract(graph, room, contract_id, created_at)
+        draft = self._build_contract(graph, room, camera, contract_id, created_at)
         trace.append("world_contract")
         solved_contract = self._solve_relationships(draft, room)
         trace.append("relationship_solve")
@@ -536,6 +536,7 @@ class WorldContractAssembler:
     def _build_contract(
         graph: ConstrainedSceneGraph,
         room: ParametricRoomResult,
+        camera: CameraContract,
         contract_id: str | None,
         created_at: str,
     ) -> WorldContract:
@@ -560,6 +561,7 @@ class WorldContractAssembler:
         return WorldContract(
             plan_revision=f"rev-{graph.plan_revision}",
             camera_hash=graph.camera_hash,
+            camera=camera,
             room_shell_ref=f"parametric-room:sha256:{graph.room_authority_hash}",
             instances=graph.instances,
             relationships=graph.relationships,

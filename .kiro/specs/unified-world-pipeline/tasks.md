@@ -228,59 +228,59 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - Preserve finality across SSE, WebSocket, reconnect/replay, sidecars, and compiler events; reject or downgrade stale/mismatched events
   - _Requirements: 19.5, 19.6, 27.2_
 
-- [-] 6.4 Write tests for solve chain, gates, and finality
+- [x] 6.4 Write tests for solve chain, gates, and finality
   - Test deterministic post-relationship hash, revision mismatch rejection, exactly-once normalization, no consumer drift, and dual-authority rejection
   - Test every gate pass/fail path plus final event ordering, reconnect/replay, stale-response cancellation, and hash mismatch downgrade
   - _Requirements: 19.2, 19.3, 20.1–20.10_
 
 ### Wave 7: Engine Compilation
 
-- [~] 7.1 Implement BrowserCompiler (Three.js)
+- [x] 7.1 Implement BrowserCompiler (Three.js)
   - Create `src/unified_pipeline/compilers/browser.py` deriving Three.js scene from WorldContract
   - GLTFLoader, PBR metallic-roughness, orbit + first-person controls, progressive SSE loading
   - _Requirements: 21.1, 21.4_
 
-- [~] 7.2 Implement GodotCompiler
+- [x] 7.2 Implement GodotCompiler
   - Create `src/unified_pipeline/compilers/godot.py` emitting Godot 4 project: .tscn, physics bodies (RigidBody3D/StaticBody3D), first-person controller, grabbing, door hinges, lighting
   - _Requirements: 21.2, 21.4, 21.6_
 
-- [~] 7.3 Implement UPBGECompiler
+- [x] 7.3 Implement UPBGECompiler
   - Create `src/unified_pipeline/compilers/upbge.py` emitting .blend with player controller, character physics, logic bricks
   - _Requirements: 21.3, 21.4, 21.6_
 
-- [~] 7.4 Implement compiler selection and post-compile parity gate
+- [x] 7.4 Implement compiler selection and post-compile parity gate
   - Create `src/unified_pipeline/compilers/parity.py` verifying browser and selected engine payloads carry the same canonical WorldContract hash, revision, camera, room dimensions, solved instance transforms, asset bindings, and material bindings
   - Reject independent consumer defaults, clamps, rescaling, rotation/offset substitution, camera inference, or second asset normalization
   - Parity SHALL pass after compilation and before any final event or publication
   - _Requirements: 20.8, 21.4, 21.5_
 
-- [~] 7.5 Write tests for compilation and parity
+- [x] 7.5 Write tests for compilation and parity
   - Test each compiler produces valid output from a test WorldContract
   - Verify parity gate catches hash mismatches
   - _Requirements: 21.4, 20.8_
 
 ### Wave 8: Walkable World and Interaction
 
-- [~] 8.1 Implement first-person controller for browser
+- [-] 8.1 Implement first-person controller for browser
   - Extend V14 Three.js viewer with: WASD movement, mouse look (PointerLock), gravity, collision with static bodies, safe spawn position selection
   - _Requirements: 22.1, 21.6_
 
-- [~] 8.2 Implement object interaction system
+- [-] 8.2 Implement object interaction system
   - Door swing (hinge physics), object grab/release (raycasting + constraint), push/topple (impulse application)
   - _Requirements: 22.2, 22.3, 22.4_
 
-- [~] 8.3 Implement lighting from WorldContract
+- [-] 8.3 Implement lighting from WorldContract
   - Place light fixtures at contract positions, set intensity/color/temperature from Scene_Canon-derived values
   - Compute shadows from each light source
   - _Requirements: 22.5_
 
-- [~] 8.4 Implement three-view identity and Canon fidelity comparison
+- [-] 8.4 Implement three-view identity and Canon fidelity comparison
   - Create `src/unified_pipeline/canon_compare.py` comparing Plan-derived Blockout/blueprint, Scene_Canon, and first-person World render per stable UUID and region
   - GREEN requires shell/opening truth, every requested object, placement/dimensions/heights, zero forbidden overlap, and palette/material fidelity; presence/order alone is insufficient
   - Store the verdict as hash-bound evidence and block final QA on red/amber according to configured release policy
   - _Requirements: 22.6_
 
-- [~] 8.5 Write interaction and walkability tests
+- [-] 8.5 Write interaction and walkability tests
   - Test spawn safety, collision response, door swing, grab/release
   - _Requirements: 22.1, 22.2, 22.3, 22.4_
 

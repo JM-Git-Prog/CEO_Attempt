@@ -9,6 +9,7 @@ the distinct schemas are not treated as hash-equivalent.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 import uuid
 from dataclasses import replace
@@ -89,6 +90,11 @@ def _assembled(tmp_path: Path):
     return object_id, camera, plan, room, asset, intent, result
 
 
+def _gate_plan_hash(plan) -> str:
+    """Expand the unified Plan fingerprint into the gate schema's SHA-256 field."""
+    return hashlib.sha256(plan.revisions[-1].plan_hash.encode("utf-8")).hexdigest()
+
+
 def _gate_contract(object_id, camera, plan, result) -> GateWorldContract:
     modern = result.contract.instances[0]
     width, depth, height = plan.room_dimensions
@@ -104,7 +110,7 @@ def _gate_contract(object_id, camera, plan, result) -> GateWorldContract:
             interface_version=16,
             profile_id="unified-v16",
             plan_revision=3,
-            plan_hash=plan.revisions[-1].plan_hash,
+            plan_hash=_gate_plan_hash(plan),
             scene_graph_hash=result.scene_graph.room_authority_hash,
             camera_contract_id="camera-1",
             camera_contract_hash=result.contract.camera_hash,
@@ -167,8 +173,8 @@ def _gate_contract(object_id, camera, plan, result) -> GateWorldContract:
             up=Vector3(x=camera.up[0], y=camera.up[1], z=camera.up[2]),
             vertical_fov_deg=camera.vfov,
             aspect_ratio=camera.aspect,
-            image_width_px=camera.raster[0],
-            image_height_px=camera.raster[1],
+            image_width_px=camera.raster_width,
+            image_height_px=camera.raster_height,
             near_plane_m=camera.near,
             far_plane_m=camera.far,
         ),
@@ -197,7 +203,7 @@ def _gate_context(object_id, plan, room, result) -> StructuralGateContext:
             ProvenanceNode("raw-evidence", "evidence", "1" * 64),
             ProvenanceNode("accepted-intent", "intent", "2" * 64, "raw-evidence"),
             ProvenanceNode(
-                "approved-plan", "approved_plan", plan.revisions[-1].plan_hash,
+                "approved-plan", "approved_plan", _gate_plan_hash(plan),
                 "accepted-intent", 3,
             ),
             ProvenanceNode("contract", "world_contract", canonical_hash, "approved-plan", 3),
