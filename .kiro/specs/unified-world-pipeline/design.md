@@ -2,7 +2,7 @@
 
 ## Overview
 
-This design defines the complete architecture for the Unified World Pipeline — a marathon-executable system that transforms natural-language conversation into a walkable, interactive 3D world with persistent GAME and REAL mode behaviors, compounding asset warehouse, and engine-neutral output. It reuses existing V14 infrastructure where complete and builds new stages for conversation, planning, approval gates, architectural finishing, mode overlays, and unified orchestration.
+This design defines the complete architecture for the Unified World Pipeline — a marathon-executable system that transforms natural-language conversation into a walkable, interactive 3D world with persistent GAME and REAL mode behaviors, a compounding asset warehouse, and engine-neutral output. It reuses proven V14 infrastructure only where it preserves the V15 authority lessons: the approved Metric_Plan owns space, neural outputs remain evidence or asset candidates, and no result is final before a gated canonical WorldContract exists.
 
 ## Architecture
 
@@ -33,7 +33,7 @@ This design defines the complete architecture for the Unified World Pipeline —
                              ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    WORLD ASSEMBLY                                     │
-│  Room Shell + Finish Pass + Physics + WorldContract + Gates          │
+│ Parametric Room + Finish + Physics + WorldContract + Gates          │
 └────────────────────────────┬────────────────────────────────────────┘
                              │
                              ▼
@@ -108,19 +108,24 @@ Mesh Generation ──► [HUMAN GATE: approve shape]
 Materials (Pass 1 immediate, Pass 2 background)
     │
     ▼
-Depth + Room Shell + Finish Pass
+Authoritative Parametric Room + Finish Pass
+    │
+    ├── Optional aligned depth appearance/reference (non-colliding, never architectural authority)
     │
     ▼
 Physics Classification + Settle
     │
     ▼
-WorldContract Assembly ──► Hash + Bind
+WorldContract Assembly ──► Solve Relationships ──► Canonical Hash
     │
     ▼
-Validation Gates (provenance, containment, overlap, circulation, camera, asset, material, parity)
+Structural Publication Gates (provenance, containment, overlap/openings/circulation, camera, asset, material)
     │
     ▼
 Engine Compilation (browser + selected engine)
+    │
+    ▼
+Compiler Parity Gate ──► Final Event Publication
     │
     ▼
 Walkable World ──► [HUMAN GATE: final QA]
@@ -166,11 +171,13 @@ The LLM does not free-form emit metric coordinates. It selects from constrained 
 - This is the mitigation for unconstrained LLM spatial emission failures
 
 ### Reuse Strategy
-Existing V14 infrastructure is reused where complete:
+Existing V14 infrastructure is reused only behind unified adapters and the corrected authority boundary:
 - Hunyuan3D generator, Trellis2 generator, placeholder generator
-- VRAM manager, depth estimator, physics classifier, physics settle
+- Depth estimator as optional evidence/appearance input only; never room geometry or collision authority
+- Physics classifier and settle pass operating on Plan-derived architecture
 - Material processor (two-pass), semantic labeler
-- Asset warehouse, room shell reconstructor
+- Asset warehouse as append-only catalog; no implicit pre-generation substitution
+- Existing parametric Plan/solver/compiler path for authoritative room architecture
 
 New infrastructure is built for:
 - Conversation engine, Brief/Art_Bible generation
@@ -178,10 +185,66 @@ New infrastructure is built for:
 - Blockout renderer
 - Approval gate system
 - Finish pass (architectural completion)
-- WorldContract assembly with hash binding
-- Validation gates
+- WorldContract assembly with relationship solving and hash binding
+- Structural and post-compile parity gates
 - GAME/REAL/Toggle mode system
-- Unified orchestrator
+- Unified orchestrator with durable checkpoints, revision invalidation, and replay
+- Resource arbiter covering Ollama, every ComfyUI model/service, and host RAM
+- Cross-authority Canon honesty report
+
+## Correctness Properties
+
+### Property 1: Single spatial authority
+**Validates: Requirements 5.3, 6.3, 19.1**
+Only the approved normalized Metric_Plan may authorize room dimensions, openings, navigation, collision, object transforms, and camera derivation.
+
+### Property 2: Evidence boundary
+**Validates: Requirements 3.2, 8.2, 14.1, 16.1**
+Dream, Canon, masks, depth, neural meshes, and room plates are provisional evidence or appearance candidates; they cannot rewrite solved geometry.
+
+### Property 3: Mandatory solve chain
+**Validates: Requirements 5.5, 6.3, 19.1, 19.2**
+The order is solve → normalize → validate → immutable CameraContract → constrained SceneGraph → WorldContract → relationship solve → canonical serialization/hash. Any mutation creates a new revision and repeats validation.
+
+### Property 4: Three-view identity
+**Validates: Requirements 7.2, 8.2, 22.6**
+Blockout/blueprint, Scene_Canon framing, and first-person world derive from the same Plan and CameraContract. Canon QA checks shell/openings, all objects, rotation-aware extents, dimensions/heights, overlap, palette/material intent, and prompt fidelity.
+
+### Property 5: No consumer drift
+**Validates: Requirements 19.3, 21.4**
+Browser, Godot, and UPBGE never infer, clamp, rescale, rotate, offset, default, or normalize authoritative values independently. Approved assets are normalized exactly once.
+
+### Property 6: Finality
+**Validates: Requirements 19.4, 19.5, 19.6**
+Pre-contract events are provisional. Final events require the exact nonzero revision, canonical hash, solved transforms, approved asset/material bindings, and passing gate report.
+
+### Property 7: Stable identity
+**Validates: Requirements 2.4, 9.3, 26.2**
+UUID/category bindings survive segmentation, approval, regeneration, compilation, replay, and warehouse cataloging; list index and fuzzy noun matching are non-authoritative.
+
+### Property 8: Measured-space transform
+**Validates: Requirements 5.3, 6.2, 14.3**
+Evidence alignment may use one camera-anchored uniform similarity transform plus translation-to-fit; per-axis or min-max normalization is forbidden.
+
+## Durable Orchestration and Ownership
+
+- Every stage writes an atomic checkpoint containing input hashes, output hashes, plan revision, external job ID, approval revision, and completion state.
+- Resume reconciles external jobs and is idempotent; it never blindly resubmits pending work. A newer revision cancels stale responses and invalidates all dependent artifacts and approvals.
+- One durable worker lease and one approval writer own each session. Watched-server reloads cannot erase ownership or create duplicate workers.
+- Superseded artifacts are archived with lineage rather than overwritten or deleted. Rejections and unresolved flags block downstream stages until explicitly resolved.
+- The resource arbiter serializes Ollama, Dream/Canon FLUX, SAM, edit/inpaint, depth, Hunyuan, Trellis, painting, and all ComfyUI instances; it owns unload, OOM recovery, stall handling, and host-RAM thresholds.
+
+## Error Handling
+
+- **Fail closed:** revision/hash mismatch, dual room authority, stale approval, invalid provenance, unsafe camera, forbidden overlap, opening/circulation failure, asset digest failure, material dishonesty, or compiler parity failure blocks final publication.
+- **Degrade honestly:** unavailable optional depth reference, Pass 2 material delay, or non-authoritative visual enhancement failure may continue only with explicit degraded labels.
+- **Diagnostic only:** failed sessions and partial qualification rounds are retained for debugging but never count as release evidence.
+
+## Testing Strategy
+
+- Fast tests cover canonical hash/revision rejection, CameraContract immutability, Plan containment/circulation, approval invalidation, fallback order, complete GPU arbitration, no-min-max alignment, exactly-once asset normalization, event ordering/replay, stale-response cancellation, and compiler drift.
+- Integration tests exercise crash/restart at every external-job boundary and prove idempotent resume with no duplicate GPU submission.
+- Qualification starts from a fresh zero-state session, records exact stage artifact hashes/source fingerprints, distinguishes mocked from live evidence, and restarts after any failure.
 
 ## File Structure
 

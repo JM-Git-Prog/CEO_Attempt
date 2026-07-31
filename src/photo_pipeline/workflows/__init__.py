@@ -17,6 +17,7 @@ _WORKFLOW_DIR = Path(__file__).parent
 AVAILABLE_WORKFLOWS: dict[str, str] = {
     "sam_segment": "sam_segment.json",
     "flux_inpaint": "flux_inpaint.json",
+    "flux_txt2img": "flux_txt2img.json",
     "moge2_depth": "moge2_depth.json",
     "depth_anything3": "depth_anything3.json",
     "hunyuan3d_gen": "hunyuan3d_gen.json",

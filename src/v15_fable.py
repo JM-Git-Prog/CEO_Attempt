@@ -42,15 +42,26 @@ PLAN_SCHEMA_HINT = """Return ONLY JSON, no prose, exactly this shape:
  "width_m": 6.0, "depth_m": 8.0, "height_m": 3.0,
  "vibe": {"era": "1970s", "style": "worn Americana", "condition": "lived-in"},
  "palette": {"wall": "#d8cfc0", "floor": "#7a5c3e", "accent": "#b33a2f", "mood": "warm"},
- "doors":   [{"wall": "S", "offset_m": 3.0, "width_m": 1.0}],
- "windows": [{"wall": "E", "offset_m": 2.0, "width_m": 1.6, "sill_m": 0.9}],
+ "shell": {"floor": "concrete", "walls": "drywall", "ceiling": "flat", "trim": "baseboard"},
+ "doors":   [{"wall": "S", "offset_m": 3.0, "width_m": 1.0, "type": "standard"}],
+ "windows": [{"wall": "E", "offset_m": 2.0, "width_m": 1.6, "sill_m": 0.9, "type": "standard"}],
+ "pillars": [],
  "objects": [{"name": "bed", "category": "object", "x_m": 1.5, "z_m": 2.0, "w_m": 1.6, "d_m": 2.0, "h_m": 0.6, "rot_deg": 0}]}
 Walls are N,S,E,W. offset_m measures along the wall from its left end.
+shell.floor: concrete|wood-plank|tile|metal-plate|carpet. shell.walls: drywall|metal-siding|brick|concrete-block|wood-panel.
+shell.ceiling: flat|steel-trusses|exposed-rafters|corrugated-metal. shell.trim: baseboard|baseboard+crown|none.
+door type: standard|roll-up|fire|sliding-gate|double. window type: standard|loading-dock.
+pillars: support columns as [{"x_m": 2.0, "z_m": 4.0}] when the space needs them.
 x_m,z_m is the object's CENTER from the room's north-west corner. 3-9 objects.
+CRITICAL: the JSON above is a SHAPE EXAMPLE ONLY — every value (objects, shell,
+doors, windows) MUST come from the room description you were given. If the room
+is a garage, there is no bed. Name the objects the description names.
 category is one of: object (interactive movables: chair, bed, TV),
 appliance (functional machines: stove, fridge), fixture (permanent: sink,
 counter, lamp), decoration (rug, painting, plant, mirror), clutter (tiny
-dressing: magazines, tissue box). Include 1-2 decorations and 1-2 clutter."""
+dressing: magazines, tissue box). Objects: ONLY what the description names, plus
+at most 1-2 small clutter items that FIT the room's purpose (a garage gets an oil
+can, never a rug)."""
 
 # taxonomy defaults by name (John's 2026-07-30 category system) — the sanitizer's
 # safety net when a planner omits or invents categories
@@ -94,15 +105,20 @@ def _llm_plan(prompt: str, variant_hint: str, model: str) -> dict | None:
             f"{OLLAMA}/api/generate",
             json={
                 "model": model,
+                "keep_alive": "10m",   # 2026-07-31: survive all 3 variant calls — a mid-sequence
+                                       # reload under render VRAM pressure lands on CPU and times out
                 "prompt": (
                     f"You are an architect. Design ONE room for: {prompt}\n"
                     f"Variation directive: {variant_hint}\n{PLAN_SCHEMA_HINT}"
                 ),
                 "format": "json",
                 "stream": False,
-                "options": {"temperature": 0.9, "num_predict": 700},
+                "options": {"temperature": 0.9, "num_predict": 1600},  # 2026-07-31: the shell/type/pillar
+                # schema outgrew 700 — a 7-object plan truncates mid-JSON and parses to fallback
             },
-            timeout=25.0,
+            timeout=75.0,  # 2026-07-31: 25s starved under GPU contention — a canon render on 8188
+                           # owns the GPU while plans generate, and llama3.1 needs ~7s idle but
+                           # 30-60s contended. Three straight fallback:procedural plans proved it.
         )
         return json.loads(r.json()["response"])
     except Exception:
@@ -175,6 +191,20 @@ _DEFAULT_SIZES = {  # w, d, h in meters — believable footprints per object fam
     "file cabinet": (0.5, 0.6, 1.3), "safe": (0.7, 0.7, 1.0), "plant": (0.5, 0.5, 1.3),
     "workbench": (2.0, 0.8, 0.95), "car": (1.9, 4.6, 1.4), "toolbox": (0.7, 0.4, 0.8),
     "shelf": (1.2, 0.4, 1.8), "barrel": (0.6, 0.6, 0.9),
+    "tire": (0.7, 0.7, 0.8), "crate": (0.9, 0.9, 0.9), "drum": (0.6, 0.6, 0.9),
+    "pallet": (1.2, 1.0, 0.15),
+}
+
+# 2026-07-31 (John): structural + finish elements are catalog citizens like props —
+# the planner proposes them, the census verifies what the photo shows, the world
+# renders them, the blueprint draws them. First entry of each tuple = the default.
+_SHELL_CATALOG = {
+    "floor":   ("wood-plank", "concrete", "tile", "metal-plate", "carpet"),
+    "walls":   ("drywall", "metal-siding", "brick", "concrete-block", "wood-panel"),
+    "ceiling": ("flat", "steel-trusses", "exposed-rafters", "corrugated-metal"),
+    "trim":    ("baseboard", "baseboard+crown", "none"),
+    "door_types":   ("standard", "roll-up", "fire", "sliding-gate", "double"),
+    "window_types": ("standard", "loading-dock"),
 }
 
 
@@ -210,15 +240,28 @@ def sanitize_plan(raw: dict, idx: int) -> dict:
             wall = str(o.get("wall", "S")).upper()
             wall = wall if wall in ("N", "S", "E", "W") else "S"
             length = w if wall in ("N", "S") else d
-            width = _clamp(o.get("width_m"), 0.7, 3.0, 1.0)
+            wmax = 4.2 if is_door else 3.0               # roll-up shipping doors are WIDE
+            width = _clamp(o.get("width_m"), 0.7, wmax, 1.0)
             off = _clamp(o.get("offset_m"), 0.3 + width / 2, length - 0.3 - width / 2, length / 2)
             item = {"wall": wall, "offset_m": round(off, 2), "width_m": round(width, 2)}
+            tkey = "door_types" if is_door else "window_types"
+            t = str(o.get("type", "")).lower().strip()
+            item["type"] = t if t in _SHELL_CATALOG[tkey] else _SHELL_CATALOG[tkey][0]
             if not is_door:
                 item["sill_m"] = _clamp(o.get("sill_m"), 0.4, h - 1.2, 0.9)
             out.append(item)
         return out
-    doors = _openings(p.get("doors"), True) or [{"wall": "S", "offset_m": round(w / 2, 2), "width_m": 1.1}]
+    doors = _openings(p.get("doors"), True) or [{"wall": "S", "offset_m": round(w / 2, 2), "width_m": 1.1, "type": "standard"}]
     windows = _openings(p.get("windows"), False)
+    sh = p.get("shell") if isinstance(p.get("shell"), dict) else {}
+    shell = {}
+    for key in ("floor", "walls", "ceiling", "trim"):
+        v = str(sh.get(key, "")).lower().strip()
+        shell[key] = v if v in _SHELL_CATALOG[key] else _SHELL_CATALOG[key][0]
+    pillars = []
+    for pl in (p.get("pillars") if isinstance(p.get("pillars"), list) else [])[:6]:
+        pillars.append({"x_m": round(_clamp(pl.get("x_m"), 0.4, w - 0.4, w / 2), 2),
+                        "z_m": round(_clamp(pl.get("z_m"), 0.4, d - 0.4, d / 2), 2)})
     objs = []
     for o in (p.get("objects") if isinstance(p.get("objects"), list) else [])[:12]:
         name = re.sub(r"[^a-z0-9 \-]", "", str(o.get("name", "prop")).lower()).strip()[:32] or "prop"
@@ -228,9 +271,13 @@ def sanitize_plan(raw: dict, idx: int) -> dict:
         oh = _clamp(o.get("h_m"), 0.02, h - 0.3, base[2])
         margin = max(ow, od) / 2 + 0.15
         cat = str(o.get("category", "")).lower()
+        cat = cat if cat in _CATEGORIES else _default_category(name)
+        if cat in ("clutter", "decoration") and any(kk in name for kk in _DEFAULT_SIZES):
+            cat = _default_category(name)   # 2026-07-31: a known physical family (tires, crates)
+                                            # is never mere dressing — the factory must mesh it
         objs.append({
             "name": name,
-            "category": cat if cat in _CATEGORIES else _default_category(name),
+            "category": cat,
             "x_m": round(_clamp(o.get("x_m"), margin, w - margin, w / 2), 2),
             "z_m": round(_clamp(o.get("z_m"), margin, d - margin, d / 2), 2),
             "w_m": round(ow, 2), "d_m": round(od, 2), "h_m": round(oh, 2),
@@ -268,7 +315,9 @@ def sanitize_plan(raw: dict, idx: int) -> dict:
     return {
         "name": str(p.get("name", f"variant {idx}"))[:48],
         "width_m": round(w, 2), "depth_m": round(d, 2), "height_m": round(h, 2),
-        "vibe": vibe, "palette": palette, "doors": doors, "windows": windows, "objects": objs,
+        "vibe": vibe, "palette": palette, "shell": shell, "pillars": pillars,
+        "skylight": bool(p.get("skylight")),
+        "doors": doors, "windows": windows, "objects": objs,
     }
 
 
@@ -306,6 +355,9 @@ _STOPWORDS = {"red", "blue", "green", "teal", "brown", "black", "white", "gold",
 
 def match_asset(name: str, category: str = "object") -> str | None:
     """Best warehouse slug by WHOLE-WORD noun overlap, category-compatible. None = placeholder."""
+    if category == "object":                # 2026-07-31: symmetry — the slug side derives its
+        category = _default_category(name)  # category from words; a generic plan side must too,
+                                            # or "workbench"(object) never matches workbench(fixture)
     words = {w for w in re.split(r"[\s\-]+", name.lower()) if len(w) >= 2 and w not in _STOPWORDS}
     if not words:
         return None
@@ -338,6 +390,12 @@ async def make_plans(body: dict):
         raw = _llm_plan(prompt, hint, model) if model else None
         engines.append(f"ollama:{model}" if raw is not None else "fallback:procedural")
         plans.append(sanitize_plan(raw if raw is not None else _fallback_plan(prompt, i + 1), i + 1))
+    if model:
+        try:  # 2026-07-31 one-GPU-user law: release llama's VRAM before the canon render —
+            #  a 14GB resident model + Z-Image = sysmem spill and a wedged [0%] render
+            httpx.post(f"{OLLAMA}/api/generate", json={"model": model, "keep_alive": 0}, timeout=8.0)
+        except Exception:
+            pass
     return {"plans": plans, "engines": engines, "elapsed_s": round(time.time() - t0, 1),
             "warehouse_assets": len(_warehouse_index())}
 
@@ -419,6 +477,7 @@ def _canon_prompt(plan: dict, user: str = "") -> str:
 async def make_canon(sid: str, roll: int = 0):
     if not re.fullmatch(r"[0-9a-f]{8}", sid):
         return JSONResponse({"error": "bad session"}, status_code=400)
+    _free_engine(8190)                                   # hotswap law: shop cache out before Z-Image in
     sdir = OUT_DIR / f"v15f_{sid}"
     plan_path = sdir / "plan.json"
     if not plan_path.exists():
@@ -787,11 +846,14 @@ async def reconcile(sid: str):
                         boxes[i] = bb
                 found[o["name"]] = i in boxes            # PROMPT-FIDELITY: is the asked-for object IN the picture?
                 prog.write_text(json.dumps({"done": n + 1, "total": len(targets), "current": o["name"], "found": found}))
-            for probe in ("window", "door"):             # SHELL census: does the photo ACTUALLY have these?
+            shell_boxes = {}
+            for probe in ("window", "door", "skylight", "support pillar", "roll-up door"):  # SHELL census: what does the photo ACTUALLY have?
                 prog.write_text(json.dumps({"done": len(targets), "total": len(targets),
                                             "current": f"checking the photo for {probe}s", "found": found}))
                 cut = await _run_sam(probe)
-                shell_found[probe] = bool(cut and _bbox(cut))
+                bb = _bbox(cut) if cut else None
+                shell_found[probe] = bool(bb)
+                shell_boxes[probe] = bb                  # kept: the wall it sits on is MEASURED below
     except Exception as exc:
         prog.write_text(json.dumps({"done": 0, "total": 0, "error": str(exc)}))
         return JSONResponse({"error": f"measurement failed: {exc}"}, status_code=502)
@@ -811,17 +873,38 @@ async def reconcile(sid: str):
     notes = []
     applied = 0
     if len(raw) >= 3:                                    # too few points = no honest layout
-        xs = [v["X"] for v in raw.values()]; zs = [v["Z"] for v in raw.values()]
-        x_lo, x_hi = min(xs), max(xs); z_lo, z_hi = min(zs), max(zs)
-        sx = (W - 1.2) / max(0.5, x_hi - x_lo); sz = (D - 1.2) / max(0.5, z_hi - z_lo)
+        # 2026-07-31 identical-views law (John): canon, blueprint and walkthrough must MATCH.
+        # (a) ONE global scale k calibrates the guessed camera (hfov/eye read ~2x far):
+        #     median of prior-width / projected-width across known object families.
+        ratios = []
+        for i, v in raw.items():
+            nm = plan["objects"][i]["name"].lower()
+            prior = next((s for kk, s in _DEFAULT_SIZES.items() if kk in nm), None)
+            if prior and v["w"] > 0.05:
+                ratios.append(prior[0] / v["w"])
+        k = sorted(ratios)[len(ratios) // 2] if ratios else 1.0
+        k = min(1.6, max(0.35, k))
+        # (b) Camera-anchored similarity transform — NEVER min-max: the workshop's 0.35m
+        #     projected depth band was once stretched 13.6x across the room (noise must
+        #     stay noise-sized), and its sign ran backward. The spawn IS the S door
+        #     looking N, so: x_m = door_x + X·k, z_m = spawn_z − Z·k — what the canon
+        #     camera saw is exactly what the first-person camera meets.
+        door0 = (plan.get("doors") or [{}])[0]
+        door_x = door0.get("offset_m", W / 2) if door0.get("wall", "S") == "S" else W / 2
+        pos = {i: {"x": door_x + v["X"] * k, "z": (D - 1.4) - v["Z"] * k} for i, v in raw.items()}
+        for ax, lo_lim, hi_lim in (("x", 0.6, W - 0.6), ("z", 0.6, D - 0.6)):
+            lo = min(p[ax] for p in pos.values()); hi = max(p[ax] for p in pos.values())
+            shift = (lo_lim - lo) if lo < lo_lim else ((hi_lim - hi) if hi > hi_lim else 0.0)
+            for p in pos.values():
+                p[ax] += shift                           # translate to fit; sanitize clamps residue
         for i, v in raw.items():
             o = plan["objects"][i]
-            o["x_m"] = round(0.6 + (v["X"] - x_lo) * sx, 2)
-            o["z_m"] = round(0.6 + (v["Z"] - z_lo) * sz, 2)
-            if 0.3 <= v["w"] <= 3.5:
-                o["w_m"] = round(v["w"], 2)
-            if 0.2 <= v["h"] <= 2.4:                     # photo sets HEIGHT too (bar tables, not knee benches)
-                o["h_m"] = round(v["h"], 2)
+            o["x_m"] = round(pos[i]["x"], 2)
+            o["z_m"] = round(pos[i]["z"], 2)
+            if 0.3 <= v["w"] * k <= 3.5:
+                o["w_m"] = round(v["w"] * k, 2)
+            if 0.2 <= v["h"] * k <= 2.4:                 # photo sets HEIGHT too (calibrated)
+                o["h_m"] = round(v["h"] * k, 2)
             applied += 1
         for i in raw:                                    # canon rooms hug their walls: snap near-wall objects flush
             o = plan["objects"][i]
@@ -834,6 +917,60 @@ async def reconcile(sid: str):
                 elif wall == "E": o["x_m"] = round(W - half - 0.18, 2)
                 elif wall == "N": o["z_m"] = round(half + 0.18, 2)
                 else:             o["z_m"] = round(D - half - 0.18, 2)
+        # (c) The window lives where the PHOTO put it — wall from its bbox third.
+        wb = shell_boxes.get("window") if shell_found.get("window") else None
+        if wb and plan.get("windows"):
+            wx = (wb[0] + wb[1]) / 2
+            wwall = "W" if wx < W_img / 3 else ("E" if wx > 2 * W_img / 3 else "N")
+            win0 = plan["windows"][0]
+            if win0.get("wall") != wwall:
+                notes.append(f"window moved to the {wwall} wall — measured from the photo")
+            win0["wall"] = wwall
+            win0["offset_m"] = round(D / 2, 2) if wwall in ("W", "E") else round(W * wx / W_img, 2)
+        # (d) structural census — geometric sanity gates so SAM3 semantic collisions
+        #     (a barrel is NOT a pillar) can't invent architecture the photo lacks.
+        def _overlaps_object(bb):
+            """SAM3 loves re-grabbing censused objects — reject any 'pillar' that mostly IS one."""
+            bx0, bx1, by0, by1 = bb
+            area = max(1, (bx1 - bx0) * (by1 - by0))
+            for (ox0, ox1, oy0, oy1) in boxes.values():
+                ix = max(0, min(bx1, ox1) - max(bx0, ox0))
+                iy = max(0, min(by1, oy1) - max(by0, oy0))
+                if ix * iy > 0.4 * area:
+                    return True
+            return False
+        pb = shell_boxes.get("support pillar")
+        if (pb and pb[3] > cy + 40 and pb[2] < cy - 60          # spans the horizon: floor-standing AND tall
+                and (pb[3] - pb[2]) >= 3.0 * (pb[1] - pb[0])    # pillar-slender
+                and not _overlaps_object(pb)):
+            pZ = 1.65 * f / (pb[3] - cy)
+            pX = ((pb[0] + pb[1]) / 2 - cx) * pZ / f
+            plan["pillars"] = [{"x_m": round(door_x + pX * k, 2), "z_m": round((D - 1.4) - pZ * k, 2)}]
+            notes.append("support pillar measured from the photo")
+        else:
+            plan["pillars"] = []                         # the census OWNS pillars: none proven = none
+        sk = shell_boxes.get("skylight")
+        if sk and sk[3] < cy:                            # a skylight lives entirely above the horizon
+            plan["skylight"] = True
+            notes.append("skylight measured from the photo")
+        else:
+            plan["skylight"] = False                     # ditto — stale census writes must not survive
+        rb = shell_boxes.get("roll-up door")
+        if rb and plan.get("doors") and (rb[1] - rb[0]) > 0.08 * W_img and (rb[1] - rb[0]) >= 0.9 * (rb[3] - rb[2]):
+            # 2026-07-31: a BACK-wall roll-up at depth is small in frame — the old 15%/1.2 gate
+            # rejected the warehouse canon's own door and llama's wrong wall stood uncorrected
+            rx_c = (rb[0] + rb[1]) / 2
+            rwall = "W" if rx_c < W_img / 3 else ("E" if rx_c > 2 * W_img / 3 else "N")
+            rolld = dict(plan["doors"][0])
+            rolld.update({"type": "roll-up", "wall": rwall,
+                          "offset_m": round((D if rwall in ("W", "E") else W) / 2, 2),
+                          "width_m": max(rolld.get("width_m", 1.0), 2.6)})
+            if rwall != "S":                             # spawn stays at a personnel entry on S —
+                entry = {"wall": "S", "offset_m": round(W / 2, 2), "width_m": 1.1, "type": "standard"}
+                plan["doors"] = [entry, rolld]           # doors[0] = spawn; the roll-up rides second
+            else:
+                plan["doors"] = [rolld]
+            notes.append(f"roll-up door on the {rwall} wall — measured from the photo")
     if not shell_found.get("window", True) and plan.get("windows"):
         notes.append(f"photo shows no windows — removed {len(plan['windows'])} invented window(s)")
         plan["windows"] = []
@@ -849,6 +986,12 @@ async def reconcile(sid: str):
         plan["palette"]["floor"] = "#%02x%02x%02x" % tuple(int(x) for x in fl)
         plan["palette"]["wall"] = "#%02x%02x%02x" % tuple(int(x) for x in wl)
         notes.append("floor/wall colors sampled from the photo")
+        spread = max(fl) - min(fl)                       # material CLASS measured, not guessed:
+        if spread < 16 and 60 < sum(fl) / 3 < 205:       # low-sat mid-grey floor = bare concrete
+            plan.setdefault("shell", {})["floor"] = "concrete"
+            notes.append("floor reads as bare concrete in the photo")
+        elif fl[0] > fl[2] + 22:                         # warm red-over-blue = wood
+            plan.setdefault("shell", {})["floor"] = "wood-plank"
     except Exception:
         pass
     new_plan = sanitize_plan(plan, 0)
@@ -897,6 +1040,7 @@ async def reconcile(sid: str):
                 "coverage": round(coverage, 2), "measured": len(raw), "of": len(targets),
                 "present": present, "missing": missing, "unplaced": unplaced,
                 "overlaps": overlaps_n, "notes": notes, "shell": shell_found,
+                "shell_boxes": shell_boxes,              # diagnostic: what SAM3 actually grabbed
                 "prompt_fidelity": round(prompt_fidelity, 2),
                 "order_inversions": inversions,
                 "objects": [{"i": i, "name": plan["objects"][i]["name"], "bbox": boxes.get(i),
@@ -1023,6 +1167,18 @@ import subprocess
 import sys
 
 PAINTSHOP_PY = Path(r"C:\Users\JohnM\ComfyUI-Installs\ComfyUI-PaintShop\.venv\Scripts\python.exe")
+
+
+def _free_engine(port: int) -> None:
+    """96GB-RAM hotswap law (John, 2026-07-31): freeing a ComfyUI's VRAM is cheap —
+    weights reload from the OS file cache in seconds, not from disk. Clear the OTHER
+    engine before heavy GPU work so the two factories never spill each other into
+    the 24GB card (tonight's wedge class: shop cache + Qwen job = 23.8GB thrash)."""
+    try:
+        httpx.post(f"http://127.0.0.1:{port}/free",
+                   json={"unload_models": True, "free_memory": True}, timeout=6.0)
+    except Exception:
+        pass
 RAW_INTAKE = CEO_3D / "worlds" / "warehouse" / "source" / "cutouts" / "raw"
 WAREHOUSE_OUT = CEO_3D / "worlds" / "warehouse" / "output"
 OBJ_CANON_DIR = CEO_3D / "worlds" / "warehouse" / "source" / "object-canon"
@@ -1065,11 +1221,16 @@ async def line_amodal(sid: str, slug: str, roll: int = 0):
         return JSONResponse({"error": "no cutout for this object"}, status_code=404)
     py = PAINTSHOP_PY if PAINTSHOP_PY.exists() else Path(sys.executable)
     seed = 20260730 + int(roll)
+    _free_engine(8190)                                   # hotswap law: shop cache out before Qwen in
     import asyncio
 
     def run():
+        # 2026-07-31: detach from the server console's signal group — a stray CTRL event
+        # killed a child at `import uuid` with exit 0xC000013A while the server lived on.
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
         return subprocess.run([str(py), str(CEO_3D / "tools" / "amodal-fill.py"), str(src), slug, str(seed)],
-                              cwd=str(CEO_3D), capture_output=True, text=True, timeout=560)
+                              cwd=str(CEO_3D), capture_output=True, text=True, timeout=560,
+                              creationflags=flags)
     log_f = OUT_DIR / f"v15f_{sid}" / f"amodal-{slug}.log"
     try:
         r = await asyncio.to_thread(run)
@@ -1155,8 +1316,12 @@ async def line_run(sid: str, slug: str):
     if not e:
         return JSONResponse({"error": "object not in this session's queue"}, status_code=404)
     log = open(OUT_DIR / f"v15f_{sid}" / f"line-{slug}.log", "ab")
+    # 2026-07-31: same detachment as the amodal spawn — a stray console CTRL event killed
+    # runner #4 silently mid-flight (log ends at SKIP render, no FAIL line, exit unseen).
+    flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
     proc = subprocess.Popen(["node", "tools/make-prop.mjs", e["subject"]],
-                            cwd=str(CEO_3D), stdout=log, stderr=subprocess.STDOUT)
+                            cwd=str(CEO_3D), stdout=log, stderr=subprocess.STDOUT,
+                            creationflags=flags)
     _RUNNER["proc"], _RUNNER["slug"] = proc, slug
     return {"ok": True, "pid": proc.pid, "subject": e["subject"]}
 
@@ -1299,6 +1464,66 @@ async def engine_nodes(pat: str = ""):
         except Exception as exc:
             out[label] = {"up": False, "error": str(exc)[:200]}
     return out
+
+
+@router.get("/line-activity")
+async def line_activity():
+    """2026-07-31 (John): which stage of THE LINE is firing RIGHT NOW — feeds the
+    live illuminator on the ComfyUI 'The Line' canvas. Derived from real state,
+    never guessed: engine queues + runner + newest session's flags."""
+    act = {"stage": "idle", "detail": ""}
+    try:
+        dirs = sorted((d for d in OUT_DIR.glob("v15f_*") if d.is_dir()),
+                      key=lambda d: d.stat().st_mtime, reverse=True)
+        sdir = dirs[0] if dirs else None
+        sid = sdir.name[5:] if sdir else None
+        act["sid"] = sid
+        prog = {}
+        if sdir and (sdir / "reconcile-progress.json").exists():
+            age = time.time() - (sdir / "reconcile-progress.json").stat().st_mtime
+            prog = json.loads((sdir / "reconcile-progress.json").read_text(encoding="utf-8"))
+            if age < 25 and "verdict" not in prog:
+                return {**act, "stage": "census", "detail": prog.get("current", "measuring")}
+        r8188 = {"queue_running": [], "queue_pending": []}
+        try:
+            async with httpx.AsyncClient(timeout=2.5) as cl:
+                r8188 = (await cl.get("http://127.0.0.1:8188/queue")).json()
+        except Exception:
+            pass
+        busy_8188 = bool(r8188.get("queue_running"))
+        p = _RUNNER.get("proc")
+        runner_busy = p is not None and p.poll() is None
+        slug = _RUNNER.get("slug")
+        if runner_busy:
+            d = WAREHOUSE_OUT / (slug or "")
+            if slug and (d / f"0-{slug}.glb").exists() and (d / "mesh-approval.json").exists():
+                return {**act, "stage": "paint", "detail": slug or ""}
+            if slug and (d / f"0-{slug}.glb").exists():
+                return {**act, "stage": "gate-mesh", "detail": slug or ""}
+            return {**act, "stage": "mesh", "detail": slug or ""}
+        if sdir and (sdir / "canon-pending.json").exists() and busy_8188:
+            return {**act, "stage": "canon", "detail": "Z-Image rendering"}
+        if busy_8188:
+            return {**act, "stage": "complete", "detail": "Qwen/SAM3 on 8188"}
+        if sdir and (sdir / "factory-queue.json").exists():
+            try:
+                q = json.loads((sdir / "factory-queue.json").read_text(encoding="utf-8"))
+                for e in (q if isinstance(q, list) else q.get("queue", [])):
+                    s2 = e.get("slug", "")
+                    d2 = WAREHOUSE_OUT / s2
+                    if (RAW_INTAKE / f"{s2}.png").exists() and not (OBJ_CANON_DIR / f"{s2}.png").exists():
+                        return {**act, "stage": "gate-photo", "detail": s2}
+                    if (d2 / f"0-{s2}.glb").exists() and not (d2 / "mesh-approval.json").exists():
+                        return {**act, "stage": "gate-mesh", "detail": s2}
+                    if (d2 / f"0-{s2}_painted.glb").exists() and not (d2 / "paint-approval.json").exists():
+                        return {**act, "stage": "gate-paint", "detail": s2}
+            except Exception:
+                pass
+        if sdir and not (sdir / "canon.png").exists():
+            return {**act, "stage": "plan", "detail": "llama planning / canon pending"}
+    except Exception as exc:
+        act["error"] = str(exc)[:120]
+    return act
 
 
 @router.get("/health")

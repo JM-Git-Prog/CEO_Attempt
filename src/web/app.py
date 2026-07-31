@@ -59,6 +59,16 @@ sessions: dict[str, WorldBuilder] = {}
 session_locks: dict[str, asyncio.Lock] = {}
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# 2026-07-31 (John): the ComfyUI "The Line" canvas (origin :8188) polls
+# /api/v15fable/line-activity to light up the live stage — localhost-only CORS.
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:8188", "http://localhost:8188"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
+
 # --- v15_Fable (2026-07-30): ADDITIVE hook only — standalone routes in src/v15_fable.py,
 # --- standalone page in templates/index_v15_fable.html. No v3-v14 behavior is changed.
 from src.v15_fable import router as _v15_fable_router  # noqa: E402

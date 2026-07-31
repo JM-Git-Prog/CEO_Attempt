@@ -331,7 +331,7 @@ function renderCard(){
     <button id="b-pflag" class="bad">🚩 Flag the photo</button>
     <button id="b-skip" class="ghost">⏭ Skip</button></div>`;
   else if(s==='completing') html=`${head}${img('cutout')}
-    <div class="spin">🪄 Flux-Fill is imagining the hidden parts… (~1–3 min, watching 8188)</div>`;
+    <div class="spin">🪄 Qwen-Edit is imagining the hidden parts… (~1–3 min, watching 8188)</div>`;
   else if(s==='photoPick') html=`${head}
     <div class="duo"><div>${img('original')}<span>original cut</span></div>
     <div>${img('completed')}<span>completed</span></div></div>
@@ -562,9 +562,15 @@ function planSVG(p,W){
   const wallPt=(o,off)=>({N:[pad+off*scale,pad],S:[pad+off*scale,pad+d],W:[pad,pad+off*scale],E:[pad+w,pad+off*scale]}[o.wall]);
   for(const o of p.doors){const [x,y]=wallPt(o,o.offset_m),ww=o.width_m*scale,hz=('NS'.includes(o.wall));
     s+=`<line x1="${hz?x-ww/2:x-6}" y1="${hz?y-6:y-ww/2}" x2="${hz?x+ww/2:x+6}" y2="${hz?y+6:y+ww/2}" stroke="#0c0f14" stroke-width="8"/>`;
-    s+=`<circle cx="${x}" cy="${y}" r="${ww/2}" fill="none" stroke="#e0a020" stroke-width="1.5" stroke-dasharray="3 3"/>`;}
+    s+=`<circle cx="${x}" cy="${y}" r="${ww/2}" fill="none" stroke="#e0a020" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+    if(o.type&&o.type!=='standard'){const L={'roll-up':'R','fire':'F','sliding-gate':'G','double':'D'}[o.type]||'?';
+      s+=`<text x="${x}" y="${o.wall==='N'?y+14:y-8}" fill="#e0a020" font-size="10" text-anchor="middle">${L}</text>`;}}
   for(const o of p.windows){const [x,y]=wallPt(o,o.offset_m),ww=o.width_m*scale,hz=('NS'.includes(o.wall));
     s+=`<line x1="${hz?x-ww/2:x}" y1="${hz?y:y-ww/2}" x2="${hz?x+ww/2:x}" y2="${hz?y:y+ww/2}" stroke="#7fb4d8" stroke-width="5"/>`;}
+  for(const pl of (p.pillars||[])){const px=pad+pl.x_m*scale,py=pad+pl.z_m*scale;
+    s+=`<rect x="${px-4}" y="${py-4}" width="8" height="8" fill="#e8e4da"/>`;}
+  if(p.skylight)
+    s+=`<rect x="${pad+w/2-w*.15}" y="${pad+d/2-d*.1}" width="${w*.3}" height="${d*.2}" fill="none" stroke="#7fb4d8" stroke-width="1.5" stroke-dasharray="5 3"/>`;
   for(const o of p.objects){const ox=pad+o.x_m*scale,oy=pad+o.z_m*scale,ow=o.w_m*scale,od=o.d_m*scale;
     const dash=o._measured===false?' stroke-dasharray="4 3" fill-opacity="0.3"':'';   // dashed = unphoto-placed GUESS
     s+=`<g transform="rotate(${o.rot_deg} ${ox} ${oy})"><rect x="${ox-ow/2}" y="${oy-od/2}" width="${ow}" height="${od}"
@@ -648,9 +654,47 @@ function buildWorld(){
   const ground=new THREE.Mesh(terr,new THREE.MeshStandardMaterial({color:0x5e7a4e,roughness:1}));
   ground.position.set(W/2,-.02,D/2); ground.receiveShadow=true; scene.add(ground);
 
-  const wallMat=new THREE.MeshStandardMaterial({color:pal.wall,roughness:.9});
+  // ---- 2026-07-31 structural finish catalog (John): procedural textures modulate the
+  // PHOTO-SAMPLED palette colors — $0, no downloads, and the canon's material reads carry in.
+  const shell=p.shell||{floor:'wood-plank',walls:'drywall',ceiling:'flat',trim:'baseboard'};
+  const texCanvas=(draw,rx=2,ry=2)=>{const c=document.createElement('canvas');c.width=c.height=256;
+    const g=c.getContext('2d');draw(g);const t=new THREE.CanvasTexture(c);
+    t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.colorSpace=THREE.SRGBColorSpace;return t;};
+  const noise=(g,n,alpha,lo,hi)=>{for(let i=0;i<n;i++){const v=Math.round(lo+Math.random()*(hi-lo));
+    g.fillStyle=`rgba(${v},${v},${v},${alpha})`;g.fillRect(Math.random()*256,Math.random()*256,1+Math.random()*2,1+Math.random()*2);}};
+  const floorTex={
+    'concrete':()=>texCanvas(g=>{g.fillStyle=pal.floor;g.fillRect(0,0,256,256);noise(g,2600,.16,40,215);
+      g.strokeStyle='rgba(0,0,0,.13)';for(let c2=0;c2<4;c2++){g.beginPath();let x=Math.random()*256,y=Math.random()*256;g.moveTo(x,y);
+        for(let s2=0;s2<5;s2++){x+=Math.random()*46-23;y+=Math.random()*46-23;g.lineTo(x,y);}g.stroke();}
+      g.fillStyle='rgba(0,0,0,.05)';for(let s2=0;s2<7;s2++){g.beginPath();g.arc(Math.random()*256,Math.random()*256,9+Math.random()*26,0,7);g.fill();}},W/1.6,D/1.6),
+    'wood-plank':()=>texCanvas(g=>{g.fillStyle=pal.floor;g.fillRect(0,0,256,256);
+      for(let y=0;y<256;y+=32){g.fillStyle=`rgba(0,0,0,${.10+Math.random()*.14})`;g.fillRect(0,y,256,2);
+        for(let i=0;i<14;i++){g.fillStyle=`rgba(60,30,10,${.05+Math.random()*.08})`;g.fillRect(Math.random()*256,y+3+Math.random()*26,30+Math.random()*90,1);}
+        g.fillStyle='rgba(0,0,0,.25)';g.fillRect((y*3.7)%256,y,2,32);}},W/1.2,D/1.2),
+    'tile':()=>texCanvas(g=>{g.fillStyle=pal.floor;g.fillRect(0,0,256,256);g.strokeStyle='rgba(0,0,0,.28)';g.lineWidth=2;
+      for(let i=0;i<=256;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i,256);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(256,i);g.stroke();}noise(g,300,.05,180,255);},W/1.3,D/1.3),
+    'metal-plate':()=>texCanvas(g=>{g.fillStyle=pal.floor;g.fillRect(0,0,256,256);noise(g,900,.10,90,190);
+      g.fillStyle='rgba(255,255,255,.14)';for(let y=16;y<256;y+=48)for(let x=16;x<256;x+=48){g.save();g.translate(x,y);g.rotate(.785);g.fillRect(-7,-2,14,4);g.restore();}},W/1.6,D/1.6),
+    'carpet':()=>texCanvas(g=>{g.fillStyle=pal.floor;g.fillRect(0,0,256,256);noise(g,5200,.10,50,205);},W/1.2,D/1.2)};
+  const wallTexF={
+    'drywall':()=>texCanvas(g=>{g.fillStyle=pal.wall;g.fillRect(0,0,256,256);noise(g,700,.05,120,235);},3,1.4),
+    'metal-siding':()=>texCanvas(g=>{g.fillStyle=pal.wall;g.fillRect(0,0,256,256);
+      for(let x=0;x<256;x+=22){g.fillStyle='rgba(0,0,0,.20)';g.fillRect(x,0,3,256);g.fillStyle='rgba(255,255,255,.10)';g.fillRect(x+3,0,2,256);}},3,1.4),
+    'brick':()=>texCanvas(g=>{g.fillStyle=pal.wall;g.fillRect(0,0,256,256);g.fillStyle='rgba(214,207,196,.9)';
+      for(let y=0;y<256;y+=22){g.fillRect(0,y,256,3);for(let x=((y/22)%2)*32;x<256;x+=64)g.fillRect(x,y,3,22);}},3,1.4),
+    'concrete-block':()=>texCanvas(g=>{g.fillStyle=pal.wall;g.fillRect(0,0,256,256);noise(g,700,.08,90,200);
+      g.strokeStyle='rgba(0,0,0,.22)';g.lineWidth=2;for(let y=0;y<256;y+=42){g.strokeRect(0,y,256,42);
+        for(let x=((y/42)%2)*42;x<256;x+=84){g.beginPath();g.moveTo(x,y);g.lineTo(x,y+42);g.stroke();}}},3,1.4),
+    'wood-panel':()=>texCanvas(g=>{g.fillStyle=pal.wall;g.fillRect(0,0,256,256);
+      for(let x=0;x<256;x+=36){g.fillStyle='rgba(0,0,0,.15)';g.fillRect(x,0,2,256);
+        for(let i=0;i<10;i++){g.fillStyle='rgba(70,40,15,.08)';g.fillRect(x+3+Math.random()*30,Math.random()*256,1,25+Math.random()*70);}}},3,1.4)};
+  const wallMat=new THREE.MeshStandardMaterial({map:(wallTexF[shell.walls]||wallTexF['drywall'])(),
+    roughness:shell.walls==='metal-siding'?.55:.9,metalness:shell.walls==='metal-siding'?.35:0});
   const trimMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.6});
-  const floorMat=new THREE.MeshStandardMaterial({color:pal.floor,roughness:.75});
+  const floorMat=new THREE.MeshStandardMaterial({map:(floorTex[shell.floor]||floorTex['wood-plank'])(),
+    roughness:shell.floor==='metal-plate'?.45:(shell.floor==='tile'?.35:.82),metalness:shell.floor==='metal-plate'?.5:0});
+  const steelMat=new THREE.MeshStandardMaterial({color:0x5a6068,roughness:.5,metalness:.65});
+  const woodBeamMat=new THREE.MeshStandardMaterial({color:0x7a5a38,roughness:.85});
   const glassMat=new THREE.MeshStandardMaterial({color:0x9fc8e8,transparent:true,opacity:.28,roughness:.1,metalness:.4});
   const box=(w,h,d,mat,x,y,z,solid=true)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
     m.position.set(x,y,z); m.castShadow=m.receiveShadow=true; scene.add(m);
@@ -665,23 +709,67 @@ function buildWorld(){
     for(const[a,b]of segs){const len=b-a,mid=a+len/2;
       if(axis==='x')box(len,H,t,wallMat,mid,H/2,fixed); else box(t,H,len,wallMat,fixed,H/2,mid);}
     for(const s of spans){const o=s.o,mid=o.offset_m,len=o.width_m;
+      const cas=(wl,hh,dd,x,y,z)=>box(wl,hh,dd,trimMat,x,y,z,false);   // casing/trim piece
       if(o.sill_m!==undefined){
         const sill=o.sill_m,head=Math.min(H-.3,sill+1.2);
         if(axis==='x'){box(len,sill,t,wallMat,mid,sill/2,fixed);box(len,H-head,t,wallMat,mid,head+(H-head)/2,fixed);
-          box(len,head-sill,.02,glassMat,mid,sill+(head-sill)/2,fixed,false);}
+          box(len,head-sill,.02,glassMat,mid,sill+(head-sill)/2,fixed,false);
+          cas(len+.12,.06,t+.06,mid,head+.03,fixed);cas(len+.16,.05,t+.14,mid,sill-.025,fixed);
+          cas(.06,head-sill+.10,t+.06,mid-len/2-.03,sill+(head-sill)/2,fixed);
+          cas(.06,head-sill+.10,t+.06,mid+len/2+.03,sill+(head-sill)/2,fixed);}
         else{box(t,sill,len,wallMat,fixed,sill/2,mid);box(t,H-head,len,wallMat,fixed,head+(H-head)/2,mid);
-          box(.02,head-sill,len,glassMat,fixed,sill+(head-sill)/2,mid,false);}
+          box(.02,head-sill,len,glassMat,fixed,sill+(head-sill)/2,mid,false);
+          cas(t+.06,.06,len+.12,fixed,head+.03,mid);cas(t+.14,.05,len+.16,fixed,sill-.025,mid);
+          cas(t+.06,head-sill+.10,.06,fixed,sill+(head-sill)/2,mid-len/2-.03);
+          cas(t+.06,head-sill+.10,.06,fixed,sill+(head-sill)/2,mid+len/2+.03);}
       }else{
+        const dtype=o.type||'standard';
         if(axis==='x')box(len,H-2.1,t,wallMat,mid,2.1+(H-2.1)/2,fixed);
-        else box(t,H-2.1,len,wallMat,fixed,2.1+(H-2.1)/2,mid);}
+        else box(t,H-2.1,len,wallMat,fixed,2.1+(H-2.1)/2,mid);
+        if(axis==='x'){cas(len+.12,.07,t+.06,mid,2.135,fixed);
+          cas(.06,2.1,t+.06,mid-len/2-.03,1.05,fixed);cas(.06,2.1,t+.06,mid+len/2+.03,1.05,fixed);}
+        else{cas(t+.06,.07,len+.12,fixed,2.135,mid);
+          cas(t+.06,2.1,.06,fixed,1.05,mid-len/2-.03);cas(t+.06,2.1,.06,fixed,1.05,mid+len/2+.03);}
+        if(dtype==='roll-up'){const hgt=Math.min(H-.5,2.6),sy=hgt/8;   // slatted shipping door
+          for(let i=0;i<8;i++){
+            if(axis==='x')box(len-.06,sy-.02,.05,steelMat,mid,sy*i+sy/2,fixed,false);
+            else box(.05,sy-.02,len-.06,steelMat,fixed,sy*i+sy/2,mid,false);}
+          if(axis==='x'){box(.08,hgt,.12,steelMat,mid-len/2+.04,hgt/2,fixed);box(.08,hgt,.12,steelMat,mid+len/2-.04,hgt/2,fixed);}
+          else{box(.12,hgt,.08,steelMat,fixed,hgt/2,mid-len/2+.04);box(.12,hgt,.08,steelMat,fixed,hgt/2,mid+len/2-.04);}}
+        else if(dtype==='fire'){const dm=new THREE.MeshStandardMaterial({color:0x8a2f26,roughness:.6,metalness:.3});
+          if(axis==='x'){box(len-.1,2.05,.06,dm,mid,1.025,fixed,false);box(len*.6,.05,.10,steelMat,mid,1.05,fixed,false);}
+          else{box(.06,2.05,len-.1,dm,fixed,1.025,mid,false);box(.10,.05,len*.6,steelMat,fixed,1.05,mid,false);}}
+        else if(dtype==='sliding-gate'){
+          if(axis==='x'){box(len+.3,.08,.10,steelMat,mid,2.18,fixed,false);box(len-.12,2.0,.04,steelMat,mid+len*.35,1.0,fixed,false);}
+          else{box(.10,.08,len+.3,steelMat,fixed,2.18,mid,false);box(.04,2.0,len-.12,steelMat,fixed,1.0,mid+len*.35,false);}}
+      }
     }
   }
   const on=w=>[...p.doors,...p.windows].filter(o=>o.wall===w);
   wallRun('x',0,W,on('N')); wallRun('x',D,W,on('S'));
   wallRun('z',0,D,on('W')); wallRun('z',W,D,on('E'));
-  for(const[len,x,z,ax]of[[W,W/2,t/2,'x'],[W,W/2,D-t/2,'x'],[D,t/2,D/2,'z'],[D,W-t/2,D/2,'z']])
-    ax==='x'?box(len,.09,.03,trimMat,x,.045,z,false):box(.03,.09,len,trimMat,x,.045,z,false);
-  box(W+.4,.12,D+.4,new THREE.MeshStandardMaterial({color:0xf2ede2,roughness:1}),W/2,H+.06,D/2,false);
+  if(shell.trim!=='none')
+    for(const[len,x,z,ax]of[[W,W/2,t/2,'x'],[W,W/2,D-t/2,'x'],[D,t/2,D/2,'z'],[D,W-t/2,D/2,'z']]){
+      ax==='x'?box(len,.09,.03,trimMat,x,.045,z,false):box(.03,.09,len,trimMat,x,.045,z,false);
+      if(shell.trim==='baseboard+crown')
+        ax==='x'?box(len,.07,.05,trimMat,x,H-.035,z,false):box(.05,.07,len,trimMat,x,H-.035,z,false);
+    }
+  const ceilMat=shell.ceiling==='corrugated-metal'
+    ?new THREE.MeshStandardMaterial({map:texCanvas(g=>{g.fillStyle='#8d9299';g.fillRect(0,0,256,256);
+        for(let x=0;x<256;x+=14){g.fillStyle='rgba(0,0,0,.25)';g.fillRect(x,0,4,256);g.fillStyle='rgba(255,255,255,.14)';g.fillRect(x+4,0,3,256);}},W/1.5,D/1.5),
+      roughness:.5,metalness:.5})
+    :new THREE.MeshStandardMaterial({color:0xf2ede2,roughness:1});
+  box(W+.4,.12,D+.4,ceilMat,W/2,H+.06,D/2,false);
+  if(shell.ceiling==='steel-trusses')
+    for(let z=1.2;z<D-0.6;z+=2.0){box(W-.3,.12,.10,steelMat,W/2,H-.28,z,false);box(W-.3,.05,.05,steelMat,W/2,H-.05,z,false);
+      for(let x=1;x<W-0.8;x+=1.4)box(.05,.26,.05,steelMat,x,H-.165,z,false);}
+  else if(shell.ceiling==='exposed-rafters')
+    for(let z=0.9;z<D-0.4;z+=0.9)box(W-.2,.16,.07,woodBeamMat,W/2,H-.10,z,false);
+  for(const pl of (p.pillars||[]))
+    box(.28,H,.28,(shell.walls==='metal-siding'||shell.ceiling==='steel-trusses')?steelMat:wallMat,pl.x_m,H/2,pl.z_m);
+  if(p.skylight)
+    box(Math.min(2.2,W*.3),.05,Math.min(1.6,D*.2),
+        new THREE.MeshStandardMaterial({color:0xcfe8ff,emissive:0xbcd8f0,emissiveIntensity:1.2}),W/2,H-.02,D/2,false);
 
   addProps();
 
