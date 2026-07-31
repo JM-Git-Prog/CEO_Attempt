@@ -1,5 +1,12 @@
 """v15_Fable — Fable's standalone prompt→blueprint→walkable-world pipeline.
 
+STEERING (version law, John 2026-07-31): this code implements THE LINE.
+Architecture doc: CEO_Attempt/THE-LINE-ARCHITECTURE.md · reviewable canvas:
+CEO-3D-World/workflows/THE-LINE.ui.json · version manifest (append-only):
+CEO-3D-World/workflows/THE-LINE-VERSIONS.json. After each VALIDATED full run,
+snapshot doc+canvas into workflows/line-history/ and bump the manifest — the
+live files always point at the newest validated version.
+
 STANDALONE by design (John, 2026-07-30): new file, new routes, new template.
 Touches NOTHING in v3–v14 beyond two additive hooks in app.py.
 
@@ -1303,8 +1310,12 @@ async def photo_unapprove(sid: str, slug: str):
 
 
 @router.post("/line-run/{sid}/{slug}")
-async def line_run(sid: str, slug: str):
-    """Mesh+paint this ONE approved object via make-prop (gates honored). One GPU job at a time."""
+async def line_run(sid: str, slug: str, lane: str = ""):
+    """Mesh+paint this ONE approved object (gates honored). One GPU job at a time.
+    lane="" → prod: make-prop.mjs (Hunyuan blast → MultiViews paint).
+    lane="trellis" → The Line v1.1_Dev: TRELLIS 2 one-pass (mesh+texture together
+    on 8188) via tools/trellis-prop.py. Same output contract (0-slug.glb +
+    0-slug_painted.glb), so line-status, gates and seat are identical."""
     if not (re.fullmatch(r"[0-9a-f]{8}", sid) and re.fullmatch(r"[a-z0-9\-]{2,40}", slug)):
         return JSONResponse({"error": "bad request"}, status_code=400)
     if not (OBJ_CANON_DIR / f"{slug}.png").exists():
@@ -1319,11 +1330,15 @@ async def line_run(sid: str, slug: str):
     # 2026-07-31: same detachment as the amodal spawn — a stray console CTRL event killed
     # runner #4 silently mid-flight (log ends at SKIP render, no FAIL line, exit unseen).
     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
-    proc = subprocess.Popen(["node", "tools/make-prop.mjs", e["subject"]],
-                            cwd=str(CEO_3D), stdout=log, stderr=subprocess.STDOUT,
+    if lane == "trellis":
+        import sys as _sys
+        cmd = [_sys.executable, "tools/trellis-prop.py", slug]
+    else:
+        cmd = ["node", "tools/make-prop.mjs", e["subject"]]
+    proc = subprocess.Popen(cmd, cwd=str(CEO_3D), stdout=log, stderr=subprocess.STDOUT,
                             creationflags=flags)
     _RUNNER["proc"], _RUNNER["slug"] = proc, slug
-    return {"ok": True, "pid": proc.pid, "subject": e["subject"]}
+    return {"ok": True, "pid": proc.pid, "subject": e["subject"], "lane": lane or "prod"}
 
 
 @router.post("/verdict/{slug}")

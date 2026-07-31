@@ -151,12 +151,12 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - Reuse `src/photo_pipeline/stages/semantic_labeler.py`
   - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
 
-- [-] 4.7 Implement unified resource arbiter
+- [x] 4.7 Implement unified resource arbiter
   - Wrap the existing VRAM manager with one explicit schedule for Ollama, Dream/Canon FLUX, SAM, edit/inpaint, DA3, Hunyuan3D, Trellis2, painting, and every ComfyUI instance
   - Enforce one GPU owner at a time (including the planner), `/free` + measured release, host-RAM thresholds, OOM retry/fallback, and durable owner diagnostics
   - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6_
 
-- [-] 4.8 Wire depth estimator as optional evidence adapter
+- [x] 4.8 Wire depth estimator as optional evidence adapter
   - Reuse `src/photo_pipeline/stages/depth_anything3.py` only to produce provenance-bearing depth evidence or aligned appearance reference
   - Prohibit depth from authorizing room dimensions, openings, collision, navigation, object transforms, or camera; reject per-axis/min-max spatial normalization
   - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
@@ -168,14 +168,14 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 ### Wave 5: Room Shell, Architecture, and Physics
 
-- [ ] 5.1 Implement authoritative parametric room adapter
+- [x] 5.1 Implement authoritative parametric room adapter
   - Reuse the existing approved Plan/solver/compiler path to build walls, floor, ceiling, openings, navigable bounds, and architectural collision
   - Bind every architectural element to the approved normalized Plan revision and immutable CameraContract
   - Allow a depth-derived mesh only as an optional aligned, non-colliding, honestly labeled appearance/reference layer
   - Fail closed if more than one source claims architecture or collision authority
   - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7_
 
-- [ ] 5.2 Implement FinishPass (procedural primitive placement — no CSG)
+- [x] 5.2 Implement FinishPass (procedural primitive placement — no CSG)
   - Create `src/unified_pipeline/finish_pass.py` placing pre-baked architectural primitives:
     - Door frames and window frames: box extrusions along opening edges
     - Baseboards: 2D profile swept along wall floor-line
@@ -186,32 +186,32 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - Crown molding, wainscoting, vent covers: interface defined, body stubbed (post-MVP)
   - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.6, 17.7_
 
-- [ ] 5.3 Wire existing physics classifier
+- [x] 5.3 Wire existing physics classifier
   - Reuse `src/photo_pipeline/stages/physics_classifier.py` — density table, 25kg threshold, architectural override
   - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5_
 
-- [ ] 5.4 Implement door hinge and interaction configuration
+- [x] 5.4 Implement door hinge and interaction configuration
   - Create `src/unified_pipeline/door_physics.py` with hinge joint setup, swing limits, mass assignment
   - _Requirements: 18.6_
 
-- [ ] 5.5 Wire existing physics settle pass
+- [x] 5.5 Wire existing physics settle pass
   - Reuse `src/photo_pipeline/stages/physics_settle.py` — 500 iterations or 5s, clamp within bounds
   - _Requirements: 18.7, 18.8_
 
-- [ ] 5.6 Write tests for authoritative room, finish pass, and physics
+- [x] 5.6 Write tests for authoritative room, finish pass, and physics
   - Test Plan-derived room/opening/collision identity, rejection of dual room authority, and non-colliding optional depth reference
   - Test era-appropriate detail generation, door hinge configuration, settle convergence, rotation-aware extents, and circulation preservation
   - _Requirements: 16.1, 16.5, 17.1, 17.5, 18.6, 18.7_
 
 ### Wave 6: WorldContract Assembly and Validation
 
-- [ ] 6.1 Implement mandatory solve chain and WorldContractAssembler
+- [x] 6.1 Implement mandatory solve chain and WorldContractAssembler
   - Create `src/unified_pipeline/assembler.py` enforcing: solve → normalize → validate → immutable CameraContract → constrained SceneGraph → WorldContract → relationship solve → canonical serialization/hash
   - Bind one nonzero Plan revision, camera hash, authoritative parametric room, instances, solved transforms, relationships, physics, materials, and approved asset `(path, sha256, triangle_count)` records
   - Normalize each approved asset exactly once; reject revision mismatch, duplicate authority, consumer defaults, or post-hash mutation
   - _Requirements: 19.1, 19.2, 19.3, 19.4_
 
-- [ ] 6.2 Implement all structural publication gates
+- [x] 6.2 Implement all structural publication gates
   - Create `src/unified_pipeline/validation_gates.py` with fail-closed gates for:
     - provenance: unbroken evidence → intent → approved Plan → contract chain with nonzero revision
     - containment: rotation-aware room/opening/object/collision extents and camera inside permitted bounds
@@ -223,101 +223,101 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - All structural gates pass before compilation; compiler parity runs after compilation in Task 7.4 and before publication
   - _Requirements: 20.1–20.10_
 
-- [ ] 6.3 Implement event finality and replay system
+- [x] 6.3 Implement event finality and replay system
   - Create `src/unified_pipeline/event_system.py` with provisional/final classification, revision/hash binding, and contract-before-final ordering
   - Preserve finality across SSE, WebSocket, reconnect/replay, sidecars, and compiler events; reject or downgrade stale/mismatched events
   - _Requirements: 19.5, 19.6, 27.2_
 
-- [ ] 6.4 Write tests for solve chain, gates, and finality
+- [-] 6.4 Write tests for solve chain, gates, and finality
   - Test deterministic post-relationship hash, revision mismatch rejection, exactly-once normalization, no consumer drift, and dual-authority rejection
   - Test every gate pass/fail path plus final event ordering, reconnect/replay, stale-response cancellation, and hash mismatch downgrade
   - _Requirements: 19.2, 19.3, 20.1–20.10_
 
 ### Wave 7: Engine Compilation
 
-- [ ] 7.1 Implement BrowserCompiler (Three.js)
+- [~] 7.1 Implement BrowserCompiler (Three.js)
   - Create `src/unified_pipeline/compilers/browser.py` deriving Three.js scene from WorldContract
   - GLTFLoader, PBR metallic-roughness, orbit + first-person controls, progressive SSE loading
   - _Requirements: 21.1, 21.4_
 
-- [ ] 7.2 Implement GodotCompiler
+- [~] 7.2 Implement GodotCompiler
   - Create `src/unified_pipeline/compilers/godot.py` emitting Godot 4 project: .tscn, physics bodies (RigidBody3D/StaticBody3D), first-person controller, grabbing, door hinges, lighting
   - _Requirements: 21.2, 21.4, 21.6_
 
-- [ ] 7.3 Implement UPBGECompiler
+- [~] 7.3 Implement UPBGECompiler
   - Create `src/unified_pipeline/compilers/upbge.py` emitting .blend with player controller, character physics, logic bricks
   - _Requirements: 21.3, 21.4, 21.6_
 
-- [ ] 7.4 Implement compiler selection and post-compile parity gate
+- [~] 7.4 Implement compiler selection and post-compile parity gate
   - Create `src/unified_pipeline/compilers/parity.py` verifying browser and selected engine payloads carry the same canonical WorldContract hash, revision, camera, room dimensions, solved instance transforms, asset bindings, and material bindings
   - Reject independent consumer defaults, clamps, rescaling, rotation/offset substitution, camera inference, or second asset normalization
   - Parity SHALL pass after compilation and before any final event or publication
   - _Requirements: 20.8, 21.4, 21.5_
 
-- [ ] 7.5 Write tests for compilation and parity
+- [~] 7.5 Write tests for compilation and parity
   - Test each compiler produces valid output from a test WorldContract
   - Verify parity gate catches hash mismatches
   - _Requirements: 21.4, 20.8_
 
 ### Wave 8: Walkable World and Interaction
 
-- [ ] 8.1 Implement first-person controller for browser
+- [~] 8.1 Implement first-person controller for browser
   - Extend V14 Three.js viewer with: WASD movement, mouse look (PointerLock), gravity, collision with static bodies, safe spawn position selection
   - _Requirements: 22.1, 21.6_
 
-- [ ] 8.2 Implement object interaction system
+- [~] 8.2 Implement object interaction system
   - Door swing (hinge physics), object grab/release (raycasting + constraint), push/topple (impulse application)
   - _Requirements: 22.2, 22.3, 22.4_
 
-- [ ] 8.3 Implement lighting from WorldContract
+- [~] 8.3 Implement lighting from WorldContract
   - Place light fixtures at contract positions, set intensity/color/temperature from Scene_Canon-derived values
   - Compute shadows from each light source
   - _Requirements: 22.5_
 
-- [ ] 8.4 Implement three-view identity and Canon fidelity comparison
+- [~] 8.4 Implement three-view identity and Canon fidelity comparison
   - Create `src/unified_pipeline/canon_compare.py` comparing Plan-derived Blockout/blueprint, Scene_Canon, and first-person World render per stable UUID and region
   - GREEN requires shell/opening truth, every requested object, placement/dimensions/heights, zero forbidden overlap, and palette/material fidelity; presence/order alone is insufficient
   - Store the verdict as hash-bound evidence and block final QA on red/amber according to configured release policy
   - _Requirements: 22.6_
 
-- [ ] 8.5 Write interaction and walkability tests
+- [~] 8.5 Write interaction and walkability tests
   - Test spawn safety, collision response, door swing, grab/release
   - _Requirements: 22.1, 22.2, 22.3, 22.4_
 
 ### Wave 9: Mode Toggle and REAL Mode (GAME stubbed)
 
-- [ ] 9.1 Implement GameOverlay data model and stub designer
+- [~] 9.1 Implement GameOverlay data model and stub designer
   - Create `src/unified_pipeline/game_designer.py` — data model for GameOverlay (rules, scoring, win_condition, object_role_bindings by UUID)
   - Stub implementation: returns a suggested theme + mechanics based on Brief room_purpose, but NO functional gameplay logic
   - Full AI game design is a follow-on session
   - _Requirements: 23.1, 23.2, 23.3, 23.4_
 
-- [ ] 9.2 Implement RealBinder (read-only surface display)
+- [~] 9.2 Implement RealBinder (read-only surface display)
   - Create `src/unified_pipeline/real_binder.py` — tool connection system
   - MCP-server-compatible bindings, read-only v1, surface assignment by UUID
   - Implement one working binding: display static text/data on a bound surface
   - Budget/land earning logic is post-MVP
   - _Requirements: 24.1, 24.2, 24.3, 24.4, 24.5_
 
-- [ ] 9.3 Implement ModeToggle (config switch)
+- [~] 9.3 Implement ModeToggle (config switch)
   - Create `src/unified_pipeline/mode_toggle.py` — per-room state, persist, announce on entry
   - Toggle switches between REAL overlay (functional) and GAME overlay (stubbed/placeholder)
   - Verify: no visual change on switch, only behavior overlays swap
   - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.5, 25.6_
 
-- [ ] 9.4 Write tests for toggle and REAL mode
+- [~] 9.4 Write tests for toggle and REAL mode
   - Test mode persistence, toggle preserves visuals, REAL binding displays data
   - _Requirements: 25.2, 25.5, 24.4_
 
 ### Wave 10: Asset Warehouse and Orchestration
 
-- [ ] 10.1 Wire existing Asset Warehouse for unified pipeline
+- [~] 10.1 Wire existing Asset Warehouse for unified pipeline
   - Reuse `src/photo_pipeline/asset_warehouse.py` — adapt to accept unified models
   - Append-only, never consulted pre-generation, full metadata registry
   - Add game_properties and real_bindings fields to registry
   - _Requirements: 26.1, 26.2, 26.3, 26.4, 26.5, 26.6_
 
-- [ ] 10.2 Implement durable UnifiedOrchestrator
+- [~] 10.2 Implement durable UnifiedOrchestrator
   - Create `src/unified_pipeline/orchestrator.py` wiring: Conversation → Brief → Art_Bible → Dream → Plan solve/normalize/validate → Camera → Blockout approval → Canon honesty/approval → Segment → Object_Canon approval → Mesh approval → Materials → authoritative Parametric Room + optional depth reference → Finish → Physics/Settle → relationship-solved WorldContract/hash → structural gates → Compile → parity gate → final events → GAME/REAL/Toggle → Warehouse Catalog
   - Write atomic per-stage checkpoints with input/output hashes, Plan revision, approval revision, external job ID, attempt, and completion state
   - Resume idempotently by reconciling pending external jobs; never blindly resubmit. Cancel stale responses and invalidate/archive every downstream artifact and approval after an upstream revision
@@ -326,12 +326,12 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - No hard time cap; 180s stall detection triggers bounded recovery/fallback without weakening quality gates
   - _Requirements: 27.1, 27.2, 27.3, 27.4, 27.5, 27.6_
 
-- [ ] 10.3 Implement web routes for unified pipeline
+- [~] 10.3 Implement web routes for unified pipeline
   - Add routes: `GET /?v=16` (default), `POST /api/session/unified/start` (begins conversation), `POST /api/session/{id}/message` (conversation turn), `POST /api/session/{id}/approve/{stage}`, `GET /api/session/{id}/dream_preview`, `GET /api/session/{id}/blockout`, `GET /api/session/{id}/canon`, `GET /api/session/{id}/mesh/{object_id}`, SSE events, WS materials
   - Maintain V3-V15 routes unchanged
   - _Requirements: 28.1, 28.2, 28.3, 28.4_
 
-- [ ] 10.4 Write orchestration recovery and integration tests
+- [~] 10.4 Write orchestration recovery and integration tests
   - Test full pipeline with mocked GPU stages using Danny's kitchenette prompt
   - Verify corrected stage order, all five approvals, structural/parity publication gates, and provisional/final event ordering
   - Crash/restart at every external-job boundary and prove idempotent resume, no duplicate submissions, stale-response cancellation, downstream invalidation, and worker-lease exclusivity
@@ -339,24 +339,24 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 ### Wave 11: Qualification
 
-- [ ] 11.1 Implement qualification harness
+- [~] 11.1 Implement qualification harness
   - Create `src/unified_pipeline/qualification.py` with fresh-session creation, canonical prompt injection, complete stage traversal, gate verification, and append-only diagnostic recording
   - Record source fingerprints, exact artifact hashes, Plan/approval revisions, contract hash, compiler parity, browser owner, and whether each result is mocked or live
   - _Requirements: 30.1, 30.2, 30.3, 30.4_
 
-- [ ] 11.2 Run clean qualification with Danny's kitchenette
+- [~] 11.2 Run clean qualification with Danny's kitchenette
   - Start from a brand-new empty session and traverse: Conversation → Brief → Dream → Plan → Blockout → Canon → Objects → Meshes → Materials → Physics → WorldContract → Compilation → Validation → Walk → GAME → REAL → Toggle
   - Inspect three-view identity, authority/gates, mesh/material quality, physics/walkability, overlays, reconnect/replay, and browser/compiler parity
   - After the zero-state smoke passes, run five fresh headless rounds and five fresh human-like rounds; never reuse or restore a qualifying session
   - Record pass/fail and exact evidence per stage and round
   - _Requirements: 30.3, 30.4, 30.5, 30.6_
 
-- [ ] 11.3 Fix any failure and restart qualification
+- [~] 11.3 Fix any failure and restart qualification
   - Failed sessions remain diagnostic evidence only
   - Fix the cause, discard the failed session as release evidence, and restart the entire clean sequence with another new empty session
   - _Requirements: 30.5, 30.6_
 
-- [ ] 11.4 Commit release
+- [~] 11.4 Commit release
   - Stage relevant files, commit as `feat(web): release v16 unified-world-pipeline`
   - Provide: clean-version URL, fresh session URL, canonical prompt, commit hash
   - _Requirements: 30.7_

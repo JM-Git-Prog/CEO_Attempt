@@ -109,6 +109,15 @@ import {PointerLockControls} from 'three/addons/controls/PointerLockControls.js'
 
 const $=id=>document.getElementById(id);
 const API='/api/v15fable';
+// The Line v1.1_Dev (2026-07-31): ?v=15_Fable_Dev flips the PROP lane to TRELLIS 2
+// one-pass (mesh+texture together on 8188). Everything else — plan, canon, census,
+// cut, complete, gates, seat — is the SAME code as prod.
+const DEV=new URLSearchParams(location.search).get('v')==='15_Fable_Dev';
+if(DEV){document.title='v15_Fable_Dev · The Line v1.1 (TRELLIS)';
+  addEventListener('DOMContentLoaded',()=>{const b=document.createElement('div');
+  b.textContent='v1.1_Dev · TRELLIS lane';
+  b.style.cssText='position:fixed;top:8px;right:8px;z-index:40;background:#7c3aed;color:#fff;font:600 11px system-ui;padding:3px 10px;border-radius:99px;opacity:.9;pointer-events:none';
+  document.body.appendChild(b);});}
 let PROMPT='', LOCKED=null, ASSETS={}, SID=null, ROLL=0;
 let QUEUE=[], CUR=0, SUB={}, POLL=null, RUNNER={busy:false}, RECON=null;
 let VIEW='prompt';               // prompt | canon | world  (the back button walks this)
@@ -412,9 +421,9 @@ async function photoApprove(o,choice){
 }
 async function lineRun(o){
   try{
-    const r=await fetch(`${API}/line-run/${SID}/${o.slug}`,{method:'POST'});
+    const r=await fetch(`${API}/line-run/${SID}/${o.slug}${DEV?'?lane=trellis':''}`,{method:'POST'});
     const d=await r.json(); if(!r.ok)throw new Error(d.error||r.status);
-    toast('factory running: '+o.slug);
+    toast(DEV?'TRELLIS one-pass running: '+o.slug:'factory running: '+o.slug);
   }catch(e){toast(e.message);}
   await refreshLine(); renderCard();
 }

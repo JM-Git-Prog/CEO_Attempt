@@ -23,6 +23,17 @@ from .models import (
     SceneCanon,
     WorldContract,
 )
+from .depth_bridge import (
+    FORBIDDEN_DEPTH_AUTHORITIES,
+    CameraAnchoredSimilarity,
+    DepthAlignmentError,
+    DepthAuthorityError,
+    DepthBridgeResult,
+    DepthEvidence,
+    DepthEvidenceProvenance,
+    DepthEvidenceValidationError,
+    UnifiedDepthEstimator,
+)
 from .dream_preview import DreamPreviewGenerator
 from .mesh_approval import MeshApprovalGate, TurntablePreview
 from .mesh_generators import (
@@ -32,6 +43,17 @@ from .mesh_generators import (
 )
 from .object_isolator import ObjectIsolator
 from .room_plate import RoomPlateGenerator
+from .resource_arbiter import (
+    RESOURCE_SCHEDULE,
+    ArbiterState,
+    ResourceKind,
+    ResourceLease,
+    ResourceOwnershipTimeout,
+    ResourceReleaseError,
+    ResourceRequest,
+    ResourceStallError,
+    UnifiedResourceArbiter,
+)
 
 __all__ = [
     "Atmosphere",
@@ -39,12 +61,30 @@ __all__ = [
     "BlockoutResult",
     "Brief",
     "CameraContract",
+    "CameraAnchoredSimilarity",
+    "DepthAlignmentError",
+    "DepthAuthorityError",
+    "DepthBridgeResult",
+    "DepthEvidence",
+    "DepthEvidenceProvenance",
+    "DepthEvidenceValidationError",
+    "FORBIDDEN_DEPTH_AUTHORITIES",
+    "UnifiedDepthEstimator",
     "DreamPreviewGenerator",
     "Era",
     "MeshApprovalGate",
     "MeshGenerationError",
     "ObjectIsolator",
     "RoomPlateGenerator",
+    "RESOURCE_SCHEDULE",
+    "ArbiterState",
+    "ResourceKind",
+    "ResourceLease",
+    "ResourceOwnershipTimeout",
+    "ResourceReleaseError",
+    "ResourceRequest",
+    "ResourceStallError",
+    "UnifiedResourceArbiter",
     "TurntablePreview",
     "UnifiedHunyuan3DGenerator",
     "UnifiedTrellis2Generator",

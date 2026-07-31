@@ -147,3 +147,23 @@ at 38% bbox area (clean-cutout's gate wants 20–80%; rembg trims ~20% further).
 - The line's "Seated" chip reads approval state, not live world placement.
 - Barrel/dark-prop paints read dark in warm room light — finish/lighting pass topic.
 - Loop 5 in flight: tires painting; crate queued. Loops 6–8 owed on the mandate.
+- **v1.1_Dev branch** (2026-07-31): TRELLIS 2 one-pass prop lane at
+  `?v=15_Fable_Dev` — see the manifest's `1.1-dev` entry and
+  `workflows/THE-LINE-v1.1-DEV.ui.json`. Validation promotes it to v2.
+
+## 10. Version control (John's law, 2026-07-31)
+
+The line's steering artifacts are versioned, append-only:
+
+- **Manifest**: `CEO-3D-World/workflows/THE-LINE-VERSIONS.json` — `current`
+  points at the newest VALIDATED version; every entry names its evidence.
+- **Snapshots**: `CEO-3D-World/workflows/line-history/` — one copy of this doc
+  + the canvas per version. Never overwritten, never deleted.
+- **The ritual, after each validated full run**: (1) snapshot the live doc +
+  canvas into line-history/ as vN, (2) append the manifest entry with the
+  run's evidence and scores, (3) bump the version header here and in the
+  canvas `extra.info`, (4) re-import the canvas into the ComfyUI "The Line"
+  tab. Source code points here via the v15_fable.py steering header.
+- Dev branches (e.g. `1.1-dev`) live in the manifest as NOT-validated entries
+  with their own canvas files; a passed validation bar promotes, never
+  overwrites — v1's snapshot stays in line-history forever.

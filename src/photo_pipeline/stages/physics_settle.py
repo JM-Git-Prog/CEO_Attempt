@@ -7,7 +7,7 @@ using PyBullet with simplified convex hull collision shapes, and
 updates the instance transforms to reflect stable resting positions.
 
 Key behaviors:
-    - Up to 500 iterations, 10s wall-time limit for ≤30 objects.
+    - Up to 500 iterations, 5s wall-time limit.
     - Convex hull collision shapes per dynamic object (simplified).
     - Max 0.5m displacement per object per iteration.
     - Detect interpenetration via contact points, apply separation impulses.
@@ -55,7 +55,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 
 _DEFAULT_MAX_ITERATIONS = 500
-_DEFAULT_TIMEOUT_S = 10.0  # 10s wall time for ≤30 objects (Req 10.6)
+_DEFAULT_TIMEOUT_S = 5.0
 _MAX_DISPLACEMENT_M = 0.5  # max per iteration (Req 10.2)
 _VELOCITY_THRESHOLD = 0.01  # m/s (Req 10.4)
 _PENETRATION_THRESHOLD = 0.01  # meters (Req 10.4)
@@ -147,8 +147,14 @@ class PhysicsSettle:
         if config is None:
             config = PhotoPipelineConfig()
 
-        max_iterations = config.physics_settle_iterations
-        timeout_s = _DEFAULT_TIMEOUT_S  # 10s for this dedicated stage
+        max_iterations = min(
+            _DEFAULT_MAX_ITERATIONS,
+            max(0, config.physics_settle_iterations),
+        )
+        timeout_s = min(
+            _DEFAULT_TIMEOUT_S,
+            max(0.0, config.physics_settle_timeout_s),
+        )
 
         # Identify dynamic objects from physics intents
         dynamic_intent_ids = {

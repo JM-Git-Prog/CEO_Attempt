@@ -383,7 +383,9 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     # v15_Fable (2026-07-30): additive early branch — non-numeric version, standalone page.
-    if request.query_params.get("v") == "15_Fable":
+    # 15_Fable_Dev (2026-07-31): SAME page, dev flag read client-side — TRELLIS 2 one-pass
+    # prop lane (The Line v1.1_Dev) instead of blast+paint. Prod lane untouched.
+    if request.query_params.get("v") in ("15_Fable", "15_Fable_Dev"):
         page = Path(__file__).parent / "templates" / "index_v15_fable.html"
         return HTMLResponse(page.read_text(encoding="utf-8"),
                             headers={"Cache-Control": "no-store"})

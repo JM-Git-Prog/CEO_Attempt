@@ -445,3 +445,128 @@ This specification defines the complete end-to-end system for transforming a nat
 5. A failed session SHALL be retained as diagnostic evidence only, never release evidence.
 6. RELEASE SHALL occur only after one complete clean zero-state pass.
 7. THE commit SHALL use: `feat(web): release vN unified-world-pipeline`.
+
+## Corrective Requirements Tranche — Pre-Task 5.1 Authority, Finality, and Qualification Correction
+
+### Normative Precedence
+
+This additive tranche supersedes only conflicting clauses in Requirements 14–20 and 27–30. All non-conflicting clauses in Requirements 1–30 remain in force verbatim.
+
+### Corrective Tranche Glossary
+
+- **Approved_Normalized_Metric_Plan**: The nonzero-revision Metric_Plan that has completed solve, normalization, validation, and human approval.
+- **Evidence_Input**: Scene_Canon, Room_Plate, mask, depth, or other observation used to evaluate appearance or alignment without spatial authority.
+- **Neural_Mesh**: Generated geometry that remains a candidate asset until approval, provenance verification, and exactly-once normalization.
+- **Constrained_SceneGraph**: A scene graph whose authoritative spatial values are derived from the Approved_Normalized_Metric_Plan and immutable CameraContract.
+- **Relationship_Solve**: Deterministic resolution of containment, attachment, support, opening-host, and collision relationships before canonical hashing.
+- **Canonical_Hash**: The SHA-256 digest of the deterministic, relationship-solved WorldContract serialization.
+- **Structural_Gate_Set**: The provenance, containment, overlap/opening/circulation, camera, asset, material, geometry, physics, and semantic gates required before compilation.
+- **Parity_Gate**: The post-compilation comparison of browser and selected-engine outputs against the same WorldContract.
+- **Asset_Normalization**: The single conversion of approved asset coordinates, units, orientation, scale, and origin into contract space.
+- **Durable_Checkpoint**: An atomic stage record containing input hashes, output hashes, Plan revision, approval revision, external-job identity, attempt, and completion state.
+- **External_Job**: Work submitted to a process or service outside the durable orchestrator transaction.
+- **Stale_Response**: An External_Job response bound to a superseded Plan, Canon, Object_Canon, mesh, material, or approval revision.
+- **Worker_Lease**: The durable exclusive right for one worker to advance one session.
+- **Approval_Writer**: The durable exclusive owner permitted to record approval state for one session.
+- **Three_View_Identity_Report**: A hash-bound comparison of Plan-derived Blockout or blueprint, Scene_Canon, and first-person World render.
+- **Fresh_Zero_State_Run**: A qualification run created from a brand-new empty session without restored state or prior-version artifacts.
+- **V15_Behavior**: Observed V15 behavior retained for comparison and diagnosis without authority over the current pipeline or release qualification.
+
+### Requirement 31: Corrected Spatial Authority Boundary
+
+**User Story:** As a release owner, I want one spatial authority, so that evidence and generated assets cannot silently redefine the approved world.
+
+#### Acceptance Criteria
+
+1. THE Authority_Controller SHALL recognize the Approved_Normalized_Metric_Plan as the sole authority for architecture, openings, navigation, collision, object transforms, and CameraContract derivation.
+2. THE Authority_Controller SHALL classify Scene_Canon and Room_Plate as appearance evidence, masks and depth as Evidence_Inputs, and Neural_Mesh instances as candidate assets.
+3. THE Authority_Controller SHALL derive every authoritative room dimension, opening, navigable bound, collision shape, object transform, and camera parameter from the Approved_Normalized_Metric_Plan.
+4. IF an Evidence_Input conflicts with the Approved_Normalized_Metric_Plan, THEN THE Authority_Controller SHALL retain the Approved_Normalized_Metric_Plan value and record the discrepancy.
+5. IF depth-derived geometry claims architecture, opening, navigation, collision, transform, or camera authority, THEN THE Authority_Controller SHALL reject the authority claim.
+6. WHERE depth evidence is aligned for appearance comparison, THE Evidence_Aligner SHALL apply one camera-anchored uniform similarity transform plus translation-to-fit.
+7. IF evidence alignment applies independent-axis scaling or min-max normalization, THEN THE Evidence_Aligner SHALL reject the aligned result.
+
+### Requirement 32: Mandatory Canonical Construction Chain
+
+**User Story:** As a developer, I want one mandatory construction chain, so that every final artifact has deterministic lineage and ordering.
+
+#### Acceptance Criteria
+
+1. WHEN an approved Plan enters world construction, THE Pipeline_Orchestrator SHALL execute solve → normalize → validate → immutable CameraContract → Constrained_SceneGraph → WorldContract → Relationship_Solve → canonical serialization → Canonical_Hash in the stated order.
+2. THE Revision_Controller SHALL assign a nonzero revision to every Approved_Normalized_Metric_Plan.
+3. THE CameraContract_Factory SHALL derive the immutable CameraContract after Plan validation and before Constrained_SceneGraph creation.
+4. THE SceneGraph_Builder SHALL constrain authoritative spatial values to the Approved_Normalized_Metric_Plan, immutable CameraContract, and approved asset bindings.
+5. WHEN the Relationship_Solve completes, THE WorldContract_Builder SHALL serialize the relationship-solved WorldContract deterministically before computing the Canonical_Hash.
+6. IF a required construction stage is omitted or reordered, THEN THE Pipeline_Orchestrator SHALL block compilation and classify downstream artifacts as provisional.
+7. IF an authoritative value changes after Canonical_Hash creation, THEN THE Revision_Controller SHALL create a new revision and restart the mandatory construction chain.
+
+### Requirement 33: MVP Gates, Compilation Parity, and Finality
+
+**User Story:** As a release owner, I want every correctness gate enforced at the correct stage, so that compilation and publication cannot legitimize an invalid world.
+
+#### Acceptance Criteria
+
+1. THE Publication_Controller SHALL include provenance, containment, overlap/opening/circulation, camera, asset, material, geometry, physics, and semantic validation in the Structural_Gate_Set.
+2. THE Publication_Controller SHALL treat every member of the Structural_Gate_Set as an MVP prerequisite for compilation.
+3. WHEN the Canonical_Hash is created, THE Publication_Controller SHALL execute the Structural_Gate_Set before compilation.
+4. IF any Structural_Gate_Set member fails, THEN THE Publication_Controller SHALL block compilation, final events, and publication with focused diagnostics.
+5. WHEN every Structural_Gate_Set member passes, THE Publication_Controller SHALL authorize compilation from the hash-bound WorldContract.
+6. WHEN browser and selected-engine compilation complete, THE Publication_Controller SHALL execute the Parity_Gate before final events or publication.
+7. THE Parity_Gate SHALL compare Canonical_Hash, Plan revision, CameraContract, room dimensions, solved transforms, asset bindings, material bindings, collision intent, and semantic UUID bindings.
+8. IF the Parity_Gate fails, THEN THE Publication_Controller SHALL retain compiled outputs as provisional diagnostic artifacts.
+9. WHEN the Structural_Gate_Set and Parity_Gate pass for the same Canonical_Hash and Plan revision, THE Publication_Controller SHALL authorize final events and publication.
+
+### Requirement 34: Durable Identity, Normalization, and Ownership
+
+**User Story:** As an operator, I want resumable single-owner orchestration, so that retries, reloads, and revisions cannot duplicate or corrupt pipeline work.
+
+#### Acceptance Criteria
+
+1. THE Identity_Registry SHALL preserve each stable UUID across evidence, segmentation, approval, regeneration, WorldContract assembly, compilation, replay, and warehouse cataloging.
+2. WHEN a Neural_Mesh becomes an Approved_Asset, THE Asset_Normalizer SHALL perform Asset_Normalization exactly once before WorldContract binding.
+3. WHEN a resumed stage encounters a normalized Approved_Asset, THE Asset_Normalizer SHALL reuse the recorded normalized binding.
+4. WHEN a pipeline stage changes durable state, THE Pipeline_Orchestrator SHALL write a Durable_Checkpoint atomically.
+5. WHEN a session resumes with a pending External_Job, THE External_Job_Controller SHALL reconcile the recorded External_Job identity and current service state idempotently.
+6. WHEN a newer authoritative revision supersedes pending External_Job work, THE External_Job_Controller SHALL request cancellation of the superseded work.
+7. WHEN a Stale_Response arrives, THE External_Job_Controller SHALL quarantine the Stale_Response as diagnostic evidence and preserve the newer revision state.
+8. WHEN an upstream Plan, Canon, Object_Canon, mesh, material, or approval revision changes, THE Invalidation_Controller SHALL invalidate and archive every dependent artifact and approval.
+9. WHILE a session is active, THE Lease_Manager SHALL permit exactly one valid Worker_Lease to advance the session.
+10. WHILE approval state is writable, THE Approval_Manager SHALL permit exactly one Approval_Writer to record decisions for the session.
+11. IF an approval references a superseded revision, THEN THE Approval_Manager SHALL classify the approval as stale and block downstream use.
+
+### Requirement 35: Strict Three-View Identity and Fresh Qualification
+
+**User Story:** As a release owner, I want spatially strict cross-view qualification from fresh state, so that prior behavior and superficial similarity cannot qualify a release.
+
+#### Acceptance Criteria
+
+1. WHEN the first-person World render is available, THE Identity_Validator SHALL create a Three_View_Identity_Report from the Plan-derived Blockout or blueprint, Scene_Canon, and first-person World render.
+2. THE Three_View_Identity_Report SHALL verify shared Plan revision, CameraContract, shell and opening geometry, stable UUID membership, rotation-aware extents, placement, dimensions, heights, forbidden-overlap status, palette and material intent, and prompt fidelity.
+3. THE Identity_Validator SHALL require the Three_View_Identity_Report checks beyond object presence and ordering to produce a GREEN verdict.
+4. IF any required Three_View_Identity_Report check fails, THEN THE Identity_Validator SHALL produce a non-GREEN verdict with the mismatched UUID or region and measured discrepancy.
+5. IF the Three_View_Identity_Report is non-GREEN, THEN THE Publication_Controller SHALL block final quality approval and publication.
+6. WHEN release qualification begins, THE Qualification_Harness SHALL run one Fresh_Zero_State_Run smoke round followed by five fresh headless rounds and five fresh human-like rounds.
+7. THE Qualification_Harness SHALL create a brand-new empty session for every qualifying round.
+8. THE Qualification_Harness SHALL record source fingerprints, exact artifact hashes, Plan and approval revisions, Canonical_Hash, Parity_Gate result, browser owner, and mocked-or-live status for every qualifying round.
+9. IF a qualifying round fails, THEN THE Qualification_Harness SHALL retain the failed round as diagnostic evidence and restart qualification with a new Fresh_Zero_State_Run.
+10. WHEN V15_Behavior is observed, THE Qualification_Harness SHALL record V15_Behavior as source-fingerprinted comparative evidence with evidence-only status.
+11. THE Release_Decision SHALL accept release evidence only from current-pipeline Fresh_Zero_State_Run rounds that satisfy the Structural_Gate_Set, Parity_Gate, and Three_View_Identity_Report requirements.
+
+### Requirement 36: Append-Only Qualification Evidence and UI V16 Preservation
+
+**User Story:** As a release owner, I want exact immutable qualification evidence and preserved interface versions, so that a V16 release is reproducible without overwriting prior user-visible behavior.
+
+#### Acceptance Criteria
+
+1. FOR every qualification stage and round, THE Qualification_Harness SHALL append an immutable exact evidence record containing the source fingerprints, exact artifact hashes, Plan revision, approval revision, Canonical_Hash, Structural_Gate_Set result, Parity_Gate result, Three_View_Identity_Report result, browser owner, mocked-or-live status, session identity, and timestamp.
+2. THE Qualification_Harness SHALL NOT overwrite, edit, delete, merge, or substitute qualification evidence records after they are appended.
+3. IF any qualification stage or round fails, THEN THE Qualification_Harness SHALL retain that session's evidence as diagnostic-only, discard the session as release evidence, and restart the entire qualification sequence from a new Fresh_Zero_State_Run.
+4. THE Interface_Router SHALL expose the unified pipeline as UI version V16 and SHALL make V16 the default when no version query is supplied.
+5. THE Interface_Router SHALL preserve every previously released V3–V15 interface at its existing query selector or route with behavior unchanged; V16 SHALL NOT silently overwrite a prior interface.
+6. THE V16 interface SHALL provide clear links for switching to each retained prior interface, and retained interfaces SHALL provide a clear link to V16 where the shared version navigation is available.
+7. WHEN a later user-visible interface change is introduced, THE Release_Process SHALL allocate a new interface query version, preserve V16 behavior, and make the new version the default only after its own clean qualification succeeds.
+8. BEFORE a V16 release commit, THE Release_Process SHALL create a brand-new empty V16 session, run the exact canonical prompt from Requirement 30.2, and inspect Brief, Plan, Blockout, Canon, World, and Compare stages where applicable.
+9. IF any defect appears during the pre-commit V16 run, THEN THE Release_Process SHALL append the defect evidence, fix the cause, discard that session as release evidence, and restart with another brand-new empty V16 session.
+10. THE Release_Process SHALL NOT use a restored session, a previous-version session, or a failed session as V16 release evidence.
+11. WHEN the clean V16 zero-state sequence and all required fresh rounds pass, THE release commit title SHALL be `feat(web): release v16 interface`, superseding conflicting commit-title language in Requirement 30.7.
+12. AFTER the V16 release commit, THE Release_Process SHALL report the clean-version URL, fresh qualifying session URL, exact canonical prompt, and commit hash.
