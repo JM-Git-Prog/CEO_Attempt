@@ -36,6 +36,11 @@ from src.web.history import (
     resolve_verified_artifact,
 )
 from src.web.templates import get_index_html
+from src.web.unified_routes import (
+    create_unified_router,
+    unified_artifact_response,
+    unified_sse_response,
+)
 from src.workflow_provenance import normalize_interface_version, workflow_profiles
 
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
@@ -58,6 +63,7 @@ app = FastAPI(title="The Living Room", version="0.9.0", lifespan=_lifespan)
 sessions: dict[str, WorldBuilder] = {}
 session_locks: dict[str, asyncio.Lock] = {}
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.include_router(create_unified_router(lambda: OUTPUT_DIR))
 
 # 2026-07-31 (John): the ComfyUI "The Line" canvas (origin :8188) polls
 # /api/v15fable/line-activity to light up the live stage — localhost-only CORS.
@@ -385,7 +391,7 @@ async def index(request: Request):
     # v15_Fable (2026-07-30): additive early branch — non-numeric version, standalone page.
     # 15_Fable_Dev (2026-07-31): SAME page, dev flag read client-side — TRELLIS 2 one-pass
     # prop lane (The Line v1.1_Dev) instead of blast+paint. Prod lane untouched.
-    if request.query_params.get("v") in ("15_Fable", "15_Fable_Dev"):
+    if request.query_params.get("v") in ("15", "15_Fable", "15_Fable_Dev"):
         page = Path(__file__).parent / "templates" / "index_v15_fable.html"
         return HTMLResponse(page.read_text(encoding="utf-8"),
                             headers={"Cache-Control": "no-store"})
@@ -982,6 +988,9 @@ async def get_floor_plan(session_id: str):
 
 @app.get("/api/session/{session_id}/blockout")
 async def get_blockout(session_id: str):
+    unified = unified_artifact_response(OUTPUT_DIR, session_id, "blockout")
+    if unified is not None:
+        return unified
     builder = _restore_builder(session_id)
     path = Path(builder.session.blockout_path) if builder and builder.session.blockout_path else None
     if not path or not path.exists():
@@ -1296,7 +1305,7 @@ async def revise_world(session_id: str, request: Request):
 
 @app.get("/api/session/{session_id}/mesh/{obj_id}")
 async def get_mesh(session_id: str, obj_id: str):
-    """Serve a mesh GLB for a V14 session object.
+    """Serve a mesh GLB for a V14 or unified V16 session object.
 
     Searches multiple naming conventions used by different generators:
     - {obj_id}_hunyuan3d.glb (Hunyuan3D output)
@@ -1304,6 +1313,11 @@ async def get_mesh(session_id: str, obj_id: str):
     - obj_{obj_id}_placeholder.glb (placeholder fallback)
     - meshes/{obj_id}.glb (legacy path)
     """
+    unified = unified_artifact_response(
+        OUTPUT_DIR, session_id, "mesh", object_id=obj_id
+    )
+    if unified is not None:
+        return unified
     session_dir = OUTPUT_DIR / session_id
     candidates = [
         session_dir / "objects" / f"{obj_id}_hunyuan3d.glb",
@@ -1476,7 +1490,7 @@ async def describe_mvp(session_id: str, request: Request):
 
 
 @app.get("/api/session/{session_id}/events")
-async def session_events(session_id: str):
+async def session_events(session_id: str, request: Request):
     """SSE endpoint delivering real-time stage progress for MVP pipeline.
 
     Streams stage transitions (interpreting, planning, building_scene, compiling,
@@ -1485,6 +1499,13 @@ async def session_events(session_id: str):
     Each event is a JSON object with 'stage' and 'elapsed' fields.
     Terminal event has stage='done' with final state and result summary.
     """
+    try:
+        after_sequence = int(request.headers.get("last-event-id", "0"))
+    except ValueError:
+        after_sequence = 0
+    unified = unified_sse_response(OUTPUT_DIR, session_id, after_sequence)
+    if unified is not None:
+        return unified
     builder = _restore_builder(session_id)
     if not builder:
         return JSONResponse({"error": "Session not found"}, status_code=404)

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09110f">
+  <title>The Living Room · V16 Unified World Pipeline</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: #e8f2ed; background: #07100d; font: 15px/1.5 Inter, system-ui, sans-serif; }
+    a { color: #8edbb8; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 20px; border-bottom: 1px solid #244238; background: #0a1713; }
+    .brand { font-weight: 800; letter-spacing: .04em; }
+    .version-nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+    .version-nav a { padding: 3px 6px; border-radius: 4px; color: #8ca69b; text-decoration: none; font-size: 11px; }
+    .version-nav a:hover, .version-nav .selected { color: #07100d; background: #8edbb8; }
+    main { display: grid; grid-template-columns: minmax(300px, 40%) 1fr; min-height: calc(100vh - 54px); }
+    .conversation, .stage { padding: 24px; }
+    .conversation { border-right: 1px solid #244238; background: #0a1713; }
+    h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 42px); line-height: 1.05; }
+    .lede { color: #a7bcb3; margin-bottom: 24px; }
+    #messages { display: grid; gap: 10px; max-height: 53vh; overflow: auto; margin-bottom: 16px; }
+    .message { padding: 10px 12px; border: 1px solid #244238; border-radius: 8px; background: #10221b; white-space: pre-wrap; }
+    .message.user { margin-left: 12%; background: #173629; }
+    form { display: grid; gap: 8px; }
+    textarea { width: 100%; resize: vertical; min-height: 92px; padding: 12px; color: #e8f2ed; background: #07100d; border: 1px solid #376453; border-radius: 7px; }
+    button { border: 0; border-radius: 6px; padding: 10px 14px; color: #07100d; background: #8edbb8; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .45; cursor: wait; }
+    .stage-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .status { color: #8edbb8; text-transform: uppercase; font-size: 12px; letter-spacing: .12em; }
+    .progress { height: 5px; margin: 16px 0; background: #14271f; border-radius: 9px; overflow: hidden; }
+    #progressFill { width: 0; height: 100%; background: #8edbb8; transition: width .2s; }
+    #artifact { display: grid; place-items: center; min-height: 52vh; border: 1px solid #244238; border-radius: 10px; background: #050a08; overflow: hidden; }
+    #artifact img { max-width: 100%; max-height: 60vh; object-fit: contain; }
+    #approval { display: none; margin-top: 14px; }
+    .meta { color: #8ca69b; font-family: ui-monospace, monospace; font-size: 12px; }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; } .conversation { border-right: 0; border-bottom: 1px solid #244238; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">LR · V16 UNIFIED</div>
+    <nav class="version-nav" aria-label="Retained interface versions">
+      <a href="/?v=3">V3</a><a href="/?v=4">V4</a><a href="/?v=5">V5</a><a href="/?v=6">V6</a>
+      <a href="/?v=7">V7</a><a href="/?v=8">V8</a><a href="/?v=9">V9</a><a href="/?v=10">V10</a>
+      <a href="/?v=11">V11</a><a href="/?v=12">V12</a><a href="/?v=13">V13</a><a href="/?v=14">V14</a>
+      <a href="/?v=15_Fable">V15 FABLE</a><a class="selected" aria-current="page" href="/?v=16">V16</a>
+    </nav>
+  </header>
+  <main>
+    <section class="conversation">
+      <h1>Describe a place.<br>Walk into one truth.</h1>
+      <p class="lede">Conversation → Brief → Plan → Blockout → Canon → World. Dream previews guide mood; the approved metric plan owns space.</p>
+      <div id="messages" aria-live="polite"><div class="message">Starting a fresh conversation…</div></div>
+      <form id="composer">
+        <label for="message">Continue the design conversation</label>
+        <textarea id="message" placeholder="A small, warm kitchen with a round table…" required></textarea>
+        <button id="send" type="submit">Send direction</button>
+      </form>
+    </section>
+    <section class="stage">
+      <div class="stage-head"><div><div class="status" id="status">CONNECTING</div><h2 id="stageTitle">Fresh V16 session</h2></div><div class="meta" id="sessionId">—</div></div>
+      <div class="progress"><div id="progressFill"></div></div>
+      <div id="artifact"><p>Stage artifacts appear here as the unified pipeline advances.</p></div>
+      <button id="approval" type="button">Approve this stage</button>
+      <p class="meta" id="details">No prior session is used for this run.</p>
+    </section>
+  </main>
+  <script>window.APP_VERSION=16;</script>
+  <script src="/static/unified_v16.js?v=16" defer></script>
+</body>
+</html>

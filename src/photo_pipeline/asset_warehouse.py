@@ -53,6 +53,8 @@ class AssetWarehouse:
         self,
         glb_path: Path,
         registry: AssetRegistryEntry,
+        *,
+        mask_id: str | None = None,
     ) -> Path:
         """Copy GLB to category dir, write JSON registry. Returns saved path.
 
@@ -67,6 +69,8 @@ class AssetWarehouse:
         Args:
             glb_path: Path to the source GLB file to catalog.
             registry: Metadata entry describing the asset.
+            mask_id: Exact source mask identifier. When omitted, preserves the
+                legacy behavior of deriving it from ``registry.name``.
 
         Returns:
             The destination path where the GLB was saved.
@@ -91,10 +95,17 @@ class AssetWarehouse:
         category_dir = self._base_dir / registry.category
 
         # Generate the filename
+        resolved_mask_id = (
+            mask_id
+            if mask_id is not None
+            else registry.name.rsplit("_", 1)[-1]
+            if "_" in registry.name
+            else registry.name
+        )
         filename = self._generate_filename(
             label=registry.semantic_label,
             session_id=registry.source_session_id,
-            mask_id=registry.name.rsplit("_", 1)[-1] if "_" in registry.name else registry.name,
+            mask_id=resolved_mask_id,
         )
 
         # Resolve collision with numeric suffix (append-only: never overwrite)

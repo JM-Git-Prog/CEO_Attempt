@@ -511,6 +511,37 @@ _PROFILE_VALUES = (
         "source": "V14 renders real Hunyuan3D meshes in-browser via Three.js GLTFLoader",
         "status": "experimental",
     },
+    {
+        "id": "v15-fable-r1",
+        "interface_version": 15,
+        "release_commit": None,
+        "supersedes": "v14-real-3d-mesh-r1",
+        "stages": {
+            "world": {"pipeline": "v15-fable", "production_lane": "blast-and-paint"},
+        },
+        "source": "Released standalone v15_Fable production interface",
+        "status": "active",
+    },
+    {
+        "id": "v16-unified-world-pipeline-r1",
+        "interface_version": 16,
+        "release_commit": None,
+        "supersedes": "v15-fable-r1",
+        "stages": {
+            "conversation": {"pipeline": "unified/conversation-v1"},
+            "plan": {"authority": "approved-normalized-metric-plan"},
+            "world": {
+                "contract": "world-contract/v2",
+                "pipeline": "unified-world-pipeline/v1",
+                "browser_compiler": "unified-browser/v2",
+                "structural_gates_required": True,
+                "parity_gate_required": True,
+            },
+            "modes": {"game": "stubbed", "real": "read-only-v1"},
+        },
+        "source": "Unified conversation-to-walkable-world pipeline",
+        "status": "development",
+    },
 )
 _PROFILE_DOCUMENTS = MappingProxyType(
     {value["id"]: json.dumps(value, sort_keys=True) for value in _PROFILE_VALUES}
@@ -529,6 +560,8 @@ _ACTIVE_PROFILE_IDS = MappingProxyType(
         12: "v12-photo-world-r1",
         13: "v13-browser-game-r1",
         14: "v14-real-3d-mesh-r1",
+        15: "v15-fable-r1",
+        16: "v16-unified-world-pipeline-r1",
     }
 )
 _HISTORICAL_PROFILE_IDS = MappingProxyType(
@@ -545,11 +578,13 @@ _HISTORICAL_PROFILE_IDS = MappingProxyType(
         12: "v12-photo-world-r1",
         13: "v13-browser-game-r1",
         14: "v14-real-3d-mesh-r1",
+        15: "v15-fable-r1",
+        16: "v16-unified-world-pipeline-r1",
     }
 )
 
 
-LATEST_INTERFACE_VERSION = 14
+LATEST_INTERFACE_VERSION = 16
 
 
 class UnsupportedInterfaceVersion(ValueError):

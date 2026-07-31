@@ -21,11 +21,14 @@ from .parametric_room import PLAN_AUTHORITY, AuthorityClaim, ParametricRoomResul
 from .plan_validator import PlanValidator
 from .world_contract import (
     AssetBinding,
+    FirstPersonNavigation,
+    InteractionBinding,
     LightingConfig,
     MaterialIntent,
     ObjectInstance,
     Quaternion,
     Relationship,
+    StaticCollisionBody,
     Vec3,
     WorldContract,
     finalize,
@@ -133,6 +136,7 @@ class ConstrainedSceneGraph:
     room_authority_hash: str
     instances: tuple[ObjectInstance, ...]
     relationships: tuple[Relationship, ...]
+    interactions: tuple[InteractionBinding, ...]
     lighting: LightingConfig
 
 
@@ -259,6 +263,7 @@ class WorldContractAssembler:
         *,
         approved_plan_revision: int,
         relationships: Iterable[Relationship] = (),
+        interactions: Iterable[InteractionBinding] = (),
         lighting: LightingConfig,
         authority_claims: Iterable[str | AuthorityClaim] = (),
         consumer_defaults: Mapping[str, Any] | Iterable[str] = (),
@@ -283,7 +288,7 @@ class WorldContractAssembler:
 
         graph, normalized_assets = self._build_scene_graph(
             plan, room, camera_hash, revision, normalized, instances,
-            tuple(relationships), lighting,
+            tuple(relationships), tuple(interactions), lighting,
         )
         trace.append("constrained_scene_graph")
 
@@ -462,6 +467,7 @@ class WorldContractAssembler:
         normalized: Sequence[dict[str, Any]],
         inputs: Sequence[InstanceAssemblyInput],
         relationships: tuple[Relationship, ...],
+        interactions: tuple[InteractionBinding, ...],
         lighting: LightingConfig,
     ) -> tuple[ConstrainedSceneGraph, tuple[NormalizedAssetRecord, ...]]:
         input_map: dict[str, InstanceAssemblyInput] = {}
@@ -525,6 +531,9 @@ class WorldContractAssembler:
             room_authority_hash=room_hash,
             instances=tuple(sorted(world_instances, key=lambda item: item.object_id)),
             relationships=relationships,
+            interactions=tuple(sorted(
+                interactions, key=lambda item: item.interaction_id
+            )),
             lighting=lighting,
         )
         assets = tuple(
@@ -554,6 +563,7 @@ class WorldContractAssembler:
                 "camera_hash": graph.camera_hash,
                 "room_authority_hash": graph.room_authority_hash,
                 "instances": [item.to_dict() for item in graph.instances],
+                "interactions": [item.to_dict() for item in graph.interactions],
                 "relationships": relationship_seed,
                 "lighting": graph.lighting.to_dict(),
             }
@@ -563,11 +573,87 @@ class WorldContractAssembler:
             camera_hash=graph.camera_hash,
             camera=camera,
             room_shell_ref=f"parametric-room:sha256:{graph.room_authority_hash}",
+            navigation=WorldContractAssembler._build_navigation(graph, room, camera),
             instances=graph.instances,
+            interactions=graph.interactions,
             relationships=graph.relationships,
             lighting=graph.lighting,
             contract_id=contract_id,
             created_at=created_at,
+        )
+
+    @staticmethod
+    def _build_navigation(
+        graph: ConstrainedSceneGraph,
+        room: ParametricRoomResult,
+        camera: CameraContract,
+    ) -> FirstPersonNavigation:
+        """Bind Plan-owned bounds/colliders and explicit controller tuning once."""
+        bodies = [StaticCollisionBody(
+            body_id=item.stable_id,
+            source_id=item.geometry_id,
+            center=Vec3(*item.position_upbge),
+            dimensions=Vec3(*item.dimensions_upbge),
+            rotation=Quaternion(),
+            shape=item.shape.lower(),
+            body_mode=item.body_mode,
+            source_kind="architecture",
+        ) for item in room.collision]
+        bodies.extend(StaticCollisionBody(
+            body_id=f"collision:instance:{item.object_id}",
+            source_id=item.object_id,
+            center=Vec3(
+                item.position.x,
+                item.position.y + item.scale.y / 2.0,
+                item.position.z,
+            ),
+            dimensions=item.scale,
+            rotation=item.rotation,
+            shape="box",
+            body_mode="STATIC",
+            source_kind="instance",
+        ) for item in graph.instances if (
+            item.physics_intent == "static" or item.is_architectural
+        ))
+        bodies.sort(key=lambda item: item.body_id)
+
+        radius = 0.25
+        height = 1.75
+        eye_height = 1.62
+        minimum = room.navigable_bounds.minimum_m
+        maximum = room.navigable_bounds.maximum_m
+        resting_y = minimum[1] + eye_height
+        center = Vec3(
+            (minimum[0] + maximum[0]) / 2.0,
+            resting_y,
+            (minimum[2] + maximum[2]) / 2.0,
+        )
+        candidates = [Vec3(*camera.position), center]
+        x = minimum[0] + radius
+        while x <= maximum[0] - radius + 1e-9:
+            z = minimum[2] + radius
+            while z <= maximum[2] - radius + 1e-9:
+                candidates.append(Vec3(x, resting_y, z))
+                z += 0.6
+            x += 0.6
+        unique: list[Vec3] = []
+        seen: set[tuple[float, float, float]] = set()
+        for point in candidates:
+            key = (point.x, point.y, point.z)
+            if key not in seen:
+                seen.add(key)
+                unique.append(point)
+        return FirstPersonNavigation(
+            bounds_minimum=Vec3(*minimum),
+            bounds_maximum=Vec3(*maximum),
+            static_bodies=tuple(bodies),
+            spawn_candidates=tuple(unique),
+            player_radius=radius,
+            player_height=height,
+            eye_height=eye_height,
+            movement_speed=2.0,
+            gravity=9.81,
+            coordinate_system=room.navigable_bounds.coordinate_system,
         )
 
     @staticmethod
@@ -668,6 +754,7 @@ def assemble_world_contract(
     approved_plan_revision: int,
     lighting: LightingConfig,
     relationships: Iterable[Relationship] = (),
+    interactions: Iterable[InteractionBinding] = (),
     authority_claims: Iterable[str | AuthorityClaim] = (),
     consumer_defaults: Mapping[str, Any] | Iterable[str] = (),
     asset_normalizer: AssetNormalizer | None = None,
@@ -682,6 +769,7 @@ def assemble_world_contract(
         instances,
         approved_plan_revision=approved_plan_revision,
         relationships=relationships,
+        interactions=interactions,
         lighting=lighting,
         authority_claims=authority_claims,
         consumer_defaults=consumer_defaults,

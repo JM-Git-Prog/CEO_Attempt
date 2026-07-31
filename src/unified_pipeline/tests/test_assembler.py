@@ -30,9 +30,13 @@ from src.unified_pipeline.parametric_room import build_authoritative_parametric_
 from src.unified_pipeline.plan_generator import _build_walls_from_dimensions
 from src.unified_pipeline.plan_validator import _compute_plan_hash
 from src.unified_pipeline.world_contract import (
+    DynamicInteractionMetadata,
+    InteractionBinding,
+    InteractionCollider,
     LightingConfig,
     MaterialIntent,
     Relationship,
+    Vec3,
     verify_hash,
 )
 
@@ -128,6 +132,34 @@ def test_assembles_full_chain_and_binds_authoritative_values(tmp_path: Path) -> 
     assert result.contract.plan_revision == "rev-3"
     assert result.contract.camera_hash == camera.compute_hash()
     assert result.contract.room_shell_ref.startswith("parametric-room:sha256:")
+    navigation = result.contract.navigation
+    assert navigation is not None
+    assert navigation.bounds_minimum.to_dict() == {
+        "x": room.navigable_bounds.minimum_m[0],
+        "y": room.navigable_bounds.minimum_m[1],
+        "z": room.navigable_bounds.minimum_m[2],
+    }
+    assert navigation.bounds_maximum.to_dict() == {
+        "x": room.navigable_bounds.maximum_m[0],
+        "y": room.navigable_bounds.maximum_m[1],
+        "z": room.navigable_bounds.maximum_m[2],
+    }
+    assert [body.to_dict() for body in navigation.static_bodies] == [
+        {
+            "body_id": collision.stable_id,
+            "source_id": collision.geometry_id,
+            "center": dict(zip(("x", "y", "z"), collision.position_upbge)),
+            "dimensions": dict(zip(("x", "y", "z"), collision.dimensions_upbge)),
+            "rotation": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0},
+            "shape": collision.shape,
+            "body_mode": collision.body_mode,
+            "source_kind": "architecture",
+        }
+        for collision in sorted(room.collision, key=lambda item: item.stable_id)
+    ]
+    assert navigation.spawn_candidates[0].to_dict() == dict(
+        zip(("x", "y", "z"), camera.position)
+    )
     assert verify_hash(result.contract)
     assert result.contract_hash == result.contract.contract_hash
     instance = result.contract.instances[0]
@@ -141,6 +173,48 @@ def test_assembles_full_chain_and_binds_authoritative_values(tmp_path: Path) -> 
         "vertex_count": 700,
         "generator": "hunyuan3d",
     }
+
+
+def test_assembler_hash_binds_explicit_uuid_interactions(tmp_path: Path) -> None:
+    object_id = "db2790ad-331f-5411-9347-1815acb004bd"
+    interaction = InteractionBinding(
+        interaction_id="3a07e72b-8b91-56e9-b902-34cdba2f85cf",
+        object_id=object_id,
+        kind="dynamic",
+        collider=InteractionCollider(
+            center_offset=Vec3(0.0, 0.4, 0.0),
+            dimensions=Vec3(0.4, 0.8, 0.4),
+        ),
+        dynamic=DynamicInteractionMetadata(
+            mass_kg=6.0,
+            friction=0.5,
+            restitution=0.2,
+            can_grab=True,
+            can_push=True,
+            can_topple=True,
+            grab_distance_m=3.0,
+            hold_distance_m=1.5,
+            hold_stiffness=12.0,
+            push_impulse_ns=9.0,
+            linear_damping=1.0,
+            angular_damping=1.5,
+        ),
+    )
+    camera = _camera()
+    plan = _plan(_placement(object_id, 1.0))
+    result = WorldContractAssembler().assemble(
+        plan,
+        camera,
+        _room(plan, camera),
+        (_intent(object_id, _asset(tmp_path)),),
+        approved_plan_revision=3,
+        interactions=(interaction,),
+        lighting=LightingConfig(),
+    )
+
+    assert result.contract.interactions == (interaction,)
+    assert result.contract.to_dict()["interactions"] == [interaction.to_dict()]
+    assert verify_hash(result.contract)
 
 
 def test_normalizes_shared_approved_asset_exactly_once(tmp_path: Path) -> None:

@@ -4,17 +4,20 @@ from pathlib import Path
 
 from src.workflow_provenance import normalize_interface_version
 
-# V14 uses a dedicated Three.js template file (full-viewport WebGL canvas)
+# V14 and V16 use dedicated full-page templates.
 _V14_TEMPLATE_PATH = Path(__file__).parent / "templates" / "index_v14.html"
+_V16_TEMPLATE_PATH = Path(__file__).parent / "templates" / "index_v16.html"
 
 
-def get_index_html(version: int = 11) -> str:
+def get_index_html(version: int = 16) -> str:
     normalized = normalize_interface_version(version)
     if normalized != version:
         raise ValueError(f"Unsupported interface version: {version}")
     version = normalized
 
-    # V14 serves a dedicated Three.js full-viewport template
+    # Released interfaces keep dedicated documents so later UI work cannot mutate them.
+    if version == 16:
+        return _V16_TEMPLATE_PATH.read_text(encoding="utf-8")
     if version == 14:
         return _V14_TEMPLATE_PATH.read_text(encoding="utf-8")
     refresh_control = '<button class="refresh-output" onclick="refreshOutput()">REFRESH OUTPUT ↻</button>' if version >= 4 else ""

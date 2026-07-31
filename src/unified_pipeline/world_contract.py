@@ -88,6 +88,253 @@ class Quaternion:
 
 
 @dataclass(frozen=True)
+class StaticCollisionBody:
+    """One explicit, authoritative static box collider in contract space."""
+
+    body_id: str
+    source_id: str
+    center: Vec3
+    dimensions: Vec3
+    rotation: Quaternion = field(default_factory=Quaternion)
+    shape: str = "box"
+    body_mode: str = "STATIC"
+    source_kind: str = "instance"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "body_id": self.body_id,
+            "source_id": self.source_id,
+            "center": self.center.to_dict(),
+            "dimensions": self.dimensions.to_dict(),
+            "rotation": self.rotation.to_dict(),
+            "shape": self.shape,
+            "body_mode": self.body_mode,
+            "source_kind": self.source_kind,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> StaticCollisionBody:
+        return cls(
+            body_id=str(data.get("body_id", "")),
+            source_id=str(data.get("source_id", "")),
+            center=Vec3.from_dict(data.get("center", {})),
+            dimensions=Vec3.from_dict(data.get("dimensions", {})),
+            rotation=Quaternion.from_dict(
+                data.get("rotation", {"x": 0, "y": 0, "z": 0, "w": 1})
+            ),
+            shape=str(data.get("shape", "box")),
+            body_mode=str(data.get("body_mode", "STATIC")),
+            source_kind=str(data.get("source_kind", "instance")),
+        )
+
+
+@dataclass(frozen=True)
+class FirstPersonNavigation:
+    """Hash-bound runtime values for browser walkability; consumers do not infer them."""
+
+    bounds_minimum: Vec3
+    bounds_maximum: Vec3
+    static_bodies: tuple[StaticCollisionBody, ...]
+    spawn_candidates: tuple[Vec3, ...]
+    player_radius: float
+    player_height: float
+    eye_height: float
+    movement_speed: float
+    gravity: float
+    coordinate_system: str = "right-handed-x-right-y-up-z-depth"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "bounds_minimum": self.bounds_minimum.to_dict(),
+            "bounds_maximum": self.bounds_maximum.to_dict(),
+            "static_bodies": [body.to_dict() for body in self.static_bodies],
+            "spawn_candidates": [point.to_dict() for point in self.spawn_candidates],
+            "player_radius": self.player_radius,
+            "player_height": self.player_height,
+            "eye_height": self.eye_height,
+            "movement_speed": self.movement_speed,
+            "gravity": self.gravity,
+            "coordinate_system": self.coordinate_system,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> FirstPersonNavigation:
+        return cls(
+            bounds_minimum=Vec3.from_dict(data.get("bounds_minimum", {})),
+            bounds_maximum=Vec3.from_dict(data.get("bounds_maximum", {})),
+            static_bodies=tuple(
+                StaticCollisionBody.from_dict(item)
+                for item in data.get("static_bodies", [])
+            ),
+            spawn_candidates=tuple(
+                Vec3.from_dict(item) for item in data.get("spawn_candidates", [])
+            ),
+            player_radius=float(data.get("player_radius", 0.0)),
+            player_height=float(data.get("player_height", 0.0)),
+            eye_height=float(data.get("eye_height", 0.0)),
+            movement_speed=float(data.get("movement_speed", 0.0)),
+            gravity=float(data.get("gravity", 0.0)),
+            coordinate_system=str(data.get("coordinate_system", "")),
+        )
+
+
+@dataclass(frozen=True)
+class InteractionCollider:
+    """Explicit local box collider authored outside the browser runtime."""
+
+    center_offset: Vec3
+    dimensions: Vec3
+    rotation: Quaternion = field(default_factory=Quaternion)
+    shape: str = "box"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "center_offset": self.center_offset.to_dict(),
+            "dimensions": self.dimensions.to_dict(),
+            "rotation": self.rotation.to_dict(),
+            "shape": self.shape,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> InteractionCollider:
+        return cls(
+            center_offset=Vec3.from_dict(data["center_offset"]),
+            dimensions=Vec3.from_dict(data["dimensions"]),
+            rotation=Quaternion.from_dict(data["rotation"]),
+            shape=str(data["shape"]),
+        )
+
+
+@dataclass(frozen=True)
+class DynamicInteractionMetadata:
+    """Explicit grab, push, topple, and deterministic body parameters."""
+
+    mass_kg: float
+    friction: float
+    restitution: float
+    can_grab: bool
+    can_push: bool
+    can_topple: bool
+    grab_distance_m: float
+    hold_distance_m: float
+    hold_stiffness: float
+    push_impulse_ns: float
+    linear_damping: float
+    angular_damping: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "mass_kg": self.mass_kg,
+            "friction": self.friction,
+            "restitution": self.restitution,
+            "can_grab": self.can_grab,
+            "can_push": self.can_push,
+            "can_topple": self.can_topple,
+            "grab_distance_m": self.grab_distance_m,
+            "hold_distance_m": self.hold_distance_m,
+            "hold_stiffness": self.hold_stiffness,
+            "push_impulse_ns": self.push_impulse_ns,
+            "linear_damping": self.linear_damping,
+            "angular_damping": self.angular_damping,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> DynamicInteractionMetadata:
+        return cls(
+            mass_kg=float(data["mass_kg"]),
+            friction=float(data["friction"]),
+            restitution=float(data["restitution"]),
+            can_grab=data["can_grab"],
+            can_push=data["can_push"],
+            can_topple=data["can_topple"],
+            grab_distance_m=float(data["grab_distance_m"]),
+            hold_distance_m=float(data["hold_distance_m"]),
+            hold_stiffness=float(data["hold_stiffness"]),
+            push_impulse_ns=float(data["push_impulse_ns"]),
+            linear_damping=float(data["linear_damping"]),
+            angular_damping=float(data["angular_damping"]),
+        )
+
+
+@dataclass(frozen=True)
+class DoorInteractionMetadata:
+    """Explicit world-space hinge metadata derived before compilation."""
+
+    pivot: Vec3
+    axis: Vec3
+    lower_limit_deg: float
+    upper_limit_deg: float
+    initial_angle_deg: float
+    angular_speed_deg_s: float
+    interaction_distance_m: float
+    interaction_mass_kg: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "pivot": self.pivot.to_dict(),
+            "axis": self.axis.to_dict(),
+            "lower_limit_deg": self.lower_limit_deg,
+            "upper_limit_deg": self.upper_limit_deg,
+            "initial_angle_deg": self.initial_angle_deg,
+            "angular_speed_deg_s": self.angular_speed_deg_s,
+            "interaction_distance_m": self.interaction_distance_m,
+            "interaction_mass_kg": self.interaction_mass_kg,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> DoorInteractionMetadata:
+        return cls(
+            pivot=Vec3.from_dict(data["pivot"]),
+            axis=Vec3.from_dict(data["axis"]),
+            lower_limit_deg=float(data["lower_limit_deg"]),
+            upper_limit_deg=float(data["upper_limit_deg"]),
+            initial_angle_deg=float(data["initial_angle_deg"]),
+            angular_speed_deg_s=float(data["angular_speed_deg_s"]),
+            interaction_distance_m=float(data["interaction_distance_m"]),
+            interaction_mass_kg=float(data["interaction_mass_kg"]),
+        )
+
+
+@dataclass(frozen=True)
+class InteractionBinding:
+    """One hash-bound behavior binding keyed by stable WorldContract UUID."""
+
+    interaction_id: str
+    object_id: str
+    kind: str
+    collider: InteractionCollider
+    dynamic: DynamicInteractionMetadata | None = None
+    door: DoorInteractionMetadata | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "interaction_id": self.interaction_id,
+            "object_id": self.object_id,
+            "kind": self.kind,
+            "collider": self.collider.to_dict(),
+            "dynamic": self.dynamic.to_dict() if self.dynamic is not None else None,
+            "door": self.door.to_dict() if self.door is not None else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> InteractionBinding:
+        return cls(
+            interaction_id=str(data["interaction_id"]),
+            object_id=str(data["object_id"]),
+            kind=str(data["kind"]),
+            collider=InteractionCollider.from_dict(data["collider"]),
+            dynamic=(
+                DynamicInteractionMetadata.from_dict(data["dynamic"])
+                if data.get("dynamic") is not None else None
+            ),
+            door=(
+                DoorInteractionMetadata.from_dict(data["door"])
+                if data.get("door") is not None else None
+            ),
+        )
+
+
+@dataclass(frozen=True)
 class MaterialIntent:
     """Material binding intent for an object instance."""
     base_color: str = ""          # hex color or texture reference
@@ -320,9 +567,13 @@ class WorldContract:
     camera_hash: str = ""             # SHA-256 of the CameraContract
     camera: CameraContract | None = None  # exact immutable projection; no consumer inference
     room_shell_ref: str = ""          # path/hash reference to room shell mesh
+    navigation: FirstPersonNavigation | None = None  # exact Plan-derived runtime authority
 
     # Instances
     instances: tuple[ObjectInstance, ...] = ()
+
+    # Explicit runtime interactions; consumers never infer these from assets.
+    interactions: tuple[InteractionBinding, ...] = ()
 
     # Relationships
     relationships: tuple[Relationship, ...] = ()
@@ -344,7 +595,9 @@ class WorldContract:
             "camera_hash": self.camera_hash,
             "camera": self.camera.to_dict() if self.camera is not None else None,
             "room_shell_ref": self.room_shell_ref,
+            "navigation": self.navigation.to_dict() if self.navigation is not None else None,
             "instances": [inst.to_dict() for inst in self.instances],
+            "interactions": [item.to_dict() for item in self.interactions],
             "relationships": [rel.to_dict() for rel in self.relationships],
             "lighting": self.lighting.to_dict(),
             "contract_id": self.contract_id,
@@ -363,8 +616,15 @@ class WorldContract:
                 if data.get("camera") is not None else None
             ),
             room_shell_ref=str(data.get("room_shell_ref", "")),
+            navigation=(
+                FirstPersonNavigation.from_dict(data["navigation"])
+                if data.get("navigation") is not None else None
+            ),
             instances=tuple(
                 ObjectInstance.from_dict(d) for d in data.get("instances", [])
+            ),
+            interactions=tuple(
+                InteractionBinding.from_dict(d) for d in data.get("interactions", [])
             ),
             relationships=tuple(
                 Relationship.from_dict(d) for d in data.get("relationships", [])

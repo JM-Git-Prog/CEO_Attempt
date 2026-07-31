@@ -261,51 +261,51 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 ### Wave 8: Walkable World and Interaction
 
-- [-] 8.1 Implement first-person controller for browser
+- [~] 8.1 Implement first-person controller for browser
   - Extend V14 Three.js viewer with: WASD movement, mouse look (PointerLock), gravity, collision with static bodies, safe spawn position selection
   - _Requirements: 22.1, 21.6_
 
-- [-] 8.2 Implement object interaction system
+- [~] 8.2 Implement object interaction system
   - Door swing (hinge physics), object grab/release (raycasting + constraint), push/topple (impulse application)
   - _Requirements: 22.2, 22.3, 22.4_
 
-- [-] 8.3 Implement lighting from WorldContract
+- [~] 8.3 Implement lighting from WorldContract
   - Place light fixtures at contract positions, set intensity/color/temperature from Scene_Canon-derived values
   - Compute shadows from each light source
   - _Requirements: 22.5_
 
-- [-] 8.4 Implement three-view identity and Canon fidelity comparison
+- [~] 8.4 Implement three-view identity and Canon fidelity comparison
   - Create `src/unified_pipeline/canon_compare.py` comparing Plan-derived Blockout/blueprint, Scene_Canon, and first-person World render per stable UUID and region
   - GREEN requires shell/opening truth, every requested object, placement/dimensions/heights, zero forbidden overlap, and palette/material fidelity; presence/order alone is insufficient
   - Store the verdict as hash-bound evidence and block final QA on red/amber according to configured release policy
   - _Requirements: 22.6_
 
-- [-] 8.5 Write interaction and walkability tests
+- [x] 8.5 Write interaction and walkability tests
   - Test spawn safety, collision response, door swing, grab/release
   - _Requirements: 22.1, 22.2, 22.3, 22.4_
 
 ### Wave 9: Mode Toggle and REAL Mode (GAME stubbed)
 
-- [~] 9.1 Implement GameOverlay data model and stub designer
+- [x] 9.1 Implement GameOverlay data model and stub designer
   - Create `src/unified_pipeline/game_designer.py` — data model for GameOverlay (rules, scoring, win_condition, object_role_bindings by UUID)
   - Stub implementation: returns a suggested theme + mechanics based on Brief room_purpose, but NO functional gameplay logic
   - Full AI game design is a follow-on session
   - _Requirements: 23.1, 23.2, 23.3, 23.4_
 
-- [~] 9.2 Implement RealBinder (read-only surface display)
+- [x] 9.2 Implement RealBinder (read-only surface display)
   - Create `src/unified_pipeline/real_binder.py` — tool connection system
   - MCP-server-compatible bindings, read-only v1, surface assignment by UUID
   - Implement one working binding: display static text/data on a bound surface
   - Budget/land earning logic is post-MVP
   - _Requirements: 24.1, 24.2, 24.3, 24.4, 24.5_
 
-- [~] 9.3 Implement ModeToggle (config switch)
+- [x] 9.3 Implement ModeToggle (config switch)
   - Create `src/unified_pipeline/mode_toggle.py` — per-room state, persist, announce on entry
   - Toggle switches between REAL overlay (functional) and GAME overlay (stubbed/placeholder)
   - Verify: no visual change on switch, only behavior overlays swap
   - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.5, 25.6_
 
-- [~] 9.4 Write tests for toggle and REAL mode
+- [x] 9.4 Write tests for toggle and REAL mode
   - Test mode persistence, toggle preserves visuals, REAL binding displays data
   - _Requirements: 25.2, 25.5, 24.4_
 

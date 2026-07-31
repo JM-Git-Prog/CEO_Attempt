@@ -5,7 +5,7 @@ packages approved assets byte-for-byte, and emits a viewer that applies the
 contract's camera, transforms, and metallic-roughness materials verbatim.
 It never centers, bounds-fits, rescales, clamps, offsets, or normalizes assets.
 
-Requirements: 21.1 and 21.4.
+Requirements: 21.1, 21.4, 22.2, 22.3, and 22.4.
 """
 from __future__ import annotations
 
@@ -17,9 +17,12 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 from src.unified_pipeline.world_contract import (
+    FirstPersonNavigation,
     ObjectInstance,
+    StaticCollisionBody,
     WorldContract,
     serialize,
     verify_hash,
@@ -114,11 +117,253 @@ def _validate_instance(instance: ObjectInstance) -> None:
         )
 
 
+def _stable_uuid(value: str, label: str) -> None:
+    try:
+        parsed = UUID(value)
+    except (TypeError, ValueError, AttributeError) as exc:
+        raise BrowserCompilerError(f"{label} must be a canonical stable UUID") from exc
+    if str(parsed) != value.lower():
+        raise BrowserCompilerError(f"{label} must be a canonical stable UUID")
+
+
+def _validate_interactions(contract: WorldContract) -> None:
+    """Validate explicit hash-bound behavior without inspecting asset geometry."""
+    instances = {item.object_id: item for item in contract.instances}
+    interaction_ids: set[str] = set()
+    object_ids: set[str] = set()
+
+    for binding in contract.interactions:
+        _stable_uuid(binding.interaction_id, "interaction_id")
+        _stable_uuid(binding.object_id, "interaction object_id")
+        if binding.interaction_id in interaction_ids:
+            raise BrowserCompilerError("interaction IDs must be unique")
+        if binding.object_id in object_ids:
+            raise BrowserCompilerError("each object UUID may have only one interaction binding")
+        interaction_ids.add(binding.interaction_id)
+        object_ids.add(binding.object_id)
+        instance = instances.get(binding.object_id)
+        if instance is None:
+            raise BrowserCompilerError(
+                f"interaction {binding.interaction_id!r} references an unknown object UUID"
+            )
+
+        collider = binding.collider
+        values = (
+            collider.center_offset.x, collider.center_offset.y, collider.center_offset.z,
+            collider.dimensions.x, collider.dimensions.y, collider.dimensions.z,
+            collider.rotation.x, collider.rotation.y, collider.rotation.z,
+            collider.rotation.w,
+        )
+        if (
+            collider.shape != "box"
+            or any(isinstance(value, bool) for value in values)
+            or any(not math.isfinite(value) for value in values)
+        ):
+            raise BrowserCompilerError(
+                f"interaction {binding.interaction_id!r} requires an explicit finite box collider"
+            )
+        if min(collider.dimensions.x, collider.dimensions.y, collider.dimensions.z) <= 0.0:
+            raise BrowserCompilerError("interaction collider dimensions must be positive")
+        expected_dimensions = (instance.scale.x, instance.scale.y, instance.scale.z)
+        actual_dimensions = (
+            collider.dimensions.x, collider.dimensions.y, collider.dimensions.z,
+        )
+        if any(abs(actual - expected) > 1e-9 for actual, expected in zip(
+            actual_dimensions, expected_dimensions
+        )):
+            raise BrowserCompilerError(
+                "interaction collider dimensions must exactly match Plan-owned instance dimensions"
+            )
+        expected_center = (0.0, instance.scale.y / 2.0, 0.0)
+        actual_center = (
+            collider.center_offset.x, collider.center_offset.y, collider.center_offset.z,
+        )
+        if any(abs(actual - expected) > 1e-9 for actual, expected in zip(
+            actual_center, expected_center
+        )):
+            raise BrowserCompilerError(
+                "interaction collider center must exactly preserve the Plan-owned instance origin"
+            )
+        rotation_norm = sum(value * value for value in (
+            collider.rotation.x, collider.rotation.y,
+            collider.rotation.z, collider.rotation.w,
+        ))
+        if abs(rotation_norm - 1.0) > 1e-6:
+            raise BrowserCompilerError("interaction collider rotation must be unit length")
+
+        if binding.kind == "dynamic":
+            metadata = binding.dynamic
+            if metadata is None or binding.door is not None:
+                raise BrowserCompilerError("dynamic interaction metadata is missing or ambiguous")
+            if instance.physics_intent != "dynamic" or instance.is_architectural:
+                raise BrowserCompilerError(
+                    "dynamic interaction requires an explicitly dynamic non-architectural instance"
+                )
+            numbers = (
+                metadata.mass_kg, metadata.friction, metadata.restitution,
+                metadata.grab_distance_m, metadata.hold_distance_m,
+                metadata.hold_stiffness, metadata.push_impulse_ns,
+                metadata.linear_damping, metadata.angular_damping,
+            )
+            if any(not math.isfinite(value) for value in numbers):
+                raise BrowserCompilerError("dynamic interaction metadata must be finite")
+            if (
+                any(isinstance(value, bool) for value in numbers)
+                or any(not isinstance(value, bool) for value in (
+                    metadata.can_grab, metadata.can_push, metadata.can_topple
+                ))
+                or metadata.mass_kg <= 0.0
+                or not 0.0 <= metadata.friction <= 1.0
+                or not 0.0 <= metadata.restitution <= 1.0
+                or metadata.grab_distance_m <= 0.0
+                or metadata.hold_distance_m <= 0.0
+                or metadata.hold_stiffness <= 0.0
+                or metadata.push_impulse_ns <= 0.0
+                or metadata.linear_damping < 0.0
+                or metadata.angular_damping < 0.0
+                or not (metadata.can_grab or metadata.can_push)
+            ):
+                raise BrowserCompilerError("dynamic interaction metadata is outside safe bounds")
+        elif binding.kind == "door_hinge":
+            metadata = binding.door
+            if metadata is None or binding.dynamic is not None:
+                raise BrowserCompilerError("door hinge metadata is missing or ambiguous")
+            if not instance.is_architectural or instance.physics_intent not in {"static", "kinematic"}:
+                raise BrowserCompilerError(
+                    "door hinge interaction requires an architectural static/kinematic instance"
+                )
+            numbers = (
+                metadata.pivot.x, metadata.pivot.y, metadata.pivot.z,
+                metadata.axis.x, metadata.axis.y, metadata.axis.z,
+                metadata.lower_limit_deg, metadata.upper_limit_deg,
+                metadata.initial_angle_deg, metadata.angular_speed_deg_s,
+                metadata.interaction_distance_m, metadata.interaction_mass_kg,
+            )
+            if any(not math.isfinite(value) for value in numbers):
+                raise BrowserCompilerError("door hinge metadata must be finite")
+            if any(isinstance(value, bool) for value in numbers):
+                raise BrowserCompilerError("door hinge metadata must use numeric values")
+            axis_norm = math.sqrt(
+                metadata.axis.x ** 2 + metadata.axis.y ** 2 + metadata.axis.z ** 2
+            )
+            if (
+                abs(axis_norm - 1.0) > 1e-6
+                or abs(metadata.axis.x) > 1e-9
+                or abs(metadata.axis.z) > 1e-9
+                or metadata.lower_limit_deg >= metadata.upper_limit_deg
+                or metadata.lower_limit_deg < -180.0
+                or metadata.upper_limit_deg > 180.0
+                or not metadata.lower_limit_deg <= metadata.initial_angle_deg <= metadata.upper_limit_deg
+                or metadata.angular_speed_deg_s <= 0.0
+                or metadata.interaction_distance_m <= 0.0
+                or metadata.interaction_mass_kg <= 0.0
+            ):
+                raise BrowserCompilerError("door hinge metadata is outside safe explicit bounds")
+        else:
+            raise BrowserCompilerError(f"unsupported interaction kind {binding.kind!r}")
+
+    required_dynamic_ids = {
+        item.object_id for item in contract.instances
+        if item.physics_intent == "dynamic" and not item.is_architectural
+    }
+    bound_dynamic_ids = {
+        item.object_id for item in contract.interactions if item.kind == "dynamic"
+    }
+    if required_dynamic_ids != bound_dynamic_ids:
+        raise BrowserCompilerError(
+            "every dynamic instance requires exactly one explicit interaction binding"
+        )
+
+
+def _body_aabb_half_extents(body: StaticCollisionBody) -> tuple[float, float, float]:
+    """Return a conservative world AABB for a contract-authored oriented box."""
+    q = body.rotation
+    norm = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w
+    if abs(norm - 1.0) > 1e-6:
+        raise BrowserCompilerError(f"collision body {body.body_id!r} rotation must be unit length")
+    xx, yy, zz = q.x * q.x, q.y * q.y, q.z * q.z
+    xy, xz, yz = q.x * q.y, q.x * q.z, q.y * q.z
+    wx, wy, wz = q.w * q.x, q.w * q.y, q.w * q.z
+    rotation = (
+        (1.0 - 2.0 * (yy + zz), 2.0 * (xy - wz), 2.0 * (xz + wy)),
+        (2.0 * (xy + wz), 1.0 - 2.0 * (xx + zz), 2.0 * (yz - wx)),
+        (2.0 * (xz - wy), 2.0 * (yz + wx), 1.0 - 2.0 * (xx + yy)),
+    )
+    half = (body.dimensions.x / 2.0, body.dimensions.y / 2.0, body.dimensions.z / 2.0)
+    return tuple(
+        sum(abs(rotation[row][column]) * half[column] for column in range(3))
+        for row in range(3)
+    )
+
+
+def _select_safe_spawn(navigation: FirstPersonNavigation) -> dict[str, float]:
+    values = (
+        navigation.player_radius, navigation.player_height,
+        navigation.eye_height, navigation.movement_speed, navigation.gravity,
+    )
+    if any(not math.isfinite(value) or value <= 0.0 for value in values):
+        raise BrowserCompilerError("first-person controller values must be positive and finite")
+    if navigation.eye_height > navigation.player_height:
+        raise BrowserCompilerError("first-person eye height cannot exceed player height")
+    if navigation.coordinate_system != "right-handed-x-right-y-up-z-depth":
+        raise BrowserCompilerError("first-person navigation coordinate system is unsupported")
+    minimum = navigation.bounds_minimum
+    maximum = navigation.bounds_maximum
+    bounds_min = (minimum.x, minimum.y, minimum.z)
+    bounds_max = (maximum.x, maximum.y, maximum.z)
+    if any(not math.isfinite(value) for value in (*bounds_min, *bounds_max)) or any(
+        low >= high for low, high in zip(bounds_min, bounds_max)
+    ):
+        raise BrowserCompilerError("first-person navigable bounds are invalid")
+
+    body_ids: set[str] = set()
+    body_boxes: list[tuple[tuple[float, float, float], tuple[float, float, float]]] = []
+    for body in navigation.static_bodies:
+        if not body.body_id or body.body_id in body_ids:
+            raise BrowserCompilerError("static collision body IDs must be unique and nonempty")
+        body_ids.add(body.body_id)
+        if body.shape != "box" or body.body_mode != "STATIC":
+            raise BrowserCompilerError(
+                f"collision body {body.body_id!r} must be an explicit STATIC box"
+            )
+        center = (body.center.x, body.center.y, body.center.z)
+        dimensions = (body.dimensions.x, body.dimensions.y, body.dimensions.z)
+        if any(not math.isfinite(value) for value in (*center, *dimensions)) or min(dimensions) <= 0.0:
+            raise BrowserCompilerError(f"collision body {body.body_id!r} is invalid")
+        body_boxes.append((center, _body_aabb_half_extents(body)))
+
+    radius = navigation.player_radius
+    player_half = (radius, navigation.player_height / 2.0, radius)
+    for candidate in navigation.spawn_candidates:
+        point = (candidate.x, candidate.y, candidate.z)
+        if any(not math.isfinite(value) for value in point):
+            raise BrowserCompilerError("spawn candidates must be finite")
+        player_center = (
+            candidate.x,
+            candidate.y - navigation.eye_height + player_half[1],
+            candidate.z,
+        )
+        if any(
+            player_center[index] - player_half[index] < bounds_min[index]
+            or player_center[index] + player_half[index] > bounds_max[index]
+            for index in range(3)
+        ):
+            continue
+        collides = any(all(
+            abs(player_center[index] - center[index])
+            < player_half[index] + half[index] - 1e-9
+            for index in range(3)
+        ) for center, half in body_boxes)
+        if not collides:
+            return candidate.to_dict()
+    raise BrowserCompilerError("WorldContract has no deterministic safe spawn candidate")
+
+
 class BrowserCompiler:
     """Emit a standalone Three.js scene from exactly one WorldContract."""
 
-    schema_version = "browser-world-compiler/v1"
-    interface_version = 1
+    schema_version = "browser-world-compiler/v3"
+    interface_version = 3
 
     def compile(
         self, contract: WorldContract, output_dir: str | Path
@@ -139,12 +384,19 @@ class BrowserCompiler:
             )
         if contract.camera.compute_hash() != contract.camera_hash:
             raise BrowserCompilerError("CameraContract values do not match camera_hash")
+        if contract.navigation is None:
+            raise BrowserCompilerError(
+                "WorldContract lacks exact Plan-derived navigation/collision values; "
+                "browser compiler will not infer them"
+            )
+        selected_spawn = _select_safe_spawn(contract.navigation)
 
         ids = [item.object_id for item in contract.instances]
         if len(ids) != len(set(ids)):
             raise BrowserCompilerError("WorldContract instance IDs must be unique")
         for instance in contract.instances:
             _validate_instance(instance)
+        _validate_interactions(contract)
         for light in contract.lighting.lights:
             if light.light_type not in _SUPPORTED_LIGHTS:
                 raise BrowserCompilerError(
@@ -175,7 +427,7 @@ class BrowserCompiler:
         if _sha256(hash_payload_file) != contract.contract_hash:
             raise BrowserCompilerError("canonical hash payload does not match WorldContract")
         scene = self._scene_manifest(
-            contract, assets, material_assets, room_uri
+            contract, assets, material_assets, room_uri, selected_spawn
         )
         scene_file.write_text(
             json.dumps(scene, indent=2, sort_keys=True), encoding="utf-8"
@@ -206,13 +458,17 @@ class BrowserCompiler:
             "plan_revision": contract.plan_revision,
             "camera_hash": contract.camera_hash,
             "camera": contract.camera.to_dict(),
+            "navigation": contract.navigation.to_dict(),
+            "selected_spawn": selected_spawn,
             "room_shell_ref": contract.room_shell_ref,
             "instances": [item.to_dict() for item in contract.instances],
+            "interactions": [item.to_dict() for item in contract.interactions],
             "authority": {
                 "source": "one_canonical_world_contract",
                 "asset_copy": "byte_for_byte_sha256_verified",
                 "transform_policy": "exact_no_clamp_rescale_offset_or_normalization",
                 "camera_policy": "exact_hash_verified_no_inference",
+                "interaction_policy": "explicit_uuid_metadata_no_glb_inference",
                 "missing_authority_policy": "fail_closed",
             },
             "artifacts": [
@@ -328,6 +584,7 @@ class BrowserCompiler:
         assets: dict[str, Path],
         material_assets: dict[str, Path],
         room_uri: str | None,
+        selected_spawn: dict[str, float],
     ) -> dict[str, Any]:
         root = next(iter(assets.values())).parents[2] if assets else None
         instances: list[dict[str, Any]] = []
@@ -341,15 +598,19 @@ class BrowserCompiler:
             }
             instances.append(payload)
         return {
-            "schema_version": "three-scene-manifest/v1",
+            "schema_version": "three-scene-manifest/v3",
             "interface_version": BrowserCompiler.interface_version,
             "contract_hash": contract.contract_hash,
             "plan_revision": contract.plan_revision,
             "camera_hash": contract.camera_hash,
             "camera": contract.camera.to_dict() if contract.camera else None,
+            "navigation": contract.navigation.to_dict() if contract.navigation else None,
+            "selected_spawn": selected_spawn,
+            "safe_spawn_policy": "first_safe_contract_candidate_in_declared_order",
             "room_shell_ref": contract.room_shell_ref,
             "room_asset_uri": room_uri,
             "instances": instances,
+            "interactions": [item.to_dict() for item in contract.interactions],
             "relationships": [item.to_dict() for item in contract.relationships],
             "lighting": contract.lighting.to_dict(),
             "progressive": {
@@ -373,7 +634,7 @@ _INDEX_HTML = '''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Canonical World — Browser v1</title>
+<title>Canonical World — Browser v3</title>
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#fff;font:14px system-ui}
 #viewport{width:100%;height:100%;display:grid;place-items:center}canvas{max-width:100%;max-height:100%;object-fit:contain}
@@ -386,7 +647,7 @@ button,a{color:#fff;background:#222;border:1px solid #777;padding:5px 8px;margin
 <div id="viewport"></div>
 <div id="hud"><strong id="identity">Loading canonical world…</strong><br>
 <button id="orbit">Orbit</button><button id="first-person">First person</button>
-<a href="?v=1" aria-current="page">v1</a><div id="status"></div><div id="errors"></div></div>
+<a href="?v=1">v1</a><a href="?v=2">v2</a><a href="?v=3" aria-current="page">v3</a><div id="status"></div><div id="errors"></div></div>
 <script type="module" src="./viewer.js"></script>
 </body>
 </html>
@@ -439,6 +700,26 @@ if (manifest.plan_revision !== contract.plan_revision || manifest.camera_hash !=
   fail("Plan revision or camera binding drift detected");
 }
 if (canonical(manifest.camera) !== canonical(contract.camera)) fail("Camera projection drift detected");
+const interfaceVersion = new URLSearchParams(location.search).get("v") || "3";
+if (!new Set(["1", "2", "3"]).has(interfaceVersion)) fail(`Unsupported browser interface v${interfaceVersion}`);
+for (const link of document.querySelectorAll("a[href^='?v=']")) {
+  link.toggleAttribute("aria-current", link.getAttribute("href") === `?v=${interfaceVersion}`);
+}
+if (interfaceVersion !== "1") {
+  if (!contract.navigation || !manifest.navigation) fail("Exact first-person navigation contract is required");
+  if (canonical(manifest.navigation) !== canonical(contract.navigation)) fail("Navigation/collision drift detected");
+  if (!contract.navigation.spawn_candidates.some(point => canonical(point) === canonical(manifest.selected_spawn))) {
+    fail("Compiled spawn is not an exact WorldContract candidate");
+  }
+}
+if (interfaceVersion === "3") {
+  if (!Array.isArray(contract.interactions) || !Array.isArray(manifest.interactions)) {
+    fail("Explicit interaction metadata is required");
+  }
+  if (canonical(manifest.interactions) !== canonical(contract.interactions)) {
+    fail("Interaction metadata drift detected");
+  }
+}
 identityNode.textContent = `${contract.plan_revision} · ${contract.contract_hash}`;
 
 const scene = new THREE.Scene();
@@ -464,11 +745,135 @@ orbit.enableDamping = true;
 const firstPerson = new PointerLockControls(camera, renderer.domElement);
 const keys = new Set();
 let mode = "orbit";
-document.querySelector("#orbit").onclick = () => { firstPerson.unlock(); mode = "orbit"; orbit.enabled = true; };
-document.querySelector("#first-person").onclick = () => { orbit.enabled = false; mode = "first-person"; firstPerson.lock(); };
-addEventListener("keydown", event => keys.add(event.code));
+let verticalVelocity = 0.0;
+const orbitPosition = new THREE.Vector3(...cameraData.position);
+const navigation = contract.navigation;
+const selectedSpawn = manifest.selected_spawn;
+const contactEpsilon = 1e-9;
+const worldAxes = [
+  new THREE.Vector3(1, 0, 0),
+  new THREE.Vector3(0, 1, 0),
+  new THREE.Vector3(0, 0, 1),
+];
+const staticBodies = interfaceVersion !== "1" ? navigation.static_bodies.map(value => {
+  const rotation = new THREE.Quaternion(
+    value.rotation.x, value.rotation.y, value.rotation.z, value.rotation.w
+  );
+  const half = new THREE.Vector3(
+    value.dimensions.x / 2, value.dimensions.y / 2, value.dimensions.z / 2
+  );
+  const axes = worldAxes.map(axis => axis.clone().applyQuaternion(rotation));
+  return {
+    value,
+    center: new THREE.Vector3(value.center.x, value.center.y, value.center.z),
+    half,
+    axes,
+    aabbHalf: new THREE.Vector3(
+      projectedRadius(axes, half, worldAxes[0]),
+      projectedRadius(axes, half, worldAxes[1]),
+      projectedRadius(axes, half, worldAxes[2])
+    ),
+  };
+}) : [];
+const playerHalf = interfaceVersion !== "1" ? new THREE.Vector3(
+  navigation.player_radius, navigation.player_height / 2, navigation.player_radius
+) : null;
+const playerCenter = new THREE.Vector3();
+const centerDelta = new THREE.Vector3();
+const crossAxis = new THREE.Vector3();
+const movement = new THREE.Vector3();
+const forward = new THREE.Vector3();
+const right = new THREE.Vector3();
+
+function projectedRadius(axes, half, axis) {
+  return Math.abs(axis.dot(axes[0])) * half.x
+    + Math.abs(axis.dot(axes[1])) * half.y
+    + Math.abs(axis.dot(axes[2])) * half.z;
+}
+function playerIntersectsBody(position, body) {
+  playerCenter.set(
+    position.x,
+    position.y - navigation.eye_height + navigation.player_height / 2,
+    position.z
+  );
+  centerDelta.copy(body.center).sub(playerCenter);
+  const axes = [...worldAxes, ...body.axes];
+  for (const left of worldAxes) {
+    for (const other of body.axes) {
+      crossAxis.crossVectors(left, other);
+      if (crossAxis.lengthSq() > 1e-12) axes.push(crossAxis.clone());
+    }
+  }
+  for (const axis of axes) {
+    const playerProjection = projectedRadius(worldAxes, playerHalf, axis);
+    const bodyProjection = projectedRadius(body.axes, body.half, axis);
+    if (Math.abs(centerDelta.dot(axis)) >= playerProjection + bodyProjection - contactEpsilon) {
+      return false;
+    }
+  }
+  return true;
+}
+function canOccupy(position) {
+  playerCenter.set(
+    position.x,
+    position.y - navigation.eye_height + navigation.player_height / 2,
+    position.z
+  );
+  const low = navigation.bounds_minimum;
+  const high = navigation.bounds_maximum;
+  if (
+    playerCenter.x - playerHalf.x < low.x || playerCenter.x + playerHalf.x > high.x
+    || playerCenter.y - playerHalf.y < low.y || playerCenter.y + playerHalf.y > high.y
+    || playerCenter.z - playerHalf.z < low.z || playerCenter.z + playerHalf.z > high.z
+  ) return false;
+  return !staticBodies.some(body => playerIntersectsBody(position, body));
+}
+function enterOrbit() {
+  mode = "orbit";
+  firstPerson.unlock();
+  orbit.enabled = true;
+  keys.clear();
+  verticalVelocity = 0.0;
+  if (interfaceVersion !== "1") {
+    camera.position.copy(orbitPosition);
+    camera.up.set(...cameraData.up);
+    camera.lookAt(...cameraData.target);
+    orbit.target.set(...cameraData.target);
+    orbit.update();
+  }
+  statusNode.textContent = "Orbit preview";
+}
+function enterFirstPerson() {
+  orbit.enabled = false;
+  mode = "first-person";
+  verticalVelocity = 0.0;
+  if (interfaceVersion !== "1") {
+    camera.position.set(selectedSpawn.x, selectedSpawn.y, selectedSpawn.z);
+    if (!canOccupy(camera.position)) return fail("Compiled safe spawn failed runtime collision validation");
+  }
+  firstPerson.lock();
+  statusNode.textContent = interfaceVersion === "3"
+    ? "WASD move · mouse look · E grab/open · F push · Esc orbit"
+    : "WASD to move · mouse to look · Esc for orbit";
+}
+document.querySelector("#orbit").onclick = enterOrbit;
+document.querySelector("#first-person").onclick = enterFirstPerson;
+addEventListener("keydown", event => {
+  if (["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)
+      || (interfaceVersion === "3" && ["KeyE", "KeyF"].includes(event.code))) {
+    event.preventDefault();
+  }
+  if (interfaceVersion === "3" && mode === "first-person" && !event.repeat) {
+    if (event.code === "KeyE") interactWithTarget();
+    if (event.code === "KeyF") pushTarget();
+  }
+  keys.add(event.code);
+});
 addEventListener("keyup", event => keys.delete(event.code));
-firstPerson.addEventListener("unlock", () => { mode = "orbit"; orbit.enabled = true; });
+addEventListener("blur", () => keys.clear());
+firstPerson.addEventListener("unlock", () => {
+  if (mode === "first-person") enterOrbit();
+});
 
 scene.add(new THREE.AmbientLight(
   new THREE.Color(contract.lighting.ambient_color), contract.lighting.ambient_intensity
@@ -487,6 +892,20 @@ const gltfLoader = new GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
 const byId = new Map(manifest.instances.map(instance => [instance.object_id, instance]));
 const loaded = new Set();
+const interactionByObjectId = new Map(
+  (interfaceVersion === "3" ? contract.interactions : []).map(binding => [binding.object_id, binding])
+);
+const interactionProxies = [];
+const dynamicBodies = new Map();
+const doorBodies = new Map();
+const interactionRaycaster = new THREE.Raycaster();
+const screenCenter = new THREE.Vector2(0, 0);
+const temporaryQuaternion = new THREE.Quaternion();
+const temporaryAxis = new THREE.Vector3();
+const temporaryVector = new THREE.Vector3();
+let grabbedBody = null;
+let physicsAccumulator = 0.0;
+const fixedPhysicsStep = 1 / 60;
 
 async function contractMaterial(instance) {
   const intent = instance.material_intent;
@@ -503,6 +922,246 @@ async function contractMaterial(instance) {
   const material = new THREE.MeshStandardMaterial(parameters);
   material.userData.contractMaterialIntent = intent;
   return material;
+}
+
+function updateInteractionProxy(body) {
+  body.root.updateWorldMatrix(true, false);
+  body.root.getWorldPosition(body.rootWorldPosition);
+  body.root.getWorldQuaternion(body.rootWorldQuaternion);
+  body.proxy.position.copy(body.centerOffset)
+    .applyQuaternion(body.rootWorldQuaternion).add(body.rootWorldPosition);
+  body.proxy.quaternion.copy(body.rootWorldQuaternion).multiply(body.colliderRotation);
+  body.proxy.updateMatrixWorld(true);
+}
+
+function registerInteraction(root, instance, binding) {
+  const collider = binding.collider;
+  const proxy = new THREE.Mesh(
+    new THREE.BoxGeometry(
+      collider.dimensions.x, collider.dimensions.y, collider.dimensions.z
+    ),
+    new THREE.MeshBasicMaterial({
+      transparent: true, opacity: 0, depthWrite: false, colorWrite: false,
+    })
+  );
+  proxy.name = `interaction:${binding.interaction_id}`;
+  proxy.userData = {
+    interactionId: binding.interaction_id,
+    objectId: binding.object_id,
+    contractHash: contract.contract_hash,
+  };
+  scene.add(proxy);
+  interactionProxies.push(proxy);
+  const body = {
+    binding,
+    root,
+    proxy,
+    centerOffset: new THREE.Vector3(
+      collider.center_offset.x, collider.center_offset.y, collider.center_offset.z
+    ),
+    colliderHalf: new THREE.Vector3(
+      collider.dimensions.x / 2, collider.dimensions.y / 2, collider.dimensions.z / 2
+    ),
+    colliderRotation: new THREE.Quaternion(
+      collider.rotation.x, collider.rotation.y, collider.rotation.z, collider.rotation.w
+    ),
+    rootWorldPosition: new THREE.Vector3(),
+    rootWorldQuaternion: new THREE.Quaternion(),
+  };
+  proxy.userData.body = body;
+
+  if (binding.kind === "dynamic") {
+    Object.assign(body, {
+      velocity: new THREE.Vector3(),
+      angularVelocity: new THREE.Vector3(),
+      held: false,
+    });
+    dynamicBodies.set(binding.object_id, body);
+  } else if (binding.kind === "door_hinge") {
+    const metadata = binding.door;
+    const pivot = new THREE.Object3D();
+    pivot.name = `hinge:${binding.interaction_id}`;
+    pivot.position.set(metadata.pivot.x, metadata.pivot.y, metadata.pivot.z);
+    scene.add(pivot);
+    pivot.attach(root);
+    Object.assign(body, {
+      pivot,
+      axis: new THREE.Vector3(metadata.axis.x, metadata.axis.y, metadata.axis.z),
+      angleDeg: metadata.initial_angle_deg,
+      targetAngleDeg: metadata.initial_angle_deg,
+    });
+    pivot.quaternion.setFromAxisAngle(body.axis, THREE.MathUtils.degToRad(body.angleDeg));
+    doorBodies.set(binding.object_id, body);
+  }
+  updateInteractionProxy(body);
+}
+
+function targetInteraction() {
+  interactionRaycaster.setFromCamera(screenCenter, camera);
+  for (const hit of interactionRaycaster.intersectObjects(interactionProxies, false)) {
+    const body = hit.object.userData.body;
+    if (!body) continue;
+    const metadata = body.binding.kind === "dynamic"
+      ? body.binding.dynamic : body.binding.door;
+    const maximum = body.binding.kind === "dynamic"
+      ? metadata.grab_distance_m : metadata.interaction_distance_m;
+    if (hit.distance <= maximum) return {body, hit};
+  }
+  return null;
+}
+
+function releaseGrab() {
+  if (!grabbedBody) return;
+  grabbedBody.held = false;
+  grabbedBody = null;
+  statusNode.textContent = "Object released";
+}
+
+function interactWithTarget() {
+  if (grabbedBody) {
+    releaseGrab();
+    return;
+  }
+  const target = targetInteraction();
+  if (!target) return;
+  const body = target.body;
+  if (body.binding.kind === "door_hinge") {
+    const metadata = body.binding.door;
+    body.targetAngleDeg = Math.abs(body.angleDeg - metadata.lower_limit_deg)
+      <= Math.abs(body.angleDeg - metadata.upper_limit_deg)
+      ? metadata.upper_limit_deg : metadata.lower_limit_deg;
+    statusNode.textContent = `Door ${body.binding.object_id} hinge engaged`;
+    return;
+  }
+  if (body.binding.dynamic.can_grab) {
+    body.held = true;
+    body.velocity.set(0, 0, 0);
+    body.angularVelocity.set(0, 0, 0);
+    grabbedBody = body;
+    statusNode.textContent = `Holding ${body.binding.object_id} · E to release`;
+  }
+}
+
+function pushTarget() {
+  const target = targetInteraction();
+  if (!target || target.body.binding.kind !== "dynamic") return;
+  const body = target.body;
+  const metadata = body.binding.dynamic;
+  if (!metadata.can_push || body.held) return;
+  camera.getWorldDirection(temporaryVector);
+  body.velocity.addScaledVector(temporaryVector, metadata.push_impulse_ns / metadata.mass_kg);
+  if (metadata.can_topple) {
+    const lever = target.hit.point.clone().sub(body.proxy.position);
+    const torque = new THREE.Vector3().crossVectors(
+      lever, temporaryVector.clone().multiplyScalar(metadata.push_impulse_ns)
+    );
+    body.angularVelocity.addScaledVector(torque, 1 / metadata.mass_kg);
+  }
+  statusNode.textContent = `Impulse applied to ${body.binding.object_id}`;
+}
+
+function updateDoor(body, delta) {
+  const metadata = body.binding.door;
+  const difference = body.targetAngleDeg - body.angleDeg;
+  const step = metadata.angular_speed_deg_s * delta;
+  body.angleDeg += Math.sign(difference) * Math.min(Math.abs(difference), step);
+  body.angleDeg = Math.max(
+    metadata.lower_limit_deg, Math.min(metadata.upper_limit_deg, body.angleDeg)
+  );
+  body.pivot.quaternion.setFromAxisAngle(
+    body.axis, THREE.MathUtils.degToRad(body.angleDeg)
+  );
+  updateInteractionProxy(body);
+}
+
+function dynamicAabbHalf(body) {
+  const axes = worldAxes.map(axis => axis.clone().applyQuaternion(body.proxy.quaternion));
+  return new THREE.Vector3(
+    projectedRadius(axes, body.colliderHalf, worldAxes[0]),
+    projectedRadius(axes, body.colliderHalf, worldAxes[1]),
+    projectedRadius(axes, body.colliderHalf, worldAxes[2])
+  );
+}
+
+function resolveDynamicContact(body, delta) {
+  updateInteractionProxy(body);
+  const half = dynamicAabbHalf(body);
+  const center = body.proxy.position;
+  const low = navigation.bounds_minimum;
+  const high = navigation.bounds_maximum;
+  const metadata = body.binding.dynamic;
+  for (const axis of ["x", "y", "z"]) {
+    const minimum = low[axis] + half[axis];
+    const maximum = high[axis] - half[axis];
+    let correction = 0;
+    if (center[axis] < minimum) correction = minimum - center[axis];
+    if (center[axis] > maximum) correction = maximum - center[axis];
+    if (correction) {
+      body.root.position[axis] += correction;
+      if (body.velocity[axis] * correction < 0) {
+        body.velocity[axis] *= -metadata.restitution;
+      }
+      if (axis === "y") {
+        body.velocity.x *= Math.max(0, 1 - metadata.friction * delta * 60);
+        body.velocity.z *= Math.max(0, 1 - metadata.friction * delta * 60);
+      }
+      updateInteractionProxy(body);
+    }
+  }
+
+  for (const obstacle of staticBodies) {
+    const dx = half.x + obstacle.aabbHalf.x - Math.abs(body.proxy.position.x - obstacle.center.x);
+    const dy = half.y + obstacle.aabbHalf.y - Math.abs(body.proxy.position.y - obstacle.center.y);
+    const dz = half.z + obstacle.aabbHalf.z - Math.abs(body.proxy.position.z - obstacle.center.z);
+    if (dx <= 0 || dy <= 0 || dz <= 0) continue;
+    const penetration = Math.min(dx, dy, dz);
+    const axis = penetration === dx ? "x" : penetration === dy ? "y" : "z";
+    const direction = body.proxy.position[axis] >= obstacle.center[axis] ? 1 : -1;
+    body.root.position[axis] += direction * penetration;
+    if (body.velocity[axis] * direction < 0) {
+      body.velocity[axis] *= -metadata.restitution;
+    }
+    if (axis === "y") {
+      body.velocity.x *= Math.max(0, 1 - metadata.friction * delta * 60);
+      body.velocity.z *= Math.max(0, 1 - metadata.friction * delta * 60);
+    }
+    updateInteractionProxy(body);
+  }
+}
+
+function simulateDynamic(body, delta) {
+  const metadata = body.binding.dynamic;
+  if (body.held) {
+    camera.getWorldDirection(temporaryVector);
+    const desiredCenter = camera.position.clone().addScaledVector(
+      temporaryVector, metadata.hold_distance_m
+    );
+    body.velocity.copy(desiredCenter.sub(body.proxy.position))
+      .multiplyScalar(metadata.hold_stiffness);
+  } else {
+    body.velocity.y -= navigation.gravity * delta;
+  }
+  body.root.position.addScaledVector(body.velocity, delta);
+  if (metadata.can_topple && body.angularVelocity.lengthSq() > 1e-12) {
+    const angularSpeed = body.angularVelocity.length();
+    temporaryAxis.copy(body.angularVelocity).multiplyScalar(1 / angularSpeed);
+    temporaryQuaternion.setFromAxisAngle(temporaryAxis, angularSpeed * delta);
+    body.root.quaternion.premultiply(temporaryQuaternion);
+  }
+  body.velocity.multiplyScalar(Math.max(0, 1 - metadata.linear_damping * delta));
+  body.angularVelocity.multiplyScalar(Math.max(0, 1 - metadata.angular_damping * delta));
+  resolveDynamicContact(body, delta);
+  if (!body.held && body.velocity.lengthSq() < 1e-8) body.velocity.set(0, 0, 0);
+  if (!body.held && body.angularVelocity.lengthSq() < 1e-8) body.angularVelocity.set(0, 0, 0);
+}
+
+function simulateInteractions(delta) {
+  for (const body of doorBodies.values()) updateDoor(body, delta);
+  physicsAccumulator = Math.min(physicsAccumulator + delta, fixedPhysicsStep * 5);
+  while (physicsAccumulator >= fixedPhysicsStep) {
+    for (const body of dynamicBodies.values()) simulateDynamic(body, fixedPhysicsStep);
+    physicsAccumulator -= fixedPhysicsStep;
+  }
 }
 
 async function loadInstance(objectId) {
@@ -538,6 +1197,10 @@ async function loadInstance(objectId) {
       }
     });
     scene.add(root);
+    if (interfaceVersion === "3") {
+      const binding = interactionByObjectId.get(instance.object_id);
+      if (binding) registerInteraction(root, instance, binding);
+    }
     statusNode.textContent = `${loaded.size}/${byId.size} contract assets loaded`;
   } catch (error) {
     loaded.delete(objectId);
@@ -585,14 +1248,47 @@ function render() {
   requestAnimationFrame(render);
   const delta = Math.min(clock.getDelta(), 0.1);
   if (mode === "first-person" && firstPerson.isLocked) {
-    const movementRateMetersPerSecond = 2.0;
-    if (keys.has("KeyW")) firstPerson.moveForward(movementRateMetersPerSecond * delta);
-    if (keys.has("KeyS")) firstPerson.moveForward(-movementRateMetersPerSecond * delta);
-    if (keys.has("KeyA")) firstPerson.moveRight(-movementRateMetersPerSecond * delta);
-    if (keys.has("KeyD")) firstPerson.moveRight(movementRateMetersPerSecond * delta);
+    if (interfaceVersion === "1") {
+      const movementRateMetersPerSecond = 2.0;
+      if (keys.has("KeyW")) firstPerson.moveForward(movementRateMetersPerSecond * delta);
+      if (keys.has("KeyS")) firstPerson.moveForward(-movementRateMetersPerSecond * delta);
+      if (keys.has("KeyA")) firstPerson.moveRight(-movementRateMetersPerSecond * delta);
+      if (keys.has("KeyD")) firstPerson.moveRight(movementRateMetersPerSecond * delta);
+    } else {
+      const forwardInput = Number(keys.has("KeyW")) - Number(keys.has("KeyS"));
+      const rightInput = Number(keys.has("KeyD")) - Number(keys.has("KeyA"));
+      if (forwardInput || rightInput) {
+        camera.getWorldDirection(forward);
+        forward.y = 0;
+        const forwardLength = Math.hypot(forward.x, forward.z);
+        if (forwardLength > 1e-12) {
+          forward.multiplyScalar(1 / forwardLength);
+          right.set(-forward.z, 0, forward.x);
+          movement.copy(forward).multiplyScalar(forwardInput).addScaledVector(right, rightInput);
+          const movementLength = Math.hypot(movement.x, movement.z);
+          if (movementLength > 1e-12) movement.multiplyScalar(1 / movementLength);
+          const distance = navigation.movement_speed * delta;
+          const candidate = camera.position.clone();
+          candidate.x += movement.x * distance;
+          if (canOccupy(candidate)) camera.position.x = candidate.x;
+          candidate.copy(camera.position);
+          candidate.z += movement.z * distance;
+          if (canOccupy(candidate)) camera.position.z = candidate.z;
+        }
+      }
+      verticalVelocity -= navigation.gravity * delta;
+      const verticalCandidate = camera.position.clone();
+      verticalCandidate.y += verticalVelocity * delta;
+      if (canOccupy(verticalCandidate)) {
+        camera.position.y = verticalCandidate.y;
+      } else {
+        verticalVelocity = 0.0;
+      }
+    }
   } else {
     orbit.update();
   }
+  if (interfaceVersion === "3") simulateInteractions(delta);
   renderer.render(scene, camera);
 }
 render();

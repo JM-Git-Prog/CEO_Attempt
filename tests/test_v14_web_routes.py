@@ -52,12 +52,11 @@ class TestVersionRouting:
         assert "V14" in resp.text
         assert "Real 3D World" in resp.text
 
-    def test_get_index_no_version_defaults_to_v14(self, client):
-        """GET / with no v param defaults to V14 (Req 8.6)."""
+    def test_get_index_no_version_defaults_to_v16(self, client):
+        """GET / with no v param defaults to the additive V16 interface."""
         resp = client.get("/")
         assert resp.status_code == 200
-        # V14 template contains distinctive Three.js content
-        assert "V14" in resp.text
+        assert "V16 Unified World Pipeline" in resp.text
 
     def test_get_index_v13_still_works(self, client):
         """GET /?v=13 returns 200 and serves V13 (Req 12.4)."""

@@ -35,6 +35,7 @@ from .depth_bridge import (
     UnifiedDepthEstimator,
 )
 from .dream_preview import DreamPreviewGenerator
+from .game_designer import GameDesigner, design_game
 from .mesh_approval import MeshApprovalGate, TurntablePreview
 from .mesh_generators import (
     MeshGenerationError,
@@ -71,6 +72,8 @@ __all__ = [
     "FORBIDDEN_DEPTH_AUTHORITIES",
     "UnifiedDepthEstimator",
     "DreamPreviewGenerator",
+    "GameDesigner",
+    "design_game",
     "Era",
     "MeshApprovalGate",
     "MeshGenerationError",

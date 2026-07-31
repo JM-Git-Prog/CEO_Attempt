@@ -71,12 +71,12 @@ def test_v14_is_default_and_invalid_versions_are_rejected(client):
     assert "window.APP_VERSION=11" in v11.text
 
 
-def test_api_header_defaults_to_v14_and_never_coerces(client):
+def test_api_header_defaults_to_v16_and_never_coerces(client):
     created = client.post("/api/session")
     assert created.status_code == 200
-    assert created.json()["interface_version"] == 14
+    assert created.json()["interface_version"] == 16
 
-    for value in ("future", "3.0", "02", "2", "15"):
+    for value in ("future", "3.0", "02", "2", "17"):
         response = client.get(
             "/api/session/missing/status", headers={"X-App-Version": value}
         )
