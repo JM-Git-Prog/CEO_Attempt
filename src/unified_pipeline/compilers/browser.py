@@ -1308,6 +1308,190 @@ function render() {
   renderer.render(scene, camera);
 }
 render();
+
+// QA Harness — only active when ?qa=1 is in the URL
+if (new URLSearchParams(location.search).has("qa")) {
+  window.__qa = Object.freeze({
+    getObjectCount: () => {
+      return loaded.size;
+    },
+    getObjectPosition: (objectId) => {
+      const instance = byId.get(objectId);
+      if (!instance) return null;
+      const root = scene.getObjectByName(objectId);
+      if (!root) return null;
+      root.updateWorldMatrix(true, false);
+      const pos = new THREE.Vector3();
+      root.getWorldPosition(pos);
+      return {x: pos.x, y: pos.y, z: pos.z};
+    },
+    getLighting: () => {
+      const lights = [];
+      scene.traverse(node => {
+        if (node.isLight && !node.isAmbientLight) {
+          const pos = new THREE.Vector3();
+          node.getWorldPosition(pos);
+          const color = "#" + node.color.getHexString();
+          let type = "unknown";
+          if (node.isPointLight) type = "point";
+          else if (node.isDirectionalLight) type = "directional";
+          else if (node.isSpotLight) type = "spot";
+          lights.push({
+            type,
+            position: {x: pos.x, y: pos.y, z: pos.z},
+            color,
+            intensity: node.intensity,
+          });
+        }
+      });
+      return lights;
+    },
+    triggerInteraction: (objectId, action) => {
+      return new Promise((resolve) => {
+        const binding = interactionByObjectId.get(objectId);
+        if (!binding) {
+          resolve({success: false, state: {error: "no_interaction_binding"}});
+          return;
+        }
+        if (action === "click" || action === "open") {
+          if (binding.kind === "door_hinge") {
+            const body = doorBodies.get(objectId);
+            if (!body) {
+              resolve({success: false, state: {error: "door_body_not_found"}});
+              return;
+            }
+            const metadata = binding.door;
+            body.targetAngleDeg = toggleDoorTarget(
+              body.angleDeg, metadata.lower_limit_deg, metadata.upper_limit_deg
+            );
+            const targetAngle = body.targetAngleDeg;
+            const checkSettled = () => {
+              if (Math.abs(body.angleDeg - targetAngle) < 0.5) {
+                resolve({success: true, state: {angleDeg: body.angleDeg, settled: true}});
+              } else {
+                requestAnimationFrame(checkSettled);
+              }
+            };
+            setTimeout(checkSettled, 100);
+          } else {
+            resolve({success: false, state: {error: "unsupported_action_for_kind"}});
+          }
+        } else if (action === "grab") {
+          if (binding.kind !== "dynamic" || !binding.dynamic.can_grab) {
+            resolve({success: false, state: {error: "object_not_grabbable"}});
+            return;
+          }
+          const body = dynamicBodies.get(objectId);
+          if (!body) {
+            resolve({success: false, state: {error: "dynamic_body_not_found"}});
+            return;
+          }
+          body.held = true;
+          body.velocity.set(0, 0, 0);
+          body.angularVelocity.set(0, 0, 0);
+          body.grabConstraint = createGrabConstraint(binding.dynamic, contract.contract_hash);
+          grabbedBody = body;
+          resolve({success: true, state: {held: true}});
+        } else if (action === "release") {
+          const body = dynamicBodies.get(objectId);
+          if (!body || !body.held) {
+            resolve({success: false, state: {error: "object_not_held"}});
+            return;
+          }
+          Object.assign(body, releasedGrabState());
+          grabbedBody = null;
+          const waitForSettle = () => {
+            setTimeout(() => {
+              const settled = body.velocity.lengthSq() < 1e-6
+                && body.angularVelocity.lengthSq() < 1e-6;
+              if (settled) {
+                updateInteractionProxy(body);
+                resolve({success: true, state: {
+                  settled: true,
+                  position: {x: body.proxy.position.x, y: body.proxy.position.y, z: body.proxy.position.z},
+                }});
+              } else {
+                waitForSettle();
+              }
+            }, 100);
+          };
+          waitForSettle();
+        } else if (action === "push") {
+          if (binding.kind !== "dynamic" || !binding.dynamic.can_push) {
+            resolve({success: false, state: {error: "object_not_pushable"}});
+            return;
+          }
+          const body = dynamicBodies.get(objectId);
+          if (!body || body.held) {
+            resolve({success: false, state: {error: "dynamic_body_not_available"}});
+            return;
+          }
+          const metadata = binding.dynamic;
+          const pushDir = new THREE.Vector3(0, 0, -1);
+          camera.getWorldDirection(pushDir);
+          applyImpulse(
+            body,
+            pushDir.multiplyScalar(metadata.push_impulse_ns),
+            body.proxy.position.clone()
+          );
+          const waitForSettle = () => {
+            setTimeout(() => {
+              const settled = body.velocity.lengthSq() < 1e-6
+                && body.angularVelocity.lengthSq() < 1e-6;
+              if (settled) {
+                updateInteractionProxy(body);
+                resolve({success: true, state: {
+                  settled: true,
+                  position: {x: body.proxy.position.x, y: body.proxy.position.y, z: body.proxy.position.z},
+                }});
+              } else {
+                waitForSettle();
+              }
+            }, 100);
+          };
+          waitForSettle();
+        } else {
+          resolve({success: false, state: {error: "unknown_action"}});
+        }
+      });
+    },
+    getSceneGraph: () => {
+      const nodes = [];
+      for (const [objectId, instance] of byId.entries()) {
+        if (!loaded.has(objectId)) continue;
+        const root = scene.getObjectByName(objectId);
+        if (!root) continue;
+        root.updateWorldMatrix(true, false);
+        const pos = new THREE.Vector3();
+        root.getWorldPosition(pos);
+        let meshCount = 0;
+        root.traverse(node => { if (node.isMesh) meshCount++; });
+        nodes.push({
+          objectId,
+          meshCount,
+          position: {x: pos.x, y: pos.y, z: pos.z},
+        });
+      }
+      return nodes;
+    },
+    captureFrame: () => {
+      return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          renderer.render(scene, camera);
+          const dataUrl = renderer.domElement.toDataURL("image/png");
+          resolve(dataUrl.replace(/^data:image\/png;base64,/, ""));
+        });
+      });
+    },
+    getRendererInfo: () => {
+      return {
+        antialias: renderer.getContext().getContextAttributes().antialias || false,
+        preserveDrawingBuffer: renderer.getContext().getContextAttributes().preserveDrawingBuffer || false,
+        seed: manifest.deterministic_seed || null,
+      };
+    },
+  });
+}
 '''
 
 

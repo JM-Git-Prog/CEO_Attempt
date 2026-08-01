@@ -9,27 +9,27 @@ Implementation language: Python (pytest, Hypothesis, Playwright)
 ## Tasks
 
 - [ ] 1. Framework foundation — config, artifact store, deterministic render
-  - [-] 1.1 Create test framework directory structure and config loader
+  - [x] 1.1 Create test framework directory structure and config loader
     - Create `tests/e2e/framework/__init__.py`
     - Create `tests/e2e/config/e2e_config.yaml` with full configuration schema (visual regression thresholds, perceptual thresholds, time budgets, cloud config)
     - Implement `tests/e2e/framework/config_loader.py` — YAML parsing into dataclasses (`VisualRegressionConfig`, `StageConfig`, `PerceptualConfig`, `VisionQAConfig`, `TimeBudgetConfig`, `CloudConfig`)
     - _Requirements: 3.4, 6.1, 22.1–22.6_
 
-  - [-] 1.2 Implement artifact store for per-run test output management
+  - [x] 1.2 Implement artifact store for per-run test output management
     - Create `tests/e2e/framework/artifact_store.py`
     - Implement `ArtifactStore` class with `init_run(run_id)`, `store_artifact(layer, filename, data)`, `get_artifact_path(layer, filename)` methods
     - Organize artifacts under `tests/e2e/artifacts/{run_id}/` with subdirectories: visual, perceptual, scene, accessibility, gpu, vision_qa
     - Include artifact directory path in pytest failure output
     - _Requirements: 23.4, 23.5_
 
-  - [-] 1.3 Implement deterministic render configuration module
+  - [x] 1.3 Implement deterministic render configuration module
     - Create `tests/e2e/framework/deterministic_render.py`
     - Implement `DeterministicRenderConfig` dataclass with `antialias=False`, `preserveDrawingBuffer=True`, `seed=42`, fixed viewport, explicit `SRGBColorSpace`
     - Implement hardware ID detection (GPU model + driver version hash)
     - Implement `verify_determinism(page)` helper that confirms renderer settings via `window.__qa.getRendererInfo()`
     - _Requirements: 1.1, 1.2, 1.3_
 
-  - [-] 1.4 Create shared conftest.py with fixtures and markers
+  - [x] 1.4 Create shared conftest.py with fixtures and markers
     - Extend `tests/e2e/conftest.py` (or create if not present for the new test modules)
     - Add pytest markers: `nightly`, `gpu`, `proposed`, `layer("visual")`, `layer("scene")`, `layer("accessibility")`
     - Add `enforce_budget` autouse fixture that applies timeout per layer from config
@@ -37,14 +37,14 @@ Implementation language: Python (pytest, Hypothesis, Playwright)
     - Add `e2e_config` fixture that loads and validates `e2e_config.yaml`
     - _Requirements: 22.1–22.6_
 
-  - [~] 1.5 Write unit tests for config loader and artifact store
+  - [-] 1.5 Write unit tests for config loader and artifact store
     - Test config loading with valid/invalid YAML
     - Test artifact store directory creation and file storage
     - Test hardware ID generation consistency
     - _Requirements: 6.1, 23.4_
 
 - [ ] 2. QA harness — inject into browser.py and build Python bridge
-  - [~] 2.1 Inject QA harness JavaScript into browser.py compiled viewer output
+  - [-] 2.1 Inject QA harness JavaScript into browser.py compiled viewer output
     - Modify `src/unified_pipeline/compilers/browser.py` `_VIEWER_JS` template
     - Add conditional `window.__qa` object creation gated by `?qa=1` URL parameter check
     - Implement all QA API methods: `getObjectCount()`, `getObjectPosition(id)`, `getLighting()`, `triggerInteraction(id, action)`, `getSceneGraph()`, `captureFrame()`, `getRendererInfo()`
