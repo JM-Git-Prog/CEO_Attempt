@@ -265,7 +265,7 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - Extend V14 Three.js viewer with: WASD movement, mouse look (PointerLock), gravity, collision with static bodies, safe spawn position selection
   - _Requirements: 22.1, 21.6_
 
-- [x] 8.2 Implement object interaction system
+- [ ] 8.2 Implement object interaction system
   - Door swing (hinge physics), object grab/release (raycasting + constraint), push/topple (impulse application)
   - _Requirements: 22.2, 22.3, 22.4_
 
