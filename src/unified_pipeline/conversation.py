@@ -36,6 +36,31 @@ from src.unified_pipeline.models import (
 CONVERSATION_DEADLINE_SECONDS = 30.0
 MAX_STEERING_TURNS = 10
 
+# ─── Confirmation detection ────────────────────────────────────────────────────
+
+_CONFIRM_PHRASES = (
+    "lock it in", "build it", "go with it", "let's do it",
+    "let's go", "perfect", "approved", "looks good", "sounds good",
+    "sounds great", "that's great", "love it", "ship it",
+    "yes please", "go ahead", "proceed", "start building", "begin building",
+    "confirmed", "i'm happy", "all good", "nail it",
+)
+
+
+def _user_confirms_stable(message: str) -> bool:
+    """Detect explicit user confirmation that steering is done.
+
+    The LLM sometimes fails to set steering_stable=true even when the user
+    clearly signals approval. This heuristic catches common confirmation
+    patterns to prevent the UI from stalling.
+    """
+    lower = message.lower().strip()
+    # Short affirmative messages (< 30 chars) starting with "yes" are confirmations
+    if lower.startswith("yes") and len(lower) < 30:
+        return True
+    return any(phrase in lower for phrase in _CONFIRM_PHRASES)
+
+
 # ─── System prompts ────────────────────────────────────────────────────────────
 
 OPENING_SYSTEM = """\
@@ -300,8 +325,10 @@ class ConversationEngine:
             # Update proposed brief with latest interpretation
             self._update_proposed_brief(result)
 
-            # Check if steering has stabilized
-            self._state.steering_stable = bool(result.get("steering_stable", False))
+            # Check if steering has stabilized — LLM flag OR explicit user confirmation
+            llm_says_stable = bool(result.get("steering_stable", False))
+            user_confirmed = _user_confirms_stable(user_message)
+            self._state.steering_stable = llm_says_stable or user_confirmed
 
             # Get the response to send back to the user
             response = result.get("response_to_user", "")
