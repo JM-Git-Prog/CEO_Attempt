@@ -99,9 +99,29 @@
   }
 
   async function start() {
+    // Check URL for existing session: ?v=16&session=<id>
+    const params = new URLSearchParams(location.search);
+    const existingSession = params.get("session");
+
+    if (existingSession) {
+      // Resume existing session
+      sessionId = existingSession;
+      sessionLabel.textContent = sessionId.slice(0, 8);
+      status.textContent = "RESUMING";
+      messages.replaceChildren();
+      appendMessage("assistant", "Reconnecting to session " + sessionId.slice(0, 8) + "…");
+      connectEvents(`/api/session/${sessionId}/events`);
+      input.focus();
+      return;
+    }
+
     try {
       const data = await jsonRequest("/api/session/unified/start", {method: "POST", body: "{}"});
       sessionId = data.session_id;
+      // Update URL to include session ID (bookmarkable, no page reload)
+      const url = new URL(location.href);
+      url.searchParams.set("session", sessionId);
+      history.replaceState(null, "", url.toString());
       sessionLabel.textContent = sessionId.slice(0, 8);
       status.textContent = "CONVERSATION";
       messages.replaceChildren();
