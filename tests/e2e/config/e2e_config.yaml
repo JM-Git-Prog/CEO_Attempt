@@ -1,0 +1,52 @@
+# E2E Testing Framework Configuration
+# V16 Unified World Pipeline — Comprehensive Testing
+#
+# This file defines thresholds, budgets, and settings for all test layers.
+# Modify thresholds here without code changes. Per-stage overrides supported.
+
+visual_regression:
+  deterministic_seed: 42
+  default_viewport: [1920, 1080]
+  stages:
+    dream_preview:
+      diff_threshold_pct: 1.0
+      enabled: true
+    blockout:
+      diff_threshold_pct: 1.0
+      enabled: true
+    canon:
+      diff_threshold_pct: 0.1
+      enabled: true
+    world:
+      diff_threshold_pct: 0.1
+      enabled: true
+
+perceptual:
+  ssim_threshold: 0.85
+  lpips_threshold: 0.3
+  clip_cosine_threshold: 0.9
+  calibration_corpus_dir: "tests/e2e/calibration_corpus/"
+
+vision_qa:
+  model_name: "qwen2.5vl:7b"
+  confidence_threshold: 0.8
+  checklist_path: "tests/e2e/config/vision_qa_checklist.json"
+  blocking: false
+
+time_budgets:
+  visual_regression_s: 120
+  scene_validation_s: 60
+  accessibility_s: 30
+  perceptual_s: 300
+
+cloud:
+  failure_analysis_model: "glm-5.2:cloud"
+  coverage_model: "qwen3-coder:480b-cloud"
+  calibration_model: "deepseek-v3.1:671b-cloud"
+  calibration_trigger_runs: 50
+  evolution_trigger_verdicts: 20
+
+baselines:
+  storage_dir: "tests/e2e/baselines/"
+  require_approval: true
+  max_corpus_size_mb: 50

@@ -18,5 +18,8 @@ bench/trained/**/*.safetensors
 bench/trained/**/*.gguf
 unsloth_compiled_cache/
 
+# E2E test artifacts (per-run outputs, not committed)
+tests/e2e/artifacts/
+
 # V14 Asset Warehouse (generated GLB meshes — large binaries, append-only)
 assets/
