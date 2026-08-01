@@ -63,6 +63,15 @@ app = FastAPI(title="The Living Room", version="0.9.0", lifespan=_lifespan)
 sessions: dict[str, WorldBuilder] = {}
 session_locks: dict[str, asyncio.Lock] = {}
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+# Live trace — simple request logging without middleware interference
+import logging
+_trace_handler = logging.FileHandler(OUTPUT_DIR / "live_trace.log", encoding="utf-8")
+_trace_handler.setFormatter(logging.Formatter("%(asctime)s %(message)s", datefmt="%H:%M:%S"))
+_trace_logger = logging.getLogger("live_trace")
+_trace_logger.addHandler(_trace_handler)
+_trace_logger.setLevel(logging.INFO)
+_trace_logger.info("=== Server started — live trace active ===")
 app.include_router(create_unified_router(lambda: OUTPUT_DIR))
 
 # 2026-07-31 (John): the ComfyUI "The Line" canvas (origin :8188) polls

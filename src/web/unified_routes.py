@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import mimetypes
 import re
+import traceback
 import uuid
 from contextlib import suppress
 from dataclasses import asdict
@@ -284,6 +286,8 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
 
     @router.post("/api/session/unified/start")
     async def start_unified_session(request: Request):
+        _log = logging.getLogger("live_trace")
+        _log.info("POST /api/session/unified/start — creating session")
         try:
             payload = await request.json()
             if not isinstance(payload, dict):
@@ -311,9 +315,16 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         )
         engine = ConversationEngine()
         engine.state.session_id = session.session_id
-        opening = await engine.generate_opening()
+        _log.info(f"  session={session.session_id} — calling Ollama for opening...")
+        try:
+            opening = await engine.generate_opening()
+            _log.info(f"  opening generated ({len(opening)} chars)")
+        except Exception as exc:
+            _log.error(f"  OPENING FAILED: {exc}\n{traceback.format_exc()[-300:]}")
+            opening = "Welcome! Describe the space you'd like to create."
         _conversations[session.session_id] = engine
         _save_conversation(engine, session_dir)
+        _log.info(f"  session ready: {session.session_id}")
         return {
             "session_id": session.session_id,
             "interface_version": INTERFACE_VERSION,
@@ -330,6 +341,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
 
     @router.post("/api/session/{session_id}/message")
     async def unified_message(session_id: str, request: Request):
+        _log = logging.getLogger("live_trace")
         try:
             session_dir = _session_dir(output_root(), session_id)
         except ValueError as exc:
@@ -343,11 +355,17 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 raise ValueError("message is required")
         except (ValueError, TypeError, AttributeError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
+        _log.info(f"POST /message session={session_id[:8]} msg={message[:80]}")
         async with _locks.setdefault(session_id, asyncio.Lock()):
             engine = _load_conversation(session_id, session_dir)
             if engine is None:
                 return JSONResponse({"error": "Conversation state is unavailable"}, status_code=409)
-            response = await engine.interpret_response(message)
+            try:
+                response = await engine.interpret_response(message)
+                _log.info(f"  response ({len(response)} chars): {response[:100]}")
+            except Exception as exc:
+                _log.error(f"  MESSAGE FAILED: {exc}\n{traceback.format_exc()[-300:]}")
+                raise
             result: dict[str, object] = {
                 "session_id": session_id,
                 "interface_version": INTERFACE_VERSION,
@@ -356,6 +374,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 "turn_count": engine.state.turn_count,
             }
             if engine.is_stable:
+                _log.info("  steering stabilized — extracting Brief")
                 brief = await engine.extract_brief()
                 brief_document = brief.to_dict()
                 artifacts = session_dir / "artifacts"
@@ -365,6 +384,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 )
                 result["brief"] = brief_document
                 _write_meta(session_dir, state="brief_ready")
+                _log.info(f"  Brief saved — {len(brief_document.get('object_manifest', []))} objects")
             _save_conversation(engine, session_dir)
             return result
 
