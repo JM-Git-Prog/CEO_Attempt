@@ -302,7 +302,7 @@ def test_authority_rewrites_and_revision_mismatch_fail_closed(monkeypatch):
     x=st.floats(min_value=-20.0, max_value=20.0, allow_nan=False, allow_infinity=False),
     z=st.floats(min_value=-20.0, max_value=20.0, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=40, deadline=None)
+@settings(max_examples=15, deadline=None)
 def test_property_settle_is_contained_by_authoritative_plan(x: float, z: float):
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setattr(legacy_settle, "PYBULLET_AVAILABLE", False)

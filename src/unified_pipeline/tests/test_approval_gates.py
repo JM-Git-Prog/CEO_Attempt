@@ -19,7 +19,7 @@ import time
 
 import pytest
 
-from unified_pipeline.approval_gates import (
+from src.unified_pipeline.approval_gates import (
     ApprovalGate,
     ApprovalRecord,
     ApprovalStatus,
@@ -27,7 +27,7 @@ from unified_pipeline.approval_gates import (
     await_canon_approval,
     await_mesh_approval,
 )
-from unified_pipeline.models import BlockoutResult, MeshApproval, SceneCanon
+from src.unified_pipeline.models import BlockoutResult, MeshApproval, SceneCanon
 
 
 # ─── ApprovalStatus Enum ──────────────────────────────────────────────────────

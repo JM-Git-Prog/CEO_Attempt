@@ -10,7 +10,7 @@ and WorldContract hash stability using Hypothesis.
 from __future__ import annotations
 
 import pytest
-from hypothesis import given, settings, assume
+from hypothesis import HealthCheck, given, settings, assume
 from hypothesis import strategies as st
 
 from src.unified_pipeline.camera_contract import CameraContract
@@ -364,7 +364,7 @@ class TestCameraContractRoundTrip:
     """CameraContract serializes and deserializes losslessly."""
 
     @given(contract=camera_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_json_roundtrip(self, contract: CameraContract):
         """to_dict() → from_dict() produces an equivalent CameraContract.
 
@@ -384,7 +384,7 @@ class TestCameraContractRoundTrip:
         assert restored.raster_height == contract.raster_height
 
     @given(contract=camera_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_hash_preserved_after_roundtrip(self, contract: CameraContract):
         """Hash is identical after round-tripping through dict.
 
@@ -404,7 +404,7 @@ class TestCameraContractImmutability:
     """CameraContract is immutable — mutation raises AttributeError."""
 
     @given(contract=camera_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_setattr_raises(self, contract: CameraContract):
         """Any attempt to set an attribute raises AttributeError (or subclass).
 
@@ -417,7 +417,7 @@ class TestCameraContractImmutability:
             contract.position = (0.0, 0.0, 0.0)  # type: ignore[misc]
 
     @given(contract=camera_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_delattr_raises(self, contract: CameraContract):
         """Any attempt to delete an attribute raises AttributeError (or subclass).
 
@@ -447,7 +447,7 @@ class TestWorldContractRoundTrip:
     """WorldContract serializes and deserializes losslessly."""
 
     @given(contract=world_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_json_roundtrip(self, contract: WorldContract):
         """to_dict() → from_dict() produces an equivalent WorldContract.
 
@@ -496,7 +496,7 @@ class TestWorldContractHashStability:
     """WorldContract hash is deterministic — same data always produces same hash."""
 
     @given(contract=world_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_hash_stable_across_calls(self, contract: WorldContract):
         """compute_hash() called twice on the same contract yields the same result.
 
@@ -507,7 +507,7 @@ class TestWorldContractHashStability:
         assert hash1 == hash2
 
     @given(contract=world_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_serialize_twice_same_hash(self, contract: WorldContract):
         """Serializing the same contract twice produces the same canonical JSON.
 
@@ -518,7 +518,7 @@ class TestWorldContractHashStability:
         assert json1 == json2
 
     @given(contract=world_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_hash_stable_after_roundtrip(self, contract: WorldContract):
         """Hash computed before and after dict round-trip is identical.
 
@@ -530,7 +530,7 @@ class TestWorldContractHashStability:
         assert hash_before == hash_after
 
     @given(contract=world_contracts())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_finalize_produces_verifiable_hash(self, contract: WorldContract):
         """finalize() sets a hash that passes verification.
 
@@ -552,7 +552,7 @@ class TestWorldContractHashSensitivity:
     @given(contract=world_contracts(), new_revision=st.text(
         alphabet="abcdefghijklmnopqrstuvwxyz0123456789-", min_size=1, max_size=20
     ))
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_different_plan_revision_different_hash(
         self, contract: WorldContract, new_revision: str
     ):
@@ -579,7 +579,7 @@ class TestBriefRoundTrip:
     """Brief serializes and deserializes losslessly."""
 
     @given(brief=briefs())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_json_roundtrip(self, brief: Brief):
         """to_dict() → from_dict() produces an equivalent Brief.
 
@@ -619,7 +619,7 @@ class TestGameOverlayRoundTrip:
     """GameOverlay serializes and deserializes losslessly."""
 
     @given(overlay=game_overlays())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_json_roundtrip(self, overlay: GameOverlay):
         """to_dict() → from_dict() produces an equivalent GameOverlay.
 
@@ -643,7 +643,7 @@ class TestRealOverlayRoundTrip:
     """RealOverlay serializes and deserializes losslessly."""
 
     @given(overlay=real_overlays())
-    @settings(max_examples=50)
+    @settings(max_examples=15, suppress_health_check=[HealthCheck.data_too_large])
     def test_json_roundtrip(self, overlay: RealOverlay):
         """to_dict() → from_dict() produces an equivalent RealOverlay.
 

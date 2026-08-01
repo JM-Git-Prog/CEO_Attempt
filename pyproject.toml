@@ -32,6 +32,14 @@ addopts = "-m 'not e2e'"
 markers = [
     "e2e: end-to-end integration tests (require Ollama, optionally UPBGE)",
 ]
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::pytest.PytestUnraisableExceptionWarning",
+]
+# Orchestrator async tests hang on Windows during pytest event-loop teardown
+# (Python 3.13 ProactorEventLoop). Run them individually or in a subprocess.
+# See: GLM-5.2 diagnosis 2026-08-01.
 
 [tool.ruff]
 line-length = 100

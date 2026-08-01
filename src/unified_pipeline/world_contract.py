@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import uuid
 from dataclasses import dataclass, field, fields
 from enum import Enum
@@ -334,6 +335,184 @@ class InteractionBinding:
         )
 
 
+class InteractionContractError(ValueError):
+    """Raised when explicit interaction metadata cannot be represented exactly."""
+
+
+def validate_interaction_bindings(
+    instances: tuple[ObjectInstance, ...],
+    interactions: tuple[InteractionBinding, ...],
+    *,
+    require_dynamic_bindings: bool,
+) -> None:
+    """Validate UUID-keyed behavior against Plan-owned instance transforms.
+
+    This shared contract check intentionally consumes only explicit metadata. It
+    never reads mesh geometry and never derives colliders or transforms.
+    """
+    instance_by_id = {item.object_id: item for item in instances}
+    interaction_ids: set[str] = set()
+    object_ids: set[str] = set()
+
+    def stable_uuid(value: str, label: str) -> None:
+        try:
+            parsed = uuid.UUID(value)
+        except (TypeError, ValueError, AttributeError) as exc:
+            raise InteractionContractError(
+                f"{label} must be a canonical stable UUID"
+            ) from exc
+        if str(parsed) != value.lower():
+            raise InteractionContractError(f"{label} must be a canonical stable UUID")
+
+    def finite_numbers(values: tuple[float, ...], label: str) -> None:
+        if any(isinstance(value, bool) or not math.isfinite(value) for value in values):
+            raise InteractionContractError(f"{label} must use finite numeric values")
+
+    for binding in interactions:
+        stable_uuid(binding.interaction_id, "interaction_id")
+        stable_uuid(binding.object_id, "interaction object_id")
+        if binding.interaction_id in interaction_ids:
+            raise InteractionContractError("interaction IDs must be unique")
+        if binding.object_id in object_ids:
+            raise InteractionContractError(
+                "each object UUID may have only one interaction binding"
+            )
+        interaction_ids.add(binding.interaction_id)
+        object_ids.add(binding.object_id)
+
+        instance = instance_by_id.get(binding.object_id)
+        if instance is None:
+            raise InteractionContractError(
+                f"interaction {binding.interaction_id!r} references an unknown object UUID"
+            )
+        collider = binding.collider
+        collider_values = (
+            collider.center_offset.x, collider.center_offset.y, collider.center_offset.z,
+            collider.dimensions.x, collider.dimensions.y, collider.dimensions.z,
+            collider.rotation.x, collider.rotation.y, collider.rotation.z,
+            collider.rotation.w,
+        )
+        finite_numbers(collider_values, "interaction collider metadata")
+        if collider.shape != "box" or min(
+            collider.dimensions.x, collider.dimensions.y, collider.dimensions.z
+        ) <= 0.0:
+            raise InteractionContractError(
+                "interaction requires an explicit positive box collider"
+            )
+        if any(abs(actual - expected) > 1e-9 for actual, expected in zip(
+            (collider.dimensions.x, collider.dimensions.y, collider.dimensions.z),
+            (instance.scale.x, instance.scale.y, instance.scale.z),
+        )):
+            raise InteractionContractError(
+                "interaction collider dimensions must exactly match Plan-owned instance dimensions"
+            )
+        if any(abs(actual - expected) > 1e-9 for actual, expected in zip(
+            (collider.center_offset.x, collider.center_offset.y, collider.center_offset.z),
+            (0.0, instance.scale.y / 2.0, 0.0),
+        )):
+            raise InteractionContractError(
+                "interaction collider center must exactly preserve the Plan-owned instance origin"
+            )
+        rotation_norm = sum(value * value for value in (
+            collider.rotation.x, collider.rotation.y,
+            collider.rotation.z, collider.rotation.w,
+        ))
+        if abs(rotation_norm - 1.0) > 1e-6:
+            raise InteractionContractError("interaction collider rotation must be unit length")
+
+        if binding.kind == "dynamic":
+            metadata = binding.dynamic
+            if metadata is None or binding.door is not None:
+                raise InteractionContractError(
+                    "dynamic interaction metadata is missing or ambiguous"
+                )
+            if instance.physics_intent != "dynamic" or instance.is_architectural:
+                raise InteractionContractError(
+                    "dynamic interaction requires an explicitly dynamic non-architectural instance"
+                )
+            numbers = (
+                metadata.mass_kg, metadata.friction, metadata.restitution,
+                metadata.grab_distance_m, metadata.hold_distance_m,
+                metadata.hold_stiffness, metadata.push_impulse_ns,
+                metadata.linear_damping, metadata.angular_damping,
+            )
+            finite_numbers(numbers, "dynamic interaction metadata")
+            if (
+                any(not isinstance(value, bool) for value in (
+                    metadata.can_grab, metadata.can_push, metadata.can_topple
+                ))
+                or not (metadata.can_grab and metadata.can_push and metadata.can_topple)
+                or metadata.mass_kg <= 0.0
+                or not 0.0 <= metadata.friction <= 1.0
+                or not 0.0 <= metadata.restitution <= 1.0
+                or metadata.grab_distance_m <= 0.0
+                or metadata.hold_distance_m <= 0.0
+                or metadata.hold_distance_m > metadata.grab_distance_m
+                or metadata.hold_stiffness <= 0.0
+                or metadata.push_impulse_ns <= 0.0
+                or metadata.linear_damping < 0.0
+                or metadata.angular_damping < 0.0
+            ):
+                raise InteractionContractError(
+                    "dynamic interaction metadata is outside safe bounds"
+                )
+        elif binding.kind == "door_hinge":
+            metadata = binding.door
+            if metadata is None or binding.dynamic is not None:
+                raise InteractionContractError(
+                    "door hinge metadata is missing or ambiguous"
+                )
+            if not instance.is_architectural or instance.physics_intent not in {
+                "static", "kinematic"
+            }:
+                raise InteractionContractError(
+                    "door hinge interaction requires an architectural static/kinematic instance"
+                )
+            numbers = (
+                metadata.pivot.x, metadata.pivot.y, metadata.pivot.z,
+                metadata.axis.x, metadata.axis.y, metadata.axis.z,
+                metadata.lower_limit_deg, metadata.upper_limit_deg,
+                metadata.initial_angle_deg, metadata.angular_speed_deg_s,
+                metadata.interaction_distance_m, metadata.interaction_mass_kg,
+            )
+            finite_numbers(numbers, "door hinge metadata")
+            axis_norm = math.sqrt(
+                metadata.axis.x ** 2 + metadata.axis.y ** 2 + metadata.axis.z ** 2
+            )
+            if (
+                abs(axis_norm - 1.0) > 1e-6
+                or abs(metadata.axis.x) > 1e-9
+                or abs(metadata.axis.z) > 1e-9
+                or metadata.lower_limit_deg >= metadata.upper_limit_deg
+                or metadata.lower_limit_deg < -180.0
+                or metadata.upper_limit_deg > 180.0
+                or not metadata.lower_limit_deg <= metadata.initial_angle_deg <= metadata.upper_limit_deg
+                or metadata.angular_speed_deg_s <= 0.0
+                or metadata.interaction_distance_m <= 0.0
+                or metadata.interaction_mass_kg <= 0.0
+            ):
+                raise InteractionContractError(
+                    "door hinge metadata is outside safe explicit bounds"
+                )
+        else:
+            raise InteractionContractError(
+                f"unsupported interaction kind {binding.kind!r}"
+            )
+
+    if require_dynamic_bindings:
+        required = {
+            item.object_id for item in instances
+            if item.physics_intent == "dynamic" and not item.is_architectural
+        }
+        bound = {
+            item.object_id for item in interactions if item.kind == "dynamic"
+        }
+        if required != bound:
+            raise InteractionContractError(
+                "every dynamic instance requires exactly one explicit interaction binding"
+            )
+
+
 @dataclass(frozen=True)
 class MaterialIntent:
     """Material binding intent for an object instance."""
@@ -479,15 +658,46 @@ class Relationship:
 # Lighting configuration
 # ---------------------------------------------------------------------------
 
+
+class LightingContractError(ValueError):
+    """Raised when canonical lighting data is missing or cannot be represented exactly."""
+
+
+_LIGHT_SOURCE_FIELDS = frozenset({
+    "light_id", "light_type", "position", "color", "intensity",
+    "temperature", "cast_shadows",
+})
+_LIGHTING_CONFIG_FIELDS = frozenset({"ambient_color", "ambient_intensity", "lights"})
+
+
+def _require_lighting_fields(
+    data: dict[str, Any], required: frozenset[str], label: str
+) -> None:
+    missing = sorted(required - set(data))
+    if missing:
+        raise LightingContractError(
+            f"{label} is incomplete; missing authoritative fields: {', '.join(missing)}"
+        )
+
+
+def _lighting_number(value: Any, label: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise LightingContractError(f"{label} must be an explicit finite number")
+    result = float(value)
+    if not math.isfinite(result):
+        raise LightingContractError(f"{label} must be an explicit finite number")
+    return result
+
+
 @dataclass(frozen=True)
 class LightSource:
-    """A light source in the world."""
+    """A fully declared, Scene-Canon-derived light source in contract space."""
     light_id: str = ""
-    light_type: str = "point"     # "point" | "directional" | "spot" | "area"
+    light_type: str = "point"     # only types with complete authoritative data may compile
     position: Vec3 = field(default_factory=Vec3)
-    color: str = "#ffffff"        # hex color
+    color: str = "#ffffff"        # approved render color; never Kelvin-inferred by consumers
     intensity: float = 1.0
-    temperature: float = 5500.0   # Kelvin
+    temperature: float = 5500.0   # exact Kelvin metadata bound alongside approved color
     cast_shadows: bool = True
 
     def to_dict(self) -> dict[str, Any]:
@@ -503,20 +713,25 @@ class LightSource:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> LightSource:
+        _require_lighting_fields(data, _LIGHT_SOURCE_FIELDS, "light source")
+        position = data["position"]
+        if not isinstance(position, dict):
+            raise LightingContractError("light position must be an explicit x/y/z object")
+        _require_lighting_fields(position, frozenset({"x", "y", "z"}), "light position")
         return cls(
-            light_id=str(data.get("light_id", "")),
-            light_type=str(data.get("light_type", "point")),
-            position=Vec3.from_dict(data.get("position", {})),
-            color=str(data.get("color", "#ffffff")),
-            intensity=float(data.get("intensity", 1.0)),
-            temperature=float(data.get("temperature", 5500.0)),
-            cast_shadows=bool(data.get("cast_shadows", True)),
+            light_id=data["light_id"],
+            light_type=data["light_type"],
+            position=Vec3(position["x"], position["y"], position["z"]),
+            color=data["color"],
+            intensity=data["intensity"],
+            temperature=data["temperature"],
+            cast_shadows=data["cast_shadows"],
         )
 
 
 @dataclass(frozen=True)
 class LightingConfig:
-    """Complete lighting configuration for the world."""
+    """Complete ambient and fixture lighting configuration for the world."""
     ambient_color: str = "#1a1a2e"
     ambient_intensity: float = 0.3
     lights: tuple[LightSource, ...] = ()
@@ -530,13 +745,65 @@ class LightingConfig:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> LightingConfig:
+        _require_lighting_fields(data, _LIGHTING_CONFIG_FIELDS, "lighting configuration")
+        if not isinstance(data["lights"], list):
+            raise LightingContractError("lighting configuration lights must be an explicit list")
         return cls(
-            ambient_color=str(data.get("ambient_color", "#1a1a2e")),
-            ambient_intensity=float(data.get("ambient_intensity", 0.3)),
-            lights=tuple(
-                LightSource.from_dict(ld) for ld in data.get("lights", [])
-            ),
+            ambient_color=data["ambient_color"],
+            ambient_intensity=data["ambient_intensity"],
+            lights=tuple(LightSource.from_dict(item) for item in data["lights"]),
         )
+
+
+def validate_lighting_config(
+    lighting: LightingConfig,
+    *,
+    supported_light_types: frozenset[str] | None = None,
+) -> None:
+    """Validate complete lighting without deriving, clamping, or normalizing values."""
+    if not isinstance(lighting, LightingConfig):
+        raise LightingContractError("WorldContract lighting must be a LightingConfig")
+    if (
+        not isinstance(lighting.ambient_color, str)
+        or len(lighting.ambient_color) != 7
+        or not lighting.ambient_color.startswith("#")
+        or any(character not in "0123456789abcdefABCDEF" for character in lighting.ambient_color[1:])
+    ):
+        raise LightingContractError("ambient light color must be exact #RRGGBB")
+    if _lighting_number(lighting.ambient_intensity, "ambient light intensity") < 0.0:
+        raise LightingContractError("ambient light intensity cannot be negative")
+
+    light_ids: set[str] = set()
+    for light in lighting.lights:
+        if not isinstance(light, LightSource):
+            raise LightingContractError("lighting entries must be LightSource values")
+        if not isinstance(light.light_id, str) or not light.light_id.strip() or light.light_id in light_ids:
+            raise LightingContractError("contract light IDs must be unique and nonempty")
+        light_ids.add(light.light_id)
+        if not isinstance(light.light_type, str) or (
+            supported_light_types is not None and light.light_type not in supported_light_types
+        ):
+            raise LightingContractError(
+                f"light {light.light_id!r} type {light.light_type!r} lacks enough "
+                "contract data for exact rendering"
+            )
+        for axis, value in zip("xyz", (light.position.x, light.position.y, light.position.z)):
+            _lighting_number(value, f"light {light.light_id} position.{axis}")
+        if (
+            not isinstance(light.color, str)
+            or len(light.color) != 7
+            or not light.color.startswith("#")
+            or any(character not in "0123456789abcdefABCDEF" for character in light.color[1:])
+        ):
+            raise LightingContractError(f"light {light.light_id!r} color must be exact #RRGGBB")
+        if _lighting_number(light.intensity, f"light {light.light_id} intensity") < 0.0:
+            raise LightingContractError(f"light {light.light_id!r} intensity cannot be negative")
+        if _lighting_number(light.temperature, f"light {light.light_id} temperature") <= 0.0:
+            raise LightingContractError(f"light {light.light_id!r} temperature must be positive Kelvin")
+        if not isinstance(light.cast_shadows, bool):
+            raise LightingContractError(
+                f"light {light.light_id!r} cast_shadows must be explicit boolean"
+            )
 
 
 # ---------------------------------------------------------------------------

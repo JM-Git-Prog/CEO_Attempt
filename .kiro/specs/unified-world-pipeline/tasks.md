@@ -261,7 +261,7 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 ### Wave 8: Walkable World and Interaction
 
-- [~] 8.1 Implement first-person controller for browser
+- [x] 8.1 Implement first-person controller for browser
   - Extend V14 Three.js viewer with: WASD movement, mouse look (PointerLock), gravity, collision with static bodies, safe spawn position selection
   - _Requirements: 22.1, 21.6_
 
@@ -269,12 +269,12 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - Door swing (hinge physics), object grab/release (raycasting + constraint), push/topple (impulse application)
   - _Requirements: 22.2, 22.3, 22.4_
 
-- [~] 8.3 Implement lighting from WorldContract
+- [ ] 8.3 Implement lighting from WorldContract
   - Place light fixtures at contract positions, set intensity/color/temperature from Scene_Canon-derived values
   - Compute shadows from each light source
   - _Requirements: 22.5_
 
-- [~] 8.4 Implement three-view identity and Canon fidelity comparison
+- [ ] 8.4 Implement three-view identity and Canon fidelity comparison
   - Create `src/unified_pipeline/canon_compare.py` comparing Plan-derived Blockout/blueprint, Scene_Canon, and first-person World render per stable UUID and region
   - GREEN requires shell/opening truth, every requested object, placement/dimensions/heights, zero forbidden overlap, and palette/material fidelity; presence/order alone is insufficient
   - Store the verdict as hash-bound evidence and block final QA on red/amber according to configured release policy
@@ -311,13 +311,13 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 ### Wave 10: Asset Warehouse and Orchestration
 
-- [~] 10.1 Wire existing Asset Warehouse for unified pipeline
+- [ ] 10.1 Wire existing Asset Warehouse for unified pipeline
   - Reuse `src/photo_pipeline/asset_warehouse.py` — adapt to accept unified models
   - Append-only, never consulted pre-generation, full metadata registry
   - Add game_properties and real_bindings fields to registry
   - _Requirements: 26.1, 26.2, 26.3, 26.4, 26.5, 26.6_
 
-- [~] 10.2 Implement durable UnifiedOrchestrator
+- [ ] 10.2 Implement durable UnifiedOrchestrator
   - Create `src/unified_pipeline/orchestrator.py` wiring: Conversation → Brief → Art_Bible → Dream → Plan solve/normalize/validate → Camera → Blockout approval → Canon honesty/approval → Segment → Object_Canon approval → Mesh approval → Materials → authoritative Parametric Room + optional depth reference → Finish → Physics/Settle → relationship-solved WorldContract/hash → structural gates → Compile → parity gate → final events → GAME/REAL/Toggle → Warehouse Catalog
   - Write atomic per-stage checkpoints with input/output hashes, Plan revision, approval revision, external job ID, attempt, and completion state
   - Resume idempotently by reconciling pending external jobs; never blindly resubmit. Cancel stale responses and invalidate/archive every downstream artifact and approval after an upstream revision
@@ -326,12 +326,12 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - No hard time cap; 180s stall detection triggers bounded recovery/fallback without weakening quality gates
   - _Requirements: 27.1, 27.2, 27.3, 27.4, 27.5, 27.6_
 
-- [~] 10.3 Implement web routes for unified pipeline
+- [ ] 10.3 Implement web routes for unified pipeline
   - Add routes: `GET /?v=16` (default), `POST /api/session/unified/start` (begins conversation), `POST /api/session/{id}/message` (conversation turn), `POST /api/session/{id}/approve/{stage}`, `GET /api/session/{id}/dream_preview`, `GET /api/session/{id}/blockout`, `GET /api/session/{id}/canon`, `GET /api/session/{id}/mesh/{object_id}`, SSE events, WS materials
   - Maintain V3-V15 routes unchanged
   - _Requirements: 28.1, 28.2, 28.3, 28.4_
 
-- [~] 10.4 Write orchestration recovery and integration tests
+- [ ] 10.4 Write orchestration recovery and integration tests
   - Test full pipeline with mocked GPU stages using Danny's kitchenette prompt
   - Verify corrected stage order, all five approvals, structural/parity publication gates, and provisional/final event ordering
   - Crash/restart at every external-job boundary and prove idempotent resume, no duplicate submissions, stale-response cancellation, downstream invalidation, and worker-lease exclusivity
@@ -339,24 +339,24 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 ### Wave 11: Qualification
 
-- [~] 11.1 Implement qualification harness
+- [ ] 11.1 Implement qualification harness
   - Create `src/unified_pipeline/qualification.py` with fresh-session creation, canonical prompt injection, complete stage traversal, gate verification, and append-only diagnostic recording
   - Record source fingerprints, exact artifact hashes, Plan/approval revisions, contract hash, compiler parity, browser owner, and whether each result is mocked or live
   - _Requirements: 30.1, 30.2, 30.3, 30.4_
 
-- [~] 11.2 Run clean qualification with Danny's kitchenette
+- [ ] 11.2 Run clean qualification with Danny's kitchenette
   - Start from a brand-new empty session and traverse: Conversation → Brief → Dream → Plan → Blockout → Canon → Objects → Meshes → Materials → Physics → WorldContract → Compilation → Validation → Walk → GAME → REAL → Toggle
   - Inspect three-view identity, authority/gates, mesh/material quality, physics/walkability, overlays, reconnect/replay, and browser/compiler parity
   - After the zero-state smoke passes, run five fresh headless rounds and five fresh human-like rounds; never reuse or restore a qualifying session
   - Record pass/fail and exact evidence per stage and round
   - _Requirements: 30.3, 30.4, 30.5, 30.6_
 
-- [~] 11.3 Fix any failure and restart qualification
+- [ ] 11.3 Fix any failure and restart qualification
   - Failed sessions remain diagnostic evidence only
   - Fix the cause, discard the failed session as release evidence, and restart the entire clean sequence with another new empty session
   - _Requirements: 30.5, 30.6_
 
-- [~] 11.4 Commit release
+- [ ] 11.4 Commit release
   - Stage relevant files, commit as `feat(web): release v16 unified-world-pipeline`
   - Provide: clean-version URL, fresh session URL, canonical prompt, commit hash
   - _Requirements: 30.7_

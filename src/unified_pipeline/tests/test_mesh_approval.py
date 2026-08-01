@@ -17,12 +17,12 @@ from pathlib import Path
 
 import pytest
 
-from unified_pipeline.mesh_approval import (
+from src.unified_pipeline.mesh_approval import (
     MeshApprovalGate,
     TurntablePreview,
     TURNTABLE_ANGLES,
 )
-from unified_pipeline.models import MeshApproval
+from src.unified_pipeline.models import MeshApproval
 
 
 # ─── TurntablePreview ──────────────────────────────────────────────────────────

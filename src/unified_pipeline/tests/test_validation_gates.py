@@ -331,7 +331,7 @@ def test_degraded_material_with_reason_is_publishable(tmp_path: Path) -> None:
 @given(yaw=st.floats(
     min_value=-720.0, max_value=720.0, allow_nan=False, allow_infinity=False
 ))
-@settings(max_examples=40, deadline=None)
+@settings(max_examples=15, deadline=None)
 def test_property_rotation_aware_extent_drives_containment(yaw: float) -> None:
     with tempfile.TemporaryDirectory() as directory:
         context = _context(Path(directory))

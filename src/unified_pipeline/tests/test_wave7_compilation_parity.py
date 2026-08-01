@@ -26,12 +26,14 @@ from src.unified_pipeline.compilers.parity import (
 from src.unified_pipeline.compilers.upbge import UPBGECompiler
 from src.unified_pipeline.world_contract import (
     AssetBinding,
+    FirstPersonNavigation,
     LightSource,
     LightingConfig,
     MaterialIntent,
     ObjectInstance,
     Quaternion,
     Relationship,
+    StaticCollisionBody,
     Vec3,
     WorldContract,
     finalize,
@@ -80,6 +82,25 @@ def _contract(tmp_path: Path) -> tuple[WorldContract, CameraContract, Path]:
         camera_hash=camera.compute_hash(),
         camera=camera,
         room_shell_ref=str(room),
+        navigation=FirstPersonNavigation(
+            bounds_minimum=Vec3(-2.0, 0.0, -2.0),
+            bounds_maximum=Vec3(2.0, 2.7, 2.0),
+            static_bodies=(
+                StaticCollisionBody(
+                    body_id="room-floor",
+                    source_id="room:floor",
+                    center=Vec3(0.0, -0.05, 0.0),
+                    dimensions=Vec3(4.0, 0.1, 4.0),
+                    source_kind="architecture",
+                ),
+            ),
+            spawn_candidates=(Vec3(0.0, 1.62, 0.0), Vec3(1.25, 1.62, 1.25)),
+            player_radius=0.25,
+            player_height=1.75,
+            eye_height=1.62,
+            movement_speed=2.0,
+            gravity=9.81,
+        ),
         instances=(instance,),
         relationships=(Relationship("table-uuid", "room", "containment", spawn),),
         lighting=LightingConfig(

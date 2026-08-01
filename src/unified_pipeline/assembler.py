@@ -33,6 +33,8 @@ from .world_contract import (
     WorldContract,
     finalize,
     serialize,
+    validate_interaction_bindings,
+    validate_lighting_config,
     verify_hash,
 )
 
@@ -283,6 +285,10 @@ class WorldContractAssembler:
         trace.append("validate")
 
         self._reject_consumer_defaults(consumer_defaults, instances)
+        try:
+            validate_lighting_config(lighting, supported_light_types=frozenset({"point"}))
+        except ValueError as exc:
+            raise AssemblyError(f"invalid authoritative lighting: {exc}") from exc
         camera_hash = self._bind_camera(camera, room)
         trace.append("immutable_camera_contract")
 
@@ -523,6 +529,13 @@ class WorldContractAssembler:
                 is_architectural=intent.is_architectural,
             ))
 
+        try:
+            validate_interaction_bindings(
+                tuple(world_instances), interactions, require_dynamic_bindings=False
+            )
+        except ValueError as exc:
+            raise AssemblyError(f"invalid explicit interaction metadata: {exc}") from exc
+
         room_hash = _canonical_digest(room.to_dict())
         graph = ConstrainedSceneGraph(
             plan_revision=revision,
@@ -599,6 +612,10 @@ class WorldContractAssembler:
             body_mode=item.body_mode,
             source_kind="architecture",
         ) for item in room.collision]
+        moving_interaction_ids = {
+            binding.object_id for binding in graph.interactions
+            if binding.kind in {"dynamic", "door_hinge"}
+        }
         bodies.extend(StaticCollisionBody(
             body_id=f"collision:instance:{item.object_id}",
             source_id=item.object_id,
@@ -613,7 +630,8 @@ class WorldContractAssembler:
             body_mode="STATIC",
             source_kind="instance",
         ) for item in graph.instances if (
-            item.physics_intent == "static" or item.is_architectural
+            (item.physics_intent == "static" or item.is_architectural)
+            and item.object_id not in moving_interaction_ids
         ))
         bodies.sort(key=lambda item: item.body_id)
 

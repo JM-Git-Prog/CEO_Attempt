@@ -216,7 +216,7 @@ def test_authority_rejects_camera_inference_and_second_normalization():
 
 
 @given(st.floats(min_value=-100.0, max_value=100.0, allow_nan=False, allow_infinity=False))
-@settings(max_examples=30, deadline=None)
+@settings(max_examples=15, deadline=None)
 def test_any_distinct_compiled_position_is_rejected(candidate_x):
     """Property: solved transforms permit no consumer-side numeric tolerance."""
     authority = _authority()

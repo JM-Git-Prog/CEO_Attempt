@@ -16,6 +16,7 @@ from src.unified_pipeline.approval_gates import ApprovalGate
 from src.unified_pipeline.assembler import (
     MANDATORY_CHAIN,
     ApprovedAssetRecord,
+    AssemblyError,
     AssetNormalizer,
     ConsumerDefaultError,
     DuplicateAuthorityError,
@@ -30,10 +31,12 @@ from src.unified_pipeline.parametric_room import build_authoritative_parametric_
 from src.unified_pipeline.plan_generator import _build_walls_from_dimensions
 from src.unified_pipeline.plan_validator import _compute_plan_hash
 from src.unified_pipeline.world_contract import (
+    DoorInteractionMetadata,
     DynamicInteractionMetadata,
     InteractionBinding,
     InteractionCollider,
     LightingConfig,
+    LightSource,
     MaterialIntent,
     Relationship,
     Vec3,
@@ -217,6 +220,60 @@ def test_assembler_hash_binds_explicit_uuid_interactions(tmp_path: Path) -> None
     assert verify_hash(result.contract)
 
 
+def test_assembler_keeps_hinged_door_out_of_static_navigation(tmp_path: Path) -> None:
+    object_id = "39ea4512-28ff-5936-8358-45833a64168d"
+    interaction = InteractionBinding(
+        interaction_id="0e158c43-3c65-5903-a58d-acceeea1496e",
+        object_id=object_id,
+        kind="door_hinge",
+        collider=InteractionCollider(
+            center_offset=Vec3(0.0, 0.4, 0.0),
+            dimensions=Vec3(0.4, 0.8, 0.4),
+        ),
+        door=DoorInteractionMetadata(
+            pivot=Vec3(-1.2, 0.0, 0.0),
+            axis=Vec3(0.0, 1.0, 0.0),
+            lower_limit_deg=0.0,
+            upper_limit_deg=90.0,
+            initial_angle_deg=0.0,
+            angular_speed_deg_s=100.0,
+            interaction_distance_m=2.5,
+            interaction_mass_kg=15.0,
+        ),
+    )
+    camera = _camera()
+    plan = _plan(_placement(object_id, 1.0))
+    asset = _asset(tmp_path)
+    door_intent = InstanceAssemblyInput(
+        object_id=object_id,
+        name="Door",
+        approved_asset=asset,
+        physics_intent="static",
+        material_intent=MaterialIntent(
+            base_color="#805533", metallic=0.0, roughness=0.7, pass_level=2
+        ),
+        semantic_label="architecture/door",
+        is_architectural=True,
+    )
+
+    result = WorldContractAssembler().assemble(
+        plan,
+        camera,
+        _room(plan, camera),
+        (door_intent,),
+        approved_plan_revision=3,
+        interactions=(interaction,),
+        lighting=LightingConfig(),
+    )
+
+    assert result.contract.interactions == (interaction,)
+    assert all(
+        body.source_id != object_id
+        for body in result.contract.navigation.static_bodies
+    )
+    assert verify_hash(result.contract)
+
+
 def test_normalizes_shared_approved_asset_exactly_once(tmp_path: Path) -> None:
     camera = _camera()
     plan = _plan(_placement("chair-a", 1.0), _placement("chair-b", 3.0))
@@ -268,6 +325,37 @@ def test_rejects_revision_authority_and_consumer_default_drift(tmp_path: Path) -
         assembler.assemble(
             plan, camera, room, (intent,), approved_plan_revision=3,
             lighting=LightingConfig(), consumer_defaults={"scale": (1, 1, 1)},
+        )
+
+
+def test_rejects_unsupported_inexact_lighting_before_contract_hashing(
+    tmp_path: Path,
+) -> None:
+    """Validates Requirement 22.5 at the final WorldContract binding boundary."""
+    camera = _camera()
+    plan = _plan(_placement("table", 1.0))
+    unsupported = LightingConfig(
+        ambient_color="#221811",
+        ambient_intensity=0.4,
+        lights=(LightSource(
+            light_id="incomplete-spot",
+            light_type="spot",
+            position=Vec3(0.0, 2.5, 0.0),
+            color="#ffd2a1",
+            intensity=2.0,
+            temperature=3200.0,
+            cast_shadows=True,
+        ),),
+    )
+
+    with pytest.raises(AssemblyError, match="lacks enough contract data"):
+        WorldContractAssembler().assemble(
+            plan,
+            camera,
+            _room(plan, camera),
+            (_intent("table", _asset(tmp_path)),),
+            approved_plan_revision=3,
+            lighting=unsupported,
         )
 
 

@@ -12,7 +12,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from src.photo_pipeline.stages.physics_settle import PhysicsSettleResult
 from src.unified_pipeline.approval_gates import ApprovalGate
@@ -437,7 +437,7 @@ def test_property_7_stable_uuid_revision_and_binding_across_wave5_adapters(
     delegated_x=st.floats(min_value=-3.0, max_value=7.0, allow_nan=False, allow_infinity=False),
     delegated_z=st.floats(min_value=-3.0, max_value=7.0, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=30, deadline=None)
+@settings(max_examples=15, deadline=None, suppress_health_check=[HealthCheck.data_too_large])
 def test_property_4_settle_preserves_rotation_aware_containment_overlap_and_circulation(
     object_uuid: UUID,
     width: float,

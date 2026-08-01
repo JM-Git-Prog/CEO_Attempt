@@ -6,11 +6,15 @@ Validates Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
 
 import json
 import uuid
+from dataclasses import replace
+
+import pytest
 
 from src.unified_pipeline.world_contract import (
     AssetBinding,
     EventStatus,
     LightingConfig,
+    LightingContractError,
     LightSource,
     MaterialIntent,
     ObjectInstance,
@@ -144,6 +148,23 @@ class TestSerialization:
         reconstructed = WorldContract.from_dict(data)
         assert serialize(contract) == serialize(reconstructed)
 
+    def test_incomplete_lighting_never_receives_consumer_defaults(self):
+        """Req 22.5: omitted authoritative lighting fields fail closed."""
+        for field_name in (
+            "light_id", "light_type", "position", "color", "intensity",
+            "temperature", "cast_shadows",
+        ):
+            payload = _make_contract().to_dict()
+            del payload["lighting"]["lights"][0][field_name]
+            with pytest.raises(LightingContractError, match="missing authoritative fields"):
+                WorldContract.from_dict(payload)
+
+        for field_name in ("ambient_color", "ambient_intensity", "lights"):
+            payload = _make_contract().to_dict()
+            del payload["lighting"][field_name]
+            with pytest.raises(LightingContractError, match="missing authoritative fields"):
+                WorldContract.from_dict(payload)
+
 
 # ---------------------------------------------------------------------------
 # Test: SHA-256 hashing (Req 19.2, 19.3)
@@ -205,6 +226,24 @@ class TestHashing:
         modified = add_relationship(contract, rel)
         h2 = compute_hash(modified)
         assert h1 != h2
+
+    def test_hash_changes_with_exact_lighting_values(self):
+        """Req 19.3/22.5: positions, temperature, and shadow intent are hash-bound."""
+        contract = _make_contract()
+        source = contract.lighting.lights[0]
+        changes = (
+            replace(source, position=Vec3(2.125, 2.4, 2.0)),
+            replace(source, color="#ffe8cc"),
+            replace(source, intensity=1.625),
+            replace(source, temperature=4100.0),
+            replace(source, cast_shadows=False),
+        )
+        for changed_source in changes:
+            changed = replace(
+                contract,
+                lighting=replace(contract.lighting, lights=(changed_source,)),
+            )
+            assert compute_hash(changed) != compute_hash(contract)
 
 
 # ---------------------------------------------------------------------------

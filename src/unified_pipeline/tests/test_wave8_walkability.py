@@ -17,10 +17,15 @@ from src.unified_pipeline.compilers.browser import BrowserCompiler
 from src.unified_pipeline.compilers.godot import GodotCompiler
 from src.unified_pipeline.world_contract import (
     AssetBinding,
+    DynamicInteractionMetadata,
+    FirstPersonNavigation,
+    InteractionBinding,
+    InteractionCollider,
     MaterialIntent,
     ObjectInstance,
     Quaternion,
     Relationship,
+    StaticCollisionBody,
     Vec3,
     WorldContract,
     finalize,
@@ -28,6 +33,10 @@ from src.unified_pipeline.world_contract import (
 
 _PLAYER_RADIUS_M = 0.3
 _SPAWN = (0.0, 0.05, -1.5)
+_WALL_UUID = "11111111-1111-1111-1111-111111111111"
+_CRATE_UUID = "22222222-2222-2222-2222-222222222222"
+_DOOR_UUID = "33333333-3333-3333-3333-333333333333"
+_CRATE_INTERACTION_UUID = "44444444-4444-4444-4444-444444444444"
 
 
 def _asset(path: Path, label: str) -> AssetBinding:
@@ -61,17 +70,17 @@ def _contract(tmp_path: Path) -> WorldContract:
     )
     instances = (
         _instance(
-            "wall-north", (0.0, 1.5, 2.8), (4.0, 3.0, 0.1),
+            _WALL_UUID, (0.0, 1.5, 2.8), (4.0, 3.0, 0.1),
             _asset(tmp_path / "wall.glb", "wall"),
             physics="static", label="architecture/wall", architectural=True,
         ),
         _instance(
-            "crate", (1.2, 0.5, -0.2), (0.5, 1.0, 0.5),
+            _CRATE_UUID, (1.2, 0.5, -0.2), (0.5, 1.0, 0.5),
             _asset(tmp_path / "crate.glb", "crate"),
             physics="dynamic", label="props/crate",
         ),
         _instance(
-            "door", (-1.0, 1.05, 2.8), (0.9, 2.1, 0.04),
+            _DOOR_UUID, (-1.0, 1.05, 2.8), (0.9, 2.1, 0.04),
             _asset(tmp_path / "door.glb", "door"),
             physics="static", label="architecture/door", architectural=True,
         ),
@@ -80,7 +89,7 @@ def _contract(tmp_path: Path) -> WorldContract:
         "position": list(_SPAWN), "rotation": [0.0, 0.0, 0.0, 1.0],
     }}
     hinge = {"door_hinge": {
-        "child_body_id": "door", "anchor_body_id": "room",
+        "child_body_id": _DOOR_UUID, "anchor_body_id": "room",
         "pivot_position": [-1.45, 0.0, 2.8], "axis": [0.0, 1.0, 0.0],
         "lower_limit_deg": -5.0, "upper_limit_deg": 95.0,
         "interaction_mass_kg": 18.5,
@@ -88,10 +97,54 @@ def _contract(tmp_path: Path) -> WorldContract:
     return finalize(WorldContract(
         plan_revision="rev-wave8", camera_hash=camera.compute_hash(), camera=camera,
         room_shell_ref="parametric-room:sha256:" + "a" * 64,
+        navigation=FirstPersonNavigation(
+            bounds_minimum=Vec3(-2.0, 0.0, -2.0),
+            bounds_maximum=Vec3(2.0, 3.0, 3.0),
+            static_bodies=(
+                StaticCollisionBody(
+                    body_id="room-floor",
+                    source_id="room:floor",
+                    center=Vec3(0.0, -0.05, 0.0),
+                    dimensions=Vec3(4.0, 0.1, 6.0),
+                    source_kind="architecture",
+                ),
+            ),
+            spawn_candidates=(Vec3(_SPAWN[0], 1.62, _SPAWN[2]), Vec3(1.0, 1.62, -1.0)),
+            player_radius=_PLAYER_RADIUS_M,
+            player_height=1.75,
+            eye_height=1.62,
+            movement_speed=2.0,
+            gravity=9.81,
+        ),
         instances=instances,
+        interactions=(
+            InteractionBinding(
+                interaction_id=_CRATE_INTERACTION_UUID,
+                object_id=_CRATE_UUID,
+                kind="dynamic",
+                collider=InteractionCollider(
+                    center_offset=Vec3(0.0, 0.5, 0.0),
+                    dimensions=Vec3(0.5, 1.0, 0.5),
+                ),
+                dynamic=DynamicInteractionMetadata(
+                    mass_kg=12.0,
+                    friction=0.5,
+                    restitution=0.2,
+                    can_grab=True,
+                    can_push=True,
+                    can_topple=True,
+                    grab_distance_m=3.0,
+                    hold_distance_m=1.5,
+                    hold_stiffness=12.0,
+                    push_impulse_ns=10.0,
+                    linear_damping=1.0,
+                    angular_damping=1.5,
+                ),
+            ),
+        ),
         relationships=(
             Relationship("player", "room", "spawn", json.dumps(spawn)),
-            Relationship("door", "room", "hinge", json.dumps(hinge)),
+            Relationship(_DOOR_UUID, "room", "hinge", json.dumps(hinge)),
         ),
         contract_id="wave8-walkability",
     ))
@@ -159,11 +212,11 @@ def test_door_interaction_emits_bounded_physical_hinge(tmp_path: Path) -> None:
     hinge = manifest["door_hinges"][0]
 
     assert hinge == {
-        "child_id": "door", "anchor_id": "room",
+        "child_id": _DOOR_UUID, "anchor_id": "room",
         "pivot": [-1.45, 0.0, 2.8], "axis": [0.0, 1.0, 0.0],
         "lower_limit_deg": -5.0, "upper_limit_deg": 95.0,
         "mass_kg": 18.5,
-        "source_relationship": ["door", "room", "hinge"],
+        "source_relationship": [_DOOR_UUID, "room", "hinge"],
     }
     assert 'type="HingeJoint3D"' in scene
     assert 'metadata/_kiro_door_hinge = true' in scene
