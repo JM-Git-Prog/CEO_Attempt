@@ -333,3 +333,292 @@ baselines:
         config_file = _write_config(tmp_path, yaml_content)
         with pytest.raises(ConfigValidationError, match="time_budgets"):
             load_config(config_file)
+
+    def test_missing_deterministic_seed(self, tmp_path):
+        """Raises ConfigValidationError when deterministic_seed is missing."""
+        yaml_content = """\
+visual_regression:
+  default_viewport: [1920, 1080]
+  stages:
+    canon:
+      diff_threshold_pct: 0.1
+perceptual:
+  ssim_threshold: 0.85
+  lpips_threshold: 0.3
+  clip_cosine_threshold: 0.9
+  calibration_corpus_dir: "corpus/"
+vision_qa:
+  model_name: "model"
+  confidence_threshold: 0.8
+  checklist_path: "path"
+  blocking: false
+time_budgets:
+  visual_regression_s: 120
+  scene_validation_s: 60
+  accessibility_s: 30
+  perceptual_s: 300
+cloud:
+  failure_analysis_model: "model"
+  coverage_model: "model"
+  calibration_model: "model"
+  calibration_trigger_runs: 50
+  evolution_trigger_verdicts: 20
+baselines:
+  storage_dir: "dir/"
+  require_approval: true
+  max_corpus_size_mb: 50
+"""
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="deterministic_seed"):
+            load_config(config_file)
+
+    def test_missing_ssim_threshold(self, tmp_path):
+        """Raises ConfigValidationError when ssim_threshold is missing."""
+        yaml_content = """\
+visual_regression:
+  deterministic_seed: 42
+  default_viewport: [1920, 1080]
+  stages:
+    canon:
+      diff_threshold_pct: 0.1
+perceptual:
+  lpips_threshold: 0.3
+  clip_cosine_threshold: 0.9
+  calibration_corpus_dir: "corpus/"
+vision_qa:
+  model_name: "model"
+  confidence_threshold: 0.8
+  checklist_path: "path"
+  blocking: false
+time_budgets:
+  visual_regression_s: 120
+  scene_validation_s: 60
+  accessibility_s: 30
+  perceptual_s: 300
+cloud:
+  failure_analysis_model: "model"
+  coverage_model: "model"
+  calibration_model: "model"
+  calibration_trigger_runs: 50
+  evolution_trigger_verdicts: 20
+baselines:
+  storage_dir: "dir/"
+  require_approval: true
+  max_corpus_size_mb: 50
+"""
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="ssim_threshold"):
+            load_config(config_file)
+
+    def test_missing_diff_threshold_in_stage(self, tmp_path):
+        """Raises ConfigValidationError when a stage is missing diff_threshold_pct."""
+        yaml_content = """\
+visual_regression:
+  deterministic_seed: 42
+  default_viewport: [1920, 1080]
+  stages:
+    canon:
+      enabled: true
+perceptual:
+  ssim_threshold: 0.85
+  lpips_threshold: 0.3
+  clip_cosine_threshold: 0.9
+  calibration_corpus_dir: "corpus/"
+vision_qa:
+  model_name: "model"
+  confidence_threshold: 0.8
+  checklist_path: "path"
+  blocking: false
+time_budgets:
+  visual_regression_s: 120
+  scene_validation_s: 60
+  accessibility_s: 30
+  perceptual_s: 300
+cloud:
+  failure_analysis_model: "model"
+  coverage_model: "model"
+  calibration_model: "model"
+  calibration_trigger_runs: 50
+  evolution_trigger_verdicts: 20
+baselines:
+  storage_dir: "dir/"
+  require_approval: true
+  max_corpus_size_mb: 50
+"""
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="diff_threshold_pct"):
+            load_config(config_file)
+
+
+# ---------------------------------------------------------------------------
+# Test: Type validation
+# ---------------------------------------------------------------------------
+
+
+class TestTypeValidation:
+    """Tests for ConfigValidationError on wrong types."""
+
+    def test_seed_as_string_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when deterministic_seed is a string."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "deterministic_seed: 42", 'deterministic_seed: "not_a_number"'
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="deterministic_seed.*integer"):
+            load_config(config_file)
+
+    def test_diff_threshold_as_string_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when diff_threshold_pct is a string."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "diff_threshold_pct: 1.0", 'diff_threshold_pct: "high"'
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="diff_threshold_pct.*number"):
+            load_config(config_file)
+
+    def test_ssim_threshold_as_string_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when ssim_threshold is a string."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "ssim_threshold: 0.85", 'ssim_threshold: "high"'
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="ssim_threshold.*number"):
+            load_config(config_file)
+
+    def test_viewport_as_scalar_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when default_viewport is not a list."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "default_viewport: [1920, 1080]", "default_viewport: 1920"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="default_viewport.*list"):
+            load_config(config_file)
+
+    def test_viewport_wrong_length_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when default_viewport has wrong length."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "default_viewport: [1920, 1080]", "default_viewport: [1920]"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="default_viewport.*list"):
+            load_config(config_file)
+
+    def test_stages_as_list_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when stages is a list, not a mapping."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "  stages:\n    dream_preview:\n      diff_threshold_pct: 1.0\n      enabled: true\n    canon:\n      diff_threshold_pct: 0.1\n      enabled: true",
+            "  stages:\n    - dream_preview"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="stages.*mapping"):
+            load_config(config_file)
+
+    def test_enabled_as_string_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when enabled is a string, not boolean."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "enabled: true", 'enabled: "yes"'
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="enabled.*boolean"):
+            load_config(config_file)
+
+    def test_time_budget_as_float_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when time budget is a float."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "visual_regression_s: 120", "visual_regression_s: 120.5"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="visual_regression_s.*integer"):
+            load_config(config_file)
+
+    def test_calibration_corpus_dir_as_number_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when calibration_corpus_dir is not a string."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            'calibration_corpus_dir: "tests/e2e/calibration_corpus/"',
+            "calibration_corpus_dir: 123"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="calibration_corpus_dir.*string"):
+            load_config(config_file)
+
+    def test_blocking_as_string_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when blocking is not a boolean."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "blocking: false", 'blocking: "no"'
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="blocking.*boolean"):
+            load_config(config_file)
+
+
+# ---------------------------------------------------------------------------
+# Test: Edge cases — negative thresholds, zero budgets
+# ---------------------------------------------------------------------------
+
+
+class TestEdgeCases:
+    """Tests for edge case validation: negative values, zeros, empty strings."""
+
+    def test_negative_diff_threshold_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when diff_threshold_pct is negative."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "diff_threshold_pct: 1.0", "diff_threshold_pct: -0.5"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="must be >= 0"):
+            load_config(config_file)
+
+    def test_zero_time_budget_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when a time budget is zero."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "visual_regression_s: 120", "visual_regression_s: 0"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="must be > 0"):
+            load_config(config_file)
+
+    def test_negative_time_budget_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when a time budget is negative."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "scene_validation_s: 60", "scene_validation_s: -10"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="must be > 0"):
+            load_config(config_file)
+
+    def test_zero_max_corpus_size_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when max_corpus_size_mb is zero."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "max_corpus_size_mb: 50", "max_corpus_size_mb: 0"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="must be > 0"):
+            load_config(config_file)
+
+    def test_zero_calibration_trigger_runs_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when calibration_trigger_runs is zero."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "calibration_trigger_runs: 50", "calibration_trigger_runs: 0"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="must be > 0"):
+            load_config(config_file)
+
+    def test_zero_diff_threshold_is_valid(self, tmp_path):
+        """A diff_threshold_pct of 0 is valid (meaning zero tolerance)."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "diff_threshold_pct: 1.0", "diff_threshold_pct: 0"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        config = load_config(config_file)
+        assert config.visual_regression.stages["dream_preview"].diff_threshold_pct == 0.0
+
+    def test_stage_data_as_non_mapping_raises_error(self, tmp_path):
+        """Raises ConfigValidationError when stage value is not a dict."""
+        yaml_content = VALID_CONFIG_YAML.replace(
+            "    dream_preview:\n      diff_threshold_pct: 1.0\n      enabled: true",
+            "    dream_preview: 1.0"
+        )
+        config_file = _write_config(tmp_path, yaml_content)
+        with pytest.raises(ConfigValidationError, match="must be a mapping"):
+            load_config(config_file)

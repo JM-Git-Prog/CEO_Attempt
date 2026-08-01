@@ -8,7 +8,7 @@ Implementation language: Python (pytest, Hypothesis, Playwright)
 
 ## Tasks
 
-- [ ] 1. Framework foundation — config, artifact store, deterministic render
+- [x] 1. Framework foundation — config, artifact store, deterministic render
   - [x] 1.1 Create test framework directory structure and config loader
     - Create `tests/e2e/framework/__init__.py`
     - Create `tests/e2e/config/e2e_config.yaml` with full configuration schema (visual regression thresholds, perceptual thresholds, time budgets, cloud config)
@@ -37,14 +37,14 @@ Implementation language: Python (pytest, Hypothesis, Playwright)
     - Add `e2e_config` fixture that loads and validates `e2e_config.yaml`
     - _Requirements: 22.1–22.6_
 
-  - [-] 1.5 Write unit tests for config loader and artifact store
+  - [x] 1.5 Write unit tests for config loader and artifact store
     - Test config loading with valid/invalid YAML
     - Test artifact store directory creation and file storage
     - Test hardware ID generation consistency
     - _Requirements: 6.1, 23.4_
 
 - [ ] 2. QA harness — inject into browser.py and build Python bridge
-  - [-] 2.1 Inject QA harness JavaScript into browser.py compiled viewer output
+  - [x] 2.1 Inject QA harness JavaScript into browser.py compiled viewer output
     - Modify `src/unified_pipeline/compilers/browser.py` `_VIEWER_JS` template
     - Add conditional `window.__qa` object creation gated by `?qa=1` URL parameter check
     - Implement all QA API methods: `getObjectCount()`, `getObjectPosition(id)`, `getLighting()`, `triggerInteraction(id, action)`, `getSceneGraph()`, `captureFrame()`, `getRendererInfo()`
