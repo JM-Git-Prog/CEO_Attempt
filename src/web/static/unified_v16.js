@@ -153,5 +153,14 @@
   });
 
   window.addEventListener("beforeunload", () => events?.close());
+
+  // Enter submits (Shift+Enter for newline)
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      composer.requestSubmit();
+    }
+  });
+
   start();
 })();

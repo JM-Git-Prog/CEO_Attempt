@@ -7,6 +7,7 @@ remains in :class:`UnifiedOrchestrator`.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import logging
 import mimetypes
@@ -29,7 +30,12 @@ from src.unified_pipeline.conversation import (
     ConversationState,
     ConversationTurn,
 )
-from src.unified_pipeline.orchestrator import DurableCheckpointStore, UnifiedOrchestrator
+from src.unified_pipeline.orchestrator import (
+    DEFAULT_STAGE_SPECS,
+    DurableCheckpointStore,
+    UnifiedOrchestrator,
+)
+from src.unified_pipeline.stage_handlers import build_handlers
 from src.workflow_provenance import profile_for
 
 INTERFACE_VERSION = 16
@@ -56,6 +62,52 @@ _locks: dict[str, asyncio.Lock] = {}
 def register_unified_orchestrator(orchestrator: UnifiedOrchestrator) -> None:
     """Attach Task 10.2's durable orchestrator to its V16 web session."""
     _orchestrators[orchestrator.session_id] = orchestrator
+
+
+def _launch_pipeline(session_id: str, session_dir: Path, brief: dict) -> None:
+    """Create the orchestrator and kick off the durable pipeline as a background task.
+
+    Called once when steering stabilizes and the Brief is ready. The orchestrator
+    runs asynchronously — the SSE endpoint streams its progress events to the UI.
+    """
+    _log = logging.getLogger("live_trace")
+    if session_id in _orchestrators:
+        _log.info(f"  pipeline already attached for {session_id[:8]}")
+        return
+
+    handlers = build_handlers()
+    orchestrator = UnifiedOrchestrator(
+        session_id=session_id,
+        session_dir=session_dir,
+        handlers=handlers,
+        stages=DEFAULT_STAGE_SPECS,
+    )
+    _orchestrators[session_id] = orchestrator
+
+    async def _run_pipeline():
+        _log.info(f"  PIPELINE STARTED for {session_id[:8]}")
+        _write_meta(session_dir, state="running")
+        try:
+            result = await orchestrator.run({
+                "brief": brief,
+                "source_hash": hashlib.sha256(
+                    json.dumps(brief, sort_keys=True).encode()
+                ).hexdigest(),
+            })
+            _log.info(f"  PIPELINE RESULT: state={result.state} stage={result.stage}")
+            if result.state == "completed":
+                _write_meta(session_dir, state="completed")
+            elif result.state == "awaiting_approval":
+                _write_meta(session_dir, state="awaiting_approval", approval_stage=result.stage)
+            elif result.state == "awaiting_external":
+                _write_meta(session_dir, state="awaiting_external", pending_stage=result.stage)
+            else:
+                _write_meta(session_dir, state=result.state)
+        except Exception as exc:
+            _log.error(f"  PIPELINE ERROR: {exc}\n{traceback.format_exc()[-400:]}")
+            _write_meta(session_dir, state="error", error=str(exc))
+
+    _tasks[session_id] = asyncio.create_task(_run_pipeline())
 
 
 def clear_unified_web_state() -> None:
@@ -385,6 +437,8 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 result["brief"] = brief_document
                 _write_meta(session_dir, state="brief_ready")
                 _log.info(f"  Brief saved — {len(brief_document.get('object_manifest', []))} objects")
+                # Kick off the durable pipeline
+                _launch_pipeline(session_id, session_dir, brief_document)
             _save_conversation(engine, session_dir)
             return result
 
