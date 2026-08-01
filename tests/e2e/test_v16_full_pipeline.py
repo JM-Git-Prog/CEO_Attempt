@@ -83,9 +83,17 @@ class TestV16FullPipeline:
         textarea.fill(CONFIRM_MESSAGE)
         page.locator("#send").click()
 
-        # Wait for Brief ready signal in the details area
+        # Wait for Brief ready OR pipeline already started (race: SSE may overwrite instantly)
         details = page.locator("#details")
-        expect(details).to_contain_text("Brief ready", timeout=LLM_TIMEOUT)
+        page.wait_for_function(
+            """() => {
+                const d = document.getElementById('details');
+                if (!d) return false;
+                const t = d.textContent;
+                return t.includes('Brief ready') || t.includes('Plan r');
+            }""",
+            timeout=LLM_TIMEOUT,
+        )
 
     def test_03_pipeline_advances_past_conversation(self, page: Page):
         """After Brief ready, pipeline should start and advance stages."""
