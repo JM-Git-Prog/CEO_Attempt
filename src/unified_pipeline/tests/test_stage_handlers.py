@@ -22,6 +22,7 @@ from src.unified_pipeline.orchestrator import (
 from src.unified_pipeline.stage_handlers import (
     APPROVAL_STAGES,
     GPU_STAGES,
+    LIVE_GPU_STAGES,
     build_handlers,
 )
 
@@ -94,7 +95,7 @@ class TestImmediateStages:
     def immediate_stages(self):
         return [
             spec.name for spec in DEFAULT_STAGE_SPECS
-            if spec.approval_for is None and spec.name not in GPU_STAGES
+            if spec.approval_for is None and spec.name not in LIVE_GPU_STAGES
         ]
 
     def test_immediate_stages_return_stageresult(self, immediate_stages, make_context):
@@ -159,34 +160,35 @@ class TestApprovalStages:
 # ---------------------------------------------------------------------------
 
 class TestGPUStages:
-    """GPU stages must return StageResult.pending with a synthetic job_id."""
+    """GPU stages: dream_preview is async/real, others return immediate placeholders."""
 
     def test_gpu_stages_exist(self):
         """Sanity: we have GPU stages defined."""
         assert len(GPU_STAGES) >= 4
 
-    def test_gpu_stages_return_pending(self, make_context):
+    def test_non_live_gpu_stages_return_immediate(self, make_context):
+        """GPU stages other than dream_preview return immediate (degraded) results."""
         handlers = build_handlers()
-        for stage_name in GPU_STAGES:
+        non_live = GPU_STAGES - {"dream_preview"}
+        for stage_name in non_live:
             ctx = make_context(stage_name, object_id="obj-1" if _is_per_object(stage_name) else None)
             result = handlers[stage_name](ctx)
-            assert isinstance(result, StageResult)
-            assert result.is_pending_external, (
-                f"{stage_name} should return pending external (has job_id)"
+            assert isinstance(result, StageResult), f"{stage_name} did not return StageResult"
+            assert not result.is_pending_external, (
+                f"{stage_name} should not be pending (returns immediate placeholder)"
             )
 
-    def test_gpu_stages_have_nonempty_job_id(self, make_context):
+    def test_dream_preview_is_async(self):
+        """dream_preview handler is async (calls real ComfyUI)."""
+        import asyncio
         handlers = build_handlers()
-        for stage_name in GPU_STAGES:
-            ctx = make_context(stage_name, object_id="obj-1" if _is_per_object(stage_name) else None)
-            result = handlers[stage_name](ctx)
-            assert result.external_job_id.startswith("mock-"), (
-                f"{stage_name} job_id should start with 'mock-'"
-            )
+        assert asyncio.iscoroutinefunction(handlers["dream_preview"])
 
-    def test_gpu_stages_preserve_plan_revision(self, make_context):
+    def test_gpu_stages_have_plan_revision(self, make_context):
+        """Non-async GPU stages preserve plan_revision."""
         handlers = build_handlers()
-        for stage_name in GPU_STAGES:
+        non_live = GPU_STAGES - {"dream_preview"}
+        for stage_name in non_live:
             ctx = make_context(stage_name, object_id="obj-1" if _is_per_object(stage_name) else None)
             result = handlers[stage_name](ctx)
             assert result.plan_revision == ctx.plan_revision
