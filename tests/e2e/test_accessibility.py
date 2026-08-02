@@ -26,8 +26,8 @@ Requirements: 11.1, 11.2, 11.3, 12.1, 12.2, 12.3, 14.1, 14.2, 14.3, 15.1, 15.2, 
 """
 from __future__ import annotations
 
-import asyncio
 import re
+import time
 import warnings
 from dataclasses import dataclass, field
 from typing import Any
@@ -88,7 +88,7 @@ class AxeScanResult:
 # ---------------------------------------------------------------------------
 
 
-async def run_axe_scan(page: Any) -> AxeScanResult:
+def run_axe_scan(page: Any) -> AxeScanResult:
     """Inject axe-core into the page and run an accessibility scan.
 
     This helper can be reused by other test modules that need axe-core
@@ -105,7 +105,7 @@ async def run_axe_scan(page: Any) -> AxeScanResult:
     """
     # Inject axe-core from CDN
     try:
-        await page.evaluate(
+        page.evaluate(
             """async () => {
                 if (typeof window.axe === 'undefined') {
                     await new Promise((resolve, reject) => {
@@ -128,7 +128,7 @@ async def run_axe_scan(page: Any) -> AxeScanResult:
 
     # Run axe.run() and collect results
     try:
-        raw_results = await page.evaluate(
+        raw_results = page.evaluate(
             """async () => {
                 const results = await axe.run();
                 return results.violations;
@@ -243,7 +243,7 @@ def format_violations_report(violations: list[AxeViolation], header: str) -> str
 
 
 @pytest.fixture
-async def page():
+def page():
     """Provide a Playwright page instance for accessibility testing.
 
     Skips gracefully when no browser is available (e.g., Playwright not
@@ -254,7 +254,7 @@ async def page():
     that provides a page connected to the running pipeline UI.
     """
     try:
-        from playwright.async_api import async_playwright
+        from playwright.sync_api import sync_playwright
     except ImportError:
         pytest.skip(
             "Playwright not installed. Install with: pip install playwright && "
@@ -263,23 +263,23 @@ async def page():
         return  # pragma: no cover
 
     try:
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
                 viewport={"width": 1920, "height": 1080}
             )
-            pg = await context.new_page()
+            pg = context.new_page()
 
             # Navigate to the pipeline UI
             # Default to localhost:8000/?v=16 as per the design doc
             try:
-                await pg.goto(
+                pg.goto(
                     "http://localhost:8000/?v=16",
                     timeout=10000,
                     wait_until="networkidle",
                 )
             except Exception:
-                await browser.close()
+                browser.close()
                 pytest.skip(
                     "Pipeline UI not available at http://localhost:8000/?v=16. "
                     "Start the development server to run accessibility tests."
@@ -288,7 +288,7 @@ async def page():
 
             yield pg
 
-            await browser.close()
+            browser.close()
     except Exception as exc:
         pytest.skip(
             f"Browser not available for accessibility testing: {exc}"
@@ -311,8 +311,7 @@ class TestAccessibility:
     Requirements: 11.1, 11.2, 11.3
     """
 
-    @pytest.mark.asyncio
-    async def test_axe_core_scan(self, page: Any) -> None:
+    def test_axe_core_scan(self, page: Any) -> None:
         """Run axe-core scan and enforce violation severity routing.
 
         - Fails on "critical" or "serious" violations (Req 11.2)
@@ -323,7 +322,7 @@ class TestAccessibility:
         Requirements: 11.1, 11.2, 11.3
         """
         # Run the axe-core scan
-        scan_result = await run_axe_scan(page)
+        scan_result = run_axe_scan(page)
 
         # Emit warnings for moderate/minor violations (Req 11.3)
         if scan_result.moderate_minor:
@@ -353,7 +352,7 @@ class TestAccessibility:
 # ---------------------------------------------------------------------------
 
 
-async def get_active_element_info(page: Any) -> dict[str, str]:
+def get_active_element_info(page: Any) -> dict[str, str]:
     """Get identifying information about the currently focused element.
 
     Returns a dict with tag, id, class, and a CSS selector-like description
@@ -365,7 +364,7 @@ async def get_active_element_info(page: Any) -> dict[str, str]:
     Returns:
         Dict with keys: tag, id, className, selector (descriptive CSS path).
     """
-    return await page.evaluate(
+    return page.evaluate(
         """() => {
             const el = document.activeElement;
             if (!el) return { tag: 'null', id: '', className: '', selector: '(no active element)' };
@@ -383,7 +382,7 @@ async def get_active_element_info(page: Any) -> dict[str, str]:
     )
 
 
-async def is_element_inside_dialog(page: Any, dialog_selector: str) -> bool:
+def is_element_inside_dialog(page: Any, dialog_selector: str) -> bool:
     """Check if the currently focused element is inside the specified dialog.
 
     Args:
@@ -393,7 +392,7 @@ async def is_element_inside_dialog(page: Any, dialog_selector: str) -> bool:
     Returns:
         True if document.activeElement is a descendant of the dialog element.
     """
-    return await page.evaluate(
+    return page.evaluate(
         """(dialogSelector) => {
             const dialog = document.querySelector(dialogSelector);
             if (!dialog) return false;
@@ -405,7 +404,7 @@ async def is_element_inside_dialog(page: Any, dialog_selector: str) -> bool:
     )
 
 
-async def open_approval_dialog(page: Any) -> str | None:
+def open_approval_dialog(page: Any) -> str | None:
     """Attempt to open an approval dialog in the pipeline UI.
 
     Tries multiple strategies to trigger an approval dialog:
@@ -417,7 +416,7 @@ async def open_approval_dialog(page: Any) -> str | None:
         The CSS selector of the opened dialog, or None if no dialog could be opened.
     """
     # Strategy 1: Look for an already-open dialog
-    dialog_selector = await page.evaluate(
+    dialog_selector = page.evaluate(
         """() => {
             // Check for role="dialog" or aria-modal elements
             const dialog = document.querySelector(
@@ -441,7 +440,7 @@ async def open_approval_dialog(page: Any) -> str | None:
         return dialog_selector
 
     # Strategy 2: Click a trigger button if available
-    trigger_clicked = await page.evaluate(
+    trigger_clicked = page.evaluate(
         """() => {
             const triggers = [
                 '[data-action="approve"]',
@@ -464,7 +463,7 @@ async def open_approval_dialog(page: Any) -> str | None:
     if trigger_clicked:
         # Wait briefly for dialog to appear
         try:
-            await page.wait_for_selector(
+            page.wait_for_selector(
                 '[role="dialog"], [aria-modal="true"], dialog[open], .approval-dialog, .modal',
                 timeout=2000,
             )
@@ -472,7 +471,7 @@ async def open_approval_dialog(page: Any) -> str | None:
             pass
 
         # Re-check for dialog
-        dialog_selector = await page.evaluate(
+        dialog_selector = page.evaluate(
             """() => {
                 const dialog = document.querySelector(
                     '[role="dialog"], [aria-modal="true"], dialog[open], .approval-dialog, .modal'
@@ -492,7 +491,7 @@ async def open_approval_dialog(page: Any) -> str | None:
 
     # Strategy 3: Simulate by injecting a test dialog if nothing is available
     # This allows tests to validate focus trap logic even without a live approval gate.
-    injected = await page.evaluate(
+    injected = page.evaluate(
         """() => {
             // Inject a minimal approval dialog for testing focus trap behavior
             const dialog = document.createElement('div');
@@ -560,8 +559,7 @@ class TestFocusTrap:
     Requirements: 12.1, 12.2, 12.3
     """
 
-    @pytest.mark.asyncio
-    async def test_focus_trap_in_approval_dialog(self, page: Any) -> None:
+    def test_focus_trap_in_approval_dialog(self, page: Any) -> None:
         """Verify Tab cycles within the approval dialog only.
 
         Opens an approval dialog and presses Tab repeatedly (more times
@@ -573,7 +571,7 @@ class TestFocusTrap:
 
         Requirements: 12.1, 12.3
         """
-        dialog_selector = await open_approval_dialog(page)
+        dialog_selector = open_approval_dialog(page)
         if dialog_selector is None:
             pytest.skip(
                 "Could not open an approval dialog. "
@@ -581,7 +579,7 @@ class TestFocusTrap:
             )
 
         # Count focusable elements inside the dialog
-        focusable_count = await page.evaluate(
+        focusable_count = page.evaluate(
             """(dialogSelector) => {
                 const dialog = document.querySelector(dialogSelector);
                 if (!dialog) return 0;
@@ -604,18 +602,17 @@ class TestFocusTrap:
         num_tabs = focusable_count * 2 + 3
 
         for i in range(num_tabs):
-            await page.keyboard.press("Tab")
+            page.keyboard.press("Tab")
 
             # Check that focus is still inside the dialog
-            element_info = await get_active_element_info(page)
-            inside = await is_element_inside_dialog(page, dialog_selector)
+            element_info = get_active_element_info(page)
+            inside = is_element_inside_dialog(page, dialog_selector)
 
             failure_msg = check_focus_within_dialog(element_info, inside, i + 1)
             if failure_msg:
                 pytest.fail(failure_msg)
 
-    @pytest.mark.asyncio
-    async def test_escape_closes_dialog(self, page: Any) -> None:
+    def test_escape_closes_dialog(self, page: Any) -> None:
         """Verify Escape closes the dialog and returns focus to previous element.
 
         Records the focused element before opening the dialog, then opens
@@ -626,10 +623,10 @@ class TestFocusTrap:
         Requirements: 12.2, 12.3
         """
         # Record the currently focused element before opening the dialog
-        pre_dialog_info = await get_active_element_info(page)
+        pre_dialog_info = get_active_element_info(page)
 
         # Ensure there's a focusable element to return to (focus the body or first button)
-        await page.evaluate(
+        page.evaluate(
             """() => {
                 // Focus a known element before opening dialog
                 const target = document.querySelector(
@@ -638,9 +635,9 @@ class TestFocusTrap:
                 target.focus();
             }"""
         )
-        pre_dialog_info = await get_active_element_info(page)
+        pre_dialog_info = get_active_element_info(page)
 
-        dialog_selector = await open_approval_dialog(page)
+        dialog_selector = open_approval_dialog(page)
         if dialog_selector is None:
             pytest.skip(
                 "Could not open an approval dialog. "
@@ -648,7 +645,7 @@ class TestFocusTrap:
             )
 
         # Verify dialog is now present
-        dialog_exists = await page.evaluate(
+        dialog_exists = page.evaluate(
             """(dialogSelector) => {
                 const dialog = document.querySelector(dialogSelector);
                 return dialog !== null;
@@ -660,11 +657,11 @@ class TestFocusTrap:
         )
 
         # Press Escape to close the dialog
-        await page.keyboard.press("Escape")
+        page.keyboard.press("Escape")
 
         # Small wait for dialog close animation/handler
         try:
-            await page.wait_for_function(
+            page.wait_for_function(
                 """(dialogSelector) => {
                     const dialog = document.querySelector(dialogSelector);
                     if (!dialog) return true;
@@ -682,7 +679,7 @@ class TestFocusTrap:
             pass
 
         # Verify dialog is closed (removed from DOM or hidden)
-        dialog_still_visible = await page.evaluate(
+        dialog_still_visible = page.evaluate(
             """(dialogSelector) => {
                 const dialog = document.querySelector(dialogSelector);
                 if (!dialog) return false;
@@ -696,14 +693,14 @@ class TestFocusTrap:
         )
 
         if dialog_still_visible:
-            current_focus = await get_active_element_info(page)
+            current_focus = get_active_element_info(page)
             pytest.fail(
                 f"Dialog '{dialog_selector}' did not close after pressing Escape. "
                 f"Current focus: {current_focus['selector']}"
             )
 
         # Verify focus returned to the previously focused element
-        post_dialog_info = await get_active_element_info(page)
+        post_dialog_info = get_active_element_info(page)
 
         # Focus should return to the element that was focused before dialog opened
         # Compare by tag+id or tag+class if id is empty
@@ -922,8 +919,7 @@ class TestHUDContrast:
     Requirements: 13.1, 13.2
     """
 
-    @pytest.mark.asyncio
-    async def test_hud_overlay_contrast(self, page: Any) -> None:
+    def test_hud_overlay_contrast(self, page: Any) -> None:
         """Verify all HUD overlay text meets WCAG AA 4.5:1 contrast ratio.
 
         For each HUD text element (status, stageTitle, details, sessionId):
@@ -942,7 +938,7 @@ class TestHUDContrast:
 
         for selector in HUD_ELEMENT_SELECTORS:
             # Check if element exists on the page
-            element = await page.query_selector(selector)
+            element = page.query_selector(selector)
             if element is None:
                 # Element not present — skip (may not be rendered at this state)
                 continue
@@ -950,7 +946,7 @@ class TestHUDContrast:
             elements_found += 1
 
             # Get computed foreground and background colors via JavaScript
-            colors = await page.evaluate(
+            colors = page.evaluate(
                 """(selector) => {
                     const el = document.querySelector(selector);
                     if (!el) return null;
@@ -1105,8 +1101,7 @@ class TestScreenReaderAnnouncements:
     Requirements: 14.1, 14.2, 14.3
     """
 
-    @pytest.mark.asyncio
-    async def test_stage_transition_announcements(self, page: Any) -> None:
+    def test_stage_transition_announcements(self, page: Any) -> None:
         """Verify aria-live="polite" updates with human-readable stage names within 2s.
 
         Steps:
@@ -1119,7 +1114,7 @@ class TestScreenReaderAnnouncements:
         Requirements: 14.1, 14.2, 14.3
         """
         # Step 1: Find the aria-live="polite" region
-        live_region = await page.query_selector('[aria-live="polite"]')
+        live_region = page.query_selector('[aria-live="polite"]')
 
         if live_region is None:
             pytest.fail(
@@ -1129,13 +1124,13 @@ class TestScreenReaderAnnouncements:
             )
 
         # Step 2: Get initial content
-        initial_content = await live_region.inner_text()
+        initial_content = live_region.inner_text()
 
         # Step 3: Attempt to trigger a stage transition
         # Strategy A: dispatch a custom event that the pipeline listens for
         # Strategy B: click a "next stage" or "approve" button if available
         # Strategy C: wait for a natural stage transition if pipeline is running
-        stage_changed = await page.evaluate(
+        stage_changed = page.evaluate(
             """() => {
                 // Try dispatching a stage-advance event
                 const event = new CustomEvent('test:advance-stage', { bubbles: true });
@@ -1168,10 +1163,10 @@ class TestScreenReaderAnnouncements:
         elapsed = 0.0
 
         while elapsed < deadline:
-            await asyncio.sleep(poll_interval)
+            time.sleep(poll_interval)
             elapsed += poll_interval
 
-            current_content = await live_region.inner_text()
+            current_content = live_region.inner_text()
             current_content = current_content.strip()
 
             # Check if content has changed from initial (and is non-empty)
@@ -1182,7 +1177,7 @@ class TestScreenReaderAnnouncements:
         # If no change detected, check if the CURRENT content already has a
         # valid stage name (pipeline may already be in a stage)
         if announcement_text is None:
-            current_content = (await live_region.inner_text()).strip()
+            current_content = live_region.inner_text().strip()
             if current_content:
                 # The region already has content — validate it
                 announcement_text = current_content
@@ -1230,8 +1225,7 @@ class TestResponsiveLayout:
     Requirements: 15.1, 15.2, 15.3
     """
 
-    @pytest.mark.asyncio
-    async def test_responsive_layout(self, page: Any) -> None:
+    def test_responsive_layout(self, page: Any) -> None:
         """Validate layout at 1920x1080, 1366x768, 1024x768, 375x667.
 
         For each viewport size:
@@ -1252,13 +1246,13 @@ class TestResponsiveLayout:
 
         for width, height in RESPONSIVE_VIEWPORTS:
             # Resize viewport
-            await page.set_viewport_size({"width": width, "height": height})
+            page.set_viewport_size({"width": width, "height": height})
 
             # Allow the layout to reflow
-            await asyncio.sleep(0.3)
+            time.sleep(0.3)
 
             # Check interactive elements for clipping/overlap/off-screen
-            viewport_issues = await page.evaluate(
+            viewport_issues = page.evaluate(
                 """(viewport) => {
                     const { width, height } = viewport;
                     const issues = [];
@@ -1349,7 +1343,7 @@ class TestResponsiveLayout:
 
             # Mobile-specific check (375x667): Req 15.3
             if width == 375 and height == 667:
-                scroll_issues = await page.evaluate(
+                scroll_issues = page.evaluate(
                     """() => {
                         const issues = [];
 
@@ -1497,7 +1491,7 @@ def arrow_sequence_to_wasd(arrow_sequence: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-async def get_camera_position(page: Any) -> dict[str, float] | None:
+def get_camera_position(page: Any) -> dict[str, float] | None:
     """Get the current camera position from the QA harness.
 
     Uses window.__qa.getObjectPosition for the camera, or falls back to
@@ -1509,7 +1503,7 @@ async def get_camera_position(page: Any) -> dict[str, float] | None:
     Returns:
         Dict with x, y, z float values, or None if unavailable.
     """
-    return await page.evaluate(
+    return page.evaluate(
         """() => {
             // Try QA harness first
             if (window.__qa && typeof window.__qa.getObjectPosition === 'function') {
@@ -1576,7 +1570,7 @@ def positions_equivalent(
     )
 
 
-async def navigate_to_3d_world(page: Any) -> bool:
+def navigate_to_3d_world(page: Any) -> bool:
     """Navigate the page to the 3D world view with QA harness enabled.
 
     Attempts to load the 3D world at localhost:8000/?v=16&qa=1 and waits
@@ -1589,7 +1583,7 @@ async def navigate_to_3d_world(page: Any) -> bool:
         True if the 3D world loaded with QA harness available, False otherwise.
     """
     try:
-        await page.goto(
+        page.goto(
             "http://localhost:8000/?v=16&qa=1",
             timeout=10000,
             wait_until="networkidle",
@@ -1598,7 +1592,7 @@ async def navigate_to_3d_world(page: Any) -> bool:
         return False
 
     # Check if the QA harness is available (indicates 3D world is loaded)
-    qa_available = await page.evaluate(
+    qa_available = page.evaluate(
         """() => {
             return typeof window.__qa !== 'undefined' && window.__qa !== null;
         }"""
@@ -1606,7 +1600,7 @@ async def navigate_to_3d_world(page: Any) -> bool:
     return qa_available
 
 
-async def get_interactive_objects(page: Any) -> list[dict[str, Any]]:
+def get_interactive_objects(page: Any) -> list[dict[str, Any]]:
     """Get a list of interactive objects in the 3D world.
 
     Uses the QA harness scene graph to identify objects that have
@@ -1618,7 +1612,7 @@ async def get_interactive_objects(page: Any) -> list[dict[str, Any]]:
     Returns:
         List of dicts with objectId and interaction info.
     """
-    return await page.evaluate(
+    return page.evaluate(
         """() => {
             if (!window.__qa) return [];
 
@@ -1648,7 +1642,7 @@ async def get_interactive_objects(page: Any) -> list[dict[str, Any]]:
     )
 
 
-async def get_focused_object_id(page: Any) -> str | None:
+def get_focused_object_id(page: Any) -> str | None:
     """Get the ID of the currently focused interactive object.
 
     Args:
@@ -1657,7 +1651,7 @@ async def get_focused_object_id(page: Any) -> str | None:
     Returns:
         The objectId of the focused object, or None if no interactive object is focused.
     """
-    return await page.evaluate(
+    return page.evaluate(
         """() => {
             const active = document.activeElement;
             if (!active) return null;
@@ -1682,7 +1676,7 @@ async def get_focused_object_id(page: Any) -> str | None:
     )
 
 
-async def get_object_activation_state(page: Any, object_id: str) -> dict[str, Any] | None:
+def get_object_activation_state(page: Any, object_id: str) -> dict[str, Any] | None:
     """Check if a specific object has been activated (interaction triggered).
 
     Args:
@@ -1692,7 +1686,7 @@ async def get_object_activation_state(page: Any, object_id: str) -> dict[str, An
     Returns:
         Dict with activation state info, or None if not checkable.
     """
-    return await page.evaluate(
+    return page.evaluate(
         """(objectId) => {
             // Try QA harness triggerInteraction result tracking
             if (window.__qa && typeof window.__qa.getObjectState === 'function') {
@@ -1736,8 +1730,7 @@ class TestKeyboardNavigation:
     Requirements: 16.1, 16.2, 16.3, 22.3
     """
 
-    @pytest.mark.asyncio
-    async def test_arrow_key_movement(self, page: Any) -> None:
+    def test_arrow_key_movement(self, page: Any) -> None:
         """Verify arrow keys provide equivalent movement to WASD keys.
 
         Sends a sequence of arrow key presses and reads the camera position,
@@ -1750,7 +1743,7 @@ class TestKeyboardNavigation:
         Requirements: 16.1
         """
         # Navigate to 3D world with QA harness
-        world_loaded = await navigate_to_3d_world(page)
+        world_loaded = navigate_to_3d_world(page)
         if not world_loaded:
             pytest.skip(
                 "3D world not available at http://localhost:8000/?v=16&qa=1. "
@@ -1758,10 +1751,10 @@ class TestKeyboardNavigation:
             )
 
         # Wait briefly for the world to initialize movement controls
-        await page.wait_for_timeout(500)
+        page.wait_for_timeout(500)
 
         # Get initial camera position
-        initial_pos = await get_camera_position(page)
+        initial_pos = get_camera_position(page)
         if initial_pos is None:
             pytest.skip(
                 "Cannot read camera position. QA harness may not expose "
@@ -1771,19 +1764,19 @@ class TestKeyboardNavigation:
         # --- Test ArrowUp vs W (forward movement) ---
 
         # Record position before arrow key sequence
-        pos_before_arrows = await get_camera_position(page)
+        pos_before_arrows = get_camera_position(page)
 
         # Send ArrowUp key presses (forward movement)
         num_presses = 5
         for _ in range(num_presses):
-            await page.keyboard.press("ArrowUp")
-            await page.wait_for_timeout(50)
+            page.keyboard.press("ArrowUp")
+            page.wait_for_timeout(50)
 
         # Allow physics/movement to settle
-        await page.wait_for_timeout(200)
+        page.wait_for_timeout(200)
 
         # Record position after arrow keys
-        pos_after_arrows = await get_camera_position(page)
+        pos_after_arrows = get_camera_position(page)
         if pos_after_arrows is None:
             pytest.skip("Camera position unavailable after arrow key input.")
 
@@ -1804,28 +1797,28 @@ class TestKeyboardNavigation:
 
         # Reset camera position to the same starting point
         # Navigate back to the initial URL to reset state
-        await page.goto(
+        page.goto(
             "http://localhost:8000/?v=16&qa=1",
             timeout=10000,
             wait_until="networkidle",
         )
-        await page.wait_for_timeout(500)
+        page.wait_for_timeout(500)
 
         # Record position before WASD sequence
-        pos_before_wasd = await get_camera_position(page)
+        pos_before_wasd = get_camera_position(page)
         if pos_before_wasd is None:
             pytest.skip("Camera position unavailable for WASD comparison.")
 
         # Send W key presses (forward movement — equivalent to ArrowUp)
         for _ in range(num_presses):
-            await page.keyboard.press("w")
-            await page.wait_for_timeout(50)
+            page.keyboard.press("w")
+            page.wait_for_timeout(50)
 
         # Allow movement to settle
-        await page.wait_for_timeout(200)
+        page.wait_for_timeout(200)
 
         # Record position after WASD
-        pos_after_wasd = await get_camera_position(page)
+        pos_after_wasd = get_camera_position(page)
         if pos_after_wasd is None:
             pytest.skip("Camera position unavailable after WASD input.")
 
@@ -1849,8 +1842,7 @@ class TestKeyboardNavigation:
                 f"  Tolerance: {tolerance} world units per axis"
             )
 
-    @pytest.mark.asyncio
-    async def test_tab_focus_cycle(self, page: Any) -> None:
+    def test_tab_focus_cycle(self, page: Any) -> None:
         """Verify Tab/Shift+Tab cycles through interactive objects.
 
         Presses Tab repeatedly to confirm that focus moves through the
@@ -1861,17 +1853,17 @@ class TestKeyboardNavigation:
         Requirements: 16.2
         """
         # Navigate to 3D world with QA harness
-        world_loaded = await navigate_to_3d_world(page)
+        world_loaded = navigate_to_3d_world(page)
         if not world_loaded:
             pytest.skip(
                 "3D world not available at http://localhost:8000/?v=16&qa=1. "
                 "Start the development server to run keyboard navigation tests."
             )
 
-        await page.wait_for_timeout(500)
+        page.wait_for_timeout(500)
 
         # Get list of interactive objects in the scene
-        interactive_objects = await get_interactive_objects(page)
+        interactive_objects = get_interactive_objects(page)
 
         if not interactive_objects:
             pytest.skip(
@@ -1884,10 +1876,10 @@ class TestKeyboardNavigation:
         num_tabs = len(interactive_objects) + 2  # Extra tabs to verify cycling
 
         for _ in range(num_tabs):
-            await page.keyboard.press("Tab")
-            await page.wait_for_timeout(100)
+            page.keyboard.press("Tab")
+            page.wait_for_timeout(100)
 
-            focused_id = await get_focused_object_id(page)
+            focused_id = get_focused_object_id(page)
             focused_objects_forward.append(focused_id)
 
         # Filter out None values (non-interactive elements that received focus)
@@ -1919,10 +1911,10 @@ class TestKeyboardNavigation:
         focused_objects_reverse: list[str | None] = []
 
         for _ in range(num_tabs):
-            await page.keyboard.press("Shift+Tab")
-            await page.wait_for_timeout(100)
+            page.keyboard.press("Shift+Tab")
+            page.wait_for_timeout(100)
 
-            focused_id = await get_focused_object_id(page)
+            focused_id = get_focused_object_id(page)
             focused_objects_reverse.append(focused_id)
 
         # Filter out None values
@@ -1946,8 +1938,7 @@ class TestKeyboardNavigation:
                 f"  Objects that received focus (reverse): {sorted(unique_reverse)}"
             )
 
-    @pytest.mark.asyncio
-    async def test_enter_space_activation(self, page: Any) -> None:
+    def test_enter_space_activation(self, page: Any) -> None:
         """Verify Enter and Space activate the focused interactive object.
 
         Tabs to an interactive object, presses Enter and verifies
@@ -1957,17 +1948,17 @@ class TestKeyboardNavigation:
         Requirements: 16.3
         """
         # Navigate to 3D world with QA harness
-        world_loaded = await navigate_to_3d_world(page)
+        world_loaded = navigate_to_3d_world(page)
         if not world_loaded:
             pytest.skip(
                 "3D world not available at http://localhost:8000/?v=16&qa=1. "
                 "Start the development server to run keyboard navigation tests."
             )
 
-        await page.wait_for_timeout(500)
+        page.wait_for_timeout(500)
 
         # Get interactive objects
-        interactive_objects = await get_interactive_objects(page)
+        interactive_objects = get_interactive_objects(page)
 
         if len(interactive_objects) < 2:
             pytest.skip(
@@ -1983,10 +1974,10 @@ class TestKeyboardNavigation:
         max_tabs = len(interactive_objects) + 5
 
         for _ in range(max_tabs):
-            await page.keyboard.press("Tab")
-            await page.wait_for_timeout(100)
+            page.keyboard.press("Tab")
+            page.wait_for_timeout(100)
 
-            focused_id = await get_focused_object_id(page)
+            focused_id = get_focused_object_id(page)
             if focused_id:
                 first_object_id = focused_id
                 break
@@ -1998,11 +1989,11 @@ class TestKeyboardNavigation:
             )
 
         # Press Enter to activate
-        await page.keyboard.press("Enter")
-        await page.wait_for_timeout(500)  # Allow interaction to complete
+        page.keyboard.press("Enter")
+        page.wait_for_timeout(500)  # Allow interaction to complete
 
         # Verify the object was activated
-        state_after_enter = await get_object_activation_state(page, first_object_id)
+        state_after_enter = get_object_activation_state(page, first_object_id)
 
         if state_after_enter is not None:
             if not state_after_enter.get("activated", False):
@@ -2021,10 +2012,10 @@ class TestKeyboardNavigation:
         second_object_id: str | None = None
 
         for _ in range(max_tabs):
-            await page.keyboard.press("Tab")
-            await page.wait_for_timeout(100)
+            page.keyboard.press("Tab")
+            page.wait_for_timeout(100)
 
-            focused_id = await get_focused_object_id(page)
+            focused_id = get_focused_object_id(page)
             if focused_id and focused_id != first_object_id:
                 second_object_id = focused_id
                 break
@@ -2036,11 +2027,11 @@ class TestKeyboardNavigation:
             )
 
         # Press Space to activate
-        await page.keyboard.press("Space")
-        await page.wait_for_timeout(500)  # Allow interaction to complete
+        page.keyboard.press("Space")
+        page.wait_for_timeout(500)  # Allow interaction to complete
 
         # Verify the object was activated
-        state_after_space = await get_object_activation_state(page, second_object_id)
+        state_after_space = get_object_activation_state(page, second_object_id)
 
         if state_after_space is not None:
             if not state_after_space.get("activated", False):

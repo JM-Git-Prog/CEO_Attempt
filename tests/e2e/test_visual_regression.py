@@ -26,7 +26,7 @@ from tests.e2e.framework.baseline_manager import BaselineManager
 from tests.e2e.framework.config_loader import E2EConfig, StageConfig
 from tests.e2e.framework.deterministic_render import detect_hardware_id
 from tests.e2e.framework.pixel_diff import PixelDiff
-from tests.e2e.framework.screenshot_capture import CameraPose, ScreenshotCapture
+from tests.e2e.framework.screenshot_capture import generate_filename
 
 
 # ---------------------------------------------------------------------------
@@ -117,7 +117,7 @@ def _is_stage_enabled(e2e_config: E2EConfig, stage_name: str) -> bool:
     return stage_cfg.enabled
 
 
-async def _run_visual_regression_for_stage(
+def _run_visual_regression_for_stage(
     page: Any,
     stage_name: str,
     e2e_config: E2EConfig,
@@ -151,10 +151,6 @@ async def _run_visual_regression_for_stage(
     hardware_id = detect_hardware_id()
 
     # Initialize components
-    capture = ScreenshotCapture(
-        artifact_store=artifact_store,
-        model_version=model_version,
-    )
     baseline_mgr = BaselineManager(
         model_version=model_version,
         hardware_id=hardware_id,
@@ -169,15 +165,27 @@ async def _run_visual_regression_for_stage(
     # Get camera pose for this stage
     camera_pose = _get_camera_pose_for_stage(stage_name)
 
-    # 1. Capture screenshot
-    capture_result = await capture.capture_stage(
-        page=page,
-        stage_name=stage_name,
-        camera_pose=camera_pose,
-    )
+    # 1. Capture screenshot (using sync Playwright page directly)
+    from datetime import datetime, timezone
+
+    # Set viewport to match deterministic config
+    page.set_viewport_size({
+        "width": e2e_config.visual_regression.default_viewport[0],
+        "height": e2e_config.visual_regression.default_viewport[1],
+    })
+
+    # Force a render cycle
+    page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))")
+
+    # Capture screenshot
+    capture_time = datetime.now(timezone.utc)
+    screenshot_bytes = page.screenshot(type="png", full_page=False)
+
+    # Generate filename and store via artifact store
+    filename = generate_filename(stage_name, model_version, capture_time)
+    actual_image_path = artifact_store.store_artifact("visual", filename, screenshot_bytes)
 
     # Load the captured screenshot as a PIL Image for comparison
-    actual_image_path = Path(capture_result.artifact_path)
     actual_image = Image.open(actual_image_path)
 
     # 2. Check if baseline exists
@@ -211,7 +219,7 @@ async def _run_visual_regression_for_stage(
     baseline_image = Image.open(baseline_result.image_path)
 
     # Get the diff output directory (visual layer in artifact store)
-    diff_output_dir = artifact_store.get_artifact_path("visual", "").parent / "visual"
+    diff_output_dir = artifact_store.run_dir / "visual"
 
     # Perform pixel comparison
     diff_result = pixel_diff.compare(
@@ -263,8 +271,7 @@ async def _run_visual_regression_for_stage(
 
 
 @pytest.mark.layer("visual")
-@pytest.mark.asyncio
-async def test_visual_regression_dream_preview(
+def test_visual_regression_dream_preview(
     page: Any,
     e2e_config: E2EConfig,
     artifact_store: ArtifactStore,
@@ -276,7 +283,7 @@ async def test_visual_regression_dream_preview(
 
     Requirements: 2.1, 3.1–3.5, 22.1, 23.1
     """
-    await _run_visual_regression_for_stage(
+    _run_visual_regression_for_stage(
         page=page,
         stage_name="dream_preview",
         e2e_config=e2e_config,
@@ -285,8 +292,7 @@ async def test_visual_regression_dream_preview(
 
 
 @pytest.mark.layer("visual")
-@pytest.mark.asyncio
-async def test_visual_regression_blockout(
+def test_visual_regression_blockout(
     page: Any,
     e2e_config: E2EConfig,
     artifact_store: ArtifactStore,
@@ -298,7 +304,7 @@ async def test_visual_regression_blockout(
 
     Requirements: 2.2, 3.1–3.5, 22.1, 23.1
     """
-    await _run_visual_regression_for_stage(
+    _run_visual_regression_for_stage(
         page=page,
         stage_name="blockout",
         e2e_config=e2e_config,
@@ -307,8 +313,7 @@ async def test_visual_regression_blockout(
 
 
 @pytest.mark.layer("visual")
-@pytest.mark.asyncio
-async def test_visual_regression_canon(
+def test_visual_regression_canon(
     page: Any,
     e2e_config: E2EConfig,
     artifact_store: ArtifactStore,
@@ -321,7 +326,7 @@ async def test_visual_regression_canon(
 
     Requirements: 2.3, 3.1–3.5, 22.1, 23.1
     """
-    await _run_visual_regression_for_stage(
+    _run_visual_regression_for_stage(
         page=page,
         stage_name="canon",
         e2e_config=e2e_config,
@@ -330,8 +335,7 @@ async def test_visual_regression_canon(
 
 
 @pytest.mark.layer("visual")
-@pytest.mark.asyncio
-async def test_visual_regression_world(
+def test_visual_regression_world(
     page: Any,
     e2e_config: E2EConfig,
     artifact_store: ArtifactStore,
@@ -344,7 +348,7 @@ async def test_visual_regression_world(
 
     Requirements: 2.4, 3.1–3.5, 22.1, 23.1
     """
-    await _run_visual_regression_for_stage(
+    _run_visual_regression_for_stage(
         page=page,
         stage_name="world",
         e2e_config=e2e_config,
