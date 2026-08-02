@@ -66,17 +66,69 @@ class ComfyUIClient:
     async def health_check(self) -> bool:
         """Check if ComfyUI is reachable by hitting /system_stats.
 
+        Implements resilient retry logic with exponential backoff to tolerate
+        VRAM contention during concurrent GPU operations. On the initial
+        attempt, uses a 5s timeout. On retries, increases to 15s timeout.
+        Retries up to 3 times with delays of 2s, 4s, 8s between attempts.
+
         Returns
         -------
         bool
             True if the server responds with HTTP 200, False otherwise.
+            On failure after all retries, logs the attempt count, total
+            elapsed time, and last error.
         """
+        max_retries = 3
+        backoff_delays = [2.0, 4.0, 8.0]
+        initial_timeout = 5.0
+        retry_timeout = 15.0
+
+        start_time = time.monotonic()
+        last_error: str | None = None
+
+        # Initial attempt with 5s timeout
         try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
+            async with httpx.AsyncClient(timeout=initial_timeout) as client:
                 response = await client.get(f"{self.base_url}/system_stats")
-                return response.status_code == 200
-        except (httpx.HTTPError, OSError):
-            return False
+                if response.status_code == 200:
+                    return True
+                last_error = f"HTTP {response.status_code}"
+        except (httpx.HTTPError, OSError) as exc:
+            last_error = str(exc)
+
+        # Retry attempts with exponential backoff and increased timeout
+        for attempt in range(max_retries):
+            delay = backoff_delays[attempt]
+            await asyncio.sleep(delay)
+
+            try:
+                async with httpx.AsyncClient(timeout=retry_timeout) as client:
+                    response = await client.get(
+                        f"{self.base_url}/system_stats"
+                    )
+                    if response.status_code == 200:
+                        total_delay = time.monotonic() - start_time
+                        logger.warning(
+                            "ComfyUI health check succeeded after %d "
+                            "retry(ies) (total delay: %.1fs)",
+                            attempt + 1,
+                            total_delay,
+                        )
+                        return True
+                    last_error = f"HTTP {response.status_code}"
+            except (httpx.HTTPError, OSError) as exc:
+                last_error = str(exc)
+
+        # All retries exhausted
+        total_elapsed = time.monotonic() - start_time
+        logger.error(
+            "ComfyUI health check failed after %d attempt(s) "
+            "(total elapsed: %.1fs, last error: %s)",
+            1 + max_retries,
+            total_elapsed,
+            last_error,
+        )
+        return False
 
     def has_node(self, class_type: str) -> bool:
         """Check whether a ComfyUI node class_type is believed to be available.

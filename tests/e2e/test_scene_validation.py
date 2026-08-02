@@ -1,12 +1,13 @@
-"""Scene validation tests — 3D object count, position, and lighting verification.
+"""Scene validation tests — 3D object count, position, lighting, and interactions.
 
 Compares the live Three.js scene (via QA Bridge) against the WorldContract
-to verify that all objects are present at the correct positions and that
-lighting matches the WorldContract specification.
+to verify that all objects are present at the correct positions, that
+lighting matches the WorldContract specification, and that interactive
+objects respond correctly to user actions.
 
 Uses the @pytest.mark.layer("scene") marker for 60s budget enforcement.
 
-Requirements: 8.1–8.4, 9.1–9.3
+Requirements: 8.1–8.4, 9.1–9.3, 10.1–10.4
 """
 from __future__ import annotations
 
@@ -486,6 +487,324 @@ def world_contract_lighting() -> list[dict[str, Any]]:
     """
     pytest.skip(
         "world_contract_lighting fixture not provided. "
+        "This test requires a running scene with a loaded WorldContract. "
+        "Override this fixture in conftest.py or provide it via a session fixture."
+    )
+    return []  # pragma: no cover
+
+
+# ---------------------------------------------------------------------------
+# Interaction testing — Requirements 10.1, 10.2, 10.3, 10.4
+# ---------------------------------------------------------------------------
+
+# Timeout constants for interaction settling (seconds)
+DOOR_SETTLE_TIMEOUT_S = 1.0
+GRAB_RELEASE_SETTLE_TIMEOUT_S = 2.0
+PUSH_SETTLE_TIMEOUT_S = 2.0
+
+
+@dataclass
+class InteractionFailure:
+    """A single interaction validation failure.
+
+    Attributes:
+        object_name: Human-readable name of the object that failed.
+        object_id: The WorldContract object ID.
+        interaction_type: The interaction action attempted (click, grab, release, push).
+        expected_state: Description of the expected state after interaction.
+        actual_state: Description of the actual state observed.
+    """
+    object_name: str
+    object_id: str
+    interaction_type: str
+    expected_state: str
+    actual_state: str
+
+
+def format_interaction_failures(failures: list[InteractionFailure]) -> str:
+    """Format interaction failures into a human-readable failure report.
+
+    Reports the object name, interaction type, expected state, and actual
+    state for each failure as required by Requirement 10.4.
+
+    Args:
+        failures: List of InteractionFailure instances.
+
+    Returns:
+        Formatted multi-line string describing each interaction failure.
+    """
+    lines = [
+        f"Interaction validation failed for {len(failures)} object(s):"
+    ]
+    for f in failures:
+        lines.append(
+            f"  Object '{f.object_name}' (id: {f.object_id}):\n"
+            f"    Interaction: {f.interaction_type}\n"
+            f"    Expected: {f.expected_state}\n"
+            f"    Actual:   {f.actual_state}"
+        )
+    return "\n".join(lines)
+
+
+@pytest.mark.layer("scene")
+class TestSceneInteractions:
+    """Interaction validation test suite — verifies WorldContract interaction bindings.
+
+    Tests that interactive objects respond correctly to user actions
+    (click, grab/release, push) within their specified timeout budgets.
+
+    Requirements: 10.1–10.4
+    """
+
+    @pytest.mark.asyncio
+    async def test_door_click_to_open(
+        self,
+        qa_bridge: QABridge,
+        world_contract_interactions: list[dict[str, Any]],
+    ) -> None:
+        """Verify that door objects transition to open state within 1s of click.
+
+        Filters interaction bindings for "click-to-open" doors, triggers a
+        "click" action on each, and verifies the resulting state shows
+        success==True and state.settled==True.
+
+        Requirements: 10.1, 10.4
+        """
+        doors = [
+            binding for binding in world_contract_interactions
+            if binding.get("interaction_type") == "click-to-open"
+        ]
+
+        if not doors:
+            pytest.skip("No click-to-open door interactions in WorldContract.")
+
+        failures: list[InteractionFailure] = []
+
+        for door in doors:
+            object_id = door["object_id"]
+            object_name = door.get("name", object_id)
+
+            # Temporarily increase timeout for the interaction settling
+            original_timeout = qa_bridge.timeout_ms
+            qa_bridge.timeout_ms = int(DOOR_SETTLE_TIMEOUT_S * 1000) + original_timeout
+
+            try:
+                result = await qa_bridge.trigger_interaction(object_id, "click")
+            except Exception as exc:
+                failures.append(InteractionFailure(
+                    object_name=object_name,
+                    object_id=object_id,
+                    interaction_type="click-to-open",
+                    expected_state="success=True, state.settled=True",
+                    actual_state=f"Error: {exc}",
+                ))
+                continue
+            finally:
+                qa_bridge.timeout_ms = original_timeout
+
+            success = result.get("success", False)
+            state = result.get("state", {})
+            settled = state.get("settled", False) if isinstance(state, dict) else False
+
+            if not success or not settled:
+                failures.append(InteractionFailure(
+                    object_name=object_name,
+                    object_id=object_id,
+                    interaction_type="click-to-open",
+                    expected_state="success=True, state.settled=True",
+                    actual_state=f"success={success}, state.settled={settled}",
+                ))
+
+        if failures:
+            pytest.fail(format_interaction_failures(failures))
+
+    @pytest.mark.asyncio
+    async def test_grab_and_release_physics_settling(
+        self,
+        qa_bridge: QABridge,
+        world_contract_interactions: list[dict[str, Any]],
+    ) -> None:
+        """Verify that grabbable objects return to physics-stable state within 2s.
+
+        For each grabbable object: triggers "grab", verifies the held state,
+        then triggers "release" and verifies the object settles to a
+        physics-stable resting state (state.settled==True).
+
+        Requirements: 10.2, 10.4
+        """
+        grabbables = [
+            binding for binding in world_contract_interactions
+            if binding.get("interaction_type") == "grab-release"
+        ]
+
+        if not grabbables:
+            pytest.skip("No grab-release interactions in WorldContract.")
+
+        failures: list[InteractionFailure] = []
+
+        for obj in grabbables:
+            object_id = obj["object_id"]
+            object_name = obj.get("name", object_id)
+
+            # Increase timeout to allow for physics settling
+            original_timeout = qa_bridge.timeout_ms
+            qa_bridge.timeout_ms = int(GRAB_RELEASE_SETTLE_TIMEOUT_S * 1000) + original_timeout
+
+            try:
+                # Step 1: Grab the object
+                grab_result = await qa_bridge.trigger_interaction(object_id, "grab")
+                grab_success = grab_result.get("success", False)
+
+                if not grab_success:
+                    failures.append(InteractionFailure(
+                        object_name=object_name,
+                        object_id=object_id,
+                        interaction_type="grab",
+                        expected_state="success=True (object grabbed)",
+                        actual_state=f"success={grab_success}",
+                    ))
+                    continue
+
+                # Step 2: Release the object
+                release_result = await qa_bridge.trigger_interaction(object_id, "release")
+                release_success = release_result.get("success", False)
+                release_state = release_result.get("state", {})
+                settled = (
+                    release_state.get("settled", False)
+                    if isinstance(release_state, dict) else False
+                )
+
+                if not release_success or not settled:
+                    failures.append(InteractionFailure(
+                        object_name=object_name,
+                        object_id=object_id,
+                        interaction_type="grab-release",
+                        expected_state="success=True, state.settled=True (physics stable)",
+                        actual_state=(
+                            f"release success={release_success}, "
+                            f"state.settled={settled}"
+                        ),
+                    ))
+
+            except Exception as exc:
+                failures.append(InteractionFailure(
+                    object_name=object_name,
+                    object_id=object_id,
+                    interaction_type="grab-release",
+                    expected_state="success=True, state.settled=True (physics stable)",
+                    actual_state=f"Error: {exc}",
+                ))
+            finally:
+                qa_bridge.timeout_ms = original_timeout
+
+        if failures:
+            pytest.fail(format_interaction_failures(failures))
+
+    @pytest.mark.asyncio
+    async def test_pushable_object_displacement(
+        self,
+        qa_bridge: QABridge,
+        world_contract_interactions: list[dict[str, Any]],
+    ) -> None:
+        """Verify that pushable objects move and settle to physics-stable state within 2s.
+
+        Triggers a "push" action on each pushable object and verifies:
+        - success==True (push acknowledged)
+        - state.settled==True (physics settled to stable state)
+
+        Requirements: 10.3, 10.4
+        """
+        pushables = [
+            binding for binding in world_contract_interactions
+            if binding.get("interaction_type") == "push"
+        ]
+
+        if not pushables:
+            pytest.skip("No push interactions in WorldContract.")
+
+        failures: list[InteractionFailure] = []
+
+        for obj in pushables:
+            object_id = obj["object_id"]
+            object_name = obj.get("name", object_id)
+
+            # Increase timeout for physics settling
+            original_timeout = qa_bridge.timeout_ms
+            qa_bridge.timeout_ms = int(PUSH_SETTLE_TIMEOUT_S * 1000) + original_timeout
+
+            try:
+                result = await qa_bridge.trigger_interaction(object_id, "push")
+            except Exception as exc:
+                failures.append(InteractionFailure(
+                    object_name=object_name,
+                    object_id=object_id,
+                    interaction_type="push",
+                    expected_state="success=True, state.settled=True",
+                    actual_state=f"Error: {exc}",
+                ))
+                continue
+            finally:
+                qa_bridge.timeout_ms = original_timeout
+
+            success = result.get("success", False)
+            state = result.get("state", {})
+            settled = state.get("settled", False) if isinstance(state, dict) else False
+
+            if not success or not settled:
+                failures.append(InteractionFailure(
+                    object_name=object_name,
+                    object_id=object_id,
+                    interaction_type="push",
+                    expected_state="success=True, state.settled=True",
+                    actual_state=f"success={success}, state.settled={settled}",
+                ))
+
+        if failures:
+            pytest.fail(format_interaction_failures(failures))
+
+
+# ---------------------------------------------------------------------------
+# Interaction fixture
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def world_contract_interactions() -> list[dict[str, Any]]:
+    """Provide WorldContract interaction binding data for interaction testing.
+
+    This fixture should be overridden or parametrized by the integration
+    layer to supply the actual WorldContract interaction bindings for the
+    scene under test. Returns a list of interaction binding dictionaries:
+
+        [
+            {
+                "object_id": "door_01",
+                "name": "Front Door",
+                "interaction_type": "click-to-open",
+            },
+            {
+                "object_id": "mug_01",
+                "name": "Coffee Mug",
+                "interaction_type": "grab-release",
+            },
+            {
+                "object_id": "crate_01",
+                "name": "Wooden Crate",
+                "interaction_type": "push",
+            },
+            ...
+        ]
+
+    Supported interaction_type values:
+    - "click-to-open": Door objects that open on click (1s timeout)
+    - "grab-release": Grabbable objects (2s timeout for physics settling)
+    - "push": Pushable objects (2s timeout for displacement + settling)
+
+    For now, skips — the actual integration will populate this from the
+    WorldContract loaded during the test session.
+    """
+    pytest.skip(
+        "world_contract_interactions fixture not provided. "
         "This test requires a running scene with a loaded WorldContract. "
         "Override this fixture in conftest.py or provide it via a session fixture."
     )

@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "description": "Seven-category QA checklist for qwen2.5vl:7b vision model semantic validation of rendered 3D world scenes.",
+  "categories": [
+    {
+      "id": "geometry",
+      "name": "Geometry Accuracy",
+      "prompt": "Are the 3D object shapes geometrically correct and proportionate? Check for distorted meshes, missing faces, or obviously wrong proportions.",
+      "weight": 1.0
+    },
+    {
+      "id": "count",
+      "name": "Object Count",
+      "prompt": "Does the scene contain the expected number of distinct objects as described in the conversation? Are there missing objects or unexpected duplicates?",
+      "weight": 1.0
+    },
+    {
+      "id": "camera",
+      "name": "Camera Placement",
+      "prompt": "Is the camera positioned at a natural eye-level first-person view? Is the scene composed from a reasonable vantage point with appropriate framing?",
+      "weight": 1.0
+    },
+    {
+      "id": "openings",
+      "name": "Openings & Portals",
+      "prompt": "Are doors, windows, archways, and other openings correctly placed and proportioned? Do openings connect spaces logically and appear traversable?",
+      "weight": 1.0
+    },
+    {
+      "id": "finish",
+      "name": "Surface Finish",
+      "prompt": "Do surfaces have appropriate materials and textures? Check for missing textures (solid pink/magenta), obvious tiling artifacts, or incorrect material assignments.",
+      "weight": 1.0
+    },
+    {
+      "id": "mood",
+      "name": "Mood & Lighting",
+      "prompt": "Does the lighting convey the intended mood from the conversation? Is the scene appropriately lit without extreme overexposure or pitch-black areas?",
+      "weight": 1.0
+    },
+    {
+      "id": "scale",
+      "name": "Scale Consistency",
+      "prompt": "Are objects scaled consistently relative to each other and to human proportions? Check for furniture that is too large/small, doors that are unrealistic heights, etc.",
+      "weight": 1.0
+    }
+  ],
+  "system_prompt": "You are a 3D scene quality assurance inspector. You evaluate rendered 3D world screenshots against a structured checklist. For each category, determine if the rendered scene passes or fails. Be strict but fair — minor imperfections are acceptable, but structural issues should fail. Respond ONLY with valid JSON.",
+  "verdict_schema": {
+    "pass": "boolean — true if all categories pass, false if any category fails",
+    "failed_checks": "array of category IDs that failed (empty array if pass is true)",
+    "confidence": "float 0.0-1.0 — your confidence in the overall verdict"
+  }
+}

@@ -47,6 +47,10 @@ class ResourceKind(str, Enum):
     TRELLIS2 = "trellis2"
     PAINTING = "painting"
     COMFYUI = "comfyui"
+    # Test-specific resource kinds (Requirements 21.1–21.5)
+    PERCEPTUAL_LPIPS = "perceptual_lpips"
+    PERCEPTUAL_CLIP = "perceptual_clip"
+    VISION_QA = "vision_qa"
 
 
 RESOURCE_SCHEDULE: tuple[ResourceKind, ...] = (
@@ -61,7 +65,25 @@ RESOURCE_SCHEDULE: tuple[ResourceKind, ...] = (
     ResourceKind.TRELLIS2,
     ResourceKind.PAINTING,
     ResourceKind.COMFYUI,
+    ResourceKind.PERCEPTUAL_LPIPS,
+    ResourceKind.PERCEPTUAL_CLIP,
+    ResourceKind.VISION_QA,
 )
+
+# Sequential scheduling for nightly GPU tests (Requirement 21.2, 21.5):
+# FLUX generation first (12 GB) → perceptual models (4 GB) → vision QA (8 GB).
+# PERCEPTUAL_LPIPS and PERCEPTUAL_CLIP may coexist (combined 4 GB),
+# but VISION_QA must wait for perceptual models to release.
+NIGHTLY_TEST_SCHEDULE: tuple[tuple[ResourceKind, ...], ...] = (
+    (ResourceKind.DREAM_FLUX,),
+    (ResourceKind.PERCEPTUAL_LPIPS, ResourceKind.PERCEPTUAL_CLIP),
+    (ResourceKind.VISION_QA,),
+)
+
+# Default VRAM lease timeout for test resources (seconds).
+# If a lease cannot be acquired within this window, the metric is skipped
+# with "vram_contention_timeout" status — not a test failure (Requirement 21.4).
+VRAM_LEASE_TIMEOUT_S: float = 60.0
 
 _COMFY_KINDS = frozenset(
     {
@@ -76,6 +98,24 @@ _COMFY_KINDS = frozenset(
         ResourceKind.COMFYUI,
     }
 )
+
+# Test-specific kinds that do NOT route through ComfyUI (they load their own models).
+_TEST_KINDS = frozenset(
+    {
+        ResourceKind.PERCEPTUAL_LPIPS,
+        ResourceKind.PERCEPTUAL_CLIP,
+        ResourceKind.VISION_QA,
+    }
+)
+
+# Perceptual kinds that may coexist concurrently (total 4 GB).
+_PERCEPTUAL_COEXIST = frozenset(
+    {
+        ResourceKind.PERCEPTUAL_LPIPS,
+        ResourceKind.PERCEPTUAL_CLIP,
+    }
+)
+
 _DEFAULT_VRAM_GB = {
     ResourceKind.OLLAMA_PLANNER: 16.0,
     ResourceKind.OLLAMA_VISION: 8.0,
@@ -88,6 +128,9 @@ _DEFAULT_VRAM_GB = {
     ResourceKind.TRELLIS2: 10.0,
     ResourceKind.PAINTING: 8.0,
     ResourceKind.COMFYUI: 8.0,
+    ResourceKind.PERCEPTUAL_LPIPS: 2.0,
+    ResourceKind.PERCEPTUAL_CLIP: 2.0,
+    ResourceKind.VISION_QA: 8.0,
 }
 
 
@@ -149,6 +192,30 @@ class ResourceOwnershipTimeout(ResourceArbiterError):
 
 class ResourceStallError(ResourceArbiterError):
     """Raised when an owner exceeds its bounded no-progress interval."""
+
+
+class VRAMContentionTimeout(ResourceArbiterError):
+    """Raised when a test-specific VRAM lease cannot be acquired within the timeout.
+
+    This is a soft failure for test infrastructure: the metric should be skipped
+    with status "vram_contention_timeout" rather than failing the test suite.
+    (Requirement 21.4)
+    """
+
+
+@dataclass(frozen=True)
+class VRAMLeaseResult:
+    """Result of a test VRAM lease attempt.
+
+    Attributes:
+        acquired: True if the lease was successfully acquired.
+        lease: The ResourceLease if acquired, else None.
+        status: "acquired" or "vram_contention_timeout".
+    """
+
+    acquired: bool
+    lease: ResourceLease | None
+    status: str
 
 
 class UnifiedResourceArbiter:
@@ -283,6 +350,63 @@ class UnifiedResourceArbiter:
             if release_error is not None and not isinstance(release_error, asyncio.CancelledError):
                 raise release_error
 
+    @asynccontextmanager
+    async def claim_for_test(
+        self,
+        request: ResourceRequest,
+        *,
+        timeout_s: float | None = None,
+    ) -> AsyncGenerator[VRAMLeaseResult, None]:
+        """Acquire a test-specific VRAM lease with graceful timeout.
+
+        If the lease cannot be acquired within ``timeout_s`` (default
+        :data:`VRAM_LEASE_TIMEOUT_S` = 60s), yields a ``VRAMLeaseResult``
+        with ``acquired=False`` and ``status="vram_contention_timeout"``
+        instead of raising — the caller should skip the metric without
+        failing the test suite.  (Requirements 21.4)
+
+        Sequential scheduling (Requirements 21.2, 21.5) is enforced by the
+        caller's test fixture ordering: FLUX completes and releases before
+        perceptual metrics start, and perceptual models release before
+        VISION_QA starts.  This context manager provides the timeout safety
+        net when contention from other processes unexpectedly delays a lease.
+        """
+        lease_timeout = timeout_s if timeout_s is not None else VRAM_LEASE_TIMEOUT_S
+
+        # Override the arbiter's default acquire_timeout_s for this specific claim.
+        original_timeout = self._acquire_timeout_s
+        self._acquire_timeout_s = lease_timeout
+        try:
+            async with self.claim(request) as lease:
+                yield VRAMLeaseResult(acquired=True, lease=lease, status="acquired")
+        except (ResourceOwnershipTimeout, asyncio.TimeoutError):
+            self._record(
+                "vram_contention_timeout",
+                request=request,
+                detail=f"lease not acquired within {lease_timeout:.1f}s — metric skipped",
+            )
+            yield VRAMLeaseResult(acquired=False, lease=None, status="vram_contention_timeout")
+        finally:
+            self._acquire_timeout_s = original_timeout
+
+    def get_nightly_schedule(self) -> tuple[tuple[ResourceKind, ...], ...]:
+        """Return the sequential scheduling order for nightly GPU tests.
+
+        The schedule defines which resource kinds run in each phase:
+        - Phase 1: FLUX generation (12 GB exclusive)
+        - Phase 2: Perceptual models (LPIPS + CLIP can coexist, 4 GB total)
+        - Phase 3: Vision QA (8 GB exclusive)
+
+        Requirements: 21.2, 21.5
+        """
+        return NIGHTLY_TEST_SCHEDULE
+
+    def get_test_lease_timeout(self) -> float:
+        """Return the configured VRAM lease timeout for test resources (seconds).
+
+        Requirement: 21.4
+        """
+        return VRAM_LEASE_TIMEOUT_S
 
     async def execute(
         self,
@@ -447,6 +571,8 @@ class UnifiedResourceArbiter:
             return {}
 
     def _validate_request(self, request: ResourceRequest) -> None:
+        if request.kind in _TEST_KINDS:
+            return  # Test-specific kinds do not route through ComfyUI
         if request.kind in _COMFY_KINDS and request.comfyui_instance not in self._clients:
             raise ValueError(
                 f"unknown ComfyUI instance {request.comfyui_instance!r}; "
@@ -454,6 +580,8 @@ class UnifiedResourceArbiter:
             )
 
     async def _activate(self, request: ResourceRequest) -> None:
+        if request.kind in _TEST_KINDS:
+            return  # Test-specific kinds load their own models outside ComfyUI
         if request.kind not in _COMFY_KINDS:
             return
         manager = self._managers[request.comfyui_instance]
