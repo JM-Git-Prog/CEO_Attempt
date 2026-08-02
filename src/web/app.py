@@ -89,6 +89,9 @@ app.add_middleware(
 from src.v15_fable import router as _v15_fable_router  # noqa: E402
 app.include_router(_v15_fable_router)
 
+from src.web.approval_routes import router as _approval_router  # noqa: E402
+app.include_router(_approval_router)
+
 
 def _normalize_requested_version(value: str | None, source: str) -> int:
     """Normalize a canonical interface version without silently coercing input."""
