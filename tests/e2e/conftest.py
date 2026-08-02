@@ -11,6 +11,10 @@ Requirements: 21.1–21.5, 22.1–22.6
 """
 from __future__ import annotations
 
+# Allow nested asyncio.run() inside pytest-playwright's event loop
+import nest_asyncio
+nest_asyncio.apply()
+
 import asyncio
 import logging
 import time

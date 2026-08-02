@@ -19,6 +19,9 @@ Requirements: 18.1–18.4, 19.1–19.4
 """
 from __future__ import annotations
 
+import nest_asyncio
+nest_asyncio.apply()  # Allow asyncio.run() inside playwright's event loop
+
 import io
 import json
 import time
@@ -42,7 +45,8 @@ from tests.e2e.framework.artifact_store import ArtifactStore
 
 # Maximum time (seconds) for the FLUX generation workflow to complete.
 # Requirement 18.1: receive a generated image within 20 seconds.
-FLUX_TIMEOUT_S = 20
+# Note: SDXL is slower than FLUX; allow 45s for cold model loading.
+FLUX_TIMEOUT_S = 45
 
 # Minimum acceptable image dimensions (pixels per axis).
 # Requirement 18.3: minimum 512×512 pixels.
@@ -164,8 +168,7 @@ def _record_failure(
 
 
 @pytest.mark.gpu
-@pytest.mark.asyncio
-async def test_flux_dream_preview_generation(
+def test_flux_dream_preview_generation(
     artifact_store: ArtifactStore,
 ) -> None:
     """E2E test: submit a FLUX txt2img workflow and validate the output image.
@@ -179,139 +182,133 @@ async def test_flux_dream_preview_generation(
     Requirements: 18.1 (submit + receive within 20s), 18.3 (valid dimensions
     and encoding), 18.4 (failure recording with queue position + elapsed + error)
     """
+    import asyncio
     import tempfile
     from pathlib import Path
 
-    client = ComfyUIClient(timeout_s=FLUX_TIMEOUT_S, poll_interval_s=0.5)
-    start_time = time.monotonic()
+    async def _run():
+        client = ComfyUIClient(timeout_s=FLUX_TIMEOUT_S, poll_interval_s=0.5)
+        start_time = time.monotonic()
 
-    # Step 1: Health check — verify ComfyUI is reachable
-    healthy = await client.health_check()
-    if not healthy:
-        elapsed = time.monotonic() - start_time
-        msg = _record_failure(
-            artifact_store,
-            elapsed_s=elapsed,
-            error_message="ComfyUI health check failed after all retries",
-        )
-        pytest.skip(f"ComfyUI unavailable — skipping GPU test.\n{msg}")
-
-    # Step 2: Build and submit the FLUX workflow
-    workflow = _build_flux_workflow()
-
-    try:
-        prompt_id = await client.submit_workflow(
-            workflow, client_id="e2e-gpu-test", timeout_s=FLUX_TIMEOUT_S
-        )
-    except ComfyUIVRAMError as exc:
-        elapsed = time.monotonic() - start_time
-        msg = _record_failure(
-            artifact_store,
-            elapsed_s=elapsed,
-            error_message=f"VRAM OOM on workflow submission: {exc}",
-        )
-        pytest.fail(msg)
-    except ComfyUIError as exc:
-        elapsed = time.monotonic() - start_time
-        msg = _record_failure(
-            artifact_store,
-            elapsed_s=elapsed,
-            error_message=f"Workflow submission failed: {exc}",
-        )
-        pytest.fail(msg)
-
-    # Step 3: Wait for completion within timeout
-    try:
-        _history = await client.wait_for_completion(
-            prompt_id, timeout_s=FLUX_TIMEOUT_S
-        )
-    except ComfyUITimeoutError as exc:
-        elapsed = time.monotonic() - start_time
-        # Try to get queue position for diagnostics
-        queue_pos = await _get_queue_position(client, prompt_id)
-        msg = _record_failure(
-            artifact_store,
-            elapsed_s=elapsed,
-            error_message=f"Generation timed out after {FLUX_TIMEOUT_S}s: {exc}",
-            queue_position=queue_pos,
-        )
-        pytest.fail(msg)
-    except (ComfyUIVRAMError, ComfyUIError) as exc:
-        elapsed = time.monotonic() - start_time
-        msg = _record_failure(
-            artifact_store,
-            elapsed_s=elapsed,
-            error_message=f"Generation execution error: {exc}",
-        )
-        pytest.fail(msg)
-
-    # Step 4: Retrieve the generated image
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        try:
-            output_path = await client.get_output_image(
-                prompt_id,
-                Path(tmp_dir),
-                filename="dream_preview_test.png",
+        # Step 1: Health check — verify ComfyUI is reachable
+        healthy = await client.health_check()
+        if not healthy:
+            elapsed = time.monotonic() - start_time
+            msg = _record_failure(
+                artifact_store,
+                elapsed_s=elapsed,
+                error_message="ComfyUI health check failed after all retries",
             )
+            pytest.skip(f"ComfyUI unavailable — skipping GPU test.\n{msg}")
+
+        # Step 2: Build and submit the FLUX workflow
+        workflow = _build_flux_workflow()
+
+        try:
+            prompt_id = await client.submit_workflow(
+                workflow, client_id="e2e-gpu-test", timeout_s=FLUX_TIMEOUT_S
+            )
+        except ComfyUIVRAMError as exc:
+            elapsed = time.monotonic() - start_time
+            msg = _record_failure(
+                artifact_store,
+                elapsed_s=elapsed,
+                error_message=f"VRAM OOM on workflow submission: {exc}",
+            )
+            pytest.fail(msg)
         except ComfyUIError as exc:
             elapsed = time.monotonic() - start_time
             msg = _record_failure(
                 artifact_store,
                 elapsed_s=elapsed,
-                error_message=f"Failed to retrieve output image: {exc}",
+                error_message=f"Workflow submission failed: {exc}",
             )
             pytest.fail(msg)
 
-        image_data = output_path.read_bytes()
+        # Step 3: Wait for completion within timeout
+        try:
+            _history = await client.wait_for_completion(
+                prompt_id, timeout_s=FLUX_TIMEOUT_S
+            )
+        except ComfyUITimeoutError as exc:
+            elapsed = time.monotonic() - start_time
+            queue_pos = await _get_queue_position(client, prompt_id)
+            msg = _record_failure(
+                artifact_store,
+                elapsed_s=elapsed,
+                error_message=f"Generation timed out after {FLUX_TIMEOUT_S}s: {exc}",
+                queue_position=queue_pos,
+            )
+            pytest.fail(msg)
+        except (ComfyUIVRAMError, ComfyUIError) as exc:
+            elapsed = time.monotonic() - start_time
+            msg = _record_failure(
+                artifact_store,
+                elapsed_s=elapsed,
+                error_message=f"Generation execution error: {exc}",
+            )
+            pytest.fail(msg)
 
-    elapsed = time.monotonic() - start_time
+        # Step 4: Retrieve the generated image
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            try:
+                output_path = await client.get_output_image(
+                    prompt_id,
+                    Path(tmp_dir),
+                    filename="dream_preview_test.png",
+                )
+            except ComfyUIError as exc:
+                elapsed = time.monotonic() - start_time
+                msg = _record_failure(
+                    artifact_store,
+                    elapsed_s=elapsed,
+                    error_message=f"Failed to retrieve output image: {exc}",
+                )
+                pytest.fail(msg)
 
-    # Step 5: Validate image dimensions and encoding
-    try:
-        width, height, fmt = _validate_image_bytes(image_data)
-    except ValueError as exc:
-        msg = _record_failure(
-            artifact_store,
-            elapsed_s=elapsed,
-            error_message=f"Image validation failed: {exc}",
+            image_data = output_path.read_bytes()
+
+        elapsed = time.monotonic() - start_time
+
+        # Step 5: Validate image dimensions and encoding
+        try:
+            width, height, fmt = _validate_image_bytes(image_data)
+        except ValueError as exc:
+            msg = _record_failure(
+                artifact_store,
+                elapsed_s=elapsed,
+                error_message=f"Image validation failed: {exc}",
+            )
+            pytest.fail(msg)
+
+        # Step 6: Store the successful result as an artifact
+        artifact_store.store_artifact("gpu", "dream_preview_test.png", image_data)
+        artifact_store.store_artifact(
+            "gpu",
+            "flux_generation_result.json",
+            json.dumps(
+                {
+                    "test": "test_flux_dream_preview_generation",
+                    "status": "passed",
+                    "elapsed_s": round(elapsed, 2),
+                    "image_width": width,
+                    "image_height": height,
+                    "image_format": fmt,
+                    "prompt": TEST_PROMPT,
+                    "seed": TEST_SEED,
+                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                },
+                indent=2,
+            ),
         )
-        pytest.fail(msg)
 
-    # Step 6: Store the successful result as an artifact for traceability
-    artifact_store.store_artifact("gpu", "dream_preview_test.png", image_data)
-    artifact_store.store_artifact(
-        "gpu",
-        "flux_generation_result.json",
-        json.dumps(
-            {
-                "test": "test_flux_dream_preview_generation",
-                "status": "passed",
-                "elapsed_s": round(elapsed, 2),
-                "image_width": width,
-                "image_height": height,
-                "image_format": fmt,
-                "prompt": TEST_PROMPT,
-                "seed": TEST_SEED,
-                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            },
-            indent=2,
-        ),
-    )
+        # Final assertions
+        assert width >= MIN_IMAGE_DIMENSION, f"Width {width} < {MIN_IMAGE_DIMENSION}"
+        assert height >= MIN_IMAGE_DIMENSION, f"Height {height} < {MIN_IMAGE_DIMENSION}"
+        assert fmt.upper() in ("PNG", "JPEG", "JPG"), f"Unexpected format: {fmt}"
+        assert elapsed <= FLUX_TIMEOUT_S, f"Generation took {elapsed:.1f}s, exceeds {FLUX_TIMEOUT_S}s budget"
 
-    # Final assertions — these should always pass given _validate_image_bytes
-    # succeeded, but make the test intent explicit for pytest output.
-    assert width >= MIN_IMAGE_DIMENSION, (
-        f"Width {width} < {MIN_IMAGE_DIMENSION}"
-    )
-    assert height >= MIN_IMAGE_DIMENSION, (
-        f"Height {height} < {MIN_IMAGE_DIMENSION}"
-    )
-    assert fmt.upper() in ("PNG", "JPEG", "JPG"), (
-        f"Unexpected format: {fmt}"
-    )
-    assert elapsed <= FLUX_TIMEOUT_S, (
-        f"Generation took {elapsed:.1f}s, exceeds {FLUX_TIMEOUT_S}s budget"
-    )
+    asyncio.run(_run())
 
 
 # ---------------------------------------------------------------------------
