@@ -70,18 +70,31 @@
   }
 
   function handleProgress(event) {
-    status.textContent = event.state || "RUNNING";
+    const state = event.state || "RUNNING";
+    // Map internal states to user-friendly display
+    const displayState = {
+      "completed": "COMPLETED",
+      "running": "RUNNING",
+      "awaiting_approval": "APPROVE →",
+      "waiting_approval": "APPROVE →",
+      "awaiting_external": "GENERATING…",
+      "blocked": "BLOCKED",
+      "error": "ERROR",
+    }[state] || state.toUpperCase();
+    status.textContent = displayState;
     stageTitle.textContent = (event.current_stage || "pipeline").replaceAll("_", " ");
     const total = Number(event.objects_total || 1);
     const complete = Number(event.objects_complete || 0);
     progressFill.style.width = `${Math.min(100, Math.round(100 * complete / total))}%`;
     details.textContent = `Plan r${event.plan_revision || 0} · ${event.finality || "provisional"} · ${event.elapsed_seconds?.toFixed?.(1) || 0}s`;
-    if (event.current_stage === "dream_preview" && event.state === "completed") showArtifact("dream_preview");
-    if (event.current_stage === "blockout" && event.state === "completed") showArtifact("blockout");
-    if (event.current_stage === "canon_honesty" && event.state === "completed") showArtifact("canon");
-    if (event.current_stage === "mesh_generation" && event.state === "completed") showArtifact("mesh", event.object_id);
+    if (event.current_stage === "dream_preview" && state === "completed") showArtifact("dream_preview");
+    if (event.current_stage === "blockout" && state === "completed") showArtifact("blockout");
+    if (event.current_stage === "canon_honesty" && state === "completed") showArtifact("canon");
+    if (event.current_stage === "mesh_generation" && state === "completed") showArtifact("mesh", event.object_id);
     currentApproval = approvalFor(event);
-    approval.style.display = currentApproval && event.state === "waiting_approval" ? "inline-block" : "none";
+    // Show approve button for both "awaiting_approval" and "waiting_approval" states
+    const needsApproval = currentApproval && (state === "waiting_approval" || state === "awaiting_approval");
+    approval.style.display = needsApproval ? "inline-block" : "none";
   }
 
   function connectEvents(url) {
@@ -134,8 +147,11 @@
     }
   }
 
+  let pipelineStarted = false;
+
   composer.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (pipelineStarted) return; // Conversation phase is over
     const message = input.value.trim();
     if (!message || !sessionId) return;
     appendMessage("user", message);
@@ -145,13 +161,32 @@
       const data = await jsonRequest(`/api/session/${sessionId}/message`, {
         method: "POST", body: JSON.stringify({message})
       });
-      appendMessage("assistant", data.message);
-      if (data.steering_stable) details.textContent = "Brief ready. The durable pipeline can advance from this approved conversation.";
+      if (data.error) {
+        appendMessage("assistant", data.error);
+      } else {
+        appendMessage("assistant", data.message);
+      }
+      if (data.steering_stable) {
+        details.textContent = "Brief ready — pipeline starting…";
+        pipelineStarted = true;
+        input.disabled = true;
+        send.disabled = true;
+        input.placeholder = "Pipeline running — use Approve button →";
+      }
     } catch (error) {
+      // If it's a 409 (pipeline already started), disable chat
+      if (error.message.includes("Pipeline is already")) {
+        pipelineStarted = true;
+        input.disabled = true;
+        send.disabled = true;
+        input.placeholder = "Pipeline running — use Approve button →";
+      }
       appendMessage("assistant", error.message);
     } finally {
-      send.disabled = false;
-      input.focus();
+      if (!pipelineStarted) {
+        send.disabled = false;
+        input.focus();
+      }
     }
   });
 

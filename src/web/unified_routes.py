@@ -99,6 +99,14 @@ def _launch_pipeline(session_id: str, session_dir: Path, brief: dict) -> None:
                 _write_meta(session_dir, state="completed")
             elif result.state == "awaiting_approval":
                 _write_meta(session_dir, state="awaiting_approval", approval_stage=result.stage)
+                # Emit an explicit progress event so the SSE/UI knows about the approval gate
+                _append_progress(session_dir, {
+                    "current_stage": result.stage,
+                    "state": "awaiting_approval",
+                    "plan_revision": orchestrator.current_plan_revision,
+                    "finality": "provisional",
+                    "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
+                })
             elif result.state == "awaiting_external":
                 _write_meta(session_dir, state="awaiting_external", pending_stage=result.stage)
             else:
@@ -141,6 +149,28 @@ def _write_meta(session_dir: Path, **changes: object) -> dict:
     temporary.write_text(json.dumps(document, indent=2), encoding="utf-8")
     temporary.replace(path)
     return document
+
+
+def _append_progress(session_dir: Path, event: dict) -> None:
+    """Append a progress event to the orchestrator progress.jsonl for SSE delivery."""
+    progress_dir = session_dir / "orchestrator"
+    progress_dir.mkdir(parents=True, exist_ok=True)
+    progress_path = progress_dir / "progress.jsonl"
+    # Read existing to get next sequence number
+    sequence = 1
+    if progress_path.is_file():
+        lines = progress_path.read_text(encoding="utf-8").strip().splitlines()
+        if lines:
+            try:
+                last = json.loads(lines[-1])
+                sequence = int(last.get("sequence", 0)) + 1
+            except (json.JSONDecodeError, ValueError):
+                sequence = len(lines) + 1
+    event["sequence"] = sequence
+    event.setdefault("session_id", "")
+    event.setdefault("elapsed_seconds", 0.0)
+    with progress_path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(event, sort_keys=True) + "\n")
 
 
 def _conversation_path(session_dir: Path) -> Path:
@@ -398,8 +428,17 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             session_dir = _session_dir(output_root(), session_id)
         except ValueError as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
-        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
+        meta = _meta(session_dir)
+        if meta.get("interface_version") != INTERFACE_VERSION:
             return JSONResponse({"error": "Unified session not found"}, status_code=404)
+        # Refuse messages once the pipeline has started — conversation phase is over
+        session_state = meta.get("state", "")
+        if session_state not in ("awaiting_description", "brief_ready", ""):
+            return JSONResponse({
+                "error": f"Pipeline is already {session_state}. Conversation phase is complete.",
+                "session_id": session_id,
+                "state": session_state,
+            }, status_code=409)
         try:
             payload = await request.json()
             message = str(payload.get("message", "")).strip()
