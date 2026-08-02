@@ -20,6 +20,26 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 
+def _run(coro):
+    """Run an async coroutine synchronously, creating a new event loop.
+    
+    This avoids conflicts with pytest-playwright's event loop management.
+    """
+    loop = asyncio.new_event_loop()
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.close()
+
+
+@pytest.fixture
+def event_loop():
+    """Create a new event loop for each test, independent of playwright's loop."""
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
+
+
 # ---------------------------------------------------------------------------
 # Tests for _wait_for_comfyui_idle
 # ---------------------------------------------------------------------------
