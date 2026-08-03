@@ -98,6 +98,10 @@ def pytest_configure(config: pytest.Config) -> None:
         'layer(name): test layer for time budget enforcement — '
         '"visual" (120s), "scene" (60s), "accessibility" (30s) (Req 22.1–22.3)',
     )
+    config.addinivalue_line(
+        "markers",
+        "e2e_playtest: full LLM-driven World Test Kit playtest run",
+    )
 
 
 # ---------------------------------------------------------------------------

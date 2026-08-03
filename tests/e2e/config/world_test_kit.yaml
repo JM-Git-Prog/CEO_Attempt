@@ -1,0 +1,57 @@
+# E2E World Test Kit Configuration
+# ----------------------------------
+# Override any setting via environment variables:
+#   WTK_PLAYTESTER_MODEL, WTK_VISION_MODEL, WTK_OLLAMA_URL,
+#   WTK_SERVER_URL, WTK_PASS_THRESHOLD, WTK_INDIVIDUAL_MINIMUM,
+#   WTK_MAX_TURNS, WTK_HEADLESS
+
+# LLM Models
+playtester_model: "qwen3-coder-next"
+vision_model: "qwen2.5vl:7b"
+ollama_base_url: "http://127.0.0.1:11434"
+
+# Application under test
+server_url: "http://localhost:8000"
+
+# Scoring
+pass_threshold: 60.0
+individual_minimum: 30.0
+max_conversation_turns: 5
+
+# Per-stage timeouts (seconds)
+timeouts:
+  conversation_s: 60
+  pipeline_wait_s: 300
+  navigation_s: 30
+  interaction_s: 60
+  vision_eval_s: 120
+  report_s: 10
+
+# Scoring weights for 9 evaluation criteria (should sum to ~1.0)
+weights:
+  conversation_quality: 0.15
+  brief_coherence: 0.10
+  pipeline_success: 0.15
+  navigation_responsiveness: 0.10
+  interaction_correctness: 0.10
+  visual_quality: 0.15
+  scene_completeness: 0.10
+  performance: 0.05
+  overall_experience: 0.10
+
+# Layer enable/disable flags
+layers:
+  conversation: true
+  pipeline_wait: true
+  navigation: true
+  interactions: true
+  vision_eval: true
+  scene_validation: true
+  performance: true
+  accessibility: true
+  experience_judge: true
+
+# Browser settings
+headless: true
+screenshot_on_failure: true
+artifacts_dir: "tests/e2e/artifacts/playtest"
