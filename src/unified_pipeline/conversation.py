@@ -273,10 +273,17 @@ class ConversationEngine:
 
         Requirement 1.1: present a conversational prompt, never a form.
         Returns the AI's opening greeting and proposal.
+
+        Includes a session-unique seed in the system prompt to invalidate
+        any cached Ollama KV context from prior sessions (prevents persona bleed).
         """
+        # Fix #1: Prepend a session-unique seed to bust Ollama KV cache
+        session_seed = f"[session:{self._state.session_id}:{time.time()}]\n"
+        system_prompt = session_seed + OPENING_SYSTEM
+
         try:
             result = await generate_json(
-                system=OPENING_SYSTEM,
+                system=system_prompt,
                 user="Generate an opening greeting for a new room design session. Be warm, creative, and immediately propose a direction.",
                 model=self._model,
                 timeout_seconds=self._deadline,
@@ -307,11 +314,18 @@ class ConversationEngine:
 
         Requirements 1.2, 1.3, 1.4, 1.7: interpret, propose GAME/REAL, steer.
         Returns the AI's response to the user.
+
+        Fix #2: After getting LLM response, checks for byte-for-byte duplicate
+        of the last assistant turn. Retries once with temperature bump if duplicate.
+        Fix #4: User's current message is appended to turns BEFORE building context,
+        ensuring it appears as the LAST item in the messages array sent to Ollama.
         """
+        # Fix #4: Append user message to turns BEFORE building context
+        # so it's the last item in the conversation context sent to the LLM
         self._state.turns.append(ConversationTurn(role="user", content=user_message))
         self._state.turn_count += 1
 
-        # Build conversation context for the LLM
+        # Build conversation context for the LLM (now includes latest user message)
         conversation_context = self._build_conversation_context()
 
         try:
@@ -335,6 +349,31 @@ class ConversationEngine:
             if not response:
                 response = result.get("interpretation", "I understand. Let me refine the design.")
 
+            # Fix #2: Response deduplication — detect echo mode
+            last_assistant_content = self._last_assistant_content()
+            if response == last_assistant_content:
+                # Retry once with temperature bump hint
+                retry_context = conversation_context + " Please provide a fresh, different suggestion."
+                try:
+                    retry_result = await generate_json(
+                        system=INTERPRET_SYSTEM,
+                        user=retry_context,
+                        model=self._model,
+                        timeout_seconds=self._deadline,
+                    )
+                    retry_response = retry_result.get("response_to_user", "")
+                    if not retry_response:
+                        retry_response = retry_result.get("interpretation", "")
+                    if retry_response and retry_response != last_assistant_content:
+                        # Retry succeeded with different content
+                        self._update_proposed_brief(retry_result)
+                        response = retry_response
+                    else:
+                        # Still duplicate after retry — acknowledge user input
+                        response = f"(Rethinking...) Based on your message \"{user_message[:60]}\", let me take a different angle on the design."
+                except (LLMError, TimeoutError):
+                    response = f"(Rethinking...) I hear you — \"{user_message[:60]}\". Let me refine the direction."
+
             self._state.turns.append(ConversationTurn(role="assistant", content=response))
             return response
 
@@ -347,6 +386,13 @@ class ConversationEngine:
             )
             self._state.turns.append(ConversationTurn(role="assistant", content=fallback_response))
             return fallback_response
+
+    def _last_assistant_content(self) -> str:
+        """Return the content of the most recent assistant turn, or empty string."""
+        for turn in reversed(self._state.turns):
+            if turn.role == "assistant":
+                return turn.content
+        return ""
 
     # ─── Art Direction Proposal ────────────────────────────────────────────
 

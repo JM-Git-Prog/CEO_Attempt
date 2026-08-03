@@ -189,17 +189,317 @@ def _handle_camera_contract(ctx: StageExecutionContext) -> StageResult:
     return _immediate({"status": "camera_contract_set", "fov_deg": 60.0}, ctx)
 
 
-def _handle_blockout(ctx: StageExecutionContext) -> StageResult:
-    return _immediate({"status": "blockout_rendered"}, ctx)
+async def _handle_blockout(ctx: StageExecutionContext) -> StageResult:
+    """Generate a blockout image via ComfyUI (SDXL), with Pillow fallback.
 
+    Builds a prompt from the plan/brief (room layout, objects, camera pose),
+    submits to ComfyUI using sd_xl_base_1.0.safetensors, and saves the output
+    as blockout.png in ctx.session_dir / "artifacts".
+    """
+    import logging
+    import random
 
-def _handle_canon_honesty(ctx: StageExecutionContext) -> StageResult:
-    """Canon generation — immediate with placeholder until real FLUX canon is wired."""
+    from src.photo_pipeline.comfyui_client import ComfyUIClient, ComfyUIError
+
+    _log = logging.getLogger("live_trace")
+
+    # --- Build prompt from brief/plan ---
+    brief = ctx.values.get("brief", {})
+    plan = ctx.values.get("plan", {})
+
+    room_purpose = brief.get("room_purpose", "room") if isinstance(brief, dict) else "room"
+    objects = brief.get("object_manifest", []) if isinstance(brief, dict) else []
+    object_names = ", ".join(
+        item.get("name", "") for item in objects[:6]
+        if isinstance(item, dict) and item.get("name")
+    ) or "furniture, objects"
+
+    camera = plan.get("camera", {}) if isinstance(plan, dict) else {}
+    camera_desc = ""
+    if isinstance(camera, dict) and camera.get("angle"):
+        camera_desc = f", {camera['angle']} camera angle"
+
+    prompt = (
+        f"Architectural blockout render of a {room_purpose}, "
+        f"showing spatial layout with {object_names}{camera_desc}. "
+        f"Clean geometric forms, neutral gray materials, studio lighting, "
+        f"architectural visualization, massing study, no textures, "
+        f"simple shapes showing volume and proportion."
+    )
+
+    # --- Prepare output path ---
+    artifacts_dir = ctx.session_dir / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    output_path = artifacts_dir / "blockout.png"
+
+    _log.info(f"  blockout: generating — prompt={prompt[:80]}...")
+
+    # --- Try ComfyUI ---
+    client = ComfyUIClient(timeout_s=120, poll_interval_s=0.75)
+    comfyui_available = await client.health_check()
+
+    if comfyui_available:
+        try:
+            seed = random.randint(1, 2**32 - 1)
+            workflow = {
+                "1": {
+                    "class_type": "CheckpointLoaderSimple",
+                    "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
+                },
+                "2": {
+                    "class_type": "CLIPTextEncode",
+                    "inputs": {"text": prompt, "clip": ["1", 1]},
+                },
+                "3": {
+                    "class_type": "EmptyLatentImage",
+                    "inputs": {"width": 1024, "height": 768, "batch_size": 1},
+                },
+                "4": {
+                    "class_type": "KSampler",
+                    "inputs": {
+                        "model": ["1", 0],
+                        "positive": ["2", 0],
+                        "negative": ["5", 0],
+                        "latent_image": ["3", 0],
+                        "seed": seed,
+                        "steps": 20,
+                        "cfg": 3.5,
+                        "sampler_name": "euler",
+                        "scheduler": "normal",
+                        "denoise": 1.0,
+                    },
+                },
+                "5": {
+                    "class_type": "CLIPTextEncode",
+                    "inputs": {"text": "blurry, distorted, text, watermark", "clip": ["1", 1]},
+                },
+                "6": {
+                    "class_type": "VAEDecode",
+                    "inputs": {"samples": ["4", 0], "vae": ["1", 2]},
+                },
+                "7": {
+                    "class_type": "SaveImage",
+                    "inputs": {"images": ["6", 0], "filename_prefix": "blockout"},
+                },
+            }
+
+            prompt_id = await client.submit_workflow(
+                workflow, client_id=f"blockout-{ctx.session_id}"
+            )
+            await client.wait_for_completion(prompt_id, timeout_s=120)
+            await client.get_output_image(
+                prompt_id=prompt_id,
+                output_dir=artifacts_dir,
+                filename="blockout.png",
+            )
+
+            _log.info(f"  blockout: OK — {output_path}")
+            return _immediate({
+                "status": "blockout_rendered",
+                "image_path": str(output_path),
+                "prompt": prompt,
+            }, ctx)
+
+        except (ComfyUIError, Exception) as exc:
+            _log.warning(f"  blockout: ComfyUI failed ({exc}), falling back to placeholder")
+
+    # --- Pillow fallback (degraded mode) ---
+    _log.info("  blockout: ComfyUI unavailable — generating placeholder PNG")
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+
+        img = Image.new("RGB", (1024, 768), color=(128, 128, 128))
+        draw = ImageDraw.Draw(img)
+        text_lines = [
+            "BLOCKOUT",
+            f"Room: {room_purpose}",
+            f"Objects: {object_names[:60]}",
+            "ComfyUI unavailable",
+        ]
+        y_offset = 280
+        for line in text_lines:
+            try:
+                font = ImageFont.truetype("arial.ttf", 32)
+            except (OSError, IOError):
+                font = ImageFont.load_default()
+            bbox = draw.textbbox((0, 0), line, font=font)
+            text_width = bbox[2] - bbox[0]
+            x = (1024 - text_width) // 2
+            draw.text((x, y_offset), line, fill=(255, 255, 255), font=font)
+            y_offset += 50
+
+        img.save(output_path, "PNG")
+    except ImportError:
+        # If Pillow not available, write a minimal valid PNG
+        output_path.write_bytes(
+            b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
+        )
+
     return _immediate({
-        "status": "canon_honesty_complete",
-        "image_path": "",
-        "honesty_report": {"passed": True, "checks": []},
-        "note": "placeholder — real Canon generation requires approved Blockout",
+        "status": "blockout_rendered",
+        "image_path": str(output_path),
+        "prompt": prompt,
+        "degraded": True,
+    }, ctx)
+
+
+async def _handle_canon_honesty(ctx: StageExecutionContext) -> StageResult:
+    """Generate a photorealistic canon image via ComfyUI (SDXL), with Pillow fallback.
+
+    Builds a high-quality prompt from the brief's full description, submits to
+    ComfyUI with higher steps (30), and saves as canon.png in artifacts.
+    """
+    import logging
+    import random
+
+    from src.photo_pipeline.comfyui_client import ComfyUIClient, ComfyUIError
+
+    _log = logging.getLogger("live_trace")
+
+    # --- Build high-quality prompt from brief ---
+    brief = ctx.values.get("brief", {})
+
+    room_purpose = brief.get("room_purpose", "room") if isinstance(brief, dict) else "room"
+    atmosphere = brief.get("atmosphere", {}) if isinstance(brief, dict) else {}
+    mood = atmosphere.get("mood", "warm and inviting") if isinstance(atmosphere, dict) else "warm"
+    era = brief.get("era", {}) if isinstance(brief, dict) else {}
+    period = era.get("period", "") if isinstance(era, dict) else ""
+    palette = brief.get("palette", {}) if isinstance(brief, dict) else {}
+    primary = palette.get("primary", "") if isinstance(palette, dict) else ""
+
+    objects = brief.get("object_manifest", []) if isinstance(brief, dict) else []
+    object_names = ", ".join(
+        item.get("name", "") for item in objects[:8]
+        if isinstance(item, dict) and item.get("name")
+    ) or "furniture and fixtures"
+
+    prompt = (
+        f"Photorealistic interior photograph of a {period + ' ' if period else ''}"
+        f"{room_purpose}, {mood} atmosphere, featuring {object_names}. "
+        f"{primary + ' color palette. ' if primary else ''}"
+        f"Professional architectural photography, natural lighting, "
+        f"high detail, 8K resolution, sharp focus, magazine quality, "
+        f"realistic materials and textures, ambient occlusion, "
+        f"volumetric light through windows."
+    )
+
+    # --- Prepare output path ---
+    artifacts_dir = ctx.session_dir / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    output_path = artifacts_dir / "canon.png"
+
+    _log.info(f"  canon_honesty: generating — prompt={prompt[:80]}...")
+
+    # --- Try ComfyUI ---
+    client = ComfyUIClient(timeout_s=180, poll_interval_s=0.75)
+    comfyui_available = await client.health_check()
+
+    if comfyui_available:
+        try:
+            seed = random.randint(1, 2**32 - 1)
+            workflow = {
+                "1": {
+                    "class_type": "CheckpointLoaderSimple",
+                    "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
+                },
+                "2": {
+                    "class_type": "CLIPTextEncode",
+                    "inputs": {"text": prompt, "clip": ["1", 1]},
+                },
+                "3": {
+                    "class_type": "EmptyLatentImage",
+                    "inputs": {"width": 1024, "height": 768, "batch_size": 1},
+                },
+                "4": {
+                    "class_type": "KSampler",
+                    "inputs": {
+                        "model": ["1", 0],
+                        "positive": ["2", 0],
+                        "negative": ["5", 0],
+                        "latent_image": ["3", 0],
+                        "seed": seed,
+                        "steps": 30,
+                        "cfg": 4.5,
+                        "sampler_name": "euler",
+                        "scheduler": "normal",
+                        "denoise": 1.0,
+                    },
+                },
+                "5": {
+                    "class_type": "CLIPTextEncode",
+                    "inputs": {
+                        "text": "blurry, distorted, text, watermark, low quality, cartoon",
+                        "clip": ["1", 1],
+                    },
+                },
+                "6": {
+                    "class_type": "VAEDecode",
+                    "inputs": {"samples": ["4", 0], "vae": ["1", 2]},
+                },
+                "7": {
+                    "class_type": "SaveImage",
+                    "inputs": {"images": ["6", 0], "filename_prefix": "canon"},
+                },
+            }
+
+            prompt_id = await client.submit_workflow(
+                workflow, client_id=f"canon-{ctx.session_id}"
+            )
+            await client.wait_for_completion(prompt_id, timeout_s=180)
+            await client.get_output_image(
+                prompt_id=prompt_id,
+                output_dir=artifacts_dir,
+                filename="canon.png",
+            )
+
+            _log.info(f"  canon_honesty: OK — {output_path}")
+            return _immediate({
+                "status": "canon_rendered",
+                "image_path": str(output_path),
+                "prompt": prompt,
+            }, ctx)
+
+        except (ComfyUIError, Exception) as exc:
+            _log.warning(f"  canon_honesty: ComfyUI failed ({exc}), falling back to placeholder")
+
+    # --- Pillow fallback (degraded mode) ---
+    _log.info("  canon_honesty: ComfyUI unavailable — generating placeholder PNG")
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+
+        img = Image.new("RGB", (1024, 768), color=(64, 64, 80))
+        draw = ImageDraw.Draw(img)
+        text_lines = [
+            "CANON",
+            f"Room: {room_purpose}",
+            f"Mood: {mood}",
+            f"Objects: {object_names[:60]}",
+            "ComfyUI unavailable",
+        ]
+        y_offset = 260
+        for line in text_lines:
+            try:
+                font = ImageFont.truetype("arial.ttf", 32)
+            except (OSError, IOError):
+                font = ImageFont.load_default()
+            bbox = draw.textbbox((0, 0), line, font=font)
+            text_width = bbox[2] - bbox[0]
+            x = (1024 - text_width) // 2
+            draw.text((x, y_offset), line, fill=(255, 255, 255), font=font)
+            y_offset += 50
+
+        img.save(output_path, "PNG")
+    except ImportError:
+        # If Pillow not available, write a minimal valid PNG
+        output_path.write_bytes(
+            b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
+        )
+
+    return _immediate({
+        "status": "canon_rendered",
+        "image_path": str(output_path),
+        "prompt": prompt,
+        "degraded": True,
     }, ctx)
 
 

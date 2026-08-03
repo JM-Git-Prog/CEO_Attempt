@@ -29,6 +29,7 @@ from src.unified_pipeline.conversation import (
     ConversationEngine,
     ConversationState,
     ConversationTurn,
+    _user_confirms_stable,
 )
 from src.unified_pipeline.orchestrator import (
     DEFAULT_STAGE_SPECS,
@@ -329,6 +330,15 @@ def unified_sse_response(root: Path, session_id: str, after_sequence: int = 0):
     progress_path = session_dir / "orchestrator" / "progress.jsonl"
 
     async def events():
+        # V16 dual-state fix: immediately emit terminal if session is already dead
+        meta = _meta(session_dir)
+        if meta.get("state") == "error":
+            yield (
+                f"event: pipeline.terminal\n"
+                f"data: {json.dumps({'state': 'error', 'reason': meta.get('error', 'unknown')})}\n\n"
+            )
+            return
+
         sequence = max(0, after_sequence)
         idle_ticks = 0
         while True:
@@ -451,6 +461,33 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             engine = _load_conversation(session_id, session_dir)
             if engine is None:
                 return JSONResponse({"error": "Conversation state is unavailable"}, status_code=409)
+
+            # Fix #3: Confirmation detection — enforce BEFORE calling interpret_response
+            # If user clearly confirms, skip the LLM call entirely and extract brief immediately
+            if _user_confirms_stable(message):
+                _log.info("  user confirmed stable — skipping LLM, extracting Brief directly")
+                engine._state.steering_stable = True  # noqa: SLF001
+                engine._state.turns.append(ConversationTurn(role="user", content=message))
+                engine._state.turn_count += 1
+                brief = await engine.extract_brief()
+                brief_document = brief.to_dict()
+                artifacts = session_dir / "artifacts"
+                artifacts.mkdir(exist_ok=True)
+                (artifacts / "brief.json").write_text(
+                    json.dumps(brief_document, indent=2), encoding="utf-8"
+                )
+                _write_meta(session_dir, state="brief_ready")
+                _save_conversation(engine, session_dir)
+                _launch_pipeline(session_id, session_dir, brief_document)
+                return {
+                    "session_id": session_id,
+                    "interface_version": INTERFACE_VERSION,
+                    "message": "Brief locked. Starting pipeline...",
+                    "steering_stable": True,
+                    "turn_count": engine.state.turn_count,
+                    "brief": brief_document,
+                }
+
             try:
                 response = await engine.interpret_response(message)
                 _log.info(f"  response ({len(response)} chars): {response[:100]}")
@@ -577,5 +614,90 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                     continue
         except WebSocketDisconnect:
             return
+
+    @router.get("/api/session/{session_id}/health")
+    async def unified_health(session_id: str):
+        """V16 ground-truth health endpoint — reads both state files and returns
+        the authoritative session state, resolving any split-brain disagreement."""
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        meta = _meta(session_dir)
+        if meta.get("interface_version") != INTERFACE_VERSION:
+            return JSONResponse({"error": "Unified session not found"}, status_code=404)
+
+        # Read session.json (SessionManager state)
+        session_json_state = None
+        session_json_error = None
+        session_file = session_dir / "session.json"
+        if session_file.is_file():
+            try:
+                raw = json.loads(session_file.read_text(encoding="utf-8"))
+                session_json_state = raw.get("state")
+                session_json_error = raw.get("error")
+            except (OSError, ValueError, TypeError):
+                pass
+
+        # Read session_meta.json (web adapter state)
+        meta_state = meta.get("state")
+        meta_error = meta.get("error")
+
+        # Resolve: if session.json says ERROR but meta disagrees, trust session.json
+        # (session_manager is the authority on lifecycle)
+        resolved_state = meta_state
+        resolved_error = meta_error
+        if session_json_state in ("error", "ERROR") and meta_state not in ("error", "completed"):
+            resolved_state = "error"
+            resolved_error = session_json_error or meta_error
+
+        return {
+            "session_id": session_id,
+            "state": resolved_state,
+            "error": resolved_error,
+            "meta_state": meta_state,
+            "session_json_state": session_json_state,
+            "split_brain": (
+                session_json_state in ("error", "ERROR")
+                and meta_state not in ("error", "completed", "ready")
+            ),
+        }
+
+    @router.get("/api/session/{session_id}/status")
+    async def unified_status(session_id: str):
+        """Lightweight status endpoint for client-side health checks."""
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        meta = _meta(session_dir)
+        if meta.get("interface_version") != INTERFACE_VERSION:
+            return JSONResponse({"error": "Unified session not found"}, status_code=404)
+
+        # Check session.json as ground truth
+        session_file = session_dir / "session.json"
+        session_json_error = None
+        if session_file.is_file():
+            try:
+                raw = json.loads(session_file.read_text(encoding="utf-8"))
+                if raw.get("state") in ("error", "ERROR"):
+                    error_raw = raw.get("error", "")
+                    try:
+                        session_json_error = json.loads(error_raw) if error_raw else {}
+                    except (ValueError, TypeError):
+                        session_json_error = {"reason_code": error_raw}
+                    return {
+                        "session_id": session_id,
+                        "state": "error",
+                        "error": session_json_error,
+                    }
+            except (OSError, ValueError, TypeError):
+                pass
+
+        return {
+            "session_id": session_id,
+            "state": meta.get("state", "unknown"),
+            "error": None,
+        }
 
     return router

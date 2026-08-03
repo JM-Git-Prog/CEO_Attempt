@@ -112,6 +112,23 @@ class SessionManager:
                 session.state = PipelineState.ERROR
                 session.error = json.dumps({"reason_code": "server_restart"})
                 self._save_session(session)
+
+                # Also stamp session_meta.json if it exists (V16 dual-state fix)
+                meta_path = session_dir / "session_meta.json"
+                if meta_path.exists():
+                    try:
+                        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                        meta["state"] = "error"
+                        meta["error"] = json.dumps({"reason_code": "server_restart"})
+                        meta_path.write_text(
+                            json.dumps(meta, indent=2), encoding="utf-8"
+                        )
+                    except (OSError, ValueError, TypeError):
+                        logger.warning(
+                            "Failed to update session_meta.json for %s",
+                            session_dir.name,
+                        )
+
                 count += 1
 
         return count

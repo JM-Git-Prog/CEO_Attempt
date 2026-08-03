@@ -124,6 +124,25 @@
       messages.replaceChildren();
       appendMessage("assistant", "Reconnecting to session " + sessionId.slice(0, 8) + "…");
       connectEvents(`/api/session/${sessionId}/events`);
+
+      // V16 dual-state fix: quick health check to catch dead sessions immediately
+      try {
+        const statusResp = await fetch(`/api/session/${sessionId}/status`);
+        if (statusResp.ok) {
+          const statusData = await statusResp.json();
+          if (statusData.state === "error") {
+            status.textContent = "ERROR";
+            const reason = statusData.error?.reason_code || "unknown";
+            appendMessage("assistant", "This session was interrupted: " + reason);
+            events?.close();
+            input.disabled = true;
+            send.disabled = true;
+            input.placeholder = "Session ended — start a new one";
+            return;
+          }
+        }
+      } catch (_) { /* non-fatal — SSE will catch up */ }
+
       input.focus();
       return;
     }
