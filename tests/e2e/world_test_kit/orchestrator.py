@@ -106,9 +106,12 @@ class WorldTestOrchestrator:
                 )
                 page = context.new_page()
 
-                # Navigate to the application
-                url = f"{self._config.server_url}/?v=16&qa=1&session={session_id}"
+                # Navigate to the application — let V16 JS create a fresh session
+                url = f"{self._config.server_url}/?v=16&qa=1"
                 page.goto(url, wait_until="networkidle", timeout=30_000)
+                
+                # Wait for V16 to create its session and show the conversation UI
+                page.wait_for_selector('#message', timeout=15_000)
 
                 # Create the playtester agent
                 agent = PlaytesterAgent(page, self._config, session_id)
