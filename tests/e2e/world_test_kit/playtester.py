@@ -157,12 +157,12 @@ class PlaytesterAgent:
 
         try:
             # Find and fill the prompt input
-            input_sel = 'textarea[data-qa="prompt-input"], input[data-qa="prompt-input"], #prompt-input'
+            input_sel = '#message'
             self._page.wait_for_selector(input_sel, timeout=10_000)
             self._page.fill(input_sel, prompt)
 
             # Submit
-            submit_sel = 'button[data-qa="submit-btn"], button:has-text("Generate"), #submit-btn'
+            submit_sel = '#send'
             self._page.click(submit_sel)
 
             # Wait for response (up to max_turns)
@@ -170,12 +170,12 @@ class PlaytesterAgent:
                 result.turn_count = turn + 1
 
                 # Wait for AI response to appear
-                response_sel = '[data-qa="ai-response"], .ai-response, #brief-content'
+                response_sel = '.message.assistant:last-of-type'
                 self._page.wait_for_selector(
                     response_sel,
                     timeout=int(self._config.timeouts.conversation_s * 1000),
                 )
-                time.sleep(1.0)  # Let content settle
+                time.sleep(2.0)  # Let content settle
 
                 # Extract response text
                 response_text = self._page.inner_text(response_sel)
@@ -197,8 +197,8 @@ class PlaytesterAgent:
                         break
                     elif turn < self._config.max_conversation_turns - 1:
                         # Ask for refinement
-                        self._page.fill(input_sel, "Please improve this — be more specific and creative.")
-                        self._page.click(submit_sel)
+                        self._page.fill('#message', "Please improve this — be more specific and creative.")
+                        self._page.click('#send')
 
             if not result.brief_approved:
                 result.quality_score = 0.4  # Minimum if never approved
@@ -509,53 +509,49 @@ class PlaytesterAgent:
 
     def _try_approve_brief(self) -> None:
         """Click the approve/continue button if visible."""
-        approve_selectors = [
-            'button[data-qa="approve-brief"]',
-            'button:has-text("Approve")',
-            'button:has-text("Continue")',
-            'button:has-text("Generate World")',
-            "#approve-btn",
-        ]
-        for sel in approve_selectors:
-            try:
-                btn = self._page.query_selector(sel)
-                if btn and btn.is_visible():
-                    btn.click()
-                    time.sleep(0.5)
-                    return
-            except Exception:
-                continue
+        # In V16, the conversation approval happens via sending a confirmation
+        # message like "looks good" — the backend handles it
+        try:
+            # Try clicking the approval button if it's visible
+            btn = self._page.query_selector('#approval')
+            if btn and btn.is_visible():
+                btn.click()
+                time.sleep(1.0)
+                return
+            # Otherwise, type a confirmation message
+            msg_input = self._page.query_selector('#message')
+            if msg_input and not msg_input.is_disabled():
+                self._page.fill('#message', "Looks good, build it")
+                self._page.click('#send')
+                time.sleep(1.0)
+        except Exception:
+            pass
 
     def _try_approve_gate(self, gate: str) -> None:
-        """Approve a pipeline gate (blockout or canon)."""
-        selectors = [
-            f'button[data-qa="approve-{gate}"]',
-            f'button:has-text("Approve {gate.title()}")',
-            'button:has-text("Approve")',
-            'button:has-text("Continue")',
-        ]
-        for sel in selectors:
-            try:
-                btn = self._page.query_selector(sel)
-                if btn and btn.is_visible():
-                    btn.click()
-                    time.sleep(1.0)
-                    return
-            except Exception:
-                continue
+        """Approve a pipeline gate (blockout or canon) via the V16 approval button."""
+        try:
+            btn = self._page.query_selector('#approval')
+            if btn and btn.is_visible():
+                btn.click()
+                time.sleep(2.0)
+        except Exception:
+            pass
 
     def _get_current_stage(self) -> str | None:
-        """Get the current pipeline stage from the UI."""
+        """Get the current pipeline stage from the V16 UI."""
         try:
             stage = self._page.evaluate(
                 """() => {
-                    // Try QA harness first
+                    // V16 stage indicator is #stageTitle
+                    const el = document.getElementById('stageTitle');
+                    if (el && el.textContent.trim()) {
+                        return el.textContent.trim().toLowerCase().replace(/\\s+/g, '_');
+                    }
+                    // Also check QA harness
                     if (window.__qa && window.__qa.getCurrentStage) {
                         return window.__qa.getCurrentStage();
                     }
-                    // Try status element
-                    const el = document.querySelector('[data-qa="stage-indicator"], .stage-label, #current-stage');
-                    return el ? el.textContent.trim().toLowerCase() : null;
+                    return null;
                 }"""
             )
             return stage if stage else None
