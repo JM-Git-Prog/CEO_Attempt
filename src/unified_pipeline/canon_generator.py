@@ -45,6 +45,11 @@ CANON_STEPS = int(os.getenv("CANON_STEPS", "30"))
 CANON_CFG = float(os.getenv("CANON_CFG", "7.5"))
 CANON_DENOISE = float(os.getenv("CANON_DENOISE", "0.65"))
 
+# FLUX model files (UNETLoader path — matches canon_image/generator.py)
+FLUX_MODEL = "flux-2-klein-base-4b-fp8.safetensors"
+FLUX_CLIP = "qwen_3_4b.safetensors"
+FLUX_VAE = "flux2-vae.safetensors"
+
 # Object presence validation via vision model
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 VISION_MODEL = os.getenv("VISION_MODEL", "qwen2.5vl:7b")
@@ -402,10 +407,16 @@ def _build_canon_workflow(
 
     workflow: dict[str, Any] = {
         "1": {
-            "class_type": "CheckpointLoaderSimple",
-            "inputs": {
-                "ckpt_name": "flux1-dev.safetensors",
-            },
+            "class_type": "UNETLoader",
+            "inputs": {"unet_name": FLUX_MODEL, "weight_dtype": "default"},
+        },
+        "1b": {
+            "class_type": "CLIPLoader",
+            "inputs": {"clip_name": FLUX_CLIP, "type": "flux2", "device": "default"},
+        },
+        "1c": {
+            "class_type": "VAELoader",
+            "inputs": {"vae_name": FLUX_VAE},
         },
         "2": {
             "class_type": "LoadImage",
@@ -427,14 +438,14 @@ def _build_canon_workflow(
             "class_type": "VAEEncode",
             "inputs": {
                 "pixels": ["3", 0],
-                "vae": ["1", 2],
+                "vae": ["1c", 0],
             },
         },
         "5": {
             "class_type": "CLIPTextEncode",
             "inputs": {
                 "text": prompt,
-                "clip": ["1", 1],
+                "clip": ["1b", 0],
             },
         },
         "6": {
@@ -443,7 +454,7 @@ def _build_canon_workflow(
                 "text": "blurry, low quality, deformed, sketch, wireframe, "
                 "line drawing, cartoon, 3d render, blockout, placeholder, "
                 "flat color, low resolution, artifacts, text, watermark",
-                "clip": ["1", 1],
+                "clip": ["1b", 0],
             },
         },
         "7": {
@@ -465,7 +476,7 @@ def _build_canon_workflow(
             "class_type": "VAEDecode",
             "inputs": {
                 "samples": ["7", 0],
-                "vae": ["1", 2],
+                "vae": ["1c", 0],
             },
         },
         "9": {

@@ -38,6 +38,11 @@ GENERATION_TIMEOUT_S = 20
 FLUX_STEPS = 20
 FLUX_CFG = 3.5
 
+# FLUX model files (UNETLoader path — matches canon_image/generator.py)
+FLUX_MODEL = "flux-2-klein-base-4b-fp8.safetensors"
+FLUX_CLIP = "qwen_3_4b.safetensors"
+FLUX_VAE = "flux2-vae.safetensors"
+
 # Default output directory for dream preview images
 DEFAULT_OUTPUT_DIR = Path("output/dream_previews")
 
@@ -293,12 +298,20 @@ class DreamPreviewGenerator:
         """
         return {
             "1": {
-                "class_type": "CheckpointLoaderSimple",
-                "inputs": {"ckpt_name": "flux1-dev.safetensors"},
+                "class_type": "UNETLoader",
+                "inputs": {"unet_name": FLUX_MODEL, "weight_dtype": "default"},
+            },
+            "1b": {
+                "class_type": "CLIPLoader",
+                "inputs": {"clip_name": FLUX_CLIP, "type": "flux2", "device": "default"},
+            },
+            "1c": {
+                "class_type": "VAELoader",
+                "inputs": {"vae_name": FLUX_VAE},
             },
             "2": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"text": prompt, "clip": ["1", 1]},
+                "inputs": {"text": prompt, "clip": ["1b", 0]},
             },
             "3": {
                 "class_type": "EmptyLatentImage",
@@ -325,11 +338,11 @@ class DreamPreviewGenerator:
             },
             "5": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"text": "", "clip": ["1", 1]},
+                "inputs": {"text": "", "clip": ["1b", 0]},
             },
             "6": {
                 "class_type": "VAEDecode",
-                "inputs": {"samples": ["4", 0], "vae": ["1", 2]},
+                "inputs": {"samples": ["4", 0], "vae": ["1c", 0]},
             },
             "7": {
                 "class_type": "SaveImage",
