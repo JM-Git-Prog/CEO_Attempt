@@ -97,6 +97,28 @@ class WorldTestOrchestrator:
                 "layers": {},
             })
 
+        # Check server is running before launching browser
+        try:
+            import httpx
+            with httpx.Client(timeout=5.0) as client:
+                resp = client.get(f"{self._config.server_url}/?v=16")
+                if resp.status_code != 200:
+                    return self._reporter.generate({
+                        "session_id": session_id,
+                        "prompt": prompt,
+                        "error": f"Server returned HTTP {resp.status_code}. Start it with: python -c \"import uvicorn; uvicorn.run('src.web.app:app', host='127.0.0.1', port=8000)\"",
+                        "duration_s": time.monotonic() - start_time,
+                        "layers": {},
+                    })
+        except Exception as e:
+            return self._reporter.generate({
+                "session_id": session_id,
+                "prompt": prompt,
+                "error": f"Server not running at {self._config.server_url} — start it first. Error: {e}",
+                "duration_s": time.monotonic() - start_time,
+                "layers": {},
+            })
+
         # Launch browser and run layers
         try:
             with sync_playwright() as pw:

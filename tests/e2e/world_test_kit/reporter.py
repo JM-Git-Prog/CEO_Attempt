@@ -130,7 +130,7 @@ class PlaytestReporter:
     def _build_summary(self, report: PlaytestReport) -> str:
         """Build a ~20-line human-readable summary."""
         lines: list[str] = []
-        status = "✓ PASSED" if report.passed else "✗ FAILED"
+        status = "PASSED" if report.passed else "FAILED"
         lines.append(f"{'=' * 60}")
         lines.append(f"  World Test Kit — Playtest Report")
         lines.append(f"{'=' * 60}")
@@ -139,19 +139,19 @@ class PlaytestReporter:
         lines.append(f"  Duration:  {report.duration_s:.1f}s")
         lines.append(f"  Status:    {status}")
         lines.append(f"  Score:     {report.overall_score:.1f} / {report.pass_threshold}")
-        lines.append(f"{'─' * 60}")
+        lines.append(f"{'-' * 60}")
         lines.append(f"  {'Layer':<20} {'Score':>7} {'Status':>8}")
-        lines.append(f"  {'─' * 37}")
+        lines.append(f"  {'-' * 37}")
 
         for name, data in report.layer_results.items():
             if name.startswith("_"):
                 continue
             score = data.get("score", 0.0)
             passed = data.get("passed", False)
-            marker = "✓" if passed else "✗"
+            marker = "OK" if passed else "FAIL"
             lines.append(f"  {name:<20} {score:>6.1f} {marker:>8}")
 
-        lines.append(f"{'─' * 60}")
+        lines.append(f"{'-' * 60}")
 
         if report.errors:
             lines.append(f"  Errors: {len(report.errors)}")
@@ -159,7 +159,7 @@ class PlaytestReporter:
                 lines.append(f"    • {err[:60]}")
 
         if report.scripted_mode:
-            lines.append(f"  ⚠ Ran in scripted mode (Ollama unavailable)")
+            lines.append(f"  [!] Ran in scripted mode (Ollama unavailable)")
 
         lines.append(f"{'=' * 60}")
         return "\n".join(lines)
