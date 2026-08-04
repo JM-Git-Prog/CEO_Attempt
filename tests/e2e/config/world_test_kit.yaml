@@ -19,9 +19,12 @@ individual_minimum: 30.0
 max_conversation_turns: 5
 
 # Per-stage timeouts (seconds)
+# NOTE: pipeline_wait and world_load use stall detection, not hard timeouts.
+# They only fail if no progress is made for stall_timeout_s consecutive seconds.
 timeouts:
   conversation_s: 60
-  pipeline_wait_s: 5400
+  pipeline_wait_s: 0
+  stall_timeout_s: 600
   navigation_s: 30
   interaction_s: 60
   vision_eval_s: 120

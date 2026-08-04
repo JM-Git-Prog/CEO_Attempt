@@ -488,18 +488,29 @@ class WorldTestOrchestrator:
     # World load wait
     # ------------------------------------------------------------------
 
-    def _wait_for_world_load(self, page: Any, timeout_s: float = 5400.0) -> None:
+    def _wait_for_world_load(self, page: Any) -> None:
         """Wait for the 3D world to load objects into the scene.
 
-        The full pipeline (render room, segment objects, generate meshes,
-        paint materials, build GLBs, compile Three.js scene) takes 30-90
-        minutes. Polls window.__qa.getSceneGraph() until objects appear.
+        Uses stall detection: keeps waiting as long as ComfyUI/pipeline is
+        still processing. Only gives up if no scene objects appear after
+        stall_timeout_s of inactivity.
         """
         import time as _time
-        deadline = _time.monotonic() + timeout_s
-        logger.info("Waiting for 3D world to load (up to %.0f min)...", timeout_s / 60)
+        stall_timeout = self._config.timeouts.stall_timeout_s
+        last_check_state = None
+        last_progress_time = _time.monotonic()
+        start = _time.monotonic()
+        logger.info("Waiting for 3D world to load (stall timeout: %.0f min)...", stall_timeout / 60)
 
-        while _time.monotonic() < deadline:
+        while True:
+            stalled_for = _time.monotonic() - last_progress_time
+            if stalled_for > stall_timeout:
+                logger.warning(
+                    "3D world did not load — no progress for %.0f min",
+                    stalled_for / 60,
+                )
+                break
+
             try:
                 result = page.evaluate(
                     """() => {
@@ -513,13 +524,22 @@ class WorldTestOrchestrator:
                     }"""
                 )
                 if result and result.get("ready"):
-                    logger.info("3D world loaded — %d objects in scene", result.get("objectCount", 0))
+                    logger.info("3D world loaded — %d objects (%.0fs elapsed)", result.get("objectCount", 0), _time.monotonic() - start)
                     return
+
+                # Check if pipeline stage indicator is still changing (still making progress)
+                current_state = page.evaluate(
+                    "() => document.getElementById('stageTitle')?.textContent?.trim() || ''"
+                )
+                if current_state and current_state != last_check_state:
+                    last_check_state = current_state
+                    last_progress_time = _time.monotonic()
+                    logger.info("  Pipeline progressing: %s (%.0fs)", current_state, _time.monotonic() - start)
             except Exception:
                 pass
             _time.sleep(15.0)
 
-        logger.warning("3D world did not load within %.0f min — navigation/interaction tests may fail", timeout_s / 60)
+        logger.warning("World load wait ended — navigation/interaction tests may fail")
 
     # ------------------------------------------------------------------
 

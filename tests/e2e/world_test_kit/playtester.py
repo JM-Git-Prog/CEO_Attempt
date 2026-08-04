@@ -237,29 +237,48 @@ class PlaytesterAgent:
     def wait_for_pipeline(self, max_wait_s: float | None = None) -> PipelineResult:
         """Wait for pipeline to advance through stages, approving gates.
 
-        Monitors for stage transitions by polling the UI or SSE events.
-        Auto-approves blockout and canon when artifacts appear.
+        Uses stall detection: runs indefinitely as long as progress is being
+        made. Only fails if no new stage appears for stall_timeout_s (default
+        10 minutes). If pipeline_wait_s is 0, there's no hard deadline.
         """
-        if max_wait_s is None:
-            max_wait_s = self._config.timeouts.pipeline_wait_s
+        stall_timeout = self._config.timeouts.stall_timeout_s
+        hard_timeout = max_wait_s if max_wait_s else self._config.timeouts.pipeline_wait_s
 
         result = PipelineResult()
         start = time.monotonic()
-        deadline = start + max_wait_s
 
         if not self.ollama_available:
             result.scripted_mode = True
 
         try:
-            # Poll for pipeline stage progression
             stages_seen: set[str] = set()
-            while time.monotonic() < deadline:
-                # Check current stage via UI or QA harness
+            last_progress_time = time.monotonic()
+
+            while True:
+                elapsed = time.monotonic() - start
+                stalled_for = time.monotonic() - last_progress_time
+
+                # Hard timeout (if set and > 0)
+                if hard_timeout > 0 and elapsed > hard_timeout:
+                    logger.warning("Pipeline hard timeout after %.0fs", elapsed)
+                    break
+
+                # Stall detection: no new stage for stall_timeout_s
+                if stalled_for > stall_timeout:
+                    logger.warning(
+                        "Pipeline stalled — no new stage for %.0fs (last: %s)",
+                        stalled_for,
+                        result.stages_completed[-1] if result.stages_completed else "none",
+                    )
+                    break
+
+                # Check current stage
                 current_stage = self._get_current_stage()
                 if current_stage and current_stage not in stages_seen:
                     stages_seen.add(current_stage)
                     result.stages_completed.append(current_stage)
-                    logger.info("Pipeline reached stage: %s", current_stage)
+                    last_progress_time = time.monotonic()
+                    logger.info("Pipeline reached stage: %s (%.0fs elapsed)", current_stage, elapsed)
 
                     # Approve gates when we see them
                     if current_stage in ("blockout", "blockout_review"):
