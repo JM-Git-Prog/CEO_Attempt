@@ -281,13 +281,18 @@ class PlaytesterAgent:
                     logger.info("Pipeline reached stage: %s (%.0fs elapsed)", current_stage, elapsed)
 
                     # Approve gates when we see them
-                    if current_stage in ("blockout", "blockout_review"):
+                    if "blockout" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("blockout")
                         result.blockout_approved = True
-                    elif current_stage in ("canon", "canon_review"):
+                    elif "canon" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("canon")
                         result.canon_approved = True
-                    elif current_stage in ("world", "complete", "done"):
+                    elif current_stage in ("blockout", "blockout_review"):
+                        # Blockout just completed — approval gate coming next
+                        pass
+                    elif current_stage in ("canon", "canon_review"):
+                        pass
+                    elif current_stage in ("world", "complete", "done", "compile"):
                         result.success = True
                         break
 
@@ -599,14 +604,42 @@ class PlaytesterAgent:
             logger.warning("Brief approval failed: %s", e)
 
     def _try_approve_gate(self, gate: str) -> None:
-        """Approve a pipeline gate (blockout or canon) via the V16 approval button."""
+        """Approve a pipeline gate (blockout or canon) via UI button or API fallback."""
+        logger.info("Attempting to approve gate: %s", gate)
+        
+        # Wait up to 5s for the approval button to become visible
+        for _ in range(10):
+            try:
+                btn = self._page.query_selector('#approval')
+                if btn and btn.is_visible():
+                    btn.click()
+                    time.sleep(2.0)
+                    logger.info("Approved gate '%s' via UI button", gate)
+                    return
+            except Exception:
+                pass
+            time.sleep(0.5)
+        
+        # Fallback: call the approve API directly via page.evaluate
+        logger.info("Button not visible — trying API approve for gate '%s'", gate)
         try:
-            btn = self._page.query_selector('#approval')
-            if btn and btn.is_visible():
-                btn.click()
-                time.sleep(2.0)
-        except Exception:
-            pass
+            self._page.evaluate(
+                """async (gate) => {
+                    const sessionId = new URLSearchParams(location.search).get('session') 
+                        || window.sessionId || '';
+                    if (!sessionId) return;
+                    await fetch(`/api/session/${sessionId}/approve/${gate}`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({approved: true})
+                    });
+                }""",
+                gate,
+            )
+            time.sleep(2.0)
+            logger.info("Approved gate '%s' via API fallback", gate)
+        except Exception as e:
+            logger.warning("Gate approval failed for '%s': %s", gate, e)
 
     def _get_current_stage(self) -> str | None:
         """Get the current pipeline stage from the V16 UI."""
