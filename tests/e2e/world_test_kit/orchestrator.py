@@ -130,7 +130,7 @@ class WorldTestOrchestrator:
 
                 # Navigate to the application — let V16 JS create a fresh session
                 url = f"{self._config.server_url}/?v=16&qa=1"
-                page.goto(url, wait_until="networkidle", timeout=30_000)
+                page.goto(url, wait_until="domcontentloaded", timeout=30_000)
                 
                 # Wait for V16 to create its session and show the conversation UI
                 page.wait_for_selector('#message', timeout=15_000)
