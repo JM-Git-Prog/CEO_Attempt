@@ -159,6 +159,12 @@ class PlaytesterAgent:
             # Find and fill the prompt input
             input_sel = '#message'
             self._page.wait_for_selector(input_sel, timeout=10_000)
+            
+            # Count existing messages before sending
+            initial_msg_count = self._page.evaluate(
+                "() => document.querySelectorAll('.message.assistant').length"
+            ) or 0
+            
             self._page.fill(input_sel, prompt)
 
             # Submit
@@ -169,16 +175,26 @@ class PlaytesterAgent:
             for turn in range(self._config.max_conversation_turns):
                 result.turn_count = turn + 1
 
-                # Wait for AI response to appear
-                response_sel = '.message.assistant:last-of-type'
-                self._page.wait_for_selector(
-                    response_sel,
-                    timeout=int(self._config.timeouts.conversation_s * 1000),
-                )
+                # Wait for a NEW assistant message to appear (not the opening greeting)
+                expected_count = initial_msg_count + turn + 1
+                try:
+                    self._page.wait_for_function(
+                        f"() => document.querySelectorAll('.message.assistant').length >= {expected_count}",
+                        timeout=int(self._config.timeouts.conversation_s * 1000),
+                    )
+                except Exception:
+                    # Fallback: just wait a bit and check what's there
+                    time.sleep(5.0)
+                
                 time.sleep(2.0)  # Let content settle
 
-                # Extract response text
-                response_text = self._page.inner_text(response_sel)
+                # Extract the LAST assistant message (the new one)
+                response_text = self._page.evaluate(
+                    """() => {
+                        const msgs = document.querySelectorAll('.message.assistant');
+                        return msgs.length > 0 ? msgs[msgs.length - 1].textContent.trim() : '';
+                    }"""
+                ) or ""
                 result.responses.append(response_text)
 
                 if result.scripted_mode:
@@ -515,24 +531,34 @@ class PlaytesterAgent:
             return 0.5
 
     def _try_approve_brief(self) -> None:
-        """Click the approve/continue button if visible."""
-        # In V16, the conversation approval happens via sending a confirmation
-        # message like "looks good" — the backend handles it
+        """Send a confirmation message to trigger brief extraction and pipeline launch."""
         try:
+            # Wait for input to be re-enabled after previous response
+            time.sleep(1.0)
+            
             # Try clicking the approval button if it's visible
             btn = self._page.query_selector('#approval')
             if btn and btn.is_visible():
                 btn.click()
-                time.sleep(1.0)
+                time.sleep(2.0)
                 return
+            
             # Otherwise, type a confirmation message
+            # Wait for the input to be enabled (not disabled after pipeline start)
             msg_input = self._page.query_selector('#message')
-            if msg_input and not msg_input.is_disabled():
-                self._page.fill('#message', "Looks good, build it")
-                self._page.click('#send')
-                time.sleep(1.0)
-        except Exception:
-            pass
+            if msg_input:
+                is_disabled = self._page.evaluate(
+                    "() => document.getElementById('message')?.disabled || false"
+                )
+                if not is_disabled:
+                    self._page.fill('#message', "Looks good, build it")
+                    self._page.click('#send')
+                    time.sleep(3.0)  # Give time for brief extraction + pipeline launch
+                    logger.info("Sent brief approval: 'Looks good, build it'")
+                else:
+                    logger.info("Input disabled — pipeline may have already started")
+        except Exception as e:
+            logger.warning("Brief approval failed: %s", e)
 
     def _try_approve_gate(self, gate: str) -> None:
         """Approve a pipeline gate (blockout or canon) via the V16 approval button."""
