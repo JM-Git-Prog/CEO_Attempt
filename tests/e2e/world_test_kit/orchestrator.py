@@ -488,16 +488,16 @@ class WorldTestOrchestrator:
     # World load wait
     # ------------------------------------------------------------------
 
-    def _wait_for_world_load(self, page: Any, timeout_s: float = 60.0) -> None:
+    def _wait_for_world_load(self, page: Any, timeout_s: float = 5400.0) -> None:
         """Wait for the 3D world to load objects into the scene.
 
-        Polls window.__qa.getSceneGraph() until it returns a non-empty array,
-        or until timeout. If the world doesn't load, subsequent navigation/
-        interaction tests will get 0 scores but won't crash.
+        The full pipeline (render room, segment objects, generate meshes,
+        paint materials, build GLBs, compile Three.js scene) takes 30-90
+        minutes. Polls window.__qa.getSceneGraph() until objects appear.
         """
         import time as _time
         deadline = _time.monotonic() + timeout_s
-        logger.info("Waiting for 3D world to load (up to %.0fs)...", timeout_s)
+        logger.info("Waiting for 3D world to load (up to %.0f min)...", timeout_s / 60)
 
         while _time.monotonic() < deadline:
             try:
@@ -517,9 +517,9 @@ class WorldTestOrchestrator:
                     return
             except Exception:
                 pass
-            _time.sleep(3.0)
+            _time.sleep(15.0)
 
-        logger.warning("3D world did not load within %.0fs — navigation/interaction tests may fail", timeout_s)
+        logger.warning("3D world did not load within %.0f min — navigation/interaction tests may fail", timeout_s / 60)
 
     # ------------------------------------------------------------------
 
