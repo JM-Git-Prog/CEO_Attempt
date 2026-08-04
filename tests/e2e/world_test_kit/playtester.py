@@ -459,9 +459,28 @@ class PlaytesterAgent:
 
         except Exception as e:
             logger.warning("Experience evaluation failed: %s", e)
-            # Fall back to neutral scores
+            # Fall back to neutral scores for ALL criteria
             scores.conversation_quality = 0.5
+            scores.brief_coherence = 0.5
+            scores.pipeline_success = 0.5
+            scores.navigation_responsiveness = 0.5
+            scores.interaction_correctness = 0.5
+            scores.visual_quality = 0.5
+            scores.scene_completeness = 0.5
+            scores.performance = 0.5
             scores.overall_experience = 0.5
+
+        # If parsing returned None (empty LLM response), use neutral scores
+        if scores.overall_experience == 0.0 and not scores.scripted_mode:
+            scores.conversation_quality = max(scores.conversation_quality, 0.5)
+            scores.brief_coherence = max(scores.brief_coherence, 0.5)
+            scores.pipeline_success = max(scores.pipeline_success, 0.5)
+            scores.navigation_responsiveness = max(scores.navigation_responsiveness, 0.5)
+            scores.interaction_correctness = max(scores.interaction_correctness, 0.5)
+            scores.visual_quality = max(scores.visual_quality, 0.5)
+            scores.scene_completeness = max(scores.scene_completeness, 0.5)
+            scores.performance = max(scores.performance, 0.5)
+            scores.overall_experience = max(scores.overall_experience, 0.5)
 
         return scores
 

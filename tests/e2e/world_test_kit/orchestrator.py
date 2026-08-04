@@ -148,6 +148,11 @@ class WorldTestOrchestrator:
                 if "pipeline_wait" in active_layers:
                     results["pipeline_wait"] = self._run_pipeline_wait(agent)
 
+                # --- Wait for 3D world to load in browser before testing it ---
+                # The pipeline may still be compiling after approval gates pass.
+                # Wait for window.__qa.getSceneGraph() to return objects.
+                self._wait_for_world_load(page)
+
                 # --- VRAM boundary: ComfyUI generation should be done by now ---
 
                 if "navigation" in active_layers:
@@ -479,6 +484,43 @@ class WorldTestOrchestrator:
 
     # ------------------------------------------------------------------
     # Helpers
+    # ------------------------------------------------------------------
+    # World load wait
+    # ------------------------------------------------------------------
+
+    def _wait_for_world_load(self, page: Any, timeout_s: float = 60.0) -> None:
+        """Wait for the 3D world to load objects into the scene.
+
+        Polls window.__qa.getSceneGraph() until it returns a non-empty array,
+        or until timeout. If the world doesn't load, subsequent navigation/
+        interaction tests will get 0 scores but won't crash.
+        """
+        import time as _time
+        deadline = _time.monotonic() + timeout_s
+        logger.info("Waiting for 3D world to load (up to %.0fs)...", timeout_s)
+
+        while _time.monotonic() < deadline:
+            try:
+                result = page.evaluate(
+                    """() => {
+                        if (!window.__qa) return {ready: false, reason: 'no_qa_harness'};
+                        if (!window.__qa.getSceneGraph) return {ready: false, reason: 'no_getSceneGraph'};
+                        const graph = window.__qa.getSceneGraph();
+                        if (graph && graph.length > 0) {
+                            return {ready: true, objectCount: graph.length};
+                        }
+                        return {ready: false, reason: 'empty_scene', objectCount: 0};
+                    }"""
+                )
+                if result and result.get("ready"):
+                    logger.info("3D world loaded — %d objects in scene", result.get("objectCount", 0))
+                    return
+            except Exception:
+                pass
+            _time.sleep(3.0)
+
+        logger.warning("3D world did not load within %.0fs — navigation/interaction tests may fail", timeout_s)
+
     # ------------------------------------------------------------------
 
     def _resolve_layers(self, requested: list[str] | None) -> list[str]:
