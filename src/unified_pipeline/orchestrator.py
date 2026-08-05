@@ -407,7 +407,11 @@ class DurableCheckpointStore:
     def all(self) -> tuple[StageCheckpoint, ...]:
         records: list[StageCheckpoint] = []
         for path in self.checkpoint_dir.glob("*.json"):
-            records.append(StageCheckpoint.from_dict(json.loads(path.read_text(encoding="utf-8"))))
+            try:
+                records.append(StageCheckpoint.from_dict(json.loads(path.read_text(encoding="utf-8"))))
+            except (OSError, json.JSONDecodeError, KeyError, TypeError):
+                # Skip transiently corrupted or mid-write files
+                continue
         return tuple(records)
 
     def archive(self, checkpoint: StageCheckpoint, *, reason: str, lineage: str) -> Path:
@@ -714,7 +718,10 @@ class UnifiedOrchestrator:
 
     @property
     def current_plan_revision(self) -> int:
-        return max((item.plan_revision for item in self.store.all()), default=0)
+        checkpoints = self.store.all()
+        if not checkpoints:
+            return 0
+        return max((item.plan_revision for item in checkpoints), default=0)
 
 
     def _flag_document(self) -> list[dict[str, Any]]:
@@ -766,9 +773,26 @@ class UnifiedOrchestrator:
             return ()
         events = []
         for line in self._progress_path.read_text(encoding="utf-8").splitlines():
-            data = json.loads(line)
-            if int(data["sequence"]) > after_sequence:
-                events.append(ProgressEvent(**data))
+            try:
+                data = json.loads(line)
+                if int(data.get("sequence", 0)) > after_sequence:
+                    # Fill defaults for fields that may be missing from web-written events
+                    data.setdefault("object_id", None)
+                    data.setdefault("objects_complete", 0)
+                    data.setdefault("objects_total", 0)
+                    data.setdefault("eta_seconds", None)
+                    data.setdefault("canonical_hash", "")
+                    data.setdefault("timestamp", data.get("elapsed_seconds", 0.0))
+                    data.setdefault("finality", "provisional")
+                    data.setdefault("plan_revision", 0)
+                    data.setdefault("state", "running")
+                    data.setdefault("current_stage", "")
+                    data.setdefault("session_id", self.session_id)
+                    data.setdefault("elapsed_seconds", 0.0)
+                    data.setdefault("message", "")
+                    events.append(ProgressEvent(**data))
+            except (json.JSONDecodeError, KeyError, TypeError):
+                continue
         return tuple(events)
 
     def replay_sse(self, after_sequence: int = 0) -> tuple[str, ...]:

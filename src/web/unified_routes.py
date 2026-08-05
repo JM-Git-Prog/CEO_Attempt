@@ -520,6 +520,18 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
 
     @router.post("/api/session/{session_id}/approve/{stage}")
     async def unified_approve(session_id: str, stage: str, request: Request):
+        _log = logging.getLogger("live_trace")
+        try:
+            return await _unified_approve_inner(session_id, stage, request)
+        except Exception as exc:
+            _log.error("APPROVAL UNHANDLED ERROR: %s\n%s", exc, traceback.format_exc())
+            return JSONResponse(
+                {"error": f"Internal error: {type(exc).__name__}: {exc}"},
+                status_code=500,
+            )
+
+    async def _unified_approve_inner(session_id: str, stage: str, request: Request):
+        _log = logging.getLogger("live_trace")
         try:
             session_dir = _session_dir(output_root(), session_id)
         except ValueError as exc:
@@ -542,8 +554,11 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         except Exception:
             payload = {}
         writer_id = str(payload.get("writer_id", "web-user")).strip() or "web-user"
-        revision = int(payload.get("plan_revision", orchestrator.current_plan_revision))
         try:
+            # Lazy evaluation: only call current_plan_revision if payload doesn't supply it
+            # This prevents ValueError from max([]) on a transiently empty checkpoint store
+            raw_rev = payload.get("plan_revision")
+            revision = int(raw_rev) if raw_rev is not None else orchestrator.current_plan_revision
             with orchestrator.approval_writer(writer_id) as writer_token:
                 decision = orchestrator.record_approval(
                     stage=approval_stage,
@@ -554,7 +569,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                     object_id=(str(payload["object_id"]) if payload.get("object_id") else None),
                     feedback=str(payload.get("feedback", "")),
                 )
-        except (ValueError, RuntimeError) as exc:
+        except (ValueError, RuntimeError, KeyError, TypeError, OSError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=409)
         existing = _tasks.get(session_id)
         if existing is None or existing.done():

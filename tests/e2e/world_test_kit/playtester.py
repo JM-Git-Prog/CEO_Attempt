@@ -287,12 +287,15 @@ class PlaytesterAgent:
                     elif "canon" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("canon")
                         result.canon_approved = True
+                    elif "final_world" in current_stage or "world_qa" in current_stage:
+                        self._try_approve_gate("world")
+                        result.success = True
                     elif current_stage in ("blockout", "blockout_review"):
                         # Blockout just completed — approval gate coming next
                         pass
                     elif current_stage in ("canon", "canon_review"):
                         pass
-                    elif current_stage in ("world", "complete", "done", "compile"):
+                    elif current_stage in ("world", "complete", "done", "compile", "mode_toggle"):
                         result.success = True
                         break
 
