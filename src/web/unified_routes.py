@@ -558,7 +558,33 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             return JSONResponse({"error": str(exc)}, status_code=409)
         existing = _tasks.get(session_id)
         if existing is None or existing.done():
-            _tasks[session_id] = asyncio.create_task(orchestrator.run())
+            _log.info("  PIPELINE RESUMING after approval for %s (stage=%s)", session_id[:8], stage)
+
+            async def _resume_pipeline():
+                try:
+                    result = await orchestrator.run()
+                    _log.info("  PIPELINE RESULT after approval: state=%s stage=%s", result.state, result.stage)
+                    if result.state == "awaiting_approval":
+                        _write_meta(session_dir, state="awaiting_approval", pending_stage=result.stage)
+                        _append_progress(session_dir, {
+                            "current_stage": result.stage,
+                            "state": "awaiting_approval",
+                            "plan_revision": orchestrator.current_plan_revision,
+                            "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
+                        })
+                    elif result.state == "completed":
+                        _write_meta(session_dir, state="completed")
+                    elif result.state == "awaiting_external":
+                        _write_meta(session_dir, state="awaiting_external", pending_stage=result.stage)
+                    else:
+                        _write_meta(session_dir, state=result.state)
+                except Exception as exc:
+                    _log.error("  PIPELINE ERROR after approval: %s\n%s", exc, traceback.format_exc()[-400:])
+                    _write_meta(session_dir, state="error", error=str(exc))
+
+            _tasks[session_id] = asyncio.create_task(_resume_pipeline())
+        else:
+            _log.info("  Pipeline task still running for %s — not restarting", session_id[:8])
         _write_meta(session_dir, state="running")
         return {"session_id": session_id, "decision": decision.to_dict(), "state": "running"}
 
