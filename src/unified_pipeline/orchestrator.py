@@ -681,7 +681,9 @@ class UnifiedOrchestrator:
         if spec is None or spec.approval_for is None:
             raise ValueError(f"{stage!r} is not an approval stage")
         current_revision = self.current_plan_revision
-        stale = plan_revision <= 0 or plan_revision != current_revision
+        # Stale check: reject only if plan_revision is negative or doesn't match current
+        # (plan_revision 0 matching current_revision 0 is valid — initial plan)
+        stale = plan_revision < 0 or plan_revision != current_revision
         document = self._approval_document()
         key = self._approval_key(stage, object_id)
         previous = document["active"].get(key, {})
