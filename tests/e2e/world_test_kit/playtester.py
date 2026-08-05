@@ -604,40 +604,48 @@ class PlaytesterAgent:
             logger.warning("Brief approval failed: %s", e)
 
     def _try_approve_gate(self, gate: str) -> None:
-        """Approve a pipeline gate (blockout or canon) via UI button or API fallback."""
-        logger.info("Attempting to approve gate: %s", gate)
+        """Approve a pipeline gate by calling the API directly.
         
-        # Wait up to 5s for the approval button to become visible
-        for _ in range(10):
-            try:
-                btn = self._page.query_selector('#approval')
-                if btn and btn.is_visible():
-                    btn.click()
-                    time.sleep(2.0)
-                    logger.info("Approved gate '%s' via UI button", gate)
-                    return
-            except Exception:
-                pass
-            time.sleep(0.5)
-        
-        # Fallback: call the approve API directly via page.evaluate
-        logger.info("Button not visible — trying API approve for gate '%s'", gate)
+        The UI button requires currentApproval to be set via SSE events,
+        which may not have fired by the time we detect the stage. Bypass
+        the UI entirely and POST to the approve endpoint.
+        """
+        logger.info("Approving gate '%s' via API", gate)
         try:
-            self._page.evaluate(
-                """async (gate) => {
-                    const sessionId = new URLSearchParams(location.search).get('session') 
-                        || window.sessionId || '';
-                    if (!sessionId) return;
-                    await fetch(`/api/session/${sessionId}/approve/${gate}`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({approved: true})
-                    });
-                }""",
-                gate,
+            # Get the session ID from the URL
+            session_id = self._page.evaluate(
+                """() => {
+                    const params = new URLSearchParams(location.search);
+                    return params.get('session') || window.sessionId || '';
+                }"""
             )
-            time.sleep(2.0)
-            logger.info("Approved gate '%s' via API fallback", gate)
+            if not session_id:
+                # Try extracting from the page's sessionId variable
+                session_id = self._page.evaluate("() => typeof sessionId !== 'undefined' ? sessionId : ''")
+            
+            if not session_id:
+                logger.warning("Cannot approve gate '%s' — no session ID found", gate)
+                return
+
+            # Call the approve API directly
+            import httpx
+            approve_url = f"{self._config.server_url}/api/session/{session_id}/approve/{gate}"
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.post(
+                    approve_url,
+                    json={"approved": True},
+                    headers={"Content-Type": "application/json"},
+                )
+                if resp.status_code == 200:
+                    logger.info("Approved gate '%s' via API — pipeline should resume", gate)
+                else:
+                    logger.warning(
+                        "Gate approval API returned %d: %s",
+                        resp.status_code,
+                        resp.text[:200],
+                    )
+            time.sleep(3.0)  # Give pipeline time to resume
+
         except Exception as e:
             logger.warning("Gate approval failed for '%s': %s", gate, e)
 
