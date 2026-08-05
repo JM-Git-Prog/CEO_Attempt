@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "World Test Kit Playtest",
+  "description": "Runs the world_test_kit e2e test with a kitchen prompt, logs output, diagnoses and fixes root-cause errors (offloading to GLM-5.2 for heavy analysis), then reruns until clean.",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run the following test command and capture output:\n\npython -m tests.e2e.world_test_kit run --prompt \"a small warm kitchen with a round table, two chairs, a counter with a coffee maker, and a window looking out at rain\" 2>&1 | Tee-Object tests\\e2e\\artifacts\\playtest\\latest_run.log\n\nAfter the run:\n1. If there are errors, diagnose the root cause. For long-running analysis or large log triage, offload to Ollama GLM-5.2 (use ollama_chat or ollama_generate with model \"glm-5.2:cloud\" and format \"markdown\").\n2. Fix the root cause in the source code.\n3. Rerun the same test command to confirm the fix.\n4. Repeat until the test passes cleanly."
+  }
+}
