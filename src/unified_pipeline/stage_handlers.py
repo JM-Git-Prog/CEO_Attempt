@@ -238,7 +238,7 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
     _log.info(f"  canon_generation: generating — prompt={prompt[:80]}...")
 
     # --- ComfyUI is REQUIRED — no fallback ---
-    client = ComfyUIClient(timeout_s=180, poll_interval_s=0.75)
+    client = ComfyUIClient(timeout_s=300, poll_interval_s=0.75)
     comfyui_available = await client.health_check()
 
     if not comfyui_available:
@@ -293,7 +293,7 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
     prompt_id = await client.submit_workflow(
         workflow, client_id=f"canon-{ctx.session_id}"
     )
-    await client.wait_for_completion(prompt_id, timeout_s=180)
+    await client.wait_for_completion(prompt_id, timeout_s=300)
     await client.get_output_image(
         prompt_id=prompt_id,
         output_dir=artifacts_dir,
@@ -467,7 +467,7 @@ async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
     _log.info("  depth_estimation: querying ComfyUI for available depth nodes...")
 
     # Query ComfyUI object_info to find depth nodes
-    client = ComfyUIClient(timeout_s=120, poll_interval_s=0.75)
+    client = ComfyUIClient(timeout_s=180, poll_interval_s=0.75)
     comfyui_available = await client.health_check()
 
     if not comfyui_available:
@@ -554,7 +554,7 @@ async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
     prompt_id = await client.submit_workflow(
         workflow, client_id=f"depth-{ctx.session_id}"
     )
-    await client.wait_for_completion(prompt_id, timeout_s=120)
+    await client.wait_for_completion(prompt_id, timeout_s=180)
     await client.get_output_image(
         prompt_id=prompt_id,
         output_dir=artifacts_dir,
