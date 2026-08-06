@@ -713,8 +713,20 @@ class UnifiedOrchestrator:
         return decision
 
     def _approval(self, stage: str, object_id: str | None) -> ApprovalDecision | None:
-        raw = self._approval_document()["active"].get(self._approval_key(stage, object_id))
-        return ApprovalDecision(**raw) if raw else None
+        document = self._approval_document()["active"]
+        # Try exact key first (per-object or global)
+        key = self._approval_key(stage, object_id)
+        raw = document.get(key)
+        if raw:
+            return ApprovalDecision(**raw)
+        # Fall back to global approval if per-object key not found
+        # This allows a single "approve all" action for per-object stages
+        if object_id is not None:
+            global_key = self._approval_key(stage, None)
+            raw = document.get(global_key)
+            if raw:
+                return ApprovalDecision(**raw)
+        return None
 
     @property
     def current_plan_revision(self) -> int:

@@ -99,7 +99,19 @@ def _handle_conversation(ctx: StageExecutionContext) -> StageResult:
 
 
 def _handle_brief(ctx: StageExecutionContext) -> StageResult:
-    return _immediate({"status": "brief_generated", "object_count": 0}, ctx)
+    """Read the saved brief and propagate object_manifest to orchestrator context."""
+    brief_path = ctx.session_dir / "artifacts" / "brief.json"
+    manifest = []
+    if brief_path.is_file():
+        try:
+            brief = json.loads(brief_path.read_text(encoding="utf-8"))
+            manifest = brief.get("object_manifest", [])
+        except (OSError, json.JSONDecodeError):
+            pass
+    return _immediate(
+        {"status": "brief_generated", "object_count": len(manifest), "object_manifest": manifest},
+        ctx,
+    )
 
 
 def _handle_art_bible(ctx: StageExecutionContext) -> StageResult:

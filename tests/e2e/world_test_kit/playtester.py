@@ -284,9 +284,13 @@ class PlaytesterAgent:
                     if "blockout" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("blockout")
                         result.blockout_approved = True
+                    elif "object_canon" in current_stage and "approval" in current_stage:
+                        self._try_approve_gate("object_canon")
                     elif "canon" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("canon")
                         result.canon_approved = True
+                    elif "mesh" in current_stage and "approval" in current_stage:
+                        self._try_approve_gate("mesh")
                     elif "final_world" in current_stage or "world_qa" in current_stage:
                         self._try_approve_gate("world")
                         result.success = True
