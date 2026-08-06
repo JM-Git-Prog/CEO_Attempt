@@ -804,4 +804,56 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             "error": None,
         }
 
+    @router.get("/api/session/{session_id}/world/{path:path}")
+    async def unified_world_file(session_id: str, path: str):
+        """Serve compiled browser world files (JS, HTML, JSON, GLB, etc.)."""
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+
+        compiled_dir = session_dir / "compiled" / "browser"
+        if not compiled_dir.is_dir():
+            return JSONResponse({"error": "Compiled world not found"}, status_code=404)
+
+        # Sanitize path to prevent directory traversal
+        target = (compiled_dir / path).resolve()
+        if not str(target).startswith(str(compiled_dir.resolve())):
+            return JSONResponse({"error": "Invalid path"}, status_code=400)
+
+        if not target.is_file():
+            return JSONResponse({"error": "File not found"}, status_code=404)
+
+        # Determine MIME type
+        mime_map = {
+            ".html": "text/html",
+            ".js": "application/javascript",
+            ".mjs": "application/javascript",
+            ".json": "text/json",
+            ".glb": "model/gltf-binary",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+        }
+        suffix = target.suffix.lower()
+        media_type = mime_map.get(suffix) or mimetypes.guess_type(str(target))[0] or "application/octet-stream"
+
+        return FileResponse(str(target), media_type=media_type)
+
+    @router.get("/api/session/{session_id}/world")
+    async def unified_world_index(session_id: str):
+        """Serve the compiled world's index.html (entry point for the 3D viewer)."""
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+
+        compiled_dir = session_dir / "compiled" / "browser"
+        index_file = compiled_dir / "index.html"
+
+        if not index_file.is_file():
+            return JSONResponse({"error": "Compiled world not available"}, status_code=404)
+
+        return FileResponse(str(index_file), media_type="text/html")
+
     return router

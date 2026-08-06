@@ -106,6 +106,14 @@
     events.addEventListener("pipeline.terminal", (message) => {
       const terminal = JSON.parse(message.data);
       status.textContent = terminal.state.toUpperCase();
+      if (terminal.state === "completed" && sessionId) {
+        const worldLink = document.createElement("a");
+        worldLink.href = `/api/session/${sessionId}/world`;
+        worldLink.target = "_blank";
+        worldLink.textContent = "🌐 View World";
+        worldLink.style.cssText = "display:inline-block;margin-top:8px;padding:6px 12px;background:#2a6;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;";
+        artifact.appendChild(worldLink);
+      }
       events.close();
     });
     events.onerror = () => { status.textContent = "RECONNECTING"; };
