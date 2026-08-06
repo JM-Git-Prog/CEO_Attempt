@@ -1336,6 +1336,9 @@ async def get_mesh(session_id: str, obj_id: str):
         session_dir / "objects" / f"{obj_id}_trellis2.glb",
         session_dir / "objects" / f"obj_{obj_id}_placeholder.glb",
         session_dir / "meshes" / f"{obj_id}.glb",
+        session_dir / "meshes" / f"{obj_id}_placeholder.glb",
+        session_dir / "meshes" / f"{obj_id}_hunyuan3d.glb",
+        session_dir / "meshes" / f"{obj_id}_trellis2.glb",
     ]
     for mesh_path in candidates:
         if mesh_path.exists():

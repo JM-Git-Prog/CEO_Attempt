@@ -699,27 +699,32 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
                 image_path = str(obj_png)
 
     if not image_path or not Path(image_path).exists():
-        _log.warning("  mesh_gen[%s]: No Object_Canon image — using placeholder", object_id[:8] if object_id else "?")
-        # Generate a placeholder
-        placeholder_gen = UnifiedPlaceholderGenerator(
-            output_dir=ctx.session_dir / "meshes"
-        )
-        obj_canon = ObjectCanon(
-            object_id=object_id or "",
-            object_name="unknown",
-            image_path="",
-            mask_coverage=0.0,
-            approved=True,
-            provenance="missing_segment",
-        )
-        result = placeholder_gen.generate(obj_canon)
+        _log.warning("  mesh_gen[%s]: No Object_Canon image — generating bare placeholder GLB", object_id[:8] if object_id else "?")
+        # Generate a placeholder box directly (no input image needed)
+        import trimesh
+        import numpy as np
+
+        meshes_dir = ctx.session_dir / "meshes"
+        meshes_dir.mkdir(parents=True, exist_ok=True)
+        glb_path = meshes_dir / f"{object_id}_placeholder.glb"
+
+        # Create a colored box (0.4m cube, random muted color)
+        mesh = trimesh.creation.box(extents=[0.4, 0.4, 0.4])
+        # Assign a muted color based on object_id hash
+        color_seed = hash(object_id or "x") % 256
+        rgba = np.array([100 + color_seed % 80, 120 + (color_seed * 3) % 60, 140 + (color_seed * 7) % 50, 255], dtype=np.uint8)
+        vertex_colors = np.tile(rgba, (len(mesh.vertices), 1))
+        mesh.visual = trimesh.visual.ColorVisuals(mesh=mesh, vertex_colors=vertex_colors)
+        mesh.export(str(glb_path), file_type="glb")
+
+        _log.info("  mesh_gen[%s]: Bare placeholder → %s", object_id[:8], glb_path.name)
         return _immediate({
             "status": "mesh_generation_complete",
             "object_id": object_id,
-            "mesh_path": result.mesh_path,
+            "mesh_path": str(glb_path),
             "generator": "placeholder",
-            "face_count": result.face_count,
-            "vertex_count": result.vertex_count,
+            "face_count": len(mesh.faces),
+            "vertex_count": len(mesh.vertices),
             "degraded": True,
         }, ctx)
 
