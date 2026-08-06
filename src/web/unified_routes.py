@@ -299,12 +299,23 @@ def unified_artifact_response(
     )
     if path is None:
         patterns = {
-            "dream_preview": ("dream_preview*.png", "dream_previews/*.png"),
-            "blockout": ("blockout*.png", "artifacts/blockout*.png"),
-            "canon": ("canon*.png", "artifacts/canon*.png"),
+            "dream_preview": (
+                "dream_preview*.png", "dream_previews/*.png",
+                "artifacts/dream_preview*.png", "artifacts/dream_previews/*.png",
+            ),
+            "blockout": (
+                "blockout*.png", "artifacts/blockout*.png",
+                "artifacts/blockout/*.png",
+            ),
+            "canon": (
+                "canon*.png", "artifacts/canon*.png",
+                "artifacts/canon_honesty*.png", "artifacts/scene_canon*.png",
+            ),
             "mesh": (
                 f"objects/{object_id}*.glb", f"meshes/{object_id}.glb",
                 f"artifacts/{object_id}*.glb",
+                f"objects/{session_id}/{object_id}*.glb",
+                f"compiled/browser/assets/meshes/*.glb",
             ),
         }[kind]
         for pattern in patterns:

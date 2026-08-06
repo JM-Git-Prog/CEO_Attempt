@@ -16,6 +16,11 @@
   let currentApproval = null;
   let events = null;
 
+  // Track which artifacts have been successfully loaded
+  const loadedArtifacts = new Set();
+  let artifactPollInterval = null;
+  let lastStage = "";
+
   function appendMessage(role, text) {
     const item = document.createElement("div");
     item.className = `message ${role}`;
@@ -34,29 +39,104 @@
     return body;
   }
 
+  // ─── Artifact Display System ─────────────────────────────────────────────
+
+  function showLoading(message) {
+    artifact.replaceChildren();
+    const container = document.createElement("div");
+    container.className = "loading";
+    const spinner = document.createElement("div");
+    spinner.className = "spinner";
+    const label = document.createElement("p");
+    label.textContent = message;
+    container.appendChild(spinner);
+    container.appendChild(label);
+    artifact.appendChild(container);
+  }
+
+  function showImage(url, alt) {
+    const image = document.createElement("img");
+    image.src = url;
+    image.alt = alt;
+    image.style.cssText = "max-width:100%;max-height:60vh;object-fit:contain;border-radius:6px;";
+    image.onerror = () => {
+      // Image not ready yet — retry in 3s
+      setTimeout(() => {
+        image.src = url + (url.includes("?") ? "&" : "?") + "retry=" + Date.now();
+      }, 3000);
+    };
+    return image;
+  }
+
   function showArtifact(kind, objectId = "") {
+    if (!sessionId) return;
+    const key = `${kind}:${objectId}`;
+
     const routes = {
       dream_preview: `/api/session/${sessionId}/dream_preview`,
       blockout: `/api/session/${sessionId}/blockout`,
       canon: `/api/session/${sessionId}/canon`,
       mesh: `/api/session/${sessionId}/mesh/${encodeURIComponent(objectId)}`
     };
-    if (!routes[kind]) return;
+    const url = routes[kind];
+    if (!url) return;
+
+    // Clear and show loading state
     artifact.replaceChildren();
+
     if (kind === "mesh") {
-      const note = document.createElement("p");
+      const container = document.createElement("div");
+      container.style.cssText = "text-align:center;padding:20px;";
+      const label = document.createElement("p");
+      label.style.cssText = "color:#8edbb8;font-size:14px;margin-bottom:8px;";
+      label.textContent = `Mesh: ${objectId.slice(0, 8)}…`;
       const link = document.createElement("a");
-      link.href = routes[kind];
-      link.textContent = `Open mesh ${objectId}`;
-      note.appendChild(link);
-      artifact.appendChild(note);
+      link.href = url;
+      link.textContent = "Download GLB";
+      link.style.cssText = "color:#8edbb8;";
+      container.appendChild(label);
+      container.appendChild(link);
+      artifact.appendChild(container);
+      loadedArtifacts.add(key);
       return;
     }
-    const image = document.createElement("img");
-    image.src = `${routes[kind]}?t=${Date.now()}`;
-    image.alt = `${kind.replace("_", " ")} artifact`;
+
+    // For images — show with retry logic
+    const cacheBust = `?t=${Date.now()}`;
+    const image = showImage(url + cacheBust, `${kind.replace("_", " ")} artifact`);
     artifact.appendChild(image);
+    loadedArtifacts.add(key);
   }
+
+  // Poll for the latest available artifact and display it
+  function startArtifactPolling() {
+    if (artifactPollInterval) return;
+    artifactPollInterval = setInterval(async () => {
+      if (!sessionId) return;
+
+      // Try to load artifacts in priority order (newest first)
+      const artifactOrder = ["canon", "blockout", "dream_preview"];
+      for (const kind of artifactOrder) {
+        const url = `/api/session/${sessionId}/${kind}`;
+        try {
+          const resp = await fetch(url, { method: "HEAD" });
+          if (resp.ok && !loadedArtifacts.has(`${kind}:`)) {
+            showArtifact(kind);
+            return; // Show the newest available
+          }
+        } catch (_) { /* ignore */ }
+      }
+    }, 5000);
+  }
+
+  function stopArtifactPolling() {
+    if (artifactPollInterval) {
+      clearInterval(artifactPollInterval);
+      artifactPollInterval = null;
+    }
+  }
+
+  // ─── Pipeline Event Handling ─────────────────────────────────────────────
 
   function approvalFor(event) {
     const map = {
@@ -71,9 +151,11 @@
 
   function handleProgress(event) {
     const state = event.state || "RUNNING";
+    const stage = event.current_stage || "";
+
     // Map internal states to user-friendly display
     const displayState = {
-      "completed": "COMPLETED",
+      "completed": "✓ DONE",
       "running": "RUNNING",
       "awaiting_approval": "APPROVE →",
       "waiting_approval": "APPROVE →",
@@ -81,20 +163,65 @@
       "blocked": "BLOCKED",
       "error": "ERROR",
     }[state] || state.toUpperCase();
+
     status.textContent = displayState;
-    stageTitle.textContent = (event.current_stage || "pipeline").replaceAll("_", " ");
+    stageTitle.textContent = (stage || "pipeline").replaceAll("_", " ");
+
     const total = Number(event.objects_total || 1);
     const complete = Number(event.objects_complete || 0);
     progressFill.style.width = `${Math.min(100, Math.round(100 * complete / total))}%`;
-    details.textContent = `Plan r${event.plan_revision || 0} · ${event.finality || "provisional"} · ${event.elapsed_seconds?.toFixed?.(1) || 0}s`;
-    if (event.current_stage === "dream_preview" && state === "completed") showArtifact("dream_preview");
-    if (event.current_stage === "blockout" && state === "completed") showArtifact("blockout");
-    if (event.current_stage === "canon_honesty" && state === "completed") showArtifact("canon");
-    if (event.current_stage === "mesh_generation" && state === "completed") showArtifact("mesh", event.object_id);
+
+    const elapsed = event.elapsed_seconds?.toFixed?.(1) || "0";
+    details.textContent = `Plan r${event.plan_revision || 0} · ${event.finality || "provisional"} · ${elapsed}s`;
+
+    // ─── Show artifacts as stages complete ───
+    // Show loading animation when GPU stages start
+    if (stage === "dream_preview" && state === "running") {
+      showLoading("Generating dream preview via FLUX…");
+    }
+    if (stage === "blockout" && state === "running") {
+      showLoading("Rendering blockout via FLUX…");
+    }
+    if (stage === "canon_honesty" && state === "running") {
+      showLoading("Generating photorealistic canon via FLUX…");
+    }
+    if (stage === "segment" && state === "running") {
+      showLoading("Segmenting objects with SAM 3.1…");
+    }
+    if (stage === "mesh_generation" && state === "running") {
+      showLoading(`Generating 3D mesh${event.object_id ? " for object " + event.object_id.slice(0, 8) : ""}…`);
+    }
+
+    // Dream preview: show when dream_preview stage completes
+    if (stage === "dream_preview" && state === "completed") {
+      showArtifact("dream_preview");
+    }
+    // Blockout: show when blockout completes OR when blockout_approval starts
+    if ((stage === "blockout" && state === "completed") ||
+        (stage === "blockout_approval")) {
+      if (!loadedArtifacts.has("blockout:")) showArtifact("blockout");
+    }
+    // Canon: show when canon_honesty completes OR canon_approval starts
+    if ((stage === "canon_honesty" && state === "completed") ||
+        (stage === "canon_approval")) {
+      if (!loadedArtifacts.has("canon:")) showArtifact("canon");
+    }
+    // Mesh: show when mesh_generation completes for an object
+    if (stage === "mesh_generation" && state === "completed" && event.object_id) {
+      showArtifact("mesh", event.object_id);
+    }
+
+    // ─── Approval gate detection ───
     currentApproval = approvalFor(event);
-    // Show approve button for both "awaiting_approval" and "waiting_approval" states
     const needsApproval = currentApproval && (state === "waiting_approval" || state === "awaiting_approval");
     approval.style.display = needsApproval ? "inline-block" : "none";
+
+    // Track last stage for artifact polling
+    if (stage !== lastStage) {
+      lastStage = stage;
+      // Start polling once pipeline is running
+      if (!artifactPollInterval && stage) startArtifactPolling();
+    }
   }
 
   function connectEvents(url) {
@@ -105,35 +232,49 @@
     });
     events.addEventListener("pipeline.terminal", (message) => {
       const terminal = JSON.parse(message.data);
-      status.textContent = terminal.state.toUpperCase();
+      status.textContent = terminal.state === "completed" ? "✓ COMPLETED" : terminal.state.toUpperCase();
+      stopArtifactPolling();
+
       if (terminal.state === "completed" && sessionId) {
+        // Show final canon image + world link
+        artifact.replaceChildren();
+        const canonUrl = `/api/session/${sessionId}/canon?t=${Date.now()}`;
+        const img = showImage(canonUrl, "Final scene");
+        artifact.appendChild(img);
+
         const worldLink = document.createElement("a");
         worldLink.href = `/api/session/${sessionId}/world`;
         worldLink.target = "_blank";
-        worldLink.textContent = "🌐 View World";
-        worldLink.style.cssText = "display:inline-block;margin-top:8px;padding:6px 12px;background:#2a6;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;";
+        worldLink.textContent = "🌐 Walk into this world";
+        worldLink.style.cssText = "display:inline-block;margin-top:12px;padding:10px 18px;background:#2a6;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;";
         artifact.appendChild(worldLink);
       }
       events.close();
     });
-    events.onerror = () => { status.textContent = "RECONNECTING"; };
+    events.onerror = () => {
+      status.textContent = "RECONNECTING";
+      // Try to reconnect after 3s
+      setTimeout(() => {
+        if (sessionId) connectEvents(`/api/session/${sessionId}/events`);
+      }, 3000);
+    };
   }
 
+  // ─── Session Lifecycle ───────────────────────────────────────────────────
+
   async function start() {
-    // Check URL for existing session: ?v=16&session=<id>
     const params = new URLSearchParams(location.search);
     const existingSession = params.get("session");
 
     if (existingSession) {
-      // Resume existing session
       sessionId = existingSession;
       sessionLabel.textContent = sessionId.slice(0, 8);
       status.textContent = "RESUMING";
       messages.replaceChildren();
       appendMessage("assistant", "Reconnecting to session " + sessionId.slice(0, 8) + "…");
       connectEvents(`/api/session/${sessionId}/events`);
+      startArtifactPolling();
 
-      // V16 dual-state fix: quick health check to catch dead sessions immediately
       try {
         const statusResp = await fetch(`/api/session/${sessionId}/status`);
         if (statusResp.ok) {
@@ -143,13 +284,14 @@
             const reason = statusData.error?.reason_code || "unknown";
             appendMessage("assistant", "This session was interrupted: " + reason);
             events?.close();
+            stopArtifactPolling();
             input.disabled = true;
             send.disabled = true;
             input.placeholder = "Session ended — start a new one";
             return;
           }
         }
-      } catch (_) { /* non-fatal — SSE will catch up */ }
+      } catch (_) { /* non-fatal */ }
 
       input.focus();
       return;
@@ -158,7 +300,6 @@
     try {
       const data = await jsonRequest("/api/session/unified/start", {method: "POST", body: "{}"});
       sessionId = data.session_id;
-      // Update URL to include session ID (bookmarkable, no page reload)
       const url = new URL(location.href);
       url.searchParams.set("session", sessionId);
       history.replaceState(null, "", url.toString());
@@ -178,7 +319,7 @@
 
   composer.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (pipelineStarted) return; // Conversation phase is over
+    if (pipelineStarted) return;
     const message = input.value.trim();
     if (!message || !sessionId) return;
     appendMessage("user", message);
@@ -199,14 +340,15 @@
         input.disabled = true;
         send.disabled = true;
         input.placeholder = "Pipeline running — use Approve button →";
+        startArtifactPolling();
       }
     } catch (error) {
-      // If it's a 409 (pipeline already started), disable chat
       if (error.message.includes("Pipeline is already")) {
         pipelineStarted = true;
         input.disabled = true;
         send.disabled = true;
         input.placeholder = "Pipeline running — use Approve button →";
+        startArtifactPolling();
       }
       appendMessage("assistant", error.message);
     } finally {
@@ -234,9 +376,8 @@
     }
   });
 
-  window.addEventListener("beforeunload", () => events?.close());
+  window.addEventListener("beforeunload", () => { events?.close(); stopArtifactPolling(); });
 
-  // Enter submits (Shift+Enter for newline)
   input.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
