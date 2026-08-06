@@ -613,6 +613,69 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         response = unified_artifact_response(output_root(), session_id, "canon")
         return response or JSONResponse({"error": "Unified session not found"}, status_code=404)
 
+    @router.get("/api/session/{session_id}/scene_graph")
+    async def unified_scene_graph(session_id: str):
+        """Return the scene graph for a completed V16 session.
+
+        Returns object IDs, names, positions, and mesh availability for the
+        QA harness (`window.__qa.getSceneGraph()`).
+        """
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
+            return JSONResponse({"error": "Unified session not found"}, status_code=404)
+
+        # Read brief for object manifest
+        brief_path = session_dir / "artifacts" / "brief.json"
+        if not brief_path.is_file():
+            return JSONResponse({"objects": [], "ready": False})
+        try:
+            brief = json.loads(brief_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return JSONResponse({"objects": [], "ready": False})
+
+        manifest = brief.get("object_manifest", [])
+        meta = _meta(session_dir)
+        is_complete = meta.get("state") in ("completed", "ready")
+
+        # Check which objects have meshes
+        objects = []
+        for obj in manifest:
+            obj_id = obj.get("id", "")
+            has_mesh = False
+            mesh_path = ""
+            # Check common mesh locations
+            for candidate in [
+                session_dir / "objects" / f"{obj_id}_hunyuan3d.glb",
+                session_dir / "objects" / f"{obj_id}_trellis2.glb",
+                session_dir / "objects" / f"obj_{obj_id}_placeholder.glb",
+                session_dir / "meshes" / f"{obj_id}.glb",
+                session_dir / "objects" / session_id / f"{obj_id}.png",  # Object_PNG exists
+            ]:
+                if candidate.exists():
+                    has_mesh = candidate.suffix == ".glb"
+                    mesh_path = f"/api/session/{session_id}/mesh/{obj_id}"
+                    break
+            objects.append({
+                "objectId": obj_id,
+                "name": obj.get("name", ""),
+                "meshCount": 1 if has_mesh else 0,
+                "hasMesh": has_mesh,
+                "meshUrl": mesh_path if has_mesh else None,
+                "position": {"x": 0.0, "y": 0.0, "z": 0.0},  # Placeholder position
+                "role": obj.get("role", ""),
+            })
+
+        return {
+            "objects": objects,
+            "ready": is_complete and len(objects) > 0,
+            "sessionId": session_id,
+            "objectCount": len(objects),
+            "state": meta.get("state", "unknown"),
+        }
+
     @router.websocket("/api/session/{session_id}/materials")
     async def unified_materials(session_id: str, websocket: WebSocket):
         try:

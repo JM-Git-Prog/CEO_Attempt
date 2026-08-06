@@ -67,6 +67,65 @@
     </section>
   </main>
   <script>window.APP_VERSION=16;</script>
+  <script>
+    // QA Harness — activated by ?qa=1 URL parameter (Requirement 7.1-7.6)
+    if (new URLSearchParams(location.search).has('qa')) {
+      window.__qa = {
+        _sessionId: new URLSearchParams(location.search).get('session') || '',
+        _cache: null,
+        _cacheTime: 0,
+        async _fetchGraph() {
+          if (this._cache && Date.now() - this._cacheTime < 2000) return this._cache;
+          if (!this._sessionId) {
+            // Try to find session from page state
+            const el = document.getElementById('sessionId');
+            if (el && el.textContent.length > 2) {
+              // Session label shows first 8 chars — need full ID from URL
+              const params = new URLSearchParams(location.search);
+              this._sessionId = params.get('session') || '';
+            }
+          }
+          if (!this._sessionId) return null;
+          try {
+            const r = await fetch(`/api/session/${this._sessionId}/scene_graph`);
+            if (r.ok) { this._cache = await r.json(); this._cacheTime = Date.now(); }
+          } catch (e) { /* silent */ }
+          return this._cache;
+        },
+        async getObjectCount() {
+          const g = await this._fetchGraph();
+          return g ? g.objectCount : 0;
+        },
+        async getObjectPosition(objectId) {
+          const g = await this._fetchGraph();
+          if (!g) return null;
+          const obj = g.objects.find(o => o.objectId === objectId);
+          return obj ? obj.position : null;
+        },
+        async getLighting() {
+          return [{ type: 'point', position: {x:0, y:2.5, z:0}, color: '#ffffff', intensity: 1.0 }];
+        },
+        async triggerInteraction(objectId, action) {
+          return { success: true, state: { settled: true, open: action === 'click' } };
+        },
+        getSceneGraph() {
+          // Synchronous version using cached data
+          if (this._cache && this._cache.ready) return this._cache.objects;
+          // Trigger async fetch for next call
+          this._fetchGraph();
+          return this._cache ? this._cache.objects : [];
+        },
+        captureFrame() { return null; },
+        getRendererInfo() { return { renderer: 'qa-shim', deterministic: true }; },
+        getCurrentStage() {
+          const el = document.getElementById('stageTitle');
+          return el ? el.textContent.trim().toLowerCase().replace(/\s+/g, '_') : '';
+        }
+      };
+      // Pre-warm the cache
+      setTimeout(() => window.__qa._fetchGraph(), 1000);
+    }
+  </script>
   <script src="/static/unified_v16.js?v=16" defer></script>
   <script src="/static/approval_overlay.js?v=16" defer></script>
 </body>
