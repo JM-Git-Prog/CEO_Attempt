@@ -216,6 +216,15 @@
     const needsApproval = currentApproval && (state === "waiting_approval" || state === "awaiting_approval");
     approval.style.display = needsApproval ? "inline-block" : "none";
 
+    // When an approval gate shows, display the relevant artifact
+    if (needsApproval) {
+      if (stage === "blockout_approval") showArtifact("blockout");
+      else if (stage === "canon_approval") showArtifact("canon");
+      else if (stage === "object_canon_approval") showArtifact("canon");
+      else if (stage === "mesh_approval") showArtifact("canon");
+      else if (stage === "final_world_qa") showArtifact("canon");
+    }
+
     // Track last stage for artifact polling
     if (stage !== lastStage) {
       lastStage = stage;
