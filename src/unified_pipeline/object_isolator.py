@@ -47,13 +47,13 @@ class QualityGateError(Exception):
 
 
 def _build_sam_workflow(image_filename: str) -> dict[str, Any]:
-    """Build a ComfyUI workflow for SAM ViT-H auto-segmentation.
+    """Build a ComfyUI workflow for SAM 3.1 auto-segmentation.
 
-    This workflow:
-    1. Loads the input image
-    2. Loads SAM ViT-H model
-    3. Runs auto-segmentation (no point/box prompts — full scene)
-    4. Returns all masks as individual segments
+    Uses the available SAM3 nodes in ComfyUI Desktop:
+    1. ImageOnlyCheckpointLoader — loads sam3.1_multiplex_fp16.safetensors
+    2. LoadImage — loads the Canon image
+    3. SAM3_Detect — runs segmentation with individual_masks=True
+    4. PreviewImage — outputs mask visualization for retrieval
 
     Args:
         image_filename: Filename of the image in ComfyUI's input folder.
@@ -69,26 +69,31 @@ def _build_sam_workflow(image_filename: str) -> dict[str, Any]:
             },
         },
         "2": {
-            "class_type": "SAMModelLoader (Segment Anything)",
+            "class_type": "ImageOnlyCheckpointLoader",
             "inputs": {
-                "model_name": "sam_vit_h_4b8939.pth",
+                "ckpt_name": "sam3.1_multiplex_fp16.safetensors",
             },
         },
         "3": {
-            "class_type": "SAMAutoSegmentation",
+            "class_type": "SAM3_Detect",
             "inputs": {
-                "sam_model": ["2", 0],
+                "model": ["2", 0],
                 "image": ["1", 0],
-                "points_per_side": 32,
-                "pred_iou_thresh": 0.88,
-                "stability_score_thresh": 0.95,
-                "min_mask_region_area": 100,
+                "threshold": 0.5,
+                "refine_iterations": 2,
+                "individual_masks": True,
             },
         },
         "4": {
+            "class_type": "MaskToImage",
+            "inputs": {
+                "mask": ["3", 0],
+            },
+        },
+        "5": {
             "class_type": "PreviewImage",
             "inputs": {
-                "images": ["3", 0],
+                "images": ["4", 0],
             },
         },
     }
