@@ -284,8 +284,6 @@ class PlaytesterAgent:
                     if "blockout" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("blockout")
                         result.blockout_approved = True
-                    elif "object_canon" in current_stage and "approval" in current_stage:
-                        self._try_approve_gate("object_canon")
                     elif "canon" in current_stage and "approval" in current_stage:
                         self._try_approve_gate("canon")
                         result.canon_approved = True
@@ -294,8 +292,8 @@ class PlaytesterAgent:
                     elif "final_world" in current_stage or "world_qa" in current_stage:
                         self._try_approve_gate("world")
                         result.success = True
-                    elif current_stage in ("blockout", "blockout_review"):
-                        # Blockout just completed — approval gate coming next
+                    elif current_stage in ("spatial_reconstruction",):
+                        # Spatial reconstruction just completed — blockout_approval gate coming next
                         pass
                     elif current_stage in ("canon", "canon_review"):
                         pass

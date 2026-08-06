@@ -71,42 +71,29 @@ class StageSpec:
     optional: bool = False
 
 
-# This order is normative. Approval stages are durable barriers, not executable adapters.
+# This order is normative. Canon-first flow: FLUX image → spatial analysis → 3D.
+# Approval stages are durable barriers, not executable adapters.
 DEFAULT_STAGE_SPECS: tuple[StageSpec, ...] = (
     StageSpec("conversation"),
     StageSpec("brief"),
     StageSpec("art_bible"),
     StageSpec("dream_preview"),
-    StageSpec("plan_solve"),
-    StageSpec("plan_normalize"),
-    StageSpec("plan_validate"),
-    StageSpec("camera_contract"),
-    StageSpec("blockout"),
-    StageSpec("blockout_approval", approval_for="blockout"),
-    StageSpec("canon_honesty"),
-    StageSpec("canon_approval", approval_for="canon_honesty"),
+    StageSpec("canon_generation"),
+    StageSpec("canon_approval", approval_for="canon_generation"),
     StageSpec("segment", per_object=True),
-    StageSpec("object_canon_approval", per_object=True, approval_for="segment"),
-    StageSpec("semantic_label", per_object=True),
+    StageSpec("depth_estimation"),
+    StageSpec("spatial_reconstruction"),
+    StageSpec("blockout_approval", approval_for="spatial_reconstruction"),
     StageSpec("mesh_generation", per_object=True),
     StageSpec("mesh_approval", per_object=True, approval_for="mesh_generation"),
     StageSpec("material_pass_1", per_object=True),
-    StageSpec("material_pass_2", per_object=True),
     StageSpec("parametric_room"),
-    StageSpec("optional_depth_reference", optional=True),
-    StageSpec("finish_pass"),
     StageSpec("physics_classification"),
     StageSpec("physics_settle"),
     StageSpec("world_contract"),
-    StageSpec("structural_gates"),
     StageSpec("compile"),
-    StageSpec("parity_gate"),
-    StageSpec("final_events"),
-    StageSpec("final_world_qa", approval_for="final_events"),
-    StageSpec("game_overlay"),
-    StageSpec("real_overlay"),
+    StageSpec("final_world_qa", approval_for="compile"),
     StageSpec("mode_toggle"),
-    StageSpec("warehouse_catalog", per_object=True),
 )
 
 

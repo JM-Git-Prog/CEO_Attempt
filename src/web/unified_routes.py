@@ -42,12 +42,10 @@ from src.workflow_provenance import profile_for
 INTERFACE_VERSION = 16
 _SESSION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
 _APPROVAL_STAGES = {
-    "blockout": "blockout_approval",
-    "blockout_approval": "blockout_approval",
     "canon": "canon_approval",
     "canon_approval": "canon_approval",
-    "object_canon": "object_canon_approval",
-    "object_canon_approval": "object_canon_approval",
+    "blockout": "blockout_approval",
+    "blockout_approval": "blockout_approval",
     "mesh": "mesh_approval",
     "mesh_approval": "mesh_approval",
     "world": "final_world_qa",
@@ -289,9 +287,9 @@ def unified_artifact_response(
 
     settings = {
         "dream_preview": (("dream_preview",), (".png", ".jpg", ".jpeg", ".webp")),
-        "blockout": (("blockout",), (".png", ".jpg", ".jpeg", ".webp")),
-        "canon": (("canon_honesty", "scene_canon", "canon"), (".png", ".jpg", ".jpeg", ".webp")),
-        "mesh": (("material_pass_2", "material_pass_1", "mesh_generation"), (".glb", ".gltf")),
+        "blockout": (("blockout", "spatial_reconstruction"), (".png", ".jpg", ".jpeg", ".webp")),
+        "canon": (("canon_generation", "scene_canon", "canon"), (".png", ".jpg", ".jpeg", ".webp")),
+        "mesh": (("material_pass_1", "mesh_generation"), (".glb", ".gltf")),
     }
     stages, suffixes = settings[kind]
     path = _artifact_path(
@@ -309,7 +307,7 @@ def unified_artifact_response(
             ),
             "canon": (
                 "canon*.png", "artifacts/canon*.png",
-                "artifacts/canon_honesty*.png", "artifacts/scene_canon*.png",
+                "artifacts/canon_generation*.png", "artifacts/scene_canon*.png",
             ),
             "mesh": (
                 f"objects/{object_id}*.glb", f"meshes/{object_id}.glb",

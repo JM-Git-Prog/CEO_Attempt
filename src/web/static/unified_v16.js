@@ -140,9 +140,8 @@
 
   function approvalFor(event) {
     const map = {
-      blockout_approval: "blockout",
       canon_approval: "canon",
-      object_canon_approval: "object_canon",
+      blockout_approval: "blockout",
       mesh_approval: "mesh",
       final_world_qa: "world"
     };
@@ -179,14 +178,17 @@
     if (stage === "dream_preview" && state === "running") {
       showLoading("Generating dream preview via FLUX…");
     }
-    if (stage === "blockout" && state === "running") {
-      showLoading("Rendering blockout via FLUX…");
-    }
-    if (stage === "canon_honesty" && state === "running") {
+    if (stage === "canon_generation" && state === "running") {
       showLoading("Generating photorealistic canon via FLUX…");
     }
     if (stage === "segment" && state === "running") {
       showLoading("Segmenting objects with SAM 3.1…");
+    }
+    if (stage === "depth_estimation" && state === "running") {
+      showLoading("Estimating depth with DA3…");
+    }
+    if (stage === "spatial_reconstruction" && state === "running") {
+      showLoading("Building spatial reconstruction…");
     }
     if (stage === "mesh_generation" && state === "running") {
       showLoading(`Generating 3D mesh${event.object_id ? " for object " + event.object_id.slice(0, 8) : ""}…`);
@@ -196,15 +198,15 @@
     if (stage === "dream_preview" && state === "completed") {
       showArtifact("dream_preview");
     }
-    // Blockout: show when blockout completes OR when blockout_approval starts
-    if ((stage === "blockout" && state === "completed") ||
-        (stage === "blockout_approval")) {
-      if (!loadedArtifacts.has("blockout:")) showArtifact("blockout");
-    }
-    // Canon: show when canon_honesty completes OR canon_approval starts
-    if ((stage === "canon_honesty" && state === "completed") ||
+    // Canon: show when canon_generation completes OR canon_approval starts
+    if ((stage === "canon_generation" && state === "completed") ||
         (stage === "canon_approval")) {
       if (!loadedArtifacts.has("canon:")) showArtifact("canon");
+    }
+    // Blockout (spatial reconstruction): show when spatial_reconstruction completes OR blockout_approval starts
+    if ((stage === "spatial_reconstruction" && state === "completed") ||
+        (stage === "blockout_approval")) {
+      if (!loadedArtifacts.has("blockout:")) showArtifact("blockout");
     }
     // Mesh: show when mesh_generation completes for an object
     if (stage === "mesh_generation" && state === "completed" && event.object_id) {
@@ -218,9 +220,8 @@
 
     // When an approval gate shows, display the relevant artifact
     if (needsApproval) {
-      if (stage === "blockout_approval") showArtifact("blockout");
-      else if (stage === "canon_approval") showArtifact("canon");
-      else if (stage === "object_canon_approval") showArtifact("canon");
+      if (stage === "canon_approval") showArtifact("canon");
+      else if (stage === "blockout_approval") showArtifact("blockout");
       else if (stage === "mesh_approval") showArtifact("canon");
       else if (stage === "final_world_qa") showArtifact("canon");
     }
