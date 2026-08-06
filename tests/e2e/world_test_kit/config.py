@@ -24,7 +24,7 @@ class StageTimeout:
 
     conversation_s: float = 60.0
     pipeline_wait_s: float = 0.0  # 0 = no hard timeout, use stall detection
-    stall_timeout_s: float = 600.0  # fail only if no progress for 10 min
+    stall_timeout_s: float = 900.0  # fail only if no progress for 15 min (GPU stages can take 5+ min)
     navigation_s: float = 30.0
     interaction_s: float = 60.0
     vision_eval_s: float = 120.0
@@ -115,7 +115,7 @@ def _parse_timeouts(raw: dict[str, Any] | None) -> StageTimeout:
     return StageTimeout(
         conversation_s=float(raw.get("conversation_s", 60.0)),
         pipeline_wait_s=float(raw.get("pipeline_wait_s", 0.0)),
-        stall_timeout_s=float(raw.get("stall_timeout_s", 600.0)),
+        stall_timeout_s=float(raw.get("stall_timeout_s", 900.0)),
         navigation_s=float(raw.get("navigation_s", 30.0)),
         interaction_s=float(raw.get("interaction_s", 60.0)),
         vision_eval_s=float(raw.get("vision_eval_s", 120.0)),
