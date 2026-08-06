@@ -533,15 +533,21 @@ async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
             "inputs": {"image": canon_filename},
         },
         "2": {
-            "class_type": depth_node_name,
+            "class_type": "DownloadAndLoadDepthAnythingV2Model",
             "inputs": {
-                "image": ["1", 0],
-                "da_model": da_model_name,
+                "model": da_model_name,
             },
         },
         "3": {
+            "class_type": depth_node_name,
+            "inputs": {
+                "images": ["1", 0],
+                "da_model": ["2", 0],
+            },
+        },
+        "4": {
             "class_type": "SaveImage",
-            "inputs": {"images": ["2", 0], "filename_prefix": "depth"},
+            "inputs": {"images": ["3", 0], "filename_prefix": "depth"},
         },
     }
 
