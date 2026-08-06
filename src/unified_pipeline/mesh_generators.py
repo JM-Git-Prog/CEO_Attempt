@@ -355,9 +355,9 @@ class UnifiedPlaceholderGenerator:
         from PIL import Image
 
         object_id = object_canon.object_id
-        image_path = Path(object_canon.image_path)
+        image_path_str = (object_canon.image_path or "").strip()
 
-        if not image_path.exists():
+        if not image_path_str or not Path(image_path_str).exists() or Path(image_path_str).is_dir():
             return MeshApproval(
                 object_id=object_id,
                 mesh_path="",
@@ -365,12 +365,13 @@ class UnifiedPlaceholderGenerator:
                 face_count=0,
                 vertex_count=0,
                 approved=False,
-                rejection_reason=f"Image not found: {image_path}",
+                rejection_reason=f"Image not found: {image_path_str!r}",
                 retry_count=0,
                 is_placeholder=True,
             )
 
         dims = dimensions_m or self.DEFAULT_DIMENSIONS_M
+        image_path = Path(image_path_str)
 
         try:
             # Use the existing V14 placeholder generator

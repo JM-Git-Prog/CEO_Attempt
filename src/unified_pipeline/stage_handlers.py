@@ -516,12 +516,127 @@ async def _handle_canon_honesty(ctx: StageExecutionContext) -> StageResult:
 
 
 def _handle_segment(ctx: StageExecutionContext) -> StageResult:
-    """Segmentation — immediate with placeholder until real SAM is wired."""
-    return _immediate({
-        "status": "segment_complete",
-        "segments": [],
-        "note": "placeholder — real SAM segmentation requires approved Canon",
-    }, ctx)
+    """Segmentation — isolate objects from approved Canon using SAM via ComfyUI.
+
+    Calls the ObjectIsolator which:
+    1. Uploads Canon to ComfyUI
+    2. Runs SAM ViT-H auto-segmentation
+    3. Matches masks to Brief manifest UUIDs
+    4. Applies quality gate (≥1% coverage)
+    5. Produces RGBA Object_PNGs
+
+    Falls back to a synthetic placeholder if ComfyUI/SAM is unavailable.
+    """
+    import asyncio
+    import logging
+    from pathlib import Path
+    from src.unified_pipeline.object_isolator import ObjectIsolator, SegmentationError
+    from src.unified_pipeline.models import ManifestObject, ObjectCanon
+
+    _log = logging.getLogger("live_trace")
+
+    # Get Canon path from prior stage outputs
+    stage_outputs = ctx.values.get("stage_outputs", {})
+    canon_output = stage_outputs.get("canon_honesty", {})
+    canon_path = canon_output.get("image_path", "")
+
+    # If no Canon image, check artifacts directory
+    if not canon_path or not Path(canon_path).exists():
+        artifacts_dir = ctx.session_dir / "artifacts"
+        canon_candidate = artifacts_dir / "canon.png"
+        if canon_candidate.exists():
+            canon_path = str(canon_candidate)
+
+    if not canon_path or not Path(canon_path).exists():
+        _log.warning("  segment: No Canon image available — returning placeholder")
+        return _immediate({
+            "status": "segment_complete",
+            "segments": [],
+            "degraded": True,
+            "note": "No Canon image found for segmentation",
+        }, ctx)
+
+    # Get manifest from brief
+    brief_output = stage_outputs.get("brief", {})
+    manifest_raw = brief_output.get("object_manifest", [])
+    manifest = [
+        ManifestObject.from_dict(obj) if isinstance(obj, dict) else obj
+        for obj in manifest_raw
+    ]
+
+    if not manifest:
+        _log.warning("  segment: No objects in manifest — skipping segmentation")
+        return _immediate({
+            "status": "segment_complete",
+            "segments": [],
+            "note": "Empty object manifest",
+        }, ctx)
+
+    # Run real SAM segmentation
+    output_dir = ctx.session_dir / "objects"
+    isolator = ObjectIsolator(output_dir=output_dir)
+
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # We're inside an async context — create a new task
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as pool:
+                results = pool.submit(
+                    asyncio.run,
+                    isolator.segment(canon_path, manifest, session_id=ctx.session_id)
+                ).result(timeout=180)
+        else:
+            results = asyncio.run(
+                isolator.segment(canon_path, manifest, session_id=ctx.session_id)
+            )
+
+        _log.info("  segment: SAM isolated %d/%d objects", len(results), len(manifest))
+
+        # Store Object_Canon results for downstream per-object stages
+        segments_data = []
+        for obj_canon in results:
+            segments_data.append({
+                "object_id": obj_canon.object_id,
+                "object_name": obj_canon.object_name,
+                "image_path": obj_canon.image_path,
+                "mask_coverage": obj_canon.mask_coverage,
+            })
+
+        return _immediate({
+            "status": "segment_complete",
+            "segments": segments_data,
+            "object_count": len(results),
+        }, ctx)
+
+    except SegmentationError as exc:
+        _log.warning("  segment: SAM failed (%s) — returning degraded result", exc)
+        # Graceful degradation: produce placeholder Object_Canon entries
+        # using crops from the Canon image
+        segments_data = []
+        for obj in manifest:
+            segments_data.append({
+                "object_id": obj.id,
+                "object_name": obj.name,
+                "image_path": "",
+                "mask_coverage": 0.0,
+                "degraded": True,
+            })
+        return _immediate({
+            "status": "segment_complete",
+            "segments": segments_data,
+            "object_count": len(manifest),
+            "degraded": True,
+            "note": f"SAM unavailable: {exc}",
+        }, ctx)
+    except Exception as exc:
+        _log.error("  segment: Unexpected error: %s", exc)
+        return _immediate({
+            "status": "segment_complete",
+            "segments": [],
+            "degraded": True,
+            "note": f"Segmentation error: {exc}",
+        }, ctx)
 
 
 def _handle_semantic_label(ctx: StageExecutionContext) -> StageResult:
@@ -533,13 +648,165 @@ def _handle_semantic_label(ctx: StageExecutionContext) -> StageResult:
 
 
 def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
-    """Mesh generation — immediate with placeholder until real Hunyuan3D is wired."""
+    """Mesh generation — Hunyuan3D → Trellis2 → placeholder fallback chain via ComfyUI.
+
+    Uses the real GPU generators through the ResourceArbiter VRAM lease system.
+    Falls back gracefully: Hunyuan3D (best quality) → Trellis2 → placeholder primitive.
+    """
+    import asyncio
+    import logging
+    from pathlib import Path
+    from src.unified_pipeline.mesh_generators import (
+        MeshGenerationError,
+        UnifiedHunyuan3DGenerator,
+        UnifiedTrellis2Generator,
+        UnifiedPlaceholderGenerator,
+    )
+    from src.unified_pipeline.models import ObjectCanon, MeshApproval
+    from src.photo_pipeline.comfyui_client import ComfyUIClient
+
+    _log = logging.getLogger("live_trace")
+    object_id = ctx.object_id
+
+    # Get the Object_Canon for this object from segment output
+    stage_outputs = ctx.values.get("stage_outputs", {})
+    segment_output = stage_outputs.get("segment", {})
+
+    # Per-object stage outputs are stored as {stage: {object_id: output}}
+    object_segment = None
+    if isinstance(segment_output, dict):
+        # Could be per-object dict or global
+        object_segment = segment_output.get(object_id, segment_output)
+
+    segments_list = (object_segment or {}).get("segments", [])
+
+    # Find the segment data for this specific object
+    image_path = ""
+    for seg in segments_list:
+        if isinstance(seg, dict) and seg.get("object_id") == object_id:
+            image_path = seg.get("image_path", "")
+            break
+
+    # If no image path, try the objects directory directly
+    if not image_path or not Path(image_path).exists():
+        obj_png = ctx.session_dir / "objects" / ctx.session_id / f"{object_id}.png"
+        if obj_png.exists():
+            image_path = str(obj_png)
+        else:
+            # Try without session subdirectory
+            obj_png = ctx.session_dir / "objects" / f"{object_id}.png"
+            if obj_png.exists():
+                image_path = str(obj_png)
+
+    if not image_path or not Path(image_path).exists():
+        _log.warning("  mesh_gen[%s]: No Object_Canon image — using placeholder", object_id[:8] if object_id else "?")
+        # Generate a placeholder
+        placeholder_gen = UnifiedPlaceholderGenerator(
+            output_dir=ctx.session_dir / "meshes"
+        )
+        obj_canon = ObjectCanon(
+            object_id=object_id or "",
+            object_name="unknown",
+            image_path="",
+            mask_coverage=0.0,
+            approved=True,
+            provenance="missing_segment",
+        )
+        result = placeholder_gen.generate(obj_canon)
+        return _immediate({
+            "status": "mesh_generation_complete",
+            "object_id": object_id,
+            "mesh_path": result.mesh_path,
+            "generator": "placeholder",
+            "face_count": result.face_count,
+            "vertex_count": result.vertex_count,
+            "degraded": True,
+        }, ctx)
+
+    # Build Object_Canon for the generators
+    obj_canon = ObjectCanon(
+        object_id=object_id or "",
+        object_name="",
+        image_path=image_path,
+        mask_coverage=1.0,
+        approved=True,
+        provenance="raw_segmentation",
+    )
+
+    output_dir = ctx.session_dir / "meshes"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Try the real fallback chain: Hunyuan3D → Trellis2 → placeholder
+    client = ComfyUIClient(base_url="http://127.0.0.1:8188", timeout_s=200)
+
+    # 1. Try Hunyuan3D 2.1
+    try:
+        loop = asyncio.get_event_loop()
+        hunyuan_gen = UnifiedHunyuan3DGenerator(client=client, output_dir=output_dir)
+
+        if loop.is_running():
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as pool:
+                result = pool.submit(
+                    asyncio.run, hunyuan_gen.generate(obj_canon)
+                ).result(timeout=200)
+        else:
+            result = asyncio.run(hunyuan_gen.generate(obj_canon))
+
+        _log.info("  mesh_gen[%s]: Hunyuan3D OK — %d faces, %d verts",
+                  object_id[:8], result.face_count, result.vertex_count)
+        return _immediate({
+            "status": "mesh_generation_complete",
+            "object_id": object_id,
+            "mesh_path": result.mesh_path,
+            "generator": "hunyuan3d_v2.1",
+            "face_count": result.face_count,
+            "vertex_count": result.vertex_count,
+        }, ctx)
+
+    except (MeshGenerationError, Exception) as exc:
+        _log.warning("  mesh_gen[%s]: Hunyuan3D failed (%s) — trying Trellis2", object_id[:8], exc)
+
+    # 2. Try Trellis2
+    try:
+        trellis_gen = UnifiedTrellis2Generator(client=client, output_dir=output_dir)
+
+        if loop.is_running():
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as pool:
+                result = pool.submit(
+                    asyncio.run, trellis_gen.generate(obj_canon)
+                ).result(timeout=120)
+        else:
+            result = asyncio.run(trellis_gen.generate(obj_canon))
+
+        _log.info("  mesh_gen[%s]: Trellis2 OK — %d faces, %d verts",
+                  object_id[:8], result.face_count, result.vertex_count)
+        return _immediate({
+            "status": "mesh_generation_complete",
+            "object_id": object_id,
+            "mesh_path": result.mesh_path,
+            "generator": "trellis2",
+            "face_count": result.face_count,
+            "vertex_count": result.vertex_count,
+        }, ctx)
+
+    except (MeshGenerationError, Exception) as exc:
+        _log.warning("  mesh_gen[%s]: Trellis2 failed (%s) — using placeholder", object_id[:8], exc)
+
+    # 3. Placeholder fallback
+    placeholder_gen = UnifiedPlaceholderGenerator(output_dir=output_dir)
+    result = placeholder_gen.generate(obj_canon)
+    _log.info("  mesh_gen[%s]: Placeholder generated", object_id[:8])
+
     return _immediate({
         "status": "mesh_generation_complete",
-        "object_id": ctx.object_id,
-        "mesh_path": "",
+        "object_id": object_id,
+        "mesh_path": result.mesh_path,
         "generator": "placeholder",
-        "note": "placeholder — real Hunyuan3D requires approved Object_Canon",
+        "face_count": result.face_count,
+        "vertex_count": result.vertex_count,
+        "degraded": True,
     }, ctx)
 
 
