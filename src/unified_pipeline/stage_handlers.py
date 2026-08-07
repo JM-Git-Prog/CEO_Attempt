@@ -600,34 +600,29 @@ async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
 
 
 def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
-    """Spatial reconstruction — produce a 2D plan view from depth + segments.
+    """Spatial reconstruction — overlay detected objects on the canon image.
 
-    Creates an annotated top-down floor plan showing estimated object positions
-    from the depth map and segmentation masks. This is the spatial layout the
-    user approves before mesh generation proceeds.
+    Shows the canon photo with colored bounding boxes and labels around each
+    segmented object. This lets the user verify that the right objects were
+    detected before proceeding to 3D mesh generation.
 
     Saves as artifacts/blockout.png (approved via blockout_approval gate).
     """
     import logging
-    import numpy as np
 
     _log = logging.getLogger("live_trace")
 
     stage_outputs = ctx.values.get("stage_outputs", {})
 
-    # Get depth map
-    depth_output = stage_outputs.get("depth_estimation", {})
-    depth_path = depth_output.get("depth_path", "")
-    if not depth_path or not Path(depth_path).exists():
-        depth_path = str(ctx.session_dir / "artifacts" / "depth.png")
+    # Get canon image path
+    canon_output = stage_outputs.get("canon_generation", {})
+    canon_path = canon_output.get("image_path", "")
+    if not canon_path or not Path(canon_path).exists():
+        canon_path = str(ctx.session_dir / "artifacts" / "canon.png")
 
     # Get segment data
     segment_output = stage_outputs.get("segment", {})
     segments = segment_output.get("segments", []) if isinstance(segment_output, dict) else []
-
-    # Get brief for object names
-    brief_output = stage_outputs.get("brief", {})
-    manifest = brief_output.get("object_manifest", []) if isinstance(brief_output, dict) else []
 
     artifacts_dir = ctx.session_dir / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -635,107 +630,94 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
 
     try:
         from PIL import Image, ImageDraw, ImageFont
+        import numpy as np
 
-        # Load depth map for spatial estimation
-        depth_img = None
-        if Path(depth_path).exists():
-            depth_img = Image.open(depth_path).convert("L")
-            depth_array = np.array(depth_img, dtype=np.float32) / 255.0
+        # Load the canon image as the base
+        if Path(canon_path).exists():
+            base = Image.open(canon_path).convert("RGBA")
         else:
-            _log.warning("  spatial_reconstruction: no depth map, using uniform depth")
-            depth_array = np.full((768, 1024), 0.5, dtype=np.float32)
+            base = Image.new("RGBA", (1024, 768), (30, 30, 30, 255))
 
-        # Create floor plan canvas
-        plan_size = 800
-        plan = Image.new("RGB", (plan_size, plan_size), color=(245, 245, 245))
-        draw = ImageDraw.Draw(plan)
+        # Create a semi-transparent overlay
+        overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+        draw = ImageDraw.Draw(overlay)
 
-        # Draw room boundary
-        margin = 60
-        draw.rectangle(
-            [margin, margin, plan_size - margin, plan_size - margin],
-            outline=(40, 40, 40), width=3
-        )
-
-        # Title
         try:
-            font = ImageFont.truetype("arial.ttf", 20)
+            font = ImageFont.truetype("arial.ttf", 18)
             font_small = ImageFont.truetype("arial.ttf", 14)
         except (OSError, IOError):
             font = ImageFont.load_default()
             font_small = font
 
-        draw.text((margin, 20), "SPATIAL RECONSTRUCTION — TOP-DOWN PLAN",
-                  fill=(40, 40, 40), font=font)
+        # Colors for object boxes
+        colors = [
+            (70, 200, 140), (100, 180, 255), (255, 180, 60),
+            (255, 100, 100), (180, 130, 255), (255, 200, 80),
+            (100, 240, 200), (255, 150, 200),
+        ]
 
-        # Place objects based on depth estimation and segment coverage
-        usable_width = plan_size - 2 * margin - 40
-        usable_height = plan_size - 2 * margin - 40
-        origin_x = margin + 20
-        origin_y = margin + 20
+        # For each segmented object, draw a bounding box on the overlay
+        objects_dir = ctx.session_dir / "objects" / ctx.session_id
+        successful = 0
 
-        # Estimate object positions from depth values and coverage
-        object_positions = []
         for idx, seg in enumerate(segments):
             if not isinstance(seg, dict):
                 continue
-            obj_id = seg.get("object_id", "")
-            obj_name = seg.get("object_name", obj_id[:8])
-            coverage = seg.get("mask_coverage", 0.05)
-
-            # Estimate depth for this object (center of its likely region)
-            # Distribute objects across the plan based on index
-            n_objects = max(1, len(segments))
-            cols = max(1, int(np.sqrt(n_objects) + 0.5))
-            row = idx // cols
-            col = idx % cols
-
-            # Position in plan space
-            x = origin_x + (col + 0.5) * (usable_width / cols)
-            y = origin_y + (row + 0.5) * (usable_height / max(1, (n_objects + cols - 1) // cols))
-
-            # Size based on coverage
-            obj_size = max(30, min(120, int(coverage * 800)))
-
-            object_positions.append({
-                "name": obj_name,
-                "x": x, "y": y,
-                "size": obj_size,
-            })
-
-        # Draw objects as labeled rectangles
-        colors = [
-            (70, 130, 180), (60, 179, 113), (218, 165, 32),
-            (205, 92, 92), (147, 112, 219), (255, 140, 0),
-            (100, 149, 237), (144, 238, 144),
-        ]
-
-        for idx, obj in enumerate(object_positions):
+            obj_name = seg.get("object_name", f"Object {idx+1}")
+            image_path = seg.get("image_path", "")
             color = colors[idx % len(colors)]
-            half = obj["size"] // 2
-            x, y = int(obj["x"]), int(obj["y"])
 
-            # Draw object rectangle
-            draw.rectangle(
-                [x - half, y - half, x + half, y + half],
-                outline=color, width=2, fill=(*color, 40)
-            )
-            # Label
-            draw.text((x - half + 4, y - half + 4), obj["name"][:20],
-                      fill=color, font=font_small)
+            if image_path and Path(image_path).exists():
+                # Load the cutout to find its bounding box on the original
+                cutout = Image.open(image_path).convert("RGBA")
+                alpha = np.array(cutout)[:, :, 3]
+                ys, xs = np.nonzero(alpha > 128)
 
-        # Legend
-        draw.text((margin, plan_size - 40),
-                  f"Objects: {len(object_positions)} | Depth: {'available' if depth_img else 'estimated'}",
-                  fill=(100, 100, 100), font=font_small)
+                if len(xs) > 0:
+                    # Map cutout bbox to canon coordinates (cutouts are same size as canon)
+                    x0, x1 = int(xs.min()), int(xs.max())
+                    y0, y1 = int(ys.min()), int(ys.max())
 
-        plan.save(output_path, "PNG")
-        _log.info(f"  spatial_reconstruction: OK — {len(object_positions)} objects placed → {output_path}")
+                    # Draw bounding box
+                    draw.rectangle([x0, y0, x1, y1], outline=color, width=3)
 
-    except ImportError:
-        # Minimal fallback if Pillow unavailable
-        _log.warning("  spatial_reconstruction: Pillow unavailable, writing placeholder")
-        output_path.write_bytes(b"\x89PNG\r\n\x1a\n" + b"\x00" * 100)
+                    # Draw label background
+                    label = f" {obj_name[:25]} "
+                    bbox = draw.textbbox((0, 0), label, font=font_small)
+                    lw, lh = bbox[2] - bbox[0], bbox[3] - bbox[1]
+                    label_y = max(0, y0 - lh - 4)
+                    draw.rectangle([x0, label_y, x0 + lw + 4, label_y + lh + 4], fill=(*color, 200))
+                    draw.text((x0 + 2, label_y + 2), label, fill=(0, 0, 0), font=font_small)
+
+                    successful += 1
+            else:
+                # No cutout available — show text only
+                n = max(1, len(segments))
+                cols = max(1, int(n ** 0.5) + 1)
+                bx = 50 + (idx % cols) * (base.width // cols)
+                by = 50 + (idx // cols) * 80
+                draw.text((bx, by), f"? {obj_name[:20]}", fill=(*color, 180), font=font_small)
+
+        # Header bar
+        header_h = 36
+        draw.rectangle([0, 0, base.width, header_h], fill=(0, 0, 0, 180))
+        draw.text((10, 8), f"OBJECT DETECTION — {successful}/{len(segments)} objects found", fill=(200, 255, 200), font=font)
+
+        # Composite overlay onto base
+        result = Image.alpha_composite(base, overlay)
+        result.convert("RGB").save(output_path, "PNG")
+
+        _log.info("  spatial_reconstruction: %d/%d objects boxed on canon → %s", successful, len(segments), output_path.name)
+
+    except Exception as exc:
+        _log.error("  spatial_reconstruction: failed: %s", exc)
+        # Write the canon image directly as fallback
+        import shutil
+        if Path(canon_path).exists():
+            shutil.copy2(canon_path, output_path)
+        else:
+            from PIL import Image
+            Image.new("RGB", (1024, 768), (30, 30, 30)).save(output_path)
 
     return _immediate({
         "status": "spatial_reconstruction_complete",
