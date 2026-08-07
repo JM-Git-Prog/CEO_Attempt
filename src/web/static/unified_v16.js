@@ -329,12 +329,29 @@
 
   composer.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (pipelineStarted) return;
     const message = input.value.trim();
     if (!message || !sessionId) return;
     appendMessage("user", message);
     input.value = "";
     send.disabled = true;
+
+    if (pipelineStarted) {
+      // Game design conversation — runs parallel to pipeline
+      try {
+        const data = await jsonRequest(`/api/session/${sessionId}/game_message`, {
+          method: "POST", body: JSON.stringify({message})
+        });
+        appendMessage("assistant", data.message || data.response || "Noted for game design.");
+      } catch (error) {
+        appendMessage("assistant", error.message || "Game design note saved.");
+      } finally {
+        send.disabled = false;
+        input.focus();
+      }
+      return;
+    }
+
+    // Room description conversation (pre-pipeline)
     try {
       const data = await jsonRequest(`/api/session/${sessionId}/message`, {
         method: "POST", body: JSON.stringify({message})
@@ -345,19 +362,20 @@
         appendMessage("assistant", data.message);
       }
       if (data.steering_stable) {
-        details.textContent = "Brief ready — pipeline starting…";
+        details.textContent = "Brief ready — pipeline building world…";
         pipelineStarted = true;
-        input.disabled = true;
-        send.disabled = true;
-        input.placeholder = "Pipeline running — use Approve button →";
+        // DON'T disable input — transition to game design conversation
+        input.placeholder = "Design the game while the world builds…";
+        send.textContent = "Send game idea";
         startArtifactPolling();
       }
     } catch (error) {
       if (error.message.includes("Pipeline is already")) {
         pipelineStarted = true;
-        input.disabled = true;
-        send.disabled = true;
-        input.placeholder = "Pipeline running — use Approve button →";
+        // Keep chat open for game design
+        input.placeholder = "Design the game while the world builds…";
+        send.textContent = "Send game idea";
+        send.disabled = false;
         startArtifactPolling();
       }
       appendMessage("assistant", error.message);

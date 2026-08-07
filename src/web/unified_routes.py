@@ -450,11 +450,12 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         meta = _meta(session_dir)
         if meta.get("interface_version") != INTERFACE_VERSION:
             return JSONResponse({"error": "Unified session not found"}, status_code=404)
-        # Refuse messages once the pipeline has started — conversation phase is over
+        # Allow game design messages during pipeline — don't reject
         session_state = meta.get("state", "")
-        if session_state not in ("awaiting_description", "brief_ready", ""):
+        if session_state not in ("awaiting_description", "brief_ready", "running",
+                                  "awaiting_approval", "awaiting_external", ""):
             return JSONResponse({
-                "error": f"Pipeline is already {session_state}. Conversation phase is complete.",
+                "error": f"Session is {session_state}.",
                 "session_id": session_id,
                 "state": session_state,
             }, status_code=409)
@@ -526,6 +527,77 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 _launch_pipeline(session_id, session_dir, brief_document)
             _save_conversation(engine, session_dir)
             return result
+
+    @router.post("/api/session/{session_id}/game_message")
+    async def unified_game_message(session_id: str, request: Request):
+        """Handle game design conversation messages during pipeline execution.
+
+        While the GPU builds the 3D world, the user designs the GAME overlay
+        through continued conversation. This runs parallel to the pipeline.
+        """
+        _log = logging.getLogger("live_trace")
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        try:
+            payload = await request.json()
+            message = str(payload.get("message", "")).strip()
+            if not message:
+                return JSONResponse({"error": "message is required"}, status_code=400)
+        except Exception:
+            return JSONResponse({"error": "invalid request"}, status_code=400)
+
+        _log.info(f"  game_message[{session_id[:8]}]: {message[:60]}")
+
+        # Get the brief for context
+        brief_path = session_dir / "artifacts" / "brief.json"
+        brief_context = ""
+        if brief_path.is_file():
+            try:
+                brief = json.loads(brief_path.read_text(encoding="utf-8"))
+                room = brief.get("room_purpose", "room")
+                objects = [o.get("name", "") for o in brief.get("object_manifest", []) if isinstance(o, dict)]
+                brief_context = f"Room: {room}. Objects: {', '.join(objects[:6])}."
+            except Exception:
+                pass
+
+        # Use Ollama for game design conversation
+        try:
+            import httpx
+            ollama_prompt = (
+                f"You are a game designer creating a game for a 3D room. {brief_context} "
+                f"The user is designing the game while the room is being built. "
+                f"Respond concisely (2-3 sentences) to their game design idea. "
+                f"Be creative and enthusiastic. Suggest mechanics, rules, or scoring that fit the room.\n\n"
+                f"User: {message}"
+            )
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(
+                    "http://127.0.0.1:11434/api/generate",
+                    json={"model": "llama3.1:latest", "prompt": ollama_prompt, "stream": False,
+                          "options": {"temperature": 0.8, "num_predict": 150}},
+                )
+                if resp.status_code == 200:
+                    response = resp.json().get("response", "").strip()
+                else:
+                    response = "Game idea noted! I'll incorporate this into the design."
+        except Exception:
+            response = "Great idea! I'll weave that into the game mechanics once the world is ready."
+
+        # Save game conversation to session
+        game_conv_path = session_dir / "game_conversation.json"
+        game_history = []
+        if game_conv_path.is_file():
+            try:
+                game_history = json.loads(game_conv_path.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        game_history.append({"role": "user", "content": message})
+        game_history.append({"role": "assistant", "content": response})
+        game_conv_path.write_text(json.dumps(game_history, indent=2), encoding="utf-8")
+
+        return {"message": response, "turn": len(game_history) // 2}
 
     @router.post("/api/session/{session_id}/approve/{stage}")
     async def unified_approve(session_id: str, stage: str, request: Request):
