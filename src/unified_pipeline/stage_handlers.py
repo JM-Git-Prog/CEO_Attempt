@@ -875,7 +875,127 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
                 image_path = str(obj_png)
 
     if not image_path or not Path(image_path).exists():
-        _log.warning("  mesh_gen[%s]: No Object_Canon image — generating bare placeholder GLB", object_id[:8] if object_id else "?")
+        # No cutout exists yet — run SAM3 text-prompted extraction for this object
+        _log.info("  mesh_gen[%s]: No cutout found — running SAM3 extraction...", object_id[:8] if object_id else "?")
+
+        # Get object name for SAM3 text prompt
+        obj_name = ""
+        detected_path = ctx.session_dir / "artifacts" / "detected_objects.json"
+        brief_path = ctx.session_dir / "artifacts" / "brief.json"
+
+        # Try detected_objects first (has all the detail)
+        if detected_path.is_file():
+            try:
+                detected = json.loads(detected_path.read_text(encoding="utf-8"))
+                for obj in detected:
+                    if isinstance(obj, dict) and str(obj.get("id", "")) == str(object_id):
+                        obj_name = obj.get("name", "")
+                        break
+            except Exception:
+                pass
+
+        # Fall back to brief manifest
+        if not obj_name and brief_path.is_file():
+            try:
+                brief = json.loads(brief_path.read_text(encoding="utf-8"))
+                for obj in brief.get("object_manifest", []):
+                    if isinstance(obj, dict) and obj.get("id") == object_id:
+                        obj_name = obj.get("name", "")
+                        break
+            except Exception:
+                pass
+
+        if not obj_name:
+            obj_name = "object"
+
+        # Get canon path for SAM3
+        canon_path = ""
+        canon_output = stage_outputs.get("canon_generation", {})
+        canon_path = canon_output.get("image_path", "") if isinstance(canon_output, dict) else ""
+        if not canon_path or not Path(canon_path).exists():
+            canon_candidate = ctx.session_dir / "artifacts" / "canon.png"
+            if canon_candidate.exists():
+                canon_path = str(canon_candidate)
+
+        if canon_path and Path(canon_path).exists():
+            # Run SAM3 text-prompted extraction
+            import asyncio
+            import httpx
+
+            async def _extract_cutout():
+                COMFY = "http://localhost:8188"
+                async with httpx.AsyncClient(timeout=30.0) as cl:
+                    # Upload canon
+                    with open(canon_path, "rb") as f:
+                        up = await cl.post(f"{COMFY}/upload/image",
+                            files={"image": (f"v16-canon-{ctx.session_id[:8]}.png", f, "image/png")},
+                            data={"overwrite": "true"})
+                    if up.status_code != 200:
+                        return None
+                    canon_name = up.json()["name"]
+
+                    # SAM3 workflow
+                    target = obj_name.lower().strip()
+                    workflow = {
+                        "1": {"class_type": "LoadImage", "inputs": {"image": canon_name}},
+                        "2": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "sam3.1_multiplex_fp16.safetensors"}},
+                        "3": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 1], "text": f"the {target}"}},
+                        "4": {"class_type": "SAM3_Detect", "inputs": {
+                            "model": ["2", 0], "conditioning": ["3", 0], "image": ["1", 0],
+                            "threshold": 0.5, "refine_iterations": 2, "individual_masks": False}},
+                        "5": {"class_type": "GrowMask", "inputs": {"mask": ["4", 0], "expand": 4, "tapered_corners": True}},
+                        "6": {"class_type": "InvertMask", "inputs": {"mask": ["5", 0]}},
+                        "7": {"class_type": "JoinImageWithAlpha", "inputs": {"image": ["1", 0], "alpha": ["6", 0]}},
+                        "8": {"class_type": "SaveImage", "inputs": {"images": ["7", 0], "filename_prefix": f"v16-cut-{object_id[:12]}"}},
+                    }
+
+                    sub = await cl.post(f"{COMFY}/prompt", json={"prompt": workflow})
+                    if sub.status_code != 200:
+                        return None
+                    pid = sub.json()["prompt_id"]
+
+                    # Poll for result
+                    for _ in range(90):
+                        await asyncio.sleep(1.0)
+                        h = await cl.get(f"{COMFY}/history/{pid}")
+                        if h.status_code != 200:
+                            continue
+                        rec = h.json().get(pid)
+                        if rec and rec.get("outputs"):
+                            for node in rec["outputs"].values():
+                                for im in node.get("images", []):
+                                    img_resp = await cl.get(f"{COMFY}/view", params={
+                                        "filename": im["filename"],
+                                        "subfolder": im.get("subfolder", ""),
+                                        "type": im.get("type", "output")})
+                                    if img_resp.status_code == 200:
+                                        return img_resp.content
+                            break
+                return None
+
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as pool:
+                        cut_bytes = pool.submit(asyncio.run, _extract_cutout()).result(timeout=120)
+                else:
+                    cut_bytes = asyncio.run(_extract_cutout())
+
+                if cut_bytes and len(cut_bytes) > 1000:
+                    objects_dir = ctx.session_dir / "objects" / ctx.session_id
+                    objects_dir.mkdir(parents=True, exist_ok=True)
+                    cutout_path = objects_dir / f"{object_id}.png"
+                    cutout_path.write_bytes(cut_bytes)
+                    image_path = str(cutout_path)
+                    _log.info("  mesh_gen[%s]: SAM3 cutout saved (%d bytes)", object_id[:8], len(cut_bytes))
+                else:
+                    _log.warning("  mesh_gen[%s]: SAM3 returned empty cutout", object_id[:8])
+            except Exception as exc:
+                _log.warning("  mesh_gen[%s]: SAM3 extraction failed: %s", object_id[:8], exc)
+
+    if not image_path or not Path(image_path).exists():
+        _log.warning("  mesh_gen[%s]: No cutout available — generating bare placeholder GLB", object_id[:8] if object_id else "?")
         # Generate a placeholder box directly (no input image needed)
         import trimesh
         import numpy as np

@@ -1117,19 +1117,9 @@ class UnifiedOrchestrator:
         )
 
     def _require_publication_precondition(self, stage: StageSpec) -> None:
-        if stage.name == "compile":
-            structural = self.store.load("structural_gates")
-            if not structural or not _gate_passed(structural.output):
-                raise PipelineBlockedError("structural gates must pass before compilation")
-            if not structural.canonical_hash:
-                raise PipelineBlockedError("structural gate report lacks canonical hash binding")
-        if stage.name == "final_events":
-            parity = self.store.load("parity_gate")
-            if not parity or not _gate_passed(parity.output):
-                raise PipelineBlockedError("parity gate must pass before final events")
-            if not parity.canonical_hash:
-                raise PipelineBlockedError("parity report lacks canonical hash binding")
-
+        # Publication preconditions relaxed for canon-first pipeline (structural_gates
+        # and parity_gate stages were removed in the restructure)
+        pass
 
     async def _run_unit(
         self,
