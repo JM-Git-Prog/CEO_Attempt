@@ -620,9 +620,29 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
     if not canon_path or not Path(canon_path).exists():
         canon_path = str(ctx.session_dir / "artifacts" / "canon.png")
 
-    # Get segment data
+    # Get segment data — per-object stage outputs are stored as {object_id: output}
     segment_output = stage_outputs.get("segment", {})
-    segments = segment_output.get("segments", []) if isinstance(segment_output, dict) else []
+    segments = []
+    if isinstance(segment_output, dict):
+        # Per-object format: {"obj_id": {"status":..., "segments":[...], ...}}
+        for obj_id, obj_output in segment_output.items():
+            if isinstance(obj_output, dict):
+                # Each per-object segment output has a "segments" list with one entry
+                obj_segs = obj_output.get("segments", [])
+                for seg in obj_segs:
+                    if isinstance(seg, dict):
+                        segments.append(seg)
+                # If no segments list, build from the output directly
+                if not obj_segs and obj_output.get("image_path"):
+                    segments.append({
+                        "object_id": obj_id,
+                        "object_name": obj_output.get("object_name", obj_id[:8]),
+                        "image_path": obj_output.get("image_path", ""),
+                        "mask_coverage": obj_output.get("mask_coverage", 0),
+                    })
+        # Also check if there's a combined "segments" field (non-per-object format)
+        if not segments and "segments" in segment_output:
+            segments = segment_output["segments"]
 
     artifacts_dir = ctx.session_dir / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -659,6 +679,23 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
         # For each segmented object, draw a bounding box on the overlay
         objects_dir = ctx.session_dir / "objects" / ctx.session_id
         successful = 0
+
+        # If segments list is empty, scan objects dir for any PNGs
+        if not segments and objects_dir.exists():
+            # Get brief manifest for names
+            brief_output = stage_outputs.get("brief", {})
+            manifest = brief_output.get("object_manifest", []) if isinstance(brief_output, dict) else []
+            name_map = {obj.get("id", ""): obj.get("name", "") for obj in manifest if isinstance(obj, dict)}
+
+            for png in objects_dir.glob("*.png"):
+                obj_id = png.stem
+                obj_name = name_map.get(obj_id, obj_id[:12])
+                segments.append({
+                    "object_id": obj_id,
+                    "object_name": obj_name,
+                    "image_path": str(png),
+                    "mask_coverage": 0.5,
+                })
 
         for idx, seg in enumerate(segments):
             if not isinstance(seg, dict):
