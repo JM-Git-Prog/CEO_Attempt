@@ -24,6 +24,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Iterator, Mapping, Protocol, Sequence
 
+from src.unified_pipeline.object_manifest import load_selected_manifest
+
 
 class OrchestratorError(RuntimeError):
     """Base error for durable orchestration failures."""
@@ -92,6 +94,7 @@ DEFAULT_STAGE_SPECS: tuple[StageSpec, ...] = (
     StageSpec("physics_settle"),
     StageSpec("world_contract"),
     StageSpec("compile"),
+    StageSpec("automated_final_validation"),
     StageSpec("final_world_qa", approval_for="compile"),
     StageSpec("mode_toggle"),
 )
@@ -455,6 +458,31 @@ class DurableOwnership:
     def _pid_alive(pid: int) -> bool:
         if pid <= 0:
             return False
+        if pid == os.getpid():
+            return True
+        if os.name == "nt":
+            # os.kill(pid, 0) is not a harmless POSIX-style probe on Windows;
+            # use a query-only process handle so lease checks cannot emit Ctrl+C.
+            import ctypes
+            from ctypes import wintypes
+
+            process_query_limited_information = 0x1000
+            still_active = 259
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+            kernel32.OpenProcess.restype = wintypes.HANDLE
+            kernel32.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+            kernel32.GetExitCodeProcess.restype = wintypes.BOOL
+            kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
+            kernel32.CloseHandle.restype = wintypes.BOOL
+            handle = kernel32.OpenProcess(process_query_limited_information, False, pid)
+            if not handle:
+                return False
+            try:
+                exit_code = wintypes.DWORD()
+                return bool(kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))) and exit_code.value == still_active
+            finally:
+                kernel32.CloseHandle(handle)
         try:
             os.kill(pid, 0)
         except OSError:
@@ -559,7 +587,7 @@ def _extract_canonical_hash(output: Mapping[str, Any], fallback: str = "") -> st
 
 
 def _gate_passed(output: Mapping[str, Any]) -> bool:
-    if output.get("passed") is True:
+    if output.get("passed") is True or output.get("approved") is True:
         return True
     report = output.get("report")
     return isinstance(report, Mapping) and report.get("passed") is True
@@ -801,6 +829,18 @@ class UnifiedOrchestrator:
         return tuple(event.to_websocket() for event in self.progress_events(after_sequence))
 
     def _publication_authorized(self) -> bool:
+        """Require the complete gate chain for the active pipeline generation."""
+        if "automated_final_validation" in self._stage_index:
+            automated = self.store.load("automated_final_validation")
+            human = self.store.load("final_world_qa")
+            return bool(
+                automated
+                and automated.completion_state is CheckpointState.COMPLETED
+                and _gate_passed(automated.output)
+                and human
+                and human.completion_state is CheckpointState.COMPLETED
+                and _gate_passed(human.output)
+            )
         structural = self.store.load("structural_gates")
         parity = self.store.load("parity_gate")
         final = self.store.load("final_events")
@@ -876,6 +916,18 @@ class UnifiedOrchestrator:
                     item.get("id") or item.get("object_id")
                     for item in manifest if isinstance(item, Mapping)
                 ]
+        if stage.name == "blockout_approval":
+            selected_path = self.session_dir / "artifacts" / "selected_objects.json"
+            if selected_path.is_file():
+                selected = load_selected_manifest(selected_path)
+                context["object_ids"] = [
+                    str(item["object_id"]) for item in selected["objects"]
+                ]
+                context["selected_object_manifest_hash"] = selected["manifest_sha256"]
+            elif context.get("execution_profile") == "strict_real":
+                raise PipelineBlockedError(
+                    "strict-real blockout approval lacks selected-object authority"
+                )
 
     def _input_hashes(
         self, context: Mapping[str, Any], stage: StageSpec, object_id: str | None
@@ -1117,9 +1169,37 @@ class UnifiedOrchestrator:
         )
 
     def _require_publication_precondition(self, stage: StageSpec) -> None:
-        # Publication preconditions relaxed for canon-first pipeline (structural_gates
-        # and parity_gate stages were removed in the restructure)
-        pass
+        """Fail closed before publication stages for retained and V16 chains."""
+        if stage.name == "compile" and "structural_gates" in self._stage_index:
+            structural = self.store.load("structural_gates")
+            if not (
+                structural
+                and structural.completion_state is CheckpointState.COMPLETED
+                and _gate_passed(structural.output)
+            ):
+                raise PipelineBlockedError("structural gates have not passed")
+        if stage.name == "final_events" and "parity_gate" in self._stage_index:
+            parity = self.store.load("parity_gate")
+            if not (
+                parity
+                and parity.completion_state is CheckpointState.COMPLETED
+                and _gate_passed(parity.output)
+            ):
+                raise PipelineBlockedError("parity gate has not passed")
+        if stage.name == "mode_toggle" and "automated_final_validation" in self._stage_index:
+            automated = self.store.load("automated_final_validation")
+            human = self.store.load("final_world_qa")
+            if not (
+                automated
+                and automated.completion_state is CheckpointState.COMPLETED
+                and _gate_passed(automated.output)
+                and human
+                and human.completion_state is CheckpointState.COMPLETED
+                and _gate_passed(human.output)
+            ):
+                raise PipelineBlockedError(
+                    "automated validation and final-world approval must pass before publication"
+                )
 
     async def _run_unit(
         self,

@@ -41,15 +41,20 @@ class JobController:
 def test_default_order_encodes_authority_gates_and_pass_order():
     names = [stage.name for stage in DEFAULT_STAGE_SPECS]
 
-    assert names.index("plan_solve") < names.index("plan_normalize")
-    assert names.index("plan_normalize") < names.index("plan_validate")
-    assert names.index("plan_validate") < names.index("camera_contract")
-    assert names.index("world_contract") < names.index("structural_gates")
-    assert names.index("structural_gates") < names.index("compile")
-    assert names.index("compile") < names.index("parity_gate")
-    assert names.index("parity_gate") < names.index("final_events")
-    assert names.index("material_pass_1") < names.index("material_pass_2")
-    assert names[-1] == "warehouse_catalog"
+    assert names.index("brief") < names.index("canon_generation")
+    assert names.index("canon_generation") < names.index("canon_approval")
+    assert names.index("canon_approval") < names.index("segment")
+    assert names.index("segment") < names.index("depth_estimation")
+    assert names.index("depth_estimation") < names.index("spatial_reconstruction")
+    assert names.index("spatial_reconstruction") < names.index("blockout_approval")
+    assert names.index("blockout_approval") < names.index("mesh_generation")
+    assert names.index("mesh_generation") < names.index("material_pass_1")
+    assert names.index("parametric_room") < names.index("physics_classification")
+    assert names.index("physics_settle") < names.index("world_contract")
+    assert names.index("world_contract") < names.index("compile")
+    assert names.index("compile") < names.index("automated_final_validation")
+    assert names.index("automated_final_validation") < names.index("final_world_qa")
+    assert names[-1] == "mode_toggle"
 
 
 @pytest.mark.asyncio
@@ -344,3 +349,51 @@ def test_worker_lease_is_exclusive_even_within_one_process(tmp_path):
         with pytest.raises(LeaseConflictError, match="worker-one"):
             with orchestrator.ownership.worker("worker-two"):
                 pass
+
+
+@pytest.mark.asyncio
+async def test_v16_mode_toggle_is_blocked_when_automated_validation_fails(tmp_path):
+    calls: list[str] = []
+    orchestrator = UnifiedOrchestrator(
+        session_id="v16-failed-validation",
+        session_dir=tmp_path,
+        stages=tuple(StageSpec(name) for name in (
+            "automated_final_validation", "final_world_qa", "mode_toggle"
+        )),
+        handlers={
+            "automated_final_validation": lambda _context: {"passed": False},
+            "final_world_qa": lambda _context: {"approved": True},
+            "mode_toggle": lambda _context: calls.append("mode_toggle") or {"published": True},
+        },
+    )
+
+    with pytest.raises(PipelineBlockedError, match="automated validation"):
+        await orchestrator.run()
+
+    assert calls == []
+    assert orchestrator.store.load("mode_toggle") is None
+    assert all(event.finality == "provisional" for event in orchestrator.progress_events())
+
+
+@pytest.mark.asyncio
+async def test_v16_publication_becomes_final_only_after_both_gates_pass(tmp_path):
+    calls: list[str] = []
+    orchestrator = UnifiedOrchestrator(
+        session_id="v16-passing-validation",
+        session_dir=tmp_path,
+        stages=tuple(StageSpec(name) for name in (
+            "automated_final_validation", "final_world_qa", "mode_toggle"
+        )),
+        handlers={
+            "automated_final_validation": lambda _context: {"passed": True},
+            "final_world_qa": lambda _context: {"approved": True},
+            "mode_toggle": lambda _context: calls.append("mode_toggle") or {"published": True},
+        },
+    )
+
+    result = await orchestrator.run()
+
+    assert result.state == "completed"
+    assert calls == ["mode_toggle"]
+    assert orchestrator._publication_authorized() is True
+    assert orchestrator.progress_events()[-1].finality == "final"

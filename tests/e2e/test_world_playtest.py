@@ -15,8 +15,11 @@ from tests.e2e.world_test_kit.config import load_wtk_config
 from tests.e2e.world_test_kit.orchestrator import WorldTestOrchestrator
 
 
-# Default prompt for automated playtest runs
-DEFAULT_PROMPT = "A cozy mountain cabin with a wooden porch, surrounded by pine trees, with warm interior lighting visible through the windows"
+# Canonical release-qualification prompt (Requirement 30.2)
+DEFAULT_PROMPT = (
+    "Danny's kitchenette — a small, warm kitchen with a round table, two chairs, "
+    "a counter with a coffee maker, and a window looking out at rain."
+)
 
 
 @pytest.mark.e2e_playtest

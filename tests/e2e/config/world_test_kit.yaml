@@ -13,9 +13,9 @@ ollama_base_url: "http://127.0.0.1:11434"
 # Application under test
 server_url: "http://localhost:8000"
 
-# Scoring
-pass_threshold: 60.0
-individual_minimum: 30.0
+# Scoring — strict-real qualification is an all-gates 100/100 release pass.
+pass_threshold: 100.0
+individual_minimum: 100.0
 max_conversation_turns: 5
 
 # Per-stage timeouts (seconds)

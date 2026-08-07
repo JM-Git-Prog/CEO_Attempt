@@ -93,9 +93,13 @@ class TestImmediateStages:
 
     @pytest.fixture
     def immediate_stages(self):
+        # Data-dependent synchronous adapters are covered by their focused suites;
+        # this wiring test only executes handlers that require no prerequisite artifact.
         return [
             spec.name for spec in DEFAULT_STAGE_SPECS
-            if spec.approval_for is None and spec.name not in LIVE_GPU_STAGES
+            if spec.approval_for is None
+            and spec.name not in LIVE_GPU_STAGES
+            and spec.name != "spatial_reconstruction"
         ]
 
     def test_immediate_stages_return_stageresult(self, immediate_stages, make_context):
@@ -160,38 +164,32 @@ class TestApprovalStages:
 # ---------------------------------------------------------------------------
 
 class TestGPUStages:
-    """GPU stages: dream_preview is async/real, others return immediate placeholders."""
+    """Live model handlers are async; synchronous handlers still return StageResult."""
 
     def test_gpu_stages_exist(self):
-        """Sanity: we have GPU stages defined."""
-        assert len(GPU_STAGES) >= 4
+        """Sanity: all model-backed stages are classified."""
+        assert len(GPU_STAGES) >= 5
 
-    def test_non_live_gpu_stages_return_immediate(self, make_context):
-        """GPU stages other than dream_preview return immediate (degraded) results."""
+    def test_synchronous_gpu_stages_return_immediate(self, make_context):
         handlers = build_handlers()
-        non_live = GPU_STAGES - {"dream_preview"}
-        for stage_name in non_live:
-            ctx = make_context(stage_name, object_id="obj-1" if _is_per_object(stage_name) else None)
+        for stage_name in {"mesh_generation"}:
+            ctx = make_context(stage_name, object_id="obj-1")
             result = handlers[stage_name](ctx)
             assert isinstance(result, StageResult), f"{stage_name} did not return StageResult"
-            assert not result.is_pending_external, (
-                f"{stage_name} should not be pending (returns immediate placeholder)"
-            )
+            assert not result.is_pending_external
 
-    def test_dream_preview_is_async(self):
-        """dream_preview handler is async (calls real ComfyUI)."""
+    def test_live_model_handlers_have_declared_call_style(self):
         import asyncio
         handlers = build_handlers()
-        assert asyncio.iscoroutinefunction(handlers["dream_preview"])
+        for stage_name in {"dream_preview", "canon_generation", "segment", "depth_estimation"}:
+            assert asyncio.iscoroutinefunction(handlers[stage_name]), stage_name
+        assert not asyncio.iscoroutinefunction(handlers["mesh_generation"])
 
-    def test_gpu_stages_have_plan_revision(self, make_context):
-        """Non-async GPU stages preserve plan_revision."""
+    def test_synchronous_gpu_stages_preserve_plan_revision(self, make_context):
         handlers = build_handlers()
-        non_live = GPU_STAGES - {"dream_preview"}
-        for stage_name in non_live:
-            ctx = make_context(stage_name, object_id="obj-1" if _is_per_object(stage_name) else None)
-            result = handlers[stage_name](ctx)
-            assert result.plan_revision == ctx.plan_revision
+        ctx = make_context("mesh_generation", object_id="obj-1")
+        result = handlers["mesh_generation"](ctx)
+        assert result.plan_revision == ctx.plan_revision
 
 
 # ---------------------------------------------------------------------------
@@ -214,14 +212,15 @@ class TestCompileHandler:
         result = handlers["compile"](ctx)
         assert result.canonical_hash == result.output["contract_hash"]
 
-    def test_compile_includes_browser_and_godot(self, make_context):
+    def test_compile_fails_closed_without_contract_authority(self, make_context):
         handlers = build_handlers()
         ctx = make_context("compile")
         result = handlers["compile"](ctx)
         assert "browser" in result.output
         assert "godot" in result.output
-        assert result.output["browser"]["compiled"] is True
-        assert result.output["godot"]["compiled"] is True
+        assert result.output["browser"]["compiled"] is False
+        assert result.output["godot"]["compiled"] is False
+        assert "world_contract.json" in result.output["browser"]["reason"]
 
     def test_compile_not_pending_external(self, make_context):
         handlers = build_handlers()

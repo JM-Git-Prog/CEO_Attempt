@@ -28,8 +28,8 @@ class PlaytestReport:
     duration_s: float = 0.0
     overall_score: float = 0.0
     passed: bool = False
-    pass_threshold: float = 60.0
-    individual_minimum: float = 30.0
+    pass_threshold: float = 100.0
+    individual_minimum: float = 100.0
     layer_results: dict[str, Any] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
     scripted_mode: bool = False

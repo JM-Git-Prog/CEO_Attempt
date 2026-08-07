@@ -19,7 +19,10 @@ from src.unified_pipeline.camera_contract import CameraContract
 from src.unified_pipeline.depth_bridge import DepthEvidence
 from src.unified_pipeline.models import MetricPlan
 from src.unified_pipeline.plan_generator import _build_walls_from_dimensions
-from src.unified_pipeline.plan_validator import PlanValidator, _compute_plan_hash
+from src.unified_pipeline.plan_validator import (
+    _compute_plan_hash,
+    validate_plan_for_authority,
+)
 from src.upbge_compiler import CompilerOutputFlags, build_compiler_plan
 from src.world_contract import (
     AppearanceIntent,
@@ -196,6 +199,8 @@ class ParametricRoomResult:
     collision: tuple[ArchitecturalCollision, ...]
     depth_reference: DepthAppearanceLayer | None = None
     spatial_authority: str = PLAN_AUTHORITY
+    render_shell_path: str = ""
+    render_shell_sha256: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -211,6 +216,8 @@ class ParametricRoomResult:
                 self.depth_reference.to_dict() if self.depth_reference else None
             ),
             "spatial_authority": self.spatial_authority,
+            "render_shell_path": self.render_shell_path,
+            "render_shell_sha256": self.render_shell_sha256,
         }
 
 
@@ -514,9 +521,13 @@ class AuthoritativeParametricRoomAdapter:
             raise PlanBindingError("approval references a different Plan revision")
         if presented.get("camera_hash") != camera.compute_hash():
             raise PlanBindingError("approval references a different CameraContract")
-        validation = PlanValidator().validate(plan)
+        validation = validate_plan_for_authority(plan)
         if not validation.valid or validation.plan != plan:
-            raise PlanBindingError("Plan must be normalized and valid before room construction")
+            details = "; ".join(item.message for item in validation.violations[:3])
+            raise PlanBindingError(
+                "Plan must be normalized and valid before room construction"
+                + (f": {details}" if details else "")
+            )
         _validate_normalized_walls(plan)
         for index, opening in enumerate(plan.openings):
             _validate_opening(dict(opening), index)

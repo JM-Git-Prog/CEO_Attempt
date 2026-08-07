@@ -31,6 +31,10 @@ from src.unified_pipeline.conversation import (
     ConversationTurn,
     _user_confirms_stable,
 )
+from src.unified_pipeline.object_manifest import (
+    build_selected_manifest,
+    load_detected_document,
+)
 from src.unified_pipeline.orchestrator import (
     DEFAULT_STAGE_SPECS,
     DurableCheckpointStore,
@@ -89,6 +93,7 @@ def _launch_pipeline(session_id: str, session_dir: Path, brief: dict) -> None:
         try:
             result = await orchestrator.run({
                 "brief": brief,
+                "execution_profile": "strict_real",
                 "source_hash": hashlib.sha256(
                     json.dumps(brief, sort_keys=True).encode()
                 ).hexdigest(),
@@ -268,6 +273,35 @@ def _artifact_path(
                     return found
     return None
 
+
+def _compiled_mesh_path(session_dir: Path, object_id: str) -> Path | None:
+    """Resolve an exact object-bound compiled mesh and verify its contract hash."""
+    scene_path = session_dir / "compiled" / "browser" / "scene.json"
+    if not scene_path.is_file():
+        return None
+    try:
+        scene = json.loads(scene_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    for instance in scene.get("instances", []):
+        if not isinstance(instance, dict) or str(instance.get("object_id", "")) != object_id:
+            continue
+        asset_uri = instance.get("asset_uri")
+        binding = instance.get("asset_binding", {})
+        if not isinstance(asset_uri, str) or not isinstance(binding, dict):
+            return None
+        candidate = _safe_existing_artifact(
+            session_dir, f"compiled/browser/{asset_uri}", (".glb",)
+        )
+        expected_hash = str(binding.get("asset_id", ""))
+        if candidate is None or not re.fullmatch(r"[0-9a-f]{64}", expected_hash):
+            return None
+        if hashlib.sha256(candidate.read_bytes()).hexdigest() != expected_hash:
+            return None
+        return candidate
+    return None
+
+
 def unified_artifact_response(
     root: Path,
     session_id: str,
@@ -310,16 +344,17 @@ def unified_artifact_response(
                 "artifacts/canon_generation*.png", "artifacts/scene_canon*.png",
             ),
             "mesh": (
-                f"objects/{object_id}*.glb", f"meshes/{object_id}.glb",
-                f"artifacts/{object_id}*.glb",
-                f"objects/{session_id}/{object_id}*.glb",
-                f"compiled/browser/assets/meshes/*.glb",
+                f"objects/{object_id}.glb", f"meshes/{object_id}.glb",
+                f"artifacts/{object_id}.glb",
+                f"objects/{session_id}/{object_id}.glb",
             ),
         }[kind]
         for pattern in patterns:
             path = next((item for item in session_dir.glob(pattern) if item.is_file()), None)
             if path is not None:
                 break
+        if path is None and kind == "mesh" and object_id is not None:
+            path = _compiled_mesh_path(session_dir, object_id)
     if path is None:
         return JSONResponse({"error": f"{kind.replace('_', ' ').title()} not found"}, status_code=404)
     media_type = mimetypes.guess_type(path.name)[0] or (
@@ -636,20 +671,34 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             payload = {}
         writer_id = str(payload.get("writer_id", "web-user")).strip() or "web-user"
 
-        # Save selected objects if this is a blockout approval with selection data
-        if approval_stage == "blockout_approval" and payload.get("selected_objects"):
-            selected = payload["selected_objects"]
-            artifacts_dir = session_dir / "artifacts"
-            artifacts_dir.mkdir(parents=True, exist_ok=True)
-            selected_data = {
-                "selected_ids": [obj.get("id", idx) for idx, obj in enumerate(selected) if isinstance(obj, dict)] if isinstance(selected[0], dict) else selected,
-                "selected_names": [obj.get("name", "") for obj in selected if isinstance(obj, dict)] if selected and isinstance(selected[0], dict) else [],
-                "selected_count": len(selected),
-            }
-            (artifacts_dir / "selected_objects.json").write_text(
-                json.dumps(selected_data, indent=2), encoding="utf-8"
-            )
-            _log.info("  blockout approval: saved %d selected objects", len(selected))
+        selected_detected = None
+        selected_ids: list[object] = []
+        if approval_stage == "blockout_approval" and bool(payload.get("approved", True)):
+            selection = payload.get("selected_object_ids")
+            if selection is None:
+                selection = payload.get("selected_objects")
+            if not isinstance(selection, list):
+                return JSONResponse(
+                    {"error": "blockout approval requires selected objects"},
+                    status_code=409,
+                )
+            for item in selection:
+                if isinstance(item, dict):
+                    selected_ids.append(item.get("object_id", item.get("id")))
+                else:
+                    selected_ids.append(item)
+            try:
+                selected_detected = load_detected_document(
+                    session_dir / "artifacts" / "detected_objects.json"
+                )
+                build_selected_manifest(
+                    selected_detected,
+                    selected_ids,
+                    plan_revision=orchestrator.current_plan_revision,
+                    approval_revision=0,
+                )
+            except (KeyError, OSError, TypeError, ValueError) as exc:
+                return JSONResponse({"error": str(exc)}, status_code=409)
 
         try:
             # Lazy evaluation: only call current_plan_revision if payload doesn't supply it
@@ -668,6 +717,27 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 )
         except (ValueError, RuntimeError, KeyError, TypeError, OSError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=409)
+
+        if selected_detected is not None:
+            selected_manifest = build_selected_manifest(
+                selected_detected,
+                selected_ids,
+                plan_revision=revision,
+                approval_revision=int(getattr(decision, "approval_revision", 1)),
+            )
+            artifacts_dir = session_dir / "artifacts"
+            artifacts_dir.mkdir(parents=True, exist_ok=True)
+            selected_path = artifacts_dir / "selected_objects.json"
+            temporary_path = selected_path.with_suffix(".json.tmp")
+            temporary_path.write_text(
+                json.dumps(selected_manifest, indent=2, sort_keys=True), encoding="utf-8"
+            )
+            temporary_path.replace(selected_path)
+            _log.info(
+                "  blockout approval: bound %d selected canon objects",
+                selected_manifest["object_count"],
+            )
+
         existing = _tasks.get(session_id)
         if existing is None or existing.done():
             _log.info("  PIPELINE RESUMING after approval for %s (stage=%s)", session_id[:8], stage)
@@ -710,13 +780,13 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
             return JSONResponse({"error": "Unified session not found"}, status_code=404)
 
-        # Read detected_objects.json or object_picker.json
+        # Canonical detection document is authoritative; picker JSON is legacy presentation data.
         artifacts_dir = session_dir / "artifacts"
-        picker_path = artifacts_dir / "object_picker.json"
         detected_path = artifacts_dir / "detected_objects.json"
+        picker_path = artifacts_dir / "object_picker.json"
 
         data = None
-        for path in (picker_path, detected_path):
+        for path in (detected_path, picker_path):
             if path.is_file():
                 try:
                     data = json.loads(path.read_text(encoding="utf-8"))
@@ -741,11 +811,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
 
     @router.get("/api/session/{session_id}/scene_graph")
     async def unified_scene_graph(session_id: str):
-        """Return the scene graph for a completed V16 session.
-
-        Returns object IDs, names, positions, and mesh availability for the
-        QA harness (`window.__qa.getSceneGraph()`).
-        """
+        """Project the finalized WorldContract for the QA harness."""
         try:
             session_dir = _session_dir(output_root(), session_id)
         except ValueError as exc:
@@ -753,54 +819,66 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
             return JSONResponse({"error": "Unified session not found"}, status_code=404)
 
-        # Read brief for object manifest
-        brief_path = session_dir / "artifacts" / "brief.json"
-        if not brief_path.is_file():
+        artifacts = session_dir / "artifacts"
+        contract_path = artifacts / "world_contract.json"
+        graph_path = artifacts / "scene_graph.json"
+        if not contract_path.is_file() or not graph_path.is_file():
             return JSONResponse({"objects": [], "ready": False})
         try:
-            brief = json.loads(brief_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            return JSONResponse({"objects": [], "ready": False})
+            from src.unified_pipeline.object_manifest import file_sha256
+            from src.unified_pipeline.world_contract import WorldContract, verify_hash
 
-        manifest = brief.get("object_manifest", [])
-        meta = _meta(session_dir)
-        is_complete = meta.get("state") in ("completed", "ready")
-
-        # Check which objects have meshes
-        objects = []
-        for obj in manifest:
-            obj_id = obj.get("id", "")
-            has_mesh = False
-            mesh_path = ""
-            # Check common mesh locations
-            for candidate in [
-                session_dir / "objects" / f"{obj_id}_hunyuan3d.glb",
-                session_dir / "objects" / f"{obj_id}_trellis2.glb",
-                session_dir / "objects" / f"obj_{obj_id}_placeholder.glb",
-                session_dir / "meshes" / f"{obj_id}.glb",
-                session_dir / "objects" / session_id / f"{obj_id}.png",  # Object_PNG exists
-            ]:
-                if candidate.exists():
-                    has_mesh = candidate.suffix == ".glb"
-                    mesh_path = f"/api/session/{session_id}/mesh/{obj_id}"
-                    break
-            objects.append({
-                "objectId": obj_id,
-                "name": obj.get("name", ""),
-                "meshCount": 1 if has_mesh else 0,
-                "hasMesh": has_mesh,
-                "meshUrl": mesh_path if has_mesh else None,
-                "position": {"x": 0.0, "y": 0.0, "z": 0.0},  # Placeholder position
-                "role": obj.get("role", ""),
-            })
-
-        return {
-            "objects": objects,
-            "ready": is_complete and len(objects) > 0,
-            "sessionId": session_id,
-            "objectCount": len(objects),
-            "state": meta.get("state", "unknown"),
-        }
+            contract = WorldContract.from_dict(json.loads(contract_path.read_text(encoding="utf-8")))
+            graph = json.loads(graph_path.read_text(encoding="utf-8"))
+            graph_hash = str(graph.pop("document_sha256", ""))
+            encoded = json.dumps(
+                graph, sort_keys=True, separators=(",", ":"), allow_nan=False
+            ).encode("utf-8")
+            if hashlib.sha256(encoded).hexdigest() != graph_hash:
+                raise ValueError("scene graph hash is invalid")
+            if not verify_hash(contract) or graph.get("contract_hash") != contract.contract_hash:
+                raise ValueError("scene graph does not bind the finalized WorldContract")
+            objects = []
+            for instance in contract.instances:
+                mesh_path = Path(instance.asset_binding.mesh_path)
+                has_mesh = (
+                    mesh_path.is_file()
+                    and mesh_path.suffix.lower() == ".glb"
+                    and file_sha256(mesh_path) == instance.asset_binding.asset_id
+                )
+                objects.append({
+                    "objectId": instance.object_id,
+                    "name": instance.name,
+                    "meshCount": 1 if has_mesh else 0,
+                    "hasMesh": has_mesh,
+                    "meshUrl": (
+                        f"/api/session/{session_id}/mesh/{instance.object_id}"
+                        if has_mesh else None
+                    ),
+                    "position": instance.position.to_dict(),
+                    "rotation": instance.rotation.to_dict(),
+                    "scale": instance.scale.to_dict(),
+                    "role": instance.semantic_label,
+                    "physicsIntent": instance.physics_intent,
+                    "materialIntent": instance.material_intent.to_dict(),
+                    "assetSha256": instance.asset_binding.asset_id,
+                    "generator": instance.asset_binding.generator,
+                })
+            meta = _meta(session_dir)
+            complete = meta.get("state") in ("completed", "ready")
+            ready = complete and bool(objects) and all(item["hasMesh"] for item in objects)
+            return {
+                "objects": objects, "ready": ready, "sessionId": session_id,
+                "objectCount": len(objects), "state": meta.get("state", "unknown"),
+                "contractHash": contract.contract_hash,
+                "cameraHash": contract.camera_hash,
+                "roomShellRef": contract.room_shell_ref,
+                "sceneGraphSha256": graph_hash,
+            }
+        except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            return JSONResponse(
+                {"objects": [], "ready": False, "error": str(exc)}, status_code=409
+            )
 
     @router.websocket("/api/session/{session_id}/materials")
     async def unified_materials(session_id: str, websocket: WebSocket):

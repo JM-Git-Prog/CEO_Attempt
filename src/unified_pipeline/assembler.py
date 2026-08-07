@@ -18,7 +18,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .camera_contract import CameraContract
 from .models import MetricPlan
 from .parametric_room import PLAN_AUTHORITY, AuthorityClaim, ParametricRoomResult
-from .plan_validator import PlanValidator
+from .plan_validator import validate_plan_for_authority
 from .world_contract import (
     AssetBinding,
     FirstPersonNavigation,
@@ -116,7 +116,7 @@ class NormalizedAssetRecord:
 
 @dataclass(frozen=True, slots=True)
 class InstanceAssemblyInput:
-    """Explicit non-spatial intent; all transforms remain Plan-derived."""
+    """Explicit instance intent with optional physics-derived dynamic transform."""
 
     object_id: str
     name: str
@@ -125,6 +125,8 @@ class InstanceAssemblyInput:
     material_intent: MaterialIntent
     semantic_label: str
     is_architectural: bool = False
+    settled_position: tuple[float, float, float] | None = None
+    settled_rotation: Quaternion | None = None
     consumer_defaults: tuple[str, ...] = ()
 
 
@@ -389,9 +391,13 @@ class WorldContractAssembler:
             raise RevisionMismatchError("Plan revision history is not ordered")
         if room.plan_revision != latest.revision or room.plan_hash != latest.plan_hash:
             raise RevisionMismatchError("parametric room is bound to another Plan revision")
-        validation = PlanValidator().validate(plan)
+        validation = validate_plan_for_authority(plan)
         if not validation.valid or validation.plan != plan:
-            raise AssemblyError("Plan must be normalized and valid before assembly")
+            details = "; ".join(item.message for item in validation.violations[:3])
+            raise AssemblyError(
+                "Plan must be normalized and valid before assembly"
+                + (f": {details}" if details else "")
+            )
         if len(normalized) != len(plan.object_placements):
             raise AssemblyError("solve/normalize lost Plan instances")
         sources = {room.spatial_authority}
@@ -515,12 +521,38 @@ class WorldContractAssembler:
             asset = self.asset_normalizer.normalize(intent.approved_asset)
             normalized_by_key[(asset.path, asset.sha256)] = asset
             position = placement["position"]
+            rotation = _yaw_quaternion(placement["rotation_deg"])
+            if intent.settled_position is not None or intent.settled_rotation is not None:
+                if intent.physics_intent != "dynamic" or intent.is_architectural:
+                    raise ConsumerDefaultError(
+                        f"{intent.object_id} settled transforms require dynamic physics intent"
+                    )
+                if intent.settled_position is None or intent.settled_rotation is None:
+                    raise ConsumerDefaultError(
+                        f"{intent.object_id} settled position and rotation must be supplied together"
+                    )
+                position = tuple(
+                    _finite(value, f"{intent.object_id}.settled_position")
+                    for value in intent.settled_position
+                )
+                if len(position) != 3:
+                    raise ConsumerDefaultError(
+                        f"{intent.object_id} settled position must contain three values"
+                    )
+                rotation = intent.settled_rotation
+                norm = sum(value * value for value in (
+                    rotation.x, rotation.y, rotation.z, rotation.w
+                ))
+                if not math.isfinite(norm) or abs(norm - 1.0) > 1e-6:
+                    raise ConsumerDefaultError(
+                        f"{intent.object_id} settled rotation must be a unit quaternion"
+                    )
             dimensions = placement["dimensions"]
             world_instances.append(ObjectInstance(
                 object_id=intent.object_id,
                 name=intent.name,
                 position=Vec3(*position),
-                rotation=_yaw_quaternion(placement["rotation_deg"]),
+                rotation=rotation,
                 scale=Vec3(*dimensions),
                 asset_binding=asset.to_binding(),
                 physics_intent=intent.physics_intent,
@@ -581,11 +613,22 @@ class WorldContractAssembler:
                 "lighting": graph.lighting.to_dict(),
             }
             contract_id = f"world-{_canonical_digest(seed)[:32]}"
+        room_shell_ref = room.render_shell_path or (
+            f"parametric-room:sha256:{graph.room_authority_hash}"
+        )
+        if room.render_shell_path:
+            shell = Path(room.render_shell_path).expanduser().resolve()
+            if not shell.is_file() or shell.suffix.lower() != ".glb":
+                raise AssemblyError("renderable room shell must be an existing GLB")
+            digest = hashlib.sha256(shell.read_bytes()).hexdigest()
+            if digest != room.render_shell_sha256:
+                raise AssemblyError("renderable room shell hash does not match authority")
+            room_shell_ref = str(shell)
         return WorldContract(
             plan_revision=f"rev-{graph.plan_revision}",
             camera_hash=graph.camera_hash,
             camera=camera,
-            room_shell_ref=f"parametric-room:sha256:{graph.room_authority_hash}",
+            room_shell_ref=room_shell_ref,
             navigation=WorldContractAssembler._build_navigation(graph, room, camera),
             instances=graph.instances,
             interactions=graph.interactions,

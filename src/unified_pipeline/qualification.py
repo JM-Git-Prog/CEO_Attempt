@@ -39,7 +39,7 @@ from src.unified_pipeline.stage_handlers import (
 # ---------------------------------------------------------------------------
 
 CANONICAL_PROMPT = (
-    "a small, warm kitchen with a round table, two chairs, "
+    "Danny's kitchenette — a small, warm kitchen with a round table, two chairs, "
     "a counter with a coffee maker, and a window looking out at rain."
 )
 

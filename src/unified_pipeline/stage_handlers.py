@@ -18,6 +18,11 @@ import uuid
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
+from src.unified_pipeline.object_manifest import (
+    build_detected_document,
+    load_detected_document,
+    load_selected_manifest,
+)
 from src.unified_pipeline.orchestrator import (
     DEFAULT_STAGE_SPECS,
     StageExecutionContext,
@@ -68,6 +73,11 @@ def _contract_hash(data: Mapping[str, Any]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _strict_real(context: StageExecutionContext) -> bool:
+    """Return whether this execution must fail instead of degrading."""
+    return context.values.get("execution_profile") == "strict_real"
+
+
 # ---------------------------------------------------------------------------
 # Stage categories (derived from DEFAULT_STAGE_SPECS)
 # ---------------------------------------------------------------------------
@@ -79,14 +89,16 @@ APPROVAL_STAGES = frozenset(
 GPU_STAGES = frozenset({
     "dream_preview",
     "canon_generation",
+    "segment",
     "depth_estimation",
     "mesh_generation",
 })
 
-# Stages that actually call live GPU services (others return immediate placeholders)
+# Stages that actually call live GPU/model services.
 LIVE_GPU_STAGES = frozenset({
     "dream_preview",   # Real ComfyUI FLUX
     "canon_generation",  # Real ComfyUI FLUX/SDXL
+    "segment",  # Real Ollama vision inventory
     "depth_estimation",  # Real DA3 via ComfyUI
     "mesh_generation",  # Real Hunyuan3D/Trellis2 via ComfyUI
 })
@@ -424,70 +436,25 @@ async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
         except Exception as exc:
             _log.warning("  segment(vision): %s failed: %s", model, exc)
 
-    # Validate and normalize detected objects
-    validated = []
-    for idx, obj in enumerate(detected_objects):
-        if not isinstance(obj, dict):
-            continue
-        name = str(obj.get("name", f"object_{idx}")).strip()
-        if not name:
-            name = f"object_{idx}"
-
-        # Validate/normalize bbox
-        bbox = obj.get("bbox", [0, 0, width, height])
-        if not isinstance(bbox, list) or len(bbox) != 4:
-            bbox = [0, 0, width, height]
-        try:
-            bbox = [max(0, min(int(b), width if i % 2 == 0 else height)) for i, b in enumerate(bbox)]
-        except (ValueError, TypeError):
-            bbox = [0, 0, width, height]
-
-        # Ensure x1 < x2 and y1 < y2
-        if bbox[0] >= bbox[2]:
-            bbox[2] = min(bbox[0] + 50, width)
-        if bbox[1] >= bbox[3]:
-            bbox[3] = min(bbox[1] + 50, height)
-
-        material = str(obj.get("material", "unknown")).strip()
-        category = str(obj.get("category", "decor")).strip()
-        size_estimate = str(obj.get("size_estimate", "medium")).strip()
-        if size_estimate not in ("large", "medium", "small", "tiny"):
-            size_estimate = "medium"
-
-        validated.append({
-            "id": idx,
-            "name": name,
-            "bbox": bbox,
-            "material": material,
-            "category": category,
-            "size_estimate": size_estimate,
-        })
-
-    _log.info("  segment(vision): detected %d objects via %s", len(validated), model_used)
-
-    # Save detected objects to artifacts
-    artifacts_dir = ctx.session_dir / "artifacts"
-    artifacts_dir.mkdir(parents=True, exist_ok=True)
-
-    detected_data = {
-        "objects": validated,
-        "image_width": width,
-        "image_height": height,
-        "model_used": model_used,
-        "object_count": len(validated),
-    }
-    (artifacts_dir / "detected_objects.json").write_text(
-        json.dumps(detected_data, indent=2), encoding="utf-8"
+    detected_data = build_detected_document(
+        detected_objects,
+        canon_path=canon_path,
+        width=width,
+        height=height,
+        model_used=model_used,
+        strict=_strict_real(ctx),
+    )
+    _log.info(
+        "  segment(vision): detected %d objects via %s",
+        detected_data["object_count"], model_used,
     )
 
-    return _immediate({
-        "status": "segment_complete",
-        "detected_objects": validated,
-        "object_count": len(validated),
-        "image_width": width,
-        "image_height": height,
-        "model_used": model_used,
-    }, ctx)
+    artifacts_dir = ctx.session_dir / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    (artifacts_dir / "detected_objects.json").write_text(
+        json.dumps(detected_data, indent=2, sort_keys=True), encoding="utf-8"
+    )
+    return _immediate({"status": "segment_complete", **detected_data}, ctx)
 
 
 async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
@@ -648,24 +615,8 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
     detected_path = artifacts_dir / "detected_objects.json"
 
     if not detected_path.is_file():
-        _log.warning("  spatial_reconstruction: no detected_objects.json found")
-        # Fall back to canon image directly
-        canon_path = str(artifacts_dir / "canon.png")
-        output_path = artifacts_dir / "blockout.png"
-        if Path(canon_path).exists():
-            import shutil
-            shutil.copy2(canon_path, output_path)
-        return _immediate({
-            "status": "spatial_reconstruction_complete",
-            "image_path": str(output_path),
-            "object_count": 0,
-        }, ctx)
-
-    try:
-        detected_data = json.loads(detected_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        _log.error("  spatial_reconstruction: failed to read detected_objects.json: %s", exc)
-        detected_data = {"objects": [], "image_width": 1024, "image_height": 768}
+        raise RuntimeError("spatial reconstruction requires detected_objects.json")
+    detected_data = load_detected_document(detected_path)
 
     objects = detected_data.get("objects", [])
     img_width = detected_data.get("image_width", 1024)
@@ -766,21 +717,16 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
 
     except Exception as exc:
         _log.error("  spatial_reconstruction: failed: %s", exc)
-        # Write the canon image directly as fallback
+        if _strict_real(ctx):
+            raise RuntimeError("strict-real blockout rendering failed") from exc
         import shutil
         if Path(canon_path).exists():
             shutil.copy2(canon_path, output_path)
         else:
-            from PIL import Image
-            Image.new("RGB", (img_width, img_height), (30, 30, 30)).save(output_path)
+            raise RuntimeError("blockout rendering failed and canon is unavailable") from exc
 
-    # Save object_picker.json for the interactive UI
-    picker_data = {
-        "objects": objects,
-        "image_width": img_width,
-        "image_height": img_height,
-        "blockout_image": "blockout.png",
-    }
+    # Compatibility artifact for the retained V16 picker; detection authority is unchanged.
+    picker_data = {**detected_data, "blockout_image": "blockout.png"}
     (artifacts_dir / "object_picker.json").write_text(
         json.dumps(picker_data, indent=2), encoding="utf-8"
     )
@@ -814,35 +760,22 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     _log = logging.getLogger("live_trace")
     object_id = ctx.object_id
 
-    # Check if this object was selected in the interactive picker
+    strict = _strict_real(ctx)
     selected_path = ctx.session_dir / "artifacts" / "selected_objects.json"
+    selected_object: dict[str, Any] | None = None
     if selected_path.is_file():
-        try:
-            selected_data = json.loads(selected_path.read_text(encoding="utf-8"))
-            selected_ids = selected_data.get("selected_ids", [])
-            selected_names = selected_data.get("selected_names", [])
-
-            # Check if this object_id (or its index) is in the selection
-            if selected_ids and object_id not in [str(s) for s in selected_ids]:
-                # Also check by matching name from the brief manifest
-                brief_path = ctx.session_dir / "artifacts" / "brief.json"
-                obj_name = ""
-                if brief_path.is_file():
-                    brief = json.loads(brief_path.read_text(encoding="utf-8"))
-                    for obj in brief.get("object_manifest", []):
-                        if isinstance(obj, dict) and obj.get("id") == object_id:
-                            obj_name = obj.get("name", "")
-                            break
-
-                if obj_name and obj_name not in selected_names:
-                    _log.info("  mesh_gen[%s]: SKIPPED — not in user selection", object_id[:8] if object_id else "?")
-                    return _immediate({
-                        "status": "mesh_generation_skipped",
-                        "object_id": object_id,
-                        "reason": "not_selected",
-                    }, ctx)
-        except (OSError, json.JSONDecodeError):
-            pass  # If file can't be read, process all objects
+        selected_manifest = load_selected_manifest(selected_path)
+        selected_object = next(
+            (
+                item for item in selected_manifest["objects"]
+                if str(item.get("object_id", "")) == str(object_id)
+            ),
+            None,
+        )
+    if strict and selected_object is None:
+        raise MeshGenerationError(
+            f"object {object_id!r} is not authorized by selected-object manifest"
+        )
 
     # Get the Object_Canon for this object from segment output
     stage_outputs = ctx.values.get("stage_outputs", {})
@@ -878,35 +811,9 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
         # No cutout exists yet — run SAM3 text-prompted extraction for this object
         _log.info("  mesh_gen[%s]: No cutout found — running SAM3 extraction...", object_id[:8] if object_id else "?")
 
-        # Get object name for SAM3 text prompt
-        obj_name = ""
-        detected_path = ctx.session_dir / "artifacts" / "detected_objects.json"
-        brief_path = ctx.session_dir / "artifacts" / "brief.json"
-
-        # Try detected_objects first (has all the detail)
-        if detected_path.is_file():
-            try:
-                detected = json.loads(detected_path.read_text(encoding="utf-8"))
-                for obj in detected:
-                    if isinstance(obj, dict) and str(obj.get("id", "")) == str(object_id):
-                        obj_name = obj.get("name", "")
-                        break
-            except Exception:
-                pass
-
-        # Fall back to brief manifest
-        if not obj_name and brief_path.is_file():
-            try:
-                brief = json.loads(brief_path.read_text(encoding="utf-8"))
-                for obj in brief.get("object_manifest", []):
-                    if isinstance(obj, dict) and obj.get("id") == object_id:
-                        obj_name = obj.get("name", "")
-                        break
-            except Exception:
-                pass
-
-        if not obj_name:
-            obj_name = "object"
+        # The approved detected record is the identity and bbox authority for SAM3.
+        obj_name = str((selected_object or {}).get("name", "object"))
+        selected_bbox = (selected_object or {}).get("bbox")
 
         # Get canon path for SAM3
         canon_path = ""
@@ -925,11 +832,20 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
             async def _extract_cutout():
                 COMFY = "http://localhost:8188"
                 async with httpx.AsyncClient(timeout=30.0) as cl:
-                    # Upload canon
-                    with open(canon_path, "rb") as f:
-                        up = await cl.post(f"{COMFY}/upload/image",
-                            files={"image": (f"v16-canon-{ctx.session_id[:8]}.png", f, "image/png")},
-                            data={"overwrite": "true"})
+                    # Crop to the approved bbox before text-conditioned SAM3 detection.
+                    upload_bytes = Path(canon_path).read_bytes()
+                    if isinstance(selected_bbox, list) and len(selected_bbox) == 4:
+                        import io
+                        from PIL import Image
+                        source = Image.open(io.BytesIO(upload_bytes)).convert("RGB")
+                        x1, y1, x2, y2 = (int(value) for value in selected_bbox)
+                        crop = source.crop((x1, y1, x2, y2))
+                        encoded = io.BytesIO()
+                        crop.save(encoded, format="PNG")
+                        upload_bytes = encoded.getvalue()
+                    up = await cl.post(f"{COMFY}/upload/image",
+                        files={"image": (f"v16-canon-{ctx.session_id[:8]}.png", upload_bytes, "image/png")},
+                        data={"overwrite": "true"})
                     if up.status_code != 200:
                         return None
                     canon_name = up.json()["name"]
@@ -983,6 +899,12 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
                     cut_bytes = asyncio.run(_extract_cutout())
 
                 if cut_bytes and len(cut_bytes) > 1000:
+                    import io
+                    from PIL import Image
+                    cutout = Image.open(io.BytesIO(cut_bytes))
+                    alpha = cutout.getchannel("A") if "A" in cutout.getbands() else None
+                    if alpha is None or alpha.getextrema() in ((0, 0), (255, 255)):
+                        raise MeshGenerationError("SAM3 cutout lacks a nontrivial alpha mask")
                     objects_dir = ctx.session_dir / "objects" / ctx.session_id
                     objects_dir.mkdir(parents=True, exist_ok=True)
                     cutout_path = objects_dir / f"{object_id}.png"
@@ -995,6 +917,8 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
                 _log.warning("  mesh_gen[%s]: SAM3 extraction failed: %s", object_id[:8], exc)
 
     if not image_path or not Path(image_path).exists():
+        if strict:
+            raise MeshGenerationError(f"SAM3 produced no valid cutout for {object_id}")
         _log.warning("  mesh_gen[%s]: No cutout available — generating bare placeholder GLB", object_id[:8] if object_id else "?")
         # Generate a placeholder box directly (no input image needed)
         import trimesh
@@ -1037,6 +961,35 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     output_dir = ctx.session_dir / "meshes"
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    def _approved_real_output(result: Any, generator: str) -> dict[str, Any]:
+        mesh_path = Path(result.mesh_path).resolve()
+        output: dict[str, Any] = {
+            "status": "mesh_generation_complete",
+            "object_id": object_id,
+            "mesh_path": str(mesh_path),
+            "generator": generator,
+            "face_count": result.face_count,
+            "vertex_count": result.vertex_count,
+            "mesh_sha256": hashlib.sha256(mesh_path.read_bytes()).hexdigest(),
+            "degraded": False,
+        }
+        if strict:
+            from src.unified_pipeline.strict_real_assets import normalize_generated_glb
+
+            normalized_path = output_dir / "normalized" / f"{object_id}.glb"
+            evidence = normalize_generated_glb(mesh_path, normalized_path)
+            output.update({
+                "mesh_path": evidence["normalized_path"],
+                "mesh_sha256": evidence["normalized_sha256"],
+                "face_count": evidence["face_count"],
+                "vertex_count": evidence["vertex_count"],
+                "source_mesh_path": evidence["source_path"],
+                "source_mesh_sha256": evidence["source_sha256"],
+                "source_mesh_extents": evidence["source_extents_m"],
+                "normalization": evidence,
+            })
+        return output
+
     # Try the real fallback chain: Hunyuan3D → Trellis2 → placeholder
     client = ComfyUIClient(base_url="http://127.0.0.1:8188", timeout_s=200)
 
@@ -1054,18 +1007,16 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
         else:
             result = asyncio.run(hunyuan_gen.generate(obj_canon))
 
+        mesh_path = Path(result.mesh_path)
+        if (not result.approved or result.is_placeholder or not mesh_path.is_file()
+                or mesh_path.suffix.lower() != ".glb"
+                or result.face_count <= 0 or result.vertex_count <= 0):
+            raise MeshGenerationError("Hunyuan3D returned an invalid or placeholder mesh")
         _log.info("  mesh_gen[%s]: Hunyuan3D OK — %d faces, %d verts",
                   object_id[:8], result.face_count, result.vertex_count)
-        return _immediate({
-            "status": "mesh_generation_complete",
-            "object_id": object_id,
-            "mesh_path": result.mesh_path,
-            "generator": "hunyuan3d_v2.1",
-            "face_count": result.face_count,
-            "vertex_count": result.vertex_count,
-        }, ctx)
+        return _immediate(_approved_real_output(result, "hunyuan3d_v2.1"), ctx)
 
-    except (MeshGenerationError, Exception) as exc:
+    except Exception as exc:
         _log.warning("  mesh_gen[%s]: Hunyuan3D failed (%s) — trying Trellis2", object_id[:8], exc)
 
     # 2. Try Trellis2
@@ -1081,21 +1032,23 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
         else:
             result = asyncio.run(trellis_gen.generate(obj_canon))
 
+        mesh_path = Path(result.mesh_path)
+        if (not result.approved or result.is_placeholder or not mesh_path.is_file()
+                or mesh_path.suffix.lower() != ".glb"
+                or result.face_count <= 0 or result.vertex_count <= 0):
+            raise MeshGenerationError("Trellis2 returned an invalid or placeholder mesh")
         _log.info("  mesh_gen[%s]: Trellis2 OK — %d faces, %d verts",
                   object_id[:8], result.face_count, result.vertex_count)
-        return _immediate({
-            "status": "mesh_generation_complete",
-            "object_id": object_id,
-            "mesh_path": result.mesh_path,
-            "generator": "trellis2",
-            "face_count": result.face_count,
-            "vertex_count": result.vertex_count,
-        }, ctx)
+        return _immediate(_approved_real_output(result, "trellis2"), ctx)
 
-    except (MeshGenerationError, Exception) as exc:
+    except Exception as exc:
+        if strict:
+            raise MeshGenerationError(
+                f"real mesh generators exhausted for {object_id}: {exc}"
+            ) from exc
         _log.warning("  mesh_gen[%s]: Trellis2 failed (%s) — using placeholder", object_id[:8], exc)
 
-    # 3. Placeholder fallback
+    # 3. Placeholder fallback (legacy non-strict profile only)
     placeholder_gen = UnifiedPlaceholderGenerator(output_dir=output_dir)
     result = placeholder_gen.generate(obj_canon)
     _log.info("  mesh_gen[%s]: Placeholder generated", object_id[:8])
@@ -1351,6 +1304,8 @@ def _handle_world_contract(ctx: StageExecutionContext) -> StageResult:
         )
 
     except Exception as exc:
+        if _strict_real(ctx):
+            raise RuntimeError("strict-real WorldContract construction failed") from exc
         _log.warning(f"  world_contract: construction failed ({exc}), returning mock")
         contract_data = {
             "session_id": ctx.session_id,
@@ -1411,6 +1366,8 @@ def _handle_compile(ctx: StageExecutionContext) -> StageResult:
         )
 
     except Exception as exc:
+        if _strict_real(ctx):
+            raise RuntimeError("strict-real browser compilation failed") from exc
         _log.warning(f"  compile: BrowserCompiler failed ({exc}), returning degraded result")
         # Fall back — pipeline still completes, but world won't be viewable
         compile_data = {
@@ -1503,4 +1460,9 @@ def build_handlers(config: dict | None = None) -> dict[str, Callable[[StageExecu
                 return _immediate({"status": f"{_name}_complete"}, ctx)
             handlers[spec.name] = _fallback
 
+    # Strict adapters dispatch back to the retained handlers for non-strict profiles.
+    # Keeping this override local avoids importing the integration module while this
+    # module's legacy functions are still being defined.
+    from src.unified_pipeline.strict_real_handlers import STRICT_REAL_HANDLERS
+    handlers.update(STRICT_REAL_HANDLERS)
     return handlers

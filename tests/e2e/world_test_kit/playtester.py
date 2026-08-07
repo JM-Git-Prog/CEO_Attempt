@@ -291,23 +291,35 @@ class PlaytesterAgent:
                         self._try_approve_gate("mesh")
                     elif "final_world" in current_stage or "world_qa" in current_stage:
                         self._try_approve_gate("world")
-                        result.success = True
                     elif current_stage in ("spatial_reconstruction",):
                         # Spatial reconstruction just completed — blockout_approval gate coming next
                         pass
                     elif current_stage in ("canon", "canon_review"):
                         pass
-                    elif current_stage in ("world", "complete", "done", "compile", "mode_toggle"):
+                    elif current_stage in ("world", "complete", "done"):
                         result.success = True
                         break
+
+                terminal_status = str(self._page.evaluate(
+                    "() => document.getElementById('status')?.textContent || ''"
+                )).strip().lower()
+                if "completed" in terminal_status:
+                    result.success = True
+                    break
+                if terminal_status.startswith("error") or terminal_status == "failed":
+                    logger.error("Pipeline entered terminal UI state: %s", terminal_status)
+                    break
 
                 time.sleep(2.0)
 
             result.total_wait_s = time.monotonic() - start
 
-            # If we timed out but got some stages, partial success
+            # Strict qualification never promotes partial traversal to success.
             if not result.success and stages_seen:
-                result.success = len(stages_seen) >= 2
+                logger.error(
+                    "Pipeline did not reach a verified terminal stage; stages seen: %s",
+                    sorted(stages_seen),
+                )
 
         except Exception as e:
             result.errors.append(f"Pipeline wait failed: {e}")
@@ -632,13 +644,28 @@ class PlaytesterAgent:
                 logger.warning("Cannot approve gate '%s' — no session ID found", gate)
                 return
 
-            # Call the approve API directly
+            # Call the approve API directly. Blockout approval must bind explicit
+            # canon-detection IDs; an empty implicit approval is never valid.
             import httpx
             approve_url = f"{self._config.server_url}/api/session/{session_id}/approve/{gate}"
             with httpx.Client(timeout=10.0) as client:
+                payload = {"approved": True}
+                if gate == "blockout":
+                    picker = client.get(
+                        f"{self._config.server_url}/api/session/{session_id}/object_picker"
+                    )
+                    picker.raise_for_status()
+                    objects = picker.json().get("objects", [])
+                    selected_ids = [
+                        item.get("object_id", item.get("id"))
+                        for item in objects if isinstance(item, dict)
+                    ]
+                    if not selected_ids:
+                        raise RuntimeError("strict-real picker returned no selectable objects")
+                    payload["selected_object_ids"] = selected_ids
                 resp = client.post(
                     approve_url,
-                    json={"approved": True},
+                    json=payload,
                     headers={"Content-Type": "application/json"},
                 )
                 if resp.status_code == 200:

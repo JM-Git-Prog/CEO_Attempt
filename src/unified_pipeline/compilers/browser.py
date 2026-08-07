@@ -246,7 +246,9 @@ class BrowserCompiler:
     interface_version = 5
 
     def compile(
-        self, contract: WorldContract, output_dir: str | Path
+        self, contract: WorldContract, output_dir: str | Path, *,
+        require_renderable_room: bool = False,
+        require_real_instances: bool = False,
     ) -> BrowserCompileResult:
         if not isinstance(contract, WorldContract):
             raise TypeError(
@@ -254,6 +256,25 @@ class BrowserCompiler:
             )
         if not verify_hash(contract):
             raise BrowserCompilerError("WorldContract hash is empty or invalid")
+        if require_real_instances:
+            if not contract.instances:
+                raise BrowserCompilerError("strict compilation requires selected instances")
+            rejected = sorted(
+                item.object_id for item in contract.instances
+                if not item.asset_binding.generator.strip()
+                or "placeholder" in item.asset_binding.generator.casefold()
+            )
+            if rejected:
+                raise BrowserCompilerError(
+                    "strict compilation rejects placeholder/unknown generators: "
+                    + ", ".join(rejected)
+                )
+        if require_renderable_room:
+            room_source = Path(contract.room_shell_ref)
+            if not room_source.is_file() or room_source.suffix.lower() != ".glb":
+                raise BrowserCompilerError(
+                    "strict compilation requires a renderable GLB room shell"
+                )
         if not contract.plan_revision.strip() or not contract.camera_hash.strip():
             raise BrowserCompilerError(
                 "WorldContract must bind an exact Plan revision and camera hash"

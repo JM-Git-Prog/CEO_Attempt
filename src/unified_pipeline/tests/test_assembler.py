@@ -38,6 +38,7 @@ from src.unified_pipeline.world_contract import (
     LightingConfig,
     LightSource,
     MaterialIntent,
+    Quaternion,
     Relationship,
     Vec3,
     verify_hash,
@@ -218,6 +219,44 @@ def test_assembler_hash_binds_explicit_uuid_interactions(tmp_path: Path) -> None
     assert result.contract.interactions == (interaction,)
     assert result.contract.to_dict()["interactions"] == [interaction.to_dict()]
     assert verify_hash(result.contract)
+
+
+def test_dynamic_instance_uses_explicit_settled_transform(tmp_path: Path) -> None:
+    object_id = "db2790ad-331f-5411-9347-1815acb004bd"
+    camera = _camera()
+    plan = _plan(_placement(object_id, 1.0))
+    asset = _asset(tmp_path)
+    intent = replace(
+        _intent(object_id, asset),
+        settled_position=(-0.8, 0.25, 0.1),
+        settled_rotation=Quaternion(0.0, 0.0, 0.0, 1.0),
+    )
+
+    result = WorldContractAssembler().assemble(
+        plan, camera, _room(plan, camera), (intent,),
+        approved_plan_revision=3, lighting=LightingConfig(),
+    )
+
+    instance = result.contract.instances[0]
+    assert instance.position.to_dict() == {"x": -0.8, "y": 0.25, "z": 0.1}
+    assert instance.rotation == intent.settled_rotation
+    assert verify_hash(result.contract)
+
+
+def test_static_instance_rejects_settled_transform_override(tmp_path: Path) -> None:
+    camera = _camera()
+    plan = _plan(_placement("table", 1.0))
+    intent = replace(
+        _intent("table", _asset(tmp_path)),
+        physics_intent="static",
+        settled_position=(0.0, 0.0, 0.0),
+        settled_rotation=Quaternion(),
+    )
+    with pytest.raises(ConsumerDefaultError, match="dynamic physics"):
+        WorldContractAssembler().assemble(
+            plan, camera, _room(plan, camera), (intent,),
+            approved_plan_revision=3, lighting=LightingConfig(),
+        )
 
 
 def test_assembler_keeps_hinged_door_out_of_static_navigation(tmp_path: Path) -> None:

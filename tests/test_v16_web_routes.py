@@ -1,6 +1,7 @@
 """Targeted route tests for Task 10.3's additive V16 interface."""
 from __future__ import annotations
 
+import hashlib
 import json
 from contextlib import contextmanager
 from pathlib import Path
@@ -8,7 +9,9 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
+from PIL import Image
 
+from src.unified_pipeline.object_manifest import build_detected_document
 from src.web import app as web
 from src.web import unified_routes
 
@@ -133,6 +136,54 @@ class TestUnifiedArtifactsAndEvents:
         assert response.content == content
         assert response.headers["content-type"] == "model/gltf-binary"
 
+    def test_compiled_mesh_fallback_is_exactly_object_bound(self, client, tmp_path):
+        session_dir = _create_v16_session(tmp_path, "compiled-mesh-session")
+        compiled = session_dir / "compiled" / "browser"
+        assets = compiled / "assets" / "meshes"
+        assets.mkdir(parents=True)
+        table_content = b"glTF-table"
+        chair_content = b"glTF-chair"
+        table_hash = hashlib.sha256(table_content).hexdigest()
+        chair_hash = hashlib.sha256(chair_content).hexdigest()
+        (assets / f"{table_hash}.glb").write_bytes(table_content)
+        (assets / f"{chair_hash}.glb").write_bytes(chair_content)
+        (compiled / "scene.json").write_text(json.dumps({"instances": [
+            {
+                "object_id": "table",
+                "asset_uri": f"assets/meshes/{table_hash}.glb",
+                "asset_binding": {"asset_id": table_hash},
+            },
+            {
+                "object_id": "chair",
+                "asset_uri": f"assets/meshes/{chair_hash}.glb",
+                "asset_binding": {"asset_id": chair_hash},
+            },
+        ]}), encoding="utf-8")
+
+        table = client.get("/api/session/compiled-mesh-session/mesh/table")
+        missing = client.get("/api/session/compiled-mesh-session/mesh/lamp")
+
+        assert table.status_code == 200
+        assert table.content == table_content
+        assert table.content != chair_content
+        assert missing.status_code == 404
+
+    def test_compiled_mesh_fallback_rejects_hash_drift(self, client, tmp_path):
+        session_dir = _create_v16_session(tmp_path, "drifted-mesh-session")
+        compiled = session_dir / "compiled" / "browser"
+        assets = compiled / "assets" / "meshes"
+        assets.mkdir(parents=True)
+        content = b"drifted"
+        (assets / "mesh.glb").write_bytes(content)
+        (compiled / "scene.json").write_text(json.dumps({"instances": [{
+            "object_id": "table", "asset_uri": "assets/meshes/mesh.glb",
+            "asset_binding": {"asset_id": "0" * 64},
+        }]}), encoding="utf-8")
+
+        response = client.get("/api/session/drifted-mesh-session/mesh/table")
+
+        assert response.status_code == 404
+
     def test_dream_and_canon_routes_return_404_until_artifacts_exist(self, client, tmp_path):
         _create_v16_session(tmp_path, "artifact-session")
         assert client.get("/api/session/artifact-session/dream_preview").status_code == 404
@@ -171,6 +222,8 @@ class TestUnifiedArtifactsAndEvents:
 
 
 class _Decision:
+    approval_revision = 1
+
     def to_dict(self):
         return {"stage": "blockout_approval", "approved": True, "plan_revision": 2}
 
@@ -194,14 +247,43 @@ class _FakeOrchestrator:
 
 class TestUnifiedApprovals:
     def test_approval_is_written_through_attached_orchestrator(self, client, tmp_path):
-        _create_v16_session(tmp_path, "approval-session")
+        session_dir = _create_v16_session(tmp_path, "approval-session")
+        artifacts = session_dir / "artifacts"
+        artifacts.mkdir()
+        canon_path = artifacts / "canon.png"
+        Image.new("RGB", (64, 64), "white").save(canon_path)
+        detected = build_detected_document(
+            [{
+                "name": "round table",
+                "bbox": [8, 8, 56, 56],
+                "material": "wood",
+                "category": "furniture",
+                "size_estimate": "medium",
+            }],
+            canon_path=canon_path,
+            width=64,
+            height=64,
+            model_used="test-vision",
+        )
+        (artifacts / "detected_objects.json").write_text(
+            json.dumps(detected), encoding="utf-8"
+        )
         unified_routes.register_unified_orchestrator(_FakeOrchestrator())
         response = client.post(
             "/api/session/approval-session/approve/blockout",
-            json={"approved": True, "plan_revision": 2},
+            json={
+                "approved": True,
+                "plan_revision": 2,
+                "selected_object_ids": [detected["objects"][0]["object_id"]],
+            },
         )
         assert response.status_code == 200
         assert response.json()["decision"]["approved"] is True
+        selected = json.loads(
+            (artifacts / "selected_objects.json").read_text(encoding="utf-8")
+        )
+        assert selected["objects"][0]["name"] == "round table"
+        assert selected["manifest_sha256"]
 
     def test_approval_fails_closed_without_orchestrator(self, client, tmp_path):
         _create_v16_session(tmp_path, "no-orchestrator")

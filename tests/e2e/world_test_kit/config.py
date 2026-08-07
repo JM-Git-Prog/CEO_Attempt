@@ -65,12 +65,14 @@ class LayerFlags:
 class WorldTestKitConfig:
     """Top-level configuration for the World Test Kit."""
 
+    strict_real: bool = True
+    required_mesh_generators: tuple[str, ...] = ("hunyuan3d_v2.1", "trellis2")
     playtester_model: str = "qwen3-coder-next"
     vision_model: str = "qwen2.5vl:7b"
     ollama_base_url: str = "http://127.0.0.1:11434"
     server_url: str = "http://localhost:8000"
-    pass_threshold: float = 60.0
-    individual_minimum: float = 30.0
+    pass_threshold: float = 100.0
+    individual_minimum: float = 100.0
     max_conversation_turns: int = 5
     timeouts: StageTimeout = field(default_factory=StageTimeout)
     weights: ScoringWeights = field(default_factory=ScoringWeights)
@@ -208,16 +210,25 @@ def load_wtk_config(config_path: str | Path | None = None) -> WorldTestKitConfig
         "WTK_SERVER_URL",
         raw.get("server_url", "http://localhost:8000"),
     )
+    strict_real = _env_override(
+        "WTK_STRICT_REAL",
+        raw.get("strict_real", True),
+        bool,
+    )
     pass_threshold = _env_override(
         "WTK_PASS_THRESHOLD",
-        raw.get("pass_threshold", 60.0),
+        raw.get("pass_threshold", 100.0),
         float,
     )
     individual_minimum = _env_override(
         "WTK_INDIVIDUAL_MINIMUM",
-        raw.get("individual_minimum", 30.0),
+        raw.get("individual_minimum", 100.0),
         float,
     )
+    if not 0.0 < pass_threshold <= 100.0 or not 0.0 < individual_minimum <= 100.0:
+        raise WTKConfigError("scoring thresholds must be in the range (0, 100]")
+    if strict_real and (pass_threshold != 100.0 or individual_minimum != 100.0):
+        raise WTKConfigError("strict-real qualification requires 100/100 thresholds")
     max_turns = _env_override(
         "WTK_MAX_TURNS",
         raw.get("max_conversation_turns", 5),
@@ -230,6 +241,7 @@ def load_wtk_config(config_path: str | Path | None = None) -> WorldTestKitConfig
     )
 
     return WorldTestKitConfig(
+        strict_real=strict_real,
         playtester_model=playtester_model,
         vision_model=vision_model,
         ollama_base_url=ollama_base_url,

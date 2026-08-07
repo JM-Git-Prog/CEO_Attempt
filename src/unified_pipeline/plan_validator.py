@@ -621,3 +621,70 @@ class PlanValidator:
             revisions=final_revisions,
             template_id=corrected_plan.template_id,
         )
+
+
+def validate_plan_for_authority(plan: MetricPlan) -> ValidationResult:
+    """Validate generative Plans normally and observed DA3 Plans without moving reality.
+
+    Observed reconstructions may legitimately contain wall-adjacent, nested, or
+    overlapping detections (for example a sink in a counter). They still require
+    a valid room, finite positive dimensions, and placements inside metric bounds.
+    """
+    if plan.template_id != "da3-canon-metric-room":
+        return PlanValidator().validate(plan)
+
+    architecture = MetricPlan(
+        room_dimensions=plan.room_dimensions,
+        walls=plan.walls,
+        openings=plan.openings,
+        object_placements=(),
+        circulation_paths=(),
+        revisions=plan.revisions,
+        template_id=plan.template_id,
+    )
+    architecture_result = PlanValidator().validate(architecture)
+    if not architecture_result.valid or architecture_result.plan != architecture:
+        return ValidationResult(
+            valid=False,
+            violations=architecture_result.violations,
+            plan=plan,
+        )
+
+    width, depth, height = (float(value) for value in plan.room_dimensions)
+    violations: list[ValidationViolation] = []
+    required = {"id", "name", "x", "y", "width", "height", "depth", "rotation_deg"}
+    seen: set[str] = set()
+    for index, placement in enumerate(plan.object_placements):
+        missing = sorted(required - set(placement))
+        object_id = str(placement.get("id", "")).strip()
+        if missing or not object_id or object_id in seen:
+            violations.append(ValidationViolation(
+                rule="observed_placement_schema", severity="error",
+                message=f"Observed placement {index} has missing/duplicate authority",
+                details={"missing": missing, "object_id": object_id},
+            ))
+            continue
+        seen.add(object_id)
+        try:
+            x = float(placement["x"])
+            z = float(placement["y"])
+            elevation = float(placement.get("elevation", 0.0))
+            dimensions = tuple(float(placement[key]) for key in ("width", "height", "depth"))
+            rotation = float(placement["rotation_deg"])
+            finite = all(math.isfinite(value) for value in (x, z, elevation, rotation, *dimensions))
+        except (TypeError, ValueError):
+            finite = False
+            x = z = elevation = 0.0
+            dimensions = (0.0, 0.0, 0.0)
+        in_bounds = (
+            finite and min(dimensions) > 0.0
+            and 0.0 <= x <= width and 0.0 <= z <= depth
+            and 0.0 <= elevation and elevation + dimensions[1] <= height + 1e-6
+        )
+        if not in_bounds:
+            violations.append(ValidationViolation(
+                rule="observed_placement_bounds", severity="error",
+                message=f"Observed placement {object_id or index} is not finite and in room bounds",
+                details={"x": x, "y": z, "elevation": elevation, "dimensions": dimensions},
+            ))
+    return ValidationResult(valid=not violations, violations=violations, plan=plan)
