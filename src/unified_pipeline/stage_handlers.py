@@ -309,127 +309,157 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
 
 
 def _handle_segment(ctx: StageExecutionContext) -> StageResult:
-    """Segmentation — isolate objects from approved Canon using SAM via ComfyUI.
+    """Segment objects from canon using the proven SAM3 text-prompted workflow.
 
-    Calls the ObjectIsolator which:
-    1. Uploads Canon to ComfyUI
-    2. Runs SAM ViT-H auto-segmentation
-    3. Matches masks to Brief manifest UUIDs
-    4. Applies quality gate (≥1% coverage)
-    5. Produces RGBA Object_PNGs
+    Uses the working v15_fable pattern: for each object in the Brief manifest,
+    run SAM3_Detect with text conditioning targeting that specific object.
+    Produces RGBA cutout PNGs (object on transparent background).
 
-    Falls back to a synthetic placeholder if ComfyUI/SAM is unavailable.
+    Workflow per object (proven on Starlite, v15 Fable):
+      CheckpointLoaderSimple(sam3.1_multiplex) → CLIPTextEncode("the {object}") →
+      SAM3_Detect(conditioning + image) → GrowMask(4px) → InvertMask →
+      JoinImageWithAlpha → SaveImage
     """
     import asyncio
     import logging
+    import time as _time
     from pathlib import Path
-    from src.unified_pipeline.object_isolator import ObjectIsolator, SegmentationError
-    from src.unified_pipeline.models import ManifestObject, ObjectCanon
 
     _log = logging.getLogger("live_trace")
 
-    # Get Canon path from prior stage outputs
+    # Get Canon path
     stage_outputs = ctx.values.get("stage_outputs", {})
     canon_output = stage_outputs.get("canon_generation", {})
     canon_path = canon_output.get("image_path", "")
-
-    # If no Canon image, check artifacts directory
     if not canon_path or not Path(canon_path).exists():
-        artifacts_dir = ctx.session_dir / "artifacts"
-        canon_candidate = artifacts_dir / "canon.png"
+        canon_candidate = ctx.session_dir / "artifacts" / "canon.png"
         if canon_candidate.exists():
             canon_path = str(canon_candidate)
-
     if not canon_path or not Path(canon_path).exists():
-        _log.warning("  segment: No Canon image available — returning placeholder")
-        return _immediate({
-            "status": "segment_complete",
-            "segments": [],
-            "degraded": True,
-            "note": "No Canon image found for segmentation",
-        }, ctx)
+        raise RuntimeError("No canon image available for segmentation")
 
-    # Get manifest from brief
+    # Get object manifest from brief
     brief_output = stage_outputs.get("brief", {})
     manifest_raw = brief_output.get("object_manifest", [])
-    manifest = [
-        ManifestObject.from_dict(obj) if isinstance(obj, dict) else obj
-        for obj in manifest_raw
-    ]
+    if not manifest_raw:
+        brief_path = ctx.session_dir / "artifacts" / "brief.json"
+        if brief_path.is_file():
+            brief = json.loads(brief_path.read_text(encoding="utf-8"))
+            manifest_raw = brief.get("object_manifest", [])
+    if not manifest_raw:
+        raise RuntimeError("No objects in brief manifest for segmentation")
 
-    if not manifest:
-        _log.warning("  segment: No objects in manifest — skipping segmentation")
-        return _immediate({
-            "status": "segment_complete",
-            "segments": [],
-            "note": "Empty object manifest",
-        }, ctx)
+    objects_dir = ctx.session_dir / "objects" / ctx.session_id
+    objects_dir.mkdir(parents=True, exist_ok=True)
 
-    # Run real SAM segmentation
-    output_dir = ctx.session_dir / "objects"
-    isolator = ObjectIsolator(output_dir=output_dir)
+    _log.info("  segment: cutting %d objects from canon via SAM3 text-prompted workflow", len(manifest_raw))
 
+    async def _run_segmentation():
+        import httpx
+        COMFY = "http://localhost:8188"
+
+        async with httpx.AsyncClient(timeout=30.0) as cl:
+            # Upload canon to ComfyUI
+            with open(canon_path, "rb") as f:
+                up = await cl.post(
+                    f"{COMFY}/upload/image",
+                    files={"image": (f"v16-canon-{ctx.session_id[:8]}.png", f, "image/png")},
+                    data={"overwrite": "true"},
+                )
+            if up.status_code != 200:
+                raise RuntimeError(f"Canon upload failed: {up.status_code}")
+            canon_name = up.json()["name"]
+
+            segments = []
+            for obj in manifest_raw:
+                obj_id = obj.get("id", "")
+                obj_name = obj.get("name", "object")
+                if not obj_id:
+                    continue
+
+                # Build proven SAM3 text-prompted workflow
+                target = obj_name.lower().strip()
+                workflow = {
+                    "1": {"class_type": "LoadImage", "inputs": {"image": canon_name}},
+                    "2": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "sam3.1_multiplex_fp16.safetensors"}},
+                    "3": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 1], "text": f"the {target}"}},
+                    "4": {"class_type": "SAM3_Detect", "inputs": {
+                        "model": ["2", 0], "conditioning": ["3", 0], "image": ["1", 0],
+                        "threshold": 0.5, "refine_iterations": 2, "individual_masks": False}},
+                    "5": {"class_type": "GrowMask", "inputs": {"mask": ["4", 0], "expand": 4, "tapered_corners": True}},
+                    "6": {"class_type": "InvertMask", "inputs": {"mask": ["5", 0]}},
+                    "7": {"class_type": "JoinImageWithAlpha", "inputs": {"image": ["1", 0], "alpha": ["6", 0]}},
+                    "8": {"class_type": "SaveImage", "inputs": {"images": ["7", 0], "filename_prefix": f"v16-cut-{obj_id[:12]}"}},
+                }
+
+                _log.info("  segment[%s]: SAM3 detecting '%s'...", obj_id[:8], target[:30])
+
+                # Submit workflow
+                sub = await cl.post(f"{COMFY}/prompt", json={"prompt": workflow})
+                if sub.status_code != 200:
+                    _log.warning("  segment[%s]: workflow rejected: %s", obj_id[:8], sub.text[:200])
+                    segments.append({"object_id": obj_id, "object_name": obj_name, "image_path": "", "mask_coverage": 0.0, "degraded": True})
+                    continue
+
+                pid = sub.json()["prompt_id"]
+
+                # Poll for completion (up to 60s per object)
+                cut_bytes = None
+                for _ in range(60):
+                    await asyncio.sleep(1.0)
+                    h = await cl.get(f"{COMFY}/history/{pid}")
+                    if h.status_code != 200:
+                        continue
+                    rec = h.json().get(pid)
+                    if rec and rec.get("outputs"):
+                        for node in rec["outputs"].values():
+                            for im in node.get("images", []):
+                                img = await cl.get(f"{COMFY}/view", params={
+                                    "filename": im["filename"],
+                                    "subfolder": im.get("subfolder", ""),
+                                    "type": im.get("type", "output"),
+                                })
+                                if img.status_code == 200:
+                                    cut_bytes = img.content
+                        break
+
+                if cut_bytes:
+                    output_path = objects_dir / f"{obj_id}.png"
+                    output_path.write_bytes(cut_bytes)
+                    _log.info("  segment[%s]: OK — saved %d bytes", obj_id[:8], len(cut_bytes))
+                    segments.append({
+                        "object_id": obj_id,
+                        "object_name": obj_name,
+                        "image_path": str(output_path),
+                        "mask_coverage": 0.5,  # Approximate
+                    })
+                else:
+                    _log.warning("  segment[%s]: SAM3 produced no output", obj_id[:8])
+                    segments.append({"object_id": obj_id, "object_name": obj_name, "image_path": "", "mask_coverage": 0.0, "degraded": True})
+
+        return segments
+
+    # Run the async segmentation
     try:
         loop = asyncio.get_event_loop()
         if loop.is_running():
-            # We're inside an async context — create a new task
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor() as pool:
-                results = pool.submit(
-                    asyncio.run,
-                    isolator.segment(canon_path, manifest, session_id=ctx.session_id)
-                ).result(timeout=180)
+                segments = pool.submit(asyncio.run, _run_segmentation()).result(timeout=600)
         else:
-            results = asyncio.run(
-                isolator.segment(canon_path, manifest, session_id=ctx.session_id)
-            )
-
-        _log.info("  segment: SAM isolated %d/%d objects", len(results), len(manifest))
-
-        # Store Object_Canon results for downstream per-object stages
-        segments_data = []
-        for obj_canon in results:
-            segments_data.append({
-                "object_id": obj_canon.object_id,
-                "object_name": obj_canon.object_name,
-                "image_path": obj_canon.image_path,
-                "mask_coverage": obj_canon.mask_coverage,
-            })
-
-        return _immediate({
-            "status": "segment_complete",
-            "segments": segments_data,
-            "object_count": len(results),
-        }, ctx)
-
-    except SegmentationError as exc:
-        _log.warning("  segment: SAM failed (%s) — returning degraded result", exc)
-        # Graceful degradation: produce placeholder Object_Canon entries
-        # using crops from the Canon image
-        segments_data = []
-        for obj in manifest:
-            segments_data.append({
-                "object_id": obj.id,
-                "object_name": obj.name,
-                "image_path": "",
-                "mask_coverage": 0.0,
-                "degraded": True,
-            })
-        return _immediate({
-            "status": "segment_complete",
-            "segments": segments_data,
-            "object_count": len(manifest),
-            "degraded": True,
-            "note": f"SAM unavailable: {exc}",
-        }, ctx)
+            segments = asyncio.run(_run_segmentation())
     except Exception as exc:
-        _log.error("  segment: Unexpected error: %s", exc)
-        return _immediate({
-            "status": "segment_complete",
-            "segments": [],
-            "degraded": True,
-            "note": f"Segmentation error: {exc}",
-        }, ctx)
+        raise RuntimeError(f"SAM3 segmentation failed: {exc}") from exc
+
+    successful = [s for s in segments if s.get("image_path")]
+    _log.info("  segment: done — %d/%d objects isolated", len(successful), len(segments))
+
+    return _immediate({
+        "status": "segment_complete",
+        "segments": segments,
+        "object_count": len(segments),
+        "successful_count": len(successful),
+    }, ctx)
 
 
 async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
