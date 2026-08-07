@@ -635,6 +635,22 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         except Exception:
             payload = {}
         writer_id = str(payload.get("writer_id", "web-user")).strip() or "web-user"
+
+        # Save selected objects if this is a blockout approval with selection data
+        if approval_stage == "blockout_approval" and payload.get("selected_objects"):
+            selected = payload["selected_objects"]
+            artifacts_dir = session_dir / "artifacts"
+            artifacts_dir.mkdir(parents=True, exist_ok=True)
+            selected_data = {
+                "selected_ids": [obj.get("id", idx) for idx, obj in enumerate(selected) if isinstance(obj, dict)] if isinstance(selected[0], dict) else selected,
+                "selected_names": [obj.get("name", "") for obj in selected if isinstance(obj, dict)] if selected and isinstance(selected[0], dict) else [],
+                "selected_count": len(selected),
+            }
+            (artifacts_dir / "selected_objects.json").write_text(
+                json.dumps(selected_data, indent=2), encoding="utf-8"
+            )
+            _log.info("  blockout approval: saved %d selected objects", len(selected))
+
         try:
             # Lazy evaluation: only call current_plan_revision if payload doesn't supply it
             # This prevents ValueError from max([]) on a transiently empty checkpoint store
@@ -683,6 +699,35 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             _log.info("  Pipeline task still running for %s — not restarting", session_id[:8])
         _write_meta(session_dir, state="running")
         return {"session_id": session_id, "decision": decision.to_dict(), "state": "running"}
+
+    @router.get("/api/session/{session_id}/object_picker")
+    async def object_picker(session_id: str):
+        """Return detected objects JSON for the interactive blockout picker UI."""
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
+            return JSONResponse({"error": "Unified session not found"}, status_code=404)
+
+        # Read detected_objects.json or object_picker.json
+        artifacts_dir = session_dir / "artifacts"
+        picker_path = artifacts_dir / "object_picker.json"
+        detected_path = artifacts_dir / "detected_objects.json"
+
+        data = None
+        for path in (picker_path, detected_path):
+            if path.is_file():
+                try:
+                    data = json.loads(path.read_text(encoding="utf-8"))
+                    break
+                except (OSError, json.JSONDecodeError):
+                    continue
+
+        if data is None:
+            return JSONResponse({"error": "No detected objects available"}, status_code=404)
+
+        return JSONResponse(data)
 
     @router.get("/api/session/{session_id}/dream_preview")
     async def unified_dream_preview(session_id: str):

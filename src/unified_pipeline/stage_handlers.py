@@ -79,7 +79,6 @@ APPROVAL_STAGES = frozenset(
 GPU_STAGES = frozenset({
     "dream_preview",
     "canon_generation",
-    "segment",
     "depth_estimation",
     "mesh_generation",
 })
@@ -88,7 +87,6 @@ GPU_STAGES = frozenset({
 LIVE_GPU_STAGES = frozenset({
     "dream_preview",   # Real ComfyUI FLUX
     "canon_generation",  # Real ComfyUI FLUX/SDXL
-    "segment",         # Real SAM3.1 via ComfyUI
     "depth_estimation",  # Real DA3 via ComfyUI
     "mesh_generation",  # Real Hunyuan3D/Trellis2 via ComfyUI
 })
@@ -308,22 +306,20 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
     }, ctx)
 
 
-def _handle_segment(ctx: StageExecutionContext) -> StageResult:
-    """Segment objects from canon using the proven SAM3 text-prompted workflow.
+async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
+    """Vision analysis — detect ALL objects in canon image via Ollama vision model.
 
-    Uses the working v15_fable pattern: for each object in the Brief manifest,
-    run SAM3_Detect with text conditioning targeting that specific object.
-    Produces RGBA cutout PNGs (object on transparent background).
-
-    Workflow per object (proven on Starlite, v15 Fable):
-      CheckpointLoaderSimple(sam3.1_multiplex) → CLIPTextEncode("the {object}") →
-      SAM3_Detect(conditioning + image) → GrowMask(4px) → InvertMask →
-      JoinImageWithAlpha → SaveImage
+    Replaces per-object SAM3 segmentation with a full scene analysis:
+    1. Sends the canon image to Ollama qwen2.5vl:7b for object detection
+    2. Gets back a list of ALL visible objects with bounding boxes
+    3. Saves detected_objects.json for the interactive picker UI
+    4. SAM3 segmentation happens LATER only for selected objects (mesh_generation)
     """
-    import asyncio
+    import base64
     import logging
-    import time as _time
     from pathlib import Path
+
+    import httpx
 
     _log = logging.getLogger("live_trace")
 
@@ -336,129 +332,161 @@ def _handle_segment(ctx: StageExecutionContext) -> StageResult:
         if canon_candidate.exists():
             canon_path = str(canon_candidate)
     if not canon_path or not Path(canon_path).exists():
-        raise RuntimeError("No canon image available for segmentation")
+        raise RuntimeError("No canon image available for vision analysis")
 
-    # Get object manifest from brief
-    brief_output = stage_outputs.get("brief", {})
-    manifest_raw = brief_output.get("object_manifest", [])
-    if not manifest_raw:
-        brief_path = ctx.session_dir / "artifacts" / "brief.json"
-        if brief_path.is_file():
-            brief = json.loads(brief_path.read_text(encoding="utf-8"))
-            manifest_raw = brief.get("object_manifest", [])
-    if not manifest_raw:
-        raise RuntimeError("No objects in brief manifest for segmentation")
+    # Get image dimensions
+    from PIL import Image
+    with Image.open(canon_path) as img:
+        width, height = img.size
 
-    objects_dir = ctx.session_dir / "objects" / ctx.session_id
-    objects_dir.mkdir(parents=True, exist_ok=True)
+    # Encode canon as base64 for Ollama vision API
+    with open(canon_path, "rb") as f:
+        canon_b64 = base64.b64encode(f.read()).decode("utf-8")
 
-    _log.info("  segment: cutting %d objects from canon via SAM3 text-prompted workflow", len(manifest_raw))
+    # Build vision analysis prompt
+    vision_prompt = (
+        f"Analyze this room photograph. List EVERY distinct object you can see, including small items.\n"
+        f"For each object, provide:\n"
+        f"- name: short descriptive name (e.g., \"wooden cutting board\", \"pendant light fixture\")\n"
+        f"- bbox: [x1, y1, x2, y2] pixel coordinates of the bounding box (image is {width}x{height} pixels)\n"
+        f"- material: primary material (wood, metal, glass, fabric, ceramic, plastic, plant, stone)\n"
+        f"- category: one of (furniture, lighting, decor, appliance, utensil, plant, architectural, storage)\n"
+        f"- size_estimate: one of (large, medium, small, tiny)\n\n"
+        f"Respond ONLY with a JSON array. No explanations. Example:\n"
+        f'[{{"name": "kitchen island", "bbox": [100, 200, 600, 500], "material": "wood", "category": "furniture", "size_estimate": "large"}}]'
+    )
 
-    async def _run_segmentation():
-        import httpx
-        COMFY = "http://localhost:8188"
+    _log.info("  segment(vision): analyzing canon %dx%d with qwen2.5vl:7b...", width, height)
 
-        async with httpx.AsyncClient(timeout=30.0) as cl:
-            # Upload canon to ComfyUI
-            with open(canon_path, "rb") as f:
-                up = await cl.post(
-                    f"{COMFY}/upload/image",
-                    files={"image": (f"v16-canon-{ctx.session_id[:8]}.png", f, "image/png")},
-                    data={"overwrite": "true"},
+    detected_objects = []
+    model_used = "qwen2.5vl:7b"
+
+    # Try qwen2.5vl:7b first, fall back to qwen3.6:27b
+    for model in ["qwen2.5vl:7b", "qwen3.6:27b"]:
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                resp = await client.post(
+                    "http://127.0.0.1:11434/api/chat",
+                    json={
+                        "model": model,
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": vision_prompt,
+                                "images": [canon_b64],
+                            }
+                        ],
+                        "stream": False,
+                        "options": {"temperature": 0.1, "num_predict": 4096},
+                    },
                 )
-            if up.status_code != 200:
-                raise RuntimeError(f"Canon upload failed: {up.status_code}")
-            canon_name = up.json()["name"]
+                if resp.status_code == 200:
+                    result = resp.json()
+                    content = result.get("message", {}).get("content", "")
+                    model_used = model
+                    _log.info("  segment(vision): got response from %s (%d chars)", model, len(content))
 
-            segments = []
-            for obj in manifest_raw:
-                obj_id = obj.get("id", "")
-                obj_name = obj.get("name", "object")
-                if not obj_id:
-                    continue
+                    # Parse JSON from response — handle markdown code blocks
+                    content = content.strip()
+                    if content.startswith("```"):
+                        # Strip markdown code fences
+                        lines = content.split("\n")
+                        lines = [l for l in lines if not l.strip().startswith("```")]
+                        content = "\n".join(lines).strip()
 
-                # Build proven SAM3 text-prompted workflow
-                target = obj_name.lower().strip()
-                workflow = {
-                    "1": {"class_type": "LoadImage", "inputs": {"image": canon_name}},
-                    "2": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "sam3.1_multiplex_fp16.safetensors"}},
-                    "3": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 1], "text": f"the {target}"}},
-                    "4": {"class_type": "SAM3_Detect", "inputs": {
-                        "model": ["2", 0], "conditioning": ["3", 0], "image": ["1", 0],
-                        "threshold": 0.5, "refine_iterations": 2, "individual_masks": False}},
-                    "5": {"class_type": "GrowMask", "inputs": {"mask": ["4", 0], "expand": 4, "tapered_corners": True}},
-                    "6": {"class_type": "InvertMask", "inputs": {"mask": ["5", 0]}},
-                    "7": {"class_type": "JoinImageWithAlpha", "inputs": {"image": ["1", 0], "alpha": ["6", 0]}},
-                    "8": {"class_type": "SaveImage", "inputs": {"images": ["7", 0], "filename_prefix": f"v16-cut-{obj_id[:12]}"}},
-                }
+                    # Try to find JSON array in the content
+                    import re
+                    json_match = re.search(r'\[.*\]', content, re.DOTALL)
+                    if json_match:
+                        content = json_match.group(0)
 
-                _log.info("  segment[%s]: SAM3 detecting '%s'...", obj_id[:8], target[:30])
-
-                # Submit workflow
-                sub = await cl.post(f"{COMFY}/prompt", json={"prompt": workflow})
-                if sub.status_code != 200:
-                    _log.warning("  segment[%s]: workflow rejected: %s", obj_id[:8], sub.text[:200])
-                    segments.append({"object_id": obj_id, "object_name": obj_name, "image_path": "", "mask_coverage": 0.0, "degraded": True})
-                    continue
-
-                pid = sub.json()["prompt_id"]
-
-                # Poll for completion (up to 60s per object)
-                cut_bytes = None
-                for _ in range(60):
-                    await asyncio.sleep(1.0)
-                    h = await cl.get(f"{COMFY}/history/{pid}")
-                    if h.status_code != 200:
-                        continue
-                    rec = h.json().get(pid)
-                    if rec and rec.get("outputs"):
-                        for node in rec["outputs"].values():
-                            for im in node.get("images", []):
-                                img = await cl.get(f"{COMFY}/view", params={
-                                    "filename": im["filename"],
-                                    "subfolder": im.get("subfolder", ""),
-                                    "type": im.get("type", "output"),
-                                })
-                                if img.status_code == 200:
-                                    cut_bytes = img.content
-                        break
-
-                if cut_bytes:
-                    output_path = objects_dir / f"{obj_id}.png"
-                    output_path.write_bytes(cut_bytes)
-                    _log.info("  segment[%s]: OK — saved %d bytes", obj_id[:8], len(cut_bytes))
-                    segments.append({
-                        "object_id": obj_id,
-                        "object_name": obj_name,
-                        "image_path": str(output_path),
-                        "mask_coverage": 0.5,  # Approximate
-                    })
+                    try:
+                        parsed = json.loads(content)
+                        if isinstance(parsed, list):
+                            detected_objects = parsed
+                            break
+                    except json.JSONDecodeError as je:
+                        _log.warning("  segment(vision): JSON parse failed for %s: %s", model, je)
+                        # Try fixing common issues: trailing commas, etc.
+                        try:
+                            fixed = re.sub(r',\s*]', ']', content)
+                            fixed = re.sub(r',\s*}', '}', fixed)
+                            parsed = json.loads(fixed)
+                            if isinstance(parsed, list):
+                                detected_objects = parsed
+                                break
+                        except json.JSONDecodeError:
+                            pass
                 else:
-                    _log.warning("  segment[%s]: SAM3 produced no output", obj_id[:8])
-                    segments.append({"object_id": obj_id, "object_name": obj_name, "image_path": "", "mask_coverage": 0.0, "degraded": True})
+                    _log.warning("  segment(vision): %s returned %d", model, resp.status_code)
+        except httpx.TimeoutException:
+            _log.warning("  segment(vision): %s timed out", model)
+        except Exception as exc:
+            _log.warning("  segment(vision): %s failed: %s", model, exc)
 
-        return segments
+    # Validate and normalize detected objects
+    validated = []
+    for idx, obj in enumerate(detected_objects):
+        if not isinstance(obj, dict):
+            continue
+        name = str(obj.get("name", f"object_{idx}")).strip()
+        if not name:
+            name = f"object_{idx}"
 
-    # Run the async segmentation
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                segments = pool.submit(asyncio.run, _run_segmentation()).result(timeout=600)
-        else:
-            segments = asyncio.run(_run_segmentation())
-    except Exception as exc:
-        raise RuntimeError(f"SAM3 segmentation failed: {exc}") from exc
+        # Validate/normalize bbox
+        bbox = obj.get("bbox", [0, 0, width, height])
+        if not isinstance(bbox, list) or len(bbox) != 4:
+            bbox = [0, 0, width, height]
+        try:
+            bbox = [max(0, min(int(b), width if i % 2 == 0 else height)) for i, b in enumerate(bbox)]
+        except (ValueError, TypeError):
+            bbox = [0, 0, width, height]
 
-    successful = [s for s in segments if s.get("image_path")]
-    _log.info("  segment: done — %d/%d objects isolated", len(successful), len(segments))
+        # Ensure x1 < x2 and y1 < y2
+        if bbox[0] >= bbox[2]:
+            bbox[2] = min(bbox[0] + 50, width)
+        if bbox[1] >= bbox[3]:
+            bbox[3] = min(bbox[1] + 50, height)
+
+        material = str(obj.get("material", "unknown")).strip()
+        category = str(obj.get("category", "decor")).strip()
+        size_estimate = str(obj.get("size_estimate", "medium")).strip()
+        if size_estimate not in ("large", "medium", "small", "tiny"):
+            size_estimate = "medium"
+
+        validated.append({
+            "id": idx,
+            "name": name,
+            "bbox": bbox,
+            "material": material,
+            "category": category,
+            "size_estimate": size_estimate,
+        })
+
+    _log.info("  segment(vision): detected %d objects via %s", len(validated), model_used)
+
+    # Save detected objects to artifacts
+    artifacts_dir = ctx.session_dir / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+
+    detected_data = {
+        "objects": validated,
+        "image_width": width,
+        "image_height": height,
+        "model_used": model_used,
+        "object_count": len(validated),
+    }
+    (artifacts_dir / "detected_objects.json").write_text(
+        json.dumps(detected_data, indent=2), encoding="utf-8"
+    )
 
     return _immediate({
         "status": "segment_complete",
-        "segments": segments,
-        "object_count": len(segments),
-        "successful_count": len(successful),
+        "detected_objects": validated,
+        "object_count": len(validated),
+        "image_width": width,
+        "image_height": height,
+        "model_used": model_used,
     }, ctx)
 
 
@@ -600,63 +628,66 @@ async def _handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
 
 
 def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
-    """Spatial reconstruction — overlay detected objects on the canon image.
+    """Spatial reconstruction — render ALL detected objects with labeled bounding boxes.
 
-    Shows the canon photo with colored bounding boxes and labels around each
-    segmented object. This lets the user verify that the right objects were
-    detected before proceeding to 3D mesh generation.
+    Reads detected_objects.json from the vision analysis stage and draws
+    colored bounding boxes with labels on the canon image. Creates both:
+    - artifacts/blockout.png (visual with all boxes)
+    - artifacts/object_picker.json (data for the interactive picker UI)
 
-    Saves as artifacts/blockout.png (approved via blockout_approval gate).
+    The blockout_approval stage shows an interactive picker where the user
+    selects which objects to send to SAM3 segmentation and mesh generation.
     """
     import logging
 
     _log = logging.getLogger("live_trace")
 
-    stage_outputs = ctx.values.get("stage_outputs", {})
+    # Read detected objects from vision analysis
+    artifacts_dir = ctx.session_dir / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    detected_path = artifacts_dir / "detected_objects.json"
+
+    if not detected_path.is_file():
+        _log.warning("  spatial_reconstruction: no detected_objects.json found")
+        # Fall back to canon image directly
+        canon_path = str(artifacts_dir / "canon.png")
+        output_path = artifacts_dir / "blockout.png"
+        if Path(canon_path).exists():
+            import shutil
+            shutil.copy2(canon_path, output_path)
+        return _immediate({
+            "status": "spatial_reconstruction_complete",
+            "image_path": str(output_path),
+            "object_count": 0,
+        }, ctx)
+
+    try:
+        detected_data = json.loads(detected_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        _log.error("  spatial_reconstruction: failed to read detected_objects.json: %s", exc)
+        detected_data = {"objects": [], "image_width": 1024, "image_height": 768}
+
+    objects = detected_data.get("objects", [])
+    img_width = detected_data.get("image_width", 1024)
+    img_height = detected_data.get("image_height", 768)
 
     # Get canon image path
+    stage_outputs = ctx.values.get("stage_outputs", {})
     canon_output = stage_outputs.get("canon_generation", {})
     canon_path = canon_output.get("image_path", "")
     if not canon_path or not Path(canon_path).exists():
-        canon_path = str(ctx.session_dir / "artifacts" / "canon.png")
+        canon_path = str(artifacts_dir / "canon.png")
 
-    # Get segment data — per-object stage outputs are stored as {object_id: output}
-    segment_output = stage_outputs.get("segment", {})
-    segments = []
-    if isinstance(segment_output, dict):
-        # Per-object format: {"obj_id": {"status":..., "segments":[...], ...}}
-        for obj_id, obj_output in segment_output.items():
-            if isinstance(obj_output, dict):
-                # Each per-object segment output has a "segments" list with one entry
-                obj_segs = obj_output.get("segments", [])
-                for seg in obj_segs:
-                    if isinstance(seg, dict):
-                        segments.append(seg)
-                # If no segments list, build from the output directly
-                if not obj_segs and obj_output.get("image_path"):
-                    segments.append({
-                        "object_id": obj_id,
-                        "object_name": obj_output.get("object_name", obj_id[:8]),
-                        "image_path": obj_output.get("image_path", ""),
-                        "mask_coverage": obj_output.get("mask_coverage", 0),
-                    })
-        # Also check if there's a combined "segments" field (non-per-object format)
-        if not segments and "segments" in segment_output:
-            segments = segment_output["segments"]
-
-    artifacts_dir = ctx.session_dir / "artifacts"
-    artifacts_dir.mkdir(parents=True, exist_ok=True)
     output_path = artifacts_dir / "blockout.png"
 
     try:
         from PIL import Image, ImageDraw, ImageFont
-        import numpy as np
 
         # Load the canon image as the base
         if Path(canon_path).exists():
             base = Image.open(canon_path).convert("RGBA")
         else:
-            base = Image.new("RGBA", (1024, 768), (30, 30, 30, 255))
+            base = Image.new("RGBA", (img_width, img_height), (30, 30, 30, 255))
 
         # Create a semi-transparent overlay
         overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
@@ -669,82 +700,69 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
             font = ImageFont.load_default()
             font_small = font
 
-        # Colors for object boxes
+        # Distinct colors for object boxes
         colors = [
             (70, 200, 140), (100, 180, 255), (255, 180, 60),
             (255, 100, 100), (180, 130, 255), (255, 200, 80),
-            (100, 240, 200), (255, 150, 200),
+            (100, 240, 200), (255, 150, 200), (200, 100, 255),
+            (100, 255, 180), (255, 130, 130), (130, 200, 255),
+            (255, 220, 100), (200, 255, 130), (180, 180, 255),
+            (255, 180, 180),
         ]
 
-        # For each segmented object, draw a bounding box on the overlay
-        objects_dir = ctx.session_dir / "objects" / ctx.session_id
-        successful = 0
-
-        # If segments list is empty, scan objects dir for any PNGs
-        if not segments and objects_dir.exists():
-            # Get brief manifest for names
-            brief_output = stage_outputs.get("brief", {})
-            manifest = brief_output.get("object_manifest", []) if isinstance(brief_output, dict) else []
-            name_map = {obj.get("id", ""): obj.get("name", "") for obj in manifest if isinstance(obj, dict)}
-
-            for png in objects_dir.glob("*.png"):
-                obj_id = png.stem
-                obj_name = name_map.get(obj_id, obj_id[:12])
-                segments.append({
-                    "object_id": obj_id,
-                    "object_name": obj_name,
-                    "image_path": str(png),
-                    "mask_coverage": 0.5,
-                })
-
-        for idx, seg in enumerate(segments):
-            if not isinstance(seg, dict):
+        drawn_count = 0
+        for idx, obj in enumerate(objects):
+            if not isinstance(obj, dict):
                 continue
-            obj_name = seg.get("object_name", f"Object {idx+1}")
-            image_path = seg.get("image_path", "")
+
+            name = obj.get("name", f"Object {idx}")
+            bbox = obj.get("bbox", [0, 0, 100, 100])
+            size = obj.get("size_estimate", "medium")
             color = colors[idx % len(colors)]
 
-            if image_path and Path(image_path).exists():
-                # Load the cutout to find its bounding box on the original
-                cutout = Image.open(image_path).convert("RGBA")
-                alpha = np.array(cutout)[:, :, 3]
-                ys, xs = np.nonzero(alpha > 128)
+            if not isinstance(bbox, list) or len(bbox) != 4:
+                continue
 
-                if len(xs) > 0:
-                    # Map cutout bbox to canon coordinates (cutouts are same size as canon)
-                    x0, x1 = int(xs.min()), int(xs.max())
-                    y0, y1 = int(ys.min()), int(ys.max())
+            x1, y1, x2, y2 = bbox
+            # Clamp to image bounds
+            x1 = max(0, min(int(x1), base.width - 1))
+            y1 = max(0, min(int(y1), base.height - 1))
+            x2 = max(x1 + 1, min(int(x2), base.width))
+            y2 = max(y1 + 1, min(int(y2), base.height))
 
-                    # Draw bounding box
-                    draw.rectangle([x0, y0, x1, y1], outline=color, width=3)
+            # Draw bounding box with width based on size
+            line_width = {"large": 4, "medium": 3, "small": 2, "tiny": 1}.get(size, 3)
+            draw.rectangle([x1, y1, x2, y2], outline=(*color, 220), width=line_width)
 
-                    # Draw label background
-                    label = f" {obj_name[:25]} "
-                    bbox = draw.textbbox((0, 0), label, font=font_small)
-                    lw, lh = bbox[2] - bbox[0], bbox[3] - bbox[1]
-                    label_y = max(0, y0 - lh - 4)
-                    draw.rectangle([x0, label_y, x0 + lw + 4, label_y + lh + 4], fill=(*color, 200))
-                    draw.text((x0 + 2, label_y + 2), label, fill=(0, 0, 0), font=font_small)
+            # Draw semi-transparent fill
+            fill_overlay = Image.new("RGBA", (x2 - x1, y2 - y1), (*color, 30))
+            overlay.paste(fill_overlay, (x1, y1), fill_overlay)
 
-                    successful += 1
-            else:
-                # No cutout available — show text only
-                n = max(1, len(segments))
-                cols = max(1, int(n ** 0.5) + 1)
-                bx = 50 + (idx % cols) * (base.width // cols)
-                by = 50 + (idx // cols) * 80
-                draw.text((bx, by), f"? {obj_name[:20]}", fill=(*color, 180), font=font_small)
+            # Draw label background + text
+            label = f" {idx}: {name[:22]} "
+            bbox_text = draw.textbbox((0, 0), label, font=font_small)
+            lw, lh = bbox_text[2] - bbox_text[0], bbox_text[3] - bbox_text[1]
+            label_y = max(0, y1 - lh - 6)
+            draw.rectangle([x1, label_y, x1 + lw + 6, label_y + lh + 6], fill=(*color, 220))
+            draw.text((x1 + 3, label_y + 3), label, fill=(0, 0, 0), font=font_small)
+
+            drawn_count += 1
 
         # Header bar
         header_h = 36
-        draw.rectangle([0, 0, base.width, header_h], fill=(0, 0, 0, 180))
-        draw.text((10, 8), f"OBJECT DETECTION — {successful}/{len(segments)} objects found", fill=(200, 255, 200), font=font)
+        draw.rectangle([0, 0, base.width, header_h], fill=(0, 0, 0, 200))
+        draw.text(
+            (10, 8),
+            f"VISION ANALYSIS — {drawn_count} objects detected (click to select/deselect)",
+            fill=(200, 255, 200),
+            font=font,
+        )
 
         # Composite overlay onto base
         result = Image.alpha_composite(base, overlay)
         result.convert("RGB").save(output_path, "PNG")
 
-        _log.info("  spatial_reconstruction: %d/%d objects boxed on canon → %s", successful, len(segments), output_path.name)
+        _log.info("  spatial_reconstruction: %d objects drawn on canon → %s", drawn_count, output_path.name)
 
     except Exception as exc:
         _log.error("  spatial_reconstruction: failed: %s", exc)
@@ -754,20 +772,32 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
             shutil.copy2(canon_path, output_path)
         else:
             from PIL import Image
-            Image.new("RGB", (1024, 768), (30, 30, 30)).save(output_path)
+            Image.new("RGB", (img_width, img_height), (30, 30, 30)).save(output_path)
+
+    # Save object_picker.json for the interactive UI
+    picker_data = {
+        "objects": objects,
+        "image_width": img_width,
+        "image_height": img_height,
+        "blockout_image": "blockout.png",
+    }
+    (artifacts_dir / "object_picker.json").write_text(
+        json.dumps(picker_data, indent=2), encoding="utf-8"
+    )
 
     return _immediate({
         "status": "spatial_reconstruction_complete",
         "image_path": str(output_path),
-        "object_count": len(segments),
+        "object_count": len(objects),
     }, ctx)
 
 
 def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
-    """Mesh generation — Hunyuan3D → Trellis2 → placeholder fallback chain via ComfyUI.
+    """Mesh generation — only process objects selected via the interactive picker.
 
-    Uses the real GPU generators through the ResourceArbiter VRAM lease system.
-    Falls back gracefully: Hunyuan3D (best quality) → Trellis2 → placeholder primitive.
+    Reads artifacts/selected_objects.json to determine which objects to process.
+    For each selected object, runs SAM3 text-prompted segmentation → then
+    Hunyuan3D → Trellis2 → placeholder fallback chain via ComfyUI.
     """
     import asyncio
     import logging
@@ -783,6 +813,36 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
 
     _log = logging.getLogger("live_trace")
     object_id = ctx.object_id
+
+    # Check if this object was selected in the interactive picker
+    selected_path = ctx.session_dir / "artifacts" / "selected_objects.json"
+    if selected_path.is_file():
+        try:
+            selected_data = json.loads(selected_path.read_text(encoding="utf-8"))
+            selected_ids = selected_data.get("selected_ids", [])
+            selected_names = selected_data.get("selected_names", [])
+
+            # Check if this object_id (or its index) is in the selection
+            if selected_ids and object_id not in [str(s) for s in selected_ids]:
+                # Also check by matching name from the brief manifest
+                brief_path = ctx.session_dir / "artifacts" / "brief.json"
+                obj_name = ""
+                if brief_path.is_file():
+                    brief = json.loads(brief_path.read_text(encoding="utf-8"))
+                    for obj in brief.get("object_manifest", []):
+                        if isinstance(obj, dict) and obj.get("id") == object_id:
+                            obj_name = obj.get("name", "")
+                            break
+
+                if obj_name and obj_name not in selected_names:
+                    _log.info("  mesh_gen[%s]: SKIPPED — not in user selection", object_id[:8] if object_id else "?")
+                    return _immediate({
+                        "status": "mesh_generation_skipped",
+                        "object_id": object_id,
+                        "reason": "not_selected",
+                    }, ctx)
+        except (OSError, json.JSONDecodeError):
+            pass  # If file can't be read, process all objects
 
     # Get the Object_Canon for this object from segment output
     stage_outputs = ctx.values.get("stage_outputs", {})

@@ -80,7 +80,7 @@ DEFAULT_STAGE_SPECS: tuple[StageSpec, ...] = (
     StageSpec("dream_preview"),
     StageSpec("canon_generation"),
     StageSpec("canon_approval", approval_for="canon_generation"),
-    StageSpec("segment", per_object=True),
+    StageSpec("segment"),
     StageSpec("depth_estimation"),
     StageSpec("spatial_reconstruction"),
     StageSpec("blockout_approval", approval_for="spatial_reconstruction"),

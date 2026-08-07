@@ -101,12 +101,186 @@
       return;
     }
 
+    // For blockout during approval: show the interactive picker
+    if (kind === "blockout" && currentApproval && currentApproval.stage === "blockout") {
+      showBlockoutPicker();
+      loadedArtifacts.add(key);
+      return;
+    }
+
     // For images — show with retry logic
     const cacheBust = `?t=${Date.now()}`;
     const image = showImage(url + cacheBust, `${kind.replace("_", " ")} artifact`);
     artifact.appendChild(image);
     loadedArtifacts.add(key);
   }
+
+  // ─── Interactive Object Picker for Blockout Approval ─────────────────────
+
+  let pickerSelection = new Map(); // id → {selected: bool, obj: object}
+
+  async function showBlockoutPicker() {
+    artifact.replaceChildren();
+
+    // Create picker container
+    const container = document.createElement("div");
+    container.className = "picker-container";
+    container.style.cssText = "position:relative;display:inline-block;max-width:100%;";
+
+    // Load blockout image as background
+    const img = document.createElement("img");
+    img.src = `/api/session/${sessionId}/blockout?t=${Date.now()}`;
+    img.alt = "Blockout with detected objects";
+    img.style.cssText = "max-width:100%;max-height:60vh;display:block;border-radius:6px;";
+    container.appendChild(img);
+
+    // Create overlay container for clickable regions
+    const overlay = document.createElement("div");
+    overlay.className = "picker-overlay";
+    overlay.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;";
+    container.appendChild(overlay);
+
+    artifact.appendChild(container);
+
+    // Fetch object picker data
+    try {
+      const resp = await fetch(`/api/session/${sessionId}/object_picker`);
+      if (!resp.ok) {
+        console.warn("Object picker data not available");
+        return;
+      }
+      const data = await resp.json();
+      const objects = data.objects || [];
+      const imgWidth = data.image_width || 1024;
+      const imgHeight = data.image_height || 768;
+
+      // Wait for image to load to get rendered dimensions
+      await new Promise((resolve) => {
+        if (img.complete) resolve();
+        else img.onload = resolve;
+      });
+
+      const renderedW = img.clientWidth;
+      const renderedH = img.clientHeight;
+
+      // Initialize selection: large/medium = selected, tiny = deselected
+      pickerSelection.clear();
+      objects.forEach((obj, idx) => {
+        const selected = obj.size_estimate !== "tiny";
+        pickerSelection.set(obj.id !== undefined ? obj.id : idx, { selected, obj });
+      });
+
+      // Colors for objects (match backend)
+      const colors = [
+        "rgba(70,200,140,", "rgba(100,180,255,", "rgba(255,180,60,",
+        "rgba(255,100,100,", "rgba(180,130,255,", "rgba(255,200,80,",
+        "rgba(100,240,200,", "rgba(255,150,200,", "rgba(200,100,255,",
+        "rgba(100,255,180,", "rgba(255,130,130,", "rgba(130,200,255,",
+        "rgba(255,220,100,", "rgba(200,255,130,", "rgba(180,180,255,",
+        "rgba(255,180,180,",
+      ];
+
+      // Render clickable bounding boxes
+      overlay.style.pointerEvents = "auto";
+      objects.forEach((obj, idx) => {
+        const bbox = obj.bbox;
+        if (!bbox || bbox.length !== 4) return;
+
+        const [x1, y1, x2, y2] = bbox;
+        // Convert to percentage positions
+        const left = (x1 / imgWidth) * 100;
+        const top = (y1 / imgHeight) * 100;
+        const w = ((x2 - x1) / imgWidth) * 100;
+        const h = ((y2 - y1) / imgHeight) * 100;
+
+        const id = obj.id !== undefined ? obj.id : idx;
+        const isSelected = pickerSelection.get(id)?.selected ?? true;
+        const colorBase = colors[idx % colors.length];
+
+        const region = document.createElement("div");
+        region.className = "picker-region";
+        region.dataset.objId = id;
+        region.style.cssText = `
+          position:absolute;
+          left:${left}%;top:${top}%;width:${w}%;height:${h}%;
+          border:2px solid ${isSelected ? colorBase + "0.9)" : "rgba(150,150,150,0.5)"};
+          background:${isSelected ? colorBase + "0.15)" : "rgba(100,100,100,0.1)"};
+          cursor:pointer;
+          transition:all 0.2s;
+          box-sizing:border-box;
+          border-radius:3px;
+        `;
+
+        // Label
+        const label = document.createElement("span");
+        label.style.cssText = `
+          position:absolute;top:-18px;left:0;
+          font-size:10px;white-space:nowrap;
+          padding:1px 4px;border-radius:2px;
+          background:${isSelected ? colorBase + "0.9)" : "rgba(100,100,100,0.7)"};
+          color:#000;font-weight:bold;
+          pointer-events:none;
+        `;
+        label.textContent = `${idx}: ${(obj.name || "").slice(0, 18)}`;
+        region.appendChild(label);
+
+        // Selection indicator
+        const indicator = document.createElement("span");
+        indicator.className = "picker-indicator";
+        indicator.style.cssText = `
+          position:absolute;bottom:2px;right:2px;
+          font-size:12px;pointer-events:none;
+        `;
+        indicator.textContent = isSelected ? "✓" : "✗";
+        region.appendChild(indicator);
+
+        // Click handler
+        region.addEventListener("click", () => {
+          const entry = pickerSelection.get(id);
+          if (!entry) return;
+          entry.selected = !entry.selected;
+          const sel = entry.selected;
+          region.style.border = `2px solid ${sel ? colorBase + "0.9)" : "rgba(150,150,150,0.5)"}`;
+          region.style.background = sel ? colorBase + "0.15)" : "rgba(100,100,100,0.1)";
+          label.style.background = sel ? colorBase + "0.9)" : "rgba(100,100,100,0.7)";
+          indicator.textContent = sel ? "✓" : "✗";
+          updatePickerCount();
+        });
+
+        overlay.appendChild(region);
+      });
+
+      // Selection count display
+      const countBar = document.createElement("div");
+      countBar.id = "pickerCount";
+      countBar.style.cssText = "text-align:center;margin-top:8px;color:#8edbb8;font-size:13px;";
+      updatePickerCount(countBar);
+      artifact.appendChild(countBar);
+
+    } catch (err) {
+      console.error("Failed to load picker data:", err);
+    }
+  }
+
+  function updatePickerCount(el) {
+    const countEl = el || document.getElementById("pickerCount");
+    if (!countEl) return;
+    let selected = 0, total = 0;
+    pickerSelection.forEach((v) => { total++; if (v.selected) selected++; });
+    countEl.textContent = `${selected}/${total} objects selected for 3D generation — click to toggle`;
+  }
+
+  function getSelectedObjects() {
+    const selected = [];
+    pickerSelection.forEach((entry, id) => {
+      if (entry.selected) {
+        selected.push({ id, name: entry.obj.name || "", ...entry.obj });
+      }
+    });
+    return selected;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Poll for the latest available artifact and display it
   function startArtifactPolling() {
@@ -182,7 +356,7 @@
       showLoading("Generating photorealistic canon via FLUX…");
     }
     if (stage === "segment" && state === "running") {
-      showLoading("Segmenting objects with SAM 3.1…");
+      showLoading("Analyzing scene with vision AI…");
     }
     if (stage === "depth_estimation" && state === "running") {
       showLoading("Estimating depth with DA3…");
@@ -206,7 +380,10 @@
     // Blockout (spatial reconstruction): show when spatial_reconstruction completes OR blockout_approval starts
     if ((stage === "spatial_reconstruction" && state === "completed") ||
         (stage === "blockout_approval")) {
-      if (!loadedArtifacts.has("blockout:")) showArtifact("blockout");
+      if (!loadedArtifacts.has("blockout:")) {
+        // If we're at the approval gate, the picker will be shown
+        showArtifact("blockout");
+      }
     }
     // Mesh: show when mesh_generation completes for an object
     if (stage === "mesh_generation" && state === "completed" && event.object_id) {
@@ -391,9 +568,16 @@
     if (!currentApproval) return;
     approval.disabled = true;
     try {
+      const body = {approved: true, object_id: currentApproval.objectId};
+
+      // Include selected objects for blockout approval
+      if (currentApproval.stage === "blockout" && pickerSelection.size > 0) {
+        body.selected_objects = getSelectedObjects();
+      }
+
       await jsonRequest(`/api/session/${sessionId}/approve/${currentApproval.stage}`, {
         method: "POST",
-        body: JSON.stringify({approved: true, object_id: currentApproval.objectId})
+        body: JSON.stringify(body)
       });
       approval.style.display = "none";
       status.textContent = "RUNNING";
