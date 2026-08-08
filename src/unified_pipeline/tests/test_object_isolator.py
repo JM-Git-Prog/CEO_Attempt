@@ -355,24 +355,28 @@ class TestSAMWorkflow:
         assert wf["1"]["inputs"]["image"] == "test.png"
 
     def test_workflow_has_sam_model_loader(self):
-        """Workflow includes SAM model loader."""
+        """Workflow loads the installed SAM 3.1 multiplex checkpoint."""
         wf = _build_sam_workflow("test.png")
         assert "2" in wf
-        assert "SAMModelLoader" in wf["2"]["class_type"]
+        assert wf["2"]["class_type"] == "ImageOnlyCheckpointLoader"
+        assert wf["2"]["inputs"]["ckpt_name"] == "sam3.1_multiplex_fp16.safetensors"
 
     def test_workflow_has_auto_segmentation(self):
-        """Workflow includes SAM auto-segmentation node."""
+        """Workflow includes SAM3 detection with individual masks."""
         wf = _build_sam_workflow("test.png")
         assert "3" in wf
-        assert "SAMAutoSegmentation" in wf["3"]["class_type"]
+        assert wf["3"]["class_type"] == "SAM3_Detect"
+        assert wf["3"]["inputs"]["individual_masks"] is True
 
     def test_workflow_connections(self):
         """Workflow nodes are properly connected."""
         wf = _build_sam_workflow("test.png")
-        # SAM model feeds from node 2
-        assert wf["3"]["inputs"]["sam_model"] == ["2", 0]
-        # Image feeds from node 1
+        # SAM3 model feeds from node 2.
+        assert wf["3"]["inputs"]["model"] == ["2", 0]
+        # Image feeds from node 1 and the resulting mask reaches PreviewImage.
         assert wf["3"]["inputs"]["image"] == ["1", 0]
+        assert wf["4"]["inputs"]["mask"] == ["3", 0]
+        assert wf["5"]["inputs"]["images"] == ["4", 0]
 
 
 # ─── Tests: ObjectIsolator Integration ──────────────────────────────────────────

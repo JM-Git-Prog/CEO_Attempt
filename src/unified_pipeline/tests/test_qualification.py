@@ -211,43 +211,43 @@ class TestArtifactRecording:
 
 
 class TestFailedGate:
-    """Gate verification — every structural gate must pass."""
+    """Gate verification — automated and human final gates must pass."""
 
-    def test_failed_structural_gate_produces_failure(self, tmp_path: Path):
-        """When structural gates fail, the round reports passed=False."""
+    def test_failed_automated_validation_produces_failure(self, tmp_path: Path):
+        """When automated final validation fails, the round reports failure."""
         harness = QualificationHarness(tmp_path, mocked=True)
 
         result = _run(harness.run_round(
             inject_gate_failures={
-                "structural_gates": {
-                    "status": "structural_gates_failed",
+                "automated_final_validation": {
+                    "status": "automated_final_validation_failed",
                     "passed": False,
-                    "report": {"passed": False, "gates": ["geometry_check"]},
+                    "report": {"passed": False, "failures": ["geometry_check"]},
                 },
             }
         ))
 
         assert result.passed is False
-        assert result.failure_stage == "structural_gates"
-        assert "structural gates" in result.failure_reason.lower()
+        assert result.failure_stage == "automated_final_validation"
+        assert "automated final validation" in result.failure_reason.lower()
 
-    def test_failed_parity_gate_produces_failure(self, tmp_path: Path):
-        """When parity gate fails, the round reports passed=False."""
+    def test_failed_final_world_qa_produces_failure(self, tmp_path: Path):
+        """When final-world QA fails, the round reports failure."""
         harness = QualificationHarness(tmp_path, mocked=True)
 
         result = _run(harness.run_round(
             inject_gate_failures={
-                "parity_gate": {
-                    "status": "parity_failed",
-                    "passed": False,
-                    "report": {"passed": False, "mismatches": ["browser_vs_godot"]},
+                "final_world_qa": {
+                    "status": "final_world_qa_failed",
+                    "approved": False,
+                    "report": {"passed": False, "failures": ["browser_world"]},
                 },
             }
         ))
 
         assert result.passed is False
-        assert result.failure_stage == "parity_gate"
-        assert "parity" in result.failure_reason.lower()
+        assert result.failure_stage == "final_world_qa"
+        assert "final-world" in result.failure_reason.lower()
 
 
 # ---------------------------------------------------------------------------

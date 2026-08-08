@@ -381,12 +381,14 @@ class TestBuildCanonWorkflow:
             prompt="test prompt",
         )
 
-        # Must have checkpoint loader, image loader, encoder, sampler, decoder, saver
+        # Must use the split FLUX 2 model/CLIP/VAE loaders plus the
+        # conditioned Blockout image, sampler, decoder, and saver.
         class_types = {
             node["class_type"] for node in workflow.values()
         }
-        assert "CheckpointLoaderSimple" in class_types
+        assert {"UNETLoader", "CLIPLoader", "VAELoader"} <= class_types
         assert "LoadImage" in class_types
+        assert "VAEEncode" in class_types
         assert "KSampler" in class_types
         assert "VAEDecode" in class_types
         assert "SaveImage" in class_types

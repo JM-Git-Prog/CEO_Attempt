@@ -12,8 +12,10 @@ import json
 import logging
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
+from src.unified_pipeline.object_manifest import load_selected_manifest
 from tests.e2e.world_test_kit.config import WorldTestKitConfig
 
 logger = logging.getLogger(__name__)
@@ -900,9 +902,104 @@ class PlaytesterAgent:
             logger.error("Canon visual QA rejected session %s: %s", session_id, evidence)
         return passed
 
+    @staticmethod
+    def _session_output_dir(session_id: str) -> Path:
+        """Return a session-confined directory used by the local V16 backend."""
+        output_root = (Path(__file__).resolve().parents[3] / "output").resolve()
+        session_dir = (output_root / session_id).resolve()
+        if session_dir.parent != output_root:
+            raise ValueError("session ID escapes the V16 output root")
+        return session_dir
+
+    def _durable_gate_accepted(
+        self,
+        session_id: str,
+        gate: str,
+        selected_ids: list[object],
+    ) -> bool:
+        """Reconcile an ambiguous HTTP result against revision-bound evidence."""
+        stage_by_gate = {
+            "canon": "canon_approval",
+            "blockout": "blockout_approval",
+            "mesh": "mesh_approval",
+            "world": "final_world_qa",
+        }
+        stage = stage_by_gate.get(gate)
+        if stage is None:
+            return False
+        try:
+            session_dir = self._session_output_dir(session_id)
+            approvals = json.loads(
+                (session_dir / "orchestrator" / "approvals.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            decision = approvals.get("active", {}).get(f"{stage}::global")
+            if not isinstance(decision, dict):
+                return False
+            if decision.get("approved") is not True or decision.get("stale") is not False:
+                return False
+            plan_revision = decision.get("plan_revision")
+            approval_revision = decision.get("approval_revision")
+            if (
+                isinstance(plan_revision, bool)
+                or not isinstance(plan_revision, int)
+                or isinstance(approval_revision, bool)
+                or not isinstance(approval_revision, int)
+                or approval_revision <= 0
+            ):
+                return False
+
+            checkpoint = json.loads(
+                (
+                    session_dir
+                    / "orchestrator"
+                    / "checkpoints"
+                    / f"{stage}--global.json"
+                ).read_text(encoding="utf-8")
+            )
+            if not (
+                checkpoint.get("session_id") == session_id
+                and checkpoint.get("stage") == stage
+                and checkpoint.get("completion_state") == "completed"
+                and checkpoint.get("output", {}).get("approved") is True
+                and checkpoint.get("plan_revision") == plan_revision
+                and checkpoint.get("approval_revision") == approval_revision
+            ):
+                return False
+
+            if gate == "blockout":
+                selected = load_selected_manifest(
+                    session_dir / "artifacts" / "selected_objects.json"
+                )
+                manifest_ids = [
+                    str(item.get("object_id", ""))
+                    for item in selected["objects"]
+                    if isinstance(item, dict)
+                ]
+                expected_ids = [str(value) for value in selected_ids]
+                if not (
+                    selected.get("plan_revision") == plan_revision
+                    and selected.get("approval_revision") == approval_revision
+                    and len(manifest_ids) == len(expected_ids)
+                    and set(manifest_ids) == set(expected_ids)
+                ):
+                    return False
+        except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            logger.warning("Durable gate evidence is invalid for '%s': %s", gate, exc)
+            return False
+        logger.warning(
+            "Gate '%s' lacked an HTTP acknowledgement but has current durable acceptance evidence",
+            gate,
+        )
+        return True
+
     def _try_approve_gate(self, gate: str) -> bool:
         """Approve a gate only after all gate-specific evidence passes."""
         logger.info("Approving gate '%s' via API", gate)
+        session_id = ""
+        selected_ids: list[object] = []
+        approval_attempted = False
         try:
             session_id = self._page.evaluate(
                 """() => {
@@ -937,6 +1034,7 @@ class PlaytesterAgent:
                     if not selected_ids:
                         raise RuntimeError("strict-real picker returned no selectable objects")
                     payload["selected_object_ids"] = selected_ids
+                approval_attempted = True
                 resp = client.post(
                     approve_url,
                     json=payload,
@@ -948,12 +1046,14 @@ class PlaytesterAgent:
                         resp.status_code,
                         resp.text[:200],
                     )
-                    return False
+                    return self._durable_gate_accepted(session_id, gate, selected_ids)
             logger.info("Approved gate '%s' via API — pipeline should resume", gate)
             time.sleep(3.0)
             return True
-        except Exception as e:
-            logger.warning("Gate approval failed for '%s': %s", gate, e)
+        except Exception as exc:
+            logger.warning("Gate approval failed for '%s': %s", gate, exc)
+            if approval_attempted and session_id:
+                return self._durable_gate_accepted(session_id, gate, selected_ids)
             return False
 
     def _get_current_stage(self) -> str | None:

@@ -63,11 +63,14 @@ class UnifiedHunyuan3DGenerator:
       - octree_resolution=384 for maximum mesh detail
       - 180s stall timeout (hung inference detection, not quality cap)
 
-    Validation rules (Req 10.6):
+    Validation rules (Req 10.6, geometry phase):
       - ≥100 faces
       - ≥50 vertices
-      - Embedded texture data
       - No fused ground sheet (M8 rule)
+
+    Hunyuan3D 2.1 emits geometry-only GLBs. Canon-derived appearance is
+    bound separately by the V16 material stages; texture presence is not a
+    mesh-generation validity signal.
 
     On failure, raises MeshGenerationError for the fallback chain to catch.
 
@@ -154,7 +157,8 @@ class UnifiedHunyuan3DGenerator:
                 method="hunyuan3d_v2.1",
             )
 
-        # Run unified validation (stricter than inner — includes texture + ground sheet)
+        # Run unified geometry validation. Canon-derived material intent is
+        # applied by the later V16 material stages.
         validation_error = self._validate_mesh(result.mesh_path)
         if validation_error:
             raise MeshGenerationError(
@@ -179,10 +183,9 @@ class UnifiedHunyuan3DGenerator:
     def _validate_mesh(self, mesh_path: Path) -> str | None:
         """Validate mesh meets unified pipeline requirements.
 
-        Checks (Req 10.6):
+        Checks (Req 10.6, geometry phase):
           - ≥100 faces
           - ≥50 vertices
-          - Embedded texture data present
           - No fused ground sheet (M8 rule: flat geometry at y≈0)
 
         Parameters
@@ -204,8 +207,6 @@ class UnifiedHunyuan3DGenerator:
             return f"Failed to load mesh: {exc}"
 
         meshes: list[trimesh.Trimesh] = []
-        has_texture = False
-
         if isinstance(loaded, trimesh.Scene):
             for geom in loaded.geometry.values():
                 if isinstance(geom, trimesh.Trimesh):
@@ -220,36 +221,12 @@ class UnifiedHunyuan3DGenerator:
 
         total_faces = sum(len(m.faces) for m in meshes)
         total_verts = sum(len(m.vertices) for m in meshes)
-
-        # Check minimum geometry thresholds
         if total_faces < self.MIN_FACES:
             return f"Insufficient faces: {total_faces} (need ≥{self.MIN_FACES})"
-
         if total_verts < self.MIN_VERTICES:
             return f"Insufficient vertices: {total_verts} (need ≥{self.MIN_VERTICES})"
-
-        # Check for embedded texture
-        for mesh in meshes:
-            visual = mesh.visual
-            if hasattr(visual, "material") and visual.material is not None:
-                mat = visual.material
-                if (
-                    hasattr(mat, "baseColorTexture")
-                    and mat.baseColorTexture is not None
-                ) or (
-                    hasattr(mat, "image") and mat.image is not None
-                ):
-                    has_texture = True
-                    break
-
-        if not has_texture:
-            return "No embedded texture data found"
-
-        # Check for ground sheet (M8 rule)
-        ground_sheet = self._detect_ground_sheet(meshes)
-        if ground_sheet:
+        if self._detect_ground_sheet(meshes):
             return "Fused ground sheet detected (M8 rule violation)"
-
         return None
 
     def _detect_ground_sheet(self, meshes: list[trimesh.Trimesh]) -> bool:

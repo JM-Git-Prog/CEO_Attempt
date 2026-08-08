@@ -216,6 +216,18 @@ def _build_qualification_handlers(
                     canonical_hash=ch,
                 )
 
+            if stage_name == "automated_final_validation":
+                return StageResult(
+                    output={
+                        "status": "automated_final_validation_passed",
+                        "passed": True,
+                        "report": {"passed": True, "failures": []},
+                    },
+                    plan_revision=1,
+                    approval_revision=ctx.approval_revision,
+                    canonical_hash=_contract_hash({"automated_final_validation": True}),
+                )
+
             if stage_name == "structural_gates":
                 return StageResult(
                     output={
@@ -479,9 +491,23 @@ class QualificationHarness:
                 "is_mocked": is_stage_mocked,
             })
 
-        # Verify structural gates and parity
+        # Verify current V16 publication gates. Keep the historical checks for
+        # retained custom stage lists, but never use this mocked harness as
+        # release evidence.
+        automated_cp = orchestrator.store.load("automated_final_validation")
+        final_world_cp = orchestrator.store.load("final_world_qa")
         structural_cp = orchestrator.store.load("structural_gates")
         parity_cp = orchestrator.store.load("parity_gate")
+
+        if automated_cp and not _gate_passed(automated_cp.output):
+            passed = False
+            failure_stage = "automated_final_validation"
+            failure_reason = "automated final validation did not pass"
+
+        if final_world_cp and not _gate_passed(final_world_cp.output):
+            passed = False
+            failure_stage = "final_world_qa"
+            failure_reason = "final-world QA did not pass"
 
         if structural_cp and not _gate_passed(structural_cp.output):
             passed = False

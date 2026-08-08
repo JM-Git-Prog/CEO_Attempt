@@ -385,10 +385,10 @@ class TestUnifiedHunyuan3DValidation:
     """Test mesh validation rules (Req 10.6)."""
 
     @pytest.mark.asyncio
-    async def test_no_texture_fails_validation(
+    async def test_geometry_only_hunyuan_mesh_passes_validation(
         self, object_canon: ObjectCanon, mock_client: MagicMock, tmp_path: Path
     ) -> None:
-        """Mesh without embedded texture fails validation."""
+        """Real Hunyuan geometry proceeds to the separate material stages."""
         no_tex_path = _create_no_texture_glb(tmp_path / "no_tex.glb")
 
         inner_result = ObjectMeshResult(
@@ -403,11 +403,14 @@ class TestUnifiedHunyuan3DValidation:
 
         gen = UnifiedHunyuan3DGenerator(client=mock_client, output_dir=tmp_path)
 
-        with patch.object(gen._inner, "generate", new_callable=AsyncMock, return_value=inner_result):
-            with pytest.raises(MeshGenerationError) as exc_info:
-                await gen.generate(object_canon)
+        with patch.object(
+            gen._inner, "generate", new_callable=AsyncMock, return_value=inner_result
+        ):
+            result = await gen.generate(object_canon)
 
-        assert "texture" in str(exc_info.value).lower()
+        assert result.mesh_path == str(no_tex_path)
+        assert result.generation_method == "hunyuan3d_v2.1"
+        assert result.is_placeholder is False
 
     @pytest.mark.asyncio
     async def test_low_poly_fails_validation(
