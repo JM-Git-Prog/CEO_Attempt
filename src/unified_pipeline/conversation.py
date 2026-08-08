@@ -13,7 +13,9 @@ Requirements: 1.1, 1.2, 1.3, 1.4, 1.7, 1.8, 2.1, 2.2, 2.3
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
+import re
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -59,6 +61,56 @@ def _user_confirms_stable(message: str) -> bool:
     if lower.startswith("yes") and len(lower) < 30:
         return True
     return any(phrase in lower for phrase in _CONFIRM_PHRASES)
+
+
+_COUNT_WORDS = {
+    "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4,
+    "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+}
+_EXPLICIT_OBJECT = re.compile(
+    r"\b(a|an|one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+"
+    r"([a-z][a-z0-9 -]*?)(?=\s*(?:,|\band\b|\bwith\b|\blooking\b|[.;]|$))",
+    re.IGNORECASE,
+)
+
+
+def _object_key(name: str) -> str:
+    """Normalize an object label for count-preserving authority matching."""
+    words = re.sub(r"[^a-z0-9 ]", " ", name.lower()).split()
+    if words and words[0] in _COUNT_WORDS:
+        words = words[1:]
+    if words and words[-1].endswith("s") and not words[-1].endswith("ss"):
+        words[-1] = words[-1][:-1]
+    return " ".join(words)
+
+
+def _first_turn_requested_objects(message: str) -> list[dict[str, Any]]:
+    """Extract explicitly counted objects from a first design prompt.
+
+    The list portion after ``with`` is treated as authoritative. This keeps
+    deterministic counts such as "two chairs" even when an LLM omits one item.
+    """
+    _, separator, listed_scope = message.partition(" with ")
+    scope = listed_scope if separator else message
+    requested: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    architectural = {"window", "door", "wall", "floor", "ceiling", "counter"}
+    for match in _EXPLICIT_OBJECT.finditer(scope):
+        count_token, raw_name = match.groups()
+        count = int(count_token) if count_token.isdigit() else _COUNT_WORDS[count_token.lower()]
+        name = raw_name.strip().lower()
+        key = _object_key(name)
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        requested.append({
+            "name": key,
+            "role": "explicitly requested",
+            "count": count,
+            "material_hint": "unspecified",
+            "is_architectural": key in architectural,
+        })
+    return requested
 
 
 # ─── System prompts ────────────────────────────────────────────────────────────
@@ -320,24 +372,48 @@ class ConversationEngine:
         Fix #4: User's current message is appended to turns BEFORE building context,
         ensuring it appears as the LAST item in the messages array sent to Ollama.
         """
-        # Fix #4: Append user message to turns BEFORE building context
-        # so it's the last item in the conversation context sent to the LLM
+        # The first substantive user message supersedes the creative opening.
+        # Opening suggestions are non-authoritative and must not leak into the
+        # proposal that is eventually approved or extracted as the Brief.
+        first_user_turn = self._state.turn_count == 0
         self._state.turns.append(ConversationTurn(role="user", content=user_message))
         self._state.turn_count += 1
+        if first_user_turn:
+            self._state.proposed_brief.clear()
+            self._state.proposed_brief.update({
+                "source_prompt": user_message,
+                "source_prompt_sha256": hashlib.sha256(
+                    user_message.encode("utf-8")
+                ).hexdigest(),
+                "environmental_constraints": (
+                    ["visible rain through the window"]
+                    if "rain" in user_message.lower() else []
+                ),
+            })
 
-        # Build conversation context for the LLM (now includes latest user message)
         conversation_context = self._build_conversation_context()
+        interpret_system = INTERPRET_SYSTEM
+        if first_user_turn:
+            interpret_system += (
+                "\nThis is the user's first substantive design prompt. Treat it as "
+                "the sole design authority. Ignore and replace every style, object, "
+                "era, palette, and mood suggested by the assistant's opening. Include "
+                "every object and count explicitly requested by the user."
+            )
 
         try:
             result = await generate_json(
-                system=INTERPRET_SYSTEM,
+                system=interpret_system,
                 user=conversation_context,
                 model=self._model,
                 timeout_seconds=self._deadline,
             )
 
-            # Update proposed brief with latest interpretation
+            # Update proposed brief with latest interpretation, then restore every
+            # explicitly counted object from the first user authority.
             self._update_proposed_brief(result)
+            if first_user_turn:
+                self._merge_required_objects(user_message)
 
             # Check if steering has stabilized — LLM flag OR explicit user confirmation
             llm_says_stable = bool(result.get("steering_stable", False))
@@ -356,7 +432,7 @@ class ConversationEngine:
                 retry_context = conversation_context + " Please provide a fresh, different suggestion."
                 try:
                     retry_result = await generate_json(
-                        system=INTERPRET_SYSTEM,
+                        system=interpret_system,
                         user=retry_context,
                         model=self._model,
                         timeout_seconds=self._deadline,
@@ -367,6 +443,8 @@ class ConversationEngine:
                     if retry_response and retry_response != last_assistant_content:
                         # Retry succeeded with different content
                         self._update_proposed_brief(retry_result)
+                        if first_user_turn:
+                            self._merge_required_objects(user_message)
                         response = retry_response
                     else:
                         # Still duplicate after retry — acknowledge user input
@@ -555,12 +633,18 @@ class ConversationEngine:
 
     # ─── Private helpers ───────────────────────────────────────────────────
 
+    def _authoritative_turns(self) -> list[ConversationTurn]:
+        """Return conversation turns beginning with the first user authority."""
+        first_user = next(
+            (index for index, turn in enumerate(self._state.turns) if turn.role == "user"),
+            0,
+        )
+        return self._state.turns[first_user:]
+
     def _build_conversation_context(self) -> str:
-        """Build a context string from recent conversation history."""
-        recent = self._state.turns[-6:]  # Last 6 turns for context window
-        parts = []
-        for turn in recent:
-            parts.append(f"[{turn.role}]: {turn.content}")
+        """Build context without treating the creative opening as authority."""
+        recent = self._authoritative_turns()[-6:]
+        parts = [f"[{turn.role}]: {turn.content}" for turn in recent]
         current_state = json.dumps(self._state.proposed_brief, indent=2)
         return (
             f"Conversation so far:\n"
@@ -571,17 +655,18 @@ class ConversationEngine:
         )
 
     def _build_full_summary(self) -> str:
-        """Build a full conversation summary for Brief extraction."""
-        parts = []
-        for turn in self._state.turns:
-            parts.append(f"[{turn.role}]: {turn.content}")
+        """Build the Brief source from user-authoritative turns only."""
+        parts = [
+            f"[{turn.role}]: {turn.content}" for turn in self._authoritative_turns()
+        ]
         current_state = json.dumps(self._state.proposed_brief, indent=2)
         return (
-            f"Full conversation:\n"
+            f"Full user-authoritative conversation:\n"
             + "\n".join(parts)
             + f"\n\nAccumulated design state:\n{current_state}\n\n"
             f"Extract the final Brief from this conversation. "
-            f"Include all fields with sensible defaults for anything unspecified."
+            f"Include every explicitly requested object and count, and use sensible "
+            f"defaults only for genuinely unspecified fields."
         )
 
     def _update_proposed_brief(self, result: dict[str, Any]) -> None:
@@ -599,6 +684,37 @@ class ConversationEngine:
 
         if "real_capabilities" in result and isinstance(result["real_capabilities"], list):
             self._state.proposed_brief["real_capabilities"] = result["real_capabilities"]
+
+    def _merge_required_objects(self, user_message: str) -> None:
+        """Merge first-turn explicit objects and exact counts into proposal state."""
+        required = _first_turn_requested_objects(user_message)
+        required_keys = [_object_key(str(item["name"])) for item in required]
+        objects = self._state.proposed_brief.get("objects")
+        if not isinstance(objects, list):
+            objects = []
+            self._state.proposed_brief["objects"] = objects
+        # A composite such as "counter with coffee maker" cannot replace the
+        # separately requested, separately selectable counter and coffee maker.
+        objects[:] = [
+            item for item in objects
+            if isinstance(item, dict) and sum(
+                key in _object_key(str(item.get("name", "")))
+                for key in required_keys
+            ) < 2
+        ]
+        existing = {
+            _object_key(str(item.get("name", ""))): item
+            for item in objects if isinstance(item, dict)
+        }
+        for requested in required:
+            key = _object_key(str(requested["name"]))
+            current = existing.get(key)
+            if current is not None:
+                current["count"] = requested["count"]
+                continue
+            addition = dict(requested)
+            objects.append(addition)
+            existing[key] = addition
 
     def _dict_to_brief(self, data: dict[str, Any]) -> Brief:
         """Convert LLM output dict to a Brief model instance.
@@ -629,8 +745,36 @@ class ConversationEngine:
             material_finishes=tuple(pal_data.get("material_finishes", ())),
         )
 
-        # Parse object manifest — each gets a stable UUID (Req 2.2)
-        objects_raw = data.get("object_manifest", [])
+        # Parse object manifest. User-authoritative proposal objects are unioned
+        # into the extraction so a later LLM pass cannot silently drop them.
+        proposed_objects = self._state.proposed_brief.get("objects", [])
+        authoritative_keys = [
+            _object_key(str(obj.get("name", "")))
+            for obj in proposed_objects if isinstance(obj, dict)
+        ] if isinstance(proposed_objects, list) else []
+        objects_raw = [
+            dict(obj) for obj in data.get("object_manifest", [])
+            if isinstance(obj, dict) and sum(
+                key in _object_key(str(obj.get("name", "")))
+                for key in authoritative_keys
+            ) < 2
+        ]
+        by_key = {
+            _object_key(str(obj.get("name", ""))): obj for obj in objects_raw
+        }
+        if isinstance(proposed_objects, list):
+            for proposed in proposed_objects:
+                if not isinstance(proposed, dict):
+                    continue
+                key = _object_key(str(proposed.get("name", "")))
+                if not key:
+                    continue
+                if key in by_key:
+                    by_key[key]["count"] = proposed.get("count", by_key[key].get("count", 1))
+                else:
+                    addition = dict(proposed)
+                    objects_raw.append(addition)
+                    by_key[key] = addition
         manifest = tuple(
             ManifestObject(
                 id=str(uuid.uuid4()),
@@ -641,7 +785,6 @@ class ConversationEngine:
                 is_architectural=obj.get("is_architectural", False),
             )
             for obj in objects_raw
-            if isinstance(obj, dict)
         )
 
         # Parse game concept
@@ -659,17 +802,32 @@ class ConversationEngine:
             RealCapability(
                 tool_type=rc.get("tool_type", ""),
                 surface_binding=rc.get("surface_binding", ""),
-                read_only_v1=rc.get("read_only_v1", True),
+                # REAL integrations are read-only in V16 regardless of an
+                # LLM's malformed or unsafe suggestion.
+                read_only_v1=True,
             )
             for rc in rc_raw
             if isinstance(rc, dict)
         )
+
+        source_prompt = next(
+            (turn.content for turn in self._state.turns if turn.role == "user"),
+            "",
+        )
+        success_criteria = str(data.get("success_criteria", "")).strip()
+        if "rain" in source_prompt.lower() and "rain" not in success_criteria.lower():
+            suffix = "The window must visibly look out at rain."
+            success_criteria = f"{success_criteria.rstrip('.')} . {suffix}".replace(" .", ".")
 
         # Build provenance (Req 2.3)
         provenance = {
             "session_id": self._state.session_id,
             "turn_count": str(self._state.turn_count),
             "extraction_method": "llm",
+            "source_prompt": source_prompt,
+            "source_prompt_sha256": hashlib.sha256(
+                source_prompt.encode("utf-8")
+            ).hexdigest() if source_prompt else "",
         }
 
         return Brief(
@@ -680,7 +838,7 @@ class ConversationEngine:
             object_manifest=manifest,
             game_concept=game_concept,
             real_capabilities=real_capabilities,
-            success_criteria=data.get("success_criteria", ""),
+            success_criteria=success_criteria,
             provenance=provenance,
         )
 
@@ -768,18 +926,35 @@ class ConversationEngine:
                     real_capabilities.append(RealCapability(
                         tool_type=rc.get("tool_type", ""),
                         surface_binding=rc.get("surface_binding", ""),
-                        read_only_v1=rc.get("read_only_v1", True),
+                        read_only_v1=True,
                     ))
 
+        source_prompt = next(
+            (turn.content for turn in self._state.turns if turn.role == "user"),
+            "",
+        )
         provenance = {
             "session_id": self._state.session_id,
             "turn_count": str(self._state.turn_count),
             "extraction_method": "state_fallback",
+            "source_prompt": source_prompt,
+            "source_prompt_sha256": hashlib.sha256(
+                source_prompt.encode("utf-8")
+            ).hexdigest() if source_prompt else "",
         }
 
         # If we have nothing useful, return the full default
         if not manifest and not state.get("room_purpose"):
             return _default_brief()
+
+        success_criteria = state.get(
+            "success_criteria", "A space that matches the described vision."
+        )
+        if "rain" in source_prompt.lower() and "rain" not in success_criteria.lower():
+            success_criteria = (
+                f"{str(success_criteria).rstrip('.')} . "
+                "The window must visibly look out at rain."
+            ).replace(" .", ".")
 
         return Brief(
             room_purpose=state.get("room_purpose", state.get("interpretation", "")),
@@ -789,6 +964,6 @@ class ConversationEngine:
             object_manifest=tuple(manifest),
             game_concept=game_concept,
             real_capabilities=tuple(real_capabilities),
-            success_criteria=state.get("success_criteria", "A space that matches the described vision."),
+            success_criteria=success_criteria,
             provenance=provenance,
         )

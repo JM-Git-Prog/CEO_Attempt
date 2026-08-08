@@ -426,7 +426,8 @@ class ComfyUIClient:
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / filename
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        download_timeout = httpx.Timeout(max(300.0, float(self.timeout_s)))
+        async with httpx.AsyncClient(timeout=download_timeout) as client:
             # Get history to find mesh outputs
             response = await client.get(
                 f"{self.base_url}/history/{prompt_id}"
@@ -524,6 +525,10 @@ class ComfyUIClient:
                 raise ComfyUIError("ComfyUI returned no prompt_id")
             return prompt_id
 
+    async def release_vram(self) -> None:
+        """Unload retained ComfyUI models at an explicit GPU ownership boundary."""
+        await self._free_vram()
+
     async def _free_vram(self) -> None:
         """Call /free endpoint to release VRAM for OOM recovery."""
         try:
@@ -582,24 +587,67 @@ class ComfyUIClient:
         outputs: dict[str, Any],
         node_id: str | None,
     ) -> dict[str, str] | None:
-        """Find the first mesh/3D output in workflow outputs."""
-        # Keys that SaveGLB and similar nodes may use for mesh outputs
-        mesh_keys = ("3d", "meshes", "gltffiles", "files")
+        """Find and normalize a GLB/GLTF from any ComfyUI output key."""
+        nodes = [outputs[node_id]] if node_id and node_id in outputs else outputs.values()
+        for node_outputs in nodes:
+            if not isinstance(node_outputs, dict):
+                continue
+            for value in node_outputs.values():
+                items = value if isinstance(value, (list, tuple)) else (value,)
+                for item in items:
+                    normalized = self._normalize_mesh_output(item)
+                    if normalized is not None:
+                        return normalized
+        return None
 
-        if node_id and node_id in outputs:
-            for key in mesh_keys:
-                items = outputs[node_id].get(key, [])
-                if items:
-                    return items[0]
+    @staticmethod
+    def _normalize_mesh_output(item: Any) -> dict[str, str] | None:
+        """Convert a Comfy file record or bare exporter path to ``/view`` args."""
+        output_type = "output"
+        subfolder = ""
+        if isinstance(item, dict):
+            raw_filename = str(item.get("filename", "")).strip()
+            if not raw_filename:
+                return None
+            subfolder = str(item.get("subfolder", "")).strip()
+            output_type = str(item.get("type", "output")).strip() or "output"
+            raw_path = raw_filename.replace("\\", "/")
+            is_absolute = raw_path.startswith("/") or (
+                len(raw_path) > 1 and raw_path[1] == ":"
+            )
+            if not is_absolute and "/" not in raw_path and subfolder:
+                raw_path = f"{subfolder}/{raw_path}"
+        elif isinstance(item, str):
+            raw_path = item.strip().replace("\\", "/")
+        else:
             return None
 
-        # Search all output nodes
-        for node_outputs in outputs.values():
-            for key in mesh_keys:
-                items = node_outputs.get(key, [])
-                if items:
-                    return items[0]
-        return None
+        if not raw_path.lower().endswith((".glb", ".gltf")) or "\x00" in raw_path:
+            return None
+
+        lower_path = raw_path.lower()
+        output_marker = "/output/"
+        marker_index = lower_path.find(output_marker)
+        if marker_index >= 0:
+            relative_path = raw_path[marker_index + len(output_marker):]
+        elif raw_path.startswith("/") or (len(raw_path) > 1 and raw_path[1] == ":"):
+            relative_path = raw_path.rsplit("/", 1)[-1]
+        else:
+            relative_path = raw_path
+
+        parts = [part for part in relative_path.split("/") if part not in ("", ".")]
+        if not parts or any(part == ".." or ":" in part for part in parts):
+            return None
+        filename = parts[-1]
+        if not filename.lower().endswith((".glb", ".gltf")):
+            return None
+        if output_type not in {"output", "temp", "input"}:
+            output_type = "output"
+        return {
+            "filename": filename,
+            "subfolder": "/".join(parts[:-1]),
+            "type": output_type,
+        }
 
 
 def _is_oom_error(error_text: str) -> bool:

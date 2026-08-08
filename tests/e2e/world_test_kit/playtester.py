@@ -18,6 +18,77 @@ from tests.e2e.world_test_kit.config import WorldTestKitConfig
 
 logger = logging.getLogger(__name__)
 
+_CANON_QA_EXPECTED: dict[str, bool | int] = {
+    "kitchenette_geometry": True,
+    "round_table_count": 1,
+    "chair_count": 2,
+    "counter_count": 1,
+    "coffee_maker_count": 1,
+    "rain_window_count": 1,
+    "coherent_camera_openings": True,
+    "plausible_finishes": True,
+    "no_duplicate_or_deformed_required_objects": True,
+}
+
+
+def _canon_qa_schema() -> dict[str, Any]:
+    """Return an Ollama structured-output schema without forcing pass values."""
+    check_properties = {
+        name: {"type": "boolean" if isinstance(expected, bool) else "integer"}
+        for name, expected in _CANON_QA_EXPECTED.items()
+    }
+    return {
+        "type": "object",
+        "properties": {
+            "pass": {"type": "boolean"},
+            "failed_checks": {"type": "array", "items": {"type": "string"}},
+            "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+            "checks": {
+                "type": "object",
+                "properties": check_properties,
+                "required": list(check_properties),
+                "additionalProperties": False,
+            },
+        },
+        "required": ["pass", "failed_checks", "confidence", "checks"],
+        "additionalProperties": False,
+    }
+
+
+def _validate_canon_qa_verdict(verdict: Any) -> tuple[bool, list[str]]:
+    """Validate the local vision verdict without Python truthiness coercion."""
+    import math
+
+    errors: list[str] = []
+    if not isinstance(verdict, dict):
+        return False, ["verdict must be a JSON object"]
+    if verdict.get("pass") is not True:
+        errors.append("pass must be JSON boolean true")
+    failed_checks = verdict.get("failed_checks")
+    if not isinstance(failed_checks, list) or any(
+        not isinstance(item, str) for item in failed_checks
+    ):
+        errors.append("failed_checks must be a string array")
+    elif failed_checks:
+        errors.append("failed_checks must be empty")
+    confidence = verdict.get("confidence")
+    if (
+        isinstance(confidence, bool)
+        or not isinstance(confidence, (int, float))
+        or not math.isfinite(float(confidence))
+        or not 0.8 <= float(confidence) <= 1.0
+    ):
+        errors.append("confidence must be a finite number from 0.8 through 1.0")
+    checks = verdict.get("checks")
+    if not isinstance(checks, dict):
+        errors.append("checks must be a JSON object")
+    else:
+        for name, expected in _CANON_QA_EXPECTED.items():
+            actual = checks.get(name)
+            if type(actual) is not type(expected) or actual != expected:
+                errors.append(f"{name} must equal {expected!r}")
+    return not errors, errors
+
 
 # ---------------------------------------------------------------------------
 # Result dataclasses
@@ -156,20 +227,35 @@ class PlaytesterAgent:
             logger.info("Playtester in scripted mode — auto-approving conversation")
 
         try:
-            # Find and fill the prompt input
+            # Wait for V16 initialization to finish before submitting. The DOM exists
+            # before /unified/start returns; sending while sessionId is empty is ignored.
             input_sel = '#message'
             self._page.wait_for_selector(input_sel, timeout=10_000)
-            
-            # Count existing messages before sending
+            self._page.wait_for_function(
+                """() => {
+                    const session = new URLSearchParams(location.search).get('session');
+                    const input = document.getElementById('message');
+                    const send = document.getElementById('send');
+                    const opening = document.querySelectorAll('.message.assistant').length;
+                    return Boolean(session && input && send && !input.disabled &&
+                                   !send.disabled && opening > 0);
+                }""",
+                timeout=int(self._config.timeouts.conversation_s * 1000),
+            )
+
+            # Count the opening message only after the session is ready.
             initial_msg_count = self._page.evaluate(
                 "() => document.querySelectorAll('.message.assistant').length"
             ) or 0
-            
-            self._page.fill(input_sel, prompt)
 
-            # Submit
-            submit_sel = '#send'
-            self._page.click(submit_sel)
+            self._page.fill(input_sel, prompt)
+            self._page.click('#send')
+            self._page.wait_for_function(
+                """expected => Array.from(document.querySelectorAll('.message.user'))
+                    .some(message => message.textContent.trim() === expected)""",
+                arg=prompt,
+                timeout=10_000,
+            )
 
             # Wait for response (up to max_turns)
             for turn in range(self._config.max_conversation_turns):
@@ -197,36 +283,52 @@ class PlaytesterAgent:
                 ) or ""
                 result.responses.append(response_text)
 
-                if result.scripted_mode:
-                    # Auto-approve in scripted mode
+                if self._config.strict_real:
+                    # Strict scoring is binary and objective: exact prompt echo,
+                    # a complete durable proposal, and dispatched approval.
+                    if len(response_text) > 20 and self._strict_proposal_matches(prompt):
+                        result.brief_approved = self._try_approve_brief()
+                        result.quality_score = 1.0 if result.brief_approved else 0.0
+                        if result.brief_approved:
+                            break
+                    elif turn < self._config.max_conversation_turns - 1:
+                        from src.unified_pipeline.conversation import (
+                            _first_turn_requested_objects,
+                        )
+                        required = _first_turn_requested_objects(prompt)
+                        inventory = ", ".join(
+                            f"{item['count']} {item['name']}" for item in required
+                        )
+                        correction = (
+                            "Revise the proposal without replacing anything. Preserve "
+                            f"exactly: {inventory}. Include every item and count in the "
+                            "structured object list."
+                        )
+                        self._page.fill('#message', correction)
+                        self._page.click('#send')
+                elif result.scripted_mode:
                     result.quality_score = 0.7
-                    result.brief_approved = True
-                    self._try_approve_brief()
+                    result.brief_approved = self._try_approve_brief()
                     break
                 else:
-                    # First turn: approve without LLM eval (model may be cold-loading)
-                    # Subsequent turns: use LLM evaluation if needed
-                    if turn == 0 and len(response_text) > 20:
-                        result.quality_score = 0.75
-                        result.brief_approved = True
-                        self._try_approve_brief()
-                        break
-                    # LLM evaluates the response
                     eval_score = self._llm_evaluate_response(prompt, response_text)
                     if eval_score >= 0.6:
                         result.quality_score = eval_score
-                        result.brief_approved = True
-                        self._try_approve_brief()
+                        result.brief_approved = self._try_approve_brief()
                         break
-                    elif turn < self._config.max_conversation_turns - 1:
-                        # Ask for refinement
+                    if turn < self._config.max_conversation_turns - 1:
                         self._page.fill('#message', "Please improve this — be more specific and creative.")
                         self._page.click('#send')
 
             if not result.brief_approved:
-                result.quality_score = 0.4  # Minimum if never approved
-                self._try_approve_brief()  # Approve anyway to continue pipeline
-                result.brief_approved = True
+                if self._config.strict_real:
+                    result.quality_score = 0.0
+                    result.errors.append(
+                        "Strict conversation contract failed before brief approval"
+                    )
+                else:
+                    result.quality_score = 0.4
+                    result.brief_approved = self._try_approve_brief()
 
         except Exception as e:
             result.errors.append(f"Conversation failed: {e}")
@@ -280,17 +382,25 @@ class PlaytesterAgent:
                     last_progress_time = time.monotonic()
                     logger.info("Pipeline reached stage: %s (%.0fs elapsed)", current_stage, elapsed)
 
-                    # Approve gates when we see them
+                    # Approve gates only when their required evidence passes.
                     if "blockout" in current_stage and "approval" in current_stage:
-                        self._try_approve_gate("blockout")
-                        result.blockout_approved = True
+                        result.blockout_approved = self._try_approve_gate("blockout")
+                        if not result.blockout_approved:
+                            result.errors.append("Blockout approval evidence failed")
+                            break
                     elif "canon" in current_stage and "approval" in current_stage:
-                        self._try_approve_gate("canon")
-                        result.canon_approved = True
+                        result.canon_approved = self._try_approve_gate("canon")
+                        if not result.canon_approved:
+                            result.errors.append("Canon visual QA failed")
+                            break
                     elif "mesh" in current_stage and "approval" in current_stage:
-                        self._try_approve_gate("mesh")
+                        if not self._try_approve_gate("mesh"):
+                            result.errors.append("Mesh approval failed")
+                            break
                     elif "final_world" in current_stage or "world_qa" in current_stage:
-                        self._try_approve_gate("world")
+                        if not self._try_approve_gate("world"):
+                            result.errors.append("Final world approval failed")
+                            break
                     elif current_stage in ("spatial_reconstruction",):
                         # Spatial reconstruction just completed — blockout_approval gate coming next
                         pass
@@ -307,8 +417,28 @@ class PlaytesterAgent:
                     result.success = True
                     break
                 if terminal_status.startswith("error") or terminal_status == "failed":
-                    logger.error("Pipeline entered terminal UI state: %s", terminal_status)
-                    break
+                    # UI text can transiently report an SSE/rendering error while
+                    # the durable backend worker is still running. Only a backend
+                    # terminal state may stop strict qualification.
+                    try:
+                        import httpx
+                        with httpx.Client(timeout=10.0) as client:
+                            backend_status = client.get(
+                                f"{self._config.server_url}/api/session/"
+                                f"{self._session_id}/status"
+                            ).json()
+                        if backend_status.get("state") == "error":
+                            error = backend_status.get("error") or terminal_status
+                            result.errors.append(f"Backend pipeline error: {error}")
+                            logger.error("Pipeline entered terminal backend state: %s", error)
+                            break
+                        logger.warning(
+                            "Ignoring transient UI state %r while backend is %r",
+                            terminal_status,
+                            backend_status.get("state"),
+                        )
+                    except (httpx.HTTPError, OSError, ValueError, TypeError) as exc:
+                        logger.warning("Could not verify terminal UI state: %s", exc)
 
                 time.sleep(2.0)
 
@@ -590,46 +720,190 @@ class PlaytesterAgent:
         except (json.JSONDecodeError, ValueError, TypeError):
             return 0.5
 
-    def _try_approve_brief(self) -> None:
-        """Send a confirmation message to trigger brief extraction and pipeline launch."""
+    def _strict_proposal_matches(self, prompt: str) -> bool:
+        """Verify durable proposal authority before strict auto-approval."""
+        from pathlib import Path
+        from src.unified_pipeline.conversation import (
+            _first_turn_requested_objects,
+            _object_key,
+        )
+
+        project_root = Path(__file__).resolve().parents[3]
+        conversation_path = project_root / "output" / self._session_id / "conversation.json"
         try:
-            # Wait for input to be re-enabled after previous response
+            document = json.loads(conversation_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError):
+            return False
+        exact_prompt_seen = any(
+            turn.get("role") == "user" and turn.get("content") == prompt
+            for turn in document.get("turns", []) if isinstance(turn, dict)
+        )
+        if not exact_prompt_seen:
+            return False
+        proposed = document.get("proposed_brief", {})
+        objects = proposed.get("objects", []) if isinstance(proposed, dict) else []
+        indexed = {
+            _object_key(str(item.get("name", ""))): int(item.get("count", 1))
+            for item in objects if isinstance(item, dict)
+        }
+        required = _first_turn_requested_objects(prompt)
+        required_keys = [_object_key(str(item["name"])) for item in required]
+        missing = [
+            item for item in required
+            if indexed.get(_object_key(str(item["name"]))) != item["count"]
+        ]
+        aggregates = [
+            item for item in objects
+            if isinstance(item, dict) and sum(
+                key in _object_key(str(item.get("name", "")))
+                for key in required_keys
+            ) >= 2
+        ]
+        if missing or aggregates:
+            logger.warning(
+                "Strict proposal authority mismatch: missing=%s aggregates=%s",
+                missing,
+                aggregates,
+            )
+            return False
+        return bool(proposed)
+
+    def _try_approve_brief(self) -> bool:
+        """Issue the brief approval action and report whether it was dispatched."""
+        try:
             time.sleep(1.0)
-            
-            # Try clicking the approval button if it's visible
             btn = self._page.query_selector('#approval')
             if btn and btn.is_visible():
                 btn.click()
-                time.sleep(2.0)
-                return
-            
-            # Otherwise, type a confirmation message
-            # Wait for the input to be enabled (not disabled after pipeline start)
+                logger.info("Clicked brief approval button")
+                return True
+
             msg_input = self._page.query_selector('#message')
-            if msg_input:
-                is_disabled = self._page.evaluate(
-                    "() => document.getElementById('message')?.disabled || false"
-                )
-                if not is_disabled:
-                    self._page.fill('#message', "Looks good, build it")
-                    self._page.click('#send')
-                    time.sleep(3.0)  # Give time for brief extraction + pipeline launch
-                    logger.info("Sent brief approval: 'Looks good, build it'")
-                else:
-                    logger.info("Input disabled — pipeline may have already started")
+            if not msg_input:
+                return False
+            is_disabled = self._page.evaluate(
+                "() => document.getElementById('message')?.disabled || false"
+            )
+            if is_disabled:
+                logger.info("Input disabled — pipeline may have already started")
+                return True
+
+            approval_text = "Looks good, build it"
+            self._page.fill('#message', approval_text)
+            self._page.click('#send')
+            self._page.wait_for_function(
+                """expected => Array.from(document.querySelectorAll('.message.user'))
+                    .some(message => message.textContent.trim() === expected)""",
+                arg=approval_text,
+                timeout=10_000,
+            )
+            logger.info("Sent brief approval: %r", approval_text)
+            return True
         except Exception as e:
             logger.warning("Brief approval failed: %s", e)
+            return False
 
-    def _try_approve_gate(self, gate: str) -> None:
-        """Approve a pipeline gate by calling the API directly.
-        
-        The UI button requires currentApproval to be set via SSE events,
-        which may not have fired by the time we detect the stage. Bypass
-        the UI entirely and POST to the approve endpoint.
-        """
+    def _canon_visual_qa(self, session_id: str) -> bool:
+        """Run fail-closed local vision QA on the Canon source image."""
+        import base64
+        from pathlib import Path
+        import httpx
+
+        project_root = Path(__file__).resolve().parents[3]
+        session_dir = project_root / "output" / session_id
+        canon_path = session_dir / "artifacts" / "canon.png"
+        conversation_path = session_dir / "conversation.json"
+        if not canon_path.is_file() or not conversation_path.is_file():
+            logger.error("Canon QA evidence missing for session %s", session_id)
+            return False
+        conversation = json.loads(conversation_path.read_text(encoding="utf-8"))
+        prompt = next(
+            (
+                str(turn.get("content", ""))
+                for turn in conversation.get("turns", [])
+                if isinstance(turn, dict) and turn.get("role") == "user"
+            ),
+            "",
+        )
+        qa_prompt = (
+            "Judge this Canon source image against the exact requested room. "
+            f"Request: {prompt}\n"
+            "Return only one JSON object with exactly this structure: "
+            '{"pass":true,"failed_checks":[],"confidence":0.9,"checks":{'
+            '"kitchenette_geometry":true,"round_table_count":1,'
+            '"chair_count":2,"counter_count":1,"coffee_maker_count":1,'
+            '"rain_window_count":1,"coherent_camera_openings":true,'
+            '"plausible_finishes":true,'
+            '"no_duplicate_or_deformed_required_objects":true}}. '
+            "Use observed integer counts, not guesses. Set pass true only when every "
+            "boolean is true, every count exactly matches, failed_checks is empty, "
+            "and confidence is at least 0.8."
+        )
+        payload = {
+            "model": self._config.vision_model,
+            "messages": [{
+                "role": "user",
+                "content": qa_prompt,
+                "images": [base64.b64encode(canon_path.read_bytes()).decode("ascii")],
+            }],
+            "stream": False,
+            "keep_alive": 0,
+            "format": _canon_qa_schema(),
+            "options": {"temperature": 0.0, "num_predict": 512},
+        }
+        raw_verdict: Any
+        try:
+            with httpx.Client(timeout=self._config.timeouts.vision_eval_s) as client:
+                response = client.post(
+                    f"{self._config.ollama_base_url}/api/chat", json=payload
+                )
+                response.raise_for_status()
+            content = response.json().get("message", {}).get("content", "")
+            raw_verdict = json.loads(content)
+        except (httpx.HTTPError, OSError, ValueError, TypeError) as exc:
+            raw_verdict = {
+                "pass": False,
+                "failed_checks": [f"vision QA error: {exc}"],
+                "confidence": 0.0,
+                "checks": {},
+            }
+
+        passed, validation_errors = _validate_canon_qa_verdict(raw_verdict)
+        raw_failed = raw_verdict.get("failed_checks", []) if isinstance(raw_verdict, dict) else []
+        failed_checks = [
+            str(item) for item in raw_failed if isinstance(item, str)
+        ] + validation_errors
+        confidence = raw_verdict.get("confidence", 0.0) if isinstance(raw_verdict, dict) else 0.0
+        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+            confidence = 0.0
+        import hashlib
+        from datetime import datetime, timezone
+
+        evidence = {
+            "schema_version": "canon-vision-qa/v2",
+            "session_id": session_id,
+            "source_prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
+            "canon_sha256": hashlib.sha256(canon_path.read_bytes()).hexdigest(),
+            "vision_model": self._config.vision_model,
+            "checklist_version": "v16-strict-real-r1",
+            "evaluated_at": datetime.now(timezone.utc).isoformat(),
+            "pass": passed,
+            "failed_checks": list(dict.fromkeys(failed_checks)),
+            "confidence": float(confidence),
+            "checks": raw_verdict.get("checks", {}) if isinstance(raw_verdict, dict) else {},
+        }
+        qa_path = session_dir / "artifacts" / "canon_vision_qa.json"
+        temporary = qa_path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(qa_path)
+        if not passed:
+            logger.error("Canon visual QA rejected session %s: %s", session_id, evidence)
+        return passed
+
+    def _try_approve_gate(self, gate: str) -> bool:
+        """Approve a gate only after all gate-specific evidence passes."""
         logger.info("Approving gate '%s' via API", gate)
         try:
-            # Get the session ID from the URL
             session_id = self._page.evaluate(
                 """() => {
                     const params = new URLSearchParams(location.search);
@@ -637,15 +911,15 @@ class PlaytesterAgent:
                 }"""
             )
             if not session_id:
-                # Try extracting from the page's sessionId variable
-                session_id = self._page.evaluate("() => typeof sessionId !== 'undefined' ? sessionId : ''")
-            
+                session_id = self._page.evaluate(
+                    "() => typeof sessionId !== 'undefined' ? sessionId : ''"
+                )
             if not session_id:
                 logger.warning("Cannot approve gate '%s' — no session ID found", gate)
-                return
+                return False
+            if gate == "canon" and not self._canon_visual_qa(session_id):
+                return False
 
-            # Call the approve API directly. Blockout approval must bind explicit
-            # canon-detection IDs; an empty implicit approval is never valid.
             import httpx
             approve_url = f"{self._config.server_url}/api/session/{session_id}/approve/{gate}"
             with httpx.Client(timeout=10.0) as client:
@@ -668,18 +942,19 @@ class PlaytesterAgent:
                     json=payload,
                     headers={"Content-Type": "application/json"},
                 )
-                if resp.status_code == 200:
-                    logger.info("Approved gate '%s' via API — pipeline should resume", gate)
-                else:
+                if resp.status_code != 200:
                     logger.warning(
                         "Gate approval API returned %d: %s",
                         resp.status_code,
                         resp.text[:200],
                     )
-            time.sleep(3.0)  # Give pipeline time to resume
-
+                    return False
+            logger.info("Approved gate '%s' via API — pipeline should resume", gate)
+            time.sleep(3.0)
+            return True
         except Exception as e:
             logger.warning("Gate approval failed for '%s': %s", gate, e)
+            return False
 
     def _get_current_stage(self) -> str | None:
         """Get the current pipeline stage from the V16 UI."""

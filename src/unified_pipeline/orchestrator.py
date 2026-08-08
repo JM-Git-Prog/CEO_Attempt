@@ -902,13 +902,17 @@ class UnifiedOrchestrator:
 
     def _put_output(
         self, context: dict[str, Any], stage: StageSpec, object_id: str | None,
-        output: Mapping[str, Any],
+        output: Mapping[str, Any], *, plan_revision: int | None = None,
     ) -> None:
         stage_outputs = context.setdefault("stage_outputs", {})
         if stage.per_object:
             stage_outputs.setdefault(stage.name, {})[str(object_id)] = dict(output)
         else:
             stage_outputs[stage.name] = dict(output)
+        if plan_revision is not None:
+            context["_orchestrator_plan_revision"] = max(
+                int(context.get("_orchestrator_plan_revision", 0)), int(plan_revision)
+            )
         if stage.name == "brief" and "object_ids" not in context:
             manifest = output.get("object_manifest", ())
             if manifest and isinstance(manifest, Sequence):
@@ -940,7 +944,7 @@ class UnifiedOrchestrator:
 
     def _context_revision(self, context: Mapping[str, Any]) -> int:
         outputs = context.get("stage_outputs", {})
-        revision = 0
+        revision = int(context.get("_orchestrator_plan_revision", 0))
         if isinstance(outputs, Mapping):
             for output in outputs.values():
                 if isinstance(output, Mapping):
@@ -1213,7 +1217,10 @@ class UnifiedOrchestrator:
         checkpoint = self.store.load(stage.name, object_id)
         if checkpoint and checkpoint.completion_state is CheckpointState.COMPLETED:
             if dict(checkpoint.input_hashes) == input_hashes:
-                self._put_output(context, stage, object_id, checkpoint.output)
+                self._put_output(
+                    context, stage, object_id, checkpoint.output,
+                    plan_revision=checkpoint.plan_revision,
+                )
                 return checkpoint
             await self._invalidate_from_index(
                 self._stage_index[stage.name],
@@ -1298,6 +1305,7 @@ class UnifiedOrchestrator:
             self._started_at = self.clock()
             context = self._initial_context(initial_context)
             context.setdefault("stage_outputs", {})
+            context["_orchestrator_plan_revision"] = 0
             for stage in self.stages:
                 object_ids = self._object_ids(context) if stage.per_object else (None,)
                 total = len(object_ids)
@@ -1306,7 +1314,10 @@ class UnifiedOrchestrator:
                         stage, object_id, context, complete, total
                     )
                     if checkpoint.completion_state is CheckpointState.COMPLETED:
-                        self._put_output(context, stage, object_id, checkpoint.output)
+                        self._put_output(
+                            context, stage, object_id, checkpoint.output,
+                            plan_revision=checkpoint.plan_revision,
+                        )
                         await self._emit_progress(
                             stage=stage.name,
                             object_id=object_id,
@@ -1421,6 +1432,7 @@ class UnifiedOrchestrator:
         with self.ownership.worker(self.worker_id):
             context = self._initial_context(None)
             context.setdefault("stage_outputs", {})
+            context["_orchestrator_plan_revision"] = 0
             for stage in self.stages:
                 checkpoints = [
                     item for item in self.store.all()
@@ -1428,7 +1440,10 @@ class UnifiedOrchestrator:
                 ]
                 for checkpoint in checkpoints:
                     if checkpoint.completion_state is CheckpointState.COMPLETED:
-                        self._put_output(context, stage, checkpoint.object_id, checkpoint.output)
+                        self._put_output(
+                            context, stage, checkpoint.object_id, checkpoint.output,
+                            plan_revision=checkpoint.plan_revision,
+                        )
                         continue
                     if not checkpoint.external_job_id:
                         continue

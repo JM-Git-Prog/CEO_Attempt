@@ -132,10 +132,19 @@ class WorldTestOrchestrator:
                 url = f"{self._config.server_url}/?v=16&qa=1"
                 page.goto(url, wait_until="domcontentloaded", timeout=30_000)
                 
-                # Wait for V16 to create its session and show the conversation UI
+                # Wait for V16 to create its real backend session. The DOM is
+                # available earlier, so selector readiness alone is insufficient.
                 page.wait_for_selector('#message', timeout=15_000)
+                page.wait_for_function(
+                    "() => Boolean(new URLSearchParams(location.search).get('session'))",
+                    timeout=int(self._config.timeouts.conversation_s * 1000),
+                )
+                session_id = page.evaluate(
+                    "() => new URLSearchParams(location.search).get('session')"
+                )
+                logger.info("V16 backend session ready — session=%s", session_id)
 
-                # Create the playtester agent
+                # Create the playtester agent with the actual backend session ID.
                 agent = PlaytesterAgent(page, self._config, session_id)
 
                 # Create vision evaluator (loaded later for VRAM management)
@@ -147,6 +156,11 @@ class WorldTestOrchestrator:
 
                 if "pipeline_wait" in active_layers:
                     results["pipeline_wait"] = self._run_pipeline_wait(agent)
+                    if not results["pipeline_wait"].passed:
+                        raise RuntimeError(
+                            "Pipeline qualification stopped before world checks: "
+                            + (results["pipeline_wait"].error or "approval/stage evidence failed")
+                        )
 
                 # --- Wait for 3D world to load in browser before testing it ---
                 # The pipeline may still be compiling after approval gates pass.
@@ -232,12 +246,15 @@ class WorldTestOrchestrator:
         start = time.monotonic()
         try:
             result = agent.wait_for_pipeline()
-            score = 100.0 if result.success else (len(result.stages_completed) * 25.0)
+            # Strict qualification is binary: partial stage traversal is useful
+            # diagnostic evidence, never release credit.
+            score = 100.0 if result.success else 0.0
             return LayerResult(
                 name="pipeline_wait",
                 passed=result.success,
-                score=min(score, 100.0),
+                score=score,
                 duration_s=time.monotonic() - start,
+                error="; ".join(result.errors) if result.errors else None,
                 details=result,
             )
         except Exception as e:

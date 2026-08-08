@@ -92,16 +92,20 @@ class PlaytestReporter:
             report.passed = False
             report.overall_score = 0.0
             report.summary = self._build_summary(report)
+            self._persist(report)
             return report
 
         # Compute overall score from layer scores
         layers = results.get("layers", {})
         scores = []
         all_passed = True
+        fatal_error = False
         for name, layer_data in layers.items():
             if name.startswith("_"):
                 if layer_data.get("error"):
                     report.errors.append(layer_data["error"])
+                    fatal_error = True
+                    all_passed = False
                 continue
             score = layer_data.get("score", 0.0)
             scores.append(score)
@@ -110,7 +114,9 @@ class PlaytestReporter:
             if score < self._config.individual_minimum:
                 all_passed = False
 
-        if scores:
+        if fatal_error:
+            report.overall_score = 0.0
+        elif scores:
             report.overall_score = sum(scores) / len(scores)
         else:
             report.overall_score = 0.0
@@ -121,7 +127,21 @@ class PlaytestReporter:
         )
 
         report.summary = self._build_summary(report)
+        self._persist(report)
         return report
+
+    def _persist(self, report: PlaytestReport) -> None:
+        """Atomically persist a session-bound JSON qualification report."""
+        if not report.session_id:
+            return
+        from pathlib import Path
+
+        report_dir = Path(self._config.artifacts_dir) / report.session_id
+        report_dir.mkdir(parents=True, exist_ok=True)
+        destination = report_dir / "playtest_report.json"
+        temporary = destination.with_suffix(".json.tmp")
+        temporary.write_text(report.to_json() + "\n", encoding="utf-8")
+        temporary.replace(destination)
 
     def print_summary(self, report: PlaytestReport) -> None:
         """Print 20-line human-readable summary to stdout."""

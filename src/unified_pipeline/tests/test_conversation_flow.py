@@ -298,7 +298,10 @@ class TestExtractBrief:
         assert brief.game_concept.scoring != ""
         assert brief.game_concept.win_condition != ""
         assert len(brief.real_capabilities) > 0
-        assert brief.success_criteria != ""
+        assert all(cap.read_only_v1 is True for cap in brief.real_capabilities)
+        assert "rain" in brief.success_criteria.lower()
+        assert brief.provenance["source_prompt"] == DANNY_KITCHENETTE_PROMPT
+        assert len(brief.provenance["source_prompt_sha256"]) == 64
 
 
 # ---------------------------------------------------------------------------

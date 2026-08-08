@@ -1,14 +1,9 @@
-"""Trellis2 mesh generator — fallback 3D mesh generation via ComfyUI.
+"""Trellis2 one-pass textured mesh generation via live ComfyUI GGUF nodes.
 
-Implements the Trellis2 4B workflow chain:
-  Trellis2LoadModel → Trellis2PreProcessImage →
-  Trellis2MeshWithVoxelGenerator(steps=18) →
-  Trellis2SimplifyMesh(triangles=12000) → Trellis2ExportMesh(GLB)
+The fallback runs TRELLIS.2-4B, generates shape and texture together,
+unwraps/simplifies to 12,000 target faces, and exports an embedded-texture GLB.
 
-Used as a fallback when Hunyuan3D 2.1 fails or produces an invalid mesh.
-On failure, returns None to trigger the placeholder fallback.
-
-Requirements: 1.4, 1.5
+Requirements: 1.4, 1.5, 10.4, 10.6
 """
 
 from __future__ import annotations
@@ -40,71 +35,55 @@ def _build_trellis2_workflow(
     target_triangles: int = 12000,
     seed: int = 42,
 ) -> dict[str, Any]:
-    """Build the ComfyUI workflow dict for the Trellis2 generation chain.
-
-    Node chain:
-      1. LoadImage — loads Object_PNG
-      2. Trellis2LoadModel — loads the Trellis2 4B model
-      3. Trellis2PreProcessImage — preprocesses image for Trellis2 pipeline
-      4. Trellis2MeshWithVoxelGenerator — generates mesh from voxels (steps=18)
-      5. Trellis2SimplifyMesh — reduces mesh to target triangle count (12000)
-      6. Trellis2ExportMesh — exports as GLB with embedded textures
-
-    Parameters
-    ----------
-    image_path : str
-        Path to the input Object_PNG (forward slashes for ComfyUI).
-    steps : int
-        Number of voxel generation steps (default 18).
-    target_triangles : int
-        Target triangle count for mesh simplification (default 12000).
-    seed : int
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    dict
-        ComfyUI-compatible workflow JSON dict.
-    """
+    """Build the installed GGUF Trellis2 one-pass mesh-and-texture graph."""
     return {
-        "1": {
-            "class_type": "LoadImage",
-            "inputs": {
-                "image": image_path,
-            },
-        },
+        "1": {"class_type": "LoadImage", "inputs": {"image": image_path}},
         "2": {
-            "class_type": "Trellis2LoadModel",
-            "inputs": {},
+            "class_type": "Trellis2LoadModel_GGUF",
+            "inputs": {
+                "modelname": "TRELLIS.2-4B", "model_format": "GGUF BF16",
+                "backend": "sdpa", "device": "cuda", "low_vram": True,
+                "keep_models_loaded": False,
+            },
         },
         "3": {
-            "class_type": "Trellis2PreProcessImage",
-            "inputs": {
-                "image": ["1", 0],
-            },
+            "class_type": "Trellis2PreProcessImage_GGUF",
+            "inputs": {"image": ["1", 0], "padding": 0, "remove_background": True},
         },
         "4": {
-            "class_type": "Trellis2MeshWithVoxelGenerator",
+            "class_type": "Trellis2MeshWithVoxelGenerator_GGUF",
             "inputs": {
-                "model": ["2", 0],
-                "image": ["3", 0],
-                "steps": steps,
-                "seed": seed,
+                "pipeline": ["2", 0], "image": ["3", 0], "seed": seed,
+                "pipeline_type": "1024_cascade",
+                "sparse_structure_steps": steps, "shape_steps": steps,
+                "texture_steps": steps, "max_num_tokens": 49152,
+                "sparse_structure_resolution": 32, "max_views": 4,
+                "generate_texture_slat": True, "use_tiled_decoder": True,
+                "sampler": "euler",
             },
         },
         "5": {
-            "class_type": "Trellis2SimplifyMesh",
+            "class_type": "Trellis2PostProcessAndUnWrapAndRasterizer_GGUF",
             "inputs": {
-                "mesh": ["4", 0],
-                "triangles": target_triangles,
+                "mesh": ["4", 0], "bvh": ["4", 1],
+                "mesh_cluster_threshold_cone_half_angle_rad": 60,
+                "mesh_cluster_refine_iterations": 0,
+                "mesh_cluster_global_iterations": 1,
+                "mesh_cluster_smooth_strength": 1, "texture_size": 4096,
+                "remesh": True, "remesh_band": 1.0, "remesh_project": 0.0,
+                "target_face_num": target_triangles, "simplify_method": "Cumesh",
+                "fill_holes": True, "texture_alpha_mode": "OPAQUE",
+                "dual_contouring_resolution": "1024", "double_side_material": False,
+                "remove_floaters": True, "bake_on_vertices": False,
+                "use_custom_normals": False, "uv_unwrap_method": "Xatlas",
+                "remove_inner_faces": True,
             },
         },
         "6": {
-            "class_type": "Trellis2ExportMesh",
+            "class_type": "Trellis2ExportMesh_GGUF",
             "inputs": {
-                "mesh": ["5", 0],
-                "format": "GLB",
-                "filename_prefix": "trellis2",
+                "trimesh": ["5", 0], "filename_prefix": "trellis2",
+                "file_format": "glb",
             },
         },
     }
@@ -113,9 +92,10 @@ def _build_trellis2_workflow(
 class Trellis2Generator:
     """Fallback 3D mesh generation via Trellis2 ComfyUI workflow.
 
-    Workflow: Trellis2LoadModel → Trellis2PreProcessImage →
-    Trellis2MeshWithVoxelGenerator(steps=18) →
-    Trellis2SimplifyMesh(triangles=12000) → Trellis2ExportMesh(GLB)
+    Workflow: Trellis2LoadModel_GGUF → Trellis2PreProcessImage_GGUF →
+    Trellis2MeshWithVoxelGenerator_GGUF(18/18/18 steps) →
+    Trellis2PostProcessAndUnWrapAndRasterizer_GGUF(12000 faces) →
+    Trellis2ExportMesh_GGUF(GLB)
 
     Parameters
     ----------
@@ -186,7 +166,7 @@ class Trellis2Generator:
                 prompt_id=prompt_id,
                 output_dir=obj_dir,
                 filename=f"{mask_id}_trellis2.glb",
-                node_id="6",  # Trellis2ExportMesh node
+                node_id="6",  # Trellis2ExportMesh_GGUF node
             )
 
             # Validate the output mesh

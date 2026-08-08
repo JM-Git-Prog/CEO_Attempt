@@ -105,9 +105,11 @@ def _launch_pipeline(session_id: str, session_dir: Path, brief: dict) -> None:
                 _write_meta(session_dir, state="awaiting_approval", approval_stage=result.stage)
                 # Emit an explicit progress event so the SSE/UI knows about the approval gate
                 _append_progress(session_dir, {
+                    "session_id": session_id,
                     "current_stage": result.stage,
                     "state": "awaiting_approval",
                     "plan_revision": orchestrator.current_plan_revision,
+                    "canonical_hash": result.canonical_hash,
                     "finality": "provisional",
                     "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
                 })
@@ -749,9 +751,12 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                     if result.state == "awaiting_approval":
                         _write_meta(session_dir, state="awaiting_approval", pending_stage=result.stage)
                         _append_progress(session_dir, {
+                            "session_id": session_id,
                             "current_stage": result.stage,
                             "state": "awaiting_approval",
                             "plan_revision": orchestrator.current_plan_revision,
+                            "canonical_hash": result.canonical_hash,
+                            "finality": "provisional",
                             "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
                         })
                     elif result.state == "completed":

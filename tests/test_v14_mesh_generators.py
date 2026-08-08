@@ -364,13 +364,13 @@ class TestTrellis2WorkflowParams:
         """Default workflow uses steps=18, target_triangles=12000."""
         workflow = _build_trellis2_workflow("test/image.png")
 
-        # Trellis2MeshWithVoxelGenerator node (4) should have steps
         voxel_gen = workflow["4"]["inputs"]
-        assert voxel_gen["steps"] == 18
+        assert voxel_gen["sparse_structure_steps"] == 18
+        assert voxel_gen["shape_steps"] == 18
+        assert voxel_gen["texture_steps"] == 18
 
-        # Trellis2SimplifyMesh node (5) should have triangles
-        simplify = workflow["5"]["inputs"]
-        assert simplify["triangles"] == 12000
+        post_process = workflow["5"]["inputs"]
+        assert post_process["target_face_num"] == 12000
 
     def test_custom_workflow_params(self) -> None:
         """Custom parameters are passed through to the workflow."""
@@ -382,11 +382,13 @@ class TestTrellis2WorkflowParams:
         )
 
         voxel_gen = workflow["4"]["inputs"]
-        assert voxel_gen["steps"] == 25
+        assert voxel_gen["sparse_structure_steps"] == 25
+        assert voxel_gen["shape_steps"] == 25
+        assert voxel_gen["texture_steps"] == 25
         assert voxel_gen["seed"] == 77
 
-        simplify = workflow["5"]["inputs"]
-        assert simplify["triangles"] == 8000
+        post_process = workflow["5"]["inputs"]
+        assert post_process["target_face_num"] == 8000
 
     def test_workflow_image_path(self) -> None:
         """Image path is set in the LoadImage node."""
@@ -398,11 +400,11 @@ class TestTrellis2WorkflowParams:
         workflow = _build_trellis2_workflow("img.png")
         expected_nodes = {
             "1": "LoadImage",
-            "2": "Trellis2LoadModel",
-            "3": "Trellis2PreProcessImage",
-            "4": "Trellis2MeshWithVoxelGenerator",
-            "5": "Trellis2SimplifyMesh",
-            "6": "Trellis2ExportMesh",
+            "2": "Trellis2LoadModel_GGUF",
+            "3": "Trellis2PreProcessImage_GGUF",
+            "4": "Trellis2MeshWithVoxelGenerator_GGUF",
+            "5": "Trellis2PostProcessAndUnWrapAndRasterizer_GGUF",
+            "6": "Trellis2ExportMesh_GGUF",
         }
         for node_id, class_type in expected_nodes.items():
             assert workflow[node_id]["class_type"] == class_type
@@ -411,7 +413,8 @@ class TestTrellis2WorkflowParams:
         """Trellis2ExportMesh node specifies GLB format."""
         workflow = _build_trellis2_workflow("img.png")
         export_node = workflow["6"]["inputs"]
-        assert export_node["format"] == "GLB"
+        assert export_node["file_format"] == "glb"
+        assert export_node["trimesh"] == ["5", 0]
 
 
 class TestTrellis2GeneratorSuccess:
@@ -460,8 +463,8 @@ class TestTrellis2GeneratorSuccess:
         workflow = call_args[0][0]
 
         # Verify Trellis2-specific nodes
-        assert workflow["2"]["class_type"] == "Trellis2LoadModel"
-        assert workflow["4"]["class_type"] == "Trellis2MeshWithVoxelGenerator"
+        assert workflow["2"]["class_type"] == "Trellis2LoadModel_GGUF"
+        assert workflow["4"]["class_type"] == "Trellis2MeshWithVoxelGenerator_GGUF"
 
 
 class TestTrellis2GeneratorErrors:

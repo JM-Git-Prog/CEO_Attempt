@@ -48,14 +48,20 @@ def test_world_playtest():
     orchestrator._reporter.print_summary(report)
 
     # Assertions
+    assert report.passed, (
+        f"Playtest report failed despite score {report.overall_score:.1f}: "
+        f"{report.errors or report.layer_results}"
+    )
+    assert not report.errors, f"Playtest report contains errors: {report.errors}"
     assert report.overall_score >= config.pass_threshold, (
         f"Overall score {report.overall_score:.1f} below threshold {config.pass_threshold}"
     )
 
-    # Check individual layer minimums
+    # Check individual layer minimums and explicit pass verdicts.
     for name, data in report.layer_results.items():
         if name.startswith("_"):
             continue
+        assert data.get("passed") is True, f"Layer '{name}' did not pass: {data}"
         score = data.get("score", 0.0)
         assert score >= config.individual_minimum, (
             f"Layer '{name}' score {score:.1f} below minimum {config.individual_minimum}"

@@ -117,7 +117,7 @@ async def test_approval_requires_exclusive_writer_and_current_revision(tmp_path)
         session_id="approval-session",
         session_dir=tmp_path,
         handlers={"plan": lambda _context: StageResult(
-            output={"plan_revision": 3}, plan_revision=3
+            output={"ready_for_approval": True}, plan_revision=3
         )},
         stages=stages,
     )
