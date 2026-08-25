@@ -1,0 +1,43 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.source-local-vision-direct.v1",
+  "recorded_at_utc": "2026-08-25T13:16:20.122384+00:00",
+  "model": "qwen2.5vl:7b",
+  "local_only": true,
+  "bytes_sent_directly": true,
+  "canon": {
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+    "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    "verdict": {
+      "pass": true,
+      "failed_checks": [],
+      "confidence": 1,
+      "observations": [
+        "The recliner in the image is positioned centrally and appears to be a standalone model with a visible footrest, which aligns well with the authoritative Canon room image description.",
+        "There are no other objects that could be mistaken for another recliner or related furniture items within this context. The count of recliners is one.",
+        "The camera orientation suggests an interior shot taken from a slightly elevated angle, providing a clear view of the recliner and its surroundings without any significant distortion.",
+        "No fused-scene risk for crop extraction was identified as the image clearly separates the recliner from other elements in the room."
+      ],
+      "next_renderer_change": ""
+    }
+  },
+  "crop": {
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+    "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+    "verdict": {
+      "pass": true,
+      "failed_checks": [],
+      "confidence": 1,
+      "observations": [
+        "The image shows a recliner with its footrest extended, which is clearly visible and identifiable as the main subject.",
+        "There are no fully transparent pixels or objects that appear to be alpha-isolated in this image. The recliner's geometry/silhouette and footrest identity are clear without any fused-scene risk.",
+        "The camera orientation appears to be a standard interior shot, with no unusual angles or distortions affecting the visibility of the recliner.",
+        "The finish/material/lighting is consistent throughout the image, providing good visibility of the recliner's details."
+      ],
+      "next_renderer_change": ""
+    }
+  },
+  "independent_adjudication": {
+    "canon": "PASS: direct inspection shows the warm room and source recliner with broad back, arms, seat, and extended footrest in front-right oblique context; appearance only.",
+    "crop": "PASS: measured alpha isolates one recliner in bbox [462,447,798,729]; transparent hidden RGB is ignored by the renderer and cannot create fused geometry."
+  }
+}

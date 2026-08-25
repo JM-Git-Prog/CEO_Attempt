@@ -30,9 +30,11 @@ logger = logging.getLogger(__name__)
 # Label applied to all Dream_Preview images (Req 3.3)
 PROVISIONAL_LABEL = "PROVISIONAL — not spatial authority"
 
-# Generation timing targets (Req 3.1)
+# Generation timing target plus a terminal wait bound. The target controls UX
+# expectations; the larger bound prevents an owned ComfyUI job from being
+# abandoned while it is still occupying the shared GPU queue.
 GENERATION_TARGET_S = 15
-GENERATION_TIMEOUT_S = 20
+GENERATION_TIMEOUT_S = 360
 
 # FLUX workflow parameters tuned for speed within 15s target
 FLUX_STEPS = 20
@@ -85,9 +87,10 @@ class DreamPreviewGenerator:
     ) -> list[str]:
         """Generate Dream_Preview image(s) from a conversation-derived prompt.
 
-        Targets 15-second generation per variant (Req 3.1). Times out after
-        20 seconds and returns an empty list on failure. Each generated image
-        is labeled as "PROVISIONAL — not spatial authority" (Req 3.3).
+        Targets 15-second generation per variant (Req 3.1), but waits up to
+        360 seconds for the owned ComfyUI job to become terminal so a slow
+        warm-up cannot block every later GPU stage. Each generated image is
+        labeled as "PROVISIONAL — not spatial authority" (Req 3.3).
 
         The prompt should reflect proposed era, mood, palette, and key objects
         from the current conversation state (Req 3.2).
@@ -392,8 +395,10 @@ class DreamPreviewGenerator:
                 prompt_id, timeout_s=int(timeout_s)
             )
         except ComfyUITimeoutError:
-            logger.warning(
-                "Dream_Preview generation exceeded %ds timeout", int(timeout_s)
+            logger.error(
+                "Dream_Preview job %s did not become terminal within %ds",
+                prompt_id,
+                int(timeout_s),
             )
             return None
 

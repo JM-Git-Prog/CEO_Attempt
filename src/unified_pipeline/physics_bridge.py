@@ -62,6 +62,31 @@ def _normalized_category(category: str) -> str:
     return category.strip().lower().replace("-", "_").replace(" ", "_")
 
 
+def _is_stable_plan_instance_id(value: Any) -> bool:
+    """Accept a UUID or the Plan multiplicity form ``<UUID>-<positive ordinal>``."""
+    if not isinstance(value, str) or not value or value != value.strip():
+        return False
+    try:
+        UUID(value)
+        return True
+    except (ValueError, AttributeError):
+        pass
+
+    base_id, separator, ordinal = value.rpartition("-")
+    if (
+        not separator
+        or not ordinal.isascii()
+        or not ordinal.isdigit()
+        or int(ordinal) <= 0
+    ):
+        return False
+    try:
+        UUID(base_id)
+    except (ValueError, AttributeError):
+        return False
+    return True
+
+
 def _vector3(value: Any, field_name: str, *, positive: bool) -> tuple[float, float, float]:
     if not isinstance(value, (tuple, list)) or len(value) != 3:
         raise PhysicsAdapterError(f"{field_name} must contain exactly three values")
@@ -87,10 +112,11 @@ class PlanPhysicsInput:
     def __post_init__(self) -> None:
         if self.plan_revision <= 0:
             raise PhysicsAdapterError("approved Plan revision must be nonzero")
-        try:
-            UUID(self.object_id)
-        except (TypeError, ValueError, AttributeError) as exc:
-            raise PhysicsAdapterError("object_id must be a stable UUID") from exc
+        if not _is_stable_plan_instance_id(self.object_id):
+            raise PhysicsAdapterError(
+                "object_id must be a stable Plan instance ID "
+                "(UUID or UUID-positive ordinal)"
+            )
         if not self.category.strip():
             raise PhysicsAdapterError("Plan-owned category is required")
         object.__setattr__(

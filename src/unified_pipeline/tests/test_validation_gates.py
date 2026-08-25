@@ -112,8 +112,10 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _context(tmp_path: Path) -> StructuralGateContext:
-    object_id = str(uuid.uuid4())
+def _context(
+    tmp_path: Path, *, object_id: str | None = None,
+) -> StructuralGateContext:
+    object_id = object_id or str(uuid.uuid4())
     contract = _contract(object_id)
     mesh = tmp_path / "table.glb"
     mesh.write_bytes(b"self-contained-test-glb")
@@ -183,6 +185,18 @@ def test_all_structural_gates_pass_and_authorize_compilation(tmp_path: Path) -> 
     assert report.parity_deferred is True
     assert token.canonical_hash == context.contract.content_hash()
     assert len(token.report_hash) == 64
+
+
+def test_semantic_gate_accepts_canonical_uuid_derived_instance_id(
+    tmp_path: Path,
+) -> None:
+    object_id = f"{uuid.uuid4()}-1"
+    context = _context(tmp_path, object_id=object_id)
+
+    result = _result(validate_before_compilation(context), "semantic")
+
+    assert result.passed is True
+    assert result.diagnostics == ()
 
 
 def test_gate_report_records_focused_provenance_failure(tmp_path: Path) -> None:

@@ -1,0 +1,210 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.additional-deterministic-validation.v1",
+  "recorded_at_utc": "2026-08-25T13:04:14.479496+00:00",
+  "task": "11.8.4a",
+  "attempt": "additional-01",
+  "result": "PASS_NON_HUMAN_DETERMINISTIC",
+  "artifact_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+  "blocker_sha256": "7fd1f453cd9e8f6aa54305b2926b829222f72534c95b4014ffccda0f591e532c",
+  "preview": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-01-depth-derived-normal-6e97d166-7dca-4c75-bbe1-1dd7bfc4a15f/recliner-raw-crop_additional-01-depth-derived-normal-eight-panel.png",
+    "sha256": "aec263ba4220c8db1c5a30a911faacaf929c10095be8f3af60d7a8e0d96538e1"
+  },
+  "renderer": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-01-depth-derived-normal-6e97d166-7dca-4c75-bbe1-1dd7bfc4a15f/render_additional_01.py",
+    "sha256": "9bb35ccdd6fc1af2625d6df589402421785fca3ce7c39b32240fca7468cce8b2"
+  },
+  "validator": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-01-depth-derived-normal-6e97d166-7dca-4c75-bbe1-1dd7bfc4a15f/validate_additional_01.py",
+    "sha256": "98a4f6e47efe6186ae77fe94ac9cc9d58d7db734f3deeafd6dd2f081eb5ec165"
+  },
+  "semantic_yaws_degrees": {
+    "front": 270,
+    "right": 0,
+    "rear": 90,
+    "left": 180
+  },
+  "assessment": {
+    "inferred_semantic_label_by_panel": {
+      "front": "front",
+      "right": "right",
+      "rear": "rear",
+      "left": "left"
+    },
+    "silhouette_iou_matrix_rows_observed_columns_expected": [
+      [
+        0.9866614600460375,
+        0.5018835476209975,
+        0.9515065865845657,
+        0.48648429584599795
+      ],
+      [
+        0.5185622051154706,
+        0.9734394703656999,
+        0.5009510952936124,
+        0.499318872471969
+      ],
+      [
+        0.9515065865845657,
+        0.48648429584599795,
+        0.9866614600460375,
+        0.5018835476209975
+      ],
+      [
+        0.5009510952936124,
+        0.499318872471969,
+        0.5185622051154706,
+        0.9734394703656999
+      ]
+    ],
+    "expected_label_iou": {
+      "front": 0.9866614600460375,
+      "right": 0.9734394703656999,
+      "rear": 0.9866614600460375,
+      "left": 0.9734394703656999
+    },
+    "assignment_margin": {
+      "front": 0.035154873461471836,
+      "right": 0.4548772652502293,
+      "rear": 0.035154873461471836,
+      "left": 0.4548772652502293
+    },
+    "semantic_label_contract_pass": true,
+    "geometry_stipple_score_by_panel": {
+      "front": 0.0,
+      "right": 0.0,
+      "rear": 0.0,
+      "left": 2.1398613369853634e-05
+    },
+    "continuous_surface_pass": true,
+    "thresholds": {
+      "minimum_expected_panel_iou": 0.82,
+      "minimum_assignment_margin": 0.02,
+      "maximum_stipple_score": 0.08
+    }
+  },
+  "artifact_inspection": {
+    "independent_loadability": true,
+    "buffer_views_in_bounds": true,
+    "geometry_count": 1,
+    "vertex_count": 675366,
+    "face_count": 1358256,
+    "extents": [
+      1.9698614478111267,
+      1.6313182711601257,
+      1.8619229793548584
+    ],
+    "material_count": 1,
+    "texture_count": 3,
+    "embedded_image_count": 3,
+    "material_texture_references": {
+      "baseColorTexture": true,
+      "metallicRoughnessTexture": true,
+      "normalTexture": true
+    },
+    "trimesh_in_memory_textures": {
+      "baseColorTexture": true,
+      "metallicRoughnessTexture": true,
+      "normalTexture": true
+    },
+    "external_image_uris": [],
+    "external_buffer_uris": [],
+    "durable_material_present": true
+  },
+  "before_after_geometry_stipple": {
+    "front": {
+      "before": 0.07384261519599865,
+      "after": 0.0
+    },
+    "right": {
+      "before": 0.1788191768151688,
+      "after": 0.0
+    },
+    "rear": {
+      "before": 0.14647007128210135,
+      "after": 0.0
+    },
+    "left": {
+      "before": 0.17045079169327668,
+      "after": 2.1398613369853634e-05
+    }
+  },
+  "common_gate": {
+    "policy": "Exact Task 11.8.4 12-check order; unchanged 0.08 anti-stipple maximum; no exception or weakened criterion.",
+    "checks_in_order": [
+      "evidence_chain_integrity",
+      "stable_uuid_binding",
+      "golden_room_source_identity",
+      "independent_loadability",
+      "non_placeholder_geometry",
+      "recognizable_recliner_silhouette_identity",
+      "no_fused_scene_or_ground_sheet_geometry",
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "no_unresolved_external_materials_or_buffers",
+      "explicit_hash_bound_human_approval"
+    ],
+    "checks": [
+      {
+        "check": "evidence_chain_integrity",
+        "pass": true
+      },
+      {
+        "check": "stable_uuid_binding",
+        "pass": true
+      },
+      {
+        "check": "golden_room_source_identity",
+        "pass": true
+      },
+      {
+        "check": "independent_loadability",
+        "pass": true
+      },
+      {
+        "check": "non_placeholder_geometry",
+        "pass": true
+      },
+      {
+        "check": "recognizable_recliner_silhouette_identity",
+        "pass": true
+      },
+      {
+        "check": "no_fused_scene_or_ground_sheet_geometry",
+        "pass": true
+      },
+      {
+        "check": "no_obvious_catastrophic_reconstruction_artifacts",
+        "pass": true
+      },
+      {
+        "check": "neutral_multi_angle_turntable_evidence",
+        "pass": true
+      },
+      {
+        "check": "durable_non_temporary_material_continuity",
+        "pass": true
+      },
+      {
+        "check": "no_unresolved_external_materials_or_buffers",
+        "pass": true
+      },
+      {
+        "check": "explicit_hash_bound_human_approval",
+        "pass": false
+      }
+    ],
+    "non_human_checks_pass": true,
+    "failed_checks": [
+      "explicit_hash_bound_human_approval"
+    ]
+  },
+  "approval": {
+    "present": false,
+    "approved": false
+  },
+  "downstream": {
+    "task_11_8_5": "BLOCKED"
+  }
+}

@@ -62,9 +62,18 @@ def test_dynamic_body_uses_pybullet_without_fallback():
         "width": 0.2, "height": 0.2, "depth": 0.2,
     }
 
+    collision = [{
+        "stable_id": "collision:room:floor",
+        "geometry_id": "room:floor",
+        "shape": "box",
+        "position_upbge": [0.0, 0.0, -0.05],
+        "dimensions_upbge": [2.0, 2.0, 0.1],
+        "body_mode": "STATIC",
+    }]
     result = settle_classified_bodies(
         bodies=[body], placements={OBJECT_ID: placement},
         room_dimensions=(2.0, 2.0, 2.5),
+        architectural_collision=collision,
     )
 
     assert result["engine"] == "pybullet-direct"
@@ -73,3 +82,24 @@ def test_dynamic_body_uses_pybullet_without_fallback():
     assert transform["body_mode"] == "DYNAMIC"
     assert transform["position"][1] == pytest.approx(0.0, abs=0.02)
     assert transform["settle_method"] == "PyBullet DIRECT upright-box settle"
+
+
+def test_dynamic_settle_rejects_missing_plan_collision():
+    body = {
+        "object_id": OBJECT_ID,
+        "body_mode": "DYNAMIC",
+        "mass_kg": 1.0,
+        "friction": 0.5,
+        "restitution": 0.0,
+        "collision_dimensions_m": [0.2, 0.2, 0.2],
+    }
+    placement = {
+        "id": OBJECT_ID, "x": 1.0, "y": 1.0, "elevation": 0.8,
+        "width": 0.2, "height": 0.2, "depth": 0.2,
+    }
+
+    with pytest.raises(RuntimeError, match="compiler-derived architectural collision"):
+        settle_classified_bodies(
+            bodies=[body], placements={OBJECT_ID: placement},
+            room_dimensions=(2.0, 2.0, 2.5),
+        )

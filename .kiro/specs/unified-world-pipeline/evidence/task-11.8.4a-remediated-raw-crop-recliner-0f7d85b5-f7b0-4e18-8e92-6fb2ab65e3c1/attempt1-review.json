@@ -1,0 +1,14 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.rematerial-attempt-review.v1",
+  "recorded_at_utc": "2026-08-25T11:46:00+00:00",
+  "task": "11.8.4a",
+  "attempt": 1,
+  "artifact_sha256": "3faded4346b3a7499dcd57a058f3b5a2088629c1f89b17bf567c495c38273afb",
+  "preview_sha256": "d409b6c49ab0f04edd150fa33509e4b39b1ba3c2863be2d32cd0898a2d547465",
+  "verdict": "FAIL_NON_HUMAN_MATERIAL_CONTINUITY",
+  "observation": "The existing pipeline embedded base-color, metallic-roughness, and normal textures and preserved geometry exactly, but neutral material views exposed the prepared input's gray background on hidden and rear surfaces. This is not acceptable durable material continuity and is ineligible for human approval.",
+  "approval_requested": false,
+  "approved": false,
+  "follow_up": "One bounded retry may replace only transparent raw-crop background pixels with a deterministic fabric color measured from the same source-matched RGBA crop, then rerun the unchanged local MaterialProcessor paths.",
+  "prohibited_expansion_respected": true
+}

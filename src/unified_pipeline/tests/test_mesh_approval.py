@@ -19,6 +19,7 @@ import pytest
 
 from src.unified_pipeline.mesh_approval import (
     MeshApprovalGate,
+    MeshVisualInspection,
     TurntablePreview,
     TURNTABLE_ANGLES,
 )
@@ -398,3 +399,67 @@ class TestMeshApprovalGateSerialization:
         assert d["current_mesh"] is None
         assert d["current_preview"] is None
         assert d["history"] == []
+
+
+class TestVisualInspectionPolicy:
+    def _mesh(self, path: str = "/assets/chair.glb") -> MeshApproval:
+        return MeshApproval(
+            object_id="chair_02",
+            mesh_path=path,
+            generation_method="hunyuan3d_v2.1",
+            face_count=1000,
+            vertex_count=500,
+            is_placeholder=False,
+        )
+
+    def test_required_visual_inspection_rejects_missing_evidence(self):
+        gate = MeshApprovalGate(require_visual_inspection=True)
+        mesh = self._mesh()
+        gate.present_for_approval(mesh)
+
+        with pytest.raises(ValueError, match="requires structured visual inspection"):
+            gate.approve(mesh)
+
+    def test_fused_multi_object_evidence_cannot_be_approved(self):
+        gate = MeshApprovalGate(require_visual_inspection=True)
+        mesh = self._mesh("/assets/chair-with-fused-table.glb")
+        gate.present_for_approval(mesh)
+        gate.record_visual_inspection(mesh, MeshVisualInspection(
+            reviewer="slice-n-independent-adjudicator",
+            recognizable=True,
+            exactly_one_object=False,
+            no_fused_objects=False,
+            no_ground_sheet=True,
+            no_severe_malformation=False,
+            confidence=1.0,
+            notes="chair silhouette contains a fused extra round table",
+        ))
+
+        with pytest.raises(ValueError, match="fused, multi-object, or malformed"):
+            gate.approve(mesh)
+        rejected = gate.reject(mesh, "fused extra round table")
+
+        assert rejected.approved is False
+        assert gate.history[-1]["visual_inspection"]["passed"] is False
+        assert gate.history[-1]["visual_inspection"]["exactly_one_object"] is False
+
+    def test_clean_single_object_evidence_allows_exactly_one_approval(self):
+        gate = MeshApprovalGate(require_visual_inspection=True)
+        mesh = self._mesh("/assets/clean-chair.glb")
+        gate.present_for_approval(mesh)
+        gate.record_visual_inspection(mesh, MeshVisualInspection(
+            reviewer="slice-n-independent-adjudicator",
+            recognizable=True,
+            exactly_one_object=True,
+            no_fused_objects=True,
+            no_ground_sheet=True,
+            no_severe_malformation=True,
+            confidence=0.95,
+            notes="clean isolated upright chair",
+        ))
+
+        approved = gate.approve(mesh)
+
+        assert approved.approved is True
+        assert [item["decision"] for item in gate.history] == ["approved"]
+        assert gate.history[0]["visual_inspection"]["passed"] is True

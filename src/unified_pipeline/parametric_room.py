@@ -534,6 +534,123 @@ class AuthoritativeParametricRoomAdapter:
         return latest.revision, latest.plan_hash
 
 
+def export_authoritative_room_glb(
+    room: ParametricRoomResult,
+    output_path: str | Path,
+) -> dict[str, Any]:
+    """Export the compiler-derived room primitives without changing authority.
+
+    The same segmented elements back both render geometry and architectural
+    collision, so compiler-authored opening gaps remain open in both views.
+    UPBGE coordinates are converted back to the domain's right-handed Y-up
+    coordinates; no neural/depth geometry is transformed into the shell.
+    """
+    import numpy as np
+    import trimesh
+
+    if room.spatial_authority != PLAN_AUTHORITY:
+        raise AuthorityConflictError("render shell requires Plan-only spatial authority")
+    element_ids = {item.stable_id for item in room.elements}
+    collision_ids = {item.geometry_id for item in room.collision}
+    if collision_ids != element_ids:
+        raise ParametricRoomError("render geometry and architectural collision differ")
+    if room.depth_reference is not None and (
+        room.depth_reference.collision_enabled
+        or room.depth_reference.spatial_authority
+        or room.depth_reference.authority_claims
+    ):
+        raise DepthReferenceError("depth reference cannot contribute room geometry")
+
+    def domain_xyz(values: tuple[float, float, float]) -> tuple[float, float, float]:
+        # Compiler mapping is domain(x,y,z) -> UPBGE(x,z,y).
+        return float(values[0]), float(values[2]), float(values[1])
+
+    scene = trimesh.Scene()
+    role_materials = {
+        "floor": ([122, 91, 62, 255], 0.72),
+        "ceiling": ([224, 220, 208, 255], 0.88),
+        "wall_segment": ([197, 178, 150, 255], 0.82),
+    }
+    for item in room.elements:
+        if item.shape != "box":
+            raise ParametricRoomError(f"unsupported room primitive: {item.shape}")
+        extents = np.asarray(domain_xyz(item.dimensions_upbge), dtype=float)
+        center = np.asarray(domain_xyz(item.position_upbge), dtype=float)
+        if not np.isfinite(extents).all() or float(extents.min()) <= 0.0:
+            raise ParametricRoomError(f"room element has invalid geometry: {item.stable_id}")
+        mesh = trimesh.creation.box(extents=extents)
+        mesh.apply_translation(center)
+        color, roughness = role_materials.get(item.role, ([180, 180, 180, 255], 0.8))
+        mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+            name=item.material_id,
+            baseColorFactor=np.asarray(color, dtype=np.uint8),
+            metallicFactor=0.0,
+            roughnessFactor=roughness,
+        ))
+        _ = mesh.vertex_normals
+        scene.add_geometry(mesh, node_name=item.stable_id, geom_name=item.stable_id)
+
+    # An opening is a true gap only when no segmented wall box overlaps its
+    # interior volume. Touching an aperture boundary is allowed.
+    wall_elements = [item for item in room.elements if item.role == "wall_segment"]
+    opening_checks: list[dict[str, Any]] = []
+    for opening in room.openings:
+        opening_center = np.asarray(domain_xyz(opening.position_upbge), dtype=float)
+        opening_half = np.asarray(domain_xyz(opening.dimensions_upbge), dtype=float) / 2.0
+        blockers: list[str] = []
+        for wall in wall_elements:
+            wall_center = np.asarray(domain_xyz(wall.position_upbge), dtype=float)
+            wall_half = np.asarray(domain_xyz(wall.dimensions_upbge), dtype=float) / 2.0
+            overlap = (opening_half + wall_half) - np.abs(opening_center - wall_center)
+            if bool(np.all(overlap > 1e-7)):
+                blockers.append(wall.stable_id)
+        if blockers:
+            raise ParametricRoomError(
+                f"opening {opening.stable_id} is closed by: {', '.join(blockers)}"
+            )
+        opening_checks.append({
+            "stable_id": opening.stable_id,
+            "kind": opening.kind,
+            "wall": opening.wall,
+            "position_m": opening_center.tolist(),
+            "dimensions_m": (opening_half * 2.0).tolist(),
+            "visual_clear": True,
+            "collision_clear": True,
+        })
+
+    output = Path(output_path).resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.with_suffix(".tmp.glb")
+    scene.export(temporary, file_type="glb", include_normals=True)
+    temporary.replace(output)
+    loaded = trimesh.load(output, force="scene", process=False)
+    rendered = loaded if isinstance(loaded, trimesh.Scene) else trimesh.Scene(loaded)
+    face_count = sum(int(len(mesh.faces)) for mesh in rendered.geometry.values())
+    vertex_count = sum(int(len(mesh.vertices)) for mesh in rendered.geometry.values())
+    if face_count <= 0 or vertex_count <= 0:
+        output.unlink(missing_ok=True)
+        raise ParametricRoomError("render shell contains no positive geometry")
+    collision_payload = [item.to_dict() for item in room.collision]
+    return {
+        "path": str(output),
+        "sha256": _file_sha256(output),
+        "face_count": face_count,
+        "vertex_count": vertex_count,
+        "geometry_count": len(rendered.geometry),
+        "element_ids": sorted(element_ids),
+        "collision_ids": sorted(collision_ids),
+        "collision_sha256": _digest(collision_payload),
+        "opening_checks": opening_checks,
+        "coordinate_system": "right-handed-x-right-y-up-z-depth",
+        "spatial_authority": PLAN_AUTHORITY,
+        "depth_geometry_used": False,
+        "normalization_count": 0,
+        "shading_authority": "explicit-exported-vertex-normals",
+        "material_authority": "parametric-room-pbr/v1:nonmetallic-role-materials",
+        "material_metallic_factor": 0.0,
+    }
+
+
 def build_authoritative_parametric_room(
     plan: MetricPlan,
     camera: CameraContract,

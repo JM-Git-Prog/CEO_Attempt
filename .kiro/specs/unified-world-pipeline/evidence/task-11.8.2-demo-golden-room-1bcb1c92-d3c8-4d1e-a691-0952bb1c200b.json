@@ -1,0 +1,173 @@
+{
+  "schema": "unified-world-pipeline.demo-profile-binding.v1",
+  "task": "11.8.2",
+  "recorded_at_utc": "2026-08-24T23:54:54.4299819Z",
+  "run": {
+    "run_id": "demo-golden-room-1bcb1c92-d3c8-4d1e-a691-0952bb1c200b",
+    "profile": "demo",
+    "interface_version": "V16",
+    "new_empty_pipeline_session_created": false,
+    "restored_or_relabelled_session": false,
+    "record_policy": "append-only; any correction or profile/reference change requires a new run identity",
+    "milestone_authority": "photo-bound Demo Profile evidence only; not Demo Ready, Release Ready, fresh qualification evidence, or Platform Complete"
+  },
+  "candidate_binding": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "validated_parent_task": "11.8.1",
+    "validated_parent_fingerprint_algorithm": "candidate-tree-v1: SHA-256 over HEAD and sorted tracked/untracked nonignored paths with raw bytes",
+    "validated_parent_fingerprint_sha256": "13fdfb09a95f100bb20f0ca06463704c5f176ac576848a76779bc903a0567999",
+    "note": "This record adds Task 11.8.2 evidence. The post-record candidate fingerprint is computed by validation and reported separately to avoid a self-referential digest."
+  },
+  "golden_room_appearance_reference": {
+    "authority": "appearance, object and set-dressing identity, lighting balance, and composition evidence only",
+    "forbidden_authority": [
+      "dimensions",
+      "transforms",
+      "placement",
+      "architecture",
+      "openings",
+      "collision",
+      "navigation",
+      "camera"
+    ],
+    "authoritative_image": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "bytes": 1964389,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "original_workflow": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "exists": true,
+      "bytes": 108962,
+      "sha256_expected": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "sha256_observed": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    },
+    "shared_input_mirror": {
+      "path": "C:\\Users\\JohnM\\ComfyUI-Shared\\input\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "bytes": 1964389,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "matches_authoritative_image": true,
+      "verified": true
+    },
+    "fail_closed": true,
+    "binding_status": "PASS"
+  },
+  "authority_preservation": {
+    "sole_spatial_authority": "approved normalized MetricPlan",
+    "camera_authority": "immutable CameraContract derived only from the approved normalized MetricPlan",
+    "final_binding_authority": "deterministic relationship-solved WorldContract and canonical hash",
+    "reference_may_not_replace_scene_canon": true,
+    "reference_may_not_rewrite_plan_or_world_contract": true
+  },
+  "exploration_freeze": {
+    "status": "ACTIVE",
+    "effective_at_utc": "2026-08-24T23:54:54.4299819Z",
+    "frozen_families": [
+      "MiniMax",
+      "Depth Anything 3 (DA3)",
+      "MoGe",
+      "Anima",
+      "HY-Pano",
+      "WorldNav",
+      "WorldStereo",
+      "MoVerse",
+      "MASt3R",
+      "DUSt3R",
+      "One2Scene",
+      "all other open-ended geometry or model exploration"
+    ],
+    "prohibited_actions": [
+      "download",
+      "installation",
+      "integration",
+      "capability preflight",
+      "inference",
+      "new video generation",
+      "new depth generation",
+      "service startup",
+      "pipeline session creation",
+      "asset generation"
+    ],
+    "exceptions": [
+      {
+        "scope": "Task 11.8.2a only",
+        "status": "NOT_STARTED_NOT_AUTHORIZED",
+        "condition": "Phase A documentation/preflight may begin only as Task 11.8.2a; Phase B download/install/execution requires its later explicit user confirmation checkpoint"
+      },
+      {
+        "scope": "Task 11.8.3 only",
+        "status": "DEFERRED",
+        "condition": "May consume recliner video-depth evidence only if it is already locally available when the fixed bake-off begins; no new generation or model work"
+      }
+    ],
+    "task_11_8_2a_started": false,
+    "models_downloaded_or_installed": false,
+    "models_preflighted": false,
+    "services_or_sessions_started": false,
+    "inference_run": false,
+    "assets_generated": false
+  },
+  "warehouse_reuse_inventory": {
+    "policy": "Only hash-verified assets with durable materials, explicit human approval, and a passing StandaloneAssetGate may be reused by this Demo Profile.",
+    "permitted": [],
+    "permitted_count": 0,
+    "rejected": [
+      {
+        "asset_path": "assets/props/furniture-item_2f1c92_001.glb",
+        "asset_sha256": "4b3360e4a1ea739d3698e5a9480b79f684cc7a0fb6032628773c9551590047cd",
+        "registry_path": "assets/props/furniture-item_2f1c92_001.json",
+        "registry_sha256": "1ed4fc96c24127b4ff6c343ce5b7603744d47256ea9b9f5dbca1698a01342da7",
+        "reasons": ["generic furniture-item identity", "has_pbr_textures=false", "no explicit human approval evidence", "no passing StandaloneAssetGate evidence"]
+      },
+      {
+        "asset_path": "assets/props/furniture-item_2f1c92_002.glb",
+        "asset_sha256": "82ed9ff45eaa34e4e3d83345f7df5c8ef2f0c6918f0b37895977e82ec526ac98",
+        "registry_path": "assets/props/furniture-item_2f1c92_002.json",
+        "registry_sha256": "63a8ba9df35a80644906f517174329bc70e4b274145dfb2156a3d5f9bce4cf86",
+        "reasons": ["generic furniture-item identity", "has_pbr_textures=false", "no explicit human approval evidence", "no passing StandaloneAssetGate evidence"]
+      },
+      {
+        "asset_path": "assets/props/furniture-item_2f1c92_003.glb",
+        "asset_sha256": "cb8817b04b396564c5a54e2474ea78b5980d8a990deba344a0ad7a5dea1e8f88",
+        "registry_path": "assets/props/furniture-item_2f1c92_003.json",
+        "registry_sha256": "fc5def4ec302522cfea1ad5b9835a8d84dae8b3d91ad66b1c36cfdc78b4cd940",
+        "reasons": ["generic furniture-item identity", "has_pbr_textures=false", "no explicit human approval evidence", "no passing StandaloneAssetGate evidence"]
+      },
+      {
+        "asset_path": "assets/props/furniture-item_2f1c92_004.glb",
+        "asset_sha256": "a30416b1e6597848a28395a45fa1157e0118c1bae74612298074e60d01bd479e",
+        "registry_path": "assets/props/furniture-item_2f1c92_004.json",
+        "registry_sha256": "f8f3f8916f8d7c2fe86d541be312175c06091ce513f3bd1225c9c10cb40e8f14",
+        "reasons": ["generic furniture-item identity", "has_pbr_textures=false", "no explicit human approval evidence", "no passing StandaloneAssetGate evidence"]
+      }
+    ],
+    "diagnostic_evidence_relabelled": false
+  },
+  "preservation": {
+    "ui_or_interface_modified": false,
+    "v3_through_v16_behavior_modified": false,
+    "production_code_modified": false,
+    "test_code_modified": false,
+    "unrelated_worktree_changes_modified": false,
+    "failed_session_evidence_modified_or_relabelled": false,
+    "process_ownership_modified": false,
+    "ratchet_watch_owner": "Windows Scheduled Task/keepalive",
+    "comfyui_port_8188_owner": "Comfy Desktop",
+    "no_agent_managed_long_running_process": true,
+    "commit_created": false
+  },
+  "next_task": {
+    "task": "11.8.2a",
+    "active": false,
+    "started": false,
+    "note": "Task 11.8.2 creates no authorization to begin Task 11.8.2a."
+  },
+  "result": "PASS",
+  "blockers": []
+}

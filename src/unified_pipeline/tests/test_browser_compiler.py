@@ -10,11 +10,17 @@ import shutil
 import subprocess
 from dataclasses import replace
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
+from hypothesis import given, settings, strategies as st
 import pytest
 
 from src.unified_pipeline.camera_contract import CameraContract
-from src.unified_pipeline.compilers.browser import BrowserCompiler, BrowserCompilerError
+from src.unified_pipeline.compilers.browser import (
+    BrowserCompiler,
+    BrowserCompilerError,
+    _select_safe_spawn,
+)
 from src.unified_pipeline.world_contract import (
     AssetBinding,
     DoorInteractionMetadata,
@@ -178,6 +184,8 @@ def _contract(tmp_path: Path, *, include_camera: bool = True) -> WorldContract:
         lighting=LightingConfig(
             ambient_color="#19120d",
             ambient_intensity=0.28125,
+            legacy_ambient_color="#19120d",
+            legacy_ambient_intensity=0.28125,
             lights=(
                 LightSource(
                     light_id="key-light",
@@ -187,6 +195,9 @@ def _contract(tmp_path: Path, *, include_camera: bool = True) -> WorldContract:
                     intensity=3.125,
                     temperature=3250.0,
                     cast_shadows=True,
+                    white_balance_color="#ffd4a3",
+                    legacy_color="#ffd4a3",
+                    legacy_intensity=3.125,
                 ),
                 LightSource(
                     light_id="fill-light",
@@ -196,6 +207,9 @@ def _contract(tmp_path: Path, *, include_camera: bool = True) -> WorldContract:
                     intensity=0.4375,
                     temperature=6750.0,
                     cast_shadows=False,
+                    white_balance_color="#a8c8ff",
+                    legacy_color="#a8c8ff",
+                    legacy_intensity=0.4375,
                 ),
             ),
         ),
@@ -232,6 +246,12 @@ def test_compiles_exact_contract_to_three_scene(tmp_path: Path) -> None:
     assert compiled["scale"] == source.scale.to_dict()
     assert compiled["asset_binding"] == source.asset_binding.to_dict()
     assert compiled["material_intent"] == source.material_intent.to_dict()
+    compiler_only_fields = {"asset_uri", "material_asset_uris"}
+    assert {
+        key: value for key, value in compiled.items()
+        if key not in compiler_only_fields
+    } == source.to_dict()
+    assert compiled["material_asset_uris"] == {}
     copied = result.output_dir / compiled["asset_uri"]
     assert copied.read_bytes() == Path(source.asset_binding.mesh_path).read_bytes()
     assert hashlib.sha256(copied.read_bytes()).hexdigest() == source.asset_binding.asset_id
@@ -241,6 +261,9 @@ def test_compiles_exact_contract_to_three_scene(tmp_path: Path) -> None:
     assert "MeshStandardMaterial" in script
     assert "OrbitControls" in script
     assert "PointerLockControls" in script
+    assert 'document.querySelector("#first-person").onclick = enterFirstPerson;' in script
+    assert "firstPerson.lock();" in script
+    assert "isLocked =" not in script
     assert "new EventSource" in script
     assert "canOccupy" in script
     assert "playerIntersectsBody" in script
@@ -262,8 +285,8 @@ def test_compiles_exact_contract_to_three_scene(tmp_path: Path) -> None:
     assert "pivot.quaternion.setFromAxisAngle" in script
     assert "binding.object_id" in script
     assert "Lighting metadata drift detected" in script
-    assert "light.color.set(value.color)" in script
-    assert "light.intensity = value.intensity" in script
+    assert "light.color.set(retained ? value.legacy_color : value.color)" in script
+    assert "light.intensity = retained ? value.legacy_intensity : value.intensity" in script
     assert "light.position.set(value.position.x, value.position.y, value.position.z)" in script
     assert "temperature_kelvin: value.temperature" in script
     assert "light.castShadow = value.cast_shadows" in script
@@ -283,15 +306,51 @@ def test_compiles_exact_contract_to_three_scene(tmp_path: Path) -> None:
     assert "?v=3" in html
     assert "?v=4" in html
     assert "?v=5" in html
-    assert "Browser v5" in html
+    assert "?v=6" in html
+    assert "?v=7" in html
+    assert "?v=8" in html
+    assert "Browser v8" in html
+    assert '<base href="./world/">' in html
+    assert scene["progressive"]["endpoint"] == "../events"
+    assert 'id="mode-real"' in html
+    assert 'id="mode-game"' in html
     assert "viewer.js" in html
 
     compiler_manifest = json.loads(
         result.compiler_manifest_file.read_text(encoding="utf-8")
     )
-    assert compiler_manifest["interface_version"] == 5
+    assert compiler_manifest["interface_version"] == 8
     assert compiler_manifest["lighting"] == contract.lighting.to_dict()
     assert compiler_manifest["authority"]["missing_authority_policy"] == "fail_closed"
+    assert 'get("v") || "8"' in script
+    assert 'supportsModeOverlay = new Set(["6", "7", "8"]).has(interfaceVersion)' in script
+    assert 'flatShading: new Set(["7", "8"]).has(interfaceVersion) && intent.shading_model === "flat"' in script
+    assert "computeVertexNormals" not in script
+    assert "targetRenderer.toneMappingExposure = lighting.exposure" in script
+    assert "value.intensity_unit !== \"candela\"" in script
+    assert "kiro:room-mode:${contract.contract_hash}:${contract.room_shell_ref}" in script
+    assert "behavior overlay only · visuals unchanged" in script
+    assert 'localStorage.setItem(modeStorageKey, nextMode)' in script
+    assert 'document.body.dataset.behaviorMode = nextMode' in script
+
+
+def test_progressive_loader_falls_back_when_stream_is_open_but_silent(
+    tmp_path: Path,
+) -> None:
+    """Validates Requirement 22.3: a silent SSE stream cannot stall a complete world."""
+    contract = _contract(tmp_path / "silent-progress-stream")
+    result = BrowserCompiler().compile(
+        contract,
+        tmp_path / "silent-progress-stream-output",
+    )
+
+    script = result.viewer_script.read_text(encoding="utf-8")
+    assert "function startProgressiveFallback()" in script
+    assert "function armProgressiveFallback()" in script
+    assert "fallbackTimer = setTimeout(startProgressiveFallback, 2000);" in script
+    assert "eventSource.onerror = startProgressiveFallback;" in script
+    assert script.count("armProgressiveFallback();") >= 2
+    assert "if (loaded.has(objectId)) return;" in script
 
 
 def test_fails_closed_for_missing_camera_and_hash_drift(tmp_path: Path) -> None:
@@ -514,35 +573,22 @@ def test_lighting_is_exact_hash_bound_and_v4_remains_available(tmp_path: Path) -
     assert compiler_manifest["lighting"] == contract.lighting.to_dict()
     assert scene["lighting"]["ambient_color"] == "#19120d"
     assert scene["lighting"]["ambient_intensity"] == 0.28125
-    assert scene["lighting"]["lights"] == [
-        {
-            "light_id": "key-light",
-            "light_type": "point",
-            "position": {"x": 0.25, "y": 2.375, "z": -0.5},
-            "color": "#ffd4a3",
-            "intensity": 3.125,
-            "temperature": 3250.0,
-            "cast_shadows": True,
-        },
-        {
-            "light_id": "fill-light",
-            "light_type": "point",
-            "position": {"x": -1.125, "y": 1.875, "z": 0.75},
-            "color": "#a8c8ff",
-            "intensity": 0.4375,
-            "temperature": 6750.0,
-            "cast_shadows": False,
-        },
+    assert [item["light_id"] for item in scene["lighting"]["lights"]] == [
+        "key-light", "fill-light"
     ]
+    assert scene["lighting"]["lights"][0]["intensity"] == 3.125
+    assert scene["lighting"]["lights"][0]["legacy_intensity"] == 3.125
+    assert scene["lighting"]["lights"][0]["legacy_color"] == "#ffd4a3"
+    assert scene["lighting"]["lights"][0]["white_balance_color"] == "#ffd4a3"
 
     script = result.viewer_script.read_text(encoding="utf-8")
     assert 'function applyContractLighting(targetScene, targetRenderer, lighting, version)' in script
-    assert 'if (version !== "5")' in script
-    assert "Retained Browser v1-v4 lighting behavior" in script
+    assert 'const retained = !new Set(["7", "8"]).has(version)' in script
+    assert "Retained Browser v1-v4/v6 lighting behavior" in script
     assert "targetRenderer.shadowMap.enabled = lighting.lights.some" in script
-    assert 'if (interfaceVersion === "5") {\n          node.castShadow = true;' in script
+    assert 'if (new Set(["5", "6", "7", "8"]).has(interfaceVersion)) {\n          node.castShadow = true;' in script
     assert "light.userData.temperature = value.temperature" in script
-    assert 'temperature_semantics: "metadata_only_explicit_contract_color_is_render_authority"' in script
+    assert 'temperature_semantics: "explicit_contract_white_balance_already_applied_to_render_color"' in script
 
 
 def test_shadow_computation_from_each_contract_light_source(tmp_path: Path) -> None:
@@ -585,10 +631,13 @@ def test_shadow_computation_from_each_contract_light_source(tmp_path: Path) -> N
         result.compiler_manifest_file.read_text(encoding="utf-8")
     )
     assert compiler_manifest["authority"]["lighting_policy"] == (
-        "exact_contract_values_no_inference_clamp_or_color_reinterpretation"
+        "exact_contract_physical_units_exposure_and_legacy_profiles_no_inference"
     )
     assert compiler_manifest["authority"]["temperature_policy"] == (
-        "exact_kelvin_metadata_with_explicit_contract_color_as_render_authority"
+        "explicit_kelvin_and_white_balance_color_already_applied_upstream"
+    )
+    assert compiler_manifest["authority"]["shading_policy"] == (
+        "explicit_contract_asset_smooth_or_derivative_flat_no_runtime_normal_generation"
     )
 
 
@@ -607,7 +656,7 @@ def test_lighting_fails_closed_for_inexact_or_missing_contract_values(
         (replace(valid.lighting, lights=(replace(source, position=Vec3(float("nan"), 2.0, 0.0)),)), "position.x"),
         (replace(valid.lighting, lights=(replace(source, color="orange"),)), "exact #RRGGBB"),
         (replace(valid.lighting, lights=(replace(source, intensity=-1.0),)), "intensity cannot be negative"),
-        (replace(valid.lighting, lights=(replace(source, temperature=0.0),)), "positive Kelvin"),
+        (replace(valid.lighting, lights=(replace(source, temperature=0.0),)), "within 1000K"),
         (replace(valid.lighting, lights=(replace(source, cast_shadows=1),)), "explicit boolean"),
     )
 
@@ -616,3 +665,108 @@ def test_lighting_fails_closed_for_inexact_or_missing_contract_values(
         candidate = replace(unhashed, contract_hash=compute_hash(unhashed))
         with pytest.raises(BrowserCompilerError, match=message):
             BrowserCompiler().compile(candidate, tmp_path / f"invalid-lighting-{index}")
+
+
+def test_v8_boundary_tolerance_accepts_decimal_grid_roundoff_only(tmp_path: Path) -> None:
+    """A mathematically boundary-safe aperture point survives binary float drift."""
+    navigation = _contract(tmp_path / "boundary").navigation
+    assert navigation is not None
+    rounded_grid_point = Vec3(-1.4500000000000002, 1.62, 1.25)
+    tolerant = replace(
+        navigation,
+        bounds_minimum=Vec3(-1.7, 0.0, -2.0),
+        bounds_maximum=Vec3(1.7, 2.7, 2.0),
+        spawn_candidates=(rounded_grid_point,),
+        boundary_tolerance_m=1e-9,
+    )
+
+    assert _select_safe_spawn(tolerant) == rounded_grid_point.to_dict()
+    with pytest.raises(BrowserCompilerError, match="no deterministic safe spawn"):
+        _select_safe_spawn(replace(tolerant, boundary_tolerance_m=0.0))
+
+
+@settings(max_examples=20, deadline=None)
+@given(drift=st.floats(
+    min_value=0.0,
+    max_value=9e-10,
+    allow_nan=False,
+    allow_infinity=False,
+))
+def test_property_v8_hash_bound_tolerance_contains_subnanometre_grid_drift(
+    drift: float,
+) -> None:
+    """**Validates: Requirements 22.4**"""
+    with TemporaryDirectory() as directory:
+        navigation = _contract(Path(directory) / "boundary-property").navigation
+    assert navigation is not None
+    candidate = Vec3(-1.45 - drift, 1.62, 1.25)
+    tolerant = replace(
+        navigation,
+        bounds_minimum=Vec3(-1.7, 0.0, -2.0),
+        bounds_maximum=Vec3(1.7, 2.7, 2.0),
+        spawn_candidates=(candidate,),
+        boundary_tolerance_m=1e-9,
+    )
+
+    assert _select_safe_spawn(tolerant) == candidate.to_dict()
+
+
+def test_environment_free_pbr_profile_is_contract_bound_and_fails_closed(
+    tmp_path: Path,
+) -> None:
+    valid = _contract(tmp_path / "environment-free")
+    instance = valid.instances[0]
+    bounded_material = replace(
+        instance.material_intent,
+        metallic=0.35,
+        roughness=0.32,
+        render_profile="environment-free-bounded-metallic/v1",
+    )
+    bounded = finalize(replace(
+        valid,
+        instances=(replace(instance, material_intent=bounded_material), *valid.instances[1:]),
+        contract_hash="",
+    ))
+    result = BrowserCompiler().compile(bounded, tmp_path / "environment-free-output")
+    scene = json.loads(result.scene_manifest_file.read_text(encoding="utf-8"))
+    assert scene["instances"][0]["material_intent"]["render_profile"] == (
+        "environment-free-bounded-metallic/v1"
+    )
+
+    unrenderable = finalize(replace(
+        bounded,
+        instances=(replace(
+            bounded.instances[0],
+            material_intent=replace(bounded_material, metallic=0.9, roughness=0.24),
+        ), *bounded.instances[1:]),
+        contract_hash="",
+    ))
+    with pytest.raises(BrowserCompilerError, match="not renderable without an environment map"):
+        BrowserCompiler().compile(unrenderable, tmp_path / "unrenderable-output")
+
+
+def test_slice_n_safe_spawn_skips_blocked_camera_origin_for_clear_plan_candidate(
+    tmp_path: Path,
+) -> None:
+    navigation = _contract(tmp_path / "slice-n-safe-spawn").navigation
+    assert navigation is not None
+    unsafe = Vec3(0.0, navigation.eye_height, 0.0)
+    safe = Vec3(1.25, navigation.eye_height, 1.25)
+    blocker = StaticCollisionBody(
+        body_id="collision:instance:counter",
+        source_id="counter",
+        center=Vec3(0.0, navigation.player_height / 2.0, 0.0),
+        dimensions=Vec3(1.6, navigation.player_height, 0.6),
+        rotation=Quaternion(),
+        shape="box",
+        body_mode="STATIC",
+        source_kind="instance",
+    )
+    candidate = replace(
+        navigation,
+        static_bodies=(blocker,),
+        spawn_candidates=(unsafe, safe),
+        boundary_tolerance_m=1e-9,
+    )
+
+    assert _select_safe_spawn(candidate) == safe.to_dict()

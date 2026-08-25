@@ -27,7 +27,7 @@ ROOM_TEMPLATES: dict[str, dict[str, Any]] = {
         "min_dimensions": (3.0, 3.0, 2.4),
         "max_dimensions": (5.0, 5.0, 3.0),
         "default_openings": [
-            {"type": "door", "wall": "south", "parameter": 0.5, "width": 0.9, "height": 2.1},
+            {"type": "door", "wall": "south", "parameter": 0.2, "width": 0.9, "height": 2.1},
             {"type": "window", "wall": "north", "parameter": 0.5, "width": 1.2, "height": 1.2},
         ],
         "keywords": ["kitchen", "kitchenette", "cooking", "breakfast", "diner"],
@@ -183,32 +183,105 @@ def _denormalize_placements(
 
 
 def _deterministic_placements(
-    brief: Brief, width: float, depth: float
+    brief: Brief,
+    width: float,
+    depth: float,
+    openings: tuple[dict[str, Any], ...] = (),
 ) -> tuple[dict[str, Any], ...]:
-    """Place non-architectural manifest instances on a bounded deterministic grid."""
-    objects = [obj for obj in brief.object_manifest if not obj.is_architectural]
+    """Place Brief instances on a bounded deterministic valid grid.
+
+    True openings are represented by Plan opening records. Other requested
+    architectural fixtures (for example a counter) remain Plan-owned instances.
+    Positions derive only from template dimensions and Brief identity; semantic
+    observations never provide coordinates or scale.
+    """
+    opening_names = {"door", "window", "opening"}
+    objects = [
+        obj for obj in brief.object_manifest
+        if " ".join(obj.name.casefold().replace("-", " ").split())
+        not in opening_names
+    ]
     total = sum(obj.count for obj in objects)
     if total == 0:
         return ()
 
-    columns = min(4, total)
-    rows = max(1, (total + columns - 1) // columns)
+    object_span = 0.5
+    edge_clearance = 0.6
+    minimum_gap = 0.6
+
+    def axis_capacity(span: float) -> int:
+        center_span = span - 2.0 * (edge_clearance + object_span / 2.0)
+        if center_span < -1e-9:
+            return 0
+        return 1 + max(0, int(center_span // (object_span + minimum_gap)))
+
+    max_columns = axis_capacity(width)
+    max_rows = axis_capacity(depth)
+    if max_columns <= 0 or max_rows <= 0 or total > max_columns * max_rows:
+        raise ValueError(
+            "template cannot place all required objects with 0.6m circulation"
+        )
+
+    columns = min(max_columns, total)
+    rows = (total + columns - 1) // columns
+
+    def axis_centers(span: float, count: int) -> tuple[float, ...]:
+        margin = edge_clearance + object_span / 2.0
+        if count == 1:
+            return (span / 2.0,)
+        step = (span - 2.0 * margin) / (count - 1)
+        return tuple(margin + index * step for index in range(count))
+
+    x_centers = axis_centers(width, columns)
+    y_centers = axis_centers(depth, rows)
+    # Consume cells farthest from the actual template door hinge first so a
+    # partially filled grid leaves the swing's most constrained cell empty.
+    door = next(
+        (
+            item for item in openings
+            if item.get("type", item.get("kind")) == "door"
+        ),
+        {"wall": "south", "parameter": 0.5, "width": 0.9},
+    )
+    wall = str(door.get("wall", "south"))
+    parameter = float(door.get("parameter", 0.5))
+    door_width = float(door.get("width", 0.9))
+    wall_length = width if wall in {"north", "south"} else depth
+    hinge = parameter * wall_length - door_width / 2.0
+    if wall == "north":
+        hinge_xy = (hinge, 0.0)
+    elif wall == "south":
+        hinge_xy = (hinge, depth)
+    elif wall == "east":
+        hinge_xy = (width, hinge)
+    else:
+        hinge_xy = (0.0, hinge)
+
+    cells = [(x, y) for y in y_centers for x in x_centers]
+    cells.sort(
+        key=lambda cell: (
+            -((cell[0] - hinge_xy[0]) ** 2 + (cell[1] - hinge_xy[1]) ** 2),
+            cell[1],
+            cell[0],
+        )
+    )
+
     placements: list[dict[str, Any]] = []
     index = 0
     for obj in objects:
         for instance_index in range(obj.count):
-            column = index % columns
-            row = index // columns
+            x, y = cells[index]
             instance_id = obj.id if obj.count == 1 else f"{obj.id}-{instance_index + 1}"
             placements.append({
                 "id": instance_id,
                 "name": obj.name,
-                "x": (column + 1) * width / (columns + 1),
-                "y": (row + 1) * depth / (rows + 1),
+                "x": x,
+                "y": y,
                 "rotation_deg": 0,
-                "width": 0.5,
-                "depth": 0.5,
+                "width": object_span,
+                "depth": object_span,
                 "height": 0.8,
+                "is_architectural": bool(obj.is_architectural),
             })
             index += 1
     return tuple(placements)
@@ -265,6 +338,17 @@ class MetricPlanGenerator:
     def __init__(self, model: Optional[str] = None, timeout: float = 30.0):
         self._model = model
         self._timeout = timeout
+
+    def generate_deterministic(self, brief: Brief) -> MetricPlan:
+        """Generate from the constrained template without invoking an LLM.
+
+        This is the Canon-first bridge entry point: durable Brief intent selects
+        the template and deterministic solver rules own every spatial value.
+        """
+        template_id = select_template(brief)
+        return self._fallback_generate(
+            brief, template_id, ROOM_TEMPLATES[template_id]
+        )
 
     async def generate(self, brief: Brief) -> MetricPlan:
         """Generate a MetricPlan from a Brief.
@@ -343,7 +427,9 @@ class MetricPlanGenerator:
         raw_placements = result.get("object_placements", [])
         placements = _denormalize_placements(raw_placements, width, depth)
         if not placements:
-            placements = _deterministic_placements(brief, width, depth)
+            placements = _deterministic_placements(
+                brief, width, depth, openings
+            )
         circulation = tuple(result.get("circulation_paths", [])) or (
             {"from": "door_0", "to": "center", "min_width": 0.6},
         )
@@ -408,46 +494,30 @@ class MetricPlanGenerator:
         """Create a new revision of an existing plan.
 
         Requirement 5.5: Every Plan revision SHALL be traceable — revision number,
-        what changed, why.
-
-        Args:
-            plan: The current MetricPlan to revise.
-            changed: Description of what changed.
-            reason: Why it was changed (e.g., "validation failure: wall gap").
-            **updates: Fields to override on the plan.
-
-        Returns:
-            A new MetricPlan with incremented revision number and provenance.
+        what changed, why. Plan-owned relationships are revisioned and hashed with
+        the spatial values they constrain.
         """
-        current_rev = max(
-            (r.revision for r in plan.revisions), default=0
-        )
+        current_rev = max((r.revision for r in plan.revisions), default=0)
         new_rev_num = current_rev + 1
 
-        # Apply updates
         new_dims = updates.get("room_dimensions", plan.room_dimensions)
         new_walls = updates.get("walls", plan.walls)
         new_openings = updates.get("openings", plan.openings)
-        new_placements = updates.get(
-            "object_placements", plan.object_placements
-        )
-        new_circulation = updates.get(
-            "circulation_paths", plan.circulation_paths
-        )
+        new_placements = updates.get("object_placements", plan.object_placements)
+        new_circulation = updates.get("circulation_paths", plan.circulation_paths)
+        new_relationships = updates.get("relationships", plan.relationships)
 
-        # Build updated plan (without revision yet to compute hash)
         updated = MetricPlan(
             room_dimensions=tuple(new_dims),
             walls=tuple(new_walls),
             openings=tuple(new_openings),
             object_placements=tuple(new_placements),
             circulation_paths=tuple(new_circulation),
+            relationships=tuple(new_relationships),
             revisions=(),
             template_id=plan.template_id,
         )
         plan_hash = _compute_plan_hash(updated)
-
-        # Create revision record
         new_revision = PlanRevision(
             revision=new_rev_num,
             changed=changed,
@@ -456,13 +526,14 @@ class MetricPlanGenerator:
         )
 
         return MetricPlan(
-            room_dimensions=tuple(new_dims),
-            walls=tuple(new_walls),
-            openings=tuple(new_openings),
-            object_placements=tuple(new_placements),
-            circulation_paths=tuple(new_circulation),
+            room_dimensions=updated.room_dimensions,
+            walls=updated.walls,
+            openings=updated.openings,
+            object_placements=updated.object_placements,
+            circulation_paths=updated.circulation_paths,
+            relationships=updated.relationships,
             revisions=plan.revisions + (new_revision,),
-            template_id=plan.template_id,
+            template_id=updated.template_id,
         )
 
     def _fallback_generate(
@@ -477,8 +548,11 @@ class MetricPlanGenerator:
         walls = _build_walls_from_dimensions(width, depth, ceiling)
         openings = tuple(template["default_openings"])
 
-        # Deterministic placement preserves manifest identity and excludes architecture.
-        placements = _deterministic_placements(brief, width, depth)
+        # Deterministic placement preserves every requested Plan instance;
+        # true openings remain represented by opening records.
+        placements = _deterministic_placements(
+            brief, width, depth, openings
+        )
 
         circulation = (
             {"from": "door_0", "to": "center", "min_width": 0.6},

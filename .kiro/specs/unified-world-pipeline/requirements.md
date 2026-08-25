@@ -25,7 +25,7 @@ This specification defines the complete end-to-end system for transforming a nat
 - UPBGE 0.50 and Godot 4.x installed for optional compilation.
 - Single-user, single-session-at-a-time execution.
 - No cloud API calls without explicit user permission.
-- Qualification scene: Danny's kitchenette (or any user-described interior).
+- Demo proving ground: the hash-bound photoreal Golden Room reference defined in Requirement 38; later release qualification remains the exact fresh Danny's kitchenette prompt in Requirement 30.2.
 
 ## Glossary
 
@@ -35,6 +35,7 @@ This specification defines the complete end-to-end system for transforming a nat
 - **Metric_Plan**: The validated, solver-approved spatial layout — rooms, walls, openings, placements, circulation, clearances.
 - **Blockout**: A 3D render of the validated Plan from the immutable CameraContract, showing geometry before expensive art.
 - **Scene_Canon**: The final approved photorealistic image conditioned on approved Blockout. Owns appearance, not geometry.
+- **Golden_Room_Appearance_Reference**: The immutable Demo Profile appearance/composition evidence binding the authoritative photoreal source image hash to the original Comfy workflow hash. It guides visual convergence but cannot authorize dimensions, transforms, openings, collision, navigation, or camera.
 - **Object_Canon**: The approved appearance reference for one object — original extraction or completed version.
 - **WorldContract**: The single hash-bound, engine-neutral document binding Plan, assets, physics, lighting, and camera.
 - **CameraContract**: Immutable perspective projection shared by Blockout, Canon, and initial World presentation.
@@ -570,3 +571,162 @@ This additive tranche supersedes only conflicting clauses in Requirements 14–2
 10. THE Release_Process SHALL NOT use a restored session, a previous-version session, or a failed session as V16 release evidence.
 11. WHEN the clean V16 zero-state sequence and all required fresh rounds pass, THE release commit title SHALL be `feat(web): release v16 interface`, superseding conflicting commit-title language in Requirement 30.7.
 12. AFTER the V16 release commit, THE Release_Process SHALL report the clean-version URL, fresh qualifying session URL, exact canonical prompt, and commit hash.
+
+
+### Requirement 37: Non-Authoritative Canon-to-Geometry Diagnostic Spike
+
+**User Story:** As a pipeline owner, I want one bounded local diagnostic of a Canon-to-video-to-object-geometry path, so that I can decide whether it improves visual quality without weakening authority, release, or qualification gates.
+
+#### Acceptance Criteria
+
+1. THE Diagnostic_Harness SHALL use session `11bdb38d-9064-4633-ab3b-09673f70c36d` Canon and Brief only as immutable diagnostic inputs, SHALL NOT resume that session's pipeline, and SHALL permanently classify every derived artifact as non-authoritative and release-ineligible.
+2. BEFORE implementation or GPU execution, THE Capability_Preflight SHALL inventory Comfy Desktop node classes, locally installed models, Depth Anything adapter availability, Hunyuan availability, GPU/process ownership, and exact source hashes without downloading models or using cloud services; any required missing or incompatible capability SHALL stop the chain with exact evidence.
+3. IF locally executable, THE MiniMax_H3 stage SHALL preserve the 1024x768 Canon aspect ratio and produce one continuous approximately five-second camera move with no cuts, object movement, count/identity drift, architecture/opening drift, material/lighting instability, implausible camera jumps, or morphing, while preserving the exact fixed inventory. The optional 8-step turbo model MAY produce draft evidence only; accepted diagnostic video SHALL use the locally available 20-step path.
+4. THE Temporal_Gate SHALL sample 8-12 frames, persist each frame hash and explicit accepted/rejected checks, and SHALL expose 8-16 stable frames only when every sampled-frame count, identity, architecture/opening, material/lighting, camera-continuity, and morphing check passes.
+5. FOR stable frames only, THE Diagnostic_Harness SHALL invoke the existing Depth Anything adapter where locally available and persist depth maps, camera estimates, confidence, masks, and tracking bound to the five Brief UUID assets: round table, chair-1, chair-2, counter, and coffee maker.
+6. FOR each required UUID, THE Diagnostic_Harness SHALL produce or explicitly reject an RGB-D/colored point cloud and record observed coverage, a single uniform scale anchor, silhouette reprojection, depth reprojection, color reprojection, and accepted/rejected status; per-axis scaling and min-max normalization are forbidden.
+7. WHERE observed coverage and remaining time permit, THE Diagnostic_Harness MAY run local coverage-aware Hunyuan candidate generation/completion sequentially; every candidate counted as successful SHALL load independently and pass a standalone neutral-view/turntable validation. Placeholder geometry and temporary-material assets SHALL NOT count as successful candidates.
+8. THE approved normalized Metric_Plan SHALL remain the sole authority for dimensions, transforms, placement, architecture, openings, collision, navigation, and CameraContract derivation. Generated video motion, estimated camera/depth, masks, bounding boxes, point clouds, and candidate meshes SHALL remain evidence only and SHALL NOT authorize any spatial value.
+9. THE Resource_Arbiter SHALL permit only one substantial GPU owner at a time, unload Ollama before MiniMax or Hunyuan GPU work, use the Comfy Desktop owner already serving port 8188, and SHALL NOT launch or retain ComfyUI or the Windows-owned Ratchet watch in an agent-managed terminal.
+10. THE Diagnostic_Harness SHALL persist seeds, model/workflow identities and hashes, input/output hashes, source fingerprint, frame/mask/depth/camera/point-cloud/candidate evidence, per-stage verdicts, and explicit outcomes for all five UUIDs in one deterministic non-authoritative evidence bundle.
+11. THE diagnostic verdict SHALL be `SUCCESS` only when the complete chain and evidence bundle exist, all five UUIDs have clear outcomes, and at least one independently validated high-quality non-placeholder object candidate passes neutral-view/turntable validation; otherwise it SHALL report `PARTIAL` or `FAILURE` with the exact furthest completed stage, measured metrics, artifacts, blocker, and an integrate/revise/reject recommendation.
+12. THIS diagnostic SHALL remain non-blocking unless later evidence proves production viability; it SHALL NOT complete or qualify Task 11.7, create release evidence, activate Tasks 11.9-11.10, weaken existing gates, alter any released interface, or authorize a commit.
+13. THE final decision record SHALL state whether the observed setup and execution cost still supports the governing 6-8 active-coding-hour end-to-end MVP target; non-blocking polish and tooling SHALL be deferred when they threaten that target.
+
+
+## Corrective Requirements Tranche — Hash-Bound Golden Room Demo and Qualification Order
+
+### Normative Precedence
+
+This additive document-only correction supersedes conflicting kitchenette-as-demo, fixed-chair, and five-kitchenette-asset clauses in the Core Principles and Requirements 10, 26, 30, and 35–42. It does not alter the exact kitchenette Release Profile prompt, weaken MetricPlan spatial authority, canonical hashing, structural/parity gates, exact-fingerprint validation, fresh release qualification, append-only failed-session evidence, or V3–V16 preservation. It authorizes no live session, UI/version change, implementation completion claim, asset generation, model download, or commit.
+
+### Corrective Tranche Glossary
+
+- **Golden_Room_Appearance_Reference**: The immutable Demo Profile tuple binding authoritative image `C:\Users\JohnM\Artificial Intelligence\Projects\Danny Tornado\renders\danny-v4-01-canon_00002_.png` at SHA-256 `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6` to original Comfy workflow `C:\Users\JohnM\Artificial Intelligence\Projects\CEO-of-My-Life-Inc\CEO-3D-World\workflows\danny-v4.1-items.ui.json` at SHA-256 `0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196`. The mirrored image `C:\Users\JohnM\ComfyUI-Shared\input\danny-v4-01-canon_00002_.png` is accepted only while its SHA-256 is the same `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6`; any mismatch fails closed and must be documented before Demo work proceeds.
+- **Golden_Room_Hero_Manifest**: Exactly five independently approved UUID-bound hero assets: recliner, refrigerator, CRT television, wooden TV stand, and bookshelf.
+- **Golden_Room_Fidelity_Inventory**: The five hero assets plus ceiling fan, wall mirror, area rug, telephone side table, table lamp, foreground sofa, trophy shelf/trophies, and paintings; and the recognizable long warm room, wood-plank floor, cream walls, rear and right wooden doors, right-side street-facing window, warm lamp/daylight balance, and approved camera composition.
+- **StandaloneAssetGate**: A fail-closed visual gate proving that one hero asset loads independently, has non-placeholder geometry and durable non-temporary materials, passes a neutral turntable review, and receives explicit human approval.
+- **SceneVisualGate**: A fail-closed whole-room visual gate proving that the Golden_Browser_Room is immediately recognizable as the Golden_Room_Appearance_Reference from the approved Plan-derived camera and remains visually coherent from at least one navigable first-person viewpoint, without claiming pixel identity from navigable views.
+- **Golden_Browser_Room**: The photo-bound Demo Profile Browser assembly built from the approved MetricPlan, immutable CameraContract, geometry-conditioned final Scene_Canon, five StandaloneAssetGate-approved hero assets, and complete Golden_Room_Fidelity_Inventory.
+- **Demo_Ready**: A non-release milestone proving the photo-bound Golden_Browser_Room is visually green, playable, and demonstrates one functional GAME interaction plus one working REAL read-only binding, all bound to one exact candidate fingerprint and the Golden_Room_Appearance_Reference hashes.
+- **Release_Ready**: A distinct later milestone proving fresh prompt-driven generalization with the exact kitchenette Release Profile prompt, a clean replacement Task 11.7.1 run, and all fresh repeated qualification required by Tasks 11.9–11.11.
+- **Platform_Complete**: Broader completion of deferred production, GAME, REAL, engine, and polish capabilities; it is not implied by Demo_Ready or Release_Ready.
+- **Diagnostic_Profile**: Non-authoritative investigation that may inspect or reuse existing evidence and approved assets but can never create Demo_Ready or release evidence.
+- **Demo_Profile**: The bounded photo-bound visual-integration profile that may reuse explicitly approved warehouse assets to reproduce and evaluate the Golden_Room_Appearance_Reference.
+- **Fresh_Benchmark_Profile**: A fresh-generation benchmark profile that does not consult or reuse prior-session warehouse assets before generation.
+- **Release_Profile**: The strict fresh zero-state prompt-driven qualification profile; every qualifying asset is newly generated for its qualifying session and no prior-session asset may substitute for fresh evidence.
+
+### Requirement 38: Golden Room Critical Path, Immutable Reference, and Product Stage Order
+
+**User Story:** As a product owner, I want visual quality proven against one immutable photoreal room before repeated release qualification, without letting the reference image replace spatial authority.
+
+#### Acceptance Criteria
+
+1. THE Pipeline_Team SHALL execute the active visual-first critical path in this exact order: focused counter/cabinet regression repair and exact-fingerprint revalidation → general exploratory-geometry freeze → bounded local WorldMirror 2.0 documentation/preflight/feasibility gate → fixed-recliner bake-off → common-gate lane selection → five Golden_Room_Hero_Manifest approvals → Golden_Browser_Room → SceneVisualGate plus playability plus one functional GAME interaction plus one REAL binding → Demo_Ready record → replacement clean Task 11.7.1 → Tasks 11.9–11.11.
+2. THE product pipeline SHALL preserve Prompt → Dream_Preview → MetricPlan solve/validation and Blockout approval → geometry-conditioned final Scene_Canon → object production.
+3. BEFORE Demo Profile object production, THE Source_Reference_Controller SHALL bind the exact authoritative image and workflow paths and hashes in Golden_Room_Appearance_Reference and SHALL confirm that the ComfyUI-Shared image mirror hashes identically; missing or mismatched evidence SHALL fail closed with a documented blocker.
+4. THE Golden_Room_Appearance_Reference SHALL control appearance, identity, set-dressing inventory, lighting balance, and composition evidence only; it SHALL NOT authorize dimensions, transforms, placement, architecture, openings, collision, navigation, or camera.
+5. THE approved normalized MetricPlan SHALL remain the sole spatial authority, and the immutable CameraContract SHALL remain derived only from that approved MetricPlan.
+6. THE geometry-conditioned final Scene_Canon SHALL derive framing and spatial conditioning from the approved MetricPlan, approved Blockout, and immutable CameraContract, then converge visually on Golden_Room_Appearance_Reference without importing it as a Canon or granting it spatial authority.
+7. BEFORE the fixed-recliner bake-off, THE Task_11_8_Repair SHALL correct the counter/cabinet semantic observation defect and revalidate the repaired candidate against its exact fingerprint; this regression prerequisite SHALL NOT make counter/cabinet a Golden_Room_Hero_Manifest asset.
+8. AFTER the repair is validated, THE Pipeline_Team SHALL freeze general exploratory geometry and SHALL NOT begin new MiniMax, Depth Anything 3, MoGe, Anima, HY-Pano, WorldNav, WorldStereo, MoVerse, One2Scene, or other open-ended model downloads or integrations on this critical path; the only bounded exception SHALL be the user-selected WorldMirror 2.0 gate in Requirement 43, whose preflight authorizes no installation or download.
+9. THE fixed-recliner bake-off SHALL compare only a raw object crop, the existing Qwen amodal completion, and a video-depth input only when that video-depth evidence is already locally available at bake-off start.
+10. THE fixed-recliner bake-off SHALL have a fixed 60–90 minute active execution budget; when the budget expires, THE Pipeline_Team SHALL evaluate completed lanes and proceed without extending model exploration.
+11. THE Pipeline_Team SHALL apply one identical StandaloneAssetGate rubric to every completed recliner lane and select the visually best passing lane.
+12. THE Pipeline_Team SHALL NOT start a replacement fresh Task 11.7.1 session before Demo_Ready is recorded for the exact candidate fingerprint; photo-bound Demo_Ready SHALL remain distinct from prompt-driven Release_Ready.
+
+### Requirement 39: Fail-Closed Standalone and Golden Room Scene Visual Gates
+
+**User Story:** As a user, I want the hero assets and assembled room to reproduce the source room convincingly before the photo-bound demo is called ready.
+
+#### Acceptance Criteria
+
+1. THE StandaloneAssetGate SHALL require a hero asset to load independently without scene-only dependencies, missing buffers, or unresolved external materials.
+2. THE StandaloneAssetGate SHALL reject placeholder geometry, fused room or ground-sheet geometry, temporary materials, and Pass-1-only materials that have not been approved as durable final demo materials.
+3. THE StandaloneAssetGate SHALL require neutral multi-angle turntable evidence that exposes silhouette, topology, object identity, material continuity, and obvious reconstruction artifacts.
+4. THE StandaloneAssetGate SHALL require explicit human approval bound to the asset hash, source lane, candidate fingerprint, Golden_Room_Appearance_Reference hashes, and gate evidence.
+5. THE common recliner bake-off rubric SHALL score every lane on the same independent-load, silhouette/identity, artifact, and durable-material criteria; lane-specific exceptions SHALL NOT convert a failure into a pass.
+6. THE Demo_Profile SHALL produce or permissibly reuse and pass StandaloneAssetGate for exactly five UUID-bound Golden_Room_Hero_Manifest assets: recliner, refrigerator, CRT television, wooden TV stand, and bookshelf.
+7. THE SceneVisualGate SHALL require every Golden_Room_Fidelity_Inventory element: ceiling fan, wall mirror, area rug, telephone side table, table lamp, foreground sofa, trophy shelf/trophies, paintings, and all five hero assets.
+8. THE SceneVisualGate SHALL require the recognizable shell and composition: a long warm room, wood-plank floor, cream walls, rear and right wooden doors, right-side street-facing window, warm lamp/daylight balance, and the approved Plan-derived camera composition.
+9. SET dressing MAY use approved, procedural, or non-hero assets, but no mandatory element MAY be missing, represented by a gross placeholder, fused into a scene remnant, or rendered in a way that breaks its visual identity.
+10. WHEN all five hero assets are approved and the full fidelity inventory is available, THE Browser_Assembler SHALL build one Golden_Browser_Room from the approved MetricPlan, immutable CameraContract, approved geometry-conditioned Scene_Canon, hash-bound hero assets, and set dressing.
+11. THE SceneVisualGate SHALL verify Plan-consistent shell/openings/transforms/dimensions, recognizable hero silhouettes, complete fidelity inventory, durable material completeness, Golden_Room_Appearance_Reference-consistent appearance/composition/lighting intent, and absence of placeholders, fused remnants, and temporary Pass-1-only materials.
+12. THE final room SHALL be immediately recognizable as the source room from the approved camera and SHALL still hold up from at least one navigable first-person viewpoint; first-person review SHALL assess identity and coherence, not pixel identity.
+13. IF StandaloneAssetGate or SceneVisualGate fails, THEN THE Demo_Readiness_Controller SHALL block Demo_Ready even when structural, hash, compilation, parity, or automated semantic gates pass.
+14. STRUCTURAL gate success SHALL NOT compensate for a visual gate failure, and visual gate success SHALL NOT compensate for a structural gate failure.
+
+### Requirement 40: Photo-Bound Demo Ready, Minimal GAME/REAL Proof, and Readiness Separation
+
+**User Story:** As a product owner, I want an honest photo-bound demo milestone distinct from fresh prompt-driven release qualification and platform completion.
+
+#### Acceptance Criteria
+
+1. THE Demo_Readiness_Controller SHALL record Demo_Ready only when the five Golden_Room_Hero_Manifest StandaloneAssetGate records and one GREEN SceneVisualGate record reference the same Golden_Browser_Room, candidate fingerprint, Golden_Room_Appearance_Reference hashes, Plan revision, and Canonical_Hash where available.
+2. THE Golden_Browser_Room SHALL be playable with first-person entry, movement, collision, and a safe spawn sufficient to inspect every hero asset and mandatory set-dressing region.
+3. THE Demo_Profile SHALL include at least one functional GAME interaction in which a user action on a stable UUID-bound object changes persistent room GAME state, produces visible success or progress feedback, and can be observed during the same demo.
+4. THE Demo_Profile SHALL retain at least one working REAL read-only binding that displays bound data on a stable UUID-bound surface without changing geometry or materials.
+5. THE GAME interaction and REAL binding SHALL coexist with the same approved visuals; switching behavior overlays SHALL NOT replace, hide, or restyle the hero assets or mandatory set dressing.
+6. THE Demo_Ready record SHALL include the exact candidate fingerprint, profile, authoritative source image path/hash, mirrored-image verification, workflow path/hash, five hero asset hashes and approvals, full fidelity-inventory verdict, SceneVisualGate evidence, playability verdict, GAME interaction evidence, REAL binding evidence, Plan revision, Canonical_Hash where available, and timestamp.
+7. Demo_Ready SHALL NOT be represented as Release_Ready, fresh qualification evidence, or Platform_Complete; it proves faithful reproduction of one immutable photo-bound Golden Room.
+8. Release_Ready SHALL prove separate fresh prompt-driven generalization and SHALL require Demo_Ready plus the exact-prompt replacement clean Task 11.7.1 run and every fresh round and release checkpoint in Tasks 11.9–11.11.
+9. Platform_Complete SHALL remain a separate post-MVP state requiring completion of explicitly deferred platform capabilities.
+
+### Requirement 41: Explicit Execution Profiles and Controlled Warehouse Reuse
+
+**User Story:** As a release owner, I want each run's reference, freshness, and reuse policy declared, so that a photo-bound demo can reuse approved work without contaminating fresh release evidence.
+
+#### Acceptance Criteria
+
+1. BEFORE object production, THE Pipeline_Orchestrator SHALL record exactly one immutable profile: diagnostic, demo, fresh-benchmark, or release.
+2. THE Diagnostic_Profile MAY inspect or reuse prior evidence and approved assets but SHALL mark every output non-authoritative and ineligible for Demo_Ready and release qualification.
+3. THE Demo_Profile SHALL bind Golden_Room_Appearance_Reference and MAY reuse only warehouse assets with verified hashes, durable material bindings, explicit human approval, and a passing StandaloneAssetGate; every reused binding SHALL be recorded.
+4. THE Fresh_Benchmark_Profile SHALL generate fresh candidate assets without pre-generation warehouse lookup or substitution and SHALL report benchmark results separately from Demo_Ready and release evidence.
+5. THE Release_Profile SHALL preserve the always-fresh rule: no pre-generation similarity lookup, warehouse substitution, restored asset, or prior-session asset may count as qualifying evidence.
+6. PROFILE selection SHALL NOT weaken MetricPlan authority, exact-fingerprint validation, structural gates, parity, SceneVisualGate, append-only provenance, stable UUID binding, or source-hash verification.
+7. IF a run changes profile or immutable appearance reference, THEN THE Pipeline_Orchestrator SHALL create a new run identity; it SHALL NOT relabel existing evidence.
+
+### Requirement 42: Regression Prerequisite, Failed-Session Retention, and Release Dependencies
+
+**User Story:** As a release owner, I want the preserved semantic regression fixed and failed smoke evidence retained while prompt-driven qualification waits for a real photo-bound Demo Ready milestone.
+
+#### Acceptance Criteria
+
+1. THE Qualification_Harness SHALL retain every failed Task 11.7 session and its artifacts append-only as permanently ineligible diagnostic evidence.
+2. THE Pipeline_Team SHALL NOT resume, restore, clone, repair in place, or otherwise use a failed Task 11.7 session as Demo_Ready or release evidence.
+3. Task 11.8.1 SHALL repair the counter/cabinet semantic defect, add or update focused regression coverage, and revalidate the affected candidate fingerprint, but counter/cabinet SHALL NOT appear in the Golden_Room_Hero_Manifest and the repair SHALL NOT start a replacement qualification session.
+4. ONLY AFTER photo-bound Demo_Ready is recorded SHALL the Qualification_Harness create the replacement Task 11.7.1 session as a brand-new empty V16 Release_Profile session.
+5. THE replacement Task 11.7.1 session and every qualifying round in Tasks 11.9–11.11 SHALL submit exactly: `Danny's kitchenette — a small, warm kitchen with a round table, two chairs, a counter with a coffee maker, and a window looking out at rain.`
+6. THE exact canonical prompt SHALL remain 142 UTF-8 bytes with SHA-256 `af6759e5d516561fad3fb49b129f02ad27743e273d1345173d59430f462f32ec`; any byte change SHALL fail release qualification.
+7. Tasks 11.9 and 11.10 SHALL remain inactive until photo-bound Demo_Ready and one clean prompt-driven replacement Task 11.7.1 pass both exist for the same exact candidate fingerprint.
+8. Task 11.11 SHALL remain inactive until Tasks 11.9 and 11.10 complete with eligible fresh evidence.
+9. THE correction SHALL preserve V3–V16 behavior, existing selectors/routes, shared version navigation, unrelated working-tree changes, Windows ownership of the Ratchet watch, Comfy Desktop ownership of port 8188, and the prohibition on agent-owned long-running service processes.
+10. NO document-only correction SHALL start a live session, generate an asset, download or integrate a model, change production or test code, change a user-visible interface or version, mark implementation tasks complete, authorize a commit, or claim Demo_Ready or Release_Ready.
+
+
+## Corrective Requirements Tranche — Bounded HY-World 2.0 WorldMirror Feasibility Gate
+
+### Normative Precedence
+
+This additive document-only correction supersedes only conflicting critical-path and exploratory-freeze clauses in Requirements 38 and 42. It inserts one bounded local WorldMirror 2.0 feasibility gate before the fixed-recliner bake-off. It does not authorize installation, download, cloud use, service or session startup, asset generation, implementation completion, UI/version change, or commit.
+
+### Requirement 43: WorldMirror-First Local Feasibility Without Authority Transfer
+
+**User Story:** As a product owner, I want to test the smallest official HY-World 2.0 reconstruction component against the hash-bound Golden Room before continuing per-object reconstruction, so that a useful persistent-world backend can be adopted without mistaking it for the product architecture or weakening MetricPlan authority.
+
+#### Acceptance Criteria
+
+1. THE Architecture_Record SHALL state that HY-World 2.0 and the Unified World Pipeline address the same broad persistent and navigable 3D-asset category, while the Unified World Pipeline additionally owns conversation, Brief and ArtBible derivation, Plan-owned metric authority, deterministic WorldContract construction, per-object warehouse provenance, human approval gates, engine-neutral compilation, and persistent GAME and REAL overlays; HY-World SHALL remain a reconstruction or generation backend candidate rather than the product architecture or an authority source.
+2. THE Capability_Record SHALL state that official HY-World 2.0 supports text, single-image, multi-view, and video inputs and can produce persistent 3DGS or mesh outputs; full worldgen is HY-Pano 2.0 → WorldNav → WorldStereo 2.0 → WorldMirror 2.0 plus 3DGS, while WorldMirror 2.0 is the bounded approximately 1.2B-parameter feed-forward multi-view or video reconstruction target.
+3. BEFORE any WorldMirror installation, download, native build, or GPU execution, THE WorldMirror_Preflight SHALL inspect the official license and redistribution terms; inventory disk, VRAM, RAM, CUDA, Python, compiler, and native-build requirements; estimate and record exact anticipated repository, model, dependency, environment, cache, and output storage; confirm that no Golden Room evidence, project data, telemetry, or inference leaves the local machine; and define reversible environment isolation plus fixed setup, storage, and 60-minute maximum active feasibility budgets.
+4. THE WorldMirror_Preflight SHALL NOT authorize installation or download. A later implementation step MAY install or download WorldMirror dependencies or weights only after the user explicitly confirms the measured size, storage budget, license finding, local-only data path, reversible isolated-environment plan, and cleanup procedure.
+5. WHEN explicitly authorized later, THE WorldMirror_Gate SHALL receive only local Golden_Room_Appearance_Reference evidence and SHALL treat candidate depth, normals, cameras, point clouds, 3DGS, TSDF, and meshes as non-authoritative visual or geometry evidence with recorded provenance.
+6. THE approved normalized MetricPlan SHALL remain the sole authority for dimensions, transforms, placement, architecture, openings, collision, navigation, and CameraContract derivation; no WorldMirror camera, depth, normal, point cloud, 3DGS, TSDF, or mesh value SHALL silently replace or rescale Plan-owned values.
+7. A WorldMirror TSDF or mesh MAY become a visual or collision candidate only after explicit alignment, validation, contract binding, applicable structural and visual gates, and human approval; absent those approvals it SHALL remain non-colliding evidence and SHALL NOT replace Plan architecture.
+8. AFTER explicit installation approval, THE WorldMirror_Gate SHALL enforce one RTX 4090, one substantial GPU owner, safe process ownership, and a maximum of 60 active minutes for the feasibility attempt; it SHALL stop rather than expanding resources, stages, or models when the budget expires.
+9. THE WorldMirror_Gate SHALL pass only if: the environment is reversibly isolated; WorldMirror loads locally or an official reduced-memory or offload mode is documented and viable on the 24GB GPU; one bounded Golden Room reconstruction completes without OOM or unsafe process ownership; an output loads locally; approved-camera resemblance and at least one novel-view coherence are materially better than the current source-only or depth evidence; no placeholder or cloud demo substitutes for execution; and source/input/output hashes, provenance, commands/configuration, timing, peak VRAM, peak RAM, and disk use are recorded.
+10. THE WorldMirror_Gate SHALL fail or defer if official execution requires multi-GPU-only stages; WorldMirror exceeds 24GB VRAM without an official viable reduced-memory or offload mode; setup, active-time, or storage budgets are exceeded; CUDA, Python, compiler, or native-build compatibility fails; license or redistribution terms block intended use; local-only execution cannot be guaranteed; the output cannot load locally; or the result is not materially useful against the stated visual criteria.
+11. IF the WorldMirror_Gate fails or defers, THEN THE Pipeline_Team SHALL freeze WorldMirror immediately, preserve its evidence and exact blocker, and return directly to the existing fixed-recliner bake-off without expanding into HY-Pano, WorldNav, WorldStereo, MoVerse, One2Scene, or unrelated model exploration.
+12. Full HY-World 2.0 worldgen SHALL remain deferred and off the active critical path because official guidance recommends at least four GPUs, reports testing on eight H20 GPUs, and uses an external vLLM service; it MAY later be evaluated as an optional remote or high-end backend, but no cloud or external data transmission is permitted without explicit user permission.
+13. PASS, FAIL, or DEFER evidence SHALL bind the exact Golden Room source image and workflow hashes, candidate fingerprint, environment identity, license finding, measured storage, model and dependency identities, execution mode, local-only verification, metrics, output hashes, visual comparison, and recommendation; it SHALL remain diagnostic until separately approved and SHALL NOT by itself establish StandaloneAssetGate, SceneVisualGate, Demo_Ready, Release_Ready, or Platform_Complete.
+14. THIS document-only correction SHALL preserve the exact Golden Room image, mirror, and workflow hashes; five hero assets and complete fidelity inventory; counter/cabinet regression prerequisite; Demo and Release distinction; exact kitchenette prompt bytes and hash; V3–V16 behavior; failed-session retention; process ownership; no-session rule; and no-commit rule.

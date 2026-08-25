@@ -1,0 +1,189 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.semantic-surface-fail-closed.v1",
+  "evidence_id": "d3730c08-0447-4640-ae0c-55183e0e0a45",
+  "recorded_at_utc": "2026-08-25T12:22:55.751698+00:00",
+  "task": "11.8.4a",
+  "result": "FAIL_CLOSED_NON_HUMAN_BLOCKER",
+  "scope": "Evidence-only continuation. The immutable corrected raw_crop GLB and material were not modified or regenerated; no production/test/UI/service/process/session/model/cloud/commit/downstream action occurred.",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_lane": "raw_crop",
+  "candidate_binding": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "pre_record_candidate_tree_fingerprint": "b5d3d6a26dbca8cb0169d1108477250bb0655919202a65397a2221dfe9fc17d8",
+    "pre_record_candidate_tree_path_count": 1938,
+    "algorithm": "candidate-tree-v1: SHA-256 initialized with raw ASCII HEAD plus LF; for each lexicographically sorted tracked or untracked nonignored path from git ls-files -z --cached --others --exclude-standard, append UTF-8 path, NUL, then raw file bytes with no post-content delimiter",
+    "note": "Computed after the focused renderer correction, final preview/render record, and second/final validator attempt, immediately before writing this non-self-referential blocker record."
+  },
+  "immutable_corrected_artifact": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "modified_or_regenerated": false,
+    "independently_loadable": true,
+    "durable_embedded_base_color_metallic_roughness_and_normal_textures": true,
+    "unresolved_external_material_or_buffer_uris": []
+  },
+  "golden_room_provenance": {
+    "authoritative_source_image": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"
+    },
+    "identical_shared_input_mirror_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    "authoritative_workflow": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "sha256": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196"
+    },
+    "raw_crop_extraction_workflow": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+      "sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+    },
+    "raw_source_crop": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+      "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a"
+    }
+  },
+  "replacement_preview": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-recliner-cf5fd0f5-0ec5-4985-aa11-bc72dbd48637/recliner-raw-crop_semantic-surface-neutral-eight-panel.png",
+    "sha256": "2f650779296f8c57aeda0acbb6ad0c9b68fdd62cb69f48c0763688a325c88a41",
+    "dimensions": [1680, 912],
+    "semantic_yaws_degrees": {
+      "front": 270,
+      "right": 0,
+      "rear": 90,
+      "left": 180
+    },
+    "visual_findings": {
+      "truthful_orientation_labels": true,
+      "continuous_filled_silhouettes": true,
+      "clear_recliner_identity_and_side_profile_footrest": true,
+      "fused_room_or_ground_sheet_visible": false,
+      "material_row_continuity_inspectable": true,
+      "neutral_contrast_adequate_for_silhouette_and_large_topology": true,
+      "anti_stipple_threshold_pass": false,
+      "independent_judgment": "The corrected output is smoother and semantically truthful, but side and rear geometry panels retain excessive fine-grained image-space noise. It is not valid approval evidence under the unchanged anti-stipple threshold.",
+      "local_ollama_visual_qa_used": false
+    },
+    "geometry_stipple_score_by_panel": {
+      "front": 0.07384261519599865,
+      "right": 0.1788191768151688,
+      "rear": 0.14647007128210135,
+      "left": 0.17045079169327668
+    },
+    "maximum_allowed_stipple_score": 0.08,
+    "failed_panels": ["right", "rear", "left"]
+  },
+  "renderer_and_validator_bindings": {
+    "renderer": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-recliner-cf5fd0f5-0ec5-4985-aa11-bc72dbd48637/render_semantic_surface_evidence.py",
+      "sha256": "17c903e54f9e26a666fe8d19de00c1a5661711955b0f06753d478ca46f4ffd0a"
+    },
+    "render_record": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-recliner-cf5fd0f5-0ec5-4985-aa11-bc72dbd48637/render-record.json",
+      "sha256": "a57a43fbf9a0e307c572b4753efcbedfa0925a0825b467290a41fea3eff07864"
+    },
+    "validator": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_semantic_surface_evidence.py",
+      "sha256": "5c9c93b3763145e18d2d808d365d98897f84f0dbbcbb8ebf7fd6b556803152da"
+    },
+    "prior_visual_gate_hold": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-visual-gate-hold-f3bdd7ac-c938-4a56-abad-79e850bd243b.json",
+      "sha256": "6c0af3b5a1486f7504085b54d84eece6bc866b274801ea839e3dc995305e648c"
+    }
+  },
+  "former_preview_regression": {
+    "prior_preview_sha256": "c6b41469032748ef02bf70136ec965eb9cb09d872a9013ca033609ed0d4a39cc",
+    "rejected_by_yaw_label_permutation_check": true,
+    "rejected_by_stipple_non_surface_check": true,
+    "confirmation": "Both validator attempts reached the later replacement_passes_both_checks assertion after the fail-closed assertions requiring both former-preview rejections had passed."
+  },
+  "execution": {
+    "validation_attempt_count": 2,
+    "maximum_validation_attempts": 2,
+    "commands": [
+      {
+        "sequence": 1,
+        "command": "python .kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-recliner-cf5fd0f5-0ec5-4985-aa11-bc72dbd48637/render_semantic_surface_evidence.py",
+        "result": "PASS_RENDERED",
+        "preview_sha256": "3515a34b6781c9767aa9ce6ada09911aa7db44d5b0099f0bfed9ad4184df4886"
+      },
+      {
+        "sequence": 2,
+        "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_semantic_surface_evidence.py",
+        "result": "FAIL_CLOSED",
+        "failure": "AssertionError: strengthened_evidence_regression.replacement_passes_both_checks is not true"
+      },
+      {
+        "sequence": 3,
+        "action": "one focused evidence-renderer correction",
+        "result": "APPLIED",
+        "details": "Increased bounded image-space normal smoothing from sigma 1.35 to 4.5 pixels and color smoothing from sigma 1.10 to 2.5 pixels; validator criteria, GLB, materials, labels, yaws, provenance, and common-gate order were unchanged."
+      },
+      {
+        "sequence": 4,
+        "command": "python .kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-recliner-cf5fd0f5-0ec5-4985-aa11-bc72dbd48637/render_semantic_surface_evidence.py",
+        "result": "PASS_RENDERED",
+        "preview_sha256": "2f650779296f8c57aeda0acbb6ad0c9b68fdd62cb69f48c0763688a325c88a41"
+      },
+      {
+        "sequence": 5,
+        "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_semantic_surface_evidence.py",
+        "result": "FAIL_CLOSED_FINAL_ATTEMPT",
+        "failure": "AssertionError: strengthened_evidence_regression.replacement_passes_both_checks is not true"
+      }
+    ]
+  },
+  "common_gate": {
+    "policy": "Exact Task 11.8.4 12-check order; no lane-specific exception or weakened criterion.",
+    "checks": [
+      {"check": "evidence_chain_integrity", "pass": true},
+      {"check": "stable_uuid_binding", "pass": true},
+      {"check": "golden_room_source_identity", "pass": true},
+      {"check": "independent_loadability", "pass": true},
+      {"check": "non_placeholder_geometry", "pass": true},
+      {"check": "recognizable_recliner_silhouette_identity", "pass": true},
+      {"check": "no_fused_scene_or_ground_sheet_geometry", "pass": true},
+      {"check": "no_obvious_catastrophic_reconstruction_artifacts", "pass": false, "observation": "The strengthened check cannot pass while the replacement topology evidence retains above-threshold high-frequency surface noise."},
+      {"check": "neutral_multi_angle_turntable_evidence", "pass": false, "observation": "Semantic labels and silhouettes are truthful, but three of four geometry panels exceed the unchanged anti-stipple threshold."},
+      {"check": "durable_non_temporary_material_continuity", "pass": false, "observation": "The GLB contains durable embedded textures, but this evidence-specific check remains fail-closed because the same-view continuous-surface proof did not pass."},
+      {"check": "no_unresolved_external_materials_or_buffers", "pass": true},
+      {"check": "explicit_hash_bound_human_approval", "pass": false, "observation": "Approval was not requested or manufactured because non-human checks failed."}
+    ],
+    "non_human_checks_pass": false,
+    "failed_checks": [
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "explicit_hash_bound_human_approval"
+    ],
+    "verdict": "FAIL_CLOSED_NON_HUMAN_BLOCKER"
+  },
+  "human_approval": {
+    "present": false,
+    "approved": false,
+    "approval_state": false,
+    "status": "NOT_REQUESTED_NON_HUMAN_FAILURE"
+  },
+  "authority": {
+    "metric_plan_remains_sole_spatial_authority": true,
+    "immutable_plan_derived_camera_contract_remains_camera_authority": true,
+    "world_contract_remains_final_binding_authority": true,
+    "asset_and_evidence_views_are_not_spatial_authority": true
+  },
+  "status_effect": {
+    "task_11_8_4a_complete": false,
+    "task_11_8_5": "BLOCKED",
+    "candidate_ready_for_explicit_approval": false,
+    "completion_or_approval_claimed": false
+  },
+  "preservation": {
+    "immutable_task_11_8_4_or_prior_corrected_or_rejected_evidence_modified": false,
+    "corrected_glb_or_material_modified": false,
+    "production_or_test_code_modified": false,
+    "ui_or_interface_version_modified": false,
+    "service_process_scheduled_task_or_ratchet_ownership_modified": false,
+    "session_or_qualification_work_started": false,
+    "model_exploration_download_or_cloud_used": false,
+    "commit_created": false,
+    "unrelated_worktree_content_modified": false
+  },
+  "mvp_alignment": "This bounded evidence-only attempt still advances the 6-8 active-coding-hour MVP target by producing a precise fail-closed visual blocker without reopening geometry, material, model, service, or downstream exploration."
+}

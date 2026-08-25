@@ -1,0 +1,148 @@
+{
+  "pbtResults": {
+    "11.2 Write the restart bug-condition exploration test before any new reconciliation implementation": {
+      "status": "passed",
+      "failingExample": "Falsifying example: test_property_1_restart_recovery_reconciles_conflicting_evidence(\n    snapshot=RecoverySnapshot(baseline_fingerprint='b10def9a38d4f40e5dd5387eccff8a0fa5085a62e816feaf591f29f82842b925', candidate_fingerprint='d34d12c9811db6c77e1883a29dfb39edb14e191f33792112a3b8c86506d0ce24', diagnostic_session_id='8f24afd0', source_order=('tasks', 'continuation', 'validation', 'tree', 'session', 'qualification'), stale_task_10=True, completed_tasks='1-12', no_clean_live_pass=True, premature_tasks=(13, 14)),  # or any other generated value\n)\n\nAssertion violations: ('V16 remains the governing active interface', 'llm-driven Tasks 1-12 remain complete', 'old Task 10 continuity is superseded', 'Tasks 13-14 remain inactive', 'diagnostic sessions are rejected', 'the first unmet V16 gate is selected')",
+      "lastRunTimestamp": 1787490988715
+    },
+    "11.3 Write restart preservation property tests before any new reconciliation implementation": {
+      "status": "passed",
+      "lastRunTimestamp": 1787492517265
+    },
+    "11.4.3 Verify the original preservation tests still pass": {
+      "status": "passed",
+      "lastRunTimestamp": 1787494585385
+    },
+    "11.4.2 Verify the original exploration test now passes": {
+      "status": "passed",
+      "lastRunTimestamp": 1787494583649
+    }
+  },
+  "executionHistory": {
+    "11.1 Preserve, fingerprint, and validate the recovered V16 candidate before qualification": [
+      {
+        "executionId": "ca8f308a-2b20-48d6-81c2-ea026db7488e",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787489116261
+      },
+      {
+        "executionId": "ca8f308a-2b20-48d6-81c2-ea026db7488e",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787490085766
+      }
+    ],
+    "11.2 Write the restart bug-condition exploration test before any new reconciliation implementation": [
+      {
+        "executionId": "ab47174e-6c04-463b-934a-b5a1d5644eeb",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787490175034
+      },
+      {
+        "executionId": "ab47174e-6c04-463b-934a-b5a1d5644eeb",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787491254823
+      }
+    ],
+    "11.3 Write restart preservation property tests before any new reconciliation implementation": [
+      {
+        "executionId": "ab47174e-6c04-463b-934a-b5a1d5644eeb",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787490176987
+      }
+    ],
+    "11.7.1 Run the replacement clean zero-state V16 smoke pass only after Demo Ready": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953430
+      }
+    ],
+    "11.8 Complete the photo-bound Golden Room Demo Ready milestone without starting a replacement session": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953481
+      }
+    ],
+    "11.8.4 Apply one common StandaloneAssetGate and select the visually best recliner lane": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953532
+      },
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655964401
+      },
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787657204556
+      }
+    ],
+    "11.8.5 Produce and approve the five standalone Golden Room hero assets": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953578
+      }
+    ],
+    "11.8.6 Assemble one Golden Browser room in normative product order": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953623
+      }
+    ],
+    "11.8.7 Pass Golden Room SceneVisualGate and Browser playability": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953670
+      }
+    ],
+    "11.8.8 Demonstrate one functional GAME interaction and one REAL read-only binding": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953709
+      }
+    ],
+    "11.8.9 Record photo-bound Demo Ready for the exact candidate": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953755
+      }
+    ],
+    "11.9 Run five fresh headless rounds only after Demo Ready and Task 11.7.1 pass": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953798
+      }
+    ],
+    "11.10 Run five fresh human-like rounds only after Demo Ready and Task 11.7.1 pass": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953874
+      }
+    ],
+    "11.11 Final qualification and Release Ready checkpoint": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787655953930
+      }
+    ],
+    "11.8.4a Remediate and approve the Golden Room source-matched raw-crop recliner": [
+      {
+        "executionId": "b3a4cbe3-0b63-4b50-80c5-c04f655f288f",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787658073728
+      }
+    ]
+  }
+}

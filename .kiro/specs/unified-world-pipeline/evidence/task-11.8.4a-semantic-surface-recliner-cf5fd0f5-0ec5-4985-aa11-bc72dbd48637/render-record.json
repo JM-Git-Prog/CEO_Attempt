@@ -1,0 +1,141 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.semantic-surface-render.v1",
+  "recorded_at_utc": "2026-08-25T12:22:09.549361+00:00",
+  "task": "11.8.4a",
+  "scope": "evidence renderer/view contract only; immutable corrected GLB and all prior evidence remain unchanged",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_lane": "raw_crop",
+  "inputs": {
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb": {
+      "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+      "verified": true
+    },
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-neutral-eight-panel.png": {
+      "sha256": "c6b41469032748ef02bf70136ec965eb9cb09d872a9013ca033609ed0d4a39cc",
+      "verified": true
+    },
+    "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png": {
+      "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "verified": true
+    }
+  },
+  "artifact_reused_without_modification": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf"
+  },
+  "renderer": {
+    "method": "continuous-normal-field-surface-v1",
+    "description": "dense visible surface samples are interpolated into a continuous geometry-derived silhouette, then lit from smoothed vertex normals; no visible point splats or nearest-point dots",
+    "sampled_vertices": 400000,
+    "neutral_background_rgb": [
+      222,
+      224,
+      226
+    ],
+    "neutral_key_fill_rim_lighting": true,
+    "same_view_and_lighting_for_geometry_and_material_rows": true,
+    "normal_smoothing_sigma_px": 4.5,
+    "color_smoothing_sigma_px": 2.5,
+    "preview_size": [
+      1680,
+      912
+    ]
+  },
+  "view_contract": {
+    "method": "source-alpha/geometry-derived-v1",
+    "source_semantics": "Golden Room crop shows the recliner from a front-right oblique viewpoint",
+    "source_search_yaws_degrees": [
+      0,
+      45,
+      90,
+      135,
+      180,
+      225,
+      270,
+      315
+    ],
+    "source_silhouette_iou_by_yaw": {
+      "0": 0.619476613024515,
+      "45": 0.7531693167168028,
+      "90": 0.6597440150632117,
+      "135": 0.5428574833742521,
+      "180": 0.47520995163919827,
+      "225": 0.5491515367271864,
+      "270": 0.6732388000677928,
+      "315": 0.7595552655901702
+    },
+    "best_source_oblique_yaw_degrees": 315,
+    "adjacent_cardinal_candidates_degrees": [
+      270,
+      0
+    ],
+    "geometry_cues": {
+      "270": {
+        "silhouette_width_px": 343,
+        "silhouette_height_px": 301,
+        "bilateral_symmetry_iou": 0.9612811937226653,
+        "front_score": 1.0954134533118745
+      },
+      "0": {
+        "silhouette_width_px": 343,
+        "silhouette_height_px": 285,
+        "bilateral_symmetry_iou": 0.5013393870601589,
+        "front_score": 0.6033663500408228
+      }
+    },
+    "semantic_yaws_degrees": {
+      "front": 270,
+      "right": 0,
+      "rear": 90,
+      "left": 180
+    },
+    "generator_axes_assumed_semantic": false,
+    "handedness": "Y-up; semantic right is +90 degrees from derived semantic front"
+  },
+  "view_contract_sha256": "dcc25ad809c32ed14b8f79144c37c7590c8aa905b381f02a7121597c6873d808",
+  "panels": {
+    "front": {
+      "yaw_degrees": 270,
+      "geometry_surface_pixel_count": 96014,
+      "material_surface_pixel_count": 96014,
+      "geometry_stipple_score": 0.07384261519599865,
+      "material_stipple_score": 0.00034718831711312917
+    },
+    "right": {
+      "yaw_degrees": 0,
+      "geometry_surface_pixel_count": 49404,
+      "material_surface_pixel_count": 49404,
+      "geometry_stipple_score": 0.1788191768151688,
+      "material_stipple_score": 0.06773987535510581
+    },
+    "rear": {
+      "yaw_degrees": 90,
+      "geometry_surface_pixel_count": 96014,
+      "material_surface_pixel_count": 96014,
+      "geometry_stipple_score": 0.14647007128210135,
+      "material_stipple_score": 4.3398539639141146e-05
+    },
+    "left": {
+      "yaw_degrees": 180,
+      "geometry_surface_pixel_count": 49404,
+      "material_surface_pixel_count": 49404,
+      "geometry_stipple_score": 0.17045079169327668,
+      "material_stipple_score": 0.06648461758682199
+    }
+  },
+  "output": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-recliner-cf5fd0f5-0ec5-4985-aa11-bc72dbd48637/recliner-raw-crop_semantic-surface-neutral-eight-panel.png",
+    "sha256": "2f650779296f8c57aeda0acbb6ad0c9b68fdd62cb69f48c0763688a325c88a41",
+    "bytes": 509752,
+    "dimensions": [
+      1680,
+      912
+    ]
+  },
+  "preservation": {
+    "glb_modified": false,
+    "material_modified": false,
+    "production_or_test_code_modified": false,
+    "ui_or_service_or_session_or_model_modified": false
+  }
+}

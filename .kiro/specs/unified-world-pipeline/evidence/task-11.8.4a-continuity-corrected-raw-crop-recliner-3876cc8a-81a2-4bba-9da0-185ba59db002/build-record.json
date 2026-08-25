@@ -1,0 +1,260 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.continuity-corrected-build.v1",
+  "recorded_at_utc": "2026-08-25T12:06:56.493151+00:00",
+  "task": "11.8.4a",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_lane": "raw_crop",
+  "correction_scope": "seamless upholstery-only source map plus coverage-aware neutral evidence; geometry and approved production material code unchanged",
+  "input_bindings": {
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/objects/recliner-raw-crop_hunyuan3d.glb": {
+      "sha256": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+      "verified": true
+    },
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/lane-raw-crop-neutral.png": {
+      "sha256": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+      "verified": true
+    },
+    "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png": {
+      "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "verified": true
+    },
+    "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png": {
+      "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "C:\\Users\\JohnM\\ComfyUI-Shared\\input\\danny-v4-01-canon_00002_.png": {
+      "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json": {
+      "sha256": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    },
+    "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json": {
+      "sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "verified": true
+    },
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json": {
+      "sha256": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "verified": true
+    },
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8.json": {
+      "sha256": "b0fc2b37f5b2c97b815552ee004f13228507ec272559ef04e45d67175859c3fa",
+      "verified": true
+    },
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr.glb": {
+      "sha256": "181ad41bfde7b1a807cb8c2c89c5a3ce977618b8b3092252d3abe5c05b07e7b2",
+      "verified": true
+    },
+    ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr-neutral-eight-panel.png": {
+      "sha256": "37776fac4fa6634ee31f39d195b87d571de94ffe7e1be7d00f5dd758d97794a6",
+      "verified": true
+    }
+  },
+  "visual_rejection_binding": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-visual-rejection-b1cbf2d1-1a25-478c-8ddf-3a4f5bfd4780.json",
+    "sha256": "ba20df1f1664daebb7ead03b395c8d916ed3633198430ed0c82eb29da9f22253"
+  },
+  "material_input_derivation": {
+    "source_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+    "source_sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+    "derived_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_seamless-upholstery-source-map.png",
+    "method": "opaque raw-crop pixels -> robust upholstery palette -> deterministic periodic sampling -> wrap Gaussian smoothing -> 0.32 source variation; no spatial source structure retained",
+    "source_alpha_bbox": [
+      462,
+      447,
+      798,
+      729
+    ],
+    "opaque_source_pixel_count": 59768,
+    "selected_upholstery_pixel_count": 45425,
+    "luminance_percentile_bounds": [
+      28.457799911499023,
+      118.81748443603516
+    ],
+    "median_rgb": [
+      98.0,
+      66.0,
+      44.0
+    ],
+    "p10_rgb": [
+      61.0,
+      34.0,
+      16.0
+    ],
+    "p90_rgb": [
+      138.0,
+      100.0,
+      86.0
+    ],
+    "deterministic_seed": 1184,
+    "periodic_tile_size": [
+      256,
+      256
+    ],
+    "output_size": [
+      1024,
+      1024
+    ],
+    "output_sha256": "fe7b30e9714da36d91c2b2786a327d6329a660d37443fc86b3ed8de2071b4518",
+    "source_only_no_model_or_inference": true
+  },
+  "material_pipeline": {
+    "implementation_path": "src/photo_pipeline/stages/material_processor.py",
+    "implementation_sha256": "c3fa4d9b763b369b40020555d945de74c73be935eeb35409a190ae2a09a6984e",
+    "pass1": "unchanged MaterialProcessor photo-projection path applied to a copied generated mesh using a non-semantic seamless source map",
+    "pass2": "unchanged MaterialProcessor durable fabric PBR path",
+    "pass1_result": {
+      "object_id": "recliner-raw-crop_continuity-corrected-fabric-pbr",
+      "pass_number": 1,
+      "has_base_color": true,
+      "has_metallic_roughness": false,
+      "has_normal_map": false,
+      "texture_resolution": [
+        1024,
+        1024
+      ]
+    },
+    "pass2_result": {
+      "object_id": "recliner-raw-crop_continuity-corrected-fabric-pbr",
+      "pass_number": 2,
+      "has_base_color": true,
+      "has_metallic_roughness": true,
+      "has_normal_map": true,
+      "texture_resolution": [
+        1024,
+        1024
+      ]
+    },
+    "production_code_modified": false,
+    "no_model_or_service": true
+  },
+  "geometry_preservation": {
+    "vertex_count": 675366,
+    "face_count": 1358256,
+    "max_position_delta": 0.0,
+    "max_extent_delta": 0.0,
+    "tolerance": 1e-05,
+    "preserved": true
+  },
+  "outputs": {
+    "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "artifact_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "artifact_bytes": 29873996,
+    "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-neutral-eight-panel.png",
+    "preview_sha256": "c6b41469032748ef02bf70136ec965eb9cb09d872a9013ca033609ed0d4a39cc",
+    "preview_dimensions": [
+      1680,
+      912
+    ]
+  },
+  "image_based_visual_validation": {
+    "thresholds": {
+      "projected_subject_leakage_correlation_max": 0.2,
+      "rendered_coverage_min": 0.995,
+      "internal_hole_ratio_max": 0.01,
+      "small_component_ratio_max": 0.005,
+      "palette_outlier_ratio_max": 0.08,
+      "false_surface_edge_density_max": 0.16,
+      "brown_palette_inlier_ratio_min": 0.9,
+      "cross_view_median_delta_e_max": 18.0
+    },
+    "projected_subject_leakage_correlation": 0.007903550751507282,
+    "per_view": {
+      "front": {
+        "rendered_coverage": 1.0,
+        "internal_hole_ratio": 0.0011263486543097655,
+        "small_component_ratio": 0.0,
+        "palette_outlier_ratio": 0.0,
+        "false_surface_edge_density": 2.0934955094521324e-05,
+        "brown_palette_inlier_ratio": 1.0,
+        "median_lab_l": 78.0,
+        "median_lab_a": 139.0,
+        "median_lab_b": 146.0,
+        "sampled_material_pixels": 47767
+      },
+      "right": {
+        "rendered_coverage": 1.0,
+        "internal_hole_ratio": 8.034145116746172e-05,
+        "small_component_ratio": 0.0,
+        "palette_outlier_ratio": 0.0,
+        "false_surface_edge_density": 0.0,
+        "brown_palette_inlier_ratio": 1.0,
+        "median_lab_l": 76.0,
+        "median_lab_a": 139.0,
+        "median_lab_b": 146.0,
+        "sampled_material_pixels": 96935
+      },
+      "rear": {
+        "rendered_coverage": 1.0,
+        "internal_hole_ratio": 0.0011263486543097655,
+        "small_component_ratio": 0.0,
+        "palette_outlier_ratio": 0.0,
+        "false_surface_edge_density": 0.0025540645215316013,
+        "brown_palette_inlier_ratio": 1.0,
+        "median_lab_l": 78.0,
+        "median_lab_a": 139.0,
+        "median_lab_b": 146.0,
+        "sampled_material_pixels": 47767
+      },
+      "left": {
+        "rendered_coverage": 1.0,
+        "internal_hole_ratio": 8.034145116746172e-05,
+        "small_component_ratio": 0.0,
+        "palette_outlier_ratio": 0.0,
+        "false_surface_edge_density": 0.0,
+        "brown_palette_inlier_ratio": 1.0,
+        "median_lab_l": 65.0,
+        "median_lab_a": 138.0,
+        "median_lab_b": 144.0,
+        "sampled_material_pixels": 96935
+      }
+    },
+    "cross_view_median_delta_e": 13.190905570983887,
+    "checks": {
+      "projected_subject_leakage": true,
+      "rendered_surface_coverage": true,
+      "no_speckled_or_holed_coverage": true,
+      "no_false_surface_edges": true,
+      "bounded_palette_outliers": true,
+      "source_brown_palette_continuity": true,
+      "cross_view_material_continuity": true
+    },
+    "failed_checks": [],
+    "pass": true,
+    "renderer": {
+      "method": "depth-selected dense vertex splat with nearest-surface fill and bounded 5px morphology",
+      "sampled_vertices": 300000,
+      "background_rgb": [
+        232,
+        232,
+        232
+      ],
+      "preview_size": [
+        1680,
+        912
+      ]
+    }
+  },
+  "rejected_candidate_regression": {
+    "artifact_sha256": "181ad41bfde7b1a807cb8c2c89c5a3ce977618b8b3092252d3abe5c05b07e7b2",
+    "projected_subject_leakage_correlation": 0.9999998807907104,
+    "projected_subject_leakage_rejected": true,
+    "stored_preview_max_internal_hole_ratio": 0.049723980344974016,
+    "stored_preview_speckle_or_holes_observed": true
+  },
+  "authority": {
+    "metric_plan_remains_sole_authority_for": [
+      "dimensions",
+      "transforms",
+      "placement",
+      "architecture",
+      "openings",
+      "collision",
+      "navigation"
+    ],
+    "camera_contract_remains_plan_derived_authority": true,
+    "world_contract_remains_final_binding_authority": true,
+    "asset_is_not_spatial_authority": true
+  }
+}

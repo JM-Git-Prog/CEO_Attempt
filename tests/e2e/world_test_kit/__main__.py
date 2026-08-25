@@ -92,11 +92,13 @@ def _cmd_check(args: argparse.Namespace) -> int:
             resp = client.get(f"{config.ollama_base_url}/api/tags")
             if resp.status_code == 200:
                 models = [m["name"] for m in resp.json().get("models", [])]
-                print(f"Ollama available — {len(models)} models loaded")
+                print(f"Ollama available: {len(models)} models loaded")
                 has_playtester = any(config.playtester_model in m for m in models)
                 has_vision = any(config.vision_model in m for m in models)
-                print(f"  Playtester ({config.playtester_model}): {'✓' if has_playtester else '✗ not found'}")
-                print(f"  Vision ({config.vision_model}): {'✓' if has_vision else '✗ not found'}")
+                playtester_status = "[OK]" if has_playtester else "[MISSING]"
+                vision_status = "[OK]" if has_vision else "[MISSING]"
+                print(f"  Playtester ({config.playtester_model}): {playtester_status}")
+                print(f"  Vision ({config.vision_model}): {vision_status}")
             else:
                 print(f"Ollama returned HTTP {resp.status_code}")
     except Exception as e:

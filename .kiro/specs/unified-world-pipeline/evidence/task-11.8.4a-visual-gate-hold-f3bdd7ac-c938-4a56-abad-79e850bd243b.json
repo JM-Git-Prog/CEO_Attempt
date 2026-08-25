@@ -1,0 +1,56 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.visual-gate-hold.v1",
+  "evidence_id": "f3bdd7ac-c938-4a56-abad-79e850bd243b",
+  "recorded_at_utc": "2026-08-25T12:15:37.396896+00:00",
+  "task": "11.8.4a",
+  "result": "VISUAL_GATE_HOLD_EVIDENCE_CONTRACT_INVALID",
+  "scope": "The corrected GLB, material, candidate, prior preview, prior evidence, and all recorded hashes remain immutable. This record appends a hold on the prior preview as approval evidence and does not claim the user explicitly rejected the artifact.",
+  "observation_source": "user-provided visual inspection findings",
+  "explicit_user_artifact_rejection_claimed": false,
+  "human_approval": {
+    "present": false,
+    "approved": false,
+    "status": "NOT_REQUESTED_WHILE_EVIDENCE_CONTRACT_IS_INVALID"
+  },
+  "held_candidate": {
+    "evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002.json",
+    "evidence_sha256": "1525378dc6a7f82c1c420b760949158ddaf36db6d6638649850e7509e09bdaf1",
+    "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "artifact_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-neutral-eight-panel.png",
+    "preview_sha256": "c6b41469032748ef02bf70136ec965eb9cb09d872a9013ca033609ed0d4a39cc",
+    "candidate_fingerprint": "f436be77924b30c25182e6008dd45d4a2b1dd8244df823c2caf40771bbc78635"
+  },
+  "findings": [
+    {
+      "check": "truthful_semantic_view_labels",
+      "pass": false,
+      "observation": "The panel labeled front is a side profile, the panel labeled left is the seat-facing front, and the panel labeled right is rear-facing. Generator cardinal axes were mislabeled as semantic object views."
+    },
+    {
+      "check": "continuous_surface_evidence",
+      "pass": false,
+      "observation": "The prior evidence renderer exposes dense point-splat stipple rather than a continuous inspectable surface."
+    },
+    {
+      "check": "inspection_lighting_and_contrast",
+      "pass": false,
+      "observation": "Flat low-contrast lighting does not reliably expose topology, silhouette, or material-continuity defects."
+    }
+  ],
+  "effect": {
+    "prior_preview_valid_approval_evidence": false,
+    "artifact_or_material_verdict_changed": false,
+    "task_11_8_4a_complete": false,
+    "task_11_8_5": "BLOCKED",
+    "required_next_action": "Replace only the evidence renderer/view contract, prove the prior preview fails strengthened checks, and rerun the exact common gate order without manufacturing approval."
+  },
+  "preservation": {
+    "prior_files_modified": false,
+    "production_or_test_or_ui_code_modified": false,
+    "service_or_process_ownership_modified": false,
+    "session_created_or_reused": false,
+    "model_or_cloud_or_download_used": false,
+    "commit_created": false
+  }
+}

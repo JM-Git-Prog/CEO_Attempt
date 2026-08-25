@@ -19,10 +19,12 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from src.unified_pipeline.object_manifest import (
+    PLAN_SELECTED_SCHEMA,
     build_detected_document,
     load_detected_document,
     load_selected_manifest,
 )
+from src.unified_pipeline.object_isolator import isolate_bound_detection
 from src.unified_pipeline.orchestrator import (
     DEFAULT_STAGE_SPECS,
     StageExecutionContext,
@@ -129,6 +131,7 @@ GPU_STAGES = frozenset({
     "canon_generation",
     "segment",
     "depth_estimation",
+    "object_isolation",
     "mesh_generation",
 })
 
@@ -138,6 +141,7 @@ LIVE_GPU_STAGES = frozenset({
     "canon_generation",  # Real ComfyUI FLUX/SDXL
     "segment",  # Real Ollama vision inventory
     "depth_estimation",  # Real DA3 via ComfyUI
+    "object_isolation",  # Real Plan-bound SAM3 via ComfyUI
     "mesh_generation",  # Real Hunyuan3D/Trellis2 via ComfyUI
 })
 
@@ -217,6 +221,8 @@ async def _handle_dream_preview(ctx: StageExecutionContext) -> StageResult:
         paths = await generator.generate(prompt, ctx.session_id, variant_count=1)
     except Exception as exc:
         _log.error(f"  dream_preview FAILED: {exc}")
+        if _strict_real(ctx):
+            raise
         paths = []
 
     if paths:
@@ -229,13 +235,17 @@ async def _handle_dream_preview(ctx: StageExecutionContext) -> StageResult:
             "provisional_label": "PROVISIONAL — not spatial authority",
         }, ctx)
     else:
-        _log.info("  dream_preview: ComfyUI unavailable — continuing with degraded result")
+        if _strict_real(ctx):
+            raise RuntimeError(
+                "strict-real Dream Preview produced no image before its GPU job deadline"
+            )
+        _log.info("  dream_preview: generation unavailable — continuing with degraded result")
         return _immediate({
             "status": "dream_preview_unavailable",
             "image_path": "",
             "variant_count": 0,
             "prompt": prompt,
-            "reason": "ComfyUI unavailable or FLUX generation failed",
+            "reason": "Dream Preview generation unavailable or failed",
         }, ctx)
 
 
@@ -301,8 +311,9 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
     coffee_requirement = ""
     if any("coffee maker" in name for name in inventory_names):
         coffee_requirement = (
-            "The coffee maker must be an unmistakable visible electric drip or "
-            "espresso machine on the counter, never substituted by a kettle. "
+            "Show one unmistakable electric drip or espresso machine on the counter. "
+            "It is the sole coffee-making appliance, with clear empty counter space on "
+            "both sides; never render a second machine-like countertop appliance. "
         )
 
     composition_requirement = ""
@@ -311,8 +322,8 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
         composition_requirement = (
             "MANDATORY COMPOSITION: show the entire round dining table in the foreground, "
             "with exactly two separate chairs clearly visible around it. Behind them, show "
-            "one counter holding one unmistakable coffee maker and one window showing rain. "
-            "Do not crop the table or either chair out of frame. "
+            "one counter with the requested sole countertop appliance and one window "
+            "showing rain. Do not crop the table or either chair out of frame. "
         )
 
     prompt = (
@@ -354,6 +365,7 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
     negative_prompt = (
         "empty room, missing table, missing chair, cropped furniture, blurry, "
         "distorted, deformed, duplicate furniture, extra chairs, extra tables, "
+        "two coffee makers, multiple coffee machines, duplicate countertop appliances, "
         "missing required object, fused objects, kettle in place of coffee maker, "
         "sunny exterior, clear weather, dry window, text, watermark, low quality, cartoon"
     )
@@ -865,7 +877,45 @@ def _handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
     }, ctx)
 
 
-def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
+async def _handle_object_isolation(ctx: StageExecutionContext) -> StageResult:
+    """Create one real, Plan-bound Object Canon before any mesh submission."""
+    selected_path = ctx.session_dir / "artifacts" / "selected_objects.json"
+    selected_manifest = load_selected_manifest(selected_path)
+    if _strict_real(ctx) and selected_manifest.get("schema_version") != PLAN_SELECTED_SCHEMA:
+        raise RuntimeError("strict-real Object Canon requires Plan-bound selected authority")
+    selected_object = next((
+        item for item in selected_manifest["objects"]
+        if str(item.get("plan_instance_id") or item.get("object_id")) == str(ctx.object_id)
+    ), None)
+    if selected_object is None:
+        raise RuntimeError(f"Object Canon identity is not selected: {ctx.object_id}")
+    if int(selected_manifest.get("plan_revision", 0)) != int(ctx.plan_revision):
+        raise RuntimeError("Object Canon selection targets a stale Plan revision")
+
+    canon_path = ctx.session_dir / "artifacts" / "canon.png"
+    await _release_local_ollama_models()
+    evidence = await isolate_bound_detection(
+        canon_path,
+        selected_object,
+        output_dir=ctx.session_dir / "artifacts" / "object_canon",
+        session_id=ctx.session_id,
+        selected_manifest=selected_manifest,
+    )
+    return StageResult(
+        output=evidence,
+        artifact_paths=(
+            evidence["source_crop_path"],
+            evidence["rgba_path"],
+            evidence["mask_path"],
+            evidence["evidence_path"],
+        ),
+        plan_revision=ctx.plan_revision,
+        approval_revision=ctx.approval_revision,
+        canonical_hash=evidence["document_sha256"],
+    )
+
+
+async def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     """Mesh generation — only process objects selected via the interactive picker.
 
     Reads artifacts/selected_objects.json to determine which objects to process.
@@ -895,7 +945,8 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
         selected_object = next(
             (
                 item for item in selected_manifest["objects"]
-                if str(item.get("object_id", "")) == str(object_id)
+                if str(item.get("plan_instance_id") or item.get("object_id", ""))
+                == str(object_id)
             ),
             None,
         )
@@ -904,37 +955,67 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
             f"object {object_id!r} is not authorized by selected-object manifest"
         )
 
-    # Get the Object_Canon for this object from segment output
     stage_outputs = ctx.values.get("stage_outputs", {})
-    segment_output = stage_outputs.get("segment", {})
-
-    # Per-object stage outputs are stored as {stage: {object_id: output}}
-    object_segment = None
-    if isinstance(segment_output, dict):
-        # Could be per-object dict or global
-        object_segment = segment_output.get(object_id, segment_output)
-
-    segments_list = (object_segment or {}).get("segments", [])
-
-    # Find the segment data for this specific object
     image_path = ""
-    for seg in segments_list:
-        if isinstance(seg, dict) and seg.get("object_id") == object_id:
-            image_path = seg.get("image_path", "")
-            break
+    object_canon_output: dict[str, Any] = {}
+    if strict:
+        approval_path = (
+            ctx.session_dir / "orchestrator" / "checkpoints"
+            / "object_canon_approval--global.json"
+        )
+        if not approval_path.is_file():
+            raise MeshGenerationError("Object Canon approval checkpoint is missing")
+        approval = json.loads(approval_path.read_text(encoding="utf-8"))
+        if (
+            approval.get("completion_state") != "completed"
+            or int(approval.get("plan_revision", 0)) != int(ctx.plan_revision)
+            or int(approval.get("approval_revision", 0)) <= 0
+        ):
+            raise MeshGenerationError("Object Canon approval is incomplete or stale")
+        object_canon_output = (
+            stage_outputs.get("object_isolation", {}).get(str(object_id), {})
+        )
+        evidence_path = Path(str(object_canon_output.get("evidence_path", "")))
+        if not evidence_path.is_file():
+            raise MeshGenerationError(f"Object Canon evidence is missing for {object_id}")
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        stored_evidence_hash = str(evidence.pop("document_sha256", ""))
+        if stored_evidence_hash != _contract_hash(evidence):
+            raise MeshGenerationError(f"Object Canon evidence hash mismatch for {object_id}")
+        evidence["document_sha256"] = stored_evidence_hash
+        if (
+            evidence.get("selected_manifest_sha256") != selected_manifest.get("manifest_sha256")
+            or evidence.get("plan_instance_id") != object_id
+            or evidence.get("canon_sha256") != selected_manifest.get("canon_sha256")
+            or int(evidence.get("plan_revision", 0)) != int(ctx.plan_revision)
+            or evidence.get("deterministic_verdict") != "green"
+        ):
+            raise MeshGenerationError(f"Object Canon binding is invalid for {object_id}")
+        image_path = str(evidence.get("rgba_path", ""))
+        if not Path(image_path).is_file() or hashlib.sha256(
+            Path(image_path).read_bytes()
+        ).hexdigest() != evidence.get("rgba_sha256"):
+            raise MeshGenerationError(f"Object Canon RGBA hash mismatch for {object_id}")
+    else:
+        # Retained non-strict path may consume historical segment outputs.
+        segment_output = stage_outputs.get("segment", {})
+        object_segment = None
+        if isinstance(segment_output, dict):
+            object_segment = segment_output.get(object_id, segment_output)
+        for seg in (object_segment or {}).get("segments", []):
+            if isinstance(seg, dict) and seg.get("object_id") == object_id:
+                image_path = seg.get("image_path", "")
+                break
+        if not image_path or not Path(image_path).exists():
+            for candidate in (
+                ctx.session_dir / "objects" / ctx.session_id / f"{object_id}.png",
+                ctx.session_dir / "objects" / f"{object_id}.png",
+            ):
+                if candidate.exists():
+                    image_path = str(candidate)
+                    break
 
-    # If no image path, try the objects directory directly
-    if not image_path or not Path(image_path).exists():
-        obj_png = ctx.session_dir / "objects" / ctx.session_id / f"{object_id}.png"
-        if obj_png.exists():
-            image_path = str(obj_png)
-        else:
-            # Try without session subdirectory
-            obj_png = ctx.session_dir / "objects" / f"{object_id}.png"
-            if obj_png.exists():
-                image_path = str(obj_png)
-
-    if not image_path or not Path(image_path).exists():
+    if not strict and (not image_path or not Path(image_path).exists()):
         # No cutout exists yet — run SAM3 text-prompted extraction for this object
         _log.info("  mesh_gen[%s]: No cutout found — running SAM3 extraction...", object_id[:8] if object_id else "?")
 
@@ -1017,13 +1098,7 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
                 return None
 
             try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    import concurrent.futures
-                    with concurrent.futures.ThreadPoolExecutor() as pool:
-                        cut_bytes = pool.submit(asyncio.run, _extract_cutout()).result(timeout=120)
-                else:
-                    cut_bytes = asyncio.run(_extract_cutout())
+                cut_bytes = await asyncio.wait_for(_extract_cutout(), timeout=120)
 
                 if cut_bytes and len(cut_bytes) > 1000:
                     import io
@@ -1080,7 +1155,9 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
         object_id=object_id or "",
         object_name="",
         image_path=image_path,
-        mask_coverage=1.0,
+        mask_coverage=float(
+            object_canon_output.get("metrics", {}).get("alpha_fraction_source", 1.0)
+        ),
         approved=True,
         provenance="raw_segmentation",
     )
@@ -1088,8 +1165,11 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     output_dir = ctx.session_dir / "meshes"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    def _approved_real_output(result: Any, generator: str) -> dict[str, Any]:
+    async def _approved_real_output(result: Any, generator: str) -> dict[str, Any]:
         mesh_path = Path(result.mesh_path).resolve()
+        mesh_sha256 = await asyncio.to_thread(
+            lambda: hashlib.sha256(mesh_path.read_bytes()).hexdigest()
+        )
         output: dict[str, Any] = {
             "status": "mesh_generation_complete",
             "object_id": object_id,
@@ -1097,14 +1177,16 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
             "generator": generator,
             "face_count": result.face_count,
             "vertex_count": result.vertex_count,
-            "mesh_sha256": hashlib.sha256(mesh_path.read_bytes()).hexdigest(),
+            "mesh_sha256": mesh_sha256,
             "degraded": False,
         }
         if strict:
             from src.unified_pipeline.strict_real_assets import normalize_generated_glb
 
             normalized_path = output_dir / "normalized" / f"{object_id}.glb"
-            evidence = normalize_generated_glb(mesh_path, normalized_path)
+            evidence = await asyncio.to_thread(
+                normalize_generated_glb, mesh_path, normalized_path
+            )
             output.update({
                 "mesh_path": evidence["normalized_path"],
                 "mesh_sha256": evidence["normalized_sha256"],
@@ -1120,19 +1202,14 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     # Try the real fallback chain: Hunyuan3D → Trellis2 → placeholder
     client = ComfyUIClient(base_url="http://127.0.0.1:8188", timeout_s=900)
 
-    # 1. Try Hunyuan3D 2.1
+    # 1. Try Hunyuan3D 2.1. Its GLB validation is CPU-heavy, so run the
+    # complete async generator in a worker thread without blocking FastAPI/SSE.
     try:
-        loop = asyncio.get_event_loop()
         hunyuan_gen = UnifiedHunyuan3DGenerator(client=client, output_dir=output_dir)
-
-        if loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                result = pool.submit(
-                    asyncio.run, hunyuan_gen.generate(obj_canon)
-                ).result(timeout=200)
-        else:
-            result = asyncio.run(hunyuan_gen.generate(obj_canon))
+        result = await asyncio.wait_for(
+            asyncio.to_thread(asyncio.run, hunyuan_gen.generate(obj_canon)),
+            timeout=200,
+        )
 
         mesh_path = Path(result.mesh_path)
         if (result.is_placeholder or not mesh_path.is_file()
@@ -1141,7 +1218,9 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
             raise MeshGenerationError("Hunyuan3D returned an invalid or placeholder mesh")
         _log.info("  mesh_gen[%s]: Hunyuan3D OK — %d faces, %d verts",
                   object_id[:8], result.face_count, result.vertex_count)
-        return _immediate(_approved_real_output(result, "hunyuan3d_v2.1"), ctx)
+        return _immediate(
+            await _approved_real_output(result, "hunyuan3d_v2.1"), ctx
+        )
 
     except Exception as exc:
         _log.warning("  mesh_gen[%s]: Hunyuan3D failed (%s) — trying Trellis2", object_id[:8], exc)
@@ -1150,14 +1229,10 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     try:
         trellis_gen = UnifiedTrellis2Generator(client=client, output_dir=output_dir)
 
-        if loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                result = pool.submit(
-                    asyncio.run, trellis_gen.generate(obj_canon)
-                ).result(timeout=930)
-        else:
-            result = asyncio.run(trellis_gen.generate(obj_canon))
+        result = await asyncio.wait_for(
+            asyncio.to_thread(asyncio.run, trellis_gen.generate(obj_canon)),
+            timeout=930,
+        )
 
         mesh_path = Path(result.mesh_path)
         if (result.is_placeholder or not mesh_path.is_file()
@@ -1166,7 +1241,7 @@ def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
             raise MeshGenerationError("Trellis2 returned an invalid or placeholder mesh")
         _log.info("  mesh_gen[%s]: Trellis2 OK — %d faces, %d verts",
                   object_id[:8], result.face_count, result.vertex_count)
-        return _immediate(_approved_real_output(result, "trellis2"), ctx)
+        return _immediate(await _approved_real_output(result, "trellis2"), ctx)
 
     except Exception as exc:
         if strict:
@@ -1546,6 +1621,7 @@ _DIRECT_HANDLERS: dict[str, Callable[[StageExecutionContext], StageResult]] = {
     "segment": _handle_segment,
     "depth_estimation": _handle_depth_estimation,
     "spatial_reconstruction": _handle_spatial_reconstruction,
+    "object_isolation": _handle_object_isolation,
     "mesh_generation": _handle_mesh_generation,
     "material_pass_1": _handle_material_pass_1,
     "parametric_room": _handle_parametric_room,

@@ -1,0 +1,570 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.2a.phase-a-preflight.v1",
+  "evidence_id": "1f5fbef8-26a2-40a1-9f59-f70db60d72bd",
+  "generated_at_utc": "2026-08-25T00:06:37.3347751Z",
+  "task": "11.8.2a",
+  "phase": "A",
+  "status": "PHASE_A_COMPLETE_PHASE_B_AWAITING_CONFIRMATION",
+  "phase_b_authorized": false,
+  "phase_b_executed": false,
+  "scope": {
+    "performed": [
+      "official-source documentation, license, model-size, and runtime-capability review",
+      "read-only host, GPU, storage, toolchain, service-ownership, and isolation inventory",
+      "local Ollama bounded compatibility and license/data-flow review with primary-agent adjudication",
+      "append-only evidence creation and non-mutating validation"
+    ],
+    "not_performed": [
+      "HY-World 2.0 or HY-WorldMirror model download or installation",
+      "environment, virtual environment, container, image, or service creation",
+      "inference, model loading, reconstruction, asset generation, or production-session startup",
+      "production code, test, UI, Scheduled Task, ComfyUI, or Ratchet watch modification",
+      "task completion, Demo Ready, Release Ready, or Platform Complete declaration",
+      "commit, push, or release action"
+    ]
+  },
+  "evidence_binding": {
+    "baseline_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "candidate_tree_fingerprint_algorithm": "candidate-tree-v1: SHA-256 initialized with raw ASCII HEAD plus LF; for each lexicographically sorted tracked or untracked nonignored path from git ls-files -z --cached --others --exclude-standard, append UTF-8 path, NUL, then raw file bytes with no post-content delimiter",
+    "pre_artifact_candidate_tree_fingerprint": "a84c7862b331e23fcb6d277539ed8b248cc771df4ad649ab5bb56969a0260ef5",
+    "pre_artifact_candidate_tree_path_count": 1894,
+    "bound_demo_run_id": "demo-golden-room-1bcb1c92-d3c8-4d1e-a691-0952bb1c200b",
+    "bound_prior_evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2-demo-golden-room-1bcb1c92-d3c8-4d1e-a691-0952bb1c200b.json",
+    "bound_prior_evidence_sha256": "96a3c99726bd791a1996cc298762ff4a0b98273308a5a80fdcdbfdc99a378f87",
+    "golden_room_input": {
+      "authoritative_image_bytes": 1964389,
+      "authoritative_image_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "comfy_input_mirror_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "workflow_bytes": 108962,
+      "workflow_sha256": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196"
+    },
+    "post_artifact_candidate_tree_fingerprint": null,
+    "post_artifact_candidate_tree_path_count": null,
+    "artifact_sha256": null,
+    "self_hash_note": "The artifact hash and post-artifact candidate fingerprint are validation outputs reported beside this immutable artifact; they are null here to avoid a self-referential hash."
+  },
+  "official_upstream": {
+    "source_repository": "Tencent-Hunyuan/HY-World-2.0",
+    "source_commit": "df9988efb87bfc0f4947eb3889411cf957478b06",
+    "source_commit_date_utc": "2026-08-12T16:15:11Z",
+    "source_tree": "6bc48461ce74934464974d56fa79d9165cf9efd3",
+    "source_tree_inventory": {
+      "classification": "MEASURED_FROM_OFFICIAL_GITHUB_TREE_API",
+      "blob_count": 488,
+      "declared_blob_bytes": 356198620,
+      "submodule_count": 1,
+      "tree_truncated": false,
+      "note": "Declared blob bytes do not include submodule contents, Git metadata, checkout expansion, environments, caches, or build products."
+    },
+    "model_repository": "tencent/HY-World-2.0",
+    "model_revision": "d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0",
+    "model_revision_last_modified_utc": "2026-05-21T03:25:37Z",
+    "worldmirror_subfolder": "HY-WorldMirror-2.0",
+    "worldmirror_files": {
+      "classification": "MEASURED_FROM_OFFICIAL_HUGGING_FACE_API_METADATA",
+      "total_bytes": 5053554466,
+      "entries": [
+        {
+          "path": "HY-WorldMirror-2.0/model.safetensors",
+          "bytes": 5053553272,
+          "lfs_sha256": "9fff06539d3d9e85338d7de1ffb5afffb7739fa5bf4d62b4b7c319b5ecdde54f"
+        },
+        {
+          "path": "HY-WorldMirror-2.0/README.md",
+          "bytes": 352
+        },
+        {
+          "path": "HY-WorldMirror-2.0/config.json",
+          "bytes": 842
+        }
+      ]
+    },
+    "full_model_repository_used_storage_bytes": {
+      "classification": "OFFICIAL_HUGGING_FACE_API_METADATA",
+      "value": 174734334870,
+      "decision": "PROHIBITED_FOR_PHASE_B_DOWNLOAD; acquire only HY-WorldMirror-2.0 files, never HY-Pano or the full repository"
+    },
+    "model_parameter_count": {
+      "classification": "OFFICIAL_DOCUMENTATION_APPROXIMATION",
+      "value": "approximately 1.2B"
+    },
+    "official_sources": [
+      "https://api.github.com/repos/Tencent-Hunyuan/HY-World-2.0/commits/main",
+      "https://api.github.com/repos/Tencent-Hunyuan/HY-World-2.0/git/trees/6bc48461ce74934464974d56fa79d9165cf9efd3?recursive=1",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/README.md",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/DOCUMENTATION.md",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/License.txt",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/requirements.txt",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/requirements_git.txt",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/hyworld2/worldrecon/pipeline.py",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/gradio_app.py",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/hyworld2/worldrecon/hyworldmirror/utils/inference_utils.py",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/hyworld2/worldrecon/hyworldmirror/utils/visual_util.py",
+      "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/df9988efb87bfc0f4947eb3889411cf957478b06/hyworld2/worldrecon/hyworldmirror/models/layers/attention.py",
+      "https://huggingface.co/api/models/tencent/HY-World-2.0",
+      "https://huggingface.co/api/models/tencent/HY-World-2.0/tree/main/HY-WorldMirror-2.0?recursive=true&expand=true",
+      "https://huggingface.co/tencent/HY-World-2.0/blob/d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0/HY-WorldMirror-2.0/README.md",
+      "https://huggingface.co/tencent/HY-World-2.0/blob/d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0/HY-WorldMirror-2.0/config.json"
+    ],
+    "benign_source_lookup_errors": [
+      {
+        "request": "https://raw.githubusercontent.com/Tencent-Hunyuan/HY-World-2.0/main/LICENSE",
+        "result": "HTTP 404: Not Found",
+        "resolution": "The official file is License.txt at the pinned commit."
+      },
+      {
+        "request": "pinned worldrecon/inference_utils.py path",
+        "result": "HTTP 404: Not Found",
+        "resolution": "The official file is hyworld2/worldrecon/hyworldmirror/utils/inference_utils.py."
+      }
+    ]
+  },
+  "license_review": {
+    "classification": "PRIMARY_AGENT_REVIEW_OF_OFFICIAL_LICENSE; NOT_LEGAL_ADVICE",
+    "license_name": "TENCENT HY-WORLD 2.0 COMMUNITY LICENSE AGREEMENT",
+    "release_date": "2026-04-15",
+    "acceptable_use_policy_last_modified": "2025-12-30",
+    "coverage": "software code, model, weights, and documentation",
+    "verdict": "CONDITIONAL_LOCAL_EVALUATION_ONLY; REDISTRIBUTION_NOT_CLEARED",
+    "conditions_and_restrictions": [
+      "The licensed territory excludes the European Union, United Kingdom, and South Korea.",
+      "An entity or affiliates exceeding one million monthly active users at release requires a separate Tencent license.",
+      "Redistribution requires the license, prominent modification notices, and required NOTICE/provider/non-affiliation disclosures.",
+      "Works and Outputs may not be used to improve another AI model except HY-World derivative works.",
+      "Outputs are not defined as model derivatives and Tencent claims no rights in Outputs, subject to license and applicable-law compliance.",
+      "The official Acceptable Use Policy remains binding."
+    ],
+    "phase_b_license_boundary": "If explicitly authorized, Phase B is limited to private local evaluation with no redistribution, publication, model training, or external input/output transmission. The operator must independently confirm territorial, MAU, organizational, and use-case eligibility before execution.",
+    "third_party_dependency_review": [
+      {
+        "component": "gsplat",
+        "observed_revision": "90d7b4b349e379ccf9ee6a8cef76aa40f48bb32e",
+        "observed_revision_date_utc": "2026-08-20T20:42:33Z",
+        "declared_license": "Apache-2.0",
+        "source": "https://github.com/nerfstudio-project/gsplat"
+      },
+      {
+        "component": "FlashAttention",
+        "observed_revision": "0251105a2fb19d2957484b7f023cd8c115286ced",
+        "observed_revision_date_utc": "2026-08-15T18:12:13Z",
+        "declared_license": "BSD-3-Clause",
+        "source": "https://github.com/Dao-AILab/flash-attention"
+      },
+      {
+        "component": "flash-attn PyPI source archive",
+        "version": "2.8.3.post1",
+        "bytes": 8451657,
+        "sha256": "55d5103ed846da8b56e0797acf4bde07dee4b1c7e8907fcfc6699c203030c348",
+        "source": "https://pypi.org/project/flash-attn/2.8.3.post1/"
+      },
+      {
+        "component": "fused-ssim",
+        "declared_license": "MIT",
+        "pin_status": "upstream requirements_git pins a revision; re-resolve and hash in authorized Phase B",
+        "source": "https://github.com/rahul-goel/fused-ssim"
+      },
+      {
+        "component": "spz v3.0.0",
+        "declared_license": "MIT",
+        "source": "https://github.com/nianticlabs/spz"
+      },
+      {
+        "component": "MoGe",
+        "declared_license": "MIT and Apache-2.0 notices observed",
+        "pin_status": "upstream requirements_git pins a revision; re-resolve and hash in authorized Phase B",
+        "source": "https://github.com/microsoft/MoGe"
+      },
+      {
+        "component": "recastnavigation submodule",
+        "observed_revision": "9f4ce64458dfae86e1239c525ddc219c4e9e06f1",
+        "declared_license": "zlib-style",
+        "source": "https://github.com/recastnavigation/recastnavigation"
+      }
+    ],
+    "unresolved_dependency_risks": [
+      "zim-anything 0.1 PyPI metadata declares no license.",
+      "The bundled custom gsplat_maskgaussian tree has no visible LICENSE in the inspected source tree.",
+      "The pinned nerfview LICENSE/license endpoint returned HTTP 404; provenance remains unresolved.",
+      "A complete transitive dependency and redistribution inventory has not been established."
+    ],
+    "decision": "These unresolved items do not authorize redistribution. They constrain any confirmed Phase B to isolated, private, local, nonredistributed evaluation and require fail-closed handling if installation reveals a stronger blocker."
+  },
+  "official_runtime_assessment": {
+    "recommended_platform": "Linux with CUDA 12.8 and Python 3.11 or newer; the official example uses Python 3.11.15",
+    "pinned_core_versions": {
+      "torch": "2.7.1",
+      "torchvision": "0.22.1",
+      "transformers": "5.2.0",
+      "diffusers": "0.36.0"
+    },
+    "single_gpu_cli": "python -m hyworld2.worldrecon.pipeline",
+    "single_gpu_supported_controls": [
+      "--enable_bf16",
+      "--disable_heads"
+    ],
+    "single_gpu_unsupported_or_inapplicable_controls": [
+      "fsdp_cpu_offload is an FSDP/multi-GPU feature",
+      "use_fsdp is ignored on a single GPU"
+    ],
+    "attention_dependency": "FlashAttention is imported by the WorldMirror attention path; FP16/BF16 routes through FA2 or FA3, making a compatible CUDA/native build a material prerequisite.",
+    "input_limits": {
+      "target_size_default_or_max_path": 952,
+      "video_default_max_frames": 32,
+      "image_directory_behavior": "Consumes supplied views."
+    },
+    "official_outputs": [
+      "depth PNG and NPY",
+      "normal maps",
+      "camera JSON",
+      "point-cloud PLY",
+      "Gaussian-splat PLY",
+      "optional COLMAP data",
+      "optional rendered videos"
+    ],
+    "not_officially_emitted_by_cli": [
+      "TSDF",
+      "mesh"
+    ],
+    "gradio_rejection": "The app defaults to 0.0.0.0:8081, can enable --share, starts a service, and does not expose every qualifying CLI control. Phase B must use one foreground CLI invocation with no port binding.",
+    "official_24gb_viability": "DEFER_UNPROVEN",
+    "official_24gb_reason": "No official peak-VRAM measurement or explicit 24 GB guarantee was found. A roughly 5.05 GB checkpoint and official single-GPU CLI do not prove that all required output heads complete on a 24 GB RTX 4090. BF16 is official; CPU offload is not an official single-GPU escape hatch.",
+    "qualifying_mode_if_authorized": "One conservative target_size=518 BF16 run with all default output heads retained. If it OOMs, do not silently disable required heads or invent a nonofficial offload mode; record FAIL or DEFER."
+  },
+  "host_inventory": {
+    "classification": "READ_ONLY_LOCAL_MEASUREMENT",
+    "windows": {
+      "edition": "Windows 11 Pro",
+      "build": "26200",
+      "python_versions_observed": [
+        "3.13.14",
+        "3.12"
+      ],
+      "git": "2.55.0.windows.3",
+      "git_lfs": "3.7.1",
+      "normal_path_absences": [
+        "conda",
+        "nvcc",
+        "CMake",
+        "Ninja",
+        "cl"
+      ],
+      "build_tools": "Visual Studio Build Tools 2019 exists with MSVC 14.29.30133 and vcvars64.bat, but no CUDA toolkit was found."
+    },
+    "wsl": {
+      "version": 2,
+      "default_distribution": "Ubuntu 24.04.1 LTS",
+      "user": "maccs55",
+      "home": "/home/maccs55",
+      "python": "3.12.3",
+      "gcc": "13.3.0",
+      "git": "2.43.0",
+      "missing_tools": [
+        "nvcc",
+        "CMake",
+        "Ninja"
+      ],
+      "ext4_free_bytes": 1008289660928,
+      "unprivileged_network_namespace_probe": {
+        "command": "unshare --user --map-root-user --net true",
+        "exit_code": 0,
+        "interpretation": "A fail-closed no-network inference namespace is available."
+      }
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 4090",
+      "uuid": "GPU-e3fa90fc-515d-bf9d-6fc6-4b67f32574a3",
+      "driver": "610.74",
+      "cuda_umd": "13.3",
+      "compute_capability": "8.9",
+      "vram_total_mib": 24564,
+      "vram_free_observed_range_mib": [
+        21210,
+        21232
+      ],
+      "vram_used_observed_mib": 2929,
+      "exclusive_launch_threshold_mib": 22500,
+      "current_ownership_gate": "BLOCKED_UNTIL_RECHECK; observed free VRAM is below the proposed threshold"
+    },
+    "ram": {
+      "total_bytes": 102747586560,
+      "approx_total_gib": 95.7,
+      "free_physical_kib_observed": 61723288
+    },
+    "windows_volumes": [
+      {
+        "drive": "B:",
+        "label": "LocalBackup",
+        "filesystem": "NTFS",
+        "free_bytes": 17865232998400
+      },
+      {
+        "drive": "C:",
+        "free_bytes": 512115048448
+      },
+      {
+        "drive": "E:",
+        "label": "Games",
+        "free_bytes": 524173815808
+      },
+      {
+        "drive": "D:",
+        "filesystem": "FAT32",
+        "suitability": "REJECTED_REMOVABLE"
+      }
+    ],
+    "docker": {
+      "desktop_state": "running with Linux containers",
+      "nvidia_runtime_present": true,
+      "local_image_count_observed": 48,
+      "phase_a_actions": "No image pulled and no container created or run."
+    }
+  },
+  "ownership_and_service_boundaries": {
+    "comfy_desktop": {
+      "endpoint_owner": "Comfy Desktop local instance",
+      "listen_address": "127.0.0.1:8188",
+      "observed_pid": 31500,
+      "command_contains": "--port 8188",
+      "queue_response": {
+        "queue_running": [],
+        "queue_pending": []
+      },
+      "rule": "The agent must not stop, kill, restart, reconfigure, or take port 8188 from Comfy Desktop."
+    },
+    "ratchet_watch": {
+      "scheduled_task": "Ratchet Watch Keepalive",
+      "observed_state_code": 1,
+      "rule": "Windows and its Scheduled Task own the watch process; Phase A made no Scheduled Task or watch change."
+    },
+    "phase_b_gpu_gate": [
+      "Recheck the Comfy queue and GPU process/memory inventory immediately before launch.",
+      "Require the queue to remain empty and free VRAM to be at least 22500 MiB.",
+      "Never stop or kill Comfy Desktop or another process to satisfy the gate.",
+      "If the gate is not green, return DEFER immediately.",
+      "Run at most one foreground WorldMirror GPU container/process, with no port binding."
+    ]
+  },
+  "fixed_phase_b_storage_budget": {
+    "classification": "PLANNED_HARD_CAP_ESTIMATE",
+    "total_bytes": 128849018880,
+    "total_gib": 120,
+    "placement": "/home/maccs55/ceo-kiro-isolated/worldmirror-phase-b/f4afd68f-8330-4ce8-a6e6-04ead5f9c669",
+    "host_free_space_at_preflight_bytes": 1008289660928,
+    "allocations": [
+      {
+        "category": "source_checkout",
+        "gib": 1
+      },
+      {
+        "category": "worldmirror_model",
+        "gib": 6
+      },
+      {
+        "category": "isolated_environment_or_container_layer",
+        "gib": 24
+      },
+      {
+        "category": "download_cache",
+        "gib": 24
+      },
+      {
+        "category": "build_and_temp",
+        "gib": 24
+      },
+      {
+        "category": "inputs",
+        "gib": 2
+      },
+      {
+        "category": "outputs",
+        "gib": 16
+      },
+      {
+        "category": "logs_and_evidence",
+        "gib": 1
+      },
+      {
+        "category": "safety_reserve",
+        "gib": 22
+      }
+    ],
+    "enforcement": "Measure root usage at each checkpoint. Stop before any operation that could exceed 120 GiB; do not spill into shared caches or another volume."
+  },
+  "proposed_phase_b_isolation": {
+    "attempt_id": "f4afd68f-8330-4ce8-a6e6-04ead5f9c669",
+    "authorized": false,
+    "root": "/home/maccs55/ceo-kiro-isolated/worldmirror-phase-b/f4afd68f-8330-4ce8-a6e6-04ead5f9c669",
+    "required_subpaths": [
+      "source",
+      "model/HY-WorldMirror-2.0",
+      "cache",
+      "build",
+      "input",
+      "output",
+      "strict-output",
+      "logs",
+      "evidence"
+    ],
+    "preferred_runtime": "An ephemeral, pinned-by-digest official NVIDIA PyTorch Linux container compatible with CUDA 12.8, Python >=3.11, PyTorch 2.7.1, RTX 4090/Ada, and FlashAttention native build requirements.",
+    "container_image_status": "UNRESOLVED_NOT_DOWNLOADED",
+    "container_image_rule": "Authorized Phase B must first resolve and record an exact official image tag and immutable digest. If no exact compatible image can be established within the setup budget, stop DEFER before model acquisition. No image reference or digest is invented by Phase A.",
+    "rejected_primary_paths": [
+      "Direct WSL virtualenv: WSL lacks nvcc, CMake, and Ninja; adding global CUDA weakens isolation and rollback.",
+      "Native Windows: no native CUDA toolkit is installed and official FlashAttention documentation says Windows compilation requires more testing.",
+      "Gradio: starts a service, defaults to 0.0.0.0, can share externally, and lacks the full qualifying CLI control surface."
+    ],
+    "local_only_controls": [
+      "Permit network only during bounded source, exact-model-subfolder, dependency, and image acquisition.",
+      "Record immutable source commit, model revision/LFS hash, image digest, and acquired artifact hashes.",
+      "Use the local checkpoint path; never allow implicit Hugging Face model acquisition during inference.",
+      "Set HF_HUB_OFFLINE=1, TRANSFORMERS_OFFLINE=1, HF_HUB_DISABLE_TELEMETRY=1, and DO_NOT_TRACK=1 before model load.",
+      "Use --sky_mask_source model to prevent the default skyseg.onnx network download.",
+      "Run inference with Docker --network none or inside unshare --user --map-root-user --net.",
+      "Do not use Gradio, --share, vLLM, cloud inference, cloud models, telemetry, or external input/output transmission.",
+      "Treat package openai in monolithic requirements as unused unless execution evidence proves otherwise; do not configure credentials."
+    ],
+    "data_flow_verdict": "The inspected WorldMirror CLI path showed no required telemetry, cloud inference, or vLLM path. The default sky-mask download is a known network edge and is explicitly disabled. Offline variables plus a no-network runtime are required as execution proof, not merely configuration intent.",
+    "cleanup_plan_not_executed": [
+      "Stop and remove only the exact ephemeral container created for attempt f4afd68f-8330-4ce8-a6e6-04ead5f9c669, if one exists.",
+      "Remove only /home/maccs55/ceo-kiro-isolated/worldmirror-phase-b/f4afd68f-8330-4ce8-a6e6-04ead5f9c669 after preserving requested evidence.",
+      "Remove only a Phase-B-specific Docker image/tag if it was newly pulled, is unshared, and its digest was first recorded.",
+      "Never run global Docker prune, delete shared caches/images, alter Comfy Desktop, or modify Scheduled Tasks."
+    ]
+  },
+  "proposed_phase_b_commands_not_executed": {
+    "status": "DOCUMENTATION_ONLY_NOT_EXECUTED",
+    "acquisition_outline": [
+      "Resolve an official CUDA-12.8 NVIDIA PyTorch image and record its immutable digest before pull/use.",
+      "Acquire Tencent-Hunyuan/HY-World-2.0 at exact commit df9988efb87bfc0f4947eb3889411cf957478b06 inside the isolated root and verify HEAD/tree.",
+      "Acquire only HY-WorldMirror-2.0/* at Hugging Face revision d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0 and verify model.safetensors SHA-256 9fff06539d3d9e85338d7de1ffb5afffb7739fa5bf4d62b4b7c319b5ecdde54f.",
+      "Build/install pinned requirements only inside the ephemeral container/root, recording resolved versions and hashes.",
+      "Copy the hash-bound Golden Room input into the isolated input directory and verify SHA-256 before model load."
+    ],
+    "environment": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_HUB_DISABLE_TELEMETRY": "1",
+      "DO_NOT_TRACK": "1"
+    },
+    "foreground_cli_argv_template": [
+      "python",
+      "-m",
+      "hyworld2.worldrecon.pipeline",
+      "--pretrained_model_name_or_path",
+      "<isolated-local-model-root>",
+      "--subfolder",
+      "HY-WorldMirror-2.0",
+      "--input_path",
+      "<isolated-hash-bound-golden-room-input-directory>",
+      "--output_path",
+      "<isolated-output>",
+      "--strict_output_path",
+      "<isolated-strict-output>",
+      "--target_size",
+      "518",
+      "--enable_bf16",
+      "--sky_mask_source",
+      "model",
+      "--no_interactive"
+    ],
+    "head_policy": "Do not pass --disable_heads for the qualifying attempt; retain all default heads so depth, normals, cameras, points, and Gaussian output can be evaluated.",
+    "runtime_wrapper": "One foreground GPU process/container, no ports, network disabled, isolated root mounted explicitly, and no host-global installation."
+  },
+  "phase_b_timebox_and_verdict_rules": {
+    "active_wall_clock_minutes": 60,
+    "clock_scope": "One continuous active clock covering image/toolchain resolution, source and model acquisition, dependency build/import, smoke check, one reconstruction, output loading, hashing, and evidence capture.",
+    "checkpoints": [
+      {
+        "by_minute": 20,
+        "requirement": "Exact image digest, isolated root, compatible toolchain/runtime, and storage accounting established."
+      },
+      {
+        "by_minute": 35,
+        "requirement": "Pinned dependencies import successfully and only the exact WorldMirror model subfolder is acquired and hash-verified."
+      },
+      {
+        "by_minute": 45,
+        "requirement": "Model loads under the one-GPU ownership gate with offline/no-network controls active."
+      },
+      {
+        "by_minute": 60,
+        "requirement": "One reconstruction completes; official outputs load locally; hashes, camera-aligned comparisons, resource measurements, and verdict evidence are recorded."
+      }
+    ],
+    "stop_immediately_on": [
+      "time or 120 GiB storage overrun",
+      "GPU OOM or unsafe ownership/queue state",
+      "network request or telemetry attempt during offline inference",
+      "source, model, image, dependency, or input hash mismatch",
+      "incompatible CUDA, Python, FlashAttention, or native build",
+      "license or provenance blocker",
+      "unloadable required output",
+      "need for multi-GPU or an unapproved cloud/placeholder substitute",
+      "no material visual improvement over the bound baseline"
+    ],
+    "pass_only_if": [
+      "The environment is isolated and reversibly removable within the exact cleanup boundary.",
+      "The exact official model loads in an official viable single-24GB mode without OOM or unsafe ownership.",
+      "One hash-bound Golden Room reconstruction completes with no external data transmission.",
+      "Required official outputs load locally and remain evidence only; MetricPlan and CameraContract retain spatial authority.",
+      "Approved-camera resemblance and novel-view coherence are materially better than the bound baseline under one common evaluation gate.",
+      "No placeholder, cloud substitute, restored session, or prior-version session is used as qualification evidence."
+    ],
+    "fail_or_defer_if": [
+      "Only multi-GPU execution works, or the required run exceeds 24 GB with no official viable single-GPU mode.",
+      "Setup, time, storage, native-build, or ownership limits are exceeded.",
+      "License/provenance or local-only proof is incomplete.",
+      "Required output is missing or unloadable.",
+      "The result does not materially improve approved-camera resemblance and novel-view coherence."
+    ],
+    "milestone_limit": "A Phase B PASS would be evaluation evidence only. It does not complete Task 11.8.2a by itself, does not start a replacement session, and does not establish Demo Ready or release qualification."
+  },
+  "ollama_review": {
+    "policy": "LOCAL_ONLY",
+    "models": [
+      {
+        "model": "gpt-oss:20b",
+        "subtask": "bounded compatibility and runtime-plan review"
+      },
+      {
+        "model": "llama3.1:latest",
+        "subtask": "bounded license and local-only data-flow review"
+      }
+    ],
+    "authority": "Drafting and screening only; all retained claims were checked against official sources or host measurements.",
+    "rejected_overclaims": [
+      "Python 3.12 was not classified as incompatible because upstream states Python 3.11 or newer.",
+      "The newer installed NVIDIA driver was not classified as incompatible solely because it is newer than the recommended CUDA runtime.",
+      "Checkpoint size was not treated as proof of peak-VRAM fit.",
+      "No unconditional commercial-use, redistribution, or 24GB-viability claim was accepted."
+    ],
+    "cloud_models_used": false,
+    "project_code_or_private_data_sent_to_cloud_model": false
+  },
+  "phase_a_conclusion": {
+    "license_verdict": "CONDITIONAL_LOCAL_EVALUATION_ONLY",
+    "storage_verdict": "PASS_FOR_PLANNING; 120 GiB isolated cap fits measured WSL ext4 free space",
+    "toolchain_verdict": "DEFER_TO_PINNED_EPHEMERAL_CONTAINER; host-native CUDA/FlashAttention toolchain is incomplete",
+    "gpu_verdict": "DEFER_UNPROVEN_AND_CURRENTLY_OWNERSHIP_BLOCKED",
+    "local_only_verdict": "PLANNED_CONTROLS_ARE_FEASIBLE; EXECUTION PROOF REQUIRES AUTHORIZED PHASE_B",
+    "overall_phase_b_readiness": "DEFER_PENDING_EXPLICIT_CONFIRMATION_AND_GREEN_PRELAUNCH_GATES",
+    "mvp_alignment": "This is one bounded decision gate on the visual-first critical path. Unrelated model exploration, integration, and polish remain frozen to protect the 6-8 active-coding-hour MVP target.",
+    "required_user_decision": "Do you explicitly authorize Phase B under these measured license, storage, isolation, cleanup, local-only, one-GPU, and 60-minute limits—yes or no?"
+  },
+  "preservation_attestation": {
+    "tasks_md_modified": false,
+    "task_11_8_2a_marked_complete": false,
+    "production_code_modified": false,
+    "tests_modified_or_run": false,
+    "ui_modified": false,
+    "scheduled_tasks_modified": false,
+    "comfy_desktop_modified_or_stopped": false,
+    "ratchet_watch_modified_or_agent_owned": false,
+    "hy_world_or_model_downloaded": false,
+    "environment_or_container_created": false,
+    "service_or_session_started": false,
+    "inference_run": false,
+    "asset_generated": false,
+    "commit_created": false
+  }
+}

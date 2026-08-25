@@ -13,6 +13,8 @@ Requirements:
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 import uuid
 from pathlib import Path
@@ -299,6 +301,305 @@ def apply_mask_to_image(
 
     logger.info("Saved Object_PNG: %s", output_path)
     return output_path
+
+
+def _build_bound_sam_workflow(
+    image_filename: str, prompt: str, filename_prefix: str,
+) -> dict[str, Any]:
+    """Build the installed text-conditioned SAM3 crop workflow."""
+    return {
+        "1": {"class_type": "LoadImage", "inputs": {"image": image_filename}},
+        "2": {
+            "class_type": "CheckpointLoaderSimple",
+            "inputs": {"ckpt_name": "sam3.1_multiplex_fp16.safetensors"},
+        },
+        "3": {
+            "class_type": "CLIPTextEncode",
+            "inputs": {"clip": ["2", 1], "text": prompt},
+        },
+        "4": {
+            "class_type": "SAM3_Detect",
+            "inputs": {
+                "model": ["2", 0],
+                "conditioning": ["3", 0],
+                "image": ["1", 0],
+                "threshold": 0.5,
+                "refine_iterations": 2,
+                "individual_masks": False,
+            },
+        },
+        "5": {
+            "class_type": "GrowMask",
+            "inputs": {"mask": ["4", 0], "expand": 2, "tapered_corners": True},
+        },
+        "6": {"class_type": "InvertMask", "inputs": {"mask": ["5", 0]}},
+        "7": {
+            "class_type": "JoinImageWithAlpha",
+            "inputs": {"image": ["1", 0], "alpha": ["6", 0]},
+        },
+        "8": {
+            "class_type": "SaveImage",
+            "inputs": {"images": ["7", 0], "filename_prefix": filename_prefix},
+        },
+    }
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _canonical_sha256(value: dict[str, Any]) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _retain_primary_mask_component(
+    alpha: np.ndarray,
+) -> tuple[np.ndarray, dict[str, Any]]:
+    """Remove detached SAM islands while preserving the dominant object component.
+
+    Components use 8-neighbor connectivity so diagonal anti-aliased object edges remain
+    attached. Original alpha values are retained inside the dominant component; every
+    other component becomes transparent.
+    """
+    if alpha.ndim != 2:
+        raise ValueError("alpha mask must be two-dimensional")
+
+    foreground = alpha > 127
+    labels = np.zeros(foreground.shape, dtype=np.int32)
+    height, width = foreground.shape
+    component_sizes: list[int] = []
+    label = 0
+
+    for y in range(height):
+        for x in range(width):
+            if not foreground[y, x] or labels[y, x] != 0:
+                continue
+            label += 1
+            labels[y, x] = label
+            stack = [(y, x)]
+            size = 0
+            while stack:
+                current_y, current_x = stack.pop()
+                size += 1
+                for neighbor_y in range(max(0, current_y - 1), min(height, current_y + 2)):
+                    for neighbor_x in range(max(0, current_x - 1), min(width, current_x + 2)):
+                        if (
+                            foreground[neighbor_y, neighbor_x]
+                            and labels[neighbor_y, neighbor_x] == 0
+                        ):
+                            labels[neighbor_y, neighbor_x] = label
+                            stack.append((neighbor_y, neighbor_x))
+            component_sizes.append(size)
+
+    if not component_sizes:
+        return alpha.copy(), {
+            "connectivity": 8,
+            "component_count_before": 0,
+            "component_pixel_counts_desc": [],
+            "retained_component_pixels": 0,
+            "removed_component_pixels": 0,
+            "cleanup_applied": False,
+        }
+
+    primary_label = max(
+        range(1, label + 1),
+        key=lambda candidate: (component_sizes[candidate - 1], -candidate),
+    )
+    retained_pixels = component_sizes[primary_label - 1]
+    foreground_pixels = int(foreground.sum())
+    cleaned = np.where(labels == primary_label, alpha, 0).astype(alpha.dtype, copy=False)
+    removed_pixels = foreground_pixels - retained_pixels
+    return cleaned, {
+        "connectivity": 8,
+        "component_count_before": len(component_sizes),
+        "component_pixel_counts_desc": sorted(component_sizes, reverse=True),
+        "retained_component_pixels": retained_pixels,
+        "removed_component_pixels": removed_pixels,
+        "cleanup_applied": removed_pixels > 0,
+    }
+
+
+def inspect_rgba_mask(
+    rgba_path: Path, *, source_size: tuple[int, int], source_bbox: tuple[int, int, int, int],
+) -> dict[str, Any]:
+    """Return deterministic mask metrics and fail-closed quality verdict."""
+    from PIL import Image
+
+    with Image.open(rgba_path) as image:
+        if image.mode != "RGBA":
+            raise QualityGateError("Object Canon output is not RGBA")
+        rgba = np.asarray(image)
+    alpha = rgba[:, :, 3]
+    mask = alpha > 127
+    crop_h, crop_w = mask.shape
+    source_w, source_h = source_size
+    expected_w = source_bbox[2] - source_bbox[0]
+    expected_h = source_bbox[3] - source_bbox[1]
+    if (crop_w, crop_h) != (expected_w, expected_h):
+        raise QualityGateError("Object Canon dimensions do not match approved detection bbox")
+    alpha_pixels = int(mask.sum())
+    alpha_fraction_crop = float(alpha_pixels / max(1, crop_w * crop_h))
+    alpha_fraction_source = float(alpha_pixels / max(1, source_w * source_h))
+    y1, x1, y2, x2 = _compute_mask_bbox(mask)
+    alpha_bbox_crop = [x1, y1, x2 + 1, y2 + 1] if alpha_pixels else [0, 0, 0, 0]
+    edge_fractions = {
+        "top": float(mask[0, :].mean()),
+        "bottom": float(mask[-1, :].mean()),
+        "left": float(mask[:, 0].mean()),
+        "right": float(mask[:, -1].mean()),
+    }
+    green = bool(
+        alpha_pixels > 0
+        and alpha_fraction_source >= MIN_COVERAGE_THRESHOLD
+        and 0.02 <= alpha_fraction_crop <= 0.95
+        and alpha_bbox_crop != [0, 0, 0, 0]
+    )
+    return {
+        "crop_size": [crop_w, crop_h],
+        "source_size": [source_w, source_h],
+        "source_bbox": list(source_bbox),
+        "alpha_pixels": alpha_pixels,
+        "alpha_fraction_crop": alpha_fraction_crop,
+        "alpha_fraction_source": alpha_fraction_source,
+        "alpha_bbox_crop": alpha_bbox_crop,
+        "edge_alpha_fractions": edge_fractions,
+        "nonempty": alpha_pixels > 0,
+        "rgba": True,
+        "quality_green": green,
+        "quality_policy": {
+            "minimum_source_coverage": MIN_COVERAGE_THRESHOLD,
+            "minimum_crop_coverage": 0.02,
+            "maximum_crop_coverage": 0.95,
+        },
+    }
+
+
+async def isolate_bound_detection(
+    canon_path: str | Path,
+    selected_object: dict[str, Any],
+    *,
+    output_dir: Path,
+    session_id: str,
+    selected_manifest: dict[str, Any],
+    comfyui_url: str = COMFYUI_URL,
+    timeout_s: int = SAM_TIMEOUT_S,
+) -> dict[str, Any]:
+    """Run real SAM3 for one detection already bound to one Plan instance."""
+    from PIL import Image
+    from src.photo_pipeline.comfyui_client import ComfyUIClient
+
+    canon = Path(canon_path)
+    if not canon.is_file() or _sha256_file(canon) != selected_manifest["canon_sha256"]:
+        raise SegmentationError("Canon file is missing or hash-mismatched")
+    plan_id = str(selected_object.get("plan_instance_id", ""))
+    detection_id = str(selected_object.get("detection_object_id", ""))
+    if not plan_id or not detection_id or selected_object.get("object_id") != plan_id:
+        raise SegmentationError("selected object lacks Plan-owned identity binding")
+    bbox_raw = selected_object.get("bbox")
+    if not isinstance(bbox_raw, list) or len(bbox_raw) != 4:
+        raise SegmentationError("selected object lacks approved detection bbox")
+
+    with Image.open(canon) as source:
+        source = source.convert("RGB")
+        source_size = source.size
+        x1, y1, x2, y2 = (int(value) for value in bbox_raw)
+        if not (0 <= x1 < x2 <= source.width and 0 <= y1 < y2 <= source.height):
+            raise SegmentationError("approved detection bbox is outside Canon")
+        crop = source.crop((x1, y1, x2, y2))
+
+    object_root = output_dir / plan_id
+    object_root.mkdir(parents=True, exist_ok=True)
+    prior_attempts = sorted(object_root.glob("attempt-*"))
+    object_dir = object_root / f"attempt-{len(prior_attempts) + 1}"
+    object_dir.mkdir(parents=False, exist_ok=False)
+    crop_path = object_dir / "source_crop.png"
+    rgba_path = object_dir / "object_canon.png"
+    mask_path = object_dir / "mask.png"
+    evidence_path = object_dir / "evidence.json"
+    crop.save(crop_path, format="PNG")
+
+    client = ComfyUIClient(base_url=comfyui_url, timeout_s=timeout_s, poll_interval_s=0.75)
+    if not await client.health_check():
+        raise SegmentationError("ComfyUI is unavailable for strict Object Canon isolation")
+    uploaded = await client.upload_image(crop_path)
+    prompt_text = f"the {str(selected_object.get('semantic_concept') or selected_object.get('name') or 'object')}"
+    workflow = _build_bound_sam_workflow(
+        uploaded,
+        prompt_text,
+        f"v16-object-canon-{plan_id[:12]}",
+    )
+    workflow_sha256 = _canonical_sha256(workflow)
+    prompt_id = await client.submit_workflow(
+        workflow, client_id=f"object-canon-{session_id[:32]}", timeout_s=timeout_s
+    )
+    await client.wait_for_completion(prompt_id, timeout_s=timeout_s)
+    await client.get_output_image(prompt_id, object_dir, rgba_path.name, node_id="8")
+
+    with Image.open(rgba_path) as isolated:
+        rgba = np.array(isolated.convert("RGBA"))
+    cleaned_alpha, component_cleanup = _retain_primary_mask_component(rgba[:, :, 3])
+    if component_cleanup["cleanup_applied"]:
+        rgba[:, :, 3] = cleaned_alpha
+        Image.fromarray(rgba, "RGBA").save(rgba_path, format="PNG")
+    Image.fromarray(cleaned_alpha, "L").save(mask_path, format="PNG")
+
+    metrics = inspect_rgba_mask(
+        rgba_path,
+        source_size=source_size,
+        source_bbox=(x1, y1, x2, y2),
+    )
+    metrics["component_cleanup"] = component_cleanup
+    if not metrics["quality_green"]:
+        raise QualityGateError(
+            f"Object Canon deterministic mask quality failed for {plan_id}: {metrics}"
+        )
+
+    evidence: dict[str, Any] = {
+        "schema_version": "plan-bound-object-canon/v1",
+        "status": "object_canon_isolated",
+        "session_id": session_id,
+        "plan_instance_id": plan_id,
+        "object_id": plan_id,
+        "manifest_id": str(selected_object.get("manifest_id", "")),
+        "detection_object_id": detection_id,
+        "detection_index": int(selected_object.get("detection_index", -1)),
+        "object_name": str(selected_object.get("name", "")),
+        "semantic_concept": str(selected_object.get("semantic_concept", "")),
+        "identity_authority": "approved_plan_instance_id",
+        "bbox_authority": "approved_canon_detection",
+        "canon_sha256": selected_manifest["canon_sha256"],
+        "metric_plan_sha256": selected_manifest["metric_plan_sha256"],
+        "plan_revision": selected_manifest["plan_revision"],
+        "camera_sha256": selected_manifest["camera_sha256"],
+        "blockout_approval_revision": selected_manifest["approval_revision"],
+        "blockout_approval_evidence_sha256": selected_manifest["blockout_approval_evidence_sha256"],
+        "selected_manifest_sha256": selected_manifest["manifest_sha256"],
+        "sam_service": comfyui_url,
+        "sam_model": "sam3.1_multiplex_fp16.safetensors",
+        "sam_prompt": prompt_text,
+        "sam_prompt_id": prompt_id,
+        "sam_workflow_sha256": workflow_sha256,
+        "source_crop_path": str(crop_path),
+        "source_crop_sha256": _sha256_file(crop_path),
+        "rgba_path": str(rgba_path),
+        "rgba_sha256": _sha256_file(rgba_path),
+        "mask_path": str(mask_path),
+        "mask_sha256": _sha256_file(mask_path),
+        "metrics": metrics,
+        "deterministic_verdict": "green",
+        "approved": False,
+    }
+    evidence["document_sha256"] = _canonical_sha256(evidence)
+    temporary = evidence_path.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(evidence, indent=2, sort_keys=True), encoding="utf-8")
+    temporary.replace(evidence_path)
+    evidence["evidence_path"] = str(evidence_path)
+    return evidence
 
 
 # ─── Main ObjectIsolator Class ──────────────────────────────────────────────────

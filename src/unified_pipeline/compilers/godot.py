@@ -396,6 +396,10 @@ class GodotCompiler:
             "instances": [item.to_dict() for item in contract.instances],
             "relationships": [item.to_dict() for item in contract.relationships],
             "lighting": contract.lighting.to_dict(),
+            "navigation": (
+                contract.navigation.to_dict()
+                if contract.navigation is not None else None
+            ),
             "door_hinges": [self._hinge_manifest(item) for item in hinges],
             "authority": {
                 "source": "one_canonical_world_contract",

@@ -186,8 +186,10 @@ class TestUnifiedTrellis2GeneratorSuccess:
 
         await gen.generate(object_canon)
 
+        prepared_path = tmp_path / "output" / "prepared_inputs" / "obj-chair-001.png"
+        assert prepared_path.is_file()
         gen._inner.generate.assert_called_once_with(
-            object_png=Path(object_canon.image_path),
+            object_png=prepared_path,
             mask_id="obj-chair-001",
             steps=18,
             target_triangles=12000,

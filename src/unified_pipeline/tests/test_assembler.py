@@ -152,8 +152,16 @@ def test_assembles_full_chain_and_binds_authoritative_values(tmp_path: Path) -> 
         {
             "body_id": collision.stable_id,
             "source_id": collision.geometry_id,
-            "center": dict(zip(("x", "y", "z"), collision.position_upbge)),
-            "dimensions": dict(zip(("x", "y", "z"), collision.dimensions_upbge)),
+            "center": {
+                "x": collision.position_upbge[0],
+                "y": collision.position_upbge[2],
+                "z": collision.position_upbge[1],
+            },
+            "dimensions": {
+                "x": collision.dimensions_upbge[0],
+                "y": collision.dimensions_upbge[2],
+                "z": collision.dimensions_upbge[1],
+            },
             "rotation": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0},
             "shape": collision.shape,
             "body_mode": collision.body_mode,
@@ -163,6 +171,22 @@ def test_assembles_full_chain_and_binds_authoritative_values(tmp_path: Path) -> 
     ]
     assert navigation.spawn_candidates[0].to_dict() == dict(
         zip(("x", "y", "z"), camera.position)
+    )
+    assert navigation.boundary_tolerance_m == pytest.approx(1e-9)
+    architecture = {
+        body.source_id: body for body in navigation.static_bodies
+        if body.source_kind == "architecture"
+    }
+    floor = architecture["room:floor"]
+    ceiling = architecture["room:ceiling"]
+    assert floor.dimensions.y == pytest.approx(0.1)
+    assert floor.center.y == pytest.approx(-0.05)
+    assert ceiling.dimensions.y == pytest.approx(0.1)
+    assert ceiling.center.y == pytest.approx(3.05)
+    assert all(
+        not (body.dimensions.y > 1.0 and abs(body.center.z) < body.dimensions.z / 2.0)
+        for body in architecture.values()
+        if body.source_id in {"room:floor", "room:ceiling"}
     )
     assert verify_hash(result.contract)
     assert result.contract_hash == result.contract.contract_hash
@@ -177,6 +201,85 @@ def test_assembles_full_chain_and_binds_authoritative_values(tmp_path: Path) -> 
         "vertex_count": 700,
         "generator": "hunyuan3d",
     }
+
+
+def test_y_up_navigation_path_has_no_phantom_floor_and_keeps_real_obstacles(tmp_path: Path) -> None:
+    """Probe the exact Browser player box against assembled Y-up collision bodies."""
+    camera = _camera()
+    plan = _plan(_placement("counter", 1.0))
+    room = _room(plan, camera)
+    counter = replace(
+        _intent("counter", _asset(tmp_path)),
+        physics_intent="static",
+    )
+    navigation = WorldContractAssembler().assemble(
+        plan,
+        camera,
+        room,
+        (counter,),
+        approved_plan_revision=3,
+        lighting=LightingConfig(),
+    ).contract.navigation
+    assert navigation is not None
+
+    def player_intersects(position: Vec3, body) -> bool:
+        player_center = Vec3(
+            position.x,
+            position.y - navigation.eye_height + navigation.player_height / 2.0,
+            position.z,
+        )
+        player_half = Vec3(
+            navigation.player_radius,
+            navigation.player_height / 2.0,
+            navigation.player_radius,
+        )
+        body_half = Vec3(
+            body.dimensions.x / 2.0,
+            body.dimensions.y / 2.0,
+            body.dimensions.z / 2.0,
+        )
+        return all(
+            abs(getattr(player_center, axis) - getattr(body.center, axis))
+            < getattr(player_half, axis) + getattr(body_half, axis) - 1e-9
+            for axis in ("x", "y", "z")
+        )
+
+    # The old Z-up tuple copy made the floor a vertical slab through z=0. A
+    # centerline walk now remains clear across that exact former phantom plane.
+    center_route = tuple(
+        Vec3(0.0, navigation.eye_height, z / 10.0)
+        for z in range(-12, 13, 2)
+    )
+    assert all(
+        not any(player_intersects(point, body) for body in navigation.static_bodies)
+        for point in center_route
+    )
+
+    counter_body = next(
+        body for body in navigation.static_bodies if body.source_id == "counter"
+    )
+    assert player_intersects(
+        Vec3(counter_body.center.x, navigation.eye_height, counter_body.center.z),
+        counter_body,
+    )
+
+    wall_bodies = [
+        body for body in navigation.static_bodies
+        if body.source_kind == "architecture" and "wall" in body.source_id
+    ]
+    assert wall_bodies
+    wall = max(wall_bodies, key=lambda body: body.dimensions.y)
+    assert player_intersects(
+        Vec3(wall.center.x, navigation.eye_height, wall.center.z), wall
+    )
+
+    opening = room.openings[0]
+    opening_center = Vec3(
+        opening.position_upbge[0],
+        navigation.eye_height,
+        opening.position_upbge[1],
+    )
+    assert not any(player_intersects(opening_center, body) for body in wall_bodies)
 
 
 def test_assembler_hash_binds_explicit_uuid_interactions(tmp_path: Path) -> None:

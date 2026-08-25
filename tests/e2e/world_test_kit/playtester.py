@@ -20,6 +20,18 @@ from tests.e2e.world_test_kit.config import WorldTestKitConfig
 
 logger = logging.getLogger(__name__)
 
+_CANONICAL_PROMPT = (
+    "Danny's kitchenette — a small, warm kitchen with a round table, two chairs, "
+    "a counter with a coffee maker, and a window looking out at rain."
+)
+_CANONICAL_OBJECT_REQUIREMENTS: tuple[tuple[str, int, tuple[str, ...]], ...] = (
+    ("round table", 1, ("round table", "table")),
+    ("chair", 2, ("chair",)),
+    ("counter", 1, ("counter", "countertop")),
+    ("coffee maker", 1, ("coffee maker", "coffee machine")),
+    ("window", 1, ("window",)),
+)
+
 _CANON_QA_EXPECTED: dict[str, bool | int] = {
     "kitchenette_geometry": True,
     "round_table_count": 1,
@@ -31,6 +43,9 @@ _CANON_QA_EXPECTED: dict[str, bool | int] = {
     "plausible_finishes": True,
     "no_duplicate_or_deformed_required_objects": True,
 }
+_CANON_QA_PRIMARY_MODEL_ROLE = "primary_count_screen"
+_CANON_QA_CROSS_CHECK_MODEL = "qwen3.6:27b"
+_CANON_QA_CROSS_CHECK_MODEL_ROLE = "independent_duplicate_screen"
 
 
 def _canon_qa_schema() -> dict[str, Any]:
@@ -58,7 +73,7 @@ def _canon_qa_schema() -> dict[str, Any]:
 
 
 def _validate_canon_qa_verdict(verdict: Any) -> tuple[bool, list[str]]:
-    """Validate the local vision verdict without Python truthiness coercion."""
+    """Validate one local vision screen without truthiness coercion."""
     import math
 
     errors: list[str] = []
@@ -90,6 +105,33 @@ def _validate_canon_qa_verdict(verdict: Any) -> tuple[bool, list[str]]:
             if type(actual) is not type(expected) or actual != expected:
                 errors.append(f"{name} must equal {expected!r}")
     return not errors, errors
+
+
+def _reconcile_canon_qa_verdicts(
+    primary: Any,
+    cross_check: Any,
+) -> tuple[bool, list[str]]:
+    """Require two independent screens to agree; confidence never breaks ties."""
+    errors: list[str] = []
+    for role, verdict in (
+        (_CANON_QA_PRIMARY_MODEL_ROLE, primary),
+        (_CANON_QA_CROSS_CHECK_MODEL_ROLE, cross_check),
+    ):
+        _passed, verdict_errors = _validate_canon_qa_verdict(verdict)
+        errors.extend(f"{role}: {error}" for error in verdict_errors)
+
+    primary_checks = primary.get("checks") if isinstance(primary, dict) else None
+    cross_checks = cross_check.get("checks") if isinstance(cross_check, dict) else None
+    if isinstance(primary_checks, dict) and isinstance(cross_checks, dict):
+        for name in _CANON_QA_EXPECTED:
+            if primary_checks.get(name) != cross_checks.get(name):
+                errors.append(
+                    f"cross-check disagreement for {name}: "
+                    f"{primary_checks.get(name)!r} != {cross_checks.get(name)!r}"
+                )
+    else:
+        errors.append("both screens must provide independently checkable evidence")
+    return not errors, list(dict.fromkeys(errors))
 
 
 # ---------------------------------------------------------------------------
@@ -208,6 +250,7 @@ class PlaytesterAgent:
         self._config = config
         self._session_id = session_id
         self._ollama_available: bool | None = None
+        self._world_prompt = ""
 
     @property
     def ollama_available(self) -> bool:
@@ -223,6 +266,7 @@ class PlaytesterAgent:
         In LLM mode: evaluates each response for quality before proceeding.
         """
         result = ConversationResult()
+        self._world_prompt = prompt.strip()
 
         if not self.ollama_available:
             result.scripted_mode = True
@@ -342,8 +386,8 @@ class PlaytesterAgent:
         """Wait for pipeline to advance through stages, approving gates.
 
         Uses stall detection: runs indefinitely as long as progress is being
-        made. Only fails if no new stage appears for stall_timeout_s (default
-        10 minutes). If pipeline_wait_s is 0, there's no hard deadline.
+        made. Only fails if no durable stage/object progress appears for
+        stall_timeout_s (default 15 minutes). If pipeline_wait_s is 0, there's no hard deadline.
         """
         stall_timeout = self._config.timeouts.stall_timeout_s
         hard_timeout = max_wait_s if max_wait_s else self._config.timeouts.pipeline_wait_s
@@ -357,20 +401,29 @@ class PlaytesterAgent:
         try:
             stages_seen: set[str] = set()
             last_progress_time = time.monotonic()
+            last_progress_marker: tuple[Any, ...] | None = None
 
             while True:
                 elapsed = time.monotonic() - start
-                stalled_for = time.monotonic() - last_progress_time
 
                 # Hard timeout (if set and > 0)
                 if hard_timeout > 0 and elapsed > hard_timeout:
                     logger.warning("Pipeline hard timeout after %.0fs", elapsed)
                     break
 
-                # Stall detection: no new stage for stall_timeout_s
+                # A single GPU stage can contain many independently completed objects.
+                # Use append-only backend progress as the watchdog signal so a healthy
+                # mesh batch is not mistaken for a stall merely because #stageTitle is
+                # unchanged. Sequence/objects advance only on durable progress events.
+                progress_marker = self._get_pipeline_progress_marker()
+                if progress_marker is not None and progress_marker != last_progress_marker:
+                    last_progress_marker = progress_marker
+                    last_progress_time = time.monotonic()
+
+                stalled_for = time.monotonic() - last_progress_time
                 if stalled_for > stall_timeout:
                     logger.warning(
-                        "Pipeline stalled — no new stage for %.0fs (last: %s)",
+                        "Pipeline stalled — no durable progress for %.0fs (last: %s)",
                         stalled_for,
                         result.stages_completed[-1] if result.stages_completed else "none",
                     )
@@ -806,13 +859,14 @@ class PlaytesterAgent:
             return False
 
     def _canon_visual_qa(self, session_id: str) -> bool:
-        """Run fail-closed local vision QA on the Canon source image."""
+        """Run two fail-closed local vision screens on the Canon source image."""
         import base64
-        from pathlib import Path
+        import hashlib
+        from datetime import datetime, timezone
+
         import httpx
 
-        project_root = Path(__file__).resolve().parents[3]
-        session_dir = project_root / "output" / session_id
+        session_dir = self._session_output_dir(session_id)
         canon_path = session_dir / "artifacts" / "canon.png"
         conversation_path = session_dir / "conversation.json"
         if not canon_path.is_file() or not conversation_path.is_file():
@@ -827,9 +881,7 @@ class PlaytesterAgent:
             ),
             "",
         )
-        qa_prompt = (
-            "Judge this Canon source image against the exact requested room. "
-            f"Request: {prompt}\n"
+        output_contract = (
             "Return only one JSON object with exactly this structure: "
             '{"pass":true,"failed_checks":[],"confidence":0.9,"checks":{'
             '"kitchenette_geometry":true,"round_table_count":1,'
@@ -837,62 +889,101 @@ class PlaytesterAgent:
             '"rain_window_count":1,"coherent_camera_openings":true,'
             '"plausible_finishes":true,'
             '"no_duplicate_or_deformed_required_objects":true}}. '
-            "Use observed integer counts, not guesses. Set pass true only when every "
-            "boolean is true, every count exactly matches, failed_checks is empty, "
-            "and confidence is at least 0.8."
+            "Use observed integer counts, not guesses. Any ambiguity, crop, fusion, "
+            "substitution, deformation, or duplicate is a failure. Set pass true only "
+            "when every boolean is true, every count exactly matches, failed_checks "
+            "is empty, and confidence is at least 0.8."
         )
-        payload = {
-            "model": self._config.vision_model,
-            "messages": [{
-                "role": "user",
-                "content": qa_prompt,
-                "images": [base64.b64encode(canon_path.read_bytes()).decode("ascii")],
-            }],
-            "stream": False,
-            "keep_alive": 0,
-            "format": _canon_qa_schema(),
-            "options": {"temperature": 0.0, "num_predict": 512},
+        qa_prompts = {
+            _CANON_QA_PRIMARY_MODEL_ROLE: (
+                "Judge this Canon source image against the exact requested room. "
+                f"Request: {prompt}\n{output_contract}"
+            ),
+            _CANON_QA_CROSS_CHECK_MODEL_ROLE: (
+                "Independently audit this Canon image. Ignore any earlier verdict. "
+                "Scan left, center, and right regions; count every visually distinct "
+                "required object, including every separate coffee-making appliance. "
+                "A second machine-like appliance on the counter is a duplicate even "
+                "when its styling differs. "
+                f"Request: {prompt}\n{output_contract}"
+            ),
         }
-        raw_verdict: Any
-        try:
-            with httpx.Client(timeout=self._config.timeouts.vision_eval_s) as client:
-                response = client.post(
-                    f"{self._config.ollama_base_url}/api/chat", json=payload
-                )
-                response.raise_for_status()
-            content = response.json().get("message", {}).get("content", "")
-            raw_verdict = json.loads(content)
-        except (httpx.HTTPError, OSError, ValueError, TypeError) as exc:
-            raw_verdict = {
-                "pass": False,
-                "failed_checks": [f"vision QA error: {exc}"],
-                "confidence": 0.0,
-                "checks": {},
+        encoded_image = base64.b64encode(canon_path.read_bytes()).decode("ascii")
+
+        def request_verdict(model: str, role: str) -> dict[str, Any]:
+            payload = {
+                "model": model,
+                "messages": [{
+                    "role": "user",
+                    "content": qa_prompts[role],
+                    "images": [encoded_image],
+                }],
+                "stream": False,
+                "keep_alive": 0,
+                "format": _canon_qa_schema(),
+                "options": {
+                    "temperature": 0.0,
+                    "num_predict": (
+                        1024 if role == _CANON_QA_CROSS_CHECK_MODEL_ROLE else 512
+                    ),
+                },
             }
+            if role == _CANON_QA_CROSS_CHECK_MODEL_ROLE:
+                # qwen3.6 may otherwise consume its response budget in hidden
+                # reasoning and return no structured verdict. Counting needs no
+                # chain-of-thought; fail-closed reconciliation still applies.
+                payload["think"] = False
+            try:
+                with httpx.Client(timeout=self._config.timeouts.vision_eval_s) as client:
+                    response = client.post(
+                        f"{self._config.ollama_base_url}/api/chat", json=payload
+                    )
+                    response.raise_for_status()
+                content = response.json().get("message", {}).get("content", "")
+                value = json.loads(content)
+                return value if isinstance(value, dict) else {}
+            except (httpx.HTTPError, OSError, ValueError, TypeError) as exc:
+                return {
+                    "pass": False,
+                    "failed_checks": [f"vision QA error: {exc}"],
+                    "confidence": 0.0,
+                    "checks": {},
+                }
 
-        passed, validation_errors = _validate_canon_qa_verdict(raw_verdict)
-        raw_failed = raw_verdict.get("failed_checks", []) if isinstance(raw_verdict, dict) else []
-        failed_checks = [
-            str(item) for item in raw_failed if isinstance(item, str)
-        ] + validation_errors
-        confidence = raw_verdict.get("confidence", 0.0) if isinstance(raw_verdict, dict) else 0.0
-        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
-            confidence = 0.0
-        import hashlib
-        from datetime import datetime, timezone
-
+        primary = request_verdict(
+            self._config.vision_model, _CANON_QA_PRIMARY_MODEL_ROLE
+        )
+        cross_check = request_verdict(
+            _CANON_QA_CROSS_CHECK_MODEL, _CANON_QA_CROSS_CHECK_MODEL_ROLE
+        )
+        passed, validation_errors = _reconcile_canon_qa_verdicts(
+            primary, cross_check
+        )
+        raw_failed = [
+            str(item)
+            for verdict in (primary, cross_check)
+            for item in verdict.get("failed_checks", [])
+            if isinstance(item, str)
+        ]
         evidence = {
-            "schema_version": "canon-vision-qa/v2",
+            "schema_version": "canon-vision-qa/v3",
             "session_id": session_id,
             "source_prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
             "canon_sha256": hashlib.sha256(canon_path.read_bytes()).hexdigest(),
-            "vision_model": self._config.vision_model,
-            "checklist_version": "v16-strict-real-r1",
+            "vision_models": {
+                _CANON_QA_PRIMARY_MODEL_ROLE: self._config.vision_model,
+                _CANON_QA_CROSS_CHECK_MODEL_ROLE: _CANON_QA_CROSS_CHECK_MODEL,
+            },
+            "checklist_version": "v16-strict-real-r2",
             "evaluated_at": datetime.now(timezone.utc).isoformat(),
             "pass": passed,
-            "failed_checks": list(dict.fromkeys(failed_checks)),
-            "confidence": float(confidence),
-            "checks": raw_verdict.get("checks", {}) if isinstance(raw_verdict, dict) else {},
+            "failed_checks": list(dict.fromkeys(raw_failed + validation_errors)),
+            "screens": {
+                _CANON_QA_PRIMARY_MODEL_ROLE: primary,
+                _CANON_QA_CROSS_CHECK_MODEL_ROLE: cross_check,
+            },
+            "screen_only": True,
+            "release_authority": "headed_human_visual_inspection",
         }
         qa_path = session_dir / "artifacts" / "canon_vision_qa.json"
         temporary = qa_path.with_suffix(".json.tmp")
@@ -1027,10 +1118,7 @@ class PlaytesterAgent:
                     )
                     picker.raise_for_status()
                     objects = picker.json().get("objects", [])
-                    selected_ids = [
-                        item.get("object_id", item.get("id"))
-                        for item in objects if isinstance(item, dict)
-                    ]
+                    selected_ids = self._select_blockout_object_ids(objects)
                     if not selected_ids:
                         raise RuntimeError("strict-real picker returned no selectable objects")
                     payload["selected_object_ids"] = selected_ids
@@ -1055,6 +1143,69 @@ class PlaytesterAgent:
             if approval_attempted and session_id:
                 return self._durable_gate_accepted(session_id, gate, selected_ids)
             return False
+
+    def _select_blockout_object_ids(self, objects: list[Any]) -> list[object]:
+        """Select explicit canonical inventory; preserve legacy behavior otherwise."""
+        selectable = [
+            item for item in objects
+            if isinstance(item, dict)
+            and item.get("object_id", item.get("id")) is not None
+        ]
+        if self._world_prompt != _CANONICAL_PROMPT:
+            return [item.get("object_id", item.get("id")) for item in selectable]
+
+        selected: list[object] = []
+        used: set[str] = set()
+        for label, count, aliases in _CANONICAL_OBJECT_REQUIREMENTS:
+            matches = []
+            for item in selectable:
+                object_id = item.get("object_id", item.get("id"))
+                normalized_name = " ".join(str(item.get("name", "")).lower().split())
+                if str(object_id) in used:
+                    continue
+                if any(alias in normalized_name for alias in aliases):
+                    matches.append(object_id)
+            if len(matches) < count:
+                raise RuntimeError(
+                    f"canonical blockout is missing required {label}: "
+                    f"needed {count}, found {len(matches)}"
+                )
+            for object_id in matches[:count]:
+                selected.append(object_id)
+                used.add(str(object_id))
+
+        logger.info(
+            "Canonical blockout selection bound %d required objects (from %d detections)",
+            len(selected),
+            len(selectable),
+        )
+        return selected
+
+    def _get_pipeline_progress_marker(self) -> tuple[Any, ...] | None:
+        """Return the latest append-only progress identity for stall detection."""
+        try:
+            progress_path = (
+                self._session_output_dir(self._session_id)
+                / "orchestrator"
+                / "progress.jsonl"
+            )
+            for raw_line in reversed(progress_path.read_text(encoding="utf-8").splitlines()):
+                if not raw_line.strip():
+                    continue
+                event = json.loads(raw_line)
+                if not isinstance(event, dict):
+                    continue
+                return (
+                    event.get("sequence"),
+                    event.get("current_stage"),
+                    event.get("state"),
+                    event.get("object_id"),
+                    event.get("objects_complete"),
+                    event.get("objects_total"),
+                )
+        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+            return None
+        return None
 
     def _get_current_stage(self) -> str | None:
         """Get the current pipeline stage from the V16 UI."""

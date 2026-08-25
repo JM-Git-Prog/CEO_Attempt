@@ -1,0 +1,160 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.2a.phase-b-retry-verdict.v1",
+  "evidence_id": "d7c1e0be-85cd-43b7-ac4b-6cce30e86cf7",
+  "recorded_at_utc": "2026-08-25T00:24:28.5972908Z",
+  "task": "11.8.2a",
+  "phase": "B_RETRY",
+  "verdict": "DEFER",
+  "retry_scope": "One bounded retry under the user-approved 21,316 MiB free-VRAM launch threshold.",
+  "completion_effect": {
+    "task_11_8_2a_remains_complete": true,
+    "task_11_8_3_ready_to_proceed": true,
+    "task_11_8_3_status_changed": false,
+    "parent_or_downstream_status_changed": false,
+    "demo_ready_or_release_ready_claimed": false
+  },
+  "evidence_bindings": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "phase_a_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-a-worldmirror-preflight-1f5fbef8-26a2-40a1-9f59-f70db60d72bd.json",
+    "phase_a_sha256": "febc7c2d5eee5e71cc81707926b573fef4a26054ed0c61ae77d437dd245881af",
+    "original_authorization_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-b-authorization-5e91d04c-1e96-43d5-b067-625b9f344a9a.json",
+    "original_authorization_sha256": "0640f121c59ebadbd549f09eeebb1710854af5e38980586af959ebe97ec00a2a",
+    "prior_defer_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-b-defer-3d8bbfba-3e73-4a71-a3d9-04f523a4f8ec.json",
+    "prior_defer_sha256": "0165fd3c7a53dc6b8d88f0d5f2f368c185013ea02fbe16552d9fb42a8245960b",
+    "threshold_override_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-b-threshold-override-01349e81-648e-4bb6-8624-8894bf1eb1b6.json",
+    "threshold_override_sha256": "f36e8d56c2242f20f8b75126383eaeea73362fb80d51facd53df743147c3471f",
+    "threshold_override_exact_statement": "21,316 MiB free is fine for the launch threshold",
+    "pre_verdict_candidate_tree_fingerprint": "8b1d893f607bd968854c13a963abe4ef7db4964c19f90c6e333282b90022b29f",
+    "pre_verdict_candidate_tree_path_count": 1898,
+    "candidate_tree_fingerprint_algorithm": "candidate-tree-v1: SHA-256 initialized with raw ASCII HEAD plus LF; for each lexicographically sorted tracked or untracked nonignored path from git ls-files -z --cached --others --exclude-standard, append UTF-8 path, NUL, then raw file bytes with no post-content delimiter"
+  },
+  "prelaunch_ownership_gate": {
+    "checked_at_utc": "2026-08-25T00:24:09.1724134Z",
+    "comfy_endpoint": "http://127.0.0.1:8188/queue",
+    "queue_running": [],
+    "queue_pending": [],
+    "queue_gate": "PASS",
+    "comfy_listener_pid": 31500,
+    "comfy_owner_name": "python.exe",
+    "comfy_owner_command_line": "C:\\Users\\JohnM\\ComfyUI-Installs\\ComfyUI\\ComfyUI\\.venv\\Scripts\\python.exe -s ComfyUI\\main.py --feature-flag show_signin_button=true --enable-manager --disable-dynamic-vram --port 8188 --extra-model-paths-config \"C:\\Users\\JohnM\\AppData\\Roaming\\Comfy Desktop\\instance-model-paths\\inst-1780733089879.yaml\" --input-directory C:\\Users\\JohnM\\ComfyUI-Shared\\input --output-directory \"C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\"",
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 4090",
+      "uuid": "GPU-e3fa90fc-515d-bf9d-6fc6-4b67f32574a3",
+      "memory_total_mib": 24564,
+      "memory_used_mib": 16328,
+      "memory_free_mib": 7811,
+      "utilization_percent": 39,
+      "user_approved_minimum_free_mib": 21316,
+      "shortfall_mib": 13505,
+      "memory_gate": "FAIL"
+    },
+    "overall_gate": "FAIL",
+    "exact_blocker": "Observed free GPU memory was 7,811 MiB, which is 13,505 MiB below the user-approved one-attempt minimum of 21,316 MiB. The Comfy queue was empty, but both conditions were mandatory.",
+    "ownership_action": "No process was stopped, killed, restarted, reconfigured, or otherwise disturbed. Comfy Desktop retained ownership of port 8188 and Windows retained ownership of the Ratchet watch.",
+    "threshold_not_silently_lowered": true
+  },
+  "execution": {
+    "continuous_60_minute_clock_started": false,
+    "reason_clock_not_started": "The mandatory prelaunch ownership gate failed before acquisition.",
+    "isolated_root": "/home/maccs55/ceo-kiro-isolated/worldmirror-phase-b/f4afd68f-8330-4ce8-a6e6-04ead5f9c669",
+    "isolated_root_exists_after_stop": false,
+    "isolated_root_cap_bytes": 128849018880,
+    "isolated_root_bytes_created": 0,
+    "container_image_tag": null,
+    "container_image_digest": null,
+    "container_created_or_run": false,
+    "source_acquired": false,
+    "model_acquired": false,
+    "dependencies_acquired_or_installed": false,
+    "environment_created": false,
+    "input_copied": false,
+    "model_loaded": false,
+    "inference_run": false,
+    "official_cli_argv": null,
+    "reason": "The explicit retry instructions require a new DEFER and immediate stop when current free VRAM is below 21,316 MiB. No image resolution, root creation, acquisition, build, load, or reconstruction was permitted after that result."
+  },
+  "planned_but_not_executed_configuration": {
+    "target_size": 518,
+    "precision": "BF16",
+    "heads": "all default heads retained",
+    "sky_mask_source": "model",
+    "interactive_or_service_mode": false,
+    "inference_network": "disabled",
+    "offline_environment": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_HUB_DISABLE_TELEMETRY": "1",
+      "DO_NOT_TRACK": "1"
+    }
+  },
+  "acquisitions_and_hashes": {
+    "items": [],
+    "expected_source_commit_not_acquired": "df9988efb87bfc0f4947eb3889411cf957478b06",
+    "expected_model_revision_not_acquired": "d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0",
+    "expected_model_lfs_sha256_not_acquired": "9fff06539d3d9e85338d7de1ffb5afffb7739fa5bf4d62b4b7c319b5ecdde54f",
+    "full_model_repository_acquired": false
+  },
+  "timing_and_resources": {
+    "prelaunch_checked_at_utc": "2026-08-25T00:24:09.1724134Z",
+    "defer_recorded_at_utc": "2026-08-25T00:24:28.5972908Z",
+    "active_acquisition_minutes": 0,
+    "peak_worldmirror_vram_mib": 0,
+    "peak_worldmirror_ram_bytes": 0,
+    "worldmirror_disk_bytes": 0,
+    "note": "No WorldMirror process, environment, or container existed, so no WorldMirror runtime resource peak was produced."
+  },
+  "outputs": {
+    "official_outputs_emitted": [],
+    "hashes": [],
+    "loadability": "NOT_RUN_PRELAUNCH_GATE_DEFER",
+    "tsdf_claimed": false,
+    "mesh_claimed": false
+  },
+  "visual_assessment": {
+    "approved_camera_resemblance": "NOT_EVALUATED",
+    "novel_view_coherence": "NOT_EVALUATED",
+    "local_ollama_visual_gate_run": false,
+    "reason": "No reconstruction was permitted after the failed prelaunch gate; visual screening would have no artifact to inspect."
+  },
+  "local_only_proof": {
+    "inference_network_mode": "NOT_APPLICABLE_NO_INFERENCE",
+    "external_project_input_or_output_transmission": false,
+    "cloud_model_used": false,
+    "gradio_started": false,
+    "ports_bound_by_retry": [],
+    "share_enabled": false,
+    "vllm_used": false,
+    "telemetry_used": false,
+    "ollama_used_for_retry": false,
+    "note": "No acquisition or inference occurred after the fail-closed prelaunch check."
+  },
+  "cleanup": {
+    "required": false,
+    "performed": false,
+    "status": "NOT_NEEDED",
+    "isolated_root_exists": false,
+    "wsl_distribution_verified": "Ubuntu",
+    "global_docker_prune_run": false,
+    "shared_cache_or_image_deleted": false,
+    "comfy_modified": false,
+    "scheduled_task_modified": false
+  },
+  "authority_preservation": {
+    "metric_plan_remains_sole_spatial_authority": true,
+    "camera_contract_authority_changed": false,
+    "worldmirror_evidence_promoted_to_authority": false
+  },
+  "preservation_attestation": {
+    "prior_defer_edited_deleted_or_relabelled": false,
+    "production_code_modified": false,
+    "tests_modified": false,
+    "ui_modified": false,
+    "pipeline_or_release_session_created": false,
+    "asset_generated": false,
+    "commit_created": false,
+    "unrelated_worktree_changes_modified": false
+  },
+  "recommendation": "Freeze WorldMirror for this milestone and proceed directly to Task 11.8.3 fixed-recliner bake-off without expanding model exploration.",
+  "mvp_alignment": "The retry DEFER protects the active 6–8 coding-hour MVP target by obeying the one-attempt launch threshold and returning directly to the fixed-recliner critical path."
+}

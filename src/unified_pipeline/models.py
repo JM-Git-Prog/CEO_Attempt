@@ -269,6 +269,7 @@ class MetricPlan:
     openings: tuple[dict[str, Any], ...] = ()
     object_placements: tuple[dict[str, Any], ...] = ()
     circulation_paths: tuple[dict[str, Any], ...] = ()
+    relationships: tuple[dict[str, Any], ...] = ()
     revisions: tuple[PlanRevision, ...] = ()
     template_id: str = ""
 
@@ -279,6 +280,7 @@ class MetricPlan:
             "openings": [dict(o) for o in self.openings],
             "object_placements": [dict(p) for p in self.object_placements],
             "circulation_paths": [dict(c) for c in self.circulation_paths],
+            "relationships": [dict(r) for r in self.relationships],
             "revisions": [r.to_dict() for r in self.revisions],
             "template_id": self.template_id,
         }
@@ -294,6 +296,9 @@ class MetricPlan:
             ),
             circulation_paths=tuple(
                 dict(c) for c in data.get("circulation_paths", [])
+            ),
+            relationships=tuple(
+                dict(r) for r in data.get("relationships", [])
             ),
             revisions=tuple(
                 PlanRevision.from_dict(r) for r in data.get("revisions", [])

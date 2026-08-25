@@ -31,9 +31,8 @@ from src.unified_pipeline.orchestrator import (
     StageSpec,
     UnifiedOrchestrator,
 )
-from src.unified_pipeline.stage_handlers import (
-    build_handlers,
-)
+from src.unified_pipeline.qualification import _build_qualification_handlers
+from src.unified_pipeline.stage_handlers import GPU_STAGES
 
 
 # ---------------------------------------------------------------------------
@@ -82,12 +81,35 @@ def _run(coro):
 
 
 def test_full_mocked_pipeline_runs_danny_kitchenette_to_completion(tmp_path):
-    """Wire build_handlers() into an orchestrator and run through all stages.
+    """Run the complete durable stage graph through explicit offline seams.
 
-    GPU stages return pending; mock reconciliation succeeds them.
-    Verify the pipeline reaches completed with all stages visited in order.
+    Model-backed stages are replaced with pending jobs; mock reconciliation
+    succeeds them without contacting live services. All remaining stages use
+    the qualification harness's deterministic offline handlers. Verify the
+    pipeline reaches completed with all configured stages visited in order.
     """
-    handlers = build_handlers()
+    handlers = _build_qualification_handlers()
+
+    def _mock_gpu_stage(ctx):
+        return StageResult.pending(
+            f"mock-{ctx.stage}-{ctx.object_id or 'global'}",
+            plan_revision=ctx.plan_revision,
+        )
+
+    for stage_name in GPU_STAGES:
+        handlers[stage_name] = _mock_gpu_stage
+
+    def _mock_automated_validation(ctx):
+        return StageResult(
+            output={
+                "status": "automated_final_validation_passed",
+                "passed": True,
+                "report": {"passed": True, "failures": []},
+            },
+            plan_revision=ctx.plan_revision,
+        )
+
+    handlers["automated_final_validation"] = _mock_automated_validation
 
     # Override conversation handler to bootstrap plan_revision=1 into the pipeline.
     # In production, the conversation/brief stage seeds the plan revision; the mock
@@ -165,17 +187,22 @@ def test_full_mocked_pipeline_runs_danny_kitchenette_to_completion(tmp_path):
         f"stuck at stage={result.stage}, state={result.state}, msg={result.message}"
     )
 
-    # Verify stage order: key ordering constraints from requirements
+    # Verify current Canon-first stage order and publication checks.
     stage_names = [spec.name for spec in DEFAULT_STAGE_SPECS]
-    assert stage_names.index("plan_solve") < stage_names.index("plan_normalize")
-    assert stage_names.index("plan_normalize") < stage_names.index("plan_validate")
-    assert stage_names.index("plan_validate") < stage_names.index("camera_contract")
-    assert stage_names.index("structural_gates") < stage_names.index("compile")
-    assert stage_names.index("compile") < stage_names.index("parity_gate")
-    assert stage_names.index("parity_gate") < stage_names.index("final_events")
-    assert stage_names[-1] == "warehouse_catalog"
+    assert stage_names.index("brief") < stage_names.index("dream_preview")
+    assert stage_names.index("dream_preview") < stage_names.index("canon_generation")
+    assert stage_names.index("canon_generation") < stage_names.index("canon_approval")
+    assert stage_names.index("canon_approval") < stage_names.index("segment")
+    assert stage_names.index("spatial_reconstruction") < stage_names.index("blockout_approval")
+    assert stage_names.index("blockout_approval") < stage_names.index("object_isolation")
+    assert stage_names.index("object_isolation") < stage_names.index("object_canon_approval")
+    assert stage_names.index("object_canon_approval") < stage_names.index("mesh_generation")
+    assert stage_names.index("world_contract") < stage_names.index("compile")
+    assert stage_names.index("compile") < stage_names.index("automated_final_validation")
+    assert stage_names.index("automated_final_validation") < stage_names.index("final_world_qa")
+    assert stage_names[-1] == "mode_toggle"
 
-    # Verify all five approval gates blocked downstream at some point
+    # Verify every configured approval gate blocked downstream at some point
     approval_stage_names = [spec.name for spec in DEFAULT_STAGE_SPECS if spec.approval_for]
     for gate in approval_stage_names:
         assert gate in visited_stages, f"Approval gate {gate} was never encountered"

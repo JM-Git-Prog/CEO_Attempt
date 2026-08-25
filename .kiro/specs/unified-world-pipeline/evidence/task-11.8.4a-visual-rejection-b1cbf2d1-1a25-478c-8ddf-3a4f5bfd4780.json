@@ -1,0 +1,55 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.visual-rejection.v1",
+  "evidence_id": "b1cbf2d1-1a25-478c-8ddf-3a4f5bfd4780",
+  "recorded_at_utc": "2026-08-25T12:03:21.4724594Z",
+  "task": "11.8.4a",
+  "result": "EXPLICIT_VISUAL_REJECTION",
+  "rejected_candidate": {
+    "evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8.json",
+    "evidence_sha256": "b0fc2b37f5b2c97b815552ee004f13228507ec272559ef04e45d67175859c3fa",
+    "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr.glb",
+    "artifact_sha256": "181ad41bfde7b1a807cb8c2c89c5a3ce977618b8b3092252d3abe5c05b07e7b2",
+    "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr-neutral-eight-panel.png",
+    "preview_sha256": "37776fac4fa6634ee31f39d195b87d571de94ffe7e1be7d00f5dd758d97794a6",
+    "candidate_fingerprint": "5ac249dd260d2cf0ae82827f9f77944045e43cfa2199bb2d440c8531828c7a64",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "source_lane": "raw_crop"
+  },
+  "human_visual_findings": [
+    "projection smearing",
+    "speckled and holed coverage",
+    "false surfaces",
+    "broken material continuity"
+  ],
+  "diagnosis": {
+    "material_input_failure": "The embedded base-color input contains a complete front-view recliner image composited onto a flat fill; mapping that semantic object image across the mesh repeats and stretches chair features over unrelated surfaces.",
+    "preview_failure": "The neutral evidence renderer samples only 80000 of 675366 vertices and splats sparse points, exposing background holes and speckle instead of continuous surface coverage.",
+    "validation_failure": "The prior automated durable-material check proves only that three textures are embedded and loadable. It does not test projected-subject leakage, rendered silhouette coverage, internal holes, speckle, false-surface edges, palette continuity, or cross-view continuity.",
+    "smallest_bounded_correction": "Derive a seamless upholstery-only palette map from opaque raw-crop recliner pixels, pass it through the unchanged approved local MaterialProcessor Pass 1 and Pass 2 paths, and require image-based rendered continuity plus projected-subject-leakage rejection."
+  },
+  "gate_effect": {
+    "prior_automated_non_human_pass_overridden_by_visual_gate": true,
+    "durable_non_temporary_material_continuity": "FAIL",
+    "explicit_hash_bound_human_approval": "REJECTED",
+    "task_11_8_4a": "IN_PROGRESS_BOUNDED_CORRECTION",
+    "task_11_8_5": "BLOCKED",
+    "demo_ready_or_release_claimed": false
+  },
+  "immutability": {
+    "rejected_artifact_preserved": true,
+    "rejected_preview_preserved": true,
+    "rejected_evidence_preserved": true,
+    "task_11_8_4_evidence_preserved": true,
+    "record_is_append_only": true
+  },
+  "scope": {
+    "permitted": "Golden Room source-matched raw_crop evidence and existing approved local material pipeline only",
+    "cloud_used": false,
+    "model_download_or_new_lane_used": false,
+    "production_or_test_code_change": false,
+    "ui_or_interface_change": false,
+    "service_or_process_ownership_change": false,
+    "session_started": false,
+    "commit_created": false
+  }
+}

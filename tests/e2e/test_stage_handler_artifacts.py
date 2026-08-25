@@ -90,5 +90,10 @@ def test_canon_uses_exact_authority_and_strict_workflow(tmp_path):
     assert submitted["7"]["inputs"]["steps"] == 20
     assert "Exact user request (authoritative)" in prompt
     assert "exactly two distinct chairs" in prompt
-    assert "coffee maker" in prompt
+    assert "sole coffee-making appliance" in prompt
+    assert "second machine-like countertop appliance" in prompt
     assert "falling rain" in prompt
+    negative = submitted["5"]["inputs"]["text"]
+    assert "two coffee makers" in negative
+    assert "multiple coffee machines" in negative
+    assert "duplicate countertop appliances" in negative

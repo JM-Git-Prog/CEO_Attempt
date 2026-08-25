@@ -1,0 +1,60 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.2a.phase-b-threshold-override.v1",
+  "override_id": "01349e81-648e-4bb6-8624-8894bf1eb1b6",
+  "recorded_at_utc": "2026-08-25T00:22:38.7910188Z",
+  "task": "11.8.2a",
+  "phase": "B_RETRY",
+  "user_override": {
+    "exact_statement": "21,316 MiB free is fine for the launch threshold",
+    "approved_minimum_free_vram_mib": 21316,
+    "scope": "This threshold applies to one bounded Phase B retry only.",
+    "no_further_reduction_authorized": true,
+    "comfy_queue_must_be_empty": true,
+    "process_disturbance_forbidden": true
+  },
+  "supersession": {
+    "effect": "Supersedes the prior DEFER only for the current retry decision; the prior record remains immutable diagnostic history.",
+    "prior_defer_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-b-defer-3d8bbfba-3e73-4a71-a3d9-04f523a4f8ec.json",
+    "prior_defer_sha256": "0165fd3c7a53dc6b8d88f0d5f2f368c185013ea02fbe16552d9fb42a8245960b",
+    "prior_defer_edited_deleted_or_relabelled": false
+  },
+  "bindings": {
+    "phase_a_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-a-worldmirror-preflight-1f5fbef8-26a2-40a1-9f59-f70db60d72bd.json",
+    "phase_a_sha256": "febc7c2d5eee5e71cc81707926b573fef4a26054ed0c61ae77d437dd245881af",
+    "original_authorization_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-b-authorization-5e91d04c-1e96-43d5-b067-625b9f344a9a.json",
+    "original_authorization_sha256": "0640f121c59ebadbd549f09eeebb1710854af5e38980586af959ebe97ec00a2a",
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "pre_override_candidate_tree_fingerprint": "a3016e5fad925ddd2eed9fabdf8f4561fae418ffb9ce401bd6ae3c076cd180c9",
+    "pre_override_candidate_tree_path_count": 1897,
+    "candidate_tree_fingerprint_algorithm": "candidate-tree-v1: SHA-256 initialized with raw ASCII HEAD plus LF; for each lexicographically sorted tracked or untracked nonignored path from git ls-files -z --cached --others --exclude-standard, append UTF-8 path, NUL, then raw file bytes with no post-content delimiter"
+  },
+  "unchanged_limits": {
+    "private_local_evaluation_only": true,
+    "redistribution_publication_or_training_authorized": false,
+    "maximum_active_minutes": 60,
+    "maximum_isolated_root_bytes": 128849018880,
+    "isolated_root": "/home/maccs55/ceo-kiro-isolated/worldmirror-phase-b/f4afd68f-8330-4ce8-a6e6-04ead5f9c669",
+    "source_commit": "df9988efb87bfc0f4947eb3889411cf957478b06",
+    "model_revision": "d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0",
+    "model_scope": "HY-WorldMirror-2.0/* only",
+    "model_safetensors_sha256": "9fff06539d3d9e85338d7de1ffb5afffb7739fa5bf4d62b4b7c319b5ecdde54f",
+    "full_model_repository_acquisition_forbidden": true,
+    "global_host_installation_forbidden": true,
+    "local_only_inference_required": true,
+    "one_foreground_gpu_process": true,
+    "gradio_ports_share_vllm_cloud_telemetry_forbidden": true,
+    "exact_cleanup_boundary_only": true,
+    "global_docker_prune_or_shared_cache_deletion_forbidden": true,
+    "comfy_or_scheduled_task_modification_forbidden": true
+  },
+  "execution_state_at_recording": {
+    "prelaunch_recheck_performed": false,
+    "continuous_60_minute_clock_started": false,
+    "environment_or_container_created": false,
+    "source_or_model_acquired": false,
+    "inference_run": false,
+    "production_code_tests_or_ui_changed": false,
+    "pipeline_or_release_session_created": false,
+    "commit_created": false
+  }
+}

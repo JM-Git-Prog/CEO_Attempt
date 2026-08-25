@@ -9,6 +9,7 @@ from typing import Any, Iterable, Mapping
 
 DETECTED_SCHEMA = "detected-objects/v1"
 SELECTED_SCHEMA = "selected-object-manifest/v1"
+PLAN_SELECTED_SCHEMA = "plan-bound-selected-object-manifest/v2"
 
 
 def _digest(value: Mapping[str, Any]) -> str:
@@ -97,6 +98,7 @@ def build_selected_manifest(
     detected: Mapping[str, Any], selected_ids: Iterable[Any], *,
     plan_revision: int, approval_revision: int,
 ) -> dict[str, Any]:
+    """Build retained detection-keyed v1 manifests for legacy tooling only."""
     objects = detected.get("objects", [])
     lookup: dict[str, Mapping[str, Any]] = {}
     for item in objects:
@@ -130,13 +132,133 @@ def build_selected_manifest(
     return manifest
 
 
+def _validated_picker(picker: Mapping[str, Any]) -> None:
+    payload = dict(picker)
+    expected = str(payload.pop("document_sha256", ""))
+    if not expected or expected != _digest(payload):
+        raise ValueError("object-picker schema or hash is invalid")
+    if picker.get("fuzzy_matching_used") is not False:
+        raise ValueError("fuzzy matching cannot authorize selected objects")
+
+
+def resolve_plan_selected_objects(
+    detected: Mapping[str, Any], picker: Mapping[str, Any], selected_ids: Iterable[Any],
+) -> tuple[list[dict[str, Any]], tuple[str, ...]]:
+    """Resolve detections to Plan instances using approved semantic bindings only."""
+    _validated_picker(picker)
+    detected_by_id = {
+        str(item.get("object_id", "")): item
+        for item in detected.get("objects", []) if isinstance(item, Mapping)
+    }
+    picker_by_detection = {
+        str(item.get("object_id", "")): item
+        for item in picker.get("objects", []) if isinstance(item, Mapping)
+    }
+    requested = tuple(str(value) for value in selected_ids)
+    if not requested or len(requested) != len(set(requested)):
+        raise ValueError("selected detection IDs must be non-empty and unique")
+
+    expected = tuple(
+        str(plan_id)
+        for binding in picker.get("required_bindings", [])
+        if isinstance(binding, Mapping)
+        for plan_id in binding.get("plan_binding_ids", [])
+        if str(plan_id) and not str(plan_id).startswith("opening:")
+    )
+    if not expected or len(expected) != len(set(expected)):
+        raise ValueError("required Plan object placements must be non-empty and unique")
+
+    resolved: list[dict[str, Any]] = []
+    seen_plan_ids: set[str] = set()
+    for detection_id in requested:
+        detected_item = detected_by_id.get(detection_id)
+        binding = picker_by_detection.get(detection_id)
+        if detected_item is None or binding is None:
+            raise ValueError(f"selected detection lacks approved semantic binding: {detection_id}")
+        plan_id = str(binding.get("plan_binding_id", ""))
+        if not binding.get("required") or not plan_id or plan_id.startswith("opening:"):
+            raise ValueError(f"selected detection is not a required Plan object placement: {detection_id}")
+        if plan_id in seen_plan_ids:
+            raise ValueError(f"duplicate Plan instance binding: {plan_id}")
+        seen_plan_ids.add(plan_id)
+        entry = dict(detected_item)
+        entry.update({
+            "detection_object_id": detection_id,
+            "object_id": plan_id,
+            "plan_instance_id": plan_id,
+            "manifest_id": str(binding.get("manifest_id", "")),
+            "semantic_concept": str(binding.get("semantic_concept", "")),
+            "identity_authority": "approved_plan_instance_id",
+            "observation_authority": False,
+        })
+        resolved.append(entry)
+
+    if set(seen_plan_ids) != set(expected) or len(resolved) != len(expected):
+        raise ValueError("selected objects must equal the required Plan object-placement set")
+    resolved.sort(key=lambda item: expected.index(str(item["plan_instance_id"])))
+    return resolved, expected
+
+
+def build_plan_bound_selected_manifest(
+    detected: Mapping[str, Any], picker: Mapping[str, Any], selected_ids: Iterable[Any], *,
+    plan_revision: int, approval_revision: int, approval_evidence_sha256: str,
+) -> dict[str, Any]:
+    """Build strict Plan-keyed selected-object authority for Object Canon."""
+    if int(plan_revision) <= 0 or int(plan_revision) != int(picker.get("plan_revision", 0)):
+        raise ValueError("selected manifest targets a stale Plan revision")
+    if int(approval_revision) <= 0:
+        raise ValueError("selected manifest requires a completed blockout approval")
+    if len(str(approval_evidence_sha256)) != 64:
+        raise ValueError("selected manifest requires blockout approval evidence hash")
+    if str(detected.get("canon_sha256", "")) != str(picker.get("canon_sha256", "")):
+        raise ValueError("object-picker Canon hash does not match detected inventory")
+    if str(detected.get("document_sha256", "")) != str(picker.get("detected_objects_sha256", "")):
+        raise ValueError("object-picker detection hash does not match detected inventory")
+
+    selected, expected = resolve_plan_selected_objects(detected, picker, selected_ids)
+    manifest: dict[str, Any] = {
+        "schema_version": PLAN_SELECTED_SCHEMA,
+        "canon_sha256": str(detected["canon_sha256"]),
+        "detected_objects_sha256": str(detected["document_sha256"]),
+        "object_picker_sha256": str(picker["document_sha256"]),
+        "metric_plan_sha256": str(picker["metric_plan_sha256"]),
+        "camera_sha256": str(picker["camera_sha256"]),
+        "blockout_visibility_sha256": str(picker["blockout_visibility_sha256"]),
+        "blockout_approval_evidence_sha256": str(approval_evidence_sha256),
+        "plan_revision": int(plan_revision),
+        "approval_revision": int(approval_revision),
+        "identity_authority": "approved_plan_instance_id",
+        "detection_role": "bounded_segmentation_observation_only",
+        "fuzzy_matching_used": False,
+        "list_index_identity_used": False,
+        "architectural_selection_policy": (
+            "exclude opening:* bindings; include every required Plan object_placement, "
+            "including the built-in counter"
+        ),
+        "selected_plan_instance_ids": list(expected),
+        "objects": selected,
+        "object_count": len(selected),
+    }
+    manifest["manifest_sha256"] = _digest(manifest)
+    return manifest
+
+
 def load_selected_manifest(path: str | Path) -> dict[str, Any]:
     manifest = json.loads(Path(path).read_text(encoding="utf-8"))
     expected = manifest.pop("manifest_sha256", "")
-    if manifest.get("schema_version") != SELECTED_SCHEMA or expected != _digest(manifest):
+    schema = manifest.get("schema_version")
+    if schema not in {SELECTED_SCHEMA, PLAN_SELECTED_SCHEMA} or expected != _digest(manifest):
         raise ValueError("selected-object manifest schema or hash is invalid")
     objects = manifest.get("objects")
     if not isinstance(objects, list) or not objects or manifest.get("object_count") != len(objects):
         raise ValueError("selected-object manifest must contain selected objects")
+    if schema == PLAN_SELECTED_SCHEMA:
+        plan_ids = [str(item.get("plan_instance_id", "")) for item in objects]
+        if any(not value for value in plan_ids) or len(plan_ids) != len(set(plan_ids)):
+            raise ValueError("Plan-bound selected identities must be non-empty and unique")
+        if plan_ids != [str(value) for value in manifest.get("selected_plan_instance_ids", [])]:
+            raise ValueError("selected Plan identity order or set drifted")
+        if manifest.get("identity_authority") != "approved_plan_instance_id":
+            raise ValueError("selected manifest identity authority is invalid")
     manifest["manifest_sha256"] = expected
     return manifest

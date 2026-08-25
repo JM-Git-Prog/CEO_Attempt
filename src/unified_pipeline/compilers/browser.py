@@ -119,6 +119,29 @@ def _validate_instance(instance: ObjectInstance) -> None:
         raise BrowserCompilerError(
             f"instance {instance.object_id!r} has invalid PBR metallic-roughness values"
         )
+    if material.render_profile not in {
+        "legacy-authoritative/v1", "environment-free-bounded-metallic/v1",
+    }:
+        raise BrowserCompilerError(
+            f"instance {instance.object_id!r} has unsupported material render profile"
+        )
+    if (
+        material.render_profile == "environment-free-bounded-metallic/v1"
+        and (material.metallic > 0.5 or material.roughness < 0.2)
+    ):
+        raise BrowserCompilerError(
+            f"instance {instance.object_id!r} is not renderable without an environment map"
+        )
+    if material.shading_model not in {"asset", "smooth", "flat"}:
+        raise BrowserCompilerError(
+            f"instance {instance.object_id!r} has unsupported shading authority"
+        )
+    if material.shading_model in {"smooth", "flat"} and not _SHA256.fullmatch(
+        material.shading_provenance
+    ):
+        raise BrowserCompilerError(
+            f"instance {instance.object_id!r} lacks hash-bound shading provenance"
+        )
     if not material.base_color.strip():
         raise BrowserCompilerError(
             f"instance {instance.object_id!r} requires explicit base color or texture"
@@ -185,6 +208,15 @@ def _select_safe_spawn(navigation: FirstPersonNavigation) -> dict[str, float]:
         raise BrowserCompilerError("first-person controller values must be positive and finite")
     if navigation.eye_height > navigation.player_height:
         raise BrowserCompilerError("first-person eye height cannot exceed player height")
+    boundary_tolerance = navigation.boundary_tolerance_m
+    if (
+        not math.isfinite(boundary_tolerance)
+        or boundary_tolerance < 0.0
+        or boundary_tolerance > 1e-6
+    ):
+        raise BrowserCompilerError(
+            "first-person boundary tolerance must be finite and at most one micrometre"
+        )
     if navigation.coordinate_system != "right-handed-x-right-y-up-z-depth":
         raise BrowserCompilerError("first-person navigation coordinate system is unsupported")
     minimum = navigation.bounds_minimum
@@ -224,8 +256,8 @@ def _select_safe_spawn(navigation: FirstPersonNavigation) -> dict[str, float]:
             candidate.z,
         )
         if any(
-            player_center[index] - player_half[index] < bounds_min[index]
-            or player_center[index] + player_half[index] > bounds_max[index]
+            player_center[index] - player_half[index] < bounds_min[index] - boundary_tolerance
+            or player_center[index] + player_half[index] > bounds_max[index] + boundary_tolerance
             for index in range(3)
         ):
             continue
@@ -242,8 +274,8 @@ def _select_safe_spawn(navigation: FirstPersonNavigation) -> dict[str, float]:
 class BrowserCompiler:
     """Emit a standalone Three.js scene from exactly one WorldContract."""
 
-    schema_version = "browser-world-compiler/v5"
-    interface_version = 5
+    schema_version = "browser-world-compiler/v8"
+    interface_version = 8
 
     def compile(
         self, contract: WorldContract, output_dir: str | Path, *,
@@ -369,8 +401,10 @@ class BrowserCompiler:
                 "transform_policy": "exact_no_clamp_rescale_offset_or_normalization",
                 "camera_policy": "exact_hash_verified_no_inference",
                 "interaction_policy": "explicit_uuid_metadata_no_glb_inference",
-                "lighting_policy": "exact_contract_values_no_inference_clamp_or_color_reinterpretation",
-                "temperature_policy": "exact_kelvin_metadata_with_explicit_contract_color_as_render_authority",
+                "lighting_policy": "exact_contract_physical_units_exposure_and_legacy_profiles_no_inference",
+                "temperature_policy": "explicit_kelvin_and_white_balance_color_already_applied_upstream",
+                "shading_policy": "explicit_contract_asset_smooth_or_derivative_flat_no_runtime_normal_generation",
+                "material_render_profile_policy": "explicit_hash_bound_no_environment_defaults",
                 "missing_authority_policy": "fail_closed",
             },
             "artifacts": [
@@ -500,7 +534,7 @@ class BrowserCompiler:
             }
             instances.append(payload)
         return {
-            "schema_version": "three-scene-manifest/v5",
+            "schema_version": "three-scene-manifest/v8",
             "interface_version": BrowserCompiler.interface_version,
             "contract_hash": contract.contract_hash,
             "plan_revision": contract.plan_revision,
@@ -517,7 +551,7 @@ class BrowserCompiler:
             "lighting": contract.lighting.to_dict(),
             "progressive": {
                 "transport": "sse",
-                "endpoint": "./events",
+                "endpoint": "../events",
                 "identity_source": "object_id",
                 "authority_policy": "events_trigger_contract_instances_only",
             },
@@ -536,12 +570,13 @@ _INDEX_HTML = '''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Canonical World — Browser v5</title>
+<base href="./world/">
+<title>Canonical World — Browser v8</title>
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#fff;font:14px system-ui}
 #viewport{width:100%;height:100%;display:grid;place-items:center}canvas{max-width:100%;max-height:100%;object-fit:contain}
 #hud{position:fixed;top:12px;left:12px;padding:10px;background:#000b;border:1px solid #fff4;border-radius:6px}
-button,a{color:#fff;background:#222;border:1px solid #777;padding:5px 8px;margin:2px;text-decoration:none}#errors{color:#ff8c8c}
+button,a{color:#fff;background:#222;border:1px solid #777;padding:5px 8px;margin:2px;text-decoration:none}button[aria-pressed="true"]{border-color:#fff;background:#40506a}[hidden]{display:none!important}#mode-announcement{margin-top:5px;color:#b9d8ff}#errors{color:#ff8c8c}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"}}</script>
 </head>
@@ -549,7 +584,8 @@ button,a{color:#fff;background:#222;border:1px solid #777;padding:5px 8px;margin
 <div id="viewport"></div>
 <div id="hud"><strong id="identity">Loading canonical world…</strong><br>
 <button id="orbit">Orbit</button><button id="first-person">First person</button>
-<a href="?v=1">v1</a><a href="?v=2">v2</a><a href="?v=3">v3</a><a href="?v=4">v4</a><a href="?v=5" aria-current="page">v5</a><div id="status"></div><div id="errors"></div></div>
+<button id="mode-real" hidden>REAL</button><button id="mode-game" hidden>GAME</button>
+<a href="?v=1">v1</a><a href="?v=2">v2</a><a href="?v=3">v3</a><a href="?v=4">v4</a><a href="?v=5">v5</a><a href="?v=6">v6</a><a href="?v=7">v7</a><a href="?v=8" aria-current="page">v8</a><div id="status"></div><div id="mode-announcement" role="status" aria-live="polite"></div><div id="errors"></div></div>
 <script type="module" src="./viewer.js"></script>
 </body>
 </html>
@@ -572,6 +608,9 @@ import {
 const statusNode = document.querySelector("#status");
 const errorNode = document.querySelector("#errors");
 const identityNode = document.querySelector("#identity");
+const modeRealButton = document.querySelector("#mode-real");
+const modeGameButton = document.querySelector("#mode-game");
+const modeAnnouncement = document.querySelector("#mode-announcement");
 const viewport = document.querySelector("#viewport");
 const encoder = new TextEncoder();
 
@@ -610,11 +649,37 @@ if (manifest.plan_revision !== contract.plan_revision || manifest.camera_hash !=
   fail("Plan revision or camera binding drift detected");
 }
 if (canonical(manifest.camera) !== canonical(contract.camera)) fail("Camera projection drift detected");
-const interfaceVersion = new URLSearchParams(location.search).get("v") || "5";
-if (!new Set(["1", "2", "3", "4", "5"]).has(interfaceVersion)) fail(`Unsupported browser interface v${interfaceVersion}`);
-const supportsInteractions = interfaceVersion === "3" || interfaceVersion === "4" || interfaceVersion === "5";
+const interfaceVersion = new URLSearchParams(location.search).get("v") || "8";
+if (!new Set(["1", "2", "3", "4", "5", "6", "7", "8"]).has(interfaceVersion)) fail(`Unsupported browser interface v${interfaceVersion}`);
+const supportsInteractions = new Set(["3", "4", "5", "6", "7", "8"]).has(interfaceVersion);
+const supportsModeOverlay = new Set(["6", "7", "8"]).has(interfaceVersion);
 for (const link of document.querySelectorAll("a[href^='?v=']")) {
   link.toggleAttribute("aria-current", link.getAttribute("href") === `?v=${interfaceVersion}`);
+}
+const modeStorageKey = `kiro:room-mode:${contract.contract_hash}:${contract.room_shell_ref}`;
+function storedBehaviorMode() {
+  if (!supportsModeOverlay) return "real";
+  try {
+    const stored = localStorage.getItem(modeStorageKey);
+    return stored === "game" ? "game" : "real";
+  } catch (_) {
+    return "real";
+  }
+}
+function applyBehaviorMode(nextMode) {
+  if (!supportsModeOverlay || !new Set(["real", "game"]).has(nextMode)) return;
+  try { localStorage.setItem(modeStorageKey, nextMode); } catch (_) { /* persistence unavailable */ }
+  document.body.dataset.behaviorMode = nextMode;
+  modeRealButton.setAttribute("aria-pressed", String(nextMode === "real"));
+  modeGameButton.setAttribute("aria-pressed", String(nextMode === "game"));
+  modeAnnouncement.textContent = `${nextMode.toUpperCase()} mode · behavior overlay only · visuals unchanged`;
+}
+if (supportsModeOverlay) {
+  modeRealButton.hidden = false;
+  modeGameButton.hidden = false;
+  modeRealButton.addEventListener("click", () => applyBehaviorMode("real"));
+  modeGameButton.addEventListener("click", () => applyBehaviorMode("game"));
+  applyBehaviorMode(storedBehaviorMode());
 }
 if (interfaceVersion !== "1") {
   if (!contract.navigation || !manifest.navigation) fail("Exact first-person navigation contract is required");
@@ -631,7 +696,7 @@ if (supportsInteractions) {
     fail("Interaction metadata drift detected");
   }
 }
-if (interfaceVersion === "5" && canonical(manifest.lighting) !== canonical(contract.lighting)) {
+if (new Set(["5", "6", "7", "8"]).has(interfaceVersion) && canonical(manifest.lighting) !== canonical(contract.lighting)) {
   fail("Lighting metadata drift detected");
 }
 identityNode.textContent = `${contract.plan_revision} · ${contract.contract_hash}`;
@@ -664,6 +729,7 @@ const orbitPosition = new THREE.Vector3(...cameraData.position);
 const navigation = contract.navigation;
 const selectedSpawn = manifest.selected_spawn;
 const contactEpsilon = 1e-9;
+const boundaryTolerance = interfaceVersion === "8" ? navigation.boundary_tolerance_m : 0.0;
 const worldAxes = [
   new THREE.Vector3(1, 0, 0),
   new THREE.Vector3(0, 1, 0),
@@ -736,9 +802,9 @@ function canOccupy(position) {
   const low = navigation.bounds_minimum;
   const high = navigation.bounds_maximum;
   if (
-    playerCenter.x - playerHalf.x < low.x || playerCenter.x + playerHalf.x > high.x
-    || playerCenter.y - playerHalf.y < low.y || playerCenter.y + playerHalf.y > high.y
-    || playerCenter.z - playerHalf.z < low.z || playerCenter.z + playerHalf.z > high.z
+    playerCenter.x - playerHalf.x < low.x - boundaryTolerance || playerCenter.x + playerHalf.x > high.x + boundaryTolerance
+    || playerCenter.y - playerHalf.y < low.y - boundaryTolerance || playerCenter.y + playerHalf.y > high.y + boundaryTolerance
+    || playerCenter.z - playerHalf.z < low.z - boundaryTolerance || playerCenter.z + playerHalf.z > high.z + boundaryTolerance
   ) return false;
   if (staticBodies.some(body => playerIntersectsBody(position, body))) return false;
   for (const body of [...doorBodies.values(), ...dynamicBodies.values()]) {
@@ -796,14 +862,19 @@ firstPerson.addEventListener("unlock", () => {
 });
 
 function applyContractLighting(targetScene, targetRenderer, lighting, version) {
-  if (version !== "5") {
-    // Retained Browser v1-v4 lighting behavior; do not change released interfaces.
+  const retained = !new Set(["7", "8"]).has(version);
+  const ambientColor = retained ? lighting.legacy_ambient_color : lighting.ambient_color;
+  const ambientIntensity = retained ? lighting.legacy_ambient_intensity : lighting.ambient_intensity;
+  if (retained && version !== "5") {
+    // Retained Browser v1-v4/v6 lighting behavior; compatibility values are contract-bound.
     targetScene.add(new THREE.AmbientLight(
-      new THREE.Color(lighting.ambient_color), lighting.ambient_intensity
+      new THREE.Color(ambientColor), ambientIntensity
     ));
     for (const value of lighting.lights) {
       if (value.light_type !== "point") fail(`Unsupported exact light representation: ${value.light_type}`);
-      const light = new THREE.PointLight(new THREE.Color(value.color), value.intensity);
+      const light = new THREE.PointLight(
+        new THREE.Color(value.legacy_color), value.legacy_intensity
+      );
       light.name = value.light_id;
       light.position.set(value.position.x, value.position.y, value.position.z);
       light.castShadow = value.cast_shadows;
@@ -813,24 +884,31 @@ function applyContractLighting(targetScene, targetRenderer, lighting, version) {
     return;
   }
 
-  targetRenderer.shadowMap.enabled = lighting.lights.some(light => light.cast_shadows);
-  if (targetRenderer.shadowMap.enabled) {
-    targetRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if (!retained) {
+    if (lighting.ambient_intensity_unit !== "scene-linear-multiplier") fail("Physical ambient unit drift detected");
+    if (lighting.derivation_profile !== "canon-mean-relative-luminance-to-three-physical/v1") fail("Physical lighting derivation drift detected");
+    targetRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    targetRenderer.toneMappingExposure = lighting.exposure;
   }
+  targetRenderer.shadowMap.enabled = lighting.lights.some(light => light.cast_shadows);
+  if (targetRenderer.shadowMap.enabled) targetRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const ambient = new THREE.AmbientLight();
-  ambient.color.set(lighting.ambient_color);
-  ambient.intensity = lighting.ambient_intensity;
+  ambient.color.set(ambientColor);
+  ambient.intensity = ambientIntensity;
   ambient.userData.contractLighting = {
-    color: lighting.ambient_color,
-    intensity: lighting.ambient_intensity,
+    color: ambientColor,
+    intensity: ambientIntensity,
+    intensity_unit: retained ? "relative" : lighting.ambient_intensity_unit,
+    exposure: retained ? 1.0 : lighting.exposure,
   };
   targetScene.add(ambient);
   for (const value of lighting.lights) {
     if (value.light_type !== "point") fail(`Unsupported exact light representation: ${value.light_type}`);
+    if (!retained && value.intensity_unit !== "candela") fail("Physical point-light unit drift detected");
     const light = new THREE.PointLight();
     light.name = value.light_id;
-    light.color.set(value.color);
-    light.intensity = value.intensity;
+    light.color.set(retained ? value.legacy_color : value.color);
+    light.intensity = retained ? value.legacy_intensity : value.intensity;
     light.position.set(value.position.x, value.position.y, value.position.z);
     light.castShadow = value.cast_shadows;
     light.shadow.autoUpdate = value.cast_shadows;
@@ -840,10 +918,12 @@ function applyContractLighting(targetScene, targetRenderer, lighting, version) {
     }
     light.userData.temperature = value.temperature;
     light.userData.contractLighting = {
-      color: value.color,
-      intensity: value.intensity,
+      color: retained ? value.legacy_color : value.color,
+      intensity: retained ? value.legacy_intensity : value.intensity,
+      intensity_unit: retained ? "relative" : value.intensity_unit,
       temperature_kelvin: value.temperature,
-      temperature_semantics: "metadata_only_explicit_contract_color_is_render_authority",
+      white_balance_color: value.white_balance_color,
+      temperature_semantics: "explicit_contract_white_balance_already_applied_to_render_color",
       cast_shadows: value.cast_shadows,
     };
     targetScene.add(light);
@@ -872,7 +952,11 @@ const fixedPhysicsStep = 1 / 60;
 
 async function contractMaterial(instance) {
   const intent = instance.material_intent;
-  const parameters = {metalness: intent.metallic, roughness: intent.roughness};
+  const parameters = {
+    metalness: intent.metallic,
+    roughness: intent.roughness,
+    flatShading: new Set(["7", "8"]).has(interfaceVersion) && intent.shading_model === "flat",
+  };
   const uris = instance.material_asset_uris;
   if (uris.base_color) {
     parameters.map = await textureLoader.loadAsync(uris.base_color);
@@ -1219,7 +1303,7 @@ async function loadInstance(objectId) {
     root.traverse(node => {
       if (node.isMesh) {
         node.material = material.clone();
-        if (interfaceVersion === "5") {
+        if (new Set(["5", "6", "7", "8"]).has(interfaceVersion)) {
           node.castShadow = true;
           node.receiveShadow = true;
         }
@@ -1242,7 +1326,7 @@ async function loadRoom() {
   const gltf = await gltfLoader.loadAsync(manifest.room_asset_uri);
   gltf.scene.name = "contract-room-shell";
   gltf.scene.userData.contractRoomShellRef = contract.room_shell_ref;
-  if (interfaceVersion === "5") {
+  if (new Set(["5", "6", "7", "8"]).has(interfaceVersion)) {
     gltf.scene.traverse(node => {
       if (node.isMesh) {
         node.castShadow = true;
@@ -1259,26 +1343,36 @@ function acceptProgress(raw) {
   if (event.contract_hash !== contract.contract_hash || event.plan_revision !== contract.plan_revision) {
     return;
   }
+  armProgressiveFallback();
   const objectId = event.object_id || event.payload?.object_id;
   if (objectId) void loadInstance(objectId);
   if (event.event_type === "contract.ready" || event.event_type === "world.ready") {
-    for (const id of byId.keys()) void loadInstance(id);
+    startProgressiveFallback();
   }
 }
 const streamUrl = new URL(manifest.progressive.endpoint, location.href);
 streamUrl.searchParams.set("contract_hash", contract.contract_hash);
 streamUrl.searchParams.set("plan_revision", contract.plan_revision);
 const eventSource = new EventSource(streamUrl);
+let fallbackStarted = false;
+let fallbackTimer = null;
+function startProgressiveFallback() {
+  if (fallbackStarted) return;
+  fallbackStarted = true;
+  if (fallbackTimer !== null) clearTimeout(fallbackTimer);
+  eventSource.close();
+  for (const id of byId.keys()) void loadInstance(id);
+}
+function armProgressiveFallback() {
+  if (fallbackStarted) return;
+  if (fallbackTimer !== null) clearTimeout(fallbackTimer);
+  fallbackTimer = setTimeout(startProgressiveFallback, 2000);
+}
 eventSource.onmessage = event => acceptProgress(event.data);
 eventSource.addEventListener("object.final", event => acceptProgress(event.data));
 eventSource.addEventListener("contract.ready", event => acceptProgress(event.data));
-let fallbackStarted = false;
-eventSource.onerror = () => {
-  if (fallbackStarted) return;
-  fallbackStarted = true;
-  eventSource.close();
-  for (const id of byId.keys()) void loadInstance(id);
-};
+eventSource.onerror = startProgressiveFallback;
+armProgressiveFallback();
 
 const clock = new THREE.Clock();
 function render() {

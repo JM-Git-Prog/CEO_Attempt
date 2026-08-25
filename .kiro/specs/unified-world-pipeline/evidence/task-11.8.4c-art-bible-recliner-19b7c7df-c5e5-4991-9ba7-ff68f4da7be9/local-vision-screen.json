@@ -1,0 +1,104 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4c.local-vision-screen.v1",
+  "task": "11.8.4c",
+  "recorded_at_utc": "2026-08-25T17:55:07.5404480Z",
+  "candidate_fingerprint": "48f2e5c610f0661419a9a2c70ba5bdbe7511ef70cc0c9b830e3faaebd98ce0e6",
+  "candidate_glb": {
+    "path": "refined-deterministic-recliner.glb",
+    "sha256": "0496fafdc7d961688ac745d0161de84e97c46be0a66c428fcea53c0426aa9cb3"
+  },
+  "immutable_bindings": {
+    "art_bible_sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+    "canon_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    "baseline_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "source_lane": "task_11_8_4b_deterministic_separate_component_refinement",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c"
+  },
+  "model": {
+    "name": "qwen2.5vl:7b",
+    "digest": "5ced39dfa4bac325dc183dd1e4febaa1c46b3ea28bce48896c8e69c1e79611cc",
+    "execution": "local_ollama_127.0.0.1:11434",
+    "cloud_used": false,
+    "download_performed": false,
+    "role": "first-pass local screen only; never human, gate, or release authority"
+  },
+  "acceptance_contract": {
+    "required_shape": {
+      "pass": "boolean",
+      "failed_checks": "array of strings",
+      "confidence": "number in inclusive range 0.0-1.0"
+    },
+    "automatic_pass_requires": "pass == true AND confidence >= 0.8 AND valid exact schema; malformed, out-of-range, borderline, unavailable, uncertain, or materially defective results fail closed",
+    "primary_adjudication_required": true
+  },
+  "screens": [
+    {
+      "path": "canon-camera-comparison-contact-sheet.png",
+      "sha256": "cd558cacb5bd4127e0e35d275500f36891924f2457ec6001262fbce2442cb8e4",
+      "model_raw_content": "{\n  \"pass\": true,\n  \"failed_checks\": [],\n  \"confidence\": 0.95\n}",
+      "model_verdict": {
+        "pass": true,
+        "failed_checks": [],
+        "confidence": 0.95
+      },
+      "contract_valid": true,
+      "threshold_pass": true,
+      "primary_adjudication": "FAIL_NON_HUMAN_SCREEN",
+      "primary_failed_checks": [
+        "soft_overstuffed_canon_matched_silhouette",
+        "correct_arm_back_cushion_proportions",
+        "integrated_footrest_visual_continuity"
+      ],
+      "primary_observation": "The candidate is recognizable as a recliner and shows no fused room or melted topology, but it does not yet match the source recliner closely enough for this strict gate. Relative to the Canon/source panels, its tall near-vertical back, rectangular slab cushions, squared arm bodies, and exposed rigid rails read substantially more rigid and block-driven than the soft, slumped, overstuffed Canon silhouette. The deployed footrest reads visually separated from the seat rather than convincingly integrated. The model pass is therefore overruled conservatively."
+    },
+    {
+      "path": "recliner-neutral-multi-angle-sheet.png",
+      "sha256": "fb290ab0893e8c3e2767071440ec7568c9cec90019864fa6337477c89052497f",
+      "model_raw_content": "{\n  \"pass\": true,\n  \"failed_checks\": [],\n  \"confidence\": 0.98\n}",
+      "model_verdict": {
+        "pass": true,
+        "failed_checks": [],
+        "confidence": 0.98
+      },
+      "contract_valid": true,
+      "threshold_pass": true,
+      "primary_adjudication": "FAIL_NON_HUMAN_SCREEN",
+      "primary_failed_checks": [
+        "soft_overstuffed_silhouette",
+        "coherent_canon_matched_proportions",
+        "integrated_footrest_visual_continuity"
+      ],
+      "primary_observation": "The four views are clear, the brown material is continuous, and no fused scene sheet or catastrophic melted topology is visible. However, the front and side views expose a tall rigid back frame, flat rectangular cushion masses, box-like lower arms/base, and hard rail-like elements inconsistent with the required soft overstuffed Canon identity. In both side views the extended footrest appears materially detached/floating with weak visible mechanism continuity. These are target-level visual defects, not merely cosmetic polish."
+    }
+  ],
+  "model_summary": "Both local model responses were valid pass=true results above 0.8, but local model confidence is screening evidence only and cannot override observed material defects.",
+  "primary_adjudication": {
+    "verdict": "FAIL_CLOSED_MATERIAL_VISUAL_DEFECTS",
+    "failed_checks": [
+      "soft_overstuffed_canon_matched_silhouette",
+      "correct_arm_back_cushion_proportions",
+      "integrated_footrest_visual_continuity"
+    ],
+    "reason": "Strict comparison of both exact sheets shows material Canon-identity defects despite the model's optimistic verdicts. Structural/hash success cannot compensate for visual failure under Requirements 39.13-39.14."
+  },
+  "overall": "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+  "human_review_eligible": false,
+  "human_approval_inferred": false,
+  "downstream": {
+    "replay_validator_run": false,
+    "focused_tests_run": false,
+    "artifact_revalidation_run": false,
+    "git_diff_check_run": false,
+    "task_11_8_4c": "BLOCKED_BY_LOCAL_VISION_SCREEN",
+    "task_11_8_5": "BLOCKED_NOT_STARTED"
+  },
+  "preservation": {
+    "candidate_glb_or_png_bytes_changed": false,
+    "proof_evidence_state_advanced": false,
+    "task_checkbox_changed": false,
+    "session_or_qualification_started": false,
+    "ui_or_version_changed": false,
+    "service_or_process_ownership_changed": false,
+    "staged_or_committed": false
+  }
+}

@@ -49,6 +49,10 @@ MANDATORY_CHAIN = (
     "canonical_serialization_hash",
 )
 
+DEFAULT_PLAYER_RADIUS_M = 0.25
+DEFAULT_PLAYER_HEIGHT_M = 1.75
+DEFAULT_PLAYER_EYE_HEIGHT_M = 1.62
+
 
 class AssemblyError(ValueError):
     """Base class for fail-closed assembly errors."""
@@ -644,12 +648,16 @@ class WorldContractAssembler:
         room: ParametricRoomResult,
         camera: CameraContract,
     ) -> FirstPersonNavigation:
-        """Bind Plan-owned bounds/colliders and explicit controller tuning once."""
+        """Bind Plan-owned Y-up bounds/colliders and explicit controller tuning once."""
+        def domain_xyz(values: tuple[float, float, float]) -> tuple[float, float, float]:
+            # Parametric compiler emits UPBGE (x,z,y); WorldContract is domain (x,y,z).
+            return float(values[0]), float(values[2]), float(values[1])
+
         bodies = [StaticCollisionBody(
             body_id=item.stable_id,
             source_id=item.geometry_id,
-            center=Vec3(*item.position_upbge),
-            dimensions=Vec3(*item.dimensions_upbge),
+            center=Vec3(*domain_xyz(item.position_upbge)),
+            dimensions=Vec3(*domain_xyz(item.dimensions_upbge)),
             rotation=Quaternion(),
             shape=item.shape.lower(),
             body_mode=item.body_mode,
@@ -678,9 +686,9 @@ class WorldContractAssembler:
         ))
         bodies.sort(key=lambda item: item.body_id)
 
-        radius = 0.25
-        height = 1.75
-        eye_height = 1.62
+        radius = DEFAULT_PLAYER_RADIUS_M
+        height = DEFAULT_PLAYER_HEIGHT_M
+        eye_height = DEFAULT_PLAYER_EYE_HEIGHT_M
         minimum = room.navigable_bounds.minimum_m
         maximum = room.navigable_bounds.maximum_m
         resting_y = minimum[1] + eye_height
@@ -715,6 +723,7 @@ class WorldContractAssembler:
             movement_speed=2.0,
             gravity=9.81,
             coordinate_system=room.navigable_bounds.coordinate_system,
+            boundary_tolerance_m=1e-9,
         )
 
     @staticmethod

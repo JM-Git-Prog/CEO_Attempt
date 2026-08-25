@@ -15,7 +15,10 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from src.unified_pipeline.mesh_generators import UnifiedPlaceholderGenerator
+from src.unified_pipeline.mesh_generators import (
+    UnifiedPlaceholderGenerator,
+    prepare_generator_input,
+)
 from src.unified_pipeline.models import MeshApproval, ObjectCanon
 
 
@@ -178,3 +181,81 @@ class TestUnifiedPlaceholderGeneratorErrors:
         result = gen.generate(canon)
 
         assert result.object_id == "obj-gone-999"
+
+
+# ---------------------------------------------------------------------------
+# Tests: Approved RGBA preparation for RGB-only mesh encoders
+# ---------------------------------------------------------------------------
+
+
+def _rgba_with_hidden_scene(
+    path: Path,
+    size: tuple[int, int],
+    hidden_rgb: tuple[int, int, int],
+    subject_rgb: tuple[int, int, int],
+) -> None:
+    image = Image.new("RGBA", size, (*hidden_rgb, 0))
+    x0, y0 = max(1, size[0] // 4), max(1, size[1] // 4)
+    x1, y1 = max(x0 + 1, size[0] * 3 // 4), max(y0 + 1, size[1] * 3 // 4)
+    subject = Image.new("RGBA", (x1 - x0, y1 - y0), (*subject_rgb, 255))
+    image.paste(subject, (x0, y0))
+    image.save(path)
+
+
+def test_prepare_generator_input_discards_hidden_scene_rgb(tmp_path: Path) -> None:
+    source = tmp_path / "approved-object-canon.png"
+    _rgba_with_hidden_scene(source, (40, 24), (255, 0, 0), (0, 80, 220))
+    source_bytes = source.read_bytes()
+    canon = ObjectCanon(
+        object_id="approved-table", object_name="table", image_path=str(source),
+        mask_coverage=0.25, approved=True, provenance="raw_segmentation",
+    )
+
+    prepared, evidence = prepare_generator_input(canon, tmp_path / "mesh-output")
+
+    pixels = np.asarray(Image.open(prepared).convert("RGB"))
+    assert source.read_bytes() == source_bytes
+    assert pixels.shape[0] == pixels.shape[1]
+    assert np.all(pixels[0, 0] == [255, 255, 255])
+    assert not np.any(np.all(pixels == [255, 0, 0], axis=2))
+    assert np.any(np.all(pixels == [0, 80, 220], axis=2))
+    assert evidence["background_policy"] == "approved-alpha-composited-on-white"
+    assert evidence["hidden_rgb_discarded"] is True
+    assert Path(evidence["prepared_path"]) == prepared.resolve()
+
+
+@pytest.mark.parametrize(
+    ("size", "hidden_rgb", "subject_rgb"),
+    [
+        ((9, 7), (250, 10, 10), (10, 120, 220)),
+        ((17, 31), (4, 200, 40), (220, 70, 15)),
+        ((64, 16), (90, 30, 180), (12, 14, 16)),
+        ((33, 33), (1, 2, 3), (200, 210, 220)),
+    ],
+)
+def test_prepared_input_property_contains_only_subject_or_white(
+    tmp_path: Path,
+    size: tuple[int, int],
+    hidden_rgb: tuple[int, int, int],
+    subject_rgb: tuple[int, int, int],
+) -> None:
+    """For varied RGBA shapes, transparent scene RGB never reaches the encoder input.
+
+    **Validates: Requirements 9.4, 10.1**
+    """
+    source = tmp_path / f"object-{size[0]}-{size[1]}.png"
+    _rgba_with_hidden_scene(source, size, hidden_rgb, subject_rgb)
+    canon = ObjectCanon(
+        object_id=f"object-{size[0]}-{size[1]}", object_name="object",
+        image_path=str(source), mask_coverage=0.25, approved=True,
+        provenance="raw_segmentation",
+    )
+
+    prepared, evidence = prepare_generator_input(canon, tmp_path / "mesh-output")
+    colors = np.unique(np.asarray(Image.open(prepared).convert("RGB")).reshape(-1, 3), axis=0)
+
+    allowed = {subject_rgb, (255, 255, 255)}
+    assert {tuple(int(channel) for channel in color) for color in colors} <= allowed
+    assert hidden_rgb not in allowed
+    assert evidence["source_alpha_bbox"][2] > evidence["source_alpha_bbox"][0]
+    assert evidence["source_alpha_bbox"][3] > evidence["source_alpha_bbox"][1]

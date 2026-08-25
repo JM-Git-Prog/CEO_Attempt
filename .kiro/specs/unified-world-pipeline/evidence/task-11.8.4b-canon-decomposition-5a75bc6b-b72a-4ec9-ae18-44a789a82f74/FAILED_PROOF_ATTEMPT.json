@@ -1,0 +1,18 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4b.failed-proof-attempt.v1",
+  "task": "11.8.4b",
+  "result": "FAIL_CLOSED_INCOMPLETE_RENDER",
+  "attempt_id": "5a75bc6b-b72a-4ec9-ae18-44a789a82f74",
+  "failure": "The deterministic GLBs and pack were created, but the Blender worker returned process code 0 after a Python exception and produced no review PNGs. The outer generator then stopped on the missing deterministic-shell-recliner-canon-camera.png.",
+  "root_cause": "Blender 5.2 exposes render engine BLENDER_EEVEE and only the default color-management look in this installation; the worker requested the unavailable BLENDER_EEVEE_NEXT engine and AgX look.",
+  "comfy_execution": "The exact immutable SAM3 API workflow was attempted against the locked Canon, but the local Comfy endpoint timed out while processing; all 13 pre-existing hash-verifiable RGBA outputs remained available and were used as an explicitly labelled fallback.",
+  "preservation": {
+    "failed_directory_retained_append_only": true,
+    "eligible_for_human_approval": false,
+    "eligible_for_demo_or_release_evidence": false,
+    "prior_task_11_8_4_or_11_8_4a_evidence_modified": false,
+    "rejected_glb_modified_or_rerendered": false,
+    "service_or_process_ownership_changed": false
+  },
+  "next_action": "Patch only Blender 5.2 render compatibility and worker error detection, then restart in a brand-new proof directory."
+}

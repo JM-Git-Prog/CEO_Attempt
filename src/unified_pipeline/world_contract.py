@@ -143,6 +143,7 @@ class FirstPersonNavigation:
     movement_speed: float
     gravity: float
     coordinate_system: str = "right-handed-x-right-y-up-z-depth"
+    boundary_tolerance_m: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -156,6 +157,7 @@ class FirstPersonNavigation:
             "movement_speed": self.movement_speed,
             "gravity": self.gravity,
             "coordinate_system": self.coordinate_system,
+            "boundary_tolerance_m": self.boundary_tolerance_m,
         }
 
     @classmethod
@@ -176,6 +178,7 @@ class FirstPersonNavigation:
             movement_speed=float(data.get("movement_speed", 0.0)),
             gravity=float(data.get("gravity", 0.0)),
             coordinate_system=str(data.get("coordinate_system", "")),
+            boundary_tolerance_m=float(data.get("boundary_tolerance_m", 0.0)),
         )
 
 
@@ -515,12 +518,15 @@ def validate_interaction_bindings(
 
 @dataclass(frozen=True)
 class MaterialIntent:
-    """Material binding intent for an object instance."""
+    """Material and explicit geometry-shading intent for an object instance."""
     base_color: str = ""          # hex color or texture reference
     metallic: float = 0.0         # 0-1
     roughness: float = 0.5        # 0-1
     normal_map_ref: str = ""      # path or empty
     pass_level: int = 1           # 1 = immediate, 2 = PBR refined
+    shading_model: str = "asset"  # asset | smooth | flat; consumers never generate normals
+    shading_provenance: str = ""  # SHA-256 of mesh-shading-audit/v1 for explicit models
+    render_profile: str = "legacy-authoritative/v1"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -529,6 +535,9 @@ class MaterialIntent:
             "roughness": self.roughness,
             "normal_map_ref": self.normal_map_ref,
             "pass_level": self.pass_level,
+            "shading_model": self.shading_model,
+            "shading_provenance": self.shading_provenance,
+            "render_profile": self.render_profile,
         }
 
     @classmethod
@@ -539,6 +548,9 @@ class MaterialIntent:
             roughness=float(data.get("roughness", 0.5)),
             normal_map_ref=str(data.get("normal_map_ref", "")),
             pass_level=int(data.get("pass_level", 1)),
+            shading_model=str(data.get("shading_model", "asset")),
+            shading_provenance=str(data.get("shading_provenance", "")),
+            render_profile=str(data.get("render_profile", "legacy-authoritative/v1")),
         )
 
 
@@ -695,10 +707,14 @@ class LightSource:
     light_id: str = ""
     light_type: str = "point"     # only types with complete authoritative data may compile
     position: Vec3 = field(default_factory=Vec3)
-    color: str = "#ffffff"        # approved render color; never Kelvin-inferred by consumers
+    color: str = "#ffffff"        # final render color; already carries explicit white balance
     intensity: float = 1.0
-    temperature: float = 5500.0   # exact Kelvin metadata bound alongside approved color
+    temperature: float = 5500.0
     cast_shadows: bool = True
+    intensity_unit: str = "relative"  # relative (legacy) | candela
+    white_balance_color: str = "#ffffff"
+    legacy_color: str = "#ffffff"
+    legacy_intensity: float = 1.0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -709,6 +725,10 @@ class LightSource:
             "intensity": self.intensity,
             "temperature": self.temperature,
             "cast_shadows": self.cast_shadows,
+            "intensity_unit": self.intensity_unit,
+            "white_balance_color": self.white_balance_color,
+            "legacy_color": self.legacy_color,
+            "legacy_intensity": self.legacy_intensity,
         }
 
     @classmethod
@@ -726,21 +746,43 @@ class LightSource:
             intensity=data["intensity"],
             temperature=data["temperature"],
             cast_shadows=data["cast_shadows"],
+            intensity_unit=str(data.get("intensity_unit", "relative")),
+            white_balance_color=str(data.get("white_balance_color", data["color"])),
+            legacy_color=str(data.get("legacy_color", data["color"])),
+            legacy_intensity=float(data.get("legacy_intensity", data["intensity"])),
         )
 
 
 @dataclass(frozen=True)
 class LightingConfig:
-    """Complete ambient and fixture lighting configuration for the world."""
+    """Complete ambient, exposure, compatibility, and physical-light authority."""
     ambient_color: str = "#1a1a2e"
     ambient_intensity: float = 0.3
     lights: tuple[LightSource, ...] = ()
+    ambient_intensity_unit: str = "relative"
+    exposure: float = 1.0
+    derivation_profile: str = "legacy-normalized/v1"
+    source_luminance: float = -1.0
+    source_chromaticity: str = "#ffffff"
+    white_balance_color: str = "#ffffff"
+    derivation_sha256: str = ""
+    legacy_ambient_color: str = "#1a1a2e"
+    legacy_ambient_intensity: float = 0.3
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "ambient_color": self.ambient_color,
             "ambient_intensity": self.ambient_intensity,
             "lights": [light.to_dict() for light in self.lights],
+            "ambient_intensity_unit": self.ambient_intensity_unit,
+            "exposure": self.exposure,
+            "derivation_profile": self.derivation_profile,
+            "source_luminance": self.source_luminance,
+            "source_chromaticity": self.source_chromaticity,
+            "white_balance_color": self.white_balance_color,
+            "derivation_sha256": self.derivation_sha256,
+            "legacy_ambient_color": self.legacy_ambient_color,
+            "legacy_ambient_intensity": self.legacy_ambient_intensity,
         }
 
     @classmethod
@@ -752,6 +794,15 @@ class LightingConfig:
             ambient_color=data["ambient_color"],
             ambient_intensity=data["ambient_intensity"],
             lights=tuple(LightSource.from_dict(item) for item in data["lights"]),
+            ambient_intensity_unit=str(data.get("ambient_intensity_unit", "relative")),
+            exposure=float(data.get("exposure", 1.0)),
+            derivation_profile=str(data.get("derivation_profile", "legacy-normalized/v1")),
+            source_luminance=float(data.get("source_luminance", -1.0)),
+            source_chromaticity=str(data.get("source_chromaticity", "#ffffff")),
+            white_balance_color=str(data.get("white_balance_color", data["ambient_color"])),
+            derivation_sha256=str(data.get("derivation_sha256", "")),
+            legacy_ambient_color=str(data.get("legacy_ambient_color", data["ambient_color"])),
+            legacy_ambient_intensity=float(data.get("legacy_ambient_intensity", data["ambient_intensity"])),
         )
 
 
@@ -763,15 +814,44 @@ def validate_lighting_config(
     """Validate complete lighting without deriving, clamping, or normalizing values."""
     if not isinstance(lighting, LightingConfig):
         raise LightingContractError("WorldContract lighting must be a LightingConfig")
-    if (
-        not isinstance(lighting.ambient_color, str)
-        or len(lighting.ambient_color) != 7
-        or not lighting.ambient_color.startswith("#")
-        or any(character not in "0123456789abcdefABCDEF" for character in lighting.ambient_color[1:])
-    ):
-        raise LightingContractError("ambient light color must be exact #RRGGBB")
-    if _lighting_number(lighting.ambient_intensity, "ambient light intensity") < 0.0:
+
+    def require_hex(value: Any, label: str) -> None:
+        if (
+            not isinstance(value, str) or len(value) != 7 or not value.startswith("#")
+            or any(character not in "0123456789abcdefABCDEF" for character in value[1:])
+        ):
+            raise LightingContractError(f"{label} must be exact #RRGGBB")
+
+    require_hex(lighting.ambient_color, "ambient light color")
+    require_hex(lighting.source_chromaticity, "Canon source chromaticity")
+    require_hex(lighting.white_balance_color, "white-balance color")
+    require_hex(lighting.legacy_ambient_color, "legacy ambient color")
+    ambient = _lighting_number(lighting.ambient_intensity, "ambient light intensity")
+    legacy_ambient = _lighting_number(lighting.legacy_ambient_intensity, "legacy ambient intensity")
+    exposure = _lighting_number(lighting.exposure, "renderer exposure")
+    source_luminance = _lighting_number(lighting.source_luminance, "Canon source luminance")
+    if ambient < 0.0 or legacy_ambient < 0.0:
         raise LightingContractError("ambient light intensity cannot be negative")
+    if lighting.ambient_intensity_unit not in {"relative", "scene-linear-multiplier"}:
+        raise LightingContractError("ambient intensity unit is unsupported")
+    if not 0.1 <= exposure <= 4.0:
+        raise LightingContractError("renderer exposure must be within 0.1..4.0")
+    if source_luminance != -1.0 and not 0.0 <= source_luminance <= 1.0:
+        raise LightingContractError("Canon source luminance must be -1 legacy or within 0..1")
+    if lighting.derivation_sha256 and (
+        len(lighting.derivation_sha256) != 64
+        or any(character not in "0123456789abcdef" for character in lighting.derivation_sha256)
+    ):
+        raise LightingContractError("lighting derivation provenance must be SHA-256")
+
+    physical = lighting.derivation_profile == "canon-mean-relative-luminance-to-three-physical/v1"
+    if physical:
+        if lighting.ambient_intensity_unit != "scene-linear-multiplier":
+            raise LightingContractError("physical lighting requires explicit scene-linear ambient units")
+        if not 0.55 <= ambient <= 1.25 or not 0.85 <= exposure <= 1.35:
+            raise LightingContractError("physical ambient/exposure values exceed profile bounds")
+        if source_luminance < 0.0 or not lighting.derivation_sha256:
+            raise LightingContractError("physical lighting requires source luminance and derivation provenance")
 
     light_ids: set[str] = set()
     for light in lighting.lights:
@@ -789,17 +869,20 @@ def validate_lighting_config(
             )
         for axis, value in zip("xyz", (light.position.x, light.position.y, light.position.z)):
             _lighting_number(value, f"light {light.light_id} position.{axis}")
-        if (
-            not isinstance(light.color, str)
-            or len(light.color) != 7
-            or not light.color.startswith("#")
-            or any(character not in "0123456789abcdefABCDEF" for character in light.color[1:])
-        ):
-            raise LightingContractError(f"light {light.light_id!r} color must be exact #RRGGBB")
-        if _lighting_number(light.intensity, f"light {light.light_id} intensity") < 0.0:
+        require_hex(light.color, f"light {light.light_id!r} color")
+        require_hex(light.white_balance_color, f"light {light.light_id!r} white-balance color")
+        require_hex(light.legacy_color, f"light {light.light_id!r} legacy color")
+        intensity = _lighting_number(light.intensity, f"light {light.light_id} intensity")
+        legacy_intensity = _lighting_number(light.legacy_intensity, f"light {light.light_id} legacy intensity")
+        temperature = _lighting_number(light.temperature, f"light {light.light_id} temperature")
+        if intensity < 0.0 or legacy_intensity < 0.0:
             raise LightingContractError(f"light {light.light_id!r} intensity cannot be negative")
-        if _lighting_number(light.temperature, f"light {light.light_id} temperature") <= 0.0:
-            raise LightingContractError(f"light {light.light_id!r} temperature must be positive Kelvin")
+        if light.intensity_unit not in {"relative", "candela"}:
+            raise LightingContractError(f"light {light.light_id!r} intensity unit is unsupported")
+        if not 1000.0 <= temperature <= 12000.0:
+            raise LightingContractError(f"light {light.light_id!r} temperature must be within 1000K..12000K")
+        if physical and (light.intensity_unit != "candela" or not 8.0 <= intensity <= 56.0):
+            raise LightingContractError("physical point-light candela exceeds profile bounds")
         if not isinstance(light.cast_shadows, bool):
             raise LightingContractError(
                 f"light {light.light_id!r} cast_shadows must be explicit boolean"

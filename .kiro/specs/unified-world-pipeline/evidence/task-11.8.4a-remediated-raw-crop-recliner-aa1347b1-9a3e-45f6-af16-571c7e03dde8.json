@@ -1,0 +1,423 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.remediated-raw-crop-gate.v1",
+  "evidence_id": "aa1347b1-9a3e-45f6-af16-571c7e03dde8",
+  "recorded_at_utc": "2026-08-25T11:49:05.401029+00:00",
+  "task": "11.8.4a",
+  "result": "AWAITING_EXPLICIT_HASH_BOUND_HUMAN_APPROVAL",
+  "scope_boundary": "Task 11.8.4a remediation and exact common-gate re-evaluation only; no approval is manufactured, Task 11.8.5 remains blocked, and no Demo Ready, release, session, service, UI, or commit claim is made.",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_lane": "raw_crop",
+  "candidate_binding": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "pre_record_candidate_tree_fingerprint": "5ac249dd260d2cf0ae82827f9f77944045e43cfa2199bb2d440c8531828c7a64",
+    "pre_record_candidate_tree_path_count": 1924,
+    "algorithm": "candidate-tree-v1: SHA-256 initialized with raw ASCII HEAD plus LF; for each lexicographically sorted tracked or untracked nonignored path from git ls-files -z --cached --others --exclude-standard, append UTF-8 path, NUL, then raw file bytes with no post-content delimiter",
+    "note": "Computed after all Task 11.8.4a scripts/artifacts and before writing this non-self-referential evidence record."
+  },
+  "golden_room_provenance": {
+    "authoritative_source_image": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "identical_shared_input_mirror": {
+      "path": "C:\\Users\\JohnM\\ComfyUI-Shared\\input\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "authoritative_workflow": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "exists": true,
+      "sha256_expected": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "sha256_observed": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    },
+    "raw_crop_extraction_workflow": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+      "exists": true,
+      "sha256_expected": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "sha256_observed": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "verified": true
+    },
+    "raw_source_crop": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+      "exists": true,
+      "sha256_expected": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "sha256_observed": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "verified": true
+    },
+    "prepared_raw_crop": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/lane-raw-crop-neutral.png",
+      "exists": true,
+      "sha256_expected": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+      "sha256_observed": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+      "verified": true
+    },
+    "immutable_task_11_8_4_evidence": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json",
+      "exists": true,
+      "sha256_expected": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "sha256_observed": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "verified": true
+    }
+  },
+  "remediation": {
+    "attempt_1": {
+      "review": {
+        "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-0f7d85b5-f7b0-4e18-8e92-6fb2ab65e3c1/attempt1-review.json",
+        "exists": true,
+        "sha256_expected": null,
+        "sha256_observed": "37ce6b705eb0067008f9909c615ab4bf23146db6725c92abf97e0553a0aac754",
+        "verified": true
+      },
+      "verdict": "FAIL_NON_HUMAN_MATERIAL_CONTINUITY",
+      "approval_requested": false
+    },
+    "attempt_2": {
+      "build_record": {
+        "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/build-record.json",
+        "exists": true,
+        "sha256_expected": null,
+        "sha256_observed": "6c4f0c9cef30a215a16dfe7b82649d4a9e4f8f4bff68b8a7e2b984ce5a8652c4",
+        "verified": true
+      },
+      "build_script": {
+        "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/build_final_remediated_recliner.py",
+        "exists": true,
+        "sha256_expected": null,
+        "sha256_observed": "638755c77d45e53c6a6eff82819c84957d38373a889a8fb7c3179490dddb0684",
+        "verified": true
+      },
+      "material_processor": {
+        "path": "src/photo_pipeline/stages/material_processor.py",
+        "exists": true,
+        "sha256_expected": null,
+        "sha256_observed": "c3fa4d9b763b369b40020555d945de74c73be935eeb35409a190ae2a09a6984e",
+        "verified": true
+      },
+      "method": "source-derived alpha-aware fabric fill followed by unchanged existing MaterialProcessor Pass 1 and Pass 2 fabric PBR paths",
+      "model_or_service_used": false
+    }
+  },
+  "artifact": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr.glb",
+    "sha256": "181ad41bfde7b1a807cb8c2c89c5a3ce977618b8b3092252d3abe5c05b07e7b2",
+    "bytes": 30749836,
+    "inspection": {
+      "container": "GLB_2_0",
+      "declared_bytes": 30749836,
+      "actual_bytes": 30749836,
+      "binary_chunk_bytes": 30748300,
+      "buffer_views_in_bounds": true,
+      "independent_trimesh_load": true,
+      "geometry_count": 1,
+      "vertex_count": 675366,
+      "face_count": 1358256,
+      "extents_generator_space": [
+        1.9698614478111267,
+        1.6313182711601257,
+        1.8619229793548584
+      ],
+      "source_geometry_sha256": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+      "geometry_preserved": true,
+      "max_position_delta": 0.0,
+      "max_extent_delta": 0.0,
+      "material_count": 1,
+      "texture_count": 3,
+      "image_count": 3,
+      "embedded_image_count": 3,
+      "external_image_uris": [],
+      "external_buffer_uris": [],
+      "material_texture_references": {
+        "baseColorTexture": true,
+        "metallicRoughnessTexture": true,
+        "normalTexture": true
+      },
+      "trimesh_in_memory_textures": {
+        "baseColorTexture": true,
+        "metallicRoughnessTexture": true,
+        "normalTexture": true
+      },
+      "uv_count": 675366,
+      "durable_material_present": true
+    }
+  },
+  "neutral_multi_angle_evidence": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr-neutral-eight-panel.png",
+    "sha256": "37776fac4fa6634ee31f39d195b87d571de94ffe7e1be7d00f5dd758d97794a6",
+    "dimensions": [
+      1680,
+      912
+    ],
+    "layout": "front/right/rear/left; geometry/topology row and embedded-material row",
+    "reviewed_non_human_observations": [
+      "recognizable recliner seat/back/arms/extended footrest",
+      "unchanged coherent topology",
+      "no fused room or ground sheet",
+      "no catastrophic collapse",
+      "source-derived brown fabric coverage continues across all four material views"
+    ]
+  },
+  "common_gate": {
+    "policy": "Exact Task 11.8.4 12-check order; no lane-specific exception or weakened criterion.",
+    "checks_in_order": [
+      "evidence_chain_integrity",
+      "stable_uuid_binding",
+      "golden_room_source_identity",
+      "independent_loadability",
+      "non_placeholder_geometry",
+      "recognizable_recliner_silhouette_identity",
+      "no_fused_scene_or_ground_sheet_geometry",
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "no_unresolved_external_materials_or_buffers",
+      "explicit_hash_bound_human_approval"
+    ],
+    "checks": [
+      {
+        "check": "evidence_chain_integrity",
+        "pass": true,
+        "observation": "All source, workflow, prior-gate, build, material-pipeline, artifact, and preview hashes verify; copied generated geometry matches the raw-crop source within 1e-5."
+      },
+      {
+        "check": "stable_uuid_binding",
+        "pass": true,
+        "observation": "Remediated artifact remains bound to recliner UUID 3b2cae03-3556-5c1e-a19b-ea3c1e15694c."
+      },
+      {
+        "check": "golden_room_source_identity",
+        "pass": true,
+        "observation": "Only the Golden Room source-matched raw_crop lane was used; authoritative image, identical mirror, UI workflow, extraction workflow, crop, and prepared-input hashes verify."
+      },
+      {
+        "check": "independent_loadability",
+        "pass": true,
+        "observation": "GLB 2.0 chunks, buffer views, accessors, and one positive trimesh geometry load independently."
+      },
+      {
+        "check": "non_placeholder_geometry",
+        "pass": true,
+        "observation": "The original high-density generated geometry is preserved exactly (675366 vertices, 1358256 faces); no placeholder primitive was substituted."
+      },
+      {
+        "check": "recognizable_recliner_silhouette_identity",
+        "pass": true,
+        "observation": "The immutable Task 11.8.4 review passed recliner silhouette/identity; zero geometry delta carries that exact shape into the new hash-bound neutral review."
+      },
+      {
+        "check": "no_fused_scene_or_ground_sheet_geometry",
+        "pass": true,
+        "observation": "The immutable Task 11.8.4 review found no room shell or ground sheet; zero geometry delta preserves that result."
+      },
+      {
+        "check": "no_obvious_catastrophic_reconstruction_artifacts",
+        "pass": true,
+        "observation": "The immutable Task 11.8.4 review found no catastrophic reconstruction collapse; the new geometry/topology row exposes the unchanged four-view result."
+      },
+      {
+        "check": "neutral_multi_angle_turntable_evidence",
+        "pass": true,
+        "observation": "Hash-bound 1680x912 front/right/rear/left evidence includes separate geometry/topology and embedded-material rows: .kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr-neutral-eight-panel.png."
+      },
+      {
+        "check": "durable_non_temporary_material_continuity",
+        "pass": true,
+        "observation": "Final GLB embeds source-derived base color plus Pass-2 fabric metallic-roughness and normal maps; all three load in-memory and the neutral material row shows bounded brown fabric coverage on every view."
+      },
+      {
+        "check": "no_unresolved_external_materials_or_buffers",
+        "pass": true,
+        "observation": "GLB contains no external image URI or buffer URI; all material images are embedded buffer views."
+      },
+      {
+        "check": "explicit_hash_bound_human_approval",
+        "pass": false,
+        "observation": "PENDING: no approval is manufactured. User decision must explicitly bind artifact hash, pre-record candidate fingerprint, Golden Room source/workflow hashes, preview hash, and this gate evidence hash."
+      }
+    ],
+    "non_human_checks_pass": true,
+    "failed_checks": [
+      "explicit_hash_bound_human_approval"
+    ],
+    "verdict": "AWAITING_EXPLICIT_HASH_BOUND_HUMAN_APPROVAL"
+  },
+  "human_approval": {
+    "present": false,
+    "status": "AWAITING_USER_DECISION",
+    "asset_hash_bound": false,
+    "candidate_fingerprint_bound": false,
+    "golden_room_reference_hashes_bound": false,
+    "preview_hash_bound": false,
+    "gate_evidence_hash_bound": false,
+    "approved": false
+  },
+  "authority": {
+    "metric_plan_remains_sole_authority_for": [
+      "dimensions",
+      "transforms",
+      "placement",
+      "architecture",
+      "openings",
+      "collision",
+      "navigation"
+    ],
+    "immutable_plan_derived_camera_contract_remains_camera_authority": true,
+    "world_contract_remains_final_binding_authority": true,
+    "asset_is_not_spatial_authority": true
+  },
+  "validation": {
+    "validator_path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a.py",
+    "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a.py",
+    "targeted_assertions": [
+      "immutable prior evidence hash",
+      "source/workflow/crop provenance",
+      "UUID binding",
+      "GLB 2.0 and trimesh load",
+      "geometry identity",
+      "embedded base-color/metallic-roughness/normal textures",
+      "no external image/buffer URIs",
+      "neutral evidence hash/dimensions",
+      "exact 12-check order",
+      "human approval remains absent"
+    ],
+    "result": "PASS"
+  },
+  "preservation": {
+    "task_11_8_4_evidence_modified": false,
+    "source_raw_crop_candidate_modified": false,
+    "production_code_modified": false,
+    "test_code_modified": false,
+    "ui_or_interface_modified": false,
+    "production_service_or_ownership_modified": false,
+    "replacement_or_qualification_session_created": false,
+    "new_model_download_integration_preflight_or_inference": false,
+    "cloud_used": false,
+    "commit_created": false,
+    "unrelated_worktree_content_modified": false
+  },
+  "status_effect": {
+    "task_11_8_4a": "AWAITING_EXPLICIT_USER_APPROVAL",
+    "task_11_8_5": "BLOCKED",
+    "approval_or_completion_claimed": false
+  },
+  "mvp_alignment": "Bounded material-only remediation used source pixels and the existing local material path, deferred non-blocking polish/model work, and keeps the 6-8 active-coding-hour Demo Ready critical path focused.",
+  "all_hash_bindings": [
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json",
+      "exists": true,
+      "sha256_expected": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "sha256_observed": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a.json",
+      "exists": true,
+      "sha256_expected": "1b72f3d0bff59c7ba494f0b782b449de6f1edbd5121fb7a268b5d37a4f1fe218",
+      "sha256_observed": "1b72f3d0bff59c7ba494f0b782b449de6f1edbd5121fb7a268b5d37a4f1fe218",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/objects/recliner-raw-crop_hunyuan3d.glb",
+      "exists": true,
+      "sha256_expected": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+      "sha256_observed": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/lane-raw-crop-neutral.png",
+      "exists": true,
+      "sha256_expected": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+      "sha256_observed": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+      "verified": true
+    },
+    {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    {
+      "path": "C:\\Users\\JohnM\\ComfyUI-Shared\\input\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "exists": true,
+      "sha256_expected": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "sha256_observed": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    },
+    {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+      "exists": true,
+      "sha256_expected": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "sha256_observed": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "verified": true
+    },
+    {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+      "exists": true,
+      "sha256_expected": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "sha256_observed": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_source-derived-fabric-base.png",
+      "exists": true,
+      "sha256_expected": "fb6395a06abf9387df711c2b310f0e928a2558a7eeb9e51b0b3f41b2e940cb52",
+      "sha256_observed": "fb6395a06abf9387df711c2b310f0e928a2558a7eeb9e51b0b3f41b2e940cb52",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr.glb",
+      "exists": true,
+      "sha256_expected": "181ad41bfde7b1a807cb8c2c89c5a3ce977618b8b3092252d3abe5c05b07e7b2",
+      "sha256_observed": "181ad41bfde7b1a807cb8c2c89c5a3ce977618b8b3092252d3abe5c05b07e7b2",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/recliner-raw-crop_durable-fabric-pbr-neutral-eight-panel.png",
+      "exists": true,
+      "sha256_expected": "37776fac4fa6634ee31f39d195b87d571de94ffe7e1be7d00f5dd758d97794a6",
+      "sha256_observed": "37776fac4fa6634ee31f39d195b87d571de94ffe7e1be7d00f5dd758d97794a6",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/build-record.json",
+      "exists": true,
+      "sha256_expected": null,
+      "sha256_observed": "6c4f0c9cef30a215a16dfe7b82649d4a9e4f8f4bff68b8a7e2b984ce5a8652c4",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8/build_final_remediated_recliner.py",
+      "exists": true,
+      "sha256_expected": null,
+      "sha256_observed": "638755c77d45e53c6a6eff82819c84957d38373a889a8fb7c3179490dddb0684",
+      "verified": true
+    },
+    {
+      "path": "src/photo_pipeline/stages/material_processor.py",
+      "exists": true,
+      "sha256_expected": null,
+      "sha256_observed": "c3fa4d9b763b369b40020555d945de74c73be935eeb35409a190ae2a09a6984e",
+      "verified": true
+    },
+    {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-0f7d85b5-f7b0-4e18-8e92-6fb2ab65e3c1/attempt1-review.json",
+      "exists": true,
+      "sha256_expected": null,
+      "sha256_observed": "37ce6b705eb0067008f9909c615ab4bf23146db6725c92abf97e0553a0aac754",
+      "verified": true
+    }
+  ]
+}

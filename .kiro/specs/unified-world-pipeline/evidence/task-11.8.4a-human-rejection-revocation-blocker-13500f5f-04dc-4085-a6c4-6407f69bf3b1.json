@@ -1,0 +1,145 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.human-rejection-revocation-blocker.v1",
+  "evidence_id": "13500f5f-04dc-4085-a6c4-6407f69bf3b1",
+  "recorded_at_utc": "2026-08-25T14:48:56.091004+00:00",
+  "task": "11.8.4a",
+  "result": "FAIL_CLOSED_EXPLICIT_HUMAN_REJECTION",
+  "scope": "Append-only correction of current release authority for the exact previously approved raw_crop recliner candidate. All earlier candidate, blocker, validator, and approval records remain immutable historical evidence. This record does not edit, relabel, or erase the prior approval interaction; it supersedes only that approval's authority to pass the current StandaloneAssetGate or unlock downstream work.",
+  "exact_candidate_binding": {
+    "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "artifact_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-03-edge-preserving-denoise-c858e5e3-7968-40ee-b8e5-b54f1c073911/recliner-raw-crop_additional-03-edge-preserving-denoise-eight-panel.png",
+    "preview_sha256": "9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7",
+    "candidate_fingerprint": "6b8a2b6b25e2cbc6e6b674ef037e95d3339584eefb83e6b3350b2f7da8d28baf",
+    "candidate_evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-approval-candidate-additional-03-7c9f6b25-130e-4f47-838c-4cecd86f6d34.json",
+    "candidate_evidence_sha256": "09b48cea36bce340667a3a185bf7727011f3f44793a5ddb3d21c0c5d96234b41",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "source_lane": "raw_crop"
+  },
+  "superseded_release_authority": {
+    "prior_approval_evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-human-approval-pass-ac67e3f0-9c19-44fa-9eed-e822f9e82515.json",
+    "prior_approval_evidence_full_file_sha256": "57946e10d2e58df0c87be5931f528c867f9fa31704b4743a410f990c63ee1773",
+    "prior_record_preserved_as_historical_evidence": true,
+    "prior_record_result_relabelled_or_edited": false,
+    "superseded_scope": "Current StandaloneAssetGate pass authority and every downstream completion, Demo Ready, qualification, or release claim for this exact candidate only.",
+    "historical_interaction_erased": false
+  },
+  "informed_review_chronology": {
+    "initial_limitation": "The initially blocked file:// preview prevented informed visual review of the exact PNG.",
+    "later_review": "The exact PNG with SHA-256 9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7 was successfully opened and viewed locally.",
+    "latest_user_judgement_verbatim": "i dont approve that, it looks like a blob",
+    "latest_judgement_is_authoritative_for_current_human_gate": true,
+    "reason_for_revocation": "After obtaining informed local visual access to the exact previously approved preview, the user explicitly rejected that exact candidate as blob-like."
+  },
+  "human_visual_defect": {
+    "observed_by": "user",
+    "observation": "blob-like geometry",
+    "binding": "Exact preview and candidate identified in exact_candidate_binding.",
+    "interpretation_limit": "This record makes no stronger topology, reconstruction, fused-geometry, material, or quantitative finding beyond the user's stated blob-like visual observation."
+  },
+  "common_gate": {
+    "policy": "The exact Task 11.8.4 12-check order is preserved with no lane-specific exception or weakened criterion. A later informed explicit human rejection revokes approval and forces a fail-closed verdict; prior automated findings cannot compensate for that visual failure.",
+    "checks_in_order": [
+      "evidence_chain_integrity",
+      "stable_uuid_binding",
+      "golden_room_source_identity",
+      "independent_loadability",
+      "non_placeholder_geometry",
+      "recognizable_recliner_silhouette_identity",
+      "no_fused_scene_or_ground_sheet_geometry",
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "no_unresolved_external_materials_or_buffers",
+      "explicit_hash_bound_human_approval"
+    ],
+    "checks": [
+      {"check": "evidence_chain_integrity", "pass": true, "basis": "Exact candidate, preview, prior approval, and immutable historical chain hashes are verified by the focused revocation validator."},
+      {"check": "stable_uuid_binding", "pass": true, "basis": "The rejected exact candidate remains bound to recliner UUID 3b2cae03-3556-5c1e-a19b-ea3c1e15694c."},
+      {"check": "golden_room_source_identity", "pass": true, "basis": "The rejection applies to the exact raw_crop candidate and does not alter its recorded source provenance."},
+      {"check": "independent_loadability", "pass": true, "basis": "The candidate bytes are unchanged from the historical loadability evidence; this revocation does not rerun or reinterpret that check."},
+      {"check": "non_placeholder_geometry", "pass": true, "basis": "The candidate bytes are unchanged from the historical non-placeholder evidence; blob-like is recorded as the user's visual defect, not relabelled as a placeholder."},
+      {"check": "recognizable_recliner_silhouette_identity", "pass": false, "basis": "The informed user visual verdict on the exact preview was that it looks like a blob; no stronger geometry finding is asserted."},
+      {"check": "no_fused_scene_or_ground_sheet_geometry", "pass": true, "basis": "No new fused-scene or ground-sheet finding was stated or manufactured."},
+      {"check": "no_obvious_catastrophic_reconstruction_artifacts", "pass": true, "basis": "No catastrophic-reconstruction finding beyond the user's blob-like observation was stated or manufactured."},
+      {"check": "neutral_multi_angle_turntable_evidence", "pass": true, "basis": "The exact hash-bound PNG was successfully opened locally and used for the informed rejection; evidence availability does not imply visual acceptance."},
+      {"check": "durable_non_temporary_material_continuity", "pass": true, "basis": "The candidate bytes and prior material evidence are unchanged; the user did not state a new material defect."},
+      {"check": "no_unresolved_external_materials_or_buffers", "pass": true, "basis": "The candidate bytes are unchanged from the historical URI/buffer evidence."},
+      {"check": "explicit_hash_bound_human_approval", "pass": false, "status": "REVOKED_BY_LATER_INFORMED_EXPLICIT_REJECTION", "basis": "The latest exact-candidate judgement is `i dont approve that, it looks like a blob`."}
+    ],
+    "failed_checks": [
+      "recognizable_recliner_silhouette_identity",
+      "explicit_hash_bound_human_approval"
+    ],
+    "passed_checks": 10,
+    "verdict": "FAIL_CLOSED_EXPLICIT_HUMAN_REJECTION"
+  },
+  "current_human_approval": {
+    "present": true,
+    "approved": false,
+    "status": "REVOKED_AND_EXPLICITLY_REJECTED",
+    "latest_user_judgement_verbatim": "i dont approve that, it looks like a blob",
+    "asset_hash_bound": true,
+    "preview_hash_bound": true,
+    "candidate_fingerprint_bound": true,
+    "prior_approval_evidence_hash_bound": true
+  },
+  "execution_effect": {
+    "task_11_8_4a": "FAIL_CLOSED_INCOMPLETE",
+    "task_11_8_5": "BLOCKED_NOT_STARTED",
+    "all_downstream_task_11_8_leaves": "BLOCKED_NOT_STARTED",
+    "task_11_7_1_and_tasks_11_9_through_11_11": "BLOCKED_NOT_STARTED",
+    "demo_ready_claimed": false,
+    "release_ready_claimed": false,
+    "platform_complete_claimed": false,
+    "further_evidence_renderer_attempts": "PROHIBITED_FOR_THIS_REJECTED_CANDIDATE",
+    "renderer_attempt_reason": "Evidence-renderer-only changes cannot repair the user's rejected underlying blob-like geometry.",
+    "required_next_action": "Remain fail-closed at Task 11.8.4a; do not start Task 11.8.5 or expand model exploration."
+  },
+  "authority": {
+    "metric_plan_remains_sole_spatial_authority": true,
+    "immutable_plan_derived_camera_contract_remains_camera_authority": true,
+    "world_contract_remains_final_binding_authority": true,
+    "asset_and_preview_are_not_spatial_authority": true
+  },
+  "preservation": {
+    "prior_candidate_blocker_validator_and_approval_files_modified": false,
+    "glb_preview_geometry_materials_or_sources_modified": false,
+    "ui_or_interface_version_modified": false,
+    "production_or_test_code_modified": false,
+    "service_process_scheduled_task_or_ratchet_ownership_modified": false,
+    "session_or_qualification_started": false,
+    "model_download_integration_inference_or_cloud_used": false,
+    "unrelated_worktree_content_modified": false,
+    "commit_created": false,
+    "record_is_append_only": true
+  },
+  "immutable_historical_manifest": [
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json", "sha256": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-approval-candidate-additional-03-7c9f6b25-130e-4f47-838c-4cecd86f6d34.json", "sha256": "09b48cea36bce340667a3a185bf7727011f3f44793a5ddb3d21c0c5d96234b41"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002.json", "sha256": "1525378dc6a7f82c1c420b760949158ddaf36db6d6638649850e7509e09bdaf1"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-human-approval-pass-ac67e3f0-9c19-44fa-9eed-e822f9e82515.json", "sha256": "57946e10d2e58df0c87be5931f528c867f9fa31704b4743a410f990c63ee1773"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-aa1347b1-9a3e-45f6-af16-571c7e03dde8.json", "sha256": "b0fc2b37f5b2c97b815552ee004f13228507ec272559ef04e45d67175859c3fa"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-semantic-surface-fail-closed-d3730c08-0447-4640-ae0c-55183e0e0a45.json", "sha256": "7fd1f453cd9e8f6aa54305b2926b829222f72534c95b4014ffccda0f591e532c"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-visual-gate-hold-f3bdd7ac-c938-4a56-abad-79e850bd243b.json", "sha256": "6c0af3b5a1486f7504085b54d84eece6bc866b274801ea839e3dc995305e648c"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-visual-rejection-b1cbf2d1-1a25-478c-8ddf-3a4f5bfd4780.json", "sha256": "ba20df1f1664daebb7ead03b395c8d916ed3633198430ed0c82eb29da9f22253"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4.py", "sha256": "17021de5e29c8a6d985a490da9759b1cf3a741e6eedbd35ab4d8bede95352729"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a.py", "sha256": "77402c75b9d8c15abb68c6a082eea02768b32c2be79323fcb3b898ee518fe608"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_additional_approval_candidate.py", "sha256": "0c6e503b3d591ac60e58f77d8f032f4cf61c4d63cc91501399154de100e17c7c"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_human_approval_pass.py", "sha256": "6e6f6efd012b4c21ff8d338e25098fd1183b10b22178aae4c885f79c034c5d42"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_semantic_surface_evidence.py", "sha256": "5c9c93b3763145e18d2d808d365d98897f84f0dbbcbb8ebf7fd6b556803152da"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_visual_correction.py", "sha256": "857a3a24cc097af07e0f3c80f6d8845fb2410841978965ff8eb4256705f6587c"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb", "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-03-edge-preserving-denoise-c858e5e3-7968-40ee-b8e5-b54f1c073911/recliner-raw-crop_additional-03-edge-preserving-denoise-eight-panel.png", "sha256": "9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7"}
+  ],
+  "validation": {
+    "validator_path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_human_rejection_revocation.py",
+    "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_human_rejection_revocation.py",
+    "only_targeted_validator_authorized": true
+  },
+  "integrity": {
+    "canonical_non_self_hash_policy": "SHA-256 over UTF-8 canonical JSON (sorted keys, compact separators, ensure_ascii=false) after removing the complete integrity object; the focused validator binds the expected digest.",
+    "full_file_hash_policy": "SHA-256 over the final evidence file bytes; it cannot be truthfully self-embedded and is bound and emitted by the focused validator."
+  },
+  "mvp_alignment": "Failing closed on the user's informed visual rejection prevents downstream work on unusable geometry and remains on the 6-8 active-coding-hour MVP critical path without renderer, model, UI, service, session, or tooling expansion."
+}

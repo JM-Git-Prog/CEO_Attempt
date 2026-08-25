@@ -1,0 +1,114 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4b.human-rejection-best-structural-baseline.v1",
+  "evidence_id": "8b1d00d1-c773-4d62-a823-7e21041b43b5",
+  "recorded_at_utc": "2026-08-25T16:11:36.2789054Z",
+  "task": "11.8.4b",
+  "result": "FAIL_CLOSED_HUMAN_REJECTED",
+  "scope": "Append-only human rejection and execution-state transition for the exact Task 11.8.4b deterministic separate-component recliner candidate. The candidate and all existing artifacts remain immutable diagnostic evidence. This record distinguishes best-so-far structural progress from human approval and does not authorize Task 11.8.5, Demo Ready, qualification, release, or downstream work.",
+  "exact_candidate_binding": {
+    "candidate_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "candidate_role": "IMMUTABLE_BEST_SO_FAR_STRUCTURAL_BASELINE_DIAGNOSTIC_ONLY",
+    "candidate_is_human_approved": false,
+    "candidate_is_release_evidence": false,
+    "candidate_is_demo_ready_evidence": false,
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "recliner_glb": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5/deterministic-recliner.glb",
+      "sha256": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e"
+    },
+    "locked_canon": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"
+    },
+    "canon_camera_contact_sheet": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5/canon-camera-comparison-contact-sheet.png",
+      "sha256": "243652bb622a4e550299de9f62f07c8704eb2e2a6423ee8ed5fb0a5e21d53443"
+    },
+    "recliner_multi_angle_sheet": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5/recliner-neutral-multi-angle-sheet.png",
+      "sha256": "6d755b1555ac8c95bdc362f0895c95d118268805e9c525e582cb63ff5525aaf2"
+    },
+    "proof_evidence": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5/proof-evidence.json",
+      "sha256": "a4df64c85b78ee31deb32e542d612c3089bc4129abdc8e29186a3f3c0ae8b75b"
+    }
+  },
+  "human_review": {
+    "approved": false,
+    "status": "EXPLICITLY_REJECTED",
+    "statements_verbatim": [
+      "the exact candidate is not approved, may require the Danny Tornado Art Bible for better prompts",
+      "but this is the closest you have come !"
+    ],
+    "interpretation": {
+      "not_approved": "The exact bound candidate fails the mandatory human-approval check and cannot pass StandaloneAssetGate.",
+      "closest_so_far": "The exact bound candidate is retained as the best-so-far structural baseline for focused refinement only; this positive comparative assessment is not approval.",
+      "art_bible_direction": "The next leaf must locate and hash-bind the authoritative Danny Tornado Art Bible, then ground recliner-specific prompt and deterministic refinement decisions in that source plus the locked Canon."
+    },
+    "approval_inferred_from_positive_feedback": false
+  },
+  "common_gate_effect": {
+    "non_human_checks_preserved_as_historical_results": true,
+    "explicit_hash_bound_human_approval": {
+      "pass": false,
+      "status": "FAIL_CLOSED_HUMAN_REJECTED"
+    },
+    "standalone_asset_gate_pass": false,
+    "structural_baseline_status": "BEST_SO_FAR_NOT_APPROVED",
+    "structural_success_does_not_compensate_for_human_visual_rejection": true
+  },
+  "authority": {
+    "metric_plan_remains_sole_authority_for": [
+      "dimensions",
+      "transforms",
+      "placement",
+      "architecture",
+      "openings",
+      "collision",
+      "navigation"
+    ],
+    "immutable_plan_derived_camera_contract_remains_camera_authority": true,
+    "world_contract_remains_final_binding_authority": true,
+    "art_bible_and_canon_remain_appearance_evidence_only": true,
+    "candidate_artifact_and_review_sheets_are_not_spatial_authority": true
+  },
+  "execution_effect": {
+    "task_11_8_4b": "FAIL_CLOSED_HUMAN_REJECTED_UNCHECKED",
+    "task_11_8_4c": "NEXT_ACTIONABLE_LEAF_NOT_STARTED",
+    "task_11_8_5": "BLOCKED_NOT_STARTED",
+    "all_downstream_task_11_8_leaves": "BLOCKED_NOT_STARTED",
+    "task_11_7_1_and_tasks_11_9_through_11_11": "BLOCKED_NOT_STARTED",
+    "required_next_action": "Task 11.8.4c: hash-bind the authoritative Danny Tornado Art Bible, extract Canon-grounded recliner style and proportion cues, improve positive/negative prompts, and refine the existing deterministic separate-component architecture into a new candidate without restarting it."
+  },
+  "task_11_8_4c_constraints": {
+    "refine_existing_deterministic_component_architecture": true,
+    "restart_or_reuse_old_artifact_as_new_candidate": false,
+    "required_visual_targets": [
+      "softer overstuffed Canon-matched silhouette",
+      "worn brown upholstery",
+      "correct arm/back/cushion proportions",
+      "conventional recliner base",
+      "integrated and aligned footrest"
+    ],
+    "preserve_independent_component_topology": true,
+    "require_new_candidate_fingerprint": true,
+    "require_new_artifact_hash": true,
+    "require_same_replay_and_non_human_gates": true,
+    "require_two_new_hash_bound_review_sheets": true,
+    "require_explicit_hash_bound_human_approval": true
+  },
+  "preservation": {
+    "candidate_glb_or_review_artifacts_modified": false,
+    "prior_evidence_modified_or_relabelled": false,
+    "new_candidate_generated": false,
+    "session_or_qualification_started": false,
+    "downstream_task_started": false,
+    "ui_or_interface_version_changed": false,
+    "production_code_or_test_code_changed": false,
+    "service_process_or_ownership_changed": false,
+    "model_download_or_cloud_use": false,
+    "staging_or_commit_created": false,
+    "record_is_append_only": true
+  },
+  "mvp_alignment": "Preserving the closest structural result while failing closed on human rejection and routing only to a bounded Art-Bible-guided deterministic refinement advances the 6-8 active-coding-hour visual-first MVP target without reopening model exploration or downstream work."
+}

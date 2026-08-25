@@ -1,0 +1,32 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4b.local-vision-screen.v1",
+  "task": "11.8.4b",
+  "model": "qwen2.5vl:7b",
+  "role": "first-pass local screen only; never human or release authority",
+  "screens": [
+    {
+      "path": "recliner-neutral-multi-angle-sheet.png",
+      "model_pass": true,
+      "failed_checks": [],
+      "model_confidence_raw": 100,
+      "confidence_contract_valid": false,
+      "automatic_acceptance": false,
+      "escalation": "Primary-agent visual adjudication required because confidence was not in the requested 0.0-1.0 range.",
+      "primary_adjudication": "PASS_NON_HUMAN_SCREEN",
+      "primary_observation": "Recognizable recliner; separate back, cushions, seat, arms, base, footrest and seams; no fused scene/ground; no melted or blob-like neural reconstruction; four views legible."
+    },
+    {
+      "path": "canon-camera-comparison-contact-sheet.png",
+      "model_pass": true,
+      "failed_checks": [],
+      "model_confidence_raw": 0.95,
+      "confidence_contract_valid": true,
+      "automatic_acceptance": true,
+      "primary_adjudication": "PASS_NON_HUMAN_SCREEN",
+      "primary_observation": "Locked Canon, existing empty twin, and deterministic shell/recliner proof are distinct and legible; sparse shell is correctly treated as diagnostic rather than Canon fidelity or spatial authority."
+    }
+  ],
+  "presentation_note": "The default bitmap font renders some Unicode separator characters as square fallback glyphs. Labels remain unambiguous; this is cosmetic and does not alter geometry, hashes, authority, or review content.",
+  "overall": "PASS_NON_HUMAN_VISUAL_SCREEN_AWAITING_EXPLICIT_HUMAN_REVIEW",
+  "human_approval_inferred": false
+}

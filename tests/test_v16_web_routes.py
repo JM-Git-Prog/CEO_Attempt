@@ -268,6 +268,31 @@ class TestUnifiedApprovals:
         (artifacts / "detected_objects.json").write_text(
             json.dumps(detected), encoding="utf-8"
         )
+        detected_item = detected["objects"][0]
+        picker = {
+            "schema_version": "candidate-object-picker/v1",
+            "canon_sha256": detected["canon_sha256"],
+            "detected_objects_sha256": detected["document_sha256"],
+            "metric_plan_sha256": "p" * 64,
+            "camera_sha256": "a" * 64,
+            "blockout_visibility_sha256": "v" * 64,
+            "plan_revision": 2,
+            "fuzzy_matching_used": False,
+            "objects": [{
+                **detected_item,
+                "required": True,
+                "plan_binding_id": "plan-table",
+                "manifest_id": "manifest-table",
+                "semantic_concept": "table",
+            }],
+            "required_bindings": [{"plan_binding_ids": ["plan-table"]}],
+        }
+        picker["document_sha256"] = hashlib.sha256(
+            json.dumps(picker, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        (artifacts / "object_picker.json").write_text(
+            json.dumps(picker), encoding="utf-8"
+        )
         unified_routes.register_unified_orchestrator(_FakeOrchestrator())
         response = client.post(
             "/api/session/approval-session/approve/blockout",
@@ -283,6 +308,8 @@ class TestUnifiedApprovals:
             (artifacts / "selected_objects.json").read_text(encoding="utf-8")
         )
         assert selected["objects"][0]["name"] == "round table"
+        assert selected["objects"][0]["object_id"] == "plan-table"
+        assert selected["objects"][0]["detection_object_id"] == detected["objects"][0]["object_id"]
         assert selected["manifest_sha256"]
 
     def test_approval_fails_closed_without_orchestrator(self, client, tmp_path):

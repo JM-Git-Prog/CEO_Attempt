@@ -9,12 +9,33 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
+from src.unified_pipeline.depth_bridge import FORBIDDEN_DEPTH_AUTHORITIES
 from src.unified_pipeline.object_manifest import (
     file_sha256,
     load_detected_document,
     load_selected_manifest,
 )
 from src.unified_pipeline.orchestrator import StageExecutionContext, StageResult
+
+
+# A Canon-derived monocular shell may be metrically self-consistent but too
+# small for a human-scale playable room. Normalize it once with a single
+# camera-anchored similarity; never stretch axes independently.
+MIN_PLAYABLE_ROOM_SPAN_M = 2.5
+MIN_PLAYABLE_ROOM_HEIGHT_M = 2.4
+
+
+def _depth_authority_labels() -> dict[str, Any]:
+    """Return the fail-closed authority envelope for every DA3 artifact."""
+    return {
+        "evidence_kind": "depth_evidence",
+        "evidence_only": True,
+        "optional": True,
+        "spatial_authority": False,
+        "collision_enabled": False,
+        "authority_claims": [],
+        "forbidden_authorities": list(FORBIDDEN_DEPTH_AUTHORITIES),
+    }
 
 
 def _strict(ctx: StageExecutionContext) -> bool:
@@ -225,6 +246,7 @@ async def handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
         "fallback_used": False,
         "spatial_scale": "metric",
         "coordinate_provenance": "DA3 mono camera-space geometry",
+        **_depth_authority_labels(),
     }
     record["evidence_sha256"] = _canonical_hash(record)
     _atomic_json(artifacts / "depth_evidence.json", record)
@@ -242,10 +264,160 @@ async def handle_depth_estimation(ctx: StageExecutionContext) -> StageResult:
         "fallback_used": False,
         "evidence_path": str(artifacts / "depth_evidence.json"),
         "evidence_sha256": record["evidence_sha256"],
+        **_depth_authority_labels(),
     })
 
 
 def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
+    if not _strict(ctx):
+        return _legacy("_handle_spatial_reconstruction", ctx)
+
+    from src.unified_pipeline.blockout_renderer import (
+        blockout_visibility_path,
+        load_blockout_visibility,
+        render_blockout,
+    )
+    from src.unified_pipeline.canon_first_authority import (
+        build_candidate_authority,
+        canonical_sha256,
+    )
+    from src.unified_pipeline.models import Brief
+
+    artifacts = ctx.session_dir / "artifacts"
+    brief_path = artifacts / "brief.json"
+    detected_path = artifacts / "detected_objects.json"
+    canon_path = artifacts / "canon.png"
+    if not brief_path.is_file():
+        raise RuntimeError(
+            "strict-real spatial reconstruction requires a durable Brief; "
+            "depth-only authority remains forbidden"
+        )
+    if not detected_path.is_file() or not canon_path.is_file():
+        raise RuntimeError(
+            "strict-real spatial reconstruction requires Canon-bound semantic detections"
+        )
+
+    brief_data = json.loads(brief_path.read_text(encoding="utf-8"))
+    brief = Brief.from_dict(brief_data)
+    detected = load_detected_document(detected_path)
+    canon_sha256 = file_sha256(canon_path)
+    if canon_sha256 != str(detected.get("canon_sha256", "")):
+        raise RuntimeError("strict-real semantic detections are not bound to local Canon")
+
+    revision_feedback = ctx.values.get("plan_revision_feedback")
+    if revision_feedback is not None and not isinstance(revision_feedback, Mapping):
+        raise RuntimeError("strict-real Plan revision feedback must be a mapping")
+    candidate = build_candidate_authority(
+        brief,
+        detected,
+        artifacts=artifacts,
+        revision_feedback=revision_feedback,
+    )
+    documents = candidate.documents(
+        brief_sha256=canonical_sha256(brief_data),
+        detected_sha256=str(detected["document_sha256"]),
+        canon_sha256=canon_sha256,
+    )
+    blockout_path = artifacts / "blockout.png"
+    blockout = render_blockout(candidate.plan, candidate.camera, blockout_path)
+    visibility = load_blockout_visibility(blockout_path)
+    if visibility["plan_revision"] != candidate.plan.revisions[-1].revision:
+        raise RuntimeError("blockout visibility evidence revision mismatch")
+    if visibility["camera_sha256"] != candidate.camera.compute_hash():
+        raise RuntimeError("blockout visibility evidence camera mismatch")
+    if candidate.plan.revisions[-1].revision >= 2 and not visibility["fully_green"]:
+        raise RuntimeError("revised blockout failed deterministic visibility gate")
+    if blockout.approved:
+        raise RuntimeError("candidate blockout must remain unapproved at spatial reconstruction")
+
+    binding_by_detection: dict[str, dict[str, Any]] = {}
+    for binding in candidate.bindings["required_bindings"]:
+        for index, detection_id in enumerate(binding["detected_object_ids"]):
+            plan_ids = binding["plan_binding_ids"]
+            binding_by_detection[detection_id] = {
+                "required": True,
+                "manifest_id": binding["manifest_id"],
+                "semantic_concept": binding["semantic_concept"],
+                "plan_binding_id": plan_ids[index] if index < len(plan_ids) else "",
+                "observation_authority": False,
+            }
+    picker_objects = []
+    for item in detected["objects"]:
+        detection_id = str(item["object_id"])
+        picker_objects.append({
+            **dict(item),
+            **binding_by_detection.get(detection_id, {
+                "required": False,
+                "manifest_id": "",
+                "semantic_concept": "extra_observation",
+                "plan_binding_id": "",
+                "observation_authority": False,
+            }),
+        })
+    picker: dict[str, Any] = {
+        "schema_version": "candidate-object-picker/v1",
+        "authority_state": "semantic_observations_pending_blockout_approval",
+        "human_approved": False,
+        "blockout_image": "blockout.png",
+        "plan_revision": candidate.plan.revisions[-1].revision,
+        "metric_plan_sha256": documents["spatial"]["metric_plan_sha256"],
+        "camera_sha256": candidate.camera.compute_hash(),
+        "blockout_visibility_sha256": visibility["report_sha256"],
+        "blockout_visibility_path": str(blockout_visibility_path(blockout_path)),
+        "canon_sha256": canon_sha256,
+        "detected_objects_sha256": detected["document_sha256"],
+        "objects": picker_objects,
+        "required_bindings": candidate.bindings["required_bindings"],
+        "extra_observation_ids": [
+            str(item["object_id"])
+            for item in candidate.bindings["extra_observations"]
+        ],
+        "fuzzy_matching_used": False,
+        "detection_coordinates_used_for_plan": False,
+    }
+    picker["document_sha256"] = canonical_sha256(picker)
+
+    _atomic_json(artifacts / "candidate_metric_plan.json", documents["plan"])
+    _atomic_json(artifacts / "camera_contract.json", documents["camera"])
+    _atomic_json(artifacts / "spatial_solution.json", documents["spatial"])
+    _atomic_json(artifacts / "object_picker.json", picker)
+
+    return _stage_result(ctx, {
+        "status": "strict_real_candidate_spatial_reconstruction_complete",
+        "authority_state": "validated_candidate_pending_blockout_approval",
+        "human_approved": False,
+        "candidate_metric_plan_path": str(artifacts / "candidate_metric_plan.json"),
+        "camera_contract_path": str(artifacts / "camera_contract.json"),
+        "spatial_solution_path": str(artifacts / "spatial_solution.json"),
+        "spatial_solution_sha256": documents["spatial"]["solution_sha256"],
+        "image_path": str(blockout_path),
+        "object_picker_path": str(artifacts / "object_picker.json"),
+        "blockout_visibility_path": str(blockout_visibility_path(blockout_path)),
+        "blockout_visibility_sha256": visibility["report_sha256"],
+        "blockout_visibility_green": visibility["fully_green"],
+        "plan_revision": candidate.plan.revisions[-1].revision,
+        "room_dimensions_m": list(candidate.plan.room_dimensions),
+        "opening_count": len(candidate.plan.openings),
+        "circulation_minimum_m": min(
+            float(item["min_width"]) for item in candidate.plan.circulation_paths
+        ),
+        "required_binding_count": len(candidate.bindings["required_bindings"]),
+        "extra_observation_count": len(candidate.bindings["extra_observations"]),
+        "camera_sha256": candidate.camera.compute_hash(),
+        "depth_reference": candidate.depth_reference,
+        "blockout_approved": False,
+    }, revision=candidate.plan.revisions[-1].revision)
+
+
+def _unsafe_depth_authority_spatial_reconstruction(
+    ctx: StageExecutionContext,
+) -> StageResult:
+    """Quarantined historical implementation; never dispatch in production.
+
+    Retained temporarily as diagnostic evidence for Task 11.8. It promotes DA3
+    camera-space geometry into spatial authority and therefore violates the
+    corrected authority boundary.
+    """
     if not _strict(ctx):
         return _legacy("_handle_spatial_reconstruction", ctx)
 
@@ -270,9 +442,20 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
     minimum = vertices.min(axis=0)
     maximum = vertices.max(axis=0)
     extents = maximum - minimum
-    width_m, height_m, depth_m = map(float, (extents[0], extents[1], extents[2]))
-    if min(width_m, height_m, depth_m) <= 0.1:
+    raw_width_m, raw_height_m, raw_depth_m = map(
+        float, (extents[0], extents[1], extents[2])
+    )
+    if min(raw_width_m, raw_height_m, raw_depth_m) <= 0.1:
         raise RuntimeError("DA3 room dimensions are not physically valid")
+    uniform_scale = max(
+        1.0,
+        MIN_PLAYABLE_ROOM_SPAN_M / raw_width_m,
+        MIN_PLAYABLE_ROOM_SPAN_M / raw_depth_m,
+        MIN_PLAYABLE_ROOM_HEIGHT_M / raw_height_m,
+    )
+    width_m = raw_width_m * uniform_scale
+    height_m = raw_height_m * uniform_scale
+    depth_m = raw_depth_m * uniform_scale
     negative_z_ratio = float(np.mean(vertices[:, 2] < -0.01))
     if negative_z_ratio < 0.75:
         raise RuntimeError("DA3 camera-space convention could not be verified")
@@ -297,9 +480,18 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
         if image.size != (image_width, image_height):
             raise RuntimeError("detected-object raster does not match Canon")
     center = (minimum + maximum) / 2.0
+    raw_translation = np.asarray(
+        [-float(center[0]), -float(minimum[1]), -float(center[2])],
+        dtype=float,
+    )
+    camera_position = raw_translation * uniform_scale
     camera = CameraContract(
-        position=(-float(center[0]), -float(minimum[1]), -float(center[2])),
-        target=(-float(center[0]), -float(minimum[1]), -float(center[2]) - 1.0),
+        position=tuple(float(value) for value in camera_position),
+        target=(
+            float(camera_position[0]),
+            float(camera_position[1]),
+            float(camera_position[2] - uniform_scale),
+        ),
         up=(0.0, 1.0, 0.0), vfov=vfov,
         aspect=image_width / image_height, near=0.05,
         far=max(100.0, depth_m * 10.0),
@@ -321,18 +513,22 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
             raise RuntimeError(f"DA3 has insufficient UV geometry for {item['object_id']}")
         lower = np.percentile(local, 5.0, axis=0)
         upper = np.percentile(local, 95.0, axis=0)
-        local_extents = np.maximum(upper - lower, 0.03)
+        local_extents = np.maximum(upper - lower, 0.03) * uniform_scale
         uv_center = np.array([(u1 + u2) / 2.0, (v1 + v2) / 2.0])
         nearest = np.argsort(np.sum((uvs - uv_center) ** 2, axis=1))[:25]
         anchor_raw = np.median(vertices[nearest], axis=0)
         object_width = min(float(local_extents[0]), width_m)
         object_height = min(float(local_extents[1]), height_m)
         object_depth = min(float(local_extents[2]), depth_m)
-        elevation = max(0.0, float(anchor_raw[1] - minimum[1] - object_height / 2.0))
+        elevation = max(
+            0.0,
+            float(anchor_raw[1] - minimum[1]) * uniform_scale
+            - object_height / 2.0,
+        )
         placement = {
             "id": str(item["object_id"]), "name": str(item["name"]),
-            "x": float(anchor_raw[0] - minimum[0]),
-            "y": float(anchor_raw[2] - minimum[2]),
+            "x": float(anchor_raw[0] - minimum[0]) * uniform_scale,
+            "y": float(anchor_raw[2] - minimum[2]) * uniform_scale,
             "elevation": elevation,
             "width": object_width, "height": object_height, "depth": object_depth,
             "rotation_deg": 0.0,
@@ -343,8 +539,9 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
             "bbox": list(item["bbox"]),
             "position_camera_m": [float(value) for value in anchor_raw],
             "position_contract_m": [
-                float(anchor_raw[0] - center[0]), elevation,
-                float(anchor_raw[2] - center[2]),
+                float(anchor_raw[0] - center[0]) * uniform_scale,
+                elevation,
+                float(anchor_raw[2] - center[2]) * uniform_scale,
             ],
             "dimensions_m": [object_width, object_height, object_depth],
             "uv_region": [u1, v1, u2, v2],
@@ -360,8 +557,8 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
         template_id="da3-canon-metric-room",
     )
     plan = replace(base_plan, revisions=(PlanRevision(
-        revision=revision, changed="DA3 metric Canon reconstruction",
-        reason="strict-real spatial solve before blockout approval",
+        revision=revision, changed="uniformly normalized DA3 metric Canon reconstruction",
+        reason="camera-anchored playable-room normalization before blockout approval",
         plan_hash=_compute_plan_hash(base_plan),
     ),))
     solution: dict[str, Any] = {
@@ -373,14 +570,18 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
             "minimum": [float(value) for value in minimum],
             "maximum": [float(value) for value in maximum],
         },
+        "raw_room_dimensions_m": [raw_width_m, raw_depth_m, raw_height_m],
         "room_dimensions_m": [width_m, depth_m, height_m],
+        "uniform_scale_camera_to_contract": uniform_scale,
         "camera": camera.to_dict(), "camera_sha256": camera.compute_hash(),
         "camera_intrinsics_provenance": "recovered from DA3 metric vertices and texture UVs",
         "metric_plan": plan.to_dict(), "objects": solved_objects,
         "coordinate_transform": {
             "translation_camera_to_contract_m": [
-                -float(center[0]), -float(minimum[1]), -float(center[2])
+                float(value) for value in raw_translation
             ],
+            "uniform_scale_camera_to_contract": uniform_scale,
+            "operation_order": ["translate", "uniform_scale"],
             "rotation": [0.0, 0.0, 0.0, 1.0],
         },
         "fallback_used": False,
@@ -401,11 +602,19 @@ def handle_spatial_reconstruction(ctx: StageExecutionContext) -> StageResult:
 
 
 def _material_parameters(material: str) -> tuple[str, float, float]:
+    """Return explicit environment-free PBR intent before contract assembly.
+
+    The current WorldContract has no environment-map authority.  A nearly pure
+    metal (0.9) therefore reflects mostly the black scene background even when
+    direct lighting is valid.  Preserve metallic identity as a bounded mixed
+    conductor/dielectric value instead of erasing it, and require a future
+    explicit environment binding before restoring near-pure metalness.
+    """
     value = material.casefold()
     table = (
-        (("steel", "metal", "iron", "chrome", "aluminum"), ("#B7BDC5", 0.9, 0.24)),
+        (("steel", "metal", "iron", "chrome", "aluminum"), ("#B7BDC5", 0.35, 0.32)),
         (("glass",), ("#D6F0F5", 0.0, 0.08)),
-        (("wood", "oak", "walnut", "timber"), ("#8A5A32", 0.0, 0.68)),
+        (("wood", "oak", "walnut", "timber", "cabinet", "countertop"), ("#8A5A32", 0.0, 0.68)),
         (("ceramic", "porcelain", "tile", "stone", "marble"), ("#E9E0D2", 0.0, 0.36)),
         (("fabric", "cloth", "linen", "leather"), ("#8F6B55", 0.0, 0.88)),
         (("plastic", "rubber"), ("#C9A86A", 0.0, 0.48)),
@@ -420,7 +629,10 @@ def handle_material_pass_1(ctx: StageExecutionContext) -> StageResult:
     if not _strict(ctx):
         return _legacy("_handle_material_pass_1", ctx)
     selected = load_selected_manifest(ctx.session_dir / "artifacts" / "selected_objects.json")
-    item = next((value for value in selected["objects"] if value["object_id"] == ctx.object_id), None)
+    item = next((
+        value for value in selected["objects"]
+        if str(value.get("plan_instance_id") or value["object_id"]) == ctx.object_id
+    ), None)
     if item is None:
         raise RuntimeError(f"material object is not selected: {ctx.object_id}")
     mesh_output = ctx.values.get("stage_outputs", {}).get("mesh_generation", {}).get(ctx.object_id, {})
@@ -430,17 +642,26 @@ def handle_material_pass_1(ctx: StageExecutionContext) -> StageResult:
         raise RuntimeError(f"material stage rejects non-real generator for {ctx.object_id}")
     if evidence["sha256"] != mesh_output.get("mesh_sha256"):
         raise RuntimeError(f"approved mesh hash drift for {ctx.object_id}")
+    from src.unified_pipeline.mesh_shading import audit_glb_shading
+
+    shading = audit_glb_shading(mesh, expected_sha256=evidence["sha256"])
     base_color, metallic, roughness = _material_parameters(str(item.get("material", "")))
     intent = {
         "base_color": base_color, "metallic": metallic, "roughness": roughness,
         "normal_map_ref": "", "pass_level": 1,
+        "shading_model": shading.shading_model,
+        "shading_provenance": shading.provenance_sha256,
+        "render_profile": "environment-free-bounded-metallic/v1",
     }
     return _stage_result(ctx, {
         "status": "material_pass_1_complete", "object_id": ctx.object_id,
         "material_intent": intent,
-        "material_source": "Canon detected-object inventory",
+        "material_source": "Canon detected-object inventory plus approved-GLB normal audit",
+        "material_render_profile": "environment-free-bounded-metallic/v1",
         "material_label": item["material"], "category": item["category"],
-        "mesh_sha256": evidence["sha256"], "fallback_used": False,
+        "mesh_sha256": evidence["sha256"],
+        "shading_audit": shading.to_dict(),
+        "fallback_used": False,
     })
 
 
@@ -452,7 +673,10 @@ def _approved_plan(ctx: StageExecutionContext):
     selected = load_selected_manifest(ctx.session_dir / "artifacts" / "selected_objects.json")
     if selected["canon_sha256"] != spatial["canon_sha256"]:
         raise RuntimeError("selected objects do not bind the spatial Canon")
-    selected_ids = {item["object_id"] for item in selected["objects"]}
+    selected_ids = {
+        str(item.get("plan_instance_id") or item["object_id"])
+        for item in selected["objects"]
+    }
     placements = tuple(
         item for item in plan.object_placements if str(item.get("id")) in selected_ids
     )
@@ -496,8 +720,15 @@ def _carve_and_transform_room(ctx: StageExecutionContext, spatial: Mapping[str, 
     regions = []
     for item in selected["objects"]:
         x1, y1, x2, y2 = map(float, item["bbox"])
-        regions.append((item["object_id"], x1 / width, 1.0 - y2 / height, x2 / width, 1.0 - y1 / height))
-    translation = np.asarray(spatial["coordinate_transform"]["translation_camera_to_contract_m"], dtype=float)
+        object_id = str(item.get("plan_instance_id") or item["object_id"])
+        regions.append((object_id, x1 / width, 1.0 - y2 / height, x2 / width, 1.0 - y1 / height))
+    transform = spatial["coordinate_transform"]
+    translation = np.asarray(
+        transform["translation_camera_to_contract_m"], dtype=float
+    )
+    uniform_scale = float(transform.get("uniform_scale_camera_to_contract", 1.0))
+    if not math.isfinite(uniform_scale) or uniform_scale <= 0.0:
+        raise RuntimeError("room transform uniform scale is invalid")
     parts = _mesh_parts(raw_path)
     hits = {object_id: 0 for object_id, *_ in regions}
     removed_total = 0
@@ -519,6 +750,7 @@ def _carve_and_transform_room(ctx: StageExecutionContext, spatial: Mapping[str, 
         mesh.update_faces(~remove)
         mesh.remove_unreferenced_vertices()
         mesh.apply_translation(translation)
+        mesh.apply_scale(uniform_scale)
         if len(mesh.faces):
             transformed.append(mesh)
     if any(count <= 0 for count in hits.values()):
@@ -535,6 +767,7 @@ def _carve_and_transform_room(ctx: StageExecutionContext, spatial: Mapping[str, 
         "removed_face_count": removed_total,
         "removed_faces_by_object": hits,
         "transform_translation_m": translation.tolist(),
+        "transform_uniform_scale": uniform_scale,
         "fallback_used": False,
     })
     return output, evidence
@@ -555,10 +788,19 @@ def handle_parametric_room(ctx: StageExecutionContext) -> StageResult:
     if not _strict(ctx):
         return _legacy("_handle_parametric_room", ctx)
     plan, camera, spatial, selected = _approved_plan(ctx)
-    output_path, mesh_evidence = _carve_and_transform_room(ctx, spatial, selected)
-    from src.unified_pipeline.parametric_room import build_authoritative_parametric_room
+    from src.unified_pipeline.parametric_room import (
+        build_authoritative_parametric_room,
+        export_authoritative_room_glb,
+    )
 
-    room = build_authoritative_parametric_room(plan, camera, _approval_gate(plan, camera))
+    room = build_authoritative_parametric_room(
+        plan,
+        camera,
+        _approval_gate(plan, camera),
+        authority_claims=(),
+    )
+    output_path = ctx.session_dir / "artifacts" / "room_shell.glb"
+    mesh_evidence = export_authoritative_room_glb(room, output_path)
     room = replace(
         room, render_shell_path=str(output_path),
         render_shell_sha256=mesh_evidence["sha256"],
@@ -573,7 +815,9 @@ def handle_parametric_room(ctx: StageExecutionContext) -> StageResult:
     artifacts = ctx.session_dir / "artifacts"
     _atomic_json(artifacts / "approved_metric_plan.json", approved_document)
     room_document: dict[str, Any] = {
-        "schema_version": "strict-real-parametric-room/v1",
+        "schema_version": "strict-real-parametric-room/v2",
+        "authority_policy": "approved MetricPlan and immutable CameraContract only",
+        "depth_reference_role": "optional non-colliding appearance/reference only",
         "room": room.to_dict(), "mesh_evidence": mesh_evidence,
     }
     room_document["document_sha256"] = _canonical_hash(room_document)
@@ -584,7 +828,12 @@ def handle_parametric_room(ctx: StageExecutionContext) -> StageResult:
         "height_m": plan.room_dimensions[2],
         "room_shell_path": str(output_path),
         "room_shell_sha256": mesh_evidence["sha256"],
-        "removed_face_count": mesh_evidence["removed_face_count"],
+        "room_collision_sha256": mesh_evidence["collision_sha256"],
+        "geometry_count": mesh_evidence["geometry_count"],
+        "face_count": mesh_evidence["face_count"],
+        "vertex_count": mesh_evidence["vertex_count"],
+        "opening_checks": mesh_evidence["opening_checks"],
+        "depth_geometry_used": False,
         "plan_hash": plan.revisions[-1].plan_hash,
         "camera_sha256": camera.compute_hash(),
         "selected_manifest_sha256": selected["manifest_sha256"],
@@ -599,7 +848,10 @@ def handle_physics_classification(ctx: StageExecutionContext) -> StageResult:
 
     plan, _, _, selected, room = _build_room(ctx)
     meshes = ctx.values.get("stage_outputs", {}).get("mesh_generation", {})
-    selected_by_id = {item["object_id"]: item for item in selected["objects"]}
+    selected_by_id = {
+        str(item.get("plan_instance_id") or item["object_id"]): item
+        for item in selected["objects"]
+    }
     selected_ids = set(selected_by_id)
     if set(meshes) != selected_ids:
         raise RuntimeError("physics mesh set does not exactly match approved selection")
@@ -674,13 +926,17 @@ def handle_physics_settle(ctx: StageExecutionContext) -> StageResult:
         raise RuntimeError("physics classification hash is invalid")
     classification["document_sha256"] = expected
     bodies = {item["object_id"]: item for item in classification["bodies"]}
-    selected_ids = {item["object_id"] for item in selected["objects"]}
+    selected_ids = {
+        str(item.get("plan_instance_id") or item["object_id"])
+        for item in selected["objects"]
+    }
     if set(bodies) != selected_ids:
         raise RuntimeError("physics classification does not match selected objects")
     placements = {str(item["id"]): item for item in plan.object_placements}
     settled = settle_classified_bodies(
         bodies=classification["bodies"], placements=placements,
         room_dimensions=plan.room_dimensions,
+        architectural_collision=[item.to_dict() for item in room.collision],
     )
     transforms = settled["transforms"]
     if {item["object_id"] for item in transforms} != selected_ids:
@@ -720,26 +976,59 @@ def handle_physics_settle(ctx: StageExecutionContext) -> StageResult:
 
 def _canon_lighting(ctx: StageExecutionContext, room_height: float):
     from PIL import Image, ImageStat
-    from src.unified_pipeline.world_contract import LightingConfig, LightSource, Vec3
+    from src.unified_pipeline.lighting_authority import derive_canon_lighting
 
     canon = ctx.session_dir / "artifacts" / "canon.png"
     if not canon.is_file():
         raise RuntimeError("Canon-derived lighting requires canon.png")
     with Image.open(canon).convert("RGB") as image:
-        sample = image.resize((64, 64))
-        mean = ImageStat.Stat(sample).mean
-        luminance = (0.2126 * mean[0] + 0.7152 * mean[1] + 0.0722 * mean[2]) / 255.0
-    color = "#" + "".join(f"{max(0, min(255, round(value))):02X}" for value in mean)
-    ambient = max(0.08, min(0.8, luminance * 0.55))
-    return LightingConfig(
-        ambient_color=color, ambient_intensity=ambient,
-        lights=(LightSource(
-            light_id="canon-luminance-centroid", light_type="point",
-            position=Vec3(0.0, room_height * 0.88, 0.0), color=color,
-            intensity=max(0.25, luminance * 2.0), temperature=5500.0,
-            cast_shadows=True,
-        ),),
+        mean = tuple(float(value) for value in ImageStat.Stat(image.resize((64, 64))).mean)
+    lighting, _ = derive_canon_lighting(
+        mean,
+        room_height_m=room_height,
+        source_sha256=file_sha256(canon),
     )
+    return lighting
+
+
+def _plan_relationship_bindings(plan: Any, selected_ids: set[str]):
+    """Convert only explicit MetricPlan-owned relations into canonical bindings."""
+    from src.unified_pipeline.world_contract import Relationship
+
+    bindings = []
+    required = {"source_id", "target_id", "relationship_type", "authority", "semantic"}
+    for index, raw in enumerate(plan.relationships):
+        relation = dict(raw)
+        missing = sorted(required - set(relation))
+        if missing:
+            raise RuntimeError(
+                f"MetricPlan relationship {index} lacks explicit authority: {missing}"
+            )
+        source_id = str(relation["source_id"])
+        target_id = str(relation["target_id"])
+        if relation["authority"] != "metric_plan":
+            raise RuntimeError(f"MetricPlan relationship {index} has non-Plan authority")
+        if source_id not in selected_ids or target_id not in selected_ids | {"room"}:
+            raise RuntimeError(
+                f"MetricPlan relationship {index} references an unselected object"
+            )
+        metadata = json.dumps(
+            {
+                "authority": str(relation["authority"]),
+                "semantic": str(relation["semantic"]),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        bindings.append(Relationship(
+            source_id=source_id,
+            target_id=target_id,
+            relationship_type=str(relation["relationship_type"]),
+            metadata=metadata,
+        ))
+    return tuple(sorted(bindings, key=lambda item: (
+        item.source_id, item.target_id, item.relationship_type, item.metadata,
+    )))
 
 
 def handle_world_contract(ctx: StageExecutionContext) -> StageResult:
@@ -756,8 +1045,19 @@ def handle_world_contract(ctx: StageExecutionContext) -> StageResult:
     )
 
     plan, camera, spatial, selected, room = _build_room(ctx)
-    selected_ids = {item["object_id"] for item in selected["objects"]}
-    selected_by_id = {item["object_id"]: item for item in selected["objects"]}
+    selected_ids = {
+        str(item.get("plan_instance_id") or item["object_id"])
+        for item in selected["objects"]
+    }
+    selected_by_id = {
+        str(item.get("plan_instance_id") or item["object_id"]): item
+        for item in selected["objects"]
+    }
+    placements_by_id = {
+        str(item["id"]): item for item in plan.object_placements
+    }
+    if set(placements_by_id) != selected_ids:
+        raise RuntimeError("WorldContract Plan placements do not match approved selection")
     outputs = ctx.values.get("stage_outputs", {})
     meshes = outputs.get("mesh_generation", {})
     materials = outputs.get("material_pass_1", {})
@@ -814,6 +1114,15 @@ def handle_world_contract(ctx: StageExecutionContext) -> StageResult:
         if material_data.get("mesh_sha256") != mesh_evidence["sha256"]:
             raise RuntimeError(f"material authority targets another mesh: {object_id}")
         material = MaterialIntent.from_dict(material_data["material_intent"])
+        from src.unified_pipeline.mesh_shading import audit_glb_shading
+        shading_audit = audit_glb_shading(
+            mesh_path, expected_sha256=mesh_evidence["sha256"]
+        )
+        if (
+            material.shading_model != shading_audit.shading_model
+            or material.shading_provenance != shading_audit.provenance_sha256
+        ):
+            raise RuntimeError(f"material shading authority drift for {object_id}")
         selected_item = selected_by_id[object_id]
         body = bodies[object_id]
         transform = settled[object_id]
@@ -828,6 +1137,9 @@ def handle_world_contract(ctx: StageExecutionContext) -> StageResult:
             physics_intent="dynamic" if is_dynamic else "static",
             material_intent=material,
             semantic_label=f"{selected_item['category']}/{selected_item['name']}",
+            is_architectural=bool(
+                placements_by_id[object_id].get("is_architectural", False)
+            ),
             settled_position=(tuple(float(value) for value in transform["position"]) if is_dynamic else None),
             settled_rotation=(Quaternion(*map(float, transform["rotation"])) if is_dynamic else None),
         ))
@@ -856,6 +1168,7 @@ def handle_world_contract(ctx: StageExecutionContext) -> StageResult:
             ))
         relationships.append(Relationship(object_id, "room", "containment"))
 
+    relationships.extend(_plan_relationship_bindings(plan, selected_ids))
     normalization_document: dict[str, Any] = {
         "schema_version": "strict-real-mesh-normalization/v1",
         "selected_manifest_sha256": selected["manifest_sha256"],
@@ -887,6 +1200,11 @@ def handle_world_contract(ctx: StageExecutionContext) -> StageResult:
             raise RuntimeError(f"contract transform drift for {instance.object_id}")
         if any(abs(float(a) - float(b)) > 1e-6 for a, b in zip(actual_scale, expected["scale"])):
             raise RuntimeError(f"contract scale drift for {instance.object_id}")
+        expected_architectural = bool(
+            placements_by_id[instance.object_id].get("is_architectural", False)
+        )
+        if instance.is_architectural != expected_architectural:
+            raise RuntimeError(f"contract architectural intent drift for {instance.object_id}")
         expected_intent = "dynamic" if bodies[instance.object_id]["body_mode"] == "DYNAMIC" else "static"
         if instance.physics_intent != expected_intent:
             raise RuntimeError(f"contract physics intent drift for {instance.object_id}")
@@ -1029,7 +1347,10 @@ def handle_automated_final_validation(ctx: StageExecutionContext) -> StageResult
     ))
     if not verify_hash(contract):
         raise RuntimeError("final validation rejects an invalid WorldContract hash")
-    selected_ids = {item["object_id"] for item in selected["objects"]}
+    selected_ids = {
+        str(item.get("plan_instance_id") or item["object_id"])
+        for item in selected["objects"]
+    }
     contract_ids = {item.object_id for item in contract.instances}
     if not selected_ids or contract_ids != selected_ids:
         raise RuntimeError("final selected-set equality check failed")

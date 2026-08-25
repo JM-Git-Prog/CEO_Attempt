@@ -1,0 +1,1602 @@
+{
+  "authority_contract": {
+    "camera_contract": "sole Plan-derived camera authority",
+    "generated_references_are_spatial_authority": false,
+    "metric_plan": "sole dimensions/transforms/placement/architecture/openings/collision/navigation authority",
+    "pack_role": "appearance, decomposition, and deterministic reconstruction candidate evidence only",
+    "world_contract": "final object/relationship/binding authority"
+  },
+  "camera_estimate": {
+    "authority": "reference_only; immutable Plan-derived CameraContract remains authoritative",
+    "confidence": 0.62,
+    "estimated_focal_length_mm": [
+      28,
+      42
+    ],
+    "estimated_horizontal_fov_degrees": [
+      45,
+      65
+    ],
+    "estimated_pose": {
+      "position_room_fraction": [
+        0.5,
+        -0.08,
+        0.6
+      ],
+      "roll_degrees": [
+        -1,
+        1
+      ],
+      "target_room_fraction": [
+        0.5,
+        0.7,
+        0.35
+      ]
+    },
+    "projection": "perspective",
+    "source_resolution_px": [
+      1536,
+      864
+    ]
+  },
+  "created_at_utc": "2026-08-25T15:52:59.469229+00:00",
+  "deterministic_reconstruction": {
+    "recliner_glb": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-5a75bc6b-b72a-4ec9-ae18-44a789a82f74\\deterministic-recliner.glb",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "rejected_geometry_reused_modified_smoothed_or_rerendered": false,
+    "rejected_glb_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "required_separate_components": [
+      "back_cushion_lower",
+      "back_cushion_upper",
+      "back_frame",
+      "base",
+      "footrest_cushion",
+      "footrest_frame",
+      "left_arm",
+      "recliner_root",
+      "right_arm",
+      "seat_cushion",
+      "seat_frame"
+    ],
+    "shell_glb": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-5a75bc6b-b72a-4ec9-ae18-44a789a82f74\\deterministic-empty-room-shell.glb"
+  },
+  "inventory": {
+    "all_clearly_visible_inventory_represented": true,
+    "compound_cutout_components": [
+      "trophies",
+      "telephone"
+    ],
+    "item_count": 15,
+    "keys": [
+      "ceiling_fan",
+      "paintings",
+      "trophy_shelf",
+      "trophies",
+      "wall_mirror",
+      "refrigerator",
+      "area_rug",
+      "recliner",
+      "phone_side_table",
+      "telephone",
+      "crt_television",
+      "wooden_tv_stand",
+      "bookshelf",
+      "table_lamp",
+      "foreground_sofa"
+    ]
+  },
+  "items": [
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "hub",
+        "downrod",
+        "four blades",
+        "light housing"
+      ],
+      "confidence": 0.96,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          1.0,
+          1.6
+        ],
+        "height": [
+          0.35,
+          0.7
+        ],
+        "width": [
+          1.0,
+          1.6
+        ]
+      },
+      "geometry_class": "radial_fixture",
+      "key": "ceiling_fan",
+      "label": "ceiling fan",
+      "material_color_cues": [
+        "dark bronze",
+        "warm wood blades"
+      ],
+      "occlusion": "low",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "hub, downrod, four blades, light housing",
+          "identity": "ceiling fan",
+          "materials_and_color": "dark bronze, warm wood blades",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.5,
+          0.38,
+          0.94
+        ],
+        "yaw_degrees_range": [
+          -10,
+          10
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            649,
+            69,
+            997,
+            199
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-fan_00002_.png",
+        "sha256": "af61c74aa965bec24482c5d7d6240af0bc48dade17f382577f28a43e4b239e24",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "ceiling-mounted",
+        "above room center"
+      ],
+      "stable_uuid": "f64752a2-9a4f-569b-b303-f29b4261b2e6"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "individual frames",
+        "image planes"
+      ],
+      "confidence": 0.94,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.03,
+          0.1
+        ],
+        "height": [
+          0.55,
+          1.1
+        ],
+        "width": [
+          1.3,
+          2.4
+        ]
+      },
+      "geometry_class": "framed_wall_art_set",
+      "key": "paintings",
+      "label": "paintings",
+      "material_color_cues": [
+        "dark wood frames",
+        "warm multicolor art"
+      ],
+      "occlusion": "low",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "individual frames, image planes",
+          "identity": "paintings",
+          "materials_and_color": "dark wood frames, warm multicolor art",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.35,
+          0.72,
+          0.68
+        ],
+        "yaw_degrees_range": [
+          -5,
+          5
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            436,
+            241,
+            584,
+            397
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-paintings_00002_.png",
+        "sha256": "052eba35c44a1d36996cd0a02453fd788decabe73290da67ba59494cc6fa435b",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "mounted on rear/left wall",
+        "above furniture line"
+      ],
+      "stable_uuid": "77a0a06c-f249-5e24-8665-7e9365f9dfa3"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "shelf boards",
+        "brackets",
+        "display backing"
+      ],
+      "confidence": 0.91,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.25,
+          0.5
+        ],
+        "height": [
+          0.8,
+          1.5
+        ],
+        "width": [
+          1.4,
+          2.4
+        ]
+      },
+      "geometry_class": "wall_shelf_display",
+      "key": "trophy_shelf",
+      "label": "trophy shelf",
+      "material_color_cues": [
+        "dark stained wood",
+        "brass highlights"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "shelf boards, brackets, display backing",
+          "identity": "trophy shelf",
+          "materials_and_color": "dark stained wood, brass highlights",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.36,
+          0.8,
+          0.63
+        ],
+        "yaw_degrees_range": [
+          -5,
+          5
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            0,
+            110,
+            454,
+            386
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-trophy-shelf_00002_.png",
+        "sha256": "97dea59660fcc85a260c486a5a71198b0206a4c0ca90e1de030353ec130d916f",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "supports trophies",
+        "against rear wall"
+      ],
+      "stable_uuid": "56681ac7-e1cc-5312-aa4c-536c1770bc00"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "cups",
+        "stems",
+        "bases"
+      ],
+      "confidence": 0.86,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.08,
+          0.25
+        ],
+        "height": [
+          0.18,
+          0.55
+        ],
+        "width": [
+          0.08,
+          0.35
+        ]
+      },
+      "geometry_class": "small_display_objects",
+      "key": "trophies",
+      "label": "trophies",
+      "material_color_cues": [
+        "brass/gold metal",
+        "dark bases"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "cups, stems, bases",
+          "identity": "trophies",
+          "materials_and_color": "brass/gold metal, dark bases",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.36,
+          0.8,
+          0.72
+        ],
+        "yaw_degrees_range": [
+          -30,
+          30
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            0,
+            110,
+            454,
+            386
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": "Trophies share the trophy-shelf RGBA extraction and require component-level separation downstream.",
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-trophy-shelf_00002_.png",
+        "sha256": "97dea59660fcc85a260c486a5a71198b0206a4c0ca90e1de030353ec130d916f",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "on trophy shelf",
+        "grouped display"
+      ],
+      "stable_uuid": "1fc637e4-dde1-529b-9aa1-974d3420105b"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "frame",
+        "reflective panel"
+      ],
+      "confidence": 0.95,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.03,
+          0.12
+        ],
+        "height": [
+          1.0,
+          1.8
+        ],
+        "width": [
+          0.7,
+          1.2
+        ]
+      },
+      "geometry_class": "framed_reflective_plane",
+      "key": "wall_mirror",
+      "label": "wall mirror",
+      "material_color_cues": [
+        "dark wood frame",
+        "cool reflective glass"
+      ],
+      "occlusion": "low",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "frame, reflective panel",
+          "identity": "wall mirror",
+          "materials_and_color": "dark wood frame, cool reflective glass",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.73,
+          0.73,
+          0.63
+        ],
+        "yaw_degrees_range": [
+          -10,
+          10
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            789,
+            285,
+            888,
+            423
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-mirror_00002_.png",
+        "sha256": "5b2acdedde2270bf2fa2dec650a794df5ca84a4197b4f23086b2da0177856551",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "wall-mounted",
+        "near refrigerator"
+      ],
+      "stable_uuid": "58aad82e-71ac-5156-a482-9fd55764877d"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "cabinet",
+        "upper door",
+        "lower door",
+        "handles"
+      ],
+      "confidence": 0.97,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.65,
+          0.9
+        ],
+        "height": [
+          1.65,
+          2.05
+        ],
+        "width": [
+          0.75,
+          1.0
+        ]
+      },
+      "geometry_class": "upright_appliance",
+      "key": "refrigerator",
+      "label": "refrigerator",
+      "material_color_cues": [
+        "cream/off-white enamel",
+        "dark handles"
+      ],
+      "occlusion": "low",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "cabinet, upper door, lower door, handles",
+          "identity": "refrigerator",
+          "materials_and_color": "cream/off-white enamel, dark handles",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.69,
+          0.77,
+          0.25
+        ],
+        "yaw_degrees_range": [
+          -10,
+          10
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            939,
+            323,
+            1087,
+            605
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-fridge_00002_.png",
+        "sha256": "feffab3d26b1331c372750313e7f5eabbf7b1673deabfe9bb0f50095d9ecb56a",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "floor-standing",
+        "against rear-right wall"
+      ],
+      "stable_uuid": "3e014fed-94e2-5a1f-b8f7-f1b4134b5e1f"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "rug body",
+        "border",
+        "pattern bands"
+      ],
+      "confidence": 0.91,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          3.0,
+          5.2
+        ],
+        "height": [
+          0.01,
+          0.04
+        ],
+        "width": [
+          2.1,
+          3.6
+        ]
+      },
+      "geometry_class": "thin_rectangular_textile",
+      "key": "area_rug",
+      "label": "area rug",
+      "material_color_cues": [
+        "muted red",
+        "tan geometric pattern"
+      ],
+      "occlusion": "high",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "rug body, border, pattern bands",
+          "identity": "area rug",
+          "materials_and_color": "muted red, tan geometric pattern",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.5,
+          0.57,
+          0.01
+        ],
+        "yaw_degrees_range": [
+          -8,
+          8
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            640,
+            654,
+            1033,
+            864
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-rug_00002_.png",
+        "sha256": "ee9e85e6ee5ae16a1a1118decd919ea85bf4abf56d41528fa522089a25c89bc4",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "on floor",
+        "beneath seating area"
+      ],
+      "stable_uuid": "65c2beef-f9a6-52ad-a721-312c73c6b245"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "back",
+        "upper/lower back cushions",
+        "seat",
+        "left arm",
+        "right arm",
+        "base",
+        "footrest",
+        "seams"
+      ],
+      "confidence": 0.98,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.9,
+          1.55
+        ],
+        "height": [
+          1.05,
+          1.35
+        ],
+        "width": [
+          0.85,
+          1.15
+        ]
+      },
+      "geometry_class": "articulated_upholstered_chair",
+      "key": "recliner",
+      "label": "recliner",
+      "material_color_cues": [
+        "deep burgundy leather",
+        "dark seam piping",
+        "dark base"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "back, upper/lower back cushions, seat, left arm, right arm, base, footrest, seams",
+          "identity": "recliner",
+          "materials_and_color": "deep burgundy leather, dark seam piping, dark base",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.37,
+          0.57,
+          0.16
+        ],
+        "yaw_degrees_range": [
+          5,
+          25
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            462,
+            447,
+            798,
+            729
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+        "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "on area rug",
+        "faces CRT television",
+        "left of phone side table"
+      ],
+      "stable_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "top",
+        "apron",
+        "four legs",
+        "lower shelf"
+      ],
+      "confidence": 0.92,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.4,
+          0.7
+        ],
+        "height": [
+          0.5,
+          0.75
+        ],
+        "width": [
+          0.4,
+          0.7
+        ]
+      },
+      "geometry_class": "small_wood_side_table",
+      "key": "phone_side_table",
+      "label": "telephone side table",
+      "material_color_cues": [
+        "dark stained wood"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "top, apron, four legs, lower shelf",
+          "identity": "telephone side table",
+          "materials_and_color": "dark stained wood",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.54,
+          0.57,
+          0.13
+        ],
+        "yaw_degrees_range": [
+          -10,
+          10
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            800,
+            497,
+            896,
+            603
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-phone-table_00002_.png",
+        "sha256": "a2bc87961cd2a85bcf8a45949b8d5aa0061887e7aa5b7fdeae6cb5aca9608494",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "supports telephone",
+        "beside recliner"
+      ],
+      "stable_uuid": "0d840820-a0fe-57c7-a3aa-bbf94eaa9b9c"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "base",
+        "handset",
+        "dial/keypad",
+        "cord"
+      ],
+      "confidence": 0.84,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.15,
+          0.3
+        ],
+        "height": [
+          0.08,
+          0.2
+        ],
+        "width": [
+          0.18,
+          0.35
+        ]
+      },
+      "geometry_class": "small_desktop_device",
+      "key": "telephone",
+      "label": "corded telephone",
+      "material_color_cues": [
+        "dark brown/black plastic"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "base, handset, dial/keypad, cord",
+          "identity": "corded telephone",
+          "materials_and_color": "dark brown/black plastic",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.54,
+          0.57,
+          0.28
+        ],
+        "yaw_degrees_range": [
+          -25,
+          25
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            800,
+            497,
+            896,
+            603
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": "Telephone shares the phone-table RGBA extraction and requires component-level separation downstream.",
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-phone-table_00002_.png",
+        "sha256": "a2bc87961cd2a85bcf8a45949b8d5aa0061887e7aa5b7fdeae6cb5aca9608494",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "on phone side table",
+        "beside recliner"
+      ],
+      "stable_uuid": "3d636bff-9b0d-57a2-aaa1-6a0957f3fbce"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "cabinet",
+        "curved screen",
+        "bezel",
+        "controls"
+      ],
+      "confidence": 0.97,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.5,
+          0.8
+        ],
+        "height": [
+          0.55,
+          0.85
+        ],
+        "width": [
+          0.65,
+          1.0
+        ]
+      },
+      "geometry_class": "box_cathode_ray_television",
+      "key": "crt_television",
+      "label": "CRT television",
+      "material_color_cues": [
+        "dark charcoal cabinet",
+        "desaturated glass screen"
+      ],
+      "occlusion": "low",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "cabinet, curved screen, bezel, controls",
+          "identity": "CRT television",
+          "materials_and_color": "dark charcoal cabinet, desaturated glass screen",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.79,
+          0.58,
+          0.37
+        ],
+        "yaw_degrees_range": [
+          -20,
+          0
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            1207,
+            524,
+            1446,
+            785
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-tv-set_00002_.png",
+        "sha256": "7d03a0bee7d1c2f913eaf4967b2ace4fd6716bbd39ffbe969485fad0410aed07",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "on wooden TV stand",
+        "faces recliner"
+      ],
+      "stable_uuid": "83d7d935-06c0-522c-9554-31e508e12de7"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "top",
+        "cabinet",
+        "doors/drawers",
+        "feet"
+      ],
+      "confidence": 0.96,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.45,
+          0.8
+        ],
+        "height": [
+          0.5,
+          0.8
+        ],
+        "width": [
+          0.9,
+          1.5
+        ]
+      },
+      "geometry_class": "low_media_cabinet",
+      "key": "wooden_tv_stand",
+      "label": "wooden TV stand",
+      "material_color_cues": [
+        "medium/dark stained wood"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "top, cabinet, doors/drawers, feet",
+          "identity": "wooden TV stand",
+          "materials_and_color": "medium/dark stained wood",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.79,
+          0.58,
+          0.15
+        ],
+        "yaw_degrees_range": [
+          -20,
+          0
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            1178,
+            663,
+            1474,
+            854
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-tv-stand_00002_.png",
+        "sha256": "5df3eed52269aad08acf5bd456775e5016e0e2b91d4fbbf60bcea631292268c2",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "supports CRT television",
+        "against right wall"
+      ],
+      "stable_uuid": "430d23e7-c233-53a1-8b48-77e2ee08db60"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "side panels",
+        "shelves",
+        "back",
+        "books"
+      ],
+      "confidence": 0.93,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.25,
+          0.5
+        ],
+        "height": [
+          1.4,
+          2.1
+        ],
+        "width": [
+          0.7,
+          1.2
+        ]
+      },
+      "geometry_class": "tall_open_shelving",
+      "key": "bookshelf",
+      "label": "bookshelf",
+      "material_color_cues": [
+        "dark stained wood",
+        "multicolor book spines"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "side panels, shelves, back, books",
+          "identity": "bookshelf",
+          "materials_and_color": "dark stained wood, multicolor book spines",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.88,
+          0.72,
+          0.28
+        ],
+        "yaw_degrees_range": [
+          -15,
+          0
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            144,
+            541,
+            456,
+            813
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-bookshelf_00002_.png",
+        "sha256": "4c9253ff0d21d0acafe2ecf4ed7f4ac08a33313e45adc088be8b9960069539ec",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "against right wall",
+        "near television"
+      ],
+      "stable_uuid": "e5875175-eeab-59fb-a8f2-831fa0576b06"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "base",
+        "stem",
+        "shade",
+        "bulb glow"
+      ],
+      "confidence": 0.92,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.25,
+          0.55
+        ],
+        "height": [
+          0.55,
+          1.0
+        ],
+        "width": [
+          0.25,
+          0.55
+        ]
+      },
+      "geometry_class": "portable_luminaire",
+      "key": "table_lamp",
+      "label": "table lamp",
+      "material_color_cues": [
+        "warm cream shade",
+        "dark base",
+        "warm light"
+      ],
+      "occlusion": "medium",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "base, stem, shade, bulb glow",
+          "identity": "table lamp",
+          "materials_and_color": "warm cream shade, dark base, warm light",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.61,
+          0.53,
+          0.4
+        ],
+        "yaw_degrees_range": [
+          -15,
+          15
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            384,
+            503,
+            456,
+            629
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-lamp_00002_.png",
+        "sha256": "ba3457e42ec92008d4a9cb5f75bf21fbbf55a8bd4418cdad50d8cddf96db9ed6",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "on side surface",
+        "casts warm local light"
+      ],
+      "stable_uuid": "481d3906-e75c-559d-bc92-1b07b74c1799"
+    },
+    {
+      "authority": "appearance_evidence_only_not_spatial_authority",
+      "component_breakdown": [
+        "seat cushions",
+        "back cushions",
+        "arms",
+        "base"
+      ],
+      "confidence": 0.9,
+      "estimated_size_range_m": {
+        "authority": "appearance_estimate_only",
+        "depth": [
+          0.8,
+          1.2
+        ],
+        "height": [
+          0.75,
+          1.1
+        ],
+        "width": [
+          1.8,
+          2.8
+        ]
+      },
+      "geometry_class": "upholstered_sofa",
+      "key": "foreground_sofa",
+      "label": "foreground sofa",
+      "material_color_cues": [
+        "deep brown/burgundy upholstery"
+      ],
+      "occlusion": "high/cropped",
+      "prompts": {
+        "negative": [
+          "no fused room or floor geometry",
+          "no duplicated components",
+          "no melted, inflated, or blob-like silhouette",
+          "no invented occluded detail treated as authority",
+          "no camera or placement inference promoted to spatial authority"
+        ],
+        "positive": {
+          "geometry": "seat cushions, back cushions, arms, base",
+          "identity": "foreground sofa",
+          "materials_and_color": "deep brown/burgundy upholstery",
+          "preservation": "Preserve the locked Canon silhouette, visible proportions, count, and orientation cues."
+        }
+      },
+      "relative_pose_estimate": {
+        "authority": "reference_only_pending_MetricPlan_and_CameraContract",
+        "canon_normalized_xyz": [
+          0.18,
+          0.23,
+          0.17
+        ],
+        "yaw_degrees_range": [
+          -10,
+          10
+        ]
+      },
+      "source_mask_or_cutout": {
+        "alpha_profile": {
+          "alpha_bbox_px": [
+            0,
+            720,
+            556,
+            864
+          ],
+          "alpha_extrema": [
+            0,
+            255
+          ],
+          "alpha_mask_has_transparency": true,
+          "alpha_mask_nonempty": true,
+          "mode": "RGBA",
+          "size_px": [
+            1536,
+            864
+          ]
+        },
+        "compound_source_note": null,
+        "kind": "rgba_cutout_with_alpha_mask",
+        "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-couch_00002_.png",
+        "sha256": "2563dfd62b198248797541255b5d328fb1eef194ada6573f9e006bd854a1a76d",
+        "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+        "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+      },
+      "spatial_relationships": [
+        "foreground left",
+        "partially outside Canon frame"
+      ],
+      "stable_uuid": "601adae6-1591-56c9-a45a-a263539596d1"
+    }
+  ],
+  "pack_id": "f73a76bb-2ec7-4ccd-addd-628618edd8a1",
+  "profile": "DIAGNOSTIC_TASK_11_8_4B_NON_QUALIFYING",
+  "room_shell": {
+    "appearance_estimate_m": {
+      "height": [
+        3.5,
+        5.5
+      ],
+      "length": [
+        11.0,
+        16.0
+      ],
+      "width": [
+        8.0,
+        11.0
+      ]
+    },
+    "architectural_features": [
+      {
+        "key": "rear_door",
+        "relationship": "rear wall opening",
+        "source": "locked Canon",
+        "uuid": "e34118e5-1e64-5aea-941e-00c776cac742"
+      },
+      {
+        "key": "right_door",
+        "relationship": "right wall opening",
+        "source": "locked Canon",
+        "uuid": "94c4a41b-dd60-5090-a315-e590bb7cd3cf"
+      },
+      {
+        "key": "right_window",
+        "relationship": "street-facing right wall opening",
+        "source": "locked Canon",
+        "uuid": "f2d01385-ffb0-5f5c-9692-d0f6e937836a"
+      }
+    ],
+    "authority": "appearance_estimate_only_pending_MetricPlan",
+    "deterministic_glb": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-5a75bc6b-b72a-4ec9-ae18-44a789a82f74\\deterministic-empty-room-shell.glb",
+    "empty_twin_reference": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-02-twin_00002_.png",
+    "geometry_class": "long_rectangular_interior_shell",
+    "materials": [
+      "warm wood plank floor",
+      "cream plaster walls",
+      "dark wood opening trim"
+    ],
+    "stable_uuid": "6e1ab5a3-a8e0-5770-9ee8-586b902dcf5e"
+  },
+  "schema": "unified-world-pipeline.canon-decomposition-pack.v1",
+  "source": {
+    "comfy_execution": {
+      "available": true,
+      "comfyui_version": "0.33.3",
+      "endpoint": "http://127.0.0.1:8188",
+      "execution": "VERIFIED_EXISTING_OUTPUT_FALLBACK",
+      "fallback": true,
+      "fallback_reason": "TimeoutError: timed out",
+      "missing_node_types": [],
+      "prior_cutouts": {
+        "area_rug": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-rug_00002_.png",
+        "bookshelf": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-bookshelf_00002_.png",
+        "ceiling_fan": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-fan_00002_.png",
+        "crt_television": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-tv-set_00002_.png",
+        "foreground_sofa": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-couch_00002_.png",
+        "paintings": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-paintings_00002_.png",
+        "phone_side_table": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-phone-table_00002_.png",
+        "recliner": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+        "refrigerator": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-fridge_00002_.png",
+        "table_lamp": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-lamp_00002_.png",
+        "trophy_shelf": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-trophy-shelf_00002_.png",
+        "wall_mirror": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-mirror_00002_.png",
+        "wooden_tv_stand": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-tv-stand_00002_.png"
+      },
+      "queue_pending_before": 0,
+      "queue_running_before": 0,
+      "requested": true,
+      "required_node_types": [
+        "CLIPTextEncode",
+        "CheckpointLoaderSimple",
+        "GrowMask",
+        "InvertMask",
+        "JoinImageWithAlpha",
+        "LoadImage",
+        "MaskComposite",
+        "SAM3_Detect",
+        "SaveImage",
+        "SolidMask"
+      ],
+      "source_hash_verified": true,
+      "source_load_image": "danny-v4-01-canon_00002_.png [output]",
+      "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+      "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+    },
+    "empty_twin_app_workflow": {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\ComfyUI-Installs\\ComfyUI\\ComfyUI\\user\\default\\workflows\\danny-v4-pipeline-app.app.json",
+      "sha256_expected": "c903d91563056fe139091396572ffdfca84718c10eaa6f4ed63150b8bd0f4ef7",
+      "sha256_observed": "c903d91563056fe139091396572ffdfca84718c10eaa6f4ed63150b8bd0f4ef7",
+      "verified": true
+    },
+    "empty_twin_qa_report": {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\danny-v4-pipeline-QA-report.md",
+      "sha256_expected": "ca442223247d66ae14c0fd3d65b6147a4b1997c7034219b68c437eed96ef7076",
+      "sha256_observed": "ca442223247d66ae14c0fd3d65b6147a4b1997c7034219b68c437eed96ef7076",
+      "verified": true
+    },
+    "existing_empty_twin": {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-02-twin_00002_.png",
+      "sha256_expected": null,
+      "sha256_observed": "2f67a5f3d3b44a4fb1eacf1ada5e57d4fbf401662358b01ccf087c4a83a59103",
+      "verified": true
+    },
+    "locked_canon": {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "sam3_items_api_workflow": {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+      "sha256_expected": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "sha256_observed": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "verified": true
+    },
+    "sam3_items_ui_workflow": {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "sha256_expected": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "sha256_observed": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    }
+  }
+}

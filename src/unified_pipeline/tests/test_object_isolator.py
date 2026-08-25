@@ -22,12 +22,15 @@ from src.unified_pipeline.models import ManifestObject, ObjectCanon
 from src.unified_pipeline.object_isolator import (
     ObjectIsolator,
     SegmentationError,
+    _build_bound_sam_workflow,
     _build_sam_workflow,
     _compute_mask_area_fraction,
     _compute_mask_bbox,
     _compute_mask_centroid,
     _match_masks_to_manifest,
+    _retain_primary_mask_component,
     apply_mask_to_image,
+    inspect_rgba_mask,
     quality_gate,
     MIN_COVERAGE_THRESHOLD,
 )
@@ -341,6 +344,52 @@ class TestApplyMask:
         assert result.exists()
 
 
+# ─── Tests: Bound SAM Component Cleanup ─────────────────────────────────────────
+
+
+class TestBoundMaskComponentCleanup:
+    def test_removes_detached_islands_and_preserves_dominant_alpha(self):
+        alpha = np.zeros((20, 20), dtype=np.uint8)
+        alpha[5:15, 6:14] = 255
+        alpha[1, 1] = 255
+        alpha[18, 17:19] = 255
+
+        cleaned, evidence = _retain_primary_mask_component(alpha)
+
+        assert np.array_equal(cleaned[5:15, 6:14], alpha[5:15, 6:14])
+        assert cleaned[1, 1] == 0
+        assert cleaned[18, 17] == 0
+        assert evidence == {
+            "connectivity": 8,
+            "component_count_before": 3,
+            "component_pixel_counts_desc": [80, 2, 1],
+            "retained_component_pixels": 80,
+            "removed_component_pixels": 3,
+            "cleanup_applied": True,
+        }
+
+    def test_treats_diagonally_touching_object_pixels_as_connected(self):
+        alpha = np.zeros((5, 5), dtype=np.uint8)
+        alpha[1, 1] = 255
+        alpha[2, 2] = 255
+        alpha[3, 3] = 255
+
+        cleaned, evidence = _retain_primary_mask_component(alpha)
+
+        assert np.array_equal(cleaned, alpha)
+        assert evidence["component_count_before"] == 1
+        assert evidence["cleanup_applied"] is False
+
+    def test_empty_mask_is_stable(self):
+        alpha = np.zeros((4, 7), dtype=np.uint8)
+
+        cleaned, evidence = _retain_primary_mask_component(alpha)
+
+        assert np.array_equal(cleaned, alpha)
+        assert evidence["component_count_before"] == 0
+        assert evidence["removed_component_pixels"] == 0
+
+
 # ─── Tests: SAM Workflow ────────────────────────────────────────────────────────
 
 
@@ -377,6 +426,44 @@ class TestSAMWorkflow:
         assert wf["3"]["inputs"]["image"] == ["1", 0]
         assert wf["4"]["inputs"]["mask"] == ["3", 0]
         assert wf["5"]["inputs"]["images"] == ["4", 0]
+
+
+    def test_bound_workflow_uses_text_conditioning_and_rgba_output(self):
+        workflow = _build_bound_sam_workflow("crop.png", "the chair", "slice-g")
+        assert workflow["3"]["inputs"]["text"] == "the chair"
+        assert workflow["4"]["inputs"]["conditioning"] == ["3", 0]
+        assert workflow["4"]["inputs"]["individual_masks"] is False
+        assert workflow["7"]["class_type"] == "JoinImageWithAlpha"
+        assert workflow["8"]["class_type"] == "SaveImage"
+
+    def test_rgba_metrics_bind_mask_to_approved_crop(self, tmp_path: Path):
+        from PIL import Image
+
+        rgba = np.zeros((100, 100, 4), dtype=np.uint8)
+        rgba[10:90, 20:80, :3] = 128
+        rgba[10:90, 20:80, 3] = 255
+        path = tmp_path / "bound.png"
+        Image.fromarray(rgba, "RGBA").save(path)
+
+        metrics = inspect_rgba_mask(
+            path, source_size=(200, 200), source_bbox=(50, 40, 150, 140)
+        )
+        assert metrics["quality_green"] is True
+        assert metrics["alpha_fraction_source"] == pytest.approx(0.12)
+        assert metrics["alpha_bbox_crop"] == [20, 10, 80, 90]
+
+    def test_rgba_metrics_reject_trivial_or_full_crop(self, tmp_path: Path):
+        from PIL import Image
+
+        for name, alpha in (("empty", 0), ("full", 255)):
+            rgba = np.zeros((100, 100, 4), dtype=np.uint8)
+            rgba[:, :, 3] = alpha
+            path = tmp_path / f"{name}.png"
+            Image.fromarray(rgba, "RGBA").save(path)
+            metrics = inspect_rgba_mask(
+                path, source_size=(100, 100), source_bbox=(0, 0, 100, 100)
+            )
+            assert metrics["quality_green"] is False
 
 
 # ─── Tests: ObjectIsolator Integration ──────────────────────────────────────────

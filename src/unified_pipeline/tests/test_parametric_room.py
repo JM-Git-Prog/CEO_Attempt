@@ -13,6 +13,7 @@ from src.unified_pipeline.depth_bridge import (
     DepthEvidence,
     DepthEvidenceProvenance,
 )
+from src.unified_pipeline.mesh_shading import audit_glb_shading
 from src.unified_pipeline.models import MetricPlan, PlanRevision
 from src.unified_pipeline.parametric_room import (
     PLAN_AUTHORITY,
@@ -149,6 +150,59 @@ def test_compiler_wall_segments_leave_real_noncolliding_opening_gaps() -> None:
             assert not (inside_horizontal and inside_vertical)
 
 
+def test_south_door_and_north_window_apertures_have_no_architecture_collider() -> None:
+    original, camera = _plan(), _camera()
+    base = replace(
+        original,
+        openings=(
+            {"id": "south_door", "type": "door", "wall": "south", "parameter": 0.3,
+             "width": 0.9, "height": 2.1},
+            {"id": "north_window", "type": "window", "wall": "north", "parameter": 0.65,
+             "width": 1.2, "height": 1.1, "sill_height": 0.9},
+        ),
+        revisions=(),
+    )
+    plan = replace(base, revisions=(PlanRevision(
+        revision=3,
+        changed="south door and north window",
+        reason="aperture collision regression",
+        plan_hash=_compute_plan_hash(base),
+    ),))
+    room = build_authoritative_parametric_room(plan, camera, _approval(plan, camera))
+    collision_by_geometry = {item.geometry_id: item for item in room.collision}
+
+    assert {item.stable_id for item in room.openings} == {"south_door", "north_window"}
+    assert not ({"south_door", "north_window"} & set(collision_by_geometry))
+    for opening in room.openings:
+        opening_center = (
+            opening.position_upbge[0], opening.position_upbge[2], opening.position_upbge[1]
+        )
+        opening_half = (
+            opening.dimensions_upbge[0] / 2.0,
+            opening.dimensions_upbge[2] / 2.0,
+            opening.dimensions_upbge[1] / 2.0,
+        )
+        blockers = []
+        for collider in room.collision:
+            if "wall" not in collider.geometry_id:
+                continue
+            center = (
+                collider.position_upbge[0], collider.position_upbge[2], collider.position_upbge[1]
+            )
+            half = (
+                collider.dimensions_upbge[0] / 2.0,
+                collider.dimensions_upbge[2] / 2.0,
+                collider.dimensions_upbge[1] / 2.0,
+            )
+            if all(
+                abs(opening_center[index] - center[index])
+                < opening_half[index] + half[index] - 1e-7
+                for index in range(3)
+            ):
+                blockers.append(collider.geometry_id)
+        assert blockers == []
+
+
 def test_accepts_only_aligned_noncolliding_depth_appearance_mesh(tmp_path: Path) -> None:
     plan, camera = _plan(), _camera()
     mesh = tmp_path / "depth-reference.glb"
@@ -239,3 +293,35 @@ def test_rejects_noncanonical_walls_even_when_room_is_closed() -> None:
         build_authoritative_parametric_room(
             changed, camera, _approval(changed, camera)
         )
+
+
+def test_exports_plan_only_render_shell_with_matching_open_collision(tmp_path: Path) -> None:
+    from src.unified_pipeline.parametric_room import export_authoritative_room_glb
+
+    plan, camera = _plan(), _camera()
+    room = build_authoritative_parametric_room(
+        plan, camera, _approval(plan, camera)
+    )
+
+    evidence = export_authoritative_room_glb(room, tmp_path / "room.glb")
+
+    assert Path(evidence["path"]).is_file()
+    assert len(evidence["sha256"]) == 64
+    assert evidence["face_count"] > 0
+    assert evidence["vertex_count"] > 0
+    assert evidence["element_ids"] == evidence["collision_ids"]
+    assert evidence["depth_geometry_used"] is False
+    assert evidence["normalization_count"] == 0
+    assert evidence["shading_authority"] == "explicit-exported-vertex-normals"
+    assert evidence["material_metallic_factor"] == 0.0
+    audit = audit_glb_shading(evidence["path"], expected_sha256=evidence["sha256"])
+    assert audit.shading_model == "smooth"
+    assert audit.primitives_with_normals == audit.primitive_count
+    import trimesh
+    loaded = trimesh.load(evidence["path"], force="scene", process=False)
+    assert all(
+        float(geometry.visual.material.metallicFactor) == 0.0
+        for geometry in loaded.geometry.values()
+    )
+    assert {item["kind"] for item in evidence["opening_checks"]} == {"door", "window"}
+    assert all(item["visual_clear"] and item["collision_clear"] for item in evidence["opening_checks"])

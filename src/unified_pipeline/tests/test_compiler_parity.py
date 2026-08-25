@@ -138,6 +138,9 @@ def _set_path(data, path, value):
         (("instances", 0, "transform", "scale", "x"), 1.0, "solved_transform_drift"),
         (("instances", 0, "asset_binding", "mesh_path"), "rescaled/table.glb", "asset_binding_drift"),
         (("instances", 0, "material_binding", "roughness"), 0.5, "material_binding_drift"),
+        (("instances", 0, "material_binding", "shading_model"), "flat", "material_binding_drift"),
+        (("lighting", "ambient_intensity"), 0.9, "lighting_drift"),
+        (("navigation",), {"coordinate_system": "z-up"}, "navigation_collision_drift"),
         (("derivation", "consumer_defaults"), ["roughness=0.5"], "consumer_default"),
         (("derivation", "clamps"), ["position.x"], "clamp"),
         (("derivation", "rescalings"), ["meters_to_units"], "rescaling"),
@@ -170,6 +173,8 @@ def test_concurrent_compiler_manifest_is_adapted_only_after_exact_contract_check
         "camera_hash": contract.camera_hash,
         "room_shell_ref": contract.room_shell_ref,
         "instances": [item.to_dict() for item in contract.instances],
+        "lighting": contract.lighting.to_dict(),
+        "navigation": contract.navigation.to_dict() if contract.navigation is not None else None,
         "authority": {
             "source": "one_canonical_world_contract",
             "transform_policy": "exact_no_clamp_rescale_offset_or_normalization",

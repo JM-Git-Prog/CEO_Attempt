@@ -1,0 +1,39 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.local-vision-gate.v1",
+  "recorded_at_utc": "2026-08-25T13:13:54.272631+00:00",
+  "task": "11.8.4a",
+  "attempt": "additional-03",
+  "model": "qwen2.5vl:7b",
+  "endpoint": "localhost only",
+  "preview": {
+    "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4a-additional-03-edge-preserving-denoise-c858e5e3-7968-40ee-b8e5-b54f1c073911\\recliner-raw-crop_additional-03-edge-preserving-denoise-eight-panel.png",
+    "sha256": "9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7",
+    "bytes_sent_directly": true
+  },
+  "prompt": "Judge the attached eight-panel standalone recliner evidence preview. Top row is neutral topology; bottom row is embedded durable material. Canon checklist: recognizable recliner geometry/silhouette and footrest; exactly one isolated asset with no fused room or ground sheet; visible truthful front/right/rear/left labels; continuous filled surfaces with no point splats/stipple or catastrophic artifacts; broad topology visibility; material continuity and source-like warm upholstered finish; adequate neutral contrast. Pass only if every check passes. Return observations grounded only in visible pixels. Confidence must be from 0.0 to 1.0.",
+  "verdict": {
+    "pass": true,
+    "failed_checks": [],
+    "confidence": 1.0,
+    "observations": [
+      "The recliner geometry and silhouette are recognizable with a clear depiction of the footrest.",
+      "Each panel shows an isolated asset without any fused room or ground sheet, adhering to the checklist criteria.",
+      "Front, right, rear, and left labels are visible in each corresponding panel.",
+      "Continuous filled surfaces are present throughout all panels, free from point splats/stipple or catastrophic artifacts.",
+      "The topology is broad and visible across all panels, showing a clear distinction between different angles of the recliner.",
+      "Material continuity is evident with a warm upholstered finish that appears consistent in both neutral and durable material states.",
+      "Neutral contrast is adequate as seen by the grayscale top row and brown color scheme in the bottom row."
+    ],
+    "next_renderer_change": ""
+  },
+  "transport": {
+    "stream": false,
+    "strict_json_schema": true,
+    "cloud": false
+  },
+  "raw_model_metadata": {
+    "done_reason": "stop",
+    "total_duration": 96550214200,
+    "eval_count": 196
+  }
+}

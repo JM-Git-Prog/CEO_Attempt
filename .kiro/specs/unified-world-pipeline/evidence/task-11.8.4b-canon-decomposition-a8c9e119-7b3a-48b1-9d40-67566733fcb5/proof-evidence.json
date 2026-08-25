@@ -1,0 +1,376 @@
+{
+  "authority": {
+    "camera_contract": "sole Plan-derived camera authority",
+    "generated_references_are_spatial_authority": false,
+    "metric_plan": "sole dimensions/transforms/placement/architecture/openings/collision/navigation authority",
+    "pack_role": "appearance, decomposition, and deterministic reconstruction candidate evidence only",
+    "world_contract": "final object/relationship/binding authority"
+  },
+  "candidate_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+  "comfy_execution": {
+    "available": false,
+    "endpoint": "http://127.0.0.1:8188",
+    "execution": "VERIFIED_EXISTING_OUTPUT_FALLBACK",
+    "fallback": true,
+    "fallback_reason": "TimeoutError: timed out",
+    "prior_cutouts": {
+      "area_rug": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-rug_00002_.png",
+      "bookshelf": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-bookshelf_00002_.png",
+      "ceiling_fan": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-fan_00002_.png",
+      "crt_television": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-tv-set_00002_.png",
+      "foreground_sofa": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-couch_00002_.png",
+      "paintings": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-paintings_00002_.png",
+      "phone_side_table": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-phone-table_00002_.png",
+      "recliner": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+      "refrigerator": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-fridge_00002_.png",
+      "table_lamp": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-lamp_00002_.png",
+      "trophy_shelf": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-trophy-shelf_00002_.png",
+      "wall_mirror": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-mirror_00002_.png",
+      "wooden_tv_stand": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-tv-stand_00002_.png"
+    },
+    "requested": false,
+    "source_hash_verified": true,
+    "source_load_image": "danny-v4-01-canon_00002_.png [output]",
+    "workflow_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+    "workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+  },
+  "execution": {
+    "blender": {
+      "command": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--python",
+        "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\tools\\canon_decomposition_upbge_proof.py",
+        "--",
+        "--blender-worker",
+        "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\blender-worker-config.json"
+      ],
+      "elapsed_seconds": 12.38,
+      "missing_expected_outputs": [],
+      "python_traceback_detected": false,
+      "returncode": 0,
+      "stderr_tail": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\tools\\canon_decomposition_upbge_proof.py:699: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  mat.use_nodes = True\n",
+      "stdout_tail": "INFO Draco is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_draco_bridge.dll\nINFO MeshOptimizer is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_meshopt_bridge.dll\n10:55:04 | INFO: Starting glTF 2.0 export\n10:55:04 | INFO: Extracting primitive: back_cushion_lower_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: back_cushion_upper_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: back_frame_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: back_horizontal_seam_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: back_vertical_seam_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: base_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: base_front_rail_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: footrest_cushion_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: footrest_frame_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: footrest_seam_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: footrest_support_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: left_arm_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: left_arm_piping_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: right_arm_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: right_arm_piping_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: seat_center_seam_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: seat_cushion_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: seat_frame_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Finished glTF 2.0 export in 0.06356930732727051 s\n\n10:55:04 | INFO: Starting glTF 2.0 export\n10:55:04 | INFO: Extracting primitive: rear_door_left_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: rear_door_right_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: rear_door_top_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_ceiling_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_floor_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_left_wall_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_rear_door_header_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_rear_left_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_rear_right_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_right_between_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_right_door_header_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_right_front_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_right_rear_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_right_window_header_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: shell_right_window_sill_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: window_front_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: window_lower_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: window_rear_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Extracting primitive: window_upper_trim_mesh\n10:55:04 | INFO: Primitives created: 1\n10:55:04 | INFO: Finished glTF 2.0 export in 0.02032947540283203 s\n00:10.813  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-front.png'\n00:11.125  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-right.png'\n00:11.360  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-rear.png'\n00:11.532  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-left.png'\n00:11.860  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-shell-recliner-canon-camera.png'\nBlender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)\n\nInfo: Saved as \"deterministic-shell-recliner-proof.blend\"\n"
+    },
+    "generator_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\tools\\canon_decomposition_upbge_proof.py",
+    "generator_sha256": "90e9dc67271560a22cf3c21c47b9eaac61d126dd3c54d1a1fafda6f5a7fe84b0"
+  },
+  "failed_non_human_checks": [],
+  "glb_inspection": {
+    "empty_room_shell": {
+      "actual_bytes": 232468,
+      "binary_chunk_bytes": 216588,
+      "buffer_views_in_bounds": true,
+      "container": "GLB_2_0",
+      "declared_bytes": 232468,
+      "embedded_image_count": 3,
+      "external_buffer_uris": [],
+      "external_image_uris": [],
+      "image_count": 3,
+      "independently_loaded": true,
+      "load_error": null,
+      "material_count": 3,
+      "mesh_count": 19,
+      "mesh_names": [
+        "rear_door_left_trim_mesh",
+        "rear_door_right_trim_mesh",
+        "rear_door_top_trim_mesh",
+        "shell_ceiling_mesh",
+        "shell_floor_mesh",
+        "shell_left_wall_mesh",
+        "shell_rear_door_header_mesh",
+        "shell_rear_left_mesh",
+        "shell_rear_right_mesh",
+        "shell_right_between_mesh",
+        "shell_right_door_header_mesh",
+        "shell_right_front_mesh",
+        "shell_right_rear_mesh",
+        "shell_right_window_header_mesh",
+        "shell_right_window_sill_mesh",
+        "window_front_trim_mesh",
+        "window_lower_trim_mesh",
+        "window_rear_trim_mesh",
+        "window_upper_trim_mesh"
+      ],
+      "node_count": 19,
+      "node_names": [
+        "rear_door_left_trim",
+        "rear_door_right_trim",
+        "rear_door_top_trim",
+        "shell_ceiling",
+        "shell_floor",
+        "shell_left_wall",
+        "shell_rear_door_header",
+        "shell_rear_left",
+        "shell_rear_right",
+        "shell_right_between",
+        "shell_right_door_header",
+        "shell_right_front",
+        "shell_right_rear",
+        "shell_right_window_header",
+        "shell_right_window_sill",
+        "window_front_trim",
+        "window_lower_trim",
+        "window_rear_trim",
+        "window_upper_trim"
+      ],
+      "primitive_count": 19,
+      "texture_count": 3,
+      "trimesh_geometry_count": 19
+    },
+    "recliner": {
+      "actual_bytes": 239800,
+      "binary_chunk_bytes": 223884,
+      "buffer_views_in_bounds": true,
+      "container": "GLB_2_0",
+      "declared_bytes": 239800,
+      "embedded_image_count": 3,
+      "external_buffer_uris": [],
+      "external_image_uris": [],
+      "image_count": 3,
+      "independently_loaded": true,
+      "load_error": null,
+      "material_count": 3,
+      "mesh_count": 18,
+      "mesh_names": [
+        "back_cushion_lower_mesh",
+        "back_cushion_upper_mesh",
+        "back_frame_mesh",
+        "back_horizontal_seam_mesh",
+        "back_vertical_seam_mesh",
+        "base_front_rail_mesh",
+        "base_mesh",
+        "footrest_cushion_mesh",
+        "footrest_frame_mesh",
+        "footrest_seam_mesh",
+        "footrest_support_mesh",
+        "left_arm_mesh",
+        "left_arm_piping_mesh",
+        "right_arm_mesh",
+        "right_arm_piping_mesh",
+        "seat_center_seam_mesh",
+        "seat_cushion_mesh",
+        "seat_frame_mesh"
+      ],
+      "node_count": 19,
+      "node_names": [
+        "back_cushion_lower",
+        "back_cushion_upper",
+        "back_frame",
+        "back_horizontal_seam",
+        "back_vertical_seam",
+        "base",
+        "base_front_rail",
+        "footrest_cushion",
+        "footrest_frame",
+        "footrest_seam",
+        "footrest_support",
+        "left_arm",
+        "left_arm_piping",
+        "recliner_root",
+        "right_arm",
+        "right_arm_piping",
+        "seat_center_seam",
+        "seat_cushion",
+        "seat_frame"
+      ],
+      "primitive_count": 18,
+      "texture_count": 3,
+      "trimesh_geometry_count": 18
+    }
+  },
+  "human_review": {
+    "approved": false,
+    "instruction": "View both exact hash-bound PNGs locally. Do not infer approval; require an explicit later human judgement bound to these hashes and candidate fingerprint.",
+    "required": true,
+    "review_paths": [
+      "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-camera-comparison-contact-sheet.png",
+      "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-neutral-multi-angle-sheet.png"
+    ],
+    "status": "AWAITING_EXPLICIT_HUMAN_REVIEW"
+  },
+  "immutable_input_bindings": [
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\ComfyUI-Shared\\input\\danny-v4-01-canon_00002_.png",
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+      "sha256_expected": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "sha256_observed": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "sha256_expected": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "sha256_observed": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\ComfyUI-Installs\\ComfyUI\\ComfyUI\\user\\default\\workflows\\danny-v4-pipeline-app.app.json",
+      "sha256_expected": "c903d91563056fe139091396572ffdfca84718c10eaa6f4ed63150b8bd0f4ef7",
+      "sha256_observed": "c903d91563056fe139091396572ffdfca84718c10eaa6f4ed63150b8bd0f4ef7",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\danny-v4-pipeline-QA-report.md",
+      "sha256_expected": "ca442223247d66ae14c0fd3d65b6147a4b1997c7034219b68c437eed96ef7076",
+      "sha256_observed": "ca442223247d66ae14c0fd3d65b6147a4b1997c7034219b68c437eed96ef7076",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002\\recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+      "sha256_expected": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+      "sha256_observed": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4a-human-rejection-revocation-blocker-13500f5f-04dc-4085-a6c4-6407f69bf3b1.json",
+      "sha256_expected": "34f39460cadf4a8c74c1b6f57d8f80b54ea0adced12a2ea2e20d8afc129e56e2",
+      "sha256_observed": "34f39460cadf4a8c74c1b6f57d8f80b54ea0adced12a2ea2e20d8afc129e56e2",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json",
+      "sha256_expected": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "sha256_observed": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
+      "verified": true
+    }
+  ],
+  "mvp_alignment": "Closes only the deterministic reconstruction gap after the rejected neural geometry lane and remains on the 6–8 active-coding-hour visual-first path.",
+  "non_human_checks": [
+    {
+      "check": "schema",
+      "pass": true
+    },
+    {
+      "check": "complete_visible_inventory",
+      "pass": true
+    },
+    {
+      "check": "item_required_fields",
+      "pass": true
+    },
+    {
+      "check": "stable_unique_uuids",
+      "pass": true
+    },
+    {
+      "check": "hash_bound_alpha_cutouts",
+      "pass": true
+    },
+    {
+      "check": "authority_boundaries",
+      "pass": true
+    },
+    {
+      "check": "immutable_source_hashes",
+      "pass": true
+    },
+    {
+      "check": "exact_sam3_workflow_or_verified_fallback",
+      "pass": true
+    },
+    {
+      "check": "recliner_independent_load",
+      "pass": true
+    },
+    {
+      "check": "separate_recliner_components",
+      "pass": true
+    },
+    {
+      "check": "embedded_durable_recliner_materials",
+      "pass": true
+    },
+    {
+      "check": "recliner_no_external_uris",
+      "pass": true
+    },
+    {
+      "check": "shell_independent_load",
+      "pass": true
+    },
+    {
+      "check": "shell_embedded_materials_no_external_uris",
+      "pass": true
+    },
+    {
+      "check": "new_geometry_distinct_from_rejected_glb",
+      "pass": true
+    },
+    {
+      "check": "two_review_pngs",
+      "pass": true
+    },
+    {
+      "check": "camera_and_authority_bindings",
+      "pass": true
+    }
+  ],
+  "output_bindings": {
+    "canon_camera_comparison_contact_sheet": {
+      "bytes": 768310,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-camera-comparison-contact-sheet.png",
+      "sha256": "243652bb622a4e550299de9f62f07c8704eb2e2a6423ee8ed5fb0a5e21d53443"
+    },
+    "canon_decomposition_pack": {
+      "bytes": 53119,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-decomposition-pack.json",
+      "sha256": "78b9fced85ffd1e4577a207662f4171d9996ad6dca8e7c03db43316e3b37ffed"
+    },
+    "deterministic_empty_room_shell_glb": {
+      "bytes": 232468,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-empty-room-shell.glb",
+      "sha256": "0c7cf23a08ee36d2cd2ceb83a7bb3c04d91504dc39bcd53645698cd271633d09"
+    },
+    "deterministic_recliner_glb": {
+      "bytes": 239800,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-recliner.glb",
+      "sha256": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e"
+    },
+    "recliner_neutral_multi_angle_sheet": {
+      "bytes": 694382,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-neutral-multi-angle-sheet.png",
+      "sha256": "6d755b1555ac8c95bdc362f0895c95d118268805e9c525e582cb63ff5525aaf2"
+    }
+  },
+  "preservation": {
+    "cloud_download_or_dependency_addition": false,
+    "commit_or_staging_created": false,
+    "prior_task_11_8_4_and_11_8_4a_evidence_modified": false,
+    "service_process_or_scheduled_task_ownership_modified": false,
+    "session_or_qualification_started": false,
+    "ui_or_interface_modified": false
+  },
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "recorded_at_utc": "2026-08-25T15:55:18.203680+00:00",
+  "rejected_candidate": {
+    "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002\\recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "preserved_unchanged": true,
+    "reused_modified_smoothed_or_rerendered": false,
+    "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf"
+  },
+  "result": "AWAITING_EXPLICIT_HUMAN_REVIEW",
+  "schema": "unified-world-pipeline.task-11.8.4b.canon-decomposition-deterministic-proof.v1",
+  "scope": "Diagnostic Canon-decomposition plus deterministic shell/recliner proof only; no Task 11.8.5 work, session, qualification, Demo Ready, release, or interface change.",
+  "task": "11.8.4b"
+}

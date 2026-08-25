@@ -155,7 +155,7 @@ def _clean_derivation(authority: CompilerAuthority) -> dict[str, Any]:
 
 _PAYLOAD_KEYS = {
     "schema_version", "target", "contract_hash", "plan_revision", "camera",
-    "room_dimensions", "instances", "derivation",
+    "room_dimensions", "instances", "lighting", "navigation", "derivation",
 }
 
 
@@ -169,8 +169,10 @@ class CompilerParityPayload:
     camera: Mapping[str, Any]
     room_dimensions: Mapping[str, Any]
     instances: tuple[Mapping[str, Any], ...]
+    lighting: Mapping[str, Any]
+    navigation: Mapping[str, Any] | None
     derivation: Mapping[str, Any]
-    schema_version: str = "compiler-parity-payload/v1"
+    schema_version: str = "compiler-parity-payload/v2"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -181,6 +183,8 @@ class CompilerParityPayload:
             "camera": dict(self.camera),
             "room_dimensions": dict(self.room_dimensions),
             "instances": [dict(item) for item in self.instances],
+            "lighting": dict(self.lighting),
+            "navigation": dict(self.navigation) if self.navigation is not None else None,
             "derivation": dict(self.derivation),
         }
 
@@ -190,11 +194,13 @@ class CompilerParityPayload:
             missing = sorted(_PAYLOAD_KEYS - set(data))
             extra = sorted(set(data) - _PAYLOAD_KEYS)
             raise InvalidCompilerPayload(f"parity payload schema mismatch; missing={missing}, extra={extra}")
-        if data["schema_version"] != "compiler-parity-payload/v1":
+        if data["schema_version"] != "compiler-parity-payload/v2":
             raise InvalidCompilerPayload("unsupported compiler parity payload schema")
-        for key in ("camera", "room_dimensions", "derivation"):
+        for key in ("camera", "room_dimensions", "lighting", "derivation"):
             if not isinstance(data[key], Mapping):
                 raise InvalidCompilerPayload(f"{key} must be an explicit object")
+        if data["navigation"] is not None and not isinstance(data["navigation"], Mapping):
+            raise InvalidCompilerPayload("navigation must be an explicit object or null")
         if not isinstance(data["instances"], (list, tuple)):
             raise InvalidCompilerPayload("instances must be an explicit sequence")
         instances = tuple(data["instances"])
@@ -210,6 +216,8 @@ class CompilerParityPayload:
             camera=dict(data["camera"]),
             room_dimensions=dict(data["room_dimensions"]),
             instances=instances,
+            lighting=dict(data["lighting"]),
+            navigation=(dict(data["navigation"]) if data["navigation"] is not None else None),
             derivation=dict(data["derivation"]),
         )
         _canonical(payload.to_dict())
@@ -229,6 +237,11 @@ def build_parity_payload(
         camera=authority.camera.to_dict(),
         room_dimensions=authority.room_dimensions.to_dict(),
         instances=_instances(authority.contract),
+        lighting=authority.contract.lighting.to_dict(),
+        navigation=(
+            authority.contract.navigation.to_dict()
+            if authority.contract.navigation is not None else None
+        ),
         derivation=_clean_derivation(authority),
     )
 
@@ -307,6 +320,10 @@ def run_parity_gate(
                reference.camera, payload.camera)
         _issue(issues, payload.target, "room_dimension_drift", "room_dimensions",
                reference.room_dimensions, payload.room_dimensions)
+        _issue(issues, payload.target, "lighting_drift", "lighting",
+               reference.lighting, payload.lighting)
+        _issue(issues, payload.target, "navigation_collision_drift", "navigation",
+               reference.navigation, payload.navigation)
 
         expected_by_id = {item["object_id"]: item for item in reference.instances}
         actual_by_id = {str(item.get("object_id", "")): item for item in payload.instances}
@@ -350,7 +367,10 @@ def adapt_compiler_manifest(
     normalization evidence supplied in its authority input beside the artifact.
     """
     target_value = CompilerTarget(target).value
-    required = {"contract_hash", "plan_revision", "camera_hash", "room_shell_ref", "instances", "authority"}
+    required = {
+        "contract_hash", "plan_revision", "camera_hash", "room_shell_ref",
+        "instances", "lighting", "navigation", "authority",
+    }
     missing = sorted(required - set(manifest))
     if missing:
         raise InvalidCompilerPayload(f"{target_value} compiler manifest missing {missing}")
@@ -361,6 +381,8 @@ def adapt_compiler_manifest(
         "camera_hash": contract.camera_hash,
         "room_shell_ref": contract.room_shell_ref,
         "instances": [item.to_dict() for item in contract.instances],
+        "lighting": contract.lighting.to_dict(),
+        "navigation": contract.navigation.to_dict() if contract.navigation is not None else None,
     }
     for field, expected in exact.items():
         if _canonical(manifest[field]) != _canonical(expected):

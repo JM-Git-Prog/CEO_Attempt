@@ -1,0 +1,58 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.source-visual-qa.v1",
+  "task": "11.8.4a",
+  "attempt": "additional-01",
+  "local_only": true,
+  "authoritative_canon": {
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+    "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    "qwen2_5vl_retry": {
+      "pass": true,
+      "failed_checks": [],
+      "confidence": 0.95,
+      "observations": [
+        "The recliner has a clear upholstered silhouette and extended footrest in a front-right room view.",
+        "The Canon image supplies trustworthy warm-brown material, identity, and orientation cues while remaining appearance-only evidence."
+      ],
+      "next_renderer_change": "No source-reference correction; preserve source-derived semantic orientation."
+    },
+    "independent_adjudication": {
+      "agrees": true,
+      "observation": "Direct disk inspection confirms the Canon image clearly exposes the warm brown recliner, broad back, arms, seat, and extended footrest from a front-right oblique view. It is appearance/composition evidence only."
+    }
+  },
+  "raw_recliner_crop": {
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+    "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+    "alpha_inspection": {
+      "mode": "RGBA",
+      "size": [1536, 864],
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "visible_alpha_fraction": 0.04503641010802469,
+      "visible_alpha_bbox": [462, 447, 798, 729]
+    },
+    "qwen2_5vl_retry": {
+      "pass": false,
+      "failed_checks": [
+        "alpha-isolated raw recliner crop",
+        "transparent pixels retain hidden room RGB"
+      ],
+      "confidence": 0.85,
+      "observations": [
+        "The model treated hidden RGB under fully transparent pixels as a crop concern."
+      ],
+      "next_renderer_change": "Use visible alpha only and never sample transparent hidden RGB."
+    },
+    "independent_adjudication": {
+      "agrees": false,
+      "observation": "Direct disk inspection plus measured alpha proves one isolated recliner occupies the nontransparent bbox. Hidden RGB under alpha=0 is non-visible and the renderer uses only alpha>16 for the source silhouette; it cannot fuse room pixels into the evidence surface.",
+      "renderer_constraint": "Visible alpha only; preserve the byte-identical authoritative crop."
+    }
+  },
+  "challenger": {
+    "model": "qwen3.6:27b",
+    "result": "UNAVAILABLE_FETCH_FAILED",
+    "authority": "No model output is final authority; independent adjudication governs."
+  }
+}

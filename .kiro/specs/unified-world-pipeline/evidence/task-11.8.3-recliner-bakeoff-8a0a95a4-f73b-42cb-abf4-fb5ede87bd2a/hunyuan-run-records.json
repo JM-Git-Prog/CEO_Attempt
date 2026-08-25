@@ -1,0 +1,36 @@
+[
+  {
+    "lane": "raw-crop",
+    "started_at_utc": "2026-08-25T07:29:24.424464+00:00",
+    "ended_at_utc": "2026-08-25T07:31:32.499885+00:00",
+    "elapsed_seconds": 128.075421,
+    "input_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\lane-raw-crop-neutral.png",
+    "input_sha256": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+    "result": {
+      "mesh_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\objects\\recliner-raw-crop_hunyuan3d.glb",
+      "mesh_sha256": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+      "generation_method": "hunyuan3d_v2.1",
+      "generation_time_s": 128.04075099999318,
+      "face_count": 1358256,
+      "vertex_count": 675366,
+      "has_texture": false
+    }
+  },
+  {
+    "lane": "qwen-historical-difference",
+    "started_at_utc": "2026-08-25T07:31:32.517610+00:00",
+    "ended_at_utc": "2026-08-25T07:33:21.177515+00:00",
+    "elapsed_seconds": 108.659905,
+    "input_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\lane-qwen-historical-difference-neutral.png",
+    "input_sha256": "a1e476d15dcd00c42490914cc8effb4cb5033a9a680f3813dec7cc7d4f0ca63a",
+    "result": {
+      "mesh_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\objects\\recliner-qwen-historical-difference_hunyuan3d.glb",
+      "mesh_sha256": "5ab18e053cb49dd9eea6fa0db2bb486325c11e06658c4ed460f2408872350896",
+      "generation_method": "hunyuan3d_v2.1",
+      "generation_time_s": 108.63789060001727,
+      "face_count": 1223586,
+      "vertex_count": 609314,
+      "has_texture": false
+    }
+  }
+]

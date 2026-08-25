@@ -210,6 +210,32 @@ def _is_sha256(value: str) -> bool:
     )
 
 
+def _stable_instance_id(value: str) -> str:
+    """Return a canonical UUID or canonical UUID plus positive instance suffix."""
+    if not isinstance(value, str):
+        return ""
+    try:
+        canonical = str(uuid.UUID(value))
+    except (ValueError, AttributeError, TypeError):
+        canonical = ""
+    if canonical == value:
+        return canonical
+
+    base, separator, suffix = value.rpartition("-")
+    if (
+        not separator
+        or not suffix.isdigit()
+        or suffix == "0"
+        or suffix.startswith("0")
+    ):
+        return ""
+    try:
+        canonical_base = str(uuid.UUID(base))
+    except (ValueError, AttributeError, TypeError):
+        return ""
+    return value if canonical_base == base else ""
+
+
 def _file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -922,13 +948,11 @@ def _semantic_gate(context: StructuralGateContext) -> list[GateDiagnostic]:
                 instance.id, instance.id,
             ))
             continue
-        try:
-            stable = str(uuid.UUID(item.stable_uuid))
-        except (ValueError, AttributeError, TypeError):
-            stable = ""
+        stable = _stable_instance_id(item.stable_uuid)
         if stable != instance.id or item.instance_id != instance.id:
             failures.append(_diagnostic(
-                "semantic.unstable_uuid", "semantic binding does not preserve the object UUID",
+                "semantic.unstable_uuid",
+                "semantic binding does not preserve the UUID-derived instance identity",
                 instance.id, item.binding_id,
             ))
         if not item.semantic_label.strip():

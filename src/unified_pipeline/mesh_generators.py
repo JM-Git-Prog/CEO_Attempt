@@ -10,6 +10,8 @@ Requirements: 10.3, 10.4, 10.5, 10.6
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import json
 import logging
 import time
 from pathlib import Path
@@ -32,6 +34,62 @@ from src.photo_pipeline.stages.trellis2_generator import Trellis2Generator
 from src.unified_pipeline.models import MeshApproval, ObjectCanon
 
 logger = logging.getLogger(__name__)
+
+
+def prepare_generator_input(
+    object_canon: ObjectCanon,
+    output_dir: Path,
+) -> tuple[Path, dict[str, Any]]:
+    """Composite approved RGBA onto white so RGB-only encoders cannot see hidden scene pixels."""
+    from PIL import Image
+
+    source_path = Path(object_canon.image_path).resolve()
+    if not source_path.is_file():
+        raise MeshGenerationError(
+            f"Object_Canon image not found: {source_path}",
+            object_id=object_canon.object_id,
+        )
+    with Image.open(source_path) as source:
+        rgba = source.convert("RGBA")
+        alpha = rgba.getchannel("A")
+        bbox = alpha.getbbox()
+        if bbox is None:
+            raise MeshGenerationError(
+                "Object_Canon alpha mask is empty",
+                object_id=object_canon.object_id,
+            )
+        cropped = rgba.crop(bbox)
+        width, height = cropped.size
+        padding = max(4, int(round(max(width, height) * 0.05)))
+        side = max(width, height) + 2 * padding
+        canvas = Image.new("RGB", (side, side), (255, 255, 255))
+        foreground = Image.new("RGB", cropped.size, (255, 255, 255))
+        foreground.paste(cropped.convert("RGB"), mask=cropped.getchannel("A"))
+        canvas.paste(foreground, ((side - width) // 2, (side - height) // 2))
+
+    prepared_dir = Path(output_dir) / "prepared_inputs"
+    prepared_dir.mkdir(parents=True, exist_ok=True)
+    prepared_path = prepared_dir / f"{object_canon.object_id}.png"
+    canvas.save(prepared_path, format="PNG", optimize=False)
+    source_sha256 = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    prepared_sha256 = hashlib.sha256(prepared_path.read_bytes()).hexdigest()
+    evidence = {
+        "schema_version": "mesh-generator-input/v1",
+        "object_id": object_canon.object_id,
+        "source_path": str(source_path),
+        "source_sha256": source_sha256,
+        "prepared_path": str(prepared_path.resolve()),
+        "prepared_sha256": prepared_sha256,
+        "source_alpha_bbox": list(bbox),
+        "prepared_size": [side, side],
+        "background_policy": "approved-alpha-composited-on-white",
+        "hidden_rgb_discarded": True,
+    }
+    evidence_path = prepared_path.with_suffix(".json")
+    temporary = evidence_path.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(evidence, indent=2, sort_keys=True), encoding="utf-8")
+    temporary.replace(evidence_path)
+    return prepared_path, evidence
 
 
 class MeshGenerationError(Exception):
@@ -129,6 +187,7 @@ class UnifiedHunyuan3DGenerator:
                 object_id=object_id,
                 method="hunyuan3d_v2.1",
             )
+        prepared_path, _ = prepare_generator_input(object_canon, self._output_dir)
 
         logger.info(
             "Hunyuan3D 2.1 generating mesh for object %s from %s",
@@ -140,7 +199,7 @@ class UnifiedHunyuan3DGenerator:
 
         # Delegate to the existing V14 generator
         result = await self._inner.generate(
-            object_png=image_path,
+            object_png=prepared_path,
             mask_id=object_id,
             steps=self.STEPS,
             cfg=self.CFG,
@@ -471,6 +530,7 @@ class UnifiedTrellis2Generator:
                 object_id=object_id,
                 method="trellis2",
             )
+        prepared_path, _ = prepare_generator_input(object_canon, self._output_dir)
 
         logger.info(
             "Trellis2 fallback generating mesh for object %s from %s",
@@ -482,7 +542,7 @@ class UnifiedTrellis2Generator:
 
         # Delegate to the existing V14 Trellis2 generator
         result = await self._inner.generate(
-            object_png=image_path,
+            object_png=prepared_path,
             mask_id=object_id,
             steps=self.STEPS,
             target_triangles=self.TARGET_TRIANGLES,

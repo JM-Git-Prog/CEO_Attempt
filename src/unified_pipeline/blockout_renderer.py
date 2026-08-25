@@ -12,6 +12,8 @@ Requirements: 7.1, 7.2, 7.3
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 from pathlib import Path
 from typing import Any
@@ -51,6 +53,21 @@ _COLORS = {
 }
 
 
+_ENTITY_COLORS = (
+    "#f6ad55",
+    "#68d391",
+    "#63b3ed",
+    "#fc8181",
+    "#b794f4",
+    "#f6e05e",
+    "#4fd1c5",
+)
+
+
+def _entity_color(index: int) -> str:
+    return _ENTITY_COLORS[index % len(_ENTITY_COLORS)]
+
+
 # ─── Mesh data types (lightweight 3D polygon representations) ──────────────────
 
 # A "mesh" here is a list of Face dicts:
@@ -58,6 +75,20 @@ _COLORS = {
 
 Face = dict[str, Any]
 Mesh3D = list[Face]
+
+
+def _render_dimensions(plan: MetricPlan) -> tuple[float, float, float]:
+    """Return width/depth/height across retained and canonical Plan layouts.
+
+    Canonical generated Plans store ``(width, depth, height)`` and carry wall
+    heights. Retained early blockout fixtures store ``(width, height, depth)``
+    without wall-height fields; preserving that interpretation keeps released
+    renderer behavior stable while the candidate adapter uses the canonical one.
+    """
+    first, second, third = (float(value) for value in plan.room_dimensions)
+    if any("height" in wall for wall in plan.walls):
+        return first, second, third
+    return first, third, second
 
 
 # ─── BlockoutRenderer Class ────────────────────────────────────────────────────
@@ -120,13 +151,18 @@ class BlockoutRenderer:
 
         # Render object placeholder meshes
         placeholder_meshes = self._render_placeholders(plan)
+        meshes = wall_meshes + opening_meshes + placeholder_meshes
+        visibility = _build_visibility_report(
+            plan, camera, project, opening_meshes, placeholder_meshes
+        )
 
         # Project all meshes to a PIL Image
         image = self._project_to_image(
-            wall_meshes + opening_meshes + placeholder_meshes,
+            meshes,
             camera,
             project,
             plan,
+            visibility,
         )
 
         # Save output
@@ -135,6 +171,7 @@ class BlockoutRenderer:
         revision = plan.revisions[-1].revision if plan.revisions else 1
         output_path = output_dir / f"blockout_v{revision}.png"
         image.save(str(output_path), "PNG")
+        _write_visibility_report(output_path, visibility)
 
         # Compute camera hash
         camera_hash = ""
@@ -160,9 +197,9 @@ class BlockoutRenderer:
         Returns:
             List of Face dicts representing wall geometry.
         """
-        rx, ry, rz = plan.room_dimensions
-        hw, hd = rx / 2.0, rz / 2.0
-        h = ry
+        room_width, room_depth, room_height = _render_dimensions(plan)
+        hw, hd = room_width / 2.0, room_depth / 2.0
+        h = room_height
 
         faces: Mesh3D = []
 
@@ -227,26 +264,26 @@ class BlockoutRenderer:
         Returns:
             List of Face dicts representing opening geometry.
         """
-        rx, ry, rz = plan.room_dimensions
-        hw, hd = rx / 2.0, rz / 2.0
+        room_width, room_depth, _room_height = _render_dimensions(plan)
+        hw, hd = room_width / 2.0, room_depth / 2.0
 
         faces: Mesh3D = []
 
-        for opening in plan.openings:
+        for index, opening in enumerate(plan.openings):
             wall = opening.get("wall", "")
-            kind = opening.get("kind", "door")
+            kind = opening.get("kind", opening.get("type", "door"))
             width_m = opening.get("width", 0.9)
             height_m = opening.get("height", 2.1)
             sill = opening.get("sill_height", 0.0)
             offset = opening.get("offset", 0.0)
-            position_param = opening.get("position", None)
+            position_param = opening.get("position", opening.get("parameter"))
 
             if position_param is not None:
                 # Convert parameter (0..1) to offset from center
                 if wall in ("north", "south"):
-                    wall_length = rx
+                    wall_length = room_width
                 else:
-                    wall_length = rz
+                    wall_length = room_depth
                 offset = (position_param - 0.5) * wall_length
 
             half_w = width_m / 2.0
@@ -297,6 +334,9 @@ class BlockoutRenderer:
                 "color": fill,
                 "outline": outline,
                 "kind": "opening",
+                "element_id": f"opening:{index}",
+                "display_label": f"{wall} {kind}",
+                "element_color": _entity_color(index),
                 "opening_type": kind,
                 "label": kind.upper(),
             })
@@ -315,14 +355,36 @@ class BlockoutRenderer:
         """
         faces: Mesh3D = []
 
-        for obj in plan.object_placements:
-            pos = obj.get("position", [0.0, 0.0, 0.0])
-            dims = obj.get("dimensions", [0.5, 0.5, 0.5])
-            rotation_deg = obj.get("rotation", 0.0)
-            name = obj.get("name", obj.get("id", "object"))
+        room_width, room_depth, _room_height = _render_dimensions(plan)
+        for index, obj in enumerate(plan.object_placements):
+            if "position" in obj:
+                pos = obj.get("position", [0.0, 0.0, 0.0])
+                cx, cy, cz = float(pos[0]), float(pos[1]), float(pos[2])
+            else:
+                # Generator placements use a south-west floor origin while
+                # blockout geometry uses a room-centered X/Z frame.
+                cx = float(obj.get("x", room_width / 2.0)) - room_width / 2.0
+                cy = float(obj.get("elevation", 0.0))
+                cz = float(obj.get("y", room_depth / 2.0)) - room_depth / 2.0
 
-            cx, cy, cz = float(pos[0]), float(pos[1]), float(pos[2])
-            w, h, d = float(dims[0]), float(dims[1]), float(dims[2])
+            if "dimensions" in obj:
+                dims = obj.get("dimensions", [0.5, 0.5, 0.5])
+                w, h, d = float(dims[0]), float(dims[1]), float(dims[2])
+            else:
+                w = float(obj.get("width", 0.5))
+                h = float(obj.get("height", 0.8))
+                d = float(obj.get("depth", 0.5))
+            rotation_deg = obj.get("rotation", obj.get("rotation_deg", 0.0))
+            name = obj.get("name", obj.get("id", "object"))
+            element_id = str(obj.get("id", f"object:{index}"))
+            display_label = str(name)
+            if display_label == "two chairs":
+                chair_number = sum(
+                    1
+                    for prior in plan.object_placements[: index + 1]
+                    if prior.get("name") == "two chairs"
+                )
+                display_label = f"chair {chair_number}"
 
             # Build box vertices with rotation around Y axis
             angle = math.radians(float(rotation_deg))
@@ -344,7 +406,13 @@ class BlockoutRenderer:
             top = [(bx, cy + h, bz) for bx, _, bz in base]
 
             # Generate box faces
-            box_faces = _make_box_faces(base, top, name)
+            box_faces = _make_box_faces(
+                base,
+                top,
+                display_label,
+                element_id=element_id,
+                element_color=_entity_color(index + len(plan.openings)),
+            )
             faces.extend(box_faces)
 
         return faces
@@ -355,98 +423,69 @@ class BlockoutRenderer:
         camera: CameraContract | CameraContractImpl,
         project,
         plan: MetricPlan,
+        visibility: dict[str, Any],
     ) -> Image.Image:
-        """Project all meshes onto a 2D PIL Image at CameraContract raster dimensions.
-
-        Uses painter's algorithm (back-to-front depth sorting) for correct
-        occlusion without a Z-buffer.
-
-        Args:
-            meshes: Combined list of Face dicts from walls, openings, placeholders.
-            camera: CameraContract for raster dimensions.
-            project: Projection closure from _build_projector.
-            plan: MetricPlan for HUD info.
-
-        Returns:
-            PIL Image at camera.raster_width × camera.raster_height.
-        """
+        """Project a diagrammatic, same-camera blockout with explicit callouts."""
         width = camera.raster_width
         height = camera.raster_height
         cam_pos = np.array(camera.position, dtype=np.float64)
 
         canvas = Image.new("RGB", (width, height), "#0f1419")
         draw = ImageDraw.Draw(canvas)
-
-        # Draw gradient background
         _draw_gradient(draw, width, height)
 
-        # Separate ceiling edges (wireframe) from filled faces
         ceiling_edges = [f for f in meshes if f.get("kind") == "ceiling_edge"]
         filled_faces = [f for f in meshes if f.get("kind") != "ceiling_edge"]
 
-        # Sort filled faces by depth (back-to-front via painter's algorithm)
         def _face_depth(face: Face) -> float:
-            verts = face["vertices"]
-            center = np.mean([np.array(v, dtype=np.float64) for v in verts], axis=0)
+            center = np.mean(
+                [np.array(v, dtype=np.float64) for v in face["vertices"]], axis=0
+            )
             return float(np.linalg.norm(center - cam_pos))
 
-        filled_faces.sort(key=_face_depth, reverse=True)
-
-        # Draw filled faces
-        for face in filled_faces:
-            vertices = face["vertices"]
-            projected = [project(v) for v in vertices]
+        # Draw the room as a coherent wireframe shell. Opaque near-wall fills
+        # caused revision 1 to erase valid Plan-owned instances and openings.
+        for face in [f for f in filled_faces if f.get("kind") in {"floor", "wall"}]:
+            projected = [project(vertex) for vertex in face["vertices"]]
             if not all(projected):
                 continue
+            points = [(point[0], point[1]) for point in projected]
+            if face.get("kind") == "floor":
+                draw.polygon(points, fill=face["color"], outline=face["outline"])
+            else:
+                draw.line(points + [points[0]], fill=face["outline"], width=3)
 
-            points = [(p[0], p[1]) for p in projected]
-            color = face["color"]
-            outline = face.get("outline", color)
+        entity_faces = [
+            face for face in filled_faces
+            if face.get("kind") not in {"floor", "wall"}
+        ]
+        entity_faces.sort(key=_face_depth, reverse=True)
+        for face in entity_faces:
+            projected = [project(vertex) for vertex in face["vertices"]]
+            if not all(projected):
+                continue
+            points = [(point[0], point[1]) for point in projected]
+            color = face.get("element_color", face["color"])
             kind = face.get("kind", "")
-
-            draw.polygon(points, fill=color, outline=outline)
-
-            # Draw thicker outlines for openings
             if kind == "opening":
-                for i in range(len(points)):
-                    j = (i + 1) % len(points)
-                    draw.line(
-                        (points[i][0], points[i][1], points[j][0], points[j][1]),
-                        fill=outline,
-                        width=4,
-                    )
-                # Label the opening
-                cx_s = sum(p[0] for p in points) / len(points)
-                cy_s = sum(p[1] for p in points) / len(points)
-                label = face.get("label", "")
-                if label:
-                    draw.text((cx_s - 20, cy_s - 6), label, fill=_COLORS["label"])
+                fill = "#0f1419"
+            elif kind == "object_top":
+                fill = color
+            else:
+                fill = None
+            draw.polygon(points, fill=fill, outline=color)
+            line_width = 5 if kind == "opening" else 2
+            draw.line(points + [points[0]], fill=color, width=line_width)
 
-            # Label objects (top face)
-            if kind == "object_top":
-                label = face.get("label", "")
-                if label:
-                    draw.text(
-                        (points[0][0] + 4, points[0][1] - 14),
-                        label[:24],
-                        fill=_COLORS["label"],
-                    )
-
-        # Draw ceiling edges
         for edge in ceiling_edges:
             verts = edge["vertices"]
             if len(verts) >= 2:
                 a, b = project(verts[0]), project(verts[1])
                 if a and b:
-                    draw.line(
-                        (a[0], a[1], b[0], b[1]),
-                        fill=edge["color"],
-                        width=2,
-                    )
+                    draw.line((a[0], a[1], b[0], b[1]), fill=edge["color"], width=2)
 
-        # Draw HUD overlay
+        _draw_callouts(draw, visibility)
         _draw_hud(draw, plan, camera, width, height)
-
         return canvas
 
 
@@ -482,15 +521,20 @@ def render_blockout(
     opening_meshes = renderer._render_openings(plan)
     placeholder_meshes = renderer._render_placeholders(plan)
 
+    visibility = _build_visibility_report(
+        plan, camera, project, opening_meshes, placeholder_meshes
+    )
     image = renderer._project_to_image(
         wall_meshes + opening_meshes + placeholder_meshes,
         camera,
         project,
         plan,
+        visibility,
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     image.save(str(output_path), "PNG")
+    _write_visibility_report(output_path, visibility)
 
     revision = plan.revisions[-1].revision if plan.revisions else 1
 
@@ -507,6 +551,211 @@ def render_blockout(
         approved=False,
         feedback="",
     )
+
+
+def blockout_visibility_path(image_path: Path) -> Path:
+    """Return the deterministic projection metadata sidecar for a blockout."""
+    return image_path.with_name(f"{image_path.stem}_visibility.json")
+
+
+def load_blockout_visibility(image_path: Path) -> dict[str, Any]:
+    """Load and verify a blockout visibility sidecar."""
+    path = blockout_visibility_path(image_path)
+    report = json.loads(path.read_text(encoding="utf-8"))
+    stored = str(report.pop("report_sha256", ""))
+    computed = hashlib.sha256(
+        json.dumps(report, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
+    ).hexdigest()
+    if stored != computed:
+        raise ValueError("blockout visibility report hash mismatch")
+    report["report_sha256"] = stored
+    return report
+
+
+def _write_visibility_report(image_path: Path, report: dict[str, Any]) -> Path:
+    path = blockout_visibility_path(image_path)
+    path.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    return path
+
+
+def _rectangles_overlap(a: list[int], b: list[int]) -> bool:
+    return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
+
+
+def _assign_callout_rects(
+    elements: dict[str, dict[str, Any]], width: int, height: int
+) -> None:
+    """Place side-sorted callouts so leader lines stay short and unambiguous."""
+    label_width = min(180, max(96, width // 5))
+    label_height = 28
+    top_limit = 74
+    bottom_limit = height - label_height - 38
+    sides = {
+        "left": [item for item in elements.values() if item["projected_center_px"][0] < width / 2],
+        "right": [item for item in elements.values() if item["projected_center_px"][0] >= width / 2],
+    }
+    for side, values in sides.items():
+        values.sort(key=lambda item: (item["projected_center_px"][1], item["element_id"]))
+        placed_tops: list[int] = []
+        previous_bottom = top_limit - 12
+        for item in values:
+            desired = int(item["projected_center_px"][1] - label_height / 2)
+            top = max(top_limit, desired, previous_bottom + 12)
+            placed_tops.append(top)
+            previous_bottom = top + label_height
+        overflow = max(0, previous_bottom - bottom_limit - label_height)
+        if overflow:
+            placed_tops = [max(top_limit, top - overflow) for top in placed_tops]
+        x1 = 16 if side == "left" else width - label_width - 16
+        for item, top in zip(values, placed_tops):
+            item["label_bbox_px"] = [x1, top, x1 + label_width, top + label_height]
+            item["label_readable"] = width >= 800 and label_width >= 160
+
+
+def _build_visibility_report(
+    plan: MetricPlan,
+    camera: CameraContract | CameraContractImpl,
+    project,
+    opening_meshes: Mesh3D,
+    placeholder_meshes: Mesh3D,
+) -> dict[str, Any]:
+    """Build deterministic geometry/projection evidence for every Plan element."""
+    width = int(camera.raster_width)
+    height = int(camera.raster_height)
+    grouped: dict[str, list[Face]] = {}
+    order: list[str] = []
+    for face in opening_meshes + placeholder_meshes:
+        element_id = str(face.get("element_id", ""))
+        if not element_id:
+            continue
+        if element_id not in grouped:
+            grouped[element_id] = []
+            order.append(element_id)
+        grouped[element_id].append(face)
+
+    elements: dict[str, dict[str, Any]] = {}
+    minimum_area = max(25.0, width * height * 0.00008)
+    margin = max(4.0, min(width, height) * 0.008)
+    for index, element_id in enumerate(order):
+        faces = grouped[element_id]
+        vertices = sorted({
+            tuple(float(component) for component in vertex)
+            for face in faces
+            for vertex in face["vertices"]
+        })
+        projected = [project(vertex) for vertex in vertices]
+        behind_camera = any(point is None for point in projected)
+        valid_points = [point for point in projected if point is not None]
+        if valid_points:
+            xs = [float(point[0]) for point in valid_points]
+            ys = [float(point[1]) for point in valid_points]
+            depths = [float(point[2]) for point in valid_points]
+            bbox = [min(xs), min(ys), max(xs), max(ys)]
+            area = max(0.0, bbox[2] - bbox[0]) * max(0.0, bbox[3] - bbox[1])
+            center = [(bbox[0] + bbox[2]) / 2.0, (bbox[1] + bbox[3]) / 2.0]
+            in_frame = (
+                bbox[0] >= margin
+                and bbox[1] >= margin
+                and bbox[2] <= width - margin
+                and bbox[3] <= height - margin
+            )
+            depth_valid = min(depths) > float(camera.near) and max(depths) < float(camera.far)
+        else:
+            bbox = [0.0, 0.0, 0.0, 0.0]
+            area = 0.0
+            center = [0.0, 0.0]
+            in_frame = False
+            depth_valid = False
+        label_rect = [0, 0, 0, 0]
+        display_label = str(faces[0].get("display_label", element_id))
+        elements[element_id] = {
+            "element_id": element_id,
+            "kind": "opening" if element_id.startswith("opening:") else "instance",
+            "label": display_label,
+            "color": str(faces[0].get("element_color", _COLORS["label"])),
+            "projected_bbox_px": [round(value, 3) for value in bbox],
+            "projected_center_px": [round(value, 3) for value in center],
+            "projected_area_px": round(area, 3),
+            "all_vertices_projected": not behind_camera,
+            "behind_camera": behind_camera,
+            "depth_valid": depth_valid,
+            "in_frame": in_frame,
+            "clipped": not in_frame,
+            "minimum_area_px": round(minimum_area, 3),
+            "label_bbox_px": label_rect,
+            "label_readable": False,
+            "geometry_visible": (
+                not behind_camera and depth_valid and in_frame and area >= minimum_area
+            ),
+            "geometry_distinct": True,
+        }
+
+    _assign_callout_rects(elements, width, height)
+
+    minimum_separation = max(8.0, min(width, height) * 0.015)
+    ids = list(elements)
+    for index, first_id in enumerate(ids):
+        first = elements[first_id]
+        for second_id in ids[index + 1:]:
+            second = elements[second_id]
+            dx = first["projected_center_px"][0] - second["projected_center_px"][0]
+            dy = first["projected_center_px"][1] - second["projected_center_px"][1]
+            if math.hypot(dx, dy) < minimum_separation:
+                first["geometry_distinct"] = False
+                second["geometry_distinct"] = False
+
+    labels = [elements[element_id]["label_bbox_px"] for element_id in ids]
+    labels_non_overlapping = all(
+        not _rectangles_overlap(first, second)
+        for index, first in enumerate(labels)
+        for second in labels[index + 1:]
+    )
+    all_required_visible = bool(elements) and all(
+        value["geometry_visible"] and value["geometry_distinct"]
+        for value in elements.values()
+    )
+    plan_payload = json.dumps(
+        plan.to_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False
+    ).encode("utf-8")
+    report: dict[str, Any] = {
+        "schema_version": "blockout-projection-visibility/v1",
+        "plan_revision": plan.revisions[-1].revision if plan.revisions else 0,
+        "metric_plan_sha256": hashlib.sha256(plan_payload).hexdigest(),
+        "camera_sha256": camera.compute_hash() if hasattr(camera, "compute_hash") else camera.camera_hash,
+        "raster": [width, height],
+        "projection": "perspective",
+        "diagrammatic_wireframe_shell": True,
+        "opening_rendering": "dark_aperture_with_colored_frame",
+        "callout_routing": "side_sorted_short_leaders",
+        "required_element_count": len(plan.openings) + len(plan.object_placements),
+        "element_count": len(elements),
+        "elements": elements,
+        "labels_non_overlapping": labels_non_overlapping,
+        "all_labels_readable": all(value["label_readable"] for value in elements.values()),
+        "all_required_visible": all_required_visible,
+        "fully_green": (
+            len(elements) == len(plan.openings) + len(plan.object_placements)
+            and all_required_visible
+            and labels_non_overlapping
+            and all(value["label_readable"] for value in elements.values())
+        ),
+    }
+    report["report_sha256"] = hashlib.sha256(
+        json.dumps(report, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
+    ).hexdigest()
+    return report
+
+
+def _draw_callouts(draw: ImageDraw.ImageDraw, visibility: dict[str, Any]) -> None:
+    for element in visibility["elements"].values():
+        x1, y1, x2, y2 = element["label_bbox_px"]
+        cx, cy = element["projected_center_px"]
+        color = element["color"]
+        anchor_x = x2 if x1 < visibility["raster"][0] / 2 else x1
+        anchor_y = (y1 + y2) / 2
+        draw.line((cx, cy, anchor_x, anchor_y), fill=color, width=2)
+        draw.rectangle((x1, y1, x2, y2), fill="#111827", outline=color, width=2)
+        draw.text((x1 + 6, y1 + 7), element["label"][:24], fill=_COLORS["label"])
 
 
 # ─── Projection ───────────────────────────────────────────────────────────────
@@ -578,6 +827,9 @@ def _make_box_faces(
     base: list[tuple[float, float, float]],
     top: list[tuple[float, float, float]],
     label: str = "",
+    *,
+    element_id: str = "",
+    element_color: str = _COLORS["object_top"],
 ) -> Mesh3D:
     """Generate box faces from base and top corner lists.
 
@@ -592,6 +844,9 @@ def _make_box_faces(
         "outline": _COLORS["object_outline"],
         "kind": "object_top",
         "label": label,
+        "display_label": label,
+        "element_id": element_id,
+        "element_color": element_color,
     })
 
     # Front face (base[0], base[1], top[1], top[0])
@@ -600,6 +855,9 @@ def _make_box_faces(
         "color": _COLORS["object_front"],
         "outline": _COLORS["object_outline"],
         "kind": "object_face",
+        "display_label": label,
+        "element_id": element_id,
+        "element_color": element_color,
     })
 
     # Right face (base[1], base[2], top[2], top[1])
@@ -608,6 +866,9 @@ def _make_box_faces(
         "color": _COLORS["object_side"],
         "outline": _COLORS["object_outline"],
         "kind": "object_face",
+        "display_label": label,
+        "element_id": element_id,
+        "element_color": element_color,
     })
 
     # Back face (base[2], base[3], top[3], top[2])
@@ -616,6 +877,9 @@ def _make_box_faces(
         "color": _COLORS["object_front"],
         "outline": _COLORS["object_outline"],
         "kind": "object_face",
+        "display_label": label,
+        "element_id": element_id,
+        "element_color": element_color,
     })
 
     # Left face (base[3], base[0], top[0], top[3])
@@ -624,6 +888,9 @@ def _make_box_faces(
         "color": _COLORS["object_side"],
         "outline": _COLORS["object_outline"],
         "kind": "object_face",
+        "display_label": label,
+        "element_id": element_id,
+        "element_color": element_color,
     })
 
     return faces
@@ -640,7 +907,7 @@ def _draw_hud(
     height: int,
 ) -> None:
     """Draw overlay HUD with plan info and camera lock label."""
-    rx, ry, rz = plan.room_dimensions
+    room_width, room_depth, room_height = _render_dimensions(plan)
     revision = plan.revisions[-1].revision if plan.revisions else 1
     obj_count = len(plan.object_placements)
     opening_count = len(plan.openings)
@@ -648,7 +915,7 @@ def _draw_hud(
     # Top-left info box
     info_text = (
         f"BLOCKOUT \u00b7 Rev {revision} \u00b7 "
-        f"{rx:.1f}m \u00d7 {rz:.1f}m \u00d7 {ry:.1f}m \u00b7 "
+        f"{room_width:.1f}m \u00d7 {room_depth:.1f}m \u00d7 {room_height:.1f}m \u00b7 "
         f"{obj_count} objects \u00b7 {opening_count} openings"
     )
     text_width = min(len(info_text) * 7 + 40, width - 36)

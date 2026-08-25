@@ -1,0 +1,97 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.rematerial-build.v1",
+  "recorded_at_utc": "2026-08-25T11:44:19.584153+00:00",
+  "task": "11.8.4a",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_lane": "raw_crop",
+  "material_pipeline": {
+    "implementation_path": "src/photo_pipeline/stages/material_processor.py",
+    "implementation_sha256": "c3fa4d9b763b369b40020555d945de74c73be935eeb35409a190ae2a09a6984e",
+    "pass1": "existing MaterialProcessor photo-projection path applied to a copied non-placeholder generated mesh",
+    "pass2": "existing MaterialProcessor durable fabric PBR path",
+    "pass1_result": {
+      "object_id": "recliner-raw-crop_durable-fabric-pbr",
+      "pass_number": 1,
+      "has_base_color": true,
+      "has_metallic_roughness": false,
+      "has_normal_map": false,
+      "texture_resolution": [
+        1024,
+        1024
+      ]
+    },
+    "pass2_result": {
+      "object_id": "recliner-raw-crop_durable-fabric-pbr",
+      "pass_number": 2,
+      "has_base_color": true,
+      "has_metallic_roughness": true,
+      "has_normal_map": true,
+      "texture_resolution": [
+        1024,
+        1024
+      ]
+    },
+    "no_new_model_or_service": true
+  },
+  "input_bindings": {
+    "raw_crop_glb": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/objects/recliner-raw-crop_hunyuan3d.glb",
+      "sha256": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06"
+    },
+    "prepared_source_matched_texture": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/lane-raw-crop-neutral.png",
+      "sha256": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3"
+    },
+    "raw_source_crop": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+      "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a"
+    },
+    "immutable_task_11_8_4_evidence": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json",
+      "sha256": "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21"
+    }
+  },
+  "outputs": {
+    "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-0f7d85b5-f7b0-4e18-8e92-6fb2ab65e3c1/recliner-raw-crop_durable-fabric-pbr.glb",
+    "artifact_sha256": "3faded4346b3a7499dcd57a058f3b5a2088629c1f89b17bf567c495c38273afb",
+    "artifact_bytes": 30759404,
+    "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-remediated-raw-crop-recliner-0f7d85b5-f7b0-4e18-8e92-6fb2ab65e3c1/recliner-raw-crop_durable-fabric-pbr-neutral-eight-panel.png",
+    "preview_sha256": "d409b6c49ab0f04edd150fa33509e4b39b1ba3c2863be2d32cd0898a2d547465",
+    "preview": {
+      "panel_layout": "four columns front/right/rear/left; geometry row then material row",
+      "sampled_vertices": 80000,
+      "background_rgb": [
+        232,
+        232,
+        232
+      ],
+      "output_size": [
+        1680,
+        912
+      ]
+    }
+  },
+  "geometry_preservation": {
+    "geometry_count": 1,
+    "vertex_count": 675366,
+    "face_count": 1358256,
+    "max_position_delta": 0.0,
+    "max_extent_delta": 0.0,
+    "tolerance": 1e-05,
+    "preserved": true
+  },
+  "authority": {
+    "asset_is_non_authoritative_until_approved_and_worldcontract_bound": true,
+    "metric_plan_remains_sole_authority_for": [
+      "dimensions",
+      "transforms",
+      "placement",
+      "architecture",
+      "openings",
+      "collision",
+      "navigation"
+    ],
+    "camera_contract_remains_plan_derived_authority": true,
+    "world_contract_remains_final_binding_authority": true
+  }
+}

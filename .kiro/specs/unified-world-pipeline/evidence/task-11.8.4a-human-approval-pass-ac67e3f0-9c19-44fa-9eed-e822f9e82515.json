@@ -1,0 +1,163 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.human-approval-pass.v1",
+  "evidence_id": "ac67e3f0-9c19-44fa-9eed-e822f9e82515",
+  "recorded_at_utc": "2026-08-25T13:34:51.084311+00:00",
+  "task": "11.8.4a",
+  "result": "PASS",
+  "scope": "Append-only exact hash-bound human approval of the already validated Task 11.8.4a raw_crop recliner candidate only. No prior blocker or candidate evidence is edited or relabeled; Task 11.8.5 and all downstream work remain not started.",
+  "exact_approval_bindings": {
+    "artifact_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "preview_sha256": "9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7",
+    "approved_candidate_fingerprint": "6b8a2b6b25e2cbc6e6b674ef037e95d3339584eefb83e6b3350b2f7da8d28baf",
+    "candidate_evidence_sha256": "09b48cea36bce340667a3a185bf7727011f3f44793a5ddb3d21c0c5d96234b41",
+    "golden_source_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    "workflow_sha256": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+    "extraction_workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+    "raw_crop_sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "source_lane": "raw_crop",
+    "question_id": "call_d61e943d-5832-456b-b812-b095ab52eb82",
+    "response": "Approve exact candidate"
+  },
+  "approved_candidate_binding": {
+    "fingerprint": "6b8a2b6b25e2cbc6e6b674ef037e95d3339584eefb83e6b3350b2f7da8d28baf",
+    "meaning": "The exact pre-record candidate-tree fingerprint presented to and approved by the user; it remains the candidate identity and is not recomputed or redefined by this approval record.",
+    "meaning_unchanged": true,
+    "approval_candidate_evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-approval-candidate-additional-03-7c9f6b25-130e-4f47-838c-4cecd86f6d34.json",
+    "approval_candidate_evidence_sha256": "09b48cea36bce340667a3a185bf7727011f3f44793a5ddb3d21c0c5d96234b41"
+  },
+  "record_creation_binding": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "fingerprint": "259150138a653aba0a6d2a063b870914980128b53a846206c497d820ada5d8d2",
+    "path_count": 1964,
+    "algorithm": "candidate-tree-v1 over HEAD and lexicographically sorted tracked/untracked nonignored paths, excluding only this approval record and tasks.md",
+    "excluded_paths": [
+      ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-human-approval-pass-ac67e3f0-9c19-44fa-9eed-e822f9e82515.json",
+      ".kiro/specs/unified-world-pipeline/tasks.md"
+    ],
+    "reason_for_exclusions": "The approval record cannot include itself in a non-self-referential fingerprint. tasks.md is the single authorized post-validation status mutation, so excluding it keeps this separate record-creation fingerprint reproducible before and after marking 11.8.4a complete. This fingerprint does not replace or alter the approved candidate fingerprint."
+  },
+  "human_approval": {
+    "present": true,
+    "approved": true,
+    "source": "Kiro user-input response",
+    "question_id": "call_d61e943d-5832-456b-b812-b095ab52eb82",
+    "response": "Approve exact candidate",
+    "asset_hash_bound": true,
+    "preview_hash_bound": true,
+    "candidate_fingerprint_bound": true,
+    "gate_evidence_hash_bound": true,
+    "golden_room_reference_hashes_bound": true,
+    "uuid_bound": true,
+    "source_lane_bound": true,
+    "interpretation": "The user explicitly approved only the exact candidate identified by every value in exact_approval_bindings; no approval transfers to a regenerated, modified, rehashed, relabeled, or differently sourced asset or preview."
+  },
+  "common_gate": {
+    "policy": "Exact Task 11.8.4 12-check order; no lane-specific exception or weakened criterion. The first eleven checks inherit only from the exact immutable approval-candidate evidence after its validator passed; check twelve is satisfied only by the exact user-input response recorded here.",
+    "checks_in_order": [
+      "evidence_chain_integrity",
+      "stable_uuid_binding",
+      "golden_room_source_identity",
+      "independent_loadability",
+      "non_placeholder_geometry",
+      "recognizable_recliner_silhouette_identity",
+      "no_fused_scene_or_ground_sheet_geometry",
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "no_unresolved_external_materials_or_buffers",
+      "explicit_hash_bound_human_approval"
+    ],
+    "checks": [
+      {"check": "evidence_chain_integrity", "pass": true, "basis": "Exact approval-candidate evidence SHA-256 verified and its focused validator passed before this append-only record was created."},
+      {"check": "stable_uuid_binding", "pass": true, "basis": "Exact candidate remains bound to recliner UUID 3b2cae03-3556-5c1e-a19b-ea3c1e15694c."},
+      {"check": "golden_room_source_identity", "pass": true, "basis": "Golden source, raw crop, UI workflow, extraction workflow, and raw_crop lane hashes exactly match the approved candidate."},
+      {"check": "independent_loadability", "pass": true, "basis": "Exact candidate GLB independently loads; artifact bytes are unchanged from the 11/11 non-human pass."},
+      {"check": "non_placeholder_geometry", "pass": true, "basis": "Exact candidate contains the validated non-placeholder generated recliner geometry."},
+      {"check": "recognizable_recliner_silhouette_identity", "pass": true, "basis": "Exact validated preview shows the recognizable recliner identity in the bound semantic views."},
+      {"check": "no_fused_scene_or_ground_sheet_geometry", "pass": true, "basis": "Exact candidate validation found one isolated recliner with no fused room or ground sheet."},
+      {"check": "no_obvious_catastrophic_reconstruction_artifacts", "pass": true, "basis": "Exact candidate validation and direct inspection passed the common artifact criterion."},
+      {"check": "neutral_multi_angle_turntable_evidence", "pass": true, "basis": "Exact 1680x912 eight-panel preview SHA-256 is bound and passed deterministic, local-vision, and independent inspection."},
+      {"check": "durable_non_temporary_material_continuity", "pass": true, "basis": "Exact GLB embeds durable base-color, metallic-roughness, and normal textures with continuous readable material."},
+      {"check": "no_unresolved_external_materials_or_buffers", "pass": true, "basis": "Exact candidate contains no unresolved external image or buffer URI."},
+      {"check": "explicit_hash_bound_human_approval", "pass": true, "basis": "Kiro user-input question call_d61e943d-5832-456b-b812-b095ab52eb82 returned `Approve exact candidate`, explicitly bound to every value in exact_approval_bindings."}
+    ],
+    "passed_checks": 12,
+    "failed_checks": [],
+    "verdict": "PASS"
+  },
+  "authority": {
+    "metric_plan_remains_sole_spatial_authority": true,
+    "metric_plan_sole_authority_for": ["dimensions", "transforms", "placement", "architecture", "openings", "collision", "navigation"],
+    "immutable_plan_derived_camera_contract_remains_camera_authority": true,
+    "world_contract_remains_final_binding_authority": true,
+    "asset_and_evidence_views_are_not_spatial_authority": true,
+    "approval_changes_no_plan_camera_or_world_binding": true
+  },
+  "preservation": {
+    "prior_task_11_8_4_no_pass_evidence_preserved_unchanged": true,
+    "prior_task_11_8_4a_blockers_preserved_unchanged": true,
+    "approval_candidate_record_preserved_unchanged": true,
+    "artifact_glb_material_and_preview_preserved_unchanged": true,
+    "task_11_8_5_not_started_or_altered": true,
+    "sessions_or_qualification_not_started_or_altered": true,
+    "ui_or_interface_version_not_changed": true,
+    "production_or_test_code_not_changed": true,
+    "service_process_comfy_scheduled_task_and_ratchet_ownership_not_changed": true,
+    "model_download_integration_preflight_inference_and_cloud_not_used": true,
+    "unrelated_worktree_content_not_changed": true,
+    "commit_not_created": true
+  },
+  "validation": {
+    "commands": [
+      {
+        "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_additional_approval_candidate.py",
+        "phase": "before approval record mutation",
+        "result": "PASS",
+        "observed": [
+          "approval-candidate evidence SHA-256 09b48cea36bce340667a3a185bf7727011f3f44793a5ddb3d21c0c5d96234b41",
+          "approved candidate fingerprint 6b8a2b6b25e2cbc6e6b674ef037e95d3339584eefb83e6b3350b2f7da8d28baf",
+          "artifact SHA-256 4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+          "preview SHA-256 9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7",
+          "11/11 non-human checks PASS; local vision PASS confidence 1.0"
+        ]
+      },
+      {
+        "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_human_approval_pass.py",
+        "phase": "before Task 11.8.4a status mutation and again after the authorized status-only mutation",
+        "result": "PASS",
+        "observed": ["12/12 exact-order common-gate checks PASS", "exact user-input decision and every approval binding verified", "Task 11.8.5 remains unchecked and not started"]
+      }
+    ],
+    "candidate_validator_was_run_before_new_record_files_changed_the_broader_tree": true,
+    "reason": "The immutable candidate validator intentionally binds the approved pre-record candidate fingerprint. The new approval record preserves that successful exact-state validation instead of redefining the approved fingerprint to include later approval bookkeeping."
+  },
+  "status_effect": {
+    "task_11_8_4a_complete": true,
+    "task_11_8_5": "ELIGIBLE_NOT_STARTED",
+    "task_11_8_5_checkbox_changed": false,
+    "all_later_demo_and_release_tasks": "NOT_STARTED_AND_STILL_DEPENDENCY_GATED",
+    "demo_ready_claimed": false,
+    "release_ready_claimed": false,
+    "platform_complete_claimed": false
+  },
+  "hash_bindings": [
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-approval-candidate-additional-03-7c9f6b25-130e-4f47-838c-4cecd86f6d34.json", "sha256": "09b48cea36bce340667a3a185bf7727011f3f44793a5ddb3d21c0c5d96234b41"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb", "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-03-edge-preserving-denoise-c858e5e3-7968-40ee-b8e5-b54f1c073911/recliner-raw-crop_additional-03-edge-preserving-denoise-eight-panel.png", "sha256": "9865be16e82e383f12f5475574d48636d536a3b825de95c9d6ccbcd27a2000d7"},
+    {"path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png", "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"},
+    {"path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png", "sha256": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a"},
+    {"path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json", "sha256": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196"},
+    {"path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json", "sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_additional_approval_candidate.py", "sha256": "0c6e503b3d591ac60e58f77d8f032f4cf61c4d63cc91501399154de100e17c7c"},
+    {"path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4a_human_approval_pass.py", "sha256": "6e6f6efd012b4c21ff8d338e25098fd1183b10b22178aae4c885f79c034c5d42"}
+  ],
+  "integrity": {
+    "full_file_sha256_policy": "A file cannot truthfully contain its own full-file SHA-256. The validator emits the immutable full-file SHA-256 after reading the final bytes.",
+    "resulting_evidence_sha256": {
+      "kind": "SHA-256 of canonical JSON after removing only this resulting_evidence_sha256 field",
+      "value": "1148250608093df37c90cf314caf91388c18943fde0dd7ada2506453ea0cb0de"
+    }
+  },
+  "mvp_alignment": "Completes only the already-presented recliner approval gate and advances the 6-8 active-coding-hour MVP critical path without model, tooling, UI, service, session, or downstream expansion."
+}

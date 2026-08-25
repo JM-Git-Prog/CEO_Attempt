@@ -68,6 +68,45 @@ class TurntablePreview:
         )
 
 
+@dataclass(frozen=True)
+class MeshVisualInspection:
+    """Structured shape evidence bound to exactly one mesh candidate."""
+
+    reviewer: str
+    recognizable: bool
+    exactly_one_object: bool
+    no_fused_objects: bool
+    no_ground_sheet: bool
+    no_severe_malformation: bool
+    confidence: float
+    notes: str = ""
+
+    @property
+    def passed(self) -> bool:
+        return (
+            self.recognizable
+            and self.exactly_one_object
+            and self.no_fused_objects
+            and self.no_ground_sheet
+            and self.no_severe_malformation
+            and math.isfinite(self.confidence)
+            and 0.0 <= self.confidence <= 1.0
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "reviewer": self.reviewer,
+            "recognizable": self.recognizable,
+            "exactly_one_object": self.exactly_one_object,
+            "no_fused_objects": self.no_fused_objects,
+            "no_ground_sheet": self.no_ground_sheet,
+            "no_severe_malformation": self.no_severe_malformation,
+            "confidence": self.confidence,
+            "notes": self.notes,
+            "passed": self.passed,
+        }
+
+
 # ─── MeshApprovalGate ──────────────────────────────────────────────────────────
 
 
@@ -101,10 +140,12 @@ class MeshApprovalGate:
         11.5 — Placeholders skip approval (inherently approximate).
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *, require_visual_inspection: bool = False) -> None:
         self._gate: ApprovalGate = ApprovalGate(gate_id="mesh", stage="mesh_shape")
         self._current_mesh: MeshApproval | None = None
         self._current_preview: TurntablePreview | None = None
+        self._visual_inspection: MeshVisualInspection | None = None
+        self._require_visual_inspection = require_visual_inspection
         self._history: list[dict[str, Any]] = []
 
     # ─── Properties ────────────────────────────────────────────────────────
@@ -123,6 +164,11 @@ class MeshApprovalGate:
     def current_preview(self) -> TurntablePreview | None:
         """The turntable preview for the current mesh."""
         return self._current_preview
+
+    @property
+    def visual_inspection(self) -> MeshVisualInspection | None:
+        """Structured visual evidence bound to the current mesh."""
+        return self._visual_inspection
 
     @property
     def history(self) -> list[dict[str, Any]]:
@@ -256,6 +302,18 @@ class MeshApprovalGate:
 
         return preview
 
+    def record_visual_inspection(
+        self, mesh: MeshApproval, inspection: MeshVisualInspection,
+    ) -> None:
+        """Bind explicit single-object visual evidence to the presented mesh."""
+        if self._current_mesh is None or self._current_mesh != mesh:
+            raise ValueError("visual inspection must match the currently presented mesh")
+        if not inspection.reviewer.strip():
+            raise ValueError("visual inspection requires a reviewer identity")
+        if not math.isfinite(inspection.confidence) or not 0.0 <= inspection.confidence <= 1.0:
+            raise ValueError("visual inspection confidence must be within 0..1")
+        self._visual_inspection = inspection
+
     def approve(self, mesh: MeshApproval) -> MeshApproval:
         """Approve the mesh shape — proceed to material/texture application.
 
@@ -268,6 +326,13 @@ class MeshApprovalGate:
         Returns:
             A new MeshApproval with approved=True.
         """
+        if self._require_visual_inspection:
+            if self._visual_inspection is None:
+                raise ValueError("mesh approval requires structured visual inspection")
+            if not self._visual_inspection.passed:
+                raise ValueError(
+                    "mesh approval rejects fused, multi-object, or malformed visual evidence"
+                )
         self._gate.approve()
         self._history.append(
             {
@@ -276,6 +341,9 @@ class MeshApprovalGate:
                 "decision": "approved",
                 "reason": "",
                 "retry_count": mesh.retry_count,
+                "visual_inspection": (
+                    self._visual_inspection.to_dict() if self._visual_inspection else None
+                ),
                 "timestamp": time.time(),
             }
         )
@@ -317,6 +385,9 @@ class MeshApprovalGate:
                 "decision": "rejected",
                 "reason": reason,
                 "retry_count": new_retry_count,
+                "visual_inspection": (
+                    self._visual_inspection.to_dict() if self._visual_inspection else None
+                ),
                 "timestamp": time.time(),
             }
         )
@@ -343,6 +414,7 @@ class MeshApprovalGate:
         self._gate.reset()
         self._current_mesh = None
         self._current_preview = None
+        self._visual_inspection = None
 
     # ─── Serialization ─────────────────────────────────────────────────────
 
@@ -357,6 +429,10 @@ class MeshApprovalGate:
                 self._current_preview.to_dict()
                 if self._current_preview
                 else None
+            ),
+            "require_visual_inspection": self._require_visual_inspection,
+            "visual_inspection": (
+                self._visual_inspection.to_dict() if self._visual_inspection else None
             ),
             "history": list(self._history),
         }

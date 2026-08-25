@@ -109,6 +109,54 @@ def _objects_overlap(a: dict[str, Any], b: dict[str, Any]) -> bool:
     return True
 
 
+def _support_geometry_is_valid(
+    supporter: dict[str, Any], supported: dict[str, Any]
+) -> bool:
+    """Return whether a declared support edge matches Plan-owned box geometry."""
+    if not _objects_overlap(supporter, supported):
+        return False
+    try:
+        supporter_top = float(supporter.get("elevation", 0.0)) + float(supporter["height"])
+        supported_bottom = float(supported.get("elevation", 0.0))
+    except (KeyError, TypeError, ValueError):
+        return False
+    return (
+        math.isfinite(supporter_top)
+        and math.isfinite(supported_bottom)
+        and math.isclose(
+            supported_bottom,
+            supporter_top,
+            abs_tol=OBJECT_OVERLAP_TOLERANCE,
+        )
+    )
+
+
+def _placements_have_valid_support(
+    plan: MetricPlan, first: dict[str, Any], second: dict[str, Any]
+) -> bool:
+    """Permit footprint overlap only for one valid MetricPlan support edge."""
+    first_id = str(first.get("id", ""))
+    second_id = str(second.get("id", ""))
+    for relation in plan.relationships:
+        if (
+            relation.get("relationship_type") == "support"
+            and relation.get("authority") == "metric_plan"
+            and str(relation.get("source_id", "")) == first_id
+            and str(relation.get("target_id", "")) == second_id
+            and _support_geometry_is_valid(first, second)
+        ):
+            return True
+        if (
+            relation.get("relationship_type") == "support"
+            and relation.get("authority") == "metric_plan"
+            and str(relation.get("source_id", "")) == second_id
+            and str(relation.get("target_id", "")) == first_id
+            and _support_geometry_is_valid(second, first)
+        ):
+            return True
+    return False
+
+
 def _opening_corner_distance(opening: dict[str, Any], room_width: float, room_depth: float) -> float:
     """Compute distance of an opening from the nearest wall corner.
 
@@ -257,6 +305,9 @@ class PlanValidator:
         # Check opening validity
         violations.extend(self._check_openings(plan))
 
+        # Validate Plan-owned relationships before interpreting stacked geometry.
+        violations.extend(self._check_relationships(plan))
+
         # Check object non-overlap
         violations.extend(self._check_overlap(plan))
 
@@ -378,14 +429,58 @@ class PlanValidator:
 
         return violations
 
+    def _check_relationships(self, plan: MetricPlan) -> list[ValidationViolation]:
+        """Fail closed unless support is explicit, Plan-owned, and geometric."""
+        violations: list[ValidationViolation] = []
+        placements = {str(item.get("id", "")): item for item in plan.object_placements}
+        seen: set[tuple[str, str, str]] = set()
+        supported: set[str] = set()
+        for index, relation in enumerate(plan.relationships):
+            relation_type = str(relation.get("relationship_type", ""))
+            source_id = str(relation.get("source_id", ""))
+            target_id = str(relation.get("target_id", ""))
+            authority = str(relation.get("authority", ""))
+            key = (source_id, target_id, relation_type)
+            reason = ""
+            if relation_type != "support":
+                reason = "unsupported relationship type"
+            elif authority != "metric_plan":
+                reason = "support relationship is not Plan-owned"
+            elif not source_id or not target_id or source_id == target_id:
+                reason = "support relationship requires distinct source and target IDs"
+            elif source_id not in placements or target_id not in placements:
+                reason = "support relationship references a missing Plan placement"
+            elif key in seen or target_id in supported:
+                reason = "duplicate support authority"
+            elif not _support_geometry_is_valid(
+                placements[source_id], placements[target_id]
+            ):
+                reason = "supported object is not stably on or above its Plan-owned support"
+            if reason:
+                violations.append(ValidationViolation(
+                    rule="plan_relationship",
+                    severity="error",
+                    message=f"Relationship {index} is invalid: {reason}",
+                    details={"relationship_idx": index, "reason": reason, **relation},
+                ))
+                continue
+            seen.add(key)
+            supported.add(target_id)
+        return violations
+
     def _check_overlap(self, plan: MetricPlan) -> list[ValidationViolation]:
-        """Check object non-overlap."""
+        """Check non-overlap, permitting only valid declared support contact."""
         violations = []
         placements = plan.object_placements
 
         for i in range(len(placements)):
             for j in range(i + 1, len(placements)):
-                if _objects_overlap(placements[i], placements[j]):
+                if (
+                    _objects_overlap(placements[i], placements[j])
+                    and not _placements_have_valid_support(
+                        plan, placements[i], placements[j]
+                    )
+                ):
                     violations.append(ValidationViolation(
                         rule="object_overlap",
                         severity="error",
@@ -402,23 +497,146 @@ class PlanValidator:
         return violations
 
     def _check_circulation(self, plan: MetricPlan) -> list[ValidationViolation]:
-        """Check circulation clearance (minimum 0.6m walkable paths).
+        """Validate declared paths; preserve broad spacing checks for pathless plans.
 
-        Checks both:
-        - Object-to-wall clearance (at least one path to each wall)
-        - Object-to-object clearance (adjacent objects must have ≥0.6m gap)
+        Explicit circulation paths own where 0.6m clearance is required. This
+        permits realistic table/chair groupings and wall-hosted built-ins while
+        retaining the historical generic diagnostics for plans without a path.
         """
-        violations = []
+        violations: list[ValidationViolation] = []
         width, depth, _ = plan.room_dimensions
         placements = plan.object_placements
 
-        # Check that each object has at least MIN_CIRCULATION_WIDTH clearance
-        # from room edges
+        if any(
+            path.get("geometry_authority") == "metric_plan"
+            for path in plan.circulation_paths
+        ):
+            def resolve(value: object) -> tuple[float, float] | None:
+                if value == "center":
+                    return width / 2.0, depth / 2.0
+                if isinstance(value, (tuple, list)) and len(value) >= 2:
+                    return float(value[0]), float(value[1])
+                if not isinstance(value, str):
+                    return None
+                opening = next(
+                    (item for item in plan.openings if str(item.get("id", "")) == value),
+                    None,
+                )
+                if opening is None and value.startswith(("door_", "window_")):
+                    kind, _, ordinal = value.partition("_")
+                    try:
+                        index = int(ordinal)
+                    except ValueError:
+                        return None
+                    matching = [item for item in plan.openings if item.get("type") == kind]
+                    opening = matching[index] if 0 <= index < len(matching) else None
+                if opening is None:
+                    return None
+                parameter = float(opening.get("parameter", 0.5))
+                return {
+                    "north": (parameter * width, depth),
+                    "south": (parameter * width, 0.0),
+                    "east": (width, parameter * depth),
+                    "west": (0.0, parameter * depth),
+                }.get(str(opening.get("wall", "")))
+
+            def point_segment_distance(
+                point: tuple[float, float],
+                start: tuple[float, float],
+                end: tuple[float, float],
+            ) -> float:
+                dx, dy = end[0] - start[0], end[1] - start[1]
+                length_sq = dx * dx + dy * dy
+                if length_sq <= 1e-12:
+                    return math.hypot(point[0] - start[0], point[1] - start[1])
+                amount = max(0.0, min(1.0, (
+                    (point[0] - start[0]) * dx + (point[1] - start[1]) * dy
+                ) / length_sq))
+                return math.hypot(
+                    point[0] - (start[0] + amount * dx),
+                    point[1] - (start[1] + amount * dy),
+                )
+
+            def segment_rectangle_distance(
+                start: tuple[float, float],
+                end: tuple[float, float],
+                center: tuple[float, float],
+                half: tuple[float, float],
+            ) -> float:
+                minimum = center[0] - half[0], center[1] - half[1]
+                maximum = center[0] + half[0], center[1] + half[1]
+                for sample in range(65):
+                    amount = sample / 64.0
+                    point = (
+                        start[0] + (end[0] - start[0]) * amount,
+                        start[1] + (end[1] - start[1]) * amount,
+                    )
+                    dx = max(minimum[0] - point[0], 0.0, point[0] - maximum[0])
+                    dy = max(minimum[1] - point[1], 0.0, point[1] - maximum[1])
+                    if dx == 0.0 and dy == 0.0:
+                        return 0.0
+                corners = (
+                    minimum,
+                    (minimum[0], maximum[1]),
+                    maximum,
+                    (maximum[0], minimum[1]),
+                )
+                return min(point_segment_distance(corner, start, end) for corner in corners)
+
+            for index, path in enumerate(plan.circulation_paths):
+                clearance = float(path.get("min_width", 0.0))
+                binding = str(path.get("id", f"circulation:{index}"))
+                if not math.isfinite(clearance) or clearance < MIN_CIRCULATION_WIDTH:
+                    violations.append(ValidationViolation(
+                        rule="circulation_clearance",
+                        severity="error",
+                        message=f"Path '{binding}' requires at least {MIN_CIRCULATION_WIDTH}m clearance",
+                        details={
+                            "path": binding,
+                            "clearance": clearance,
+                            "min_required": MIN_CIRCULATION_WIDTH,
+                        },
+                    ))
+                    continue
+                start = resolve(path.get("start", path.get("from")))
+                end = resolve(path.get("end", path.get("to")))
+                if start is None or end is None:
+                    violations.append(ValidationViolation(
+                        rule="circulation_clearance",
+                        severity="error",
+                        message=f"Path '{binding}' has unresolved endpoints",
+                        details={"path": binding},
+                    ))
+                    continue
+                for placement in placements:
+                    distance = segment_rectangle_distance(
+                        start,
+                        end,
+                        (float(placement.get("x", 0.0)), float(placement.get("y", 0.0))),
+                        (
+                            float(placement.get("width", 0.5)) / 2.0,
+                            float(placement.get("depth", 0.5)) / 2.0,
+                        ),
+                    )
+                    if distance < clearance / 2.0 - OBJECT_OVERLAP_TOLERANCE:
+                        violations.append(ValidationViolation(
+                            rule="circulation_clearance",
+                            severity="error",
+                            message=f"Object '{placement.get('name', '?')}' occludes path '{binding}'",
+                            details={
+                                "path": binding,
+                                "object_name": placement.get("name", "unknown"),
+                                "clearance": max(0.0, distance * 2.0),
+                                "min_required": clearance,
+                            },
+                        ))
+            return violations
+
+        # Historical pathless plans retain broad room-spacing diagnostics.
         for i, obj in enumerate(placements):
             x, y = obj.get("x", 0), obj.get("y", 0)
             ow, od = obj.get("width", 0.5), obj.get("depth", 0.5)
 
-            # Distance to walls
             dist_left = x - ow / 2
             dist_right = width - (x + ow / 2)
             dist_top = y - od / 2
@@ -440,12 +658,9 @@ class PlanValidator:
                     },
                 ))
 
-        # Check inter-object circulation clearance
         for i in range(len(placements)):
             for j in range(i + 1, len(placements)):
                 gap = _gap_between_objects(placements[i], placements[j])
-                # Only flag if objects are close but not overlapping
-                # (overlapping is caught by _check_overlap)
                 if 0 <= gap < MIN_CIRCULATION_WIDTH:
                     violations.append(ValidationViolation(
                         rule="circulation_clearance",
@@ -590,6 +805,7 @@ class PlanValidator:
             openings=tuple(new_openings),
             object_placements=tuple(new_placements),
             circulation_paths=plan.circulation_paths,
+            relationships=plan.relationships,
             revisions=plan.revisions + (
                 PlanRevision(
                     revision=new_rev,
@@ -618,6 +834,7 @@ class PlanValidator:
             openings=corrected_plan.openings,
             object_placements=corrected_plan.object_placements,
             circulation_paths=corrected_plan.circulation_paths,
+            relationships=corrected_plan.relationships,
             revisions=final_revisions,
             template_id=corrected_plan.template_id,
         )

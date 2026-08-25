@@ -134,9 +134,11 @@ def classify_selected_body(
 
 def settle_classified_bodies(
     *, bodies: Sequence[Mapping[str, Any]], placements: Mapping[str, Mapping[str, Any]],
-    room_dimensions: Sequence[float], max_iterations: int = 500, timeout_s: float = 5.0,
+    room_dimensions: Sequence[float],
+    architectural_collision: Sequence[Mapping[str, Any]] = (),
+    max_iterations: int = 500, timeout_s: float = 5.0,
 ) -> dict[str, Any]:
-    """Settle dynamic boxes in PyBullet DIRECT; preserve static DA3 anchors exactly."""
+    """Settle boxes in PyBullet DIRECT against Plan-derived collision only."""
     width, depth, height = (float(value) for value in room_dimensions)
     by_id = {str(item["object_id"]): item for item in bodies}
     if set(by_id) != set(placements):
@@ -151,11 +153,15 @@ def settle_classified_bodies(
             "object_id": object_id,
             "position": [float(placement["x"]) - width / 2.0, float(placement.get("elevation", 0.0)), float(placement["y"]) - depth / 2.0],
             "rotation": [0.0, 0.0, 0.0, 1.0], "scale": dimensions,
-            "body_mode": "STATIC", "settle_method": "static DA3 anchor preservation",
+            "body_mode": "STATIC", "settle_method": "static approved-Plan anchor preservation",
         }
     if not dynamic_ids:
         return {"transforms": [transforms[key] for key in sorted(transforms)], "iterations": 0, "elapsed_seconds": 0.0, "engine": "none-required-static-only"}
 
+    if not architectural_collision:
+        raise RuntimeError(
+            "strict-real settle requires compiler-derived architectural collision"
+        )
     try:
         import pybullet as bullet
     except ImportError as exc:
@@ -165,12 +171,35 @@ def settle_classified_bodies(
     try:
         bullet.setGravity(0.0, -9.81, 0.0, physicsClientId=client)
         bullet.setTimeStep(1.0 / 240.0, physicsClientId=client)
-        floor_shape = bullet.createCollisionShape(bullet.GEOM_BOX, halfExtents=[width / 2.0, 0.05, depth / 2.0], physicsClientId=client)
-        bullet.createMultiBody(baseMass=0.0, baseCollisionShapeIndex=floor_shape, basePosition=[0.0, -0.05, 0.0], physicsClientId=client)
-        wall_specs = (([0.05, height / 2.0, depth / 2.0], [-width / 2.0, height / 2.0, 0.0]), ([0.05, height / 2.0, depth / 2.0], [width / 2.0, height / 2.0, 0.0]), ([width / 2.0, height / 2.0, 0.05], [0.0, height / 2.0, -depth / 2.0]), ([width / 2.0, height / 2.0, 0.05], [0.0, height / 2.0, depth / 2.0]))
-        for half_extents, position in wall_specs:
-            shape = bullet.createCollisionShape(bullet.GEOM_BOX, halfExtents=half_extents, physicsClientId=client)
-            bullet.createMultiBody(baseMass=0.0, baseCollisionShapeIndex=shape, basePosition=position, physicsClientId=client)
+        collision_ids: set[str] = set()
+        for item in architectural_collision:
+            stable_id = str(item.get("stable_id", ""))
+            geometry_id = str(item.get("geometry_id", ""))
+            if not stable_id or not geometry_id or stable_id in collision_ids:
+                raise RuntimeError("architectural collision requires unique stable bindings")
+            if item.get("body_mode") != "STATIC" or item.get("shape") != "box":
+                raise RuntimeError("architectural collision must use static compiler boxes")
+            position_upbge = [float(value) for value in item["position_upbge"]]
+            dimensions_upbge = [float(value) for value in item["dimensions_upbge"]]
+            if len(position_upbge) != 3 or len(dimensions_upbge) != 3:
+                raise RuntimeError("architectural collision requires 3D transforms")
+            # Compiler mapping is domain(x,y,z) -> UPBGE(x,z,y).
+            center = [position_upbge[0], position_upbge[2], position_upbge[1]]
+            dimensions = [dimensions_upbge[0], dimensions_upbge[2], dimensions_upbge[1]]
+            if not all(math.isfinite(value) and value > 0.0 for value in dimensions):
+                raise RuntimeError("architectural collision dimensions must be positive")
+            shape = bullet.createCollisionShape(
+                bullet.GEOM_BOX,
+                halfExtents=[value / 2.0 for value in dimensions],
+                physicsClientId=client,
+            )
+            bullet.createMultiBody(
+                baseMass=0.0,
+                baseCollisionShapeIndex=shape,
+                basePosition=center,
+                physicsClientId=client,
+            )
+            collision_ids.add(stable_id)
         for object_id in static_ids:
             placement, body = placements[object_id], by_id[object_id]
             dims = [float(value) for value in body["collision_dimensions_m"]]

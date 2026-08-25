@@ -1,0 +1,467 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4.standalone-asset-gate.v1",
+  "evidence_id": "d3f9253c-130b-4a6c-b597-1fc2fa27dd75",
+  "recorded_at_utc": "2026-08-25T11:17:39.612311+00:00",
+  "task": "11.8.4",
+  "result": "NO_LANE_PASSES_FAIL_CLOSED",
+  "scope_boundary": "Task 11.8.4 evaluation only; no approval, selection, replacement generation, exploration, Task 11.8.5 work, Demo Ready, release qualification, or release claim.",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_evidence": {
+    "task_11_8_3_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a.json",
+    "task_11_8_3_sha256": "1b72f3d0bff59c7ba494f0b782b449de6f1edbd5121fb7a268b5d37a4f1fe218",
+    "completed_lane_count": 2,
+    "completed_lanes": [
+      "raw_crop",
+      "existing_qwen_amodal_completion"
+    ],
+    "video_depth_status": "UNAVAILABLE_AT_TASK_START",
+    "video_depth_evaluated": false,
+    "video_depth_exclusion_reason": "A historical diagnostic video and extracted RGB frames existed, but repository and render inventories found no recliner-bound depth map, camera/depth bundle, point cloud, RGB-D asset, or video-derived recliner geometry. Video alone is not video-depth evidence."
+  },
+  "candidate_binding": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "pre_record_candidate_tree_fingerprint": "022c01ae8b3821f3516dafeedc978ed8bf31cd44b116a7b48e6649f04e9a07ee",
+    "pre_record_candidate_tree_path_count": 1912,
+    "algorithm": "candidate-tree-v1: SHA-256 initialized with raw ASCII HEAD plus LF; for each lexicographically sorted tracked or untracked nonignored path from git ls-files -z --cached --others --exclude-standard, append UTF-8 path, NUL, then raw file bytes with no post-content delimiter",
+    "note": "Fingerprint was computed after adding this validator and before writing this non-self-referential evidence record."
+  },
+  "golden_room_reference_bindings": {
+    "authoritative_source_image": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "authoritative_workflow": {
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.ui.json",
+      "exists": true,
+      "sha256_expected": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "sha256_observed": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+      "verified": true
+    },
+    "shared_input_mirror": {
+      "path": "C:\\Users\\JohnM\\ComfyUI-Shared\\input\\danny-v4-01-canon_00002_.png",
+      "exists": true,
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    "demo_profile_binding": {
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.2-demo-golden-room-1bcb1c92-d3c8-4d1e-a691-0952bb1c200b.json",
+      "exists": true,
+      "sha256_expected": "96a3c99726bd791a1996cc298762ff4a0b98273308a5a80fdcdbfdc99a378f87",
+      "sha256_observed": "96a3c99726bd791a1996cc298762ff4a0b98273308a5a80fdcdbfdc99a378f87",
+      "verified": true
+    },
+    "worldmirror_defer_binding": {
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.2a-phase-b-retry-defer-d7c1e0be-85cd-43b7-ac4b-6cce30e86cf7.json",
+      "exists": true,
+      "sha256_expected": "4f24a49dd855837f411a0daa21e04c33644bb6e8fc475ffc72022f2fbbee127e",
+      "sha256_observed": "4f24a49dd855837f411a0daa21e04c33644bb6e8fc475ffc72022f2fbbee127e",
+      "verified": true
+    },
+    "all_verified": true
+  },
+  "common_gate": {
+    "policy": "All checks are mandatory and identical for every completed lane; no lane-specific exception can convert a failure into a pass.",
+    "checks_in_order": [
+      "evidence_chain_integrity",
+      "stable_uuid_binding",
+      "golden_room_source_identity",
+      "independent_loadability",
+      "non_placeholder_geometry",
+      "recognizable_recliner_silhouette_identity",
+      "no_fused_scene_or_ground_sheet_geometry",
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "no_unresolved_external_materials_or_buffers",
+      "explicit_hash_bound_human_approval"
+    ],
+    "hard_fail_conditions": [
+      "source identity mismatch",
+      "independent load failure",
+      "placeholder or fused geometry",
+      "obvious catastrophic reconstruction artifact",
+      "missing neutral multi-angle evidence",
+      "missing durable non-temporary material continuity",
+      "unresolved external material or buffer",
+      "missing explicit hash-bound human approval",
+      "evidence-chain mismatch"
+    ]
+  },
+  "lane_verdicts": [
+    {
+      "lane": "raw_crop",
+      "availability": "COMPLETED_CANDIDATE",
+      "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+      "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/objects/recliner-raw-crop_hunyuan3d.glb",
+      "artifact_sha256": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+      "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/recliner-raw-crop_hunyuan3d-four-view.png",
+      "preview_sha256": "84732ef334b29825ea4bf8cf554a51b8288f325695497ac676ee33128be6089e",
+      "source_match": true,
+      "source_and_semantic_provenance": "Golden Room raw source-matched crop",
+      "hash_bindings": [
+        {
+          "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\lane-raw-crop-neutral.png",
+          "exists": true,
+          "sha256_expected": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+          "sha256_observed": "8f52b50c172cefbeaa6ec19f59495ca27eb88c8a4bf0986c513e6bd62c2444b3",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\objects\\recliner-raw-crop_hunyuan3d.glb",
+          "exists": true,
+          "sha256_expected": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+          "sha256_observed": "970d3b92c8d25f27b088de9696c5762255b72a7e7b7af1180ef8f946fa70ad06",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\recliner-raw-crop_hunyuan3d-four-view.png",
+          "exists": true,
+          "sha256_expected": "84732ef334b29825ea4bf8cf554a51b8288f325695497ac676ee33128be6089e",
+          "sha256_observed": "84732ef334b29825ea4bf8cf554a51b8288f325695497ac676ee33128be6089e",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+          "exists": true,
+          "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+          "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v4.1-items.api.json",
+          "exists": true,
+          "sha256_expected": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+          "sha256_observed": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+          "exists": true,
+          "sha256_expected": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+          "sha256_observed": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+          "verified": true
+        }
+      ],
+      "independent_glb_inspection": {
+        "container": "GLB_2_0",
+        "declared_bytes": 24405708,
+        "actual_bytes": 24405708,
+        "independent_load": true,
+        "geometry_count": 1,
+        "vertex_count": 675366,
+        "face_count": 1358256,
+        "extents_generator_space": [
+          1.9698614478111267,
+          1.6313182711601257,
+          1.8619229793548584
+        ],
+        "watertight": false,
+        "material_count": 0,
+        "texture_count": 0,
+        "image_count": 0,
+        "embedded_image_count": 0,
+        "external_image_uris": [],
+        "external_buffer_uris": [],
+        "durable_material_present": false
+      },
+      "common_gate_checks": [
+        {
+          "check": "evidence_chain_integrity",
+          "pass": true,
+          "observation": "All lane input/workflow/output/preview hashes and recorded geometry counts match Task 11.8.3."
+        },
+        {
+          "check": "stable_uuid_binding",
+          "pass": true,
+          "observation": "Candidate remains bound to common recliner UUID 3b2cae03-3556-5c1e-a19b-ea3c1e15694c."
+        },
+        {
+          "check": "golden_room_source_identity",
+          "pass": true,
+          "observation": "Raw crop is source-matched to the immutable Golden Room reference."
+        },
+        {
+          "check": "independent_loadability",
+          "pass": true,
+          "observation": "trimesh independently loaded the GLB with positive geometry."
+        },
+        {
+          "check": "non_placeholder_geometry",
+          "pass": true,
+          "observation": "High-density generated geometry (1358256 faces, 675366 vertices), not a placeholder primitive."
+        },
+        {
+          "check": "recognizable_recliner_silhouette_identity",
+          "pass": true,
+          "observation": "Neutral front/right/rear/left preview shows a recliner-like seat, back, arms, and extended footrest."
+        },
+        {
+          "check": "no_fused_scene_or_ground_sheet_geometry",
+          "pass": true,
+          "observation": "Neutral four-view output shows no room shell or generated ground sheet attached to the GLB."
+        },
+        {
+          "check": "no_obvious_catastrophic_reconstruction_artifacts",
+          "pass": true,
+          "observation": "Four views remain coherent without catastrophic collapse; non-watertight topology is retained as a limitation, not used to waive other failures."
+        },
+        {
+          "check": "neutral_multi_angle_turntable_evidence",
+          "pass": true,
+          "observation": "Hash-bound front/right/rear/left neutral preview: .kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/recliner-raw-crop_hunyuan3d-four-view.png."
+        },
+        {
+          "check": "durable_non_temporary_material_continuity",
+          "pass": false,
+          "observation": "Hard failure: geometry-only GLB has no embedded durable textured material; temporary/Pass-1 exceptions are prohibited."
+        },
+        {
+          "check": "no_unresolved_external_materials_or_buffers",
+          "pass": true,
+          "observation": "No external image or buffer URI is referenced; the separate durable-material requirement still fails."
+        },
+        {
+          "check": "explicit_hash_bound_human_approval",
+          "pass": false,
+          "observation": "No human asset approval exists or is manufactured; a hard-failing candidate is ineligible for approval."
+        }
+      ],
+      "failed_checks": [
+        "durable_non_temporary_material_continuity",
+        "explicit_hash_bound_human_approval"
+      ],
+      "gate_verdict": "FAIL",
+      "human_approval": {
+        "present": false,
+        "status": "NOT_REQUESTED_HARD_FAILURE",
+        "asset_hash_bound": false,
+        "candidate_fingerprint_bound": false,
+        "golden_room_reference_hashes_bound": false
+      },
+      "approved": false,
+      "selected": false
+    },
+    {
+      "lane": "existing_qwen_amodal_completion",
+      "availability": "COMPLETED_DIAGNOSTIC_CANDIDATE_WITH_SOURCE_AND_SEMANTIC_MISMATCH",
+      "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+      "artifact_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/objects/recliner-qwen-historical-difference_hunyuan3d.glb",
+      "artifact_sha256": "5ab18e053cb49dd9eea6fa0db2bb486325c11e06658c4ed460f2408872350896",
+      "preview_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/recliner-qwen-historical-difference_hunyuan3d-four-view.png",
+      "preview_sha256": "bafef202f666b713f31921a0031df871128b6b500451e6d90f212d66b1ea6368",
+      "source_match": false,
+      "source_and_semantic_provenance": "Historical V3 Qwen whole-room removal/difference; not Golden Room source-matched; not a true amodal completion",
+      "hash_bindings": [
+        {
+          "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\lane-qwen-historical-difference-neutral.png",
+          "exists": true,
+          "sha256_expected": "a1e476d15dcd00c42490914cc8effb4cb5033a9a680f3813dec7cc7d4f0ca63a",
+          "sha256_observed": "a1e476d15dcd00c42490914cc8effb4cb5033a9a680f3813dec7cc7d4f0ca63a",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\objects\\recliner-qwen-historical-difference_hunyuan3d.glb",
+          "exists": true,
+          "sha256_expected": "5ab18e053cb49dd9eea6fa0db2bb486325c11e06658c4ed460f2408872350896",
+          "sha256_observed": "5ab18e053cb49dd9eea6fa0db2bb486325c11e06658c4ed460f2408872350896",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a\\recliner-qwen-historical-difference_hunyuan3d-four-view.png",
+          "exists": true,
+          "sha256_expected": "bafef202f666b713f31921a0031df871128b6b500451e6d90f212d66b1ea6368",
+          "sha256_observed": "bafef202f666b713f31921a0031df871128b6b500451e6d90f212d66b1ea6368",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v3-01-furnished-canon_00001_.png",
+          "exists": true,
+          "sha256_expected": "f8ac94fa4852f50cdc0756dd3b6801e43bec519396afb0b96b92c7bfe630c499",
+          "sha256_observed": "f8ac94fa4852f50cdc0756dd3b6801e43bec519396afb0b96b92c7bfe630c499",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\CEO-of-My-Life-Inc\\CEO-3D-World\\workflows\\danny-v31-qwen-bakeoff.api.json",
+          "exists": true,
+          "sha256_expected": "2e19d919b716fa8feeb7b927b7728b422a30fd78f6ca89b964f720aaa90c33f2",
+          "sha256_observed": "2e19d919b716fa8feeb7b927b7728b422a30fd78f6ca89b964f720aaa90c33f2",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v31-qwenedit-recliner_00001_.png",
+          "exists": true,
+          "sha256_expected": "24d878af7f8773f718ce7ee795e7f330e9b528bc098dfc655ba6e3e9ff6a9672",
+          "sha256_observed": "24d878af7f8773f718ce7ee795e7f330e9b528bc098dfc655ba6e3e9ff6a9672",
+          "verified": true
+        },
+        {
+          "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v31-qwendiff-recliner_00001_.png",
+          "exists": true,
+          "sha256_expected": "bdae6f8e1103672692d93b4cb211add43ce2f77c49b5431f54bfb1c6199cb860",
+          "sha256_observed": "bdae6f8e1103672692d93b4cb211add43ce2f77c49b5431f54bfb1c6199cb860",
+          "verified": true
+        }
+      ],
+      "independent_glb_inspection": {
+        "container": "GLB_2_0",
+        "declared_bytes": 21997060,
+        "actual_bytes": 21997060,
+        "independent_load": true,
+        "geometry_count": 1,
+        "vertex_count": 609314,
+        "face_count": 1223586,
+        "extents_generator_space": [
+          1.9530009627342224,
+          1.4924288988113403,
+          1.868407666683197
+        ],
+        "watertight": false,
+        "material_count": 0,
+        "texture_count": 0,
+        "image_count": 0,
+        "embedded_image_count": 0,
+        "external_image_uris": [],
+        "external_buffer_uris": [],
+        "durable_material_present": false
+      },
+      "common_gate_checks": [
+        {
+          "check": "evidence_chain_integrity",
+          "pass": true,
+          "observation": "All lane input/workflow/output/preview hashes and recorded geometry counts match Task 11.8.3."
+        },
+        {
+          "check": "stable_uuid_binding",
+          "pass": true,
+          "observation": "Candidate remains bound to common recliner UUID 3b2cae03-3556-5c1e-a19b-ea3c1e15694c."
+        },
+        {
+          "check": "golden_room_source_identity",
+          "pass": false,
+          "observation": "Historical Qwen lane is V3 whole-room removal/difference evidence, not Golden Room source-matched and not a true amodal completion."
+        },
+        {
+          "check": "independent_loadability",
+          "pass": true,
+          "observation": "trimesh independently loaded the GLB with positive geometry."
+        },
+        {
+          "check": "non_placeholder_geometry",
+          "pass": true,
+          "observation": "High-density generated geometry (1223586 faces, 609314 vertices), not a placeholder primitive."
+        },
+        {
+          "check": "recognizable_recliner_silhouette_identity",
+          "pass": true,
+          "observation": "Neutral front/right/rear/left preview shows a recliner-like seat, back, arms, and extended footrest, but this does not cure source mismatch."
+        },
+        {
+          "check": "no_fused_scene_or_ground_sheet_geometry",
+          "pass": true,
+          "observation": "Neutral four-view output shows no room shell or generated ground sheet attached to the GLB."
+        },
+        {
+          "check": "no_obvious_catastrophic_reconstruction_artifacts",
+          "pass": true,
+          "observation": "Four views remain coherent without catastrophic collapse; non-watertight topology is retained as a limitation, not used to waive other failures."
+        },
+        {
+          "check": "neutral_multi_angle_turntable_evidence",
+          "pass": true,
+          "observation": "Hash-bound front/right/rear/left neutral preview: .kiro/specs/unified-world-pipeline/evidence/task-11.8.3-recliner-bakeoff-8a0a95a4-f73b-42cb-abf4-fb5ede87bd2a/recliner-qwen-historical-difference_hunyuan3d-four-view.png."
+        },
+        {
+          "check": "durable_non_temporary_material_continuity",
+          "pass": false,
+          "observation": "Hard failure: geometry-only GLB has no embedded durable textured material; temporary/Pass-1 exceptions are prohibited."
+        },
+        {
+          "check": "no_unresolved_external_materials_or_buffers",
+          "pass": true,
+          "observation": "No external image or buffer URI is referenced; the separate durable-material requirement still fails."
+        },
+        {
+          "check": "explicit_hash_bound_human_approval",
+          "pass": false,
+          "observation": "No human asset approval exists or is manufactured; a hard-failing candidate is ineligible for approval."
+        }
+      ],
+      "failed_checks": [
+        "golden_room_source_identity",
+        "durable_non_temporary_material_continuity",
+        "explicit_hash_bound_human_approval"
+      ],
+      "gate_verdict": "FAIL",
+      "human_approval": {
+        "present": false,
+        "status": "NOT_REQUESTED_HARD_FAILURE",
+        "asset_hash_bound": false,
+        "candidate_fingerprint_bound": false,
+        "golden_room_reference_hashes_bound": false
+      },
+      "approved": false,
+      "selected": false
+    }
+  ],
+  "selection": {
+    "passing_lane_count": 0,
+    "passing_lanes": [],
+    "visually_best_passing_lane": null,
+    "selected_lane": null,
+    "selected_asset_sha256": null,
+    "human_approval_created": false,
+    "note": "Raw crop has source-matched provenance and fewer identity failures, but it still fails durable-material and human-approval requirements; no failing lane is selected."
+  },
+  "fail_closed_blocker": {
+    "active": true,
+    "code": "NO_RECLINER_LANE_PASSES_STANDALONE_ASSET_GATE",
+    "summary": "Both completed candidates lack durable materials and explicit hash-bound human approval; the historical Qwen candidate additionally fails Golden Room source/semantic identity.",
+    "demo_ready_blocked": true,
+    "structural_success_cannot_override": true,
+    "visual_success_cannot_override_structural_failure": true,
+    "do_not_continue_into_task": "11.8.5",
+    "exploration_expansion_authorized": false
+  },
+  "validation": {
+    "validator_path": ".kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4.py",
+    "command": "python .kiro/specs/unified-world-pipeline/evidence/validate_task_11_8_4.py",
+    "method": "Rehash all bound evidence, parse each GLB 2.0 container, independently load through trimesh, compare geometry counts, and assert identical rubric plus fail-closed outcomes.",
+    "result": "PASS"
+  },
+  "preservation": {
+    "production_code_modified": false,
+    "test_code_modified": false,
+    "ui_or_interface_modified": false,
+    "v3_through_v16_behavior_modified": false,
+    "asset_or_material_generated_or_modified": false,
+    "replacement_or_pipeline_session_created": false,
+    "exploratory_model_or_worldmirror_invoked": false,
+    "cloud_used": false,
+    "ollama_used": false,
+    "scheduled_task_modified": false,
+    "ratchet_watch_owner": "Windows Scheduled Task/keepalive",
+    "comfyui_owner": "Comfy Desktop on port 8188",
+    "commit_created": false,
+    "unrelated_worktree_changes_modified": false
+  },
+  "status_effect": {
+    "task_11_8_4_outcome": "COMPLETE_WITH_FAIL_CLOSED_BLOCKER",
+    "leave_incomplete": [
+      "11.8",
+      "11.8.5",
+      "11.8.6",
+      "11.8.7",
+      "11.8.8",
+      "11.8.9",
+      "11.7.1",
+      "11.9",
+      "11.10",
+      "11.11"
+    ]
+  },
+  "mvp_alignment": "The common gate made the bounded no-pass decision from existing evidence only and stopped before Task 11.8.5 without reopening exploration, preserving the 6\u20138 active-coding-hour MVP focus."
+}

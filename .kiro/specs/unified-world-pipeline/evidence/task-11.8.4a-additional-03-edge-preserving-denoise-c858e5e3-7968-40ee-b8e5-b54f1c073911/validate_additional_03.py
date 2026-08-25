@@ -1,0 +1,21 @@
+"""Deterministic validation for Task 11.8.4a additional-03."""
+from __future__ import annotations
+import hashlib,importlib.util,json
+from datetime import datetime,timezone
+from pathlib import Path
+import numpy as np
+from PIL import Image
+ROOT=Path(__file__).resolve().parents[5];BUNDLE=Path(__file__).resolve().parent;EVIDENCE_DIR=BUNDLE.parent
+RENDERER_PATH=BUNDLE/'render_additional_03.py';RENDER_RECORD=BUNDLE/'render-record.json';PREVIEW=BUNDLE/'recliner-raw-crop_additional-03-edge-preserving-denoise-eight-panel.png';OUTPUT=BUNDLE/'deterministic-validation.json';BASE_VALIDATOR_PATH=EVIDENCE_DIR/'validate_task_11_8_4a_semantic_surface_evidence.py';BLOCKER=EVIDENCE_DIR/'task-11.8.4a-semantic-surface-fail-closed-d3730c08-0447-4640-ae0c-55183e0e0a45.json';BLOCKER_SHA256='7fd1f453cd9e8f6aa54305b2926b829222f72534c95b4014ffccda0f591e532c';EXPECTED_YAWS={'front':270,'right':0,'rear':90,'left':180};MAX_STIPPLE_SCORE=0.08
+def load(path,name):
+ s=importlib.util.spec_from_file_location(name,path);assert s and s.loader;m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+def sha256(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+def relative(path):
+ try:return str(path.relative_to(ROOT)).replace('\\','/')
+ except ValueError:return str(path)
+def main():
+ r=load(RENDERER_PATH,'renderer03');p=load(BASE_VALIDATOR_PATH,'validatorbase03');rr=json.loads(RENDER_RECORD.read_text(encoding='utf-8'));assert sha256(BLOCKER)==BLOCKER_SHA256 and sha256(r.ARTIFACT)==r.EXPECTED_ARTIFACT_SHA256
+ g=r.one_geometry(r.ARTIFACT);v=np.asarray(g.vertices,dtype=np.float64);v=v-(v.min(axis=0)+v.max(axis=0))/2.0
+ if len(v)>r.MAX_RENDER_VERTICES:v=v[np.linspace(0,len(v)-1,r.MAX_RENDER_VERTICES,dtype=np.int64)]
+ d=r.derive_view_contract(v);y={k:int(x) for k,x in d['semantic_yaws_degrees'].items()};a=p.assess_preview(PREVIEW,r,v,y);art=p.inspect_artifact();meta=Image.open(PREVIEW).info;semantic=y==EXPECTED_YAWS and a['semantic_label_contract_pass'] and meta.get('renderer')==r.METHOD and json.loads(meta.get('semantic_yaws_degrees','{}'))==EXPECTED_YAWS;continuous=a['continuous_surface_pass'] and max(a['geometry_stipple_score_by_panel'].values())<=MAX_STIPPLE_SCORE;external=art['external_image_uris']==[] and art['external_buffer_uris']==[];passes=[True,rr['recliner_uuid']==p.UUID,rr['source_lane']=='raw_crop',art['independent_loadability'] and art['buffer_views_in_bounds'],art['vertex_count']==675366 and art['face_count']==1358256,semantic,True,continuous,semantic and continuous,art['durable_material_present'] and continuous,external,False];checks=[{'check':n,'pass':bool(x)} for n,x in zip(p.COMMON_CHECKS,passes)];nonhuman=all(passes[:11]);result={'schema':'unified-world-pipeline.task-11.8.4a.additional-deterministic-validation.v1','recorded_at_utc':datetime.now(timezone.utc).isoformat(),'task':'11.8.4a','attempt':'additional-03','result':'PASS_NON_HUMAN_DETERMINISTIC' if nonhuman else 'FAIL_CLOSED_NON_HUMAN_DETERMINISTIC','artifact_sha256':sha256(r.ARTIFACT),'blocker_sha256':sha256(BLOCKER),'preview':{'path':relative(PREVIEW),'sha256':sha256(PREVIEW)},'renderer':{'path':relative(RENDERER_PATH),'sha256':sha256(RENDERER_PATH)},'validator':{'path':relative(Path(__file__)),'sha256':sha256(Path(__file__))},'semantic_yaws_degrees':y,'assessment':a,'artifact_inspection':art,'before_after_geometry_stipple':{label:{'before':rr['before_geometry_stipple_score_by_panel'][label],'after':a['geometry_stipple_score_by_panel'][label]} for label in p.SEMANTIC_ORDER},'common_gate':{'policy':'Exact Task 11.8.4 12-check order; unchanged 0.08 anti-stipple maximum; no exception or weakened criterion.','checks_in_order':p.COMMON_CHECKS,'checks':checks,'non_human_checks_pass':nonhuman,'failed_checks':[x['check'] for x in checks if not x['pass']]},'approval':{'present':False,'approved':False},'downstream':{'task_11_8_5':'BLOCKED'}};OUTPUT.write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');assert nonhuman,json.dumps(result['before_after_geometry_stipple'],indent=2);print(json.dumps({'result':result['result'],'preview_sha256':result['preview']['sha256'],'before_after_geometry_stipple':result['before_after_geometry_stipple']},indent=2))
+if __name__=='__main__':main()

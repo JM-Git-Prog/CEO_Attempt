@@ -32,8 +32,9 @@ from src.unified_pipeline.conversation import (
     _user_confirms_stable,
 )
 from src.unified_pipeline.object_manifest import (
-    build_selected_manifest,
+    build_plan_bound_selected_manifest,
     load_detected_document,
+    resolve_plan_selected_objects,
 )
 from src.unified_pipeline.orchestrator import (
     DEFAULT_STAGE_SPECS,
@@ -44,12 +45,28 @@ from src.unified_pipeline.stage_handlers import build_handlers
 from src.workflow_provenance import profile_for
 
 INTERFACE_VERSION = 16
+# Route-scoped capability policy for the generated world document. Pointer Lock
+# is required by the native first-person controller; unrelated sensitive browser
+# capabilities remain denied instead of inheriting a broader application policy.
+WORLD_PERMISSIONS_POLICY = ", ".join((
+    "accelerometer=()",
+    "camera=()",
+    "geolocation=()",
+    "gyroscope=()",
+    "magnetometer=()",
+    "microphone=()",
+    "payment=()",
+    "usb=()",
+    "pointer-lock=(self)",
+))
 _SESSION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
 _APPROVAL_STAGES = {
     "canon": "canon_approval",
     "canon_approval": "canon_approval",
     "blockout": "blockout_approval",
     "blockout_approval": "blockout_approval",
+    "object_canon": "object_canon_approval",
+    "object_canon_approval": "object_canon_approval",
     "mesh": "mesh_approval",
     "mesh_approval": "mesh_approval",
     "world": "final_world_qa",
@@ -674,6 +691,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         writer_id = str(payload.get("writer_id", "web-user")).strip() or "web-user"
 
         selected_detected = None
+        selected_picker = None
         selected_ids: list[object] = []
         if approval_stage == "blockout_approval" and bool(payload.get("approved", True)):
             selection = payload.get("selected_object_ids")
@@ -693,11 +711,13 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 selected_detected = load_detected_document(
                     session_dir / "artifacts" / "detected_objects.json"
                 )
-                build_selected_manifest(
-                    selected_detected,
-                    selected_ids,
-                    plan_revision=orchestrator.current_plan_revision,
-                    approval_revision=0,
+                selected_picker = json.loads(
+                    (session_dir / "artifacts" / "object_picker.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                resolve_plan_selected_objects(
+                    selected_detected, selected_picker, selected_ids
                 )
             except (KeyError, OSError, TypeError, ValueError) as exc:
                 return JSONResponse({"error": str(exc)}, status_code=409)
@@ -720,12 +740,20 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         except (ValueError, RuntimeError, KeyError, TypeError, OSError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=409)
 
-        if selected_detected is not None:
-            selected_manifest = build_selected_manifest(
+        if selected_detected is not None and selected_picker is not None:
+            decision_payload = decision.to_dict()
+            approval_evidence_sha256 = hashlib.sha256(
+                json.dumps(
+                    decision_payload, sort_keys=True, separators=(",", ":")
+                ).encode("utf-8")
+            ).hexdigest()
+            selected_manifest = build_plan_bound_selected_manifest(
                 selected_detected,
+                selected_picker,
                 selected_ids,
                 plan_revision=revision,
                 approval_revision=int(getattr(decision, "approval_revision", 1)),
+                approval_evidence_sha256=approval_evidence_sha256,
             )
             artifacts_dir = session_dir / "artifacts"
             artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -1047,7 +1075,14 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         suffix = target.suffix.lower()
         media_type = mime_map.get(suffix) or mimetypes.guess_type(str(target))[0] or "application/octet-stream"
 
-        return FileResponse(str(target), media_type=media_type)
+        return FileResponse(
+            str(target),
+            media_type=media_type,
+            headers={
+                "Cache-Control": "no-store",
+                "Permissions-Policy": WORLD_PERMISSIONS_POLICY,
+            },
+        )
 
     @router.get("/api/session/{session_id}/world")
     async def unified_world_index(session_id: str):
@@ -1063,6 +1098,13 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         if not index_file.is_file():
             return JSONResponse({"error": "Compiled world not available"}, status_code=404)
 
-        return FileResponse(str(index_file), media_type="text/html")
+        return FileResponse(
+            str(index_file),
+            media_type="text/html",
+            headers={
+                "Cache-Control": "no-store",
+                "Permissions-Policy": WORLD_PERMISSIONS_POLICY,
+            },
+        )
 
     return router

@@ -1,0 +1,79 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.additional-attempt.v1",
+  "task": "11.8.4a",
+  "attempt": "additional-01",
+  "result": "CONTINUE_STRICT_LOCAL_VISION_GATE_FAILED",
+  "hypothesis": "Derive neutral topology normals from a masked, broadly smoothed visible-depth field instead of interpolated generator vertex normals; retain the same silhouette, semantic yaws, neutral lights, material colors, and anti-stipple threshold.",
+  "immutable_bindings": {
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "lane": "raw_crop",
+    "artifact_sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "prior_blocker_sha256": "7fd1f453cd9e8f6aa54305b2926b829222f72534c95b4014ffccda0f591e532c",
+    "workflow_sha256": "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
+    "extraction_workflow_sha256": "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af"
+  },
+  "before_after_geometry_stipple": {
+    "front": {"before": 0.07384261519599865, "after": 0.0},
+    "right": {"before": 0.1788191768151688, "after": 0.0},
+    "rear": {"before": 0.14647007128210135, "after": 0.0},
+    "left": {"before": 0.17045079169327668, "after": 0.000021398613369853634}
+  },
+  "deterministic_gate": {
+    "result": "PASS_NON_HUMAN_DETERMINISTIC",
+    "non_human_checks": "11/11 PASS",
+    "anti_stipple_maximum": 0.08,
+    "threshold_changed": false,
+    "exact_common_gate_order_preserved": true
+  },
+  "direct_visual_inspection": {
+    "performed_from_disk": true,
+    "independent_adjudication": "FAIL_CONTINUE",
+    "observations": [
+      "All eight panels are continuous and stipple-free with truthful visible front/right/rear/left labels and isolated filled silhouettes.",
+      "The depth-derived result is overly emboss-like and suppresses convincing material texture and broad topology continuity despite deterministic pass.",
+      "No fused room or ground sheet is visible."
+    ]
+  },
+  "local_vision_gate": {
+    "model": "qwen2.5vl:7b",
+    "local_only": true,
+    "verdict": {
+      "pass": false,
+      "failed_checks": ["geometry/silhouette identity", "front/right/rear/left camera labels", "material continuity"],
+      "confidence": 0.80,
+      "observations": [
+        "The recliner's geometry and silhouette do not match the expected neutral topology.",
+        "Camera labels are missing or incorrect, which is crucial for accurate rendering.",
+        "Material continuity appears inconsistent across different panels."
+      ],
+      "next_renderer_change": "Re-render with correct camera angles and ensure material consistency throughout all panels."
+    },
+    "independent_adjudication": "The missing-label claim is contradicted by direct inspection and deterministic metadata/silhouette assignment, but the strict gate still fails. The material/topology concern is accepted as the next renderer learning."
+  },
+  "preview": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-01-depth-derived-normal-6e97d166-7dca-4c75-bbe1-1dd7bfc4a15f/recliner-raw-crop_additional-01-depth-derived-normal-eight-panel.png",
+    "sha256": "aec263ba4220c8db1c5a30a911faacaf929c10095be8f3af60d7a8e0d96538e1"
+  },
+  "hashes": {
+    "renderer_sha256": "9bb35ccdd6fc1af2625d6df589402421785fca3ce7c39b32240fca7468cce8b2",
+    "validator_sha256": "98a4f6e47efe6186ae77fe94ac9cc9d58d7db734f3deeafd6dd2f081eb5ec165",
+    "render_record_sha256": "a83ea0f960255e49d87a29454def4299b19fb1bb63a13491573518b48d7da4e1",
+    "deterministic_validation_sha256": "eeab16e228643739de2ddc24c84a1c7bb94c1184850265c5c0ffded17cbe86eb",
+    "source_visual_qa_sha256": "12b5e165c7b5fd6d5371dc09534f9eea4825d4407b124469361563c6698d8709"
+  },
+  "candidate_binding": {
+    "git_head": "5b1b3bb3ff809b4ea480bf64921de70604ca1e39",
+    "pre_attempt_record_candidate_tree_fingerprint": "39dbdd73be84fd8284250f649bec4d497a085ed0f3026a8513bbe385875c429b",
+    "path_count": 1945,
+    "algorithm": "candidate-tree-v1"
+  },
+  "commands": [
+    {"command": "python .../render_additional_01.py", "result": "PASS_RENDERED"},
+    {"command": "python .../validate_additional_01.py", "result": "PASS_NON_HUMAN_DETERMINISTIC"},
+    {"command": "local qwen2.5vl:7b strict preview gate", "result": "FAIL confidence 0.80"}
+  ],
+  "learning_for_next_attempt": "Retain stipple-free depth rasterization and semantic views, but restore broad material variation and topology readability without reintroducing high-frequency noise; add explicit in-image camera-orientation diagram/labels if useful to local vision.",
+  "approval": {"present": false, "approved": false, "requested": false},
+  "status_effect": {"task_11_8_4a_complete": false, "task_11_8_5": "BLOCKED"},
+  "authority": {"metric_plan": "SOLE_SPATIAL_AUTHORITY", "camera_contract": "IMMUTABLE_PLAN_DERIVED_AUTHORITY", "world_contract": "FINAL_BINDING_AUTHORITY"}
+}

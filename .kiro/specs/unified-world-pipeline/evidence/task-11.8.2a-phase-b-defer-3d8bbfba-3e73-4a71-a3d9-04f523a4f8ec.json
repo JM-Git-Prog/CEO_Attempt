@@ -1,0 +1,134 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.2a.phase-b-verdict.v1",
+  "evidence_id": "3d8bbfba-3e73-4a71-a3d9-04f523a4f8ec",
+  "recorded_at_utc": "2026-08-25T00:17:55.7180817Z",
+  "task": "11.8.2a",
+  "phase": "B",
+  "verdict": "DEFER",
+  "completion_effect": {
+    "task_11_8_2a_complete": true,
+    "task_11_8_3_unlocked": true,
+    "parent_task_11_8_complete": false,
+    "downstream_tasks_executed_or_completed": false,
+    "demo_ready_or_release_ready_claimed": false
+  },
+  "authorization_binding": {
+    "authorization_id": "5e91d04c-1e96-43d5-b067-625b9f344a9a",
+    "authorization_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-b-authorization-5e91d04c-1e96-43d5-b067-625b9f344a9a.json",
+    "user_statement": "Yes — authorize bounded Phase B",
+    "phase_a_evidence_path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.2a-phase-a-worldmirror-preflight-1f5fbef8-26a2-40a1-9f59-f70db60d72bd.json",
+    "phase_a_evidence_sha256": "febc7c2d5eee5e71cc81707926b573fef4a26054ed0c61ae77d437dd245881af"
+  },
+  "prelaunch_ownership_gate": {
+    "checked_at_utc": "2026-08-25T00:17:16.0262306Z",
+    "comfy_endpoint": "http://127.0.0.1:8188/queue",
+    "queue_running": [],
+    "queue_pending": [],
+    "queue_gate": "PASS",
+    "comfy_listener_pid": 31500,
+    "comfy_owner_name": "python.exe",
+    "comfy_owner_command_line": "C:\\Users\\JohnM\\ComfyUI-Installs\\ComfyUI\\ComfyUI\\.venv\\Scripts\\python.exe -s ComfyUI\\main.py --feature-flag show_signin_button=true --enable-manager --disable-dynamic-vram --port 8188 --extra-model-paths-config \"C:\\Users\\JohnM\\AppData\\Roaming\\Comfy Desktop\\instance-model-paths\\inst-1780733089879.yaml\" --input-directory C:\\Users\\JohnM\\ComfyUI-Shared\\input --output-directory \"C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\"",
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 4090",
+      "uuid": "GPU-e3fa90fc-515d-bf9d-6fc6-4b67f32574a3",
+      "memory_total_mib": 24564,
+      "memory_used_mib": 2823,
+      "memory_free_mib": 21316,
+      "utilization_percent": 19,
+      "required_free_mib": 22500,
+      "shortfall_mib": 1184,
+      "memory_gate": "FAIL"
+    },
+    "overall_gate": "FAIL",
+    "exact_blocker": "Observed free GPU memory was 21,316 MiB, which is 1,184 MiB below the required 22,500 MiB prelaunch threshold. The Comfy queue was empty, but both conditions were mandatory.",
+    "ownership_action": "No process was stopped, killed, restarted, reconfigured, or otherwise disturbed. Comfy Desktop retained ownership of port 8188 and Windows retained ownership of the Ratchet watch."
+  },
+  "execution": {
+    "continuous_60_minute_acquisition_clock_started": false,
+    "isolated_root": "/home/maccs55/ceo-kiro-isolated/worldmirror-phase-b/f4afd68f-8330-4ce8-a6e6-04ead5f9c669",
+    "isolated_root_exists_after_stop": false,
+    "isolated_root_cap_bytes": 128849018880,
+    "isolated_root_bytes_created": 0,
+    "container_tag": null,
+    "container_digest": null,
+    "container_created_or_run": false,
+    "source_acquired": false,
+    "model_acquired": false,
+    "dependencies_acquired_or_installed": false,
+    "environment_created": false,
+    "input_copied": false,
+    "model_loaded": false,
+    "inference_run": false,
+    "command_or_config": null,
+    "reason": "Required execution order mandates immediate DEFER before acquisition when the prelaunch ownership gate is not green."
+  },
+  "acquisitions_and_hashes": {
+    "items": [],
+    "expected_source_commit_not_acquired": "df9988efb87bfc0f4947eb3889411cf957478b06",
+    "expected_model_revision_not_acquired": "d78a16c91c7a56488894a1c8de4f5c7cc28aa8b0",
+    "expected_model_lfs_sha256_not_acquired": "9fff06539d3d9e85338d7de1ffb5afffb7739fa5bf4d62b4b7c319b5ecdde54f",
+    "full_model_repository_acquired": false
+  },
+  "timing_and_resources": {
+    "phase_b_authorization_recorded_at_utc": "2026-08-25T00:16:45.0911348Z",
+    "prelaunch_checked_at_utc": "2026-08-25T00:17:16.0262306Z",
+    "defer_recorded_at_utc": "2026-08-25T00:17:55.7180817Z",
+    "active_acquisition_minutes": 0,
+    "peak_worldmirror_vram_mib": 0,
+    "peak_worldmirror_ram_bytes": 0,
+    "worldmirror_disk_bytes": 0,
+    "note": "No WorldMirror process or environment existed, so no WorldMirror runtime resource peak was produced."
+  },
+  "outputs": {
+    "official_outputs_emitted": [],
+    "hashes": [],
+    "loadability": "NOT_RUN_PRELAUNCH_GATE_DEFER",
+    "tsdf_claimed": false,
+    "mesh_claimed": false
+  },
+  "visual_assessment": {
+    "approved_camera_resemblance": "NOT_EVALUATED",
+    "novel_view_coherence": "NOT_EVALUATED",
+    "local_vision_gate_run": false,
+    "reason": "No reconstruction was authorized to start after the failed prelaunch ownership gate."
+  },
+  "local_only_proof": {
+    "inference_network_mode": "NOT_APPLICABLE_NO_INFERENCE",
+    "external_project_input_or_output_transmission": false,
+    "cloud_model_used": false,
+    "gradio_started": false,
+    "ports_bound": [],
+    "share_enabled": false,
+    "vllm_used": false,
+    "telemetry_used": false,
+    "ollama_used_for_phase_b": false,
+    "note": "No acquisition or inference occurred after the fail-closed prelaunch check."
+  },
+  "cleanup": {
+    "required": false,
+    "performed": false,
+    "status": "NOT_NEEDED",
+    "isolated_root_exists": false,
+    "global_docker_prune_run": false,
+    "shared_cache_or_image_deleted": false,
+    "comfy_modified": false,
+    "scheduled_task_modified": false
+  },
+  "authority_preservation": {
+    "metric_plan_remains_sole_spatial_authority": true,
+    "camera_contract_authority_changed": false,
+    "worldmirror_evidence_promoted_to_authority": false
+  },
+  "preservation_attestation": {
+    "production_code_modified": false,
+    "tests_modified": false,
+    "ui_modified": false,
+    "pipeline_or_release_session_created": false,
+    "asset_generated": false,
+    "commit_created": false,
+    "unrelated_worktree_changes_modified": false
+  },
+  "recommendation": "Freeze WorldMirror for this milestone and proceed directly to Task 11.8.3 fixed-recliner bake-off without expanding model exploration.",
+  "mvp_alignment": "DEFER protects the active 6–8 coding-hour MVP target by avoiding acquisition under a failed ownership gate and returning immediately to the fixed-recliner critical path."
+}

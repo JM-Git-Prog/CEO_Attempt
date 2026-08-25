@@ -86,6 +86,8 @@ DEFAULT_STAGE_SPECS: tuple[StageSpec, ...] = (
     StageSpec("depth_estimation"),
     StageSpec("spatial_reconstruction"),
     StageSpec("blockout_approval", approval_for="spatial_reconstruction"),
+    StageSpec("object_isolation", per_object=True),
+    StageSpec("object_canon_approval", approval_for="object_isolation"),
     StageSpec("mesh_generation", per_object=True),
     StageSpec("mesh_approval", per_object=True, approval_for="mesh_generation"),
     StageSpec("material_pass_1", per_object=True),
@@ -925,7 +927,8 @@ class UnifiedOrchestrator:
             if selected_path.is_file():
                 selected = load_selected_manifest(selected_path)
                 context["object_ids"] = [
-                    str(item["object_id"]) for item in selected["objects"]
+                    str(item.get("plan_instance_id") or item["object_id"])
+                    for item in selected["objects"]
                 ]
                 context["selected_object_manifest_hash"] = selected["manifest_sha256"]
             elif context.get("execution_profile") == "strict_real":

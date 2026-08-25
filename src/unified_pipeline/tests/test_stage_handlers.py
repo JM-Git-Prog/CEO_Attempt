@@ -25,6 +25,10 @@ from src.unified_pipeline.stage_handlers import (
     LIVE_GPU_STAGES,
     build_handlers,
 )
+from src.unified_pipeline.strict_real_handlers import (
+    _depth_authority_labels,
+    handle_spatial_reconstruction,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -164,32 +168,79 @@ class TestApprovalStages:
 # ---------------------------------------------------------------------------
 
 class TestGPUStages:
-    """Live model handlers are async; synchronous handlers still return StageResult."""
+    """Live model handlers are async so GPU work cannot starve the web loop."""
 
     def test_gpu_stages_exist(self):
         """Sanity: all model-backed stages are classified."""
         assert len(GPU_STAGES) >= 5
 
-    def test_synchronous_gpu_stages_return_immediate(self, make_context):
+    @pytest.mark.asyncio
+    async def test_mesh_generation_returns_immediate_result(self, make_context):
         handlers = build_handlers()
-        for stage_name in {"mesh_generation"}:
-            ctx = make_context(stage_name, object_id="obj-1")
-            result = handlers[stage_name](ctx)
-            assert isinstance(result, StageResult), f"{stage_name} did not return StageResult"
-            assert not result.is_pending_external
+        ctx = make_context("mesh_generation", object_id="obj-1")
+        result = await handlers["mesh_generation"](ctx)
+        assert isinstance(result, StageResult)
+        assert not result.is_pending_external
 
     def test_live_model_handlers_have_declared_call_style(self):
         import asyncio
         handlers = build_handlers()
-        for stage_name in {"dream_preview", "canon_generation", "segment", "depth_estimation"}:
+        for stage_name in {
+            "dream_preview", "canon_generation", "segment", "depth_estimation",
+            "object_isolation", "mesh_generation",
+        }:
             assert asyncio.iscoroutinefunction(handlers[stage_name]), stage_name
-        assert not asyncio.iscoroutinefunction(handlers["mesh_generation"])
 
-    def test_synchronous_gpu_stages_preserve_plan_revision(self, make_context):
+    @pytest.mark.asyncio
+    async def test_mesh_generation_preserves_plan_revision(self, make_context):
         handlers = build_handlers()
         ctx = make_context("mesh_generation", object_id="obj-1")
-        result = handlers["mesh_generation"](ctx)
+        result = await handlers["mesh_generation"](ctx)
         assert result.plan_revision == ctx.plan_revision
+
+    def test_strict_real_depth_is_explicitly_non_authoritative_evidence(self):
+        labels = _depth_authority_labels()
+
+        assert labels["evidence_kind"] == "depth_evidence"
+        assert labels["evidence_only"] is True
+        assert labels["optional"] is True
+        assert labels["spatial_authority"] is False
+        assert labels["collision_enabled"] is False
+        assert labels["authority_claims"] == []
+        assert labels["forbidden_authorities"] == [
+            "room_dimensions",
+            "openings",
+            "architectural_geometry",
+            "collision_geometry",
+            "navigation_geometry",
+            "object_transforms",
+            "camera",
+        ]
+
+    def test_strict_real_spatial_reconstruction_rejects_depth_only_authority(
+        self, tmp_session_dir: Path
+    ):
+        """DA3 evidence cannot be promoted into Plan, transforms, or camera."""
+        ctx = StageExecutionContext(
+            session_id="depth-only-diagnostic",
+            session_dir=tmp_session_dir,
+            stage="spatial_reconstruction",
+            object_id=None,
+            values={"execution_profile": "strict_real"},
+            plan_revision=0,
+            approval_revision=0,
+            attempt=1,
+        )
+
+        with pytest.raises(
+            RuntimeError,
+            match="requires a durable Brief",
+        ):
+            handle_spatial_reconstruction(ctx)
+
+        assert not (tmp_session_dir / "artifacts" / "spatial_solution.json").exists()
+        assert not (tmp_session_dir / "artifacts" / "blockout.png").exists()
+        assert not (tmp_session_dir / "artifacts" / "object_picker.json").exists()
 
 
 # ---------------------------------------------------------------------------

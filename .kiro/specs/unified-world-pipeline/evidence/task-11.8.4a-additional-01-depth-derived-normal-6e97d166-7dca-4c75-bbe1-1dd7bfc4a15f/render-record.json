@@ -1,0 +1,124 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4a.additional-render.v1",
+  "recorded_at_utc": "2026-08-25T13:04:05.476340+00:00",
+  "task": "11.8.4a",
+  "attempt": "additional-01",
+  "hypothesis": "Derive neutral topology normals from a masked, broadly smoothed visible-depth field instead of interpolated generator vertex normals; retain the same silhouette, semantic yaws, neutral lights, material colors, and anti-stipple threshold.",
+  "scope": "evidence renderer/view/lighting/rasterization only; immutable GLB/material and prior evidence unchanged",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_lane": "raw_crop",
+  "artifact": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-continuity-corrected-raw-crop-recliner-3876cc8a-81a2-4bba-9da0-185ba59db002/recliner-raw-crop_continuity-corrected-fabric-pbr.glb",
+    "sha256": "4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf",
+    "modified": false
+  },
+  "renderer": {
+    "method": "masked-depth-derived-normal-surface-v1",
+    "depth_smoothing_sigma_px": 9.0,
+    "depth_detail_sigma_px": 3.5,
+    "color_smoothing_sigma_px": 4.0,
+    "sampled_vertices": 400000,
+    "same_semantic_views_and_lighting_for_rows": true
+  },
+  "view_contract": {
+    "method": "source-alpha/geometry-derived-v1",
+    "source_semantics": "Golden Room crop shows the recliner from a front-right oblique viewpoint",
+    "source_search_yaws_degrees": [
+      0,
+      45,
+      90,
+      135,
+      180,
+      225,
+      270,
+      315
+    ],
+    "source_silhouette_iou_by_yaw": {
+      "0": 0.619476613024515,
+      "45": 0.7531693167168028,
+      "90": 0.6597440150632117,
+      "135": 0.5428574833742521,
+      "180": 0.47520995163919827,
+      "225": 0.5491515367271864,
+      "270": 0.6732388000677928,
+      "315": 0.7595552655901702
+    },
+    "best_source_oblique_yaw_degrees": 315,
+    "adjacent_cardinal_candidates_degrees": [
+      270,
+      0
+    ],
+    "geometry_cues": {
+      "270": {
+        "silhouette_width_px": 343,
+        "silhouette_height_px": 301,
+        "bilateral_symmetry_iou": 0.9612811937226653,
+        "front_score": 1.0954134533118745
+      },
+      "0": {
+        "silhouette_width_px": 343,
+        "silhouette_height_px": 285,
+        "bilateral_symmetry_iou": 0.5013393870601589,
+        "front_score": 0.6033663500408228
+      }
+    },
+    "semantic_yaws_degrees": {
+      "front": 270,
+      "right": 0,
+      "rear": 90,
+      "left": 180
+    },
+    "generator_axes_assumed_semantic": false,
+    "handedness": "Y-up; semantic right is +90 degrees from derived semantic front"
+  },
+  "panels": {
+    "front": {
+      "yaw_degrees": 270,
+      "geometry_surface_pixel_count": 96014,
+      "material_surface_pixel_count": 96014,
+      "geometry_stipple_score": 0.0,
+      "material_stipple_score": 0.0
+    },
+    "right": {
+      "yaw_degrees": 0,
+      "geometry_surface_pixel_count": 49404,
+      "material_surface_pixel_count": 49404,
+      "geometry_stipple_score": 0.0,
+      "material_stipple_score": 0.0
+    },
+    "rear": {
+      "yaw_degrees": 90,
+      "geometry_surface_pixel_count": 96014,
+      "material_surface_pixel_count": 96014,
+      "geometry_stipple_score": 0.0,
+      "material_stipple_score": 0.0
+    },
+    "left": {
+      "yaw_degrees": 180,
+      "geometry_surface_pixel_count": 49404,
+      "material_surface_pixel_count": 49404,
+      "geometry_stipple_score": 0.0,
+      "material_stipple_score": 0.0
+    }
+  },
+  "before_geometry_stipple_score_by_panel": {
+    "front": 0.07384261519599865,
+    "right": 0.1788191768151688,
+    "rear": 0.14647007128210135,
+    "left": 0.17045079169327668
+  },
+  "output": {
+    "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4a-additional-01-depth-derived-normal-6e97d166-7dca-4c75-bbe1-1dd7bfc4a15f/recliner-raw-crop_additional-01-depth-derived-normal-eight-panel.png",
+    "sha256": "aec263ba4220c8db1c5a30a911faacaf929c10095be8f3af60d7a8e0d96538e1",
+    "bytes": 347361,
+    "dimensions": [
+      1680,
+      912
+    ]
+  },
+  "preservation": {
+    "glb_modified": false,
+    "material_modified": false,
+    "production_test_ui_service_session_model_modified": false
+  }
+}

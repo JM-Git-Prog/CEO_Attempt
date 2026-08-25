@@ -2,7 +2,7 @@
 
 Tests the Dream Preview generation logic including:
 - Successful single and multi-variant generation
-- Timeout handling (15s target, 20s hard timeout)
+- Timeout handling (15s target, 360s owned-job terminal bound)
 - Provisional labeling (not spatial authority)
 - User preference recording and retrieval
 - ComfyUI failure handling (returns empty list)
@@ -124,7 +124,7 @@ class TestGenerate:
 
     @pytest.mark.asyncio
     async def test_timeout_returns_empty(self, generator, mock_client):
-        """Req 3.1: Returns empty list on timeout (20s limit)."""
+        """Req 3.1: Returns empty when the owned job misses its terminal bound."""
         mock_client.wait_for_completion = AsyncMock(
             side_effect=ComfyUITimeoutError("Timed out after 20s")
         )

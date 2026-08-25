@@ -98,6 +98,43 @@ def test_plan_input_rejects_invalid_authoritative_values(
         PlanPhysicsInput(**values)  # type: ignore[arg-type]
 
 
+def test_expanded_plan_instance_id_is_preserved_through_classification() -> None:
+    object_id = "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1"
+    plan_object = PlanPhysicsInput(
+        plan_revision=2,
+        object_id=object_id,
+        category="chair",
+        dimensions_m=(0.5, 0.9, 0.5),
+        position_m=(1.0, 0.0, 1.0),
+    )
+
+    result = UnifiedPhysicsClassifier().classify(
+        plan_object,
+        {"primary_material": "wood"},
+    )
+
+    assert plan_object.object_id == object_id
+    assert result.object_id == object_id
+
+
+@pytest.mark.parametrize(
+    "object_id",
+    [
+        "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-0",
+        "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-chair",
+        "not-a-uuid-1",
+    ],
+)
+def test_plan_input_rejects_invalid_expanded_instance_ids(object_id: str) -> None:
+    with pytest.raises(PhysicsAdapterError, match="stable Plan instance ID"):
+        PlanPhysicsInput(
+            plan_revision=2,
+            object_id=object_id,
+            category="chair",
+            dimensions_m=(0.5, 0.9, 0.5),
+        )
+
+
 def test_plan_input_is_immutable() -> None:
     plan_object = _plan_object()
     with pytest.raises(FrozenInstanceError):
