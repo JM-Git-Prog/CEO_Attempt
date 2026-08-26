@@ -1,0 +1,28 @@
+{
+  "calibration_written": false,
+  "candidate_written": false,
+  "checkpoint_sha256": "d8b3459dded2f9c0e50282e85e0118e5501019c7e1c506ed696340bfc6ed322c",
+  "eligible_next_subtask": null,
+  "first_failure": {
+    "detail": "INITIALIZE_REFERENCES: authority or asset drift: {'path': 'C:\\\\Users\\\\JohnM\\\\My Applications\\\\Kiro\\\\CEO_Kiro\\\\CEO_Attempt\\\\output\\\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\\\artifacts\\\\final_validation.json', 'resolved_path': 'C:\\\\Users\\\\JohnM\\\\My Applications\\\\Kiro\\\\CEO_Kiro\\\\CEO_Attempt\\\\output\\\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\\\artifacts\\\\final_validation.json', 'exists': True, 'is_regular_file': True, 'is_symlink': False, 'bytes': 2408, 'sha256_expected': 'b58c162195777163083c71e73d2a4ecf283749510472bacb90c18289672d44d7', 'sha256_observed': '6dd5d900977a73bd9a4abcaed7cec138cee1355fde68622f403f3429b02d0bca', 'verified': False}",
+    "stage": "INITIALIZE_REFERENCES",
+    "verdict": "FAIL"
+  },
+  "references_json_written": false,
+  "result": "FAILED",
+  "schema": "recliner-canon-visual-refinement-fix.initialize-references-failure/v1",
+  "score_written": false,
+  "skipped_subtasks": [
+    "3.2",
+    "3.3",
+    "3.4",
+    "3.5",
+    "3.6",
+    "3.7",
+    "3.8",
+    "3.9",
+    "3.10",
+    "3.11"
+  ],
+  "state": "INITIALIZE_REFERENCES"
+}

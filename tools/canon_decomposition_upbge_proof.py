@@ -10,19 +10,31 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
+import importlib.util
 import json
 import math
+import os
+import platform
 import re
 import struct
 import subprocess
 import sys
 import time
 import uuid
+from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable, Mapping
 from urllib.error import URLError
 from urllib.request import Request, urlopen
+
+from src.unified_pipeline.camera_contract import CameraContract
+from src.unified_pipeline.object_manifest import (
+    build_plan_bound_selected_manifest,
+    load_selected_manifest,
+)
+from src.unified_pipeline.world_contract import WorldContract, verify_hash
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC_DIR = ROOT / ".kiro" / "specs" / "unified-world-pipeline"
@@ -35,6 +47,19 @@ ITEMS_UI_PATH = ITEMS_API_PATH.with_name("danny-v4.1-items.ui.json")
 APP_WORKFLOW_PATH = Path(r"C:\Users\JohnM\ComfyUI-Installs\ComfyUI\ComfyUI\user\default\workflows\danny-v4-pipeline-app.app.json")
 QA_REPORT_PATH = Path(r"C:\Users\JohnM\Artificial Intelligence\Projects\CEO-of-My-Life-Inc\CEO-3D-World\danny-v4-pipeline-QA-report.md")
 EMPTY_TWIN_PATH = RENDER_ROOT / "danny-v4-02-twin_00002_.png"
+ART_BIBLE_PATH = Path(r"C:\Users\JohnM\Artificial Intelligence\Projects\Danny Tornado\danny-tornado-seven-outs-design-bible_1\danny-tornado\13-art-direction.md")
+AUTHORITY_ROOT = ROOT / "output" / "diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745" / "artifacts"
+APPROVED_METRIC_PLAN_PATH = AUTHORITY_ROOT / "approved_metric_plan.json"
+WORLD_CONTRACT_PATH = AUTHORITY_ROOT / "world_contract.json"
+SELECTED_MANIFEST_PATH = AUTHORITY_ROOT / "selected_objects.json"
+SPATIAL_SOLUTION_PATH = AUTHORITY_ROOT / "spatial_solution.json"
+SCENE_GRAPH_PATH = AUTHORITY_ROOT / "scene_graph.json"
+FINAL_VALIDATION_PATH = AUTHORITY_ROOT / "final_validation.json"
+DECOMPOSITION_PACK_PATH = EVIDENCE_DIR / "task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5" / "canon-decomposition-pack.json"
+BUGFIX_CONFIG_PATH = ROOT / ".kiro" / "specs" / "recliner-canon-visual-refinement-fix" / ".config.kiro"
+BUGFIX_DESIGN_PATH = BUGFIX_CONFIG_PATH.with_name("design.md")
+VALIDATOR_PATH = ROOT / "tools" / "validate_canon_decomposition_upbge_proof.py"
+BROWSER_COMPILER_PATH = ROOT / "src" / "unified_pipeline" / "compilers" / "browser.py"
 BLENDER_EXE = Path(r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe")
 COMFY_URL = "http://127.0.0.1:8188"
 RECLINER_UUID = "3b2cae03-3556-5c1e-a19b-ea3c1e15694c"
@@ -46,6 +71,7 @@ UUID_NAMESPACE = uuid.UUID("93e6ca0f-056a-54b7-a47e-6863a4b3a242")
 
 EXPECTED_HASHES = {
     CANON_PATH: "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    EMPTY_TWIN_PATH: "2f67a5f3d3b44a4fb1eacf1ada5e57d4fbf401662358b01ccf087c4a83a59103",
     SHARED_CANON_PATH: "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
     ITEMS_API_PATH: "362dea52c21418717e919d9ea942f74a9016dd38088ec618660c21f74f2f37af",
     ITEMS_UI_PATH: "0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196",
@@ -55,6 +81,47 @@ EXPECTED_HASHES = {
     REJECTION_RECORD_PATH: "34f39460cadf4a8c74c1b6f57d8f80b54ea0adced12a2ea2e20d8afc129e56e2",
     NO_PASS_RECORD_PATH: "823aef9fa29103efabe32aafcd195aa4c76c135eb571e170120dc107aed58d21",
 }
+
+REFERENCE_SPECS: tuple[dict[str, Any], ...] = (
+    {"role": "locked_canon", "path": CANON_PATH, "bytes": 1_964_389, "sha256": EXPECTED_HASHES[CANON_PATH]},
+    {"role": "locked_empty_twin", "path": EMPTY_TWIN_PATH, "bytes": 1_372_293, "sha256": EXPECTED_HASHES[EMPTY_TWIN_PATH]},
+)
+AUTHORITY_HASHES = {
+    ART_BIBLE_PATH: "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+    APPROVED_METRIC_PLAN_PATH: "2cbf348fa73dd56cae2e532e1c184540e06bb01519f6ee8c438d11c64a9a3685",
+    WORLD_CONTRACT_PATH: "2670c044b10bac5fbeffc3e2a772a5b998317aad1fcaca6da9938cac3d980b0f",
+    SELECTED_MANIFEST_PATH: "89de39b04047dc4ff20f47a70ddbb16b6b9eccb59ed12877bbd7df177d12cb5e",
+    SPATIAL_SOLUTION_PATH: "418bb3f66d34975c33ef082821acde2d418a4edf4fa422de29824a230c420e5c",
+    SCENE_GRAPH_PATH: "e46fc4bb98dd00f46f7e331c53a84ede094b19c33cf10b8e93062a88ad7607a1",
+    FINAL_VALIDATION_PATH: "b58c162195777163083c71e73d2a4ecf283749510472bacb90c18289672d44d7",
+    DECOMPOSITION_PACK_PATH: "78b9fced85ffd1e4577a207662f4171d9996ad6dca8e7c03db43316e3b37ffed",
+}
+APPROVED_ASSET_HASHES: dict[str, dict[str, str]] = {
+    "8c6119a5-f7b9-4eca-a30e-cb039aad9c71": {"normalized": "1e287b5f23176fceb73dcc42ff618abc0c31f46eb177641cfb974f38f1bcfe8b", "source": "c7e318e91ee346cb53f5f6bde176d72ffbeb1956d83ed629422b53ffe6b1b353"},
+    "a4566944-5603-48e2-a0d0-ffc47dc8d225": {"normalized": "22f76498aaafefdcb782710b78e079f8216c76952f2fb5ecfe9b9ee5eb1a04f6", "source": "4d118f9386a49ad5beb06adc7d010598e8c4ed73ee0e37de1b059b14466a7008"},
+    "e307026a-2a6b-47e8-a2a9-42b8dc7904e0": {"normalized": "975a98e5b5f9214bc06cdb71a7d05e172e15c1c75b173cef104b75b83eaf95c7", "source": "7dced64197e104fcbe223b1e88253ec9cadb9d76f4f450d36800ca82eb90aff5"},
+    "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1": {"normalized": "663f2d19723b56988ebdcf69a67de0cb1a3724f15159b89b0aebcd82b7af17dc", "source": "ac6190d4e62737604debf7cbacd30cecf2d3d6855324ebe76db689295d517f0e"},
+    "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-2": {"normalized": "94cdfdbc94cd02f5ee94bd9df5185191c29d965c004a82992d2d7ac451acd890", "source": "886748ff0f988413096948fe8af29e01febd4dfd673bb546d087a97d645d2bb5"},
+}
+REFERENCE_LOCK_SEED = 0
+REFERENCE_RENDERER_SETTINGS = {
+    "renderer": "BLENDER_EEVEE",
+    "color_mode": "RGBA",
+    "film_transparent": False,
+    "resolution_percentage": 100,
+    "deterministic_seed": REFERENCE_LOCK_SEED,
+}
+RUNTIME_MODULE_CONTRACT: tuple[tuple[str, str], ...] = (
+    ("PIL", "12.0.0"),
+    ("numpy", "2.2.6"),
+    ("scipy", "1.18.0"),
+    ("cv2", "4.12.0"),
+)
+LEARNED_PERCEPTUAL_CANDIDATES: tuple[str, ...] = ("lpips", "piq")
+GENERATED_CONVERGENCE_PREFIX = (
+    ".kiro/specs/unified-world-pipeline/evidence/"
+    "task-11.8.4c-golden-room-convergence/"
+)
 
 ITEM_PREFIXES = {
     "bookshelf": "danny-v4.1-item-bookshelf",
@@ -127,24 +194,612 @@ def stable_uuid(key: str) -> str:
     return str(uuid.uuid5(UUID_NAMESPACE, f"{EXPECTED_HASHES[CANON_PATH]}:{key}"))
 
 
+class ReferenceLockError(RuntimeError):
+    """Fail-closed INITIALIZE_REFERENCES verdict with no candidate side effects."""
+
+
+def _canonical_hash(value: Any) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def hash_binding(path: Path, expected: str | None = None) -> dict[str, Any]:
-    exists = path.is_file()
-    observed = sha256_file(path) if exists else None
+    exists = path.exists()
+    is_symlink = path.is_symlink()
+    is_regular = path.is_file() and not is_symlink
+    observed = sha256_file(path) if is_regular else None
     return {
         "path": str(path),
+        "resolved_path": str(path.resolve(strict=False)),
         "exists": exists,
+        "is_regular_file": is_regular,
+        "is_symlink": is_symlink,
+        "bytes": path.stat().st_size if is_regular else None,
         "sha256_expected": expected,
         "sha256_observed": observed,
-        "verified": exists and (expected is None or observed == expected),
+        "verified": is_regular and (expected is None or observed == expected),
     }
 
 
+def verify_reference_specs(specs: Iterable[Mapping[str, Any]] = REFERENCE_SPECS) -> list[dict[str, Any]]:
+    normalized = [dict(spec) for spec in specs]
+    roles = [str(spec.get("role", "")) for spec in normalized]
+    paths = [Path(spec["path"]) for spec in normalized]
+    if not roles or any(not role for role in roles) or len(roles) != len(set(roles)):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: ambiguous or missing reference role")
+    folded = [os.path.normcase(str(path.absolute())) for path in paths]
+    if len(folded) != len(set(folded)):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: duplicate or aliased reference path")
+    bindings: list[dict[str, Any]] = []
+    for spec, path in zip(normalized, paths):
+        expected = str(spec["sha256"])
+        binding = hash_binding(path, expected)
+        binding.update({"role": spec["role"], "bytes_expected": int(spec["bytes"])})
+        if not path.is_absolute() or binding["resolved_path"] != str(path):
+            raise ReferenceLockError(f"INITIALIZE_REFERENCES: non-exact or aliased path for {spec['role']}: {path}")
+        if binding["is_symlink"] or not binding["is_regular_file"]:
+            raise ReferenceLockError(f"INITIALIZE_REFERENCES: reference is not a regular non-symlink file: {path}")
+        if binding["bytes"] != int(spec["bytes"]) or binding["sha256_observed"] != expected:
+            raise ReferenceLockError(f"INITIALIZE_REFERENCES: substituted or drifted reference: {path}")
+        if EXPECTED_HASHES.get(path) != expected:
+            raise ReferenceLockError(f"INITIALIZE_REFERENCES: immutable table omits or conflicts with {path}")
+        bindings.append(binding)
+    for index, left in enumerate(paths):
+        for right in paths[index + 1:]:
+            if left.samefile(right):
+                raise ReferenceLockError(f"INITIALIZE_REFERENCES: reference aliases are forbidden: {left} == {right}")
+    return bindings
+
+
 def verify_immutable_inputs() -> list[dict[str, Any]]:
+    verify_reference_specs()
     bindings = [hash_binding(path, expected) for path, expected in EXPECTED_HASHES.items()]
     failures = [binding for binding in bindings if not binding["verified"]]
     if failures:
-        raise RuntimeError(f"Immutable input verification failed: {failures}")
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: immutable input verification failed: {failures}")
     return bindings
+
+
+def _strict_binding(path: Path, expected: str) -> dict[str, Any]:
+    binding = hash_binding(path, expected)
+    if not binding["verified"]:
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: authority or asset drift: {binding}")
+    return binding
+
+
+def validate_decomposition_authority(pack: Mapping[str, Any]) -> dict[str, Any]:
+    """Reject incomplete or uncertain decomposition/isolation evidence."""
+    if pack.get("schema") != "unified-world-pipeline.canon-decomposition-pack.v1":
+        raise ReferenceLockError("INITIALIZE_REFERENCES: decomposition schema is invalid")
+    items = pack.get("items")
+    inventory = pack.get("inventory")
+    if not isinstance(items, list) or not items or not isinstance(inventory, Mapping):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: decomposition inventory is missing or empty")
+    keys = [str(item.get("key", "")) for item in items if isinstance(item, Mapping)]
+    if (
+        len(keys) != len(items)
+        or any(not key for key in keys)
+        or len(keys) != len(set(keys))
+        or int(inventory.get("item_count", -1)) != len(items)
+        or list(inventory.get("keys", [])) != keys
+    ):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: decomposition inventory identity/count ambiguity")
+    uncertain_items = [
+        key
+        for key, item in zip(keys, items)
+        if item.get("authority") != "appearance_evidence_only_not_spatial_authority"
+        or isinstance(item.get("confidence"), bool)
+        or not isinstance(item.get("confidence"), (int, float))
+        or not 0.0 <= float(item["confidence"]) <= 1.0
+    ]
+    if uncertain_items:
+        raise ReferenceLockError(
+            f"INITIALIZE_REFERENCES: uncertain decomposition item evidence: {uncertain_items}"
+        )
+    source = pack.get("source")
+    execution = source.get("comfy_execution") if isinstance(source, Mapping) else None
+    if not isinstance(execution, Mapping):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: object isolation/decomposition evidence is absent")
+    blockers = {
+        "available": execution.get("available"),
+        "requested": execution.get("requested"),
+        "fallback": execution.get("fallback"),
+        "source_hash_verified": execution.get("source_hash_verified"),
+        "execution": execution.get("execution"),
+    }
+    if (
+        blockers["available"] is not True
+        or blockers["requested"] is not True
+        or blockers["fallback"] is not False
+        or blockers["source_hash_verified"] is not True
+    ):
+        raise ReferenceLockError(
+            "INITIALIZE_REFERENCES: skipped or uncertain object isolation/decomposition evidence: "
+            + json.dumps(blockers, sort_keys=True)
+        )
+    return {
+        "schema": pack["schema"],
+        "item_count": len(items),
+        "keys": keys,
+        "execution": dict(blockers),
+        "authority": "appearance evidence only; Plan/World UUID authority preserved",
+    }
+
+
+def validate_asset_provenance(
+    object_id: str,
+    provenance: Mapping[str, Any],
+    expected: Mapping[str, str],
+) -> dict[str, Any]:
+    """Bind one approved real asset and reject placeholder/missing provenance."""
+    generator = str(provenance.get("generator", "")).strip()
+    if not generator or "placeholder" in generator.casefold():
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: placeholder or missing provenance for {object_id}")
+    mesh_path_value = str(provenance.get("mesh_path", "")).strip()
+    if not mesh_path_value:
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: missing normalized asset path for {object_id}")
+    normalized_path = Path(mesh_path_value)
+    normalized = _strict_binding(normalized_path, str(expected["normalized"]))
+    source_path = normalized_path.parent.parent / "source" / normalized_path.name
+    source = _strict_binding(source_path, str(expected["source"]))
+    if provenance.get("asset_id") != expected["normalized"]:
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: WorldContract asset binding drift for {object_id}")
+    return {
+        "object_id": object_id,
+        "generator": generator,
+        "asset_id": provenance["asset_id"],
+        "normalized": normalized,
+        "source": source,
+    }
+
+
+def rebuild_plan_bound_manifest(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    """Replay existing builder semantics from the immutable selected record."""
+    detected_objects: list[dict[str, Any]] = []
+    picker_objects: list[dict[str, Any]] = []
+    selected_detection_ids: list[str] = []
+    for item_value in manifest["objects"]:
+        item = dict(item_value)
+        detection_id = str(item["detection_object_id"])
+        selected_detection_ids.append(detection_id)
+        detected_item = dict(item)
+        for generated in (
+            "detection_object_id", "plan_instance_id", "manifest_id",
+            "semantic_concept", "identity_authority", "observation_authority",
+        ):
+            detected_item.pop(generated, None)
+        detected_item["object_id"] = detection_id
+        detected_objects.append(detected_item)
+        picker_objects.append({
+            "object_id": detection_id,
+            "required": True,
+            "plan_binding_id": item["plan_instance_id"],
+            "manifest_id": item["manifest_id"],
+            "semantic_concept": item["semantic_concept"],
+        })
+    detected = {
+        "canon_sha256": manifest["canon_sha256"],
+        "document_sha256": manifest["detected_objects_sha256"],
+        "objects": detected_objects,
+    }
+    picker: dict[str, Any] = {
+        "plan_revision": manifest["plan_revision"],
+        "canon_sha256": manifest["canon_sha256"],
+        "detected_objects_sha256": manifest["detected_objects_sha256"],
+        "metric_plan_sha256": manifest["metric_plan_sha256"],
+        "camera_sha256": manifest["camera_sha256"],
+        "blockout_visibility_sha256": manifest["blockout_visibility_sha256"],
+        "fuzzy_matching_used": False,
+        "required_bindings": [{"plan_binding_ids": list(manifest["selected_plan_instance_ids"])}],
+        "objects": picker_objects,
+    }
+    picker["document_sha256"] = _canonical_hash(picker)
+    return build_plan_bound_selected_manifest(
+        detected,
+        picker,
+        selected_detection_ids,
+        plan_revision=int(manifest["plan_revision"]),
+        approval_revision=int(manifest["approval_revision"]),
+        approval_evidence_sha256=str(manifest["blockout_approval_evidence_sha256"]),
+    )
+
+
+def _git_output(*arguments: str) -> bytes:
+    result = subprocess.run(
+        ["git", *arguments], cwd=ROOT, capture_output=True, timeout=30, check=False,
+    )
+    if result.returncode != 0:
+        raise ReferenceLockError(
+            f"INITIALIZE_REFERENCES: git {' '.join(arguments)} failed: {result.stderr.decode(errors='replace')}"
+        )
+    return result.stdout
+
+
+def repository_fingerprint() -> dict[str, Any]:
+    """Fingerprint source state while excluding only fresh generated evidence."""
+    untracked = [
+        value.decode("utf-8")
+        for value in _git_output("ls-files", "--others", "--exclude-standard", "-z").split(b"\0")
+        if value
+    ]
+    untracked_bindings = []
+    for relative in sorted(untracked):
+        normalized = relative.replace("\\", "/")
+        if normalized.startswith(GENERATED_CONVERGENCE_PREFIX):
+            continue
+        path = ROOT / relative
+        if path.is_file() and not path.is_symlink():
+            untracked_bindings.append(
+                {"path": normalized, "sha256": sha256_file(path), "bytes": path.stat().st_size}
+            )
+    record = {
+        "head": _git_output("rev-parse", "HEAD").decode().strip(),
+        "index_tree": _git_output("write-tree").decode().strip(),
+        "staged_diff_sha256": hashlib.sha256(_git_output("diff", "--cached", "--binary")).hexdigest(),
+        "working_diff_sha256": hashlib.sha256(_git_output("diff", "--binary")).hexdigest(),
+        "tracked_status_sha256": hashlib.sha256(
+            _git_output("status", "--porcelain=v1", "--untracked-files=no")
+        ).hexdigest(),
+        "untracked": untracked_bindings,
+    }
+    record["fingerprint"] = _canonical_hash(record)
+    return record
+
+
+def _bounded_version(path: Path) -> str:
+    if not path.is_file() or path.is_symlink():
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: tool executable unavailable or aliased: {path}")
+    result = subprocess.run([str(path), "--version"], capture_output=True, text=True, timeout=30, check=False)
+    if result.returncode != 0 or not result.stdout.strip():
+        raise ReferenceLockError(f"INITIALIZE_REFERENCES: tool version probe failed: {path}")
+    return result.stdout.splitlines()[0].strip()
+
+
+def build_reference_lock() -> dict[str, Any]:
+    """Build the deterministic Task 3.1 lock without creating candidate output."""
+    references = verify_reference_specs()
+    for path, expected in AUTHORITY_HASHES.items():
+        _strict_binding(path, expected)
+    selected = load_selected_manifest(SELECTED_MANIFEST_PATH)
+    rebuilt = rebuild_plan_bound_manifest(selected)
+    semantic_keys = (
+        "selected_plan_instance_ids", "objects", "object_count", "identity_authority",
+        "detection_role", "metric_plan_sha256", "camera_sha256", "plan_revision",
+    )
+    if any(rebuilt[key] != selected[key] for key in semantic_keys):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: selected manifest cannot be replayed by the Plan-bound builder")
+    if selected["fuzzy_matching_used"] or selected["list_index_identity_used"]:
+        raise ReferenceLockError("INITIALIZE_REFERENCES: fuzzy or list-index inventory aliases are forbidden")
+    if any(item.get("observation_authority") is not False for item in selected["objects"]):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: segmentation observation was promoted or is uncertain")
+
+    decomposition = json.loads(DECOMPOSITION_PACK_PATH.read_text(encoding="utf-8"))
+    decomposition_authority = validate_decomposition_authority(decomposition)
+
+    plan = json.loads(APPROVED_METRIC_PLAN_PATH.read_text(encoding="utf-8"))
+    unsigned_plan = dict(plan)
+    declared_plan_document_hash = str(unsigned_plan.pop("document_sha256", ""))
+    if _canonical_hash(unsigned_plan) != declared_plan_document_hash:
+        raise ReferenceLockError("INITIALIZE_REFERENCES: approved MetricPlan document hash is invalid")
+    spatial = json.loads(SPATIAL_SOLUTION_PATH.read_text(encoding="utf-8"))
+    scene_graph = json.loads(SCENE_GRAPH_PATH.read_text(encoding="utf-8"))
+    world_payload = json.loads(WORLD_CONTRACT_PATH.read_text(encoding="utf-8"))
+    world = WorldContract.from_dict(world_payload)
+    if not verify_hash(world):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: WorldContract hash is invalid")
+    camera = CameraContract.from_dict(world_payload["camera"])
+    camera_hash = camera.compute_hash()
+    if camera_hash != world_payload["camera_hash"] or any(
+        document.get("camera_sha256", document.get("camera_hash")) != camera_hash
+        for document in (selected, spatial, scene_graph)
+    ):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: CameraContract field/hash authority drift")
+    plan_revision = int(selected["plan_revision"])
+    if (
+        plan_revision != int(spatial["plan_revision"])
+        or world_payload["plan_revision"] != f"rev-{plan_revision}"
+        or int(scene_graph["plan_revision"]) != plan_revision
+        or int(plan["metric_plan"]["revisions"][-1]["revision"]) != plan_revision
+    ):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: approved Plan revision drift")
+
+    selected_ids = list(selected["selected_plan_instance_ids"])
+    world_ids = [instance["object_id"] for instance in world_payload["instances"]]
+    plan_ids = [item["id"] for item in plan["metric_plan"]["object_placements"]]
+    if Counter(selected_ids) != Counter(world_ids) or Counter(selected_ids) != Counter(plan_ids):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: Plan/manifest/World UUID inventory ambiguity")
+    if selected_ids.count("8c6119a5-f7b9-4eca-a30e-cb039aad9c71") != 1:
+        raise ReferenceLockError("INITIALIZE_REFERENCES: built-in counter identity/count drift")
+
+    assets: list[dict[str, Any]] = []
+    instances = {item["object_id"]: item for item in world_payload["instances"]}
+    if set(instances) != set(APPROVED_ASSET_HASHES):
+        raise ReferenceLockError("INITIALIZE_REFERENCES: approved asset set ambiguity")
+    for object_id in selected_ids:
+        instance = instances[object_id]
+        assets.append(validate_asset_provenance(
+            object_id,
+            instance["asset_binding"],
+            APPROVED_ASSET_HASHES[object_id],
+        ))
+
+    final_validation = json.loads(FINAL_VALIDATION_PATH.read_text(encoding="utf-8"))
+    proof_source = _strict_binding(Path(__file__).resolve(), sha256_file(Path(__file__).resolve()))
+    validator_source = _strict_binding(VALIDATOR_PATH, sha256_file(VALIDATOR_PATH))
+    browser_source = _strict_binding(BROWSER_COMPILER_PATH, sha256_file(BROWSER_COMPILER_PATH))
+    python_executable = Path(sys.executable).resolve()
+    python_binding = _strict_binding(python_executable, sha256_file(python_executable))
+    blender_binding = _strict_binding(BLENDER_EXE, sha256_file(BLENDER_EXE))
+    lock: dict[str, Any] = {
+        "schema": "recliner-canon-visual-refinement-fix.references/v1",
+        "state": "INITIALIZE_REFERENCES",
+        "references": references,
+        "authorities": {
+            "art_bible": _strict_binding(ART_BIBLE_PATH, AUTHORITY_HASHES[ART_BIBLE_PATH]),
+            "approved_metric_plan": {
+                **_strict_binding(APPROVED_METRIC_PLAN_PATH, AUTHORITY_HASHES[APPROVED_METRIC_PLAN_PATH]),
+                "plan_revision": plan_revision,
+                "document_sha256": declared_plan_document_hash,
+                "metric_plan_sha256": selected["metric_plan_sha256"],
+            },
+            "camera_contract": {"fields": camera.to_dict(), "sha256": camera_hash},
+            "world_contract": {
+                **_strict_binding(WORLD_CONTRACT_PATH, AUTHORITY_HASHES[WORLD_CONTRACT_PATH]),
+                "contract_hash": world.contract_hash,
+            },
+            "spatial_solution": _strict_binding(SPATIAL_SOLUTION_PATH, AUTHORITY_HASHES[SPATIAL_SOLUTION_PATH]),
+            "scene_graph": _strict_binding(SCENE_GRAPH_PATH, AUTHORITY_HASHES[SCENE_GRAPH_PATH]),
+        },
+        "inventory": {
+            "selected_manifest": _strict_binding(SELECTED_MANIFEST_PATH, AUTHORITY_HASHES[SELECTED_MANIFEST_PATH]),
+            "manifest_sha256": selected["manifest_sha256"],
+            "builder_replay_sha256": rebuilt["manifest_sha256"],
+            "plan_revision": plan_revision,
+            "object_count": selected["object_count"],
+            "selected_plan_instance_ids": selected_ids,
+            "stable_uuid_counts": dict(sorted(Counter(selected_ids).items())),
+            "identity_authority": selected["identity_authority"],
+            "detection_role": selected["detection_role"],
+            "built_in_counter_uuid": "8c6119a5-f7b9-4eca-a30e-cb039aad9c71",
+            "decomposition": {
+                **_strict_binding(DECOMPOSITION_PACK_PATH, AUTHORITY_HASHES[DECOMPOSITION_PACK_PATH]),
+                "authority_validation": decomposition_authority,
+            },
+        },
+        "assets": assets,
+        "toolchain": {
+            "python": {"version": platform.python_version(), "implementation": platform.python_implementation(), "executable": python_binding},
+            "blender": {"version": _bounded_version(BLENDER_EXE), "executable": blender_binding},
+            "browser": {
+                "version": "strict-canonical-worldcontract-to-threejs/v1",
+                "target": "strict-canonical-worldcontract-to-threejs",
+                "implementation": browser_source,
+                "final_validation_schema": final_validation["schema_version"],
+                "compiler_manifest_sha256": final_validation["compiler_manifest_sha256"],
+            },
+        },
+        "determinism": {"seed": REFERENCE_LOCK_SEED, "renderer_settings": REFERENCE_RENDERER_SETTINGS},
+        "scorer_and_configuration": {
+            "producer_source": proof_source,
+            "independent_validator_source": validator_source,
+            "bugfix_config": _strict_binding(BUGFIX_CONFIG_PATH, sha256_file(BUGFIX_CONFIG_PATH)),
+            "design_contract": _strict_binding(BUGFIX_DESIGN_PATH, sha256_file(BUGFIX_DESIGN_PATH)),
+        },
+        "source": {"repository": repository_fingerprint()},
+        "authority_boundary": {
+            "metric_plan": "sole dimensions/transforms/placement/architecture/openings/collision/navigation authority",
+            "camera_contract": "sole immutable Plan-derived camera authority",
+            "world_contract": "final UUID/object/relationship/binding authority",
+            "canon_and_empty_twin": "immutable appearance/scene evidence only; never spatial or camera authority",
+            "object_isolator": "bounded segmentation observation only; never identity authority",
+        },
+    }
+    lock["lock_sha256"] = _canonical_hash(lock)
+    return lock
+
+
+def write_reference_lock(destination: Path, lock: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    value = dict(lock or build_reference_lock())
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("x", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+    return value
+
+
+def write_initialize_references_failure(destination: Path, error: BaseException) -> dict[str, Any]:
+    """Exclusive-create the Task 3.1 failure checkpoint without later-stage output."""
+    detail = str(error)
+    if not detail.startswith("INITIALIZE_REFERENCES:"):
+        detail = f"INITIALIZE_REFERENCES: {type(error).__name__}: {detail}"
+    checkpoint: dict[str, Any] = {
+        "schema": "recliner-canon-visual-refinement-fix.initialize-references-failure/v1",
+        "state": "INITIALIZE_REFERENCES",
+        "result": "FAILED",
+        "first_failure": {
+            "stage": "INITIALIZE_REFERENCES",
+            "verdict": "FAIL",
+            "detail": detail,
+        },
+        "references_json_written": False,
+        "calibration_written": False,
+        "candidate_written": False,
+        "score_written": False,
+        "eligible_next_subtask": None,
+        "skipped_subtasks": [f"3.{index}" for index in range(2, 12)],
+    }
+    checkpoint["checkpoint_sha256"] = _canonical_hash(checkpoint)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("x", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(checkpoint, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+    return checkpoint
+
+
+def _module_identity(module_name: str, expected_version: str) -> dict[str, Any]:
+    record: dict[str, Any] = {
+        "module": module_name,
+        "expected_version": expected_version,
+        "available": False,
+        "verified": False,
+    }
+    spec = importlib.util.find_spec(module_name)
+    if spec is None or spec.origin is None:
+        record["failure"] = "module_not_installed"
+        return record
+    origin = Path(spec.origin)
+    if not origin.is_file() or origin.is_symlink():
+        record["failure"] = "module_origin_not_regular_or_is_symlink"
+        record["origin"] = str(origin)
+        return record
+    module = importlib.import_module(module_name)
+    observed_version = str(getattr(module, "__version__", ""))
+    record.update({
+        "available": True,
+        "origin": str(origin.resolve()),
+        "origin_sha256": sha256_file(origin),
+        "observed_version": observed_version,
+        "verified": observed_version == expected_version,
+    })
+    if not record["verified"]:
+        record["failure"] = "version_mismatch"
+    return record
+
+
+def _tree_digest(root: Path, suffixes: tuple[str, ...]) -> dict[str, Any]:
+    files = [
+        path for path in sorted(root.rglob("*"))
+        if path.is_file() and not path.is_symlink() and path.suffix.casefold() in suffixes
+    ]
+    digest = hashlib.sha256()
+    records: list[dict[str, Any]] = []
+    for path in files:
+        relative = path.relative_to(root).as_posix()
+        file_hash = sha256_file(path)
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(file_hash.encode("ascii"))
+        records.append({"path": relative, "sha256": file_hash, "bytes": path.stat().st_size})
+    return {"file_count": len(records), "sha256": digest.hexdigest(), "files": records}
+
+
+def _learned_candidate_identity(module_name: str) -> dict[str, Any]:
+    record: dict[str, Any] = {
+        "module": module_name,
+        "available": False,
+        "replayable": False,
+        "exact_hash_bound": False,
+    }
+    spec = importlib.util.find_spec(module_name)
+    if spec is None or spec.origin is None:
+        record["failure"] = "module_not_installed"
+        return record
+    origin = Path(spec.origin)
+    root = origin.parent if origin.name == "__init__.py" else origin.parent
+    if not origin.is_file() or origin.is_symlink() or not root.is_dir():
+        record["failure"] = "module_origin_not_regular_or_is_symlink"
+        return record
+    source = _tree_digest(root, (".py", ".pyi", ".pyd", ".dll", ".so"))
+    weights = _tree_digest(root, (".pth", ".pt", ".ckpt", ".safetensors", ".onnx"))
+    record.update({
+        "available": True,
+        "origin": str(origin.resolve()),
+        "source": source,
+        "weights": weights,
+        "exact_hash_bound": source["file_count"] > 0 and weights["file_count"] > 0,
+    })
+    if not record["exact_hash_bound"]:
+        record["failure"] = "local_exact_code_and_weight_hash_unavailable"
+    else:
+        record["failure"] = "no_contract_bound_deterministic_replay_adapter"
+    return record
+
+
+def probe_calibration_capability() -> dict[str, Any]:
+    """Probe only installed local capability; never install, download, or score."""
+    runtime = [_module_identity(name, expected) for name, expected in RUNTIME_MODULE_CONTRACT]
+    learned = [_learned_candidate_identity(name) for name in LEARNED_PERCEPTUAL_CANDIDATES]
+    runtime_ok = all(item["verified"] for item in runtime)
+    selected = next(
+        (item for item in learned if item["replayable"] and item["exact_hash_bound"]),
+        None,
+    )
+    state = "CALIBRATE_CONTRACT" if runtime_ok and selected is not None else "BLOCKED_UNCALIBRATED"
+    blocker = None
+    if not runtime_ok:
+        blocker = "required_runtime_module_identity_or_version_mismatch"
+    elif selected is None:
+        blocker = "no_already_installed_replayable_exact_hash_learned_perceptual_implementation"
+    record: dict[str, Any] = {
+        "schema": "recliner-canon-visual-refinement-fix.capability-probe/v1",
+        "state": state,
+        "runtime": runtime,
+        "learned_perceptual_candidates": learned,
+        "selected_learned_perceptual": selected,
+        "blocker": blocker,
+        "downloads_or_installs_performed": False,
+        "cloud_or_model_service_invoked": False,
+        "candidate_scored": False,
+        "percentage_claim": None,
+    }
+    record["probe_sha256"] = _canonical_hash(record)
+    return record
+
+
+def write_capability_probe(destination: Path, probe: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    value = dict(probe or probe_calibration_capability())
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("x", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+    return value
+
+
+def write_atomic_verified_json(destination: Path, value: Mapping[str, Any]) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_name(f".{destination.name}.{uuid.uuid4().hex}.tmp")
+    serialized = json.dumps(dict(value), indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    try:
+        with temporary.open("x", encoding="utf-8", newline="\n") as stream:
+            stream.write(serialized)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, destination)
+        with destination.open("rb") as stream:
+            if stream.read() != serialized.encode("utf-8"):
+                raise RuntimeError("atomic checkpoint reread mismatch")
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def checkpoint_blocked_uncalibrated(
+    destination: Path,
+    reference_lock: Mapping[str, Any],
+    capability_probe: Mapping[str, Any],
+) -> dict[str, Any]:
+    if capability_probe.get("state") != "BLOCKED_UNCALIBRATED":
+        raise ValueError("BLOCKED_UNCALIBRATED checkpoint requires a blocked capability probe")
+    checkpoint: dict[str, Any] = {
+        "schema": "recliner-canon-visual-refinement-fix.checkpoint/v1",
+        "contract_id": destination.parent.name,
+        "state": "BLOCKED_UNCALIBRATED",
+        "first_failure": {
+            "stage": "CALIBRATE_CONTRACT",
+            "verdict": "BLOCKED_UNCALIBRATED",
+            "detail": capability_probe["blocker"],
+            "capability_probe_sha256": capability_probe["probe_sha256"],
+        },
+        "references_sha256": reference_lock["lock_sha256"],
+        "calibration_manifest_created": False,
+        "candidate_created": False,
+        "candidate_scored": False,
+        "percentage_claim": None,
+        "review_requested": False,
+        "retry_eligible": False,
+        "pending_outbox_ids": [],
+        "next_action": "Stop; an already-installed replayable exact-hash learned-perceptual implementation is required. Do not download, substitute, or score.",
+    }
+    checkpoint["checkpoint_sha256"] = _canonical_hash(checkpoint)
+    write_atomic_verified_json(destination, checkpoint)
+    return checkpoint
 
 
 def fetch_json(path: str, *, payload: dict[str, Any] | None = None, timeout: float = 15.0) -> dict[str, Any]:
@@ -902,7 +1557,25 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"Refusing to overwrite append-only proof directory: {output_dir}")
     if not BLENDER_EXE.is_file():
         raise SystemExit(f"Blender executable not found: {BLENDER_EXE}")
+    try:
+        reference_lock = build_reference_lock()
+    except ReferenceLockError as exc:
+        raise SystemExit(str(exc)) from exc
     output_dir.mkdir(parents=True)
+    write_reference_lock(output_dir / "references.json", reference_lock)
+    capability_probe = write_capability_probe(output_dir / "capability-probe.json")
+    if capability_probe["state"] == "BLOCKED_UNCALIBRATED":
+        checkpoint = checkpoint_blocked_uncalibrated(
+            output_dir / "checkpoint.json", reference_lock, capability_probe,
+        )
+        print(json.dumps({
+            "result": checkpoint["state"],
+            "output_dir": str(output_dir),
+            "checkpoint_path": str(output_dir / "checkpoint.json"),
+            "first_failure": checkpoint["first_failure"],
+            "percentage_claim": None,
+        }, indent=2))
+        return 3
 
     immutable_bindings = verify_immutable_inputs()
     if not EMPTY_TWIN_PATH.is_file():
