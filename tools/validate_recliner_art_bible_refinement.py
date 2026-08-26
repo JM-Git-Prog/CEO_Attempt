@@ -35,8 +35,14 @@ def validate(directory: Path) -> dict[str, Any]:
         raise AssertionError("Unexpected Task 11.8.4c evidence schema")
     if evidence.get("task") != "11.8.4c":
         raise AssertionError("Task mismatch")
-    if evidence.get("result") not in {"PENDING_LOCAL_VISION_SCREEN", "AWAITING_EXPLICIT_HUMAN_REVIEW"}:
-        raise AssertionError(f"Evidence is fail-closed or has unexpected state: {evidence.get('result')}")
+    allowed_results = {
+        "PENDING_LOCAL_VISION_SCREEN",
+        "AWAITING_EXPLICIT_HUMAN_REVIEW",
+        "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+        "FAIL_CLOSED_PRIMARY_VISUAL_ADJUDICATION",
+    }
+    if evidence.get("result") not in allowed_results:
+        raise AssertionError(f"Unexpected evidence state: {evidence.get('result')}")
     if evidence.get("prior_baseline", {}).get("candidate_fingerprint") != refinement.BASELINE_FINGERPRINT:
         raise AssertionError("Immutable baseline fingerprint mismatch")
     if evidence.get("prior_baseline", {}).get("modified_or_relabelled") is not False:
@@ -61,7 +67,14 @@ def validate(directory: Path) -> dict[str, Any]:
     observed = baseline.inspect_glb(directory / refinement.OUTPUT_GLB_NAME)
     compare_inspection(evidence["glb_inspection"], observed)
     names = set(observed["node_names"]) | set(observed["mesh_names"])
-    missing = sorted(name for name in refinement.REQUIRED_COMPONENTS - {"recliner_root"} if not any(name in candidate for candidate in names))
+    recorded_required_components = set(evidence.get("required_components", []))
+    if not recorded_required_components:
+        raise AssertionError("Recorded required component contract missing")
+    missing = sorted(
+        name
+        for name in recorded_required_components - {"recliner_root"}
+        if not any(name in candidate for candidate in names)
+    )
     if missing:
         raise AssertionError(f"Missing separate components: {missing}")
     if observed["mesh_count"] < 16 or observed["trimesh_geometry_count"] < 16:
@@ -110,17 +123,53 @@ def validate(directory: Path) -> dict[str, Any]:
         raise AssertionError("Candidate fingerprint replay mismatch")
     if refinement.prompt_fingerprint(prompts) != evidence["prompt_fingerprint"]:
         raise AssertionError("Prompt fingerprint replay mismatch")
+    expected_screen = evidence.get("expected_local_vision_screen")
+    if expected_screen is not None:
+        if expected_screen != prompts.get("local_vision_screen_contract"):
+            raise AssertionError("Local vision screen contract drift")
+        if expected_screen.get("model") != refinement.LOCAL_VISION_MODEL:
+            raise AssertionError("Replacement local vision model mismatch")
+        if expected_screen.get("digest") != refinement.LOCAL_VISION_MODEL_DIGEST:
+            raise AssertionError("Replacement local vision model digest mismatch")
+        if expected_screen.get("confidence_threshold") != refinement.LOCAL_VISION_CONFIDENCE_THRESHOLD:
+            raise AssertionError("Local vision confidence threshold mismatch")
     vision_path = directory / "local-vision-screen.json"
     vision_status = "NOT_PRESENT"
+    vision: dict[str, Any] | None = None
     if vision_path.is_file():
         vision = json.loads(vision_path.read_text(encoding="utf-8"))
+    elif isinstance(evidence.get("local_vision_screen"), dict):
+        vision = evidence["local_vision_screen"]
+    if vision is not None:
         if vision.get("candidate_fingerprint") != evidence["candidate_fingerprint"]:
             raise AssertionError("Local vision screen candidate mismatch")
+        if expected_screen is not None:
+            model = vision.get("model", {})
+            if model.get("name") != expected_screen["model"] or model.get("digest") != expected_screen["digest"]:
+                raise AssertionError("Local vision evidence used a model other than the bound replacement")
         for screen in vision.get("screens", []):
             path = Path(screen["path"])
             if not path.is_file() or baseline.sha256_file(path) != screen["sha256"]:
                 raise AssertionError(f"Local vision screen image drift: {path}")
+            verdict = screen.get("model_verdict", {})
+            if not isinstance(verdict.get("pass"), bool):
+                raise AssertionError("Local vision verdict pass must be boolean")
+            if not isinstance(verdict.get("failed_checks"), list):
+                raise AssertionError("Local vision verdict failed_checks must be a list")
+            confidence = verdict.get("confidence")
+            if not isinstance(confidence, (int, float)) or isinstance(confidence, bool) or not 0.0 <= confidence <= 1.0:
+                raise AssertionError("Local vision verdict confidence must be within [0, 1]")
         vision_status = vision.get("overall", "UNKNOWN")
+    if evidence["result"] == "FAIL_CLOSED_PRIMARY_VISUAL_ADJUDICATION":
+        primary = evidence.get("primary_visual_adjudication", {})
+        if not str(primary.get("verdict", "")).startswith("FAIL_CLOSED") or not primary.get("failed_checks"):
+            raise AssertionError("Primary visual failure state lacks fail-closed adjudication evidence")
+    human_gate = {
+        "AWAITING_EXPLICIT_HUMAN_REVIEW": "AWAITING_EXPLICIT_HUMAN_REVIEW",
+        "PENDING_LOCAL_VISION_SCREEN": "PENDING_LOCAL_VISION_SCREEN",
+        "FAIL_CLOSED_LOCAL_VISION_SCREEN": "NOT_ELIGIBLE_LOCAL_VISION_SCREEN_FAILED",
+        "FAIL_CLOSED_PRIMARY_VISUAL_ADJUDICATION": "NOT_ELIGIBLE_PRIMARY_VISUAL_ADJUDICATION_FAILED",
+    }[evidence["result"]]
     return {
         "result": "PASS",
         "evidence_path": str(evidence_path),
@@ -132,7 +181,7 @@ def validate(directory: Path) -> dict[str, Any]:
             for filename in ("canon-camera-comparison-contact-sheet.png", "recliner-neutral-multi-angle-sheet.png")
         },
         "local_vision_status": vision_status,
-        "human_gate": "AWAITING_EXPLICIT_HUMAN_REVIEW" if evidence["result"] == "AWAITING_EXPLICIT_HUMAN_REVIEW" else "PENDING_LOCAL_VISION_SCREEN",
+        "human_gate": human_gate,
     }
 
 

@@ -1,0 +1,548 @@
+{
+  "art_bible": {
+    "ambiguous_substitutes_rejected": [
+      "00-MASTER-BIBLE.md (shared narrative/systems spine, not artist production authority)",
+      "08-world-texture.md (additive ambient texture pass, not the Art Direction source)",
+      "DANNY-TORNADO-ASSET-MANIFEST.md (derived manifest citing the 29-file bible)"
+    ],
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\13-art-direction.md",
+    "selection_basis": "The design-bible README explicitly routes the Artist role to 13-art-direction.md; 00-MASTER-BIBLE.md is identified as the shared systems spine, so it is rejected as an Art Bible substitute.",
+    "sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007"
+  },
+  "authority": {
+    "art_bible_and_canon": "appearance/style/identity evidence only",
+    "camera_contract": "sole immutable Plan-derived camera authority",
+    "metric_plan": "sole dimensions/transforms/placement/architecture/openings/collision/navigation authority",
+    "world_contract": "final object/relationship/binding authority"
+  },
+  "baseline_shell_replay_inspection": {
+    "actual_bytes": 232468,
+    "binary_chunk_bytes": 216588,
+    "buffer_views_in_bounds": true,
+    "container": "GLB_2_0",
+    "declared_bytes": 232468,
+    "embedded_image_count": 3,
+    "external_buffer_uris": [],
+    "external_image_uris": [],
+    "image_count": 3,
+    "independently_loaded": true,
+    "load_error": null,
+    "material_count": 3,
+    "mesh_count": 19,
+    "mesh_names": [
+      "rear_door_left_trim_mesh",
+      "rear_door_right_trim_mesh",
+      "rear_door_top_trim_mesh",
+      "shell_ceiling_mesh",
+      "shell_floor_mesh",
+      "shell_left_wall_mesh",
+      "shell_rear_door_header_mesh",
+      "shell_rear_left_mesh",
+      "shell_rear_right_mesh",
+      "shell_right_between_mesh",
+      "shell_right_door_header_mesh",
+      "shell_right_front_mesh",
+      "shell_right_rear_mesh",
+      "shell_right_window_header_mesh",
+      "shell_right_window_sill_mesh",
+      "window_front_trim_mesh",
+      "window_lower_trim_mesh",
+      "window_rear_trim_mesh",
+      "window_upper_trim_mesh"
+    ],
+    "node_count": 19,
+    "node_names": [
+      "rear_door_left_trim",
+      "rear_door_right_trim",
+      "rear_door_top_trim",
+      "shell_ceiling",
+      "shell_floor",
+      "shell_left_wall",
+      "shell_rear_door_header",
+      "shell_rear_left",
+      "shell_rear_right",
+      "shell_right_between",
+      "shell_right_door_header",
+      "shell_right_front",
+      "shell_right_rear",
+      "shell_right_window_header",
+      "shell_right_window_sill",
+      "window_front_trim",
+      "window_lower_trim",
+      "window_rear_trim",
+      "window_upper_trim"
+    ],
+    "primitive_count": 19,
+    "texture_count": 3,
+    "trimesh_geometry_count": 19
+  },
+  "candidate_fingerprint": "59aeb146459164e3ea109450de9a338031bd29f66b870d63d2474a9308e008e7",
+  "common_standalone_asset_gate": {
+    "checks": [
+      {
+        "check": "evidence_chain_integrity",
+        "observation": "Art Bible, Canon, cutout, immutable 11.8.4b baseline, rejection, generator/configuration, and outputs are hash-bound.",
+        "pass": true
+      },
+      {
+        "check": "stable_uuid_binding",
+        "observation": "Stable UUID 3b2cae03-3556-5c1e-a19b-ea3c1e15694c is preserved on the separate-component root.",
+        "pass": true
+      },
+      {
+        "check": "golden_room_source_identity",
+        "observation": "Candidate prompts and proportions are bound to the immutable Golden Room Canon and its exact recliner cutout.",
+        "pass": true
+      },
+      {
+        "check": "independent_loadability",
+        "observation": "trimesh loaded 22 separate geometries from the standalone GLB.",
+        "pass": true
+      },
+      {
+        "check": "non_placeholder_geometry",
+        "observation": "Deterministic authored component topology includes cushions, arms, seams, tufting, skirt, mechanism support, and footrest; it is not a fallback box/cylinder/sphere placeholder.",
+        "pass": true
+      },
+      {
+        "check": "recognizable_recliner_silhouette_identity",
+        "observation": "Named broad back, padded arms, deep seat, conventional base/skirt, and centered integrated footrest establish recliner identity; local vision screening remains separately mandatory.",
+        "pass": true
+      },
+      {
+        "check": "no_fused_scene_or_ground_sheet_geometry",
+        "observation": "Export selection contains only recliner root/components; neutral ground and lights are render helpers excluded from the GLB.",
+        "pass": true
+      },
+      {
+        "check": "no_obvious_catastrophic_reconstruction_artifacts",
+        "observation": "Every exported component loads as geometry with deterministic manufactured topology; visual artifact screening remains separately mandatory.",
+        "pass": true
+      },
+      {
+        "check": "neutral_multi_angle_turntable_evidence",
+        "observation": "Hash-bound front/right/rear/left sheet: C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-neutral-multi-angle-sheet.png.",
+        "pass": true
+      },
+      {
+        "check": "durable_non_temporary_material_continuity",
+        "observation": "Four packed texture-backed rough materials cover worn upholstery, shadow upholstery, seams/piping, and structural base.",
+        "pass": true
+      },
+      {
+        "check": "no_unresolved_external_materials_or_buffers",
+        "observation": "All image and buffer data is embedded in the GLB with in-bounds buffer views.",
+        "pass": true
+      },
+      {
+        "check": "explicit_hash_bound_human_approval",
+        "observation": "PENDING: approval is never inferred. A later user decision must bind candidate fingerprint, GLB, Art Bible, Canon, both review sheets, UUID, source lane, and final gate evidence.",
+        "pass": false
+      }
+    ],
+    "checks_in_order": [
+      "evidence_chain_integrity",
+      "stable_uuid_binding",
+      "golden_room_source_identity",
+      "independent_loadability",
+      "non_placeholder_geometry",
+      "recognizable_recliner_silhouette_identity",
+      "no_fused_scene_or_ground_sheet_geometry",
+      "no_obvious_catastrophic_reconstruction_artifacts",
+      "neutral_multi_angle_turntable_evidence",
+      "durable_non_temporary_material_continuity",
+      "no_unresolved_external_materials_or_buffers",
+      "explicit_hash_bound_human_approval"
+    ],
+    "failed_non_human_checks": [],
+    "human_approval": {
+      "approved": false,
+      "status": "NOT_ELIGIBLE_LOCAL_VISION_SCREEN_FAILED"
+    },
+    "policy": "Same mandatory order as Task 11.8.4; no lane-specific exceptions or weakened criteria."
+  },
+  "downstream": {
+    "task_11_8_4c": "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+    "task_11_8_5": "BLOCKED_NOT_STARTED"
+  },
+  "execution": {
+    "blender": {
+      "command": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--python",
+        "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\tools\\refine_recliner_art_bible.py",
+        "--",
+        "--blender-worker",
+        "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\blender-worker-config.json"
+      ],
+      "elapsed_seconds": 4.931,
+      "missing_expected_outputs": [],
+      "python_traceback_detected": false,
+      "returncode": 0,
+      "stderr_tail": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\tools\\refine_recliner_art_bible.py:492: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  mat.use_nodes = True\n",
+      "stdout_tail": "INFO Draco is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_draco_bridge.dll\nINFO MeshOptimizer is available, use library at C:\\Program Files\\Blender Foundation\\Blender 5.2\\5.2\\scripts\\addons_core\\io_scene_gltf2\\bf_intern_meshopt_bridge.dll\n12:32:09 | INFO: Starting glTF 2.0 export\n12:32:09 | INFO: Extracting primitive: back_continuity_mass_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_cushion_lower_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_cushion_upper_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_frame_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_horizontal_seam_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_left_tuft_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_right_tuft_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: back_vertical_seam_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: base_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: base_skirt_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: footrest_continuity_shroud_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: footrest_cushion_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: footrest_frame_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: footrest_seam_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: footrest_support_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: left_arm_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: left_arm_piping_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: right_arm_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: right_arm_piping_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: seat_center_seam_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: seat_cushion_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Extracting primitive: seat_frame_mesh\n12:32:09 | INFO: Primitives created: 1\n12:32:09 | INFO: Finished glTF 2.0 export in 0.08805727958679199 s\n00:03.625  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-front.png'\n00:03.781  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-right.png'\n00:03.953  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-rear.png'\n00:04.109  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-left.png'\n00:04.265  render           | Saved: 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-canon-view.png'\nBlender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:35:40)\n\nInfo: Saved as \"refined-recliner-proof.blend\"\n"
+    },
+    "configuration_sha256": "3363365bea13168af70012f04765026e38e962d5e65c86c2f9f254a90cff3680",
+    "generator_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\tools\\refine_recliner_art_bible.py",
+    "generator_sha256": "aa49cb4c09df4452d9a913390751d356007b70897fc923c016e7c44a8c9b1d84"
+  },
+  "expected_local_vision_screen": {
+    "acceptance": "Every exact sheet must return strict JSON with pass=true, empty failed_checks, and confidence >= threshold; primary adjudication remains independently mandatory.",
+    "cloud_used": false,
+    "confidence_threshold": 0.8,
+    "digest": "901cae73216286ea8c5aba8b46d307ff7188f737285ec500c795a12f05225d28",
+    "download_performed": false,
+    "model": "qwen3-vl:8b",
+    "required_sheets": [
+      "canon-camera-comparison-contact-sheet.png",
+      "recliner-neutral-multi-angle-sheet.png"
+    ],
+    "role": "local first-pass screen only; never human, Demo Ready, qualification, or release authority"
+  },
+  "failed_replay_checks": [],
+  "glb_inspection": {
+    "actual_bytes": 1123780,
+    "binary_chunk_bytes": 1101648,
+    "buffer_views_in_bounds": true,
+    "container": "GLB_2_0",
+    "declared_bytes": 1123780,
+    "embedded_image_count": 5,
+    "external_buffer_uris": [],
+    "external_image_uris": [],
+    "image_count": 5,
+    "independently_loaded": true,
+    "load_error": null,
+    "material_count": 4,
+    "mesh_count": 22,
+    "mesh_names": [
+      "back_continuity_mass_mesh",
+      "back_cushion_lower_mesh",
+      "back_cushion_upper_mesh",
+      "back_frame_mesh",
+      "back_horizontal_seam_mesh",
+      "back_left_tuft_mesh",
+      "back_right_tuft_mesh",
+      "back_vertical_seam_mesh",
+      "base_mesh",
+      "base_skirt_mesh",
+      "footrest_continuity_shroud_mesh",
+      "footrest_cushion_mesh",
+      "footrest_frame_mesh",
+      "footrest_seam_mesh",
+      "footrest_support_mesh",
+      "left_arm_mesh",
+      "left_arm_piping_mesh",
+      "right_arm_mesh",
+      "right_arm_piping_mesh",
+      "seat_center_seam_mesh",
+      "seat_cushion_mesh",
+      "seat_frame_mesh"
+    ],
+    "node_count": 23,
+    "node_names": [
+      "back_continuity_mass",
+      "back_cushion_lower",
+      "back_cushion_upper",
+      "back_frame",
+      "back_horizontal_seam",
+      "back_left_tuft",
+      "back_right_tuft",
+      "back_vertical_seam",
+      "base",
+      "base_skirt",
+      "footrest_continuity_shroud",
+      "footrest_cushion",
+      "footrest_frame",
+      "footrest_seam",
+      "footrest_support",
+      "left_arm",
+      "left_arm_piping",
+      "recliner_root",
+      "right_arm",
+      "right_arm_piping",
+      "seat_center_seam",
+      "seat_cushion",
+      "seat_frame"
+    ],
+    "primitive_count": 22,
+    "texture_count": 6,
+    "trimesh_geometry_count": 22
+  },
+  "immutable_input_bindings": [
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\13-art-direction.md",
+      "sha256_expected": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+      "sha256_observed": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\README.md",
+      "sha256_expected": null,
+      "sha256_observed": "f9e93f62d490c95ca157f3c33a2351489776679c351762fc42a9f1755483c83f",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "sha256_expected": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "sha256_observed": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4.1-item-recliner_00002_.png",
+      "sha256_expected": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "sha256_observed": "b962f2c58770b7edde18d8aeb4b8f4fa26fc936584c45ea84424639d4d97386a",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-recliner.glb",
+      "sha256_expected": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e",
+      "sha256_observed": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\proof-evidence.json",
+      "sha256_expected": "a4df64c85b78ee31deb32e542d612c3089bc4129abdc8e29186a3f3c0ae8b75b",
+      "sha256_observed": "a4df64c85b78ee31deb32e542d612c3089bc4129abdc8e29186a3f3c0ae8b75b",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-decomposition-pack.json",
+      "sha256_expected": null,
+      "sha256_observed": "78b9fced85ffd1e4577a207662f4171d9996ad6dca8e7c03db43316e3b37ffed",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-empty-room-shell.glb",
+      "sha256_expected": null,
+      "sha256_observed": "0c7cf23a08ee36d2cd2ceb83a7bb3c04d91504dc39bcd53645698cd271633d09",
+      "verified": true
+    },
+    {
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-human-rejection-best-structural-baseline-8b1d00d1-c773-4d62-a823-7e21041b43b5.json",
+      "sha256_expected": "36d65fbf6a617959510fb297479d295d4f4c6d69d4ba1938c85b3e195ac9c509",
+      "sha256_observed": "36d65fbf6a617959510fb297479d295d4f4c6d69d4ba1938c85b3e195ac9c509",
+      "verified": true
+    }
+  ],
+  "local_vision_screen": {
+    "acceptance_contract": {
+      "confidence_threshold": 0.8,
+      "primary_adjudication_required": true,
+      "strict_json_required": true
+    },
+    "candidate_fingerprint": "59aeb146459164e3ea109450de9a338031bd29f66b870d63d2474a9308e008e7",
+    "first_failed_gate": {
+      "order": "local_vision_screen.multi_angle_sheet",
+      "reason": "The exact multi-angle sheet returned pass=false with confidence 0.20 and visible rear-cover/base/rail failures.",
+      "verdict": "FAIL"
+    },
+    "model": {
+      "cloud_used": false,
+      "digest": "901cae73216286ea8c5aba8b46d307ff7188f737285ec500c795a12f05225d28",
+      "download_performed": false,
+      "execution": "local_ollama_http_127_0_0_1",
+      "name": "qwen3-vl:8b",
+      "role": "first-pass local screen only; never final, human, Demo Ready, qualification, or release authority"
+    },
+    "overall": "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+    "screens": [
+      {
+        "bytes": 525184,
+        "contract_valid": true,
+        "dimensions": [1920, 562],
+        "model_raw_content": "{\"pass\":true,\"failed_checks\":[],\"confidence\":1.0}",
+        "model_verdict": {"confidence": 1.0, "failed_checks": [], "pass": true},
+        "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\canon-camera-comparison-contact-sheet.png",
+        "sha256": "c5c802b83f4a03071232b36fde3804a9ba3c5bffd6aeefe7827c85b3222e258d",
+        "threshold_pass": true
+      },
+      {
+        "bytes": 1201980,
+        "contract_valid": true,
+        "dimensions": [1280, 1414],
+        "model_raw_content": "{\"pass\":false,\"failed_checks\":[\"Recognizable soft overstuffed recliner not present in rear view (flat panel backrest)\",\"Concealed conventional base not present (base visible)\",\"Exposed rails present in front, right, left views\"],\"confidence\":0.2}",
+        "model_verdict": {
+          "confidence": 0.2,
+          "failed_checks": [
+            "Recognizable soft overstuffed recliner not present in rear view (flat panel backrest)",
+            "Concealed conventional base not present (base visible)",
+            "Exposed rails present in front, right, left views"
+          ],
+          "pass": false
+        },
+        "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-neutral-multi-angle-sheet.png",
+        "sha256": "10873a6a7fa63132b7b1b1835060da889ebedc20805025d1b5a3b56ac826a77a",
+        "threshold_pass": false
+      }
+    ]
+  },
+  "locked_canon": {
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+    "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"
+  },
+  "missing_components": [],
+  "mvp_alignment": "Focused Art-Bible-guided refinement of the closest structural baseline advances the 6-8 active-coding-hour visual-first MVP target without model exploration or downstream work.",
+  "output_bindings": {
+    "art_bible_cues_and_prompts": {
+      "bytes": 7403,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\art-bible-cues-and-prompts.json",
+      "sha256": "76e3a226be27c420243355bb2955bd41a3ac4a3633abb2e26735a240962fcf0d"
+    },
+    "blender_worker_config": {
+      "bytes": 1787,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\blender-worker-config.json",
+      "sha256": "3363365bea13168af70012f04765026e38e962d5e65c86c2f9f254a90cff3680"
+    },
+    "canon_camera_comparison_contact_sheet": {
+      "bytes": 525184,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\canon-camera-comparison-contact-sheet.png",
+      "sha256": "c5c802b83f4a03071232b36fde3804a9ba3c5bffd6aeefe7827c85b3222e258d"
+    },
+    "recliner_neutral_multi_angle_sheet": {
+      "bytes": 1201980,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-neutral-multi-angle-sheet.png",
+      "sha256": "10873a6a7fa63132b7b1b1835060da889ebedc20805025d1b5a3b56ac826a77a"
+    },
+    "refined_deterministic_recliner_glb": {
+      "bytes": 1123780,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\refined-deterministic-recliner.glb",
+      "sha256": "190f869770e88169d61708ca4285c1f0d5add9f9ae08c424576316bfd5b2b4da"
+    },
+    "refined_recliner_proof_blend": {
+      "bytes": 465092,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\refined-recliner-proof.blend",
+      "sha256": "f8d94f9d128100c2f24fe7bb96e2d2244a181dce48e59e4b25e794b481953ccd"
+    }
+  },
+  "preservation": {
+    "baseline_modified": false,
+    "new_model_or_cloud_used": false,
+    "service_or_process_ownership_changed": false,
+    "session_or_qualification_started": false,
+    "staged_or_committed": false,
+    "ui_or_version_changed": false
+  },
+  "prior_baseline": {
+    "candidate_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "glb_sha256": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e",
+    "modified_or_relabelled": false,
+    "preserved_unchanged": true
+  },
+  "prompt_fingerprint": "7d2294df37560d23e3870ace77993238d23bc4ad404b6210b5c5e6f12bbb96bd",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "recorded_at_utc": "2026-08-26T17:32:13.714210+00:00",
+  "required_components": [
+    "back_continuity_mass",
+    "back_cushion_lower",
+    "back_cushion_upper",
+    "back_frame",
+    "back_vertical_seam",
+    "base",
+    "base_skirt",
+    "footrest_continuity_shroud",
+    "footrest_cushion",
+    "footrest_frame",
+    "footrest_seam",
+    "footrest_support",
+    "left_arm",
+    "recliner_root",
+    "right_arm",
+    "seat_center_seam",
+    "seat_cushion",
+    "seat_frame"
+  ],
+  "result": "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+  "review": {
+    "opened": true,
+    "paths": [
+      "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\canon-camera-comparison-contact-sheet.png",
+      "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-qwen3vl-00f73724-1b27-495d-9275-efad901f20f2\\recliner-neutral-multi-angle-sheet.png"
+    ],
+    "status": "SCREENED_LOCALLY_FAIL_CLOSED_NOT_PRESENTED_FOR_HUMAN_APPROVAL"
+  },
+  "schema": "unified-world-pipeline.task-11.8.4c.art-bible-recliner-refinement.v1",
+  "scope": "Append-only Art-Bible-guided deterministic recliner refinement only; no Task 11.8.5, session, qualification, Demo Ready, release, UI/version, service ownership, staging, or commit.",
+  "source_lane": "task_11_8_4b_deterministic_separate_component_refinement",
+  "task": "11.8.4c",
+  "task_11_8_4b_replay_checks": [
+    {
+      "check": "schema",
+      "pass": true
+    },
+    {
+      "check": "complete_visible_inventory",
+      "pass": true
+    },
+    {
+      "check": "item_required_fields",
+      "pass": true
+    },
+    {
+      "check": "stable_unique_uuids",
+      "pass": true
+    },
+    {
+      "check": "hash_bound_alpha_cutouts",
+      "pass": true
+    },
+    {
+      "check": "authority_boundaries",
+      "pass": true
+    },
+    {
+      "check": "immutable_source_hashes",
+      "pass": true
+    },
+    {
+      "check": "exact_sam3_workflow_or_verified_fallback",
+      "pass": true
+    },
+    {
+      "check": "recliner_independent_load",
+      "pass": true
+    },
+    {
+      "check": "separate_recliner_components",
+      "pass": true
+    },
+    {
+      "check": "embedded_durable_recliner_materials",
+      "pass": true
+    },
+    {
+      "check": "recliner_no_external_uris",
+      "pass": true
+    },
+    {
+      "check": "shell_independent_load",
+      "pass": true
+    },
+    {
+      "check": "shell_embedded_materials_no_external_uris",
+      "pass": true
+    },
+    {
+      "check": "new_geometry_distinct_from_rejected_glb",
+      "pass": true
+    },
+    {
+      "check": "two_review_pngs",
+      "pass": true
+    },
+    {
+      "check": "camera_and_authority_bindings",
+      "pass": true
+    }
+  ]
+}

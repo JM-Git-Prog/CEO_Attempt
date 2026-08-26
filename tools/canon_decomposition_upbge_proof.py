@@ -29,13 +29,6 @@ from typing import Any, Iterable, Mapping
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
-from src.unified_pipeline.camera_contract import CameraContract
-from src.unified_pipeline.object_manifest import (
-    build_plan_bound_selected_manifest,
-    load_selected_manifest,
-)
-from src.unified_pipeline.world_contract import WorldContract, verify_hash
-
 ROOT = Path(__file__).resolve().parents[1]
 SPEC_DIR = ROOT / ".kiro" / "specs" / "unified-world-pipeline"
 EVIDENCE_DIR = SPEC_DIR / "evidence"
@@ -355,6 +348,8 @@ def validate_asset_provenance(
 
 def rebuild_plan_bound_manifest(manifest: Mapping[str, Any]) -> dict[str, Any]:
     """Replay existing builder semantics from the immutable selected record."""
+    from src.unified_pipeline.object_manifest import build_plan_bound_selected_manifest
+
     detected_objects: list[dict[str, Any]] = []
     picker_objects: list[dict[str, Any]] = []
     selected_detection_ids: list[str] = []
@@ -457,6 +452,10 @@ def _bounded_version(path: Path) -> str:
 
 def build_reference_lock() -> dict[str, Any]:
     """Build the deterministic Task 3.1 lock without creating candidate output."""
+    from src.unified_pipeline.camera_contract import CameraContract
+    from src.unified_pipeline.object_manifest import load_selected_manifest
+    from src.unified_pipeline.world_contract import WorldContract, verify_hash
+
     references = verify_reference_specs()
     for path, expected in AUTHORITY_HASHES.items():
         _strict_binding(path, expected)

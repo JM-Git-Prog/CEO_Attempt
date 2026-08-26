@@ -1,0 +1,98 @@
+{
+  "architecture_refinement": {
+    "method": "deterministic parameter refinement of the existing separate-component architecture, not neural regeneration or reuse of baseline artifact bytes",
+    "preserved_components": [
+      "back_cushion_lower",
+      "back_cushion_upper",
+      "back_frame",
+      "back_vertical_seam",
+      "base",
+      "base_skirt",
+      "footrest_continuity_shroud",
+      "footrest_cushion",
+      "footrest_frame",
+      "footrest_seam",
+      "footrest_support",
+      "left_arm",
+      "recliner_root",
+      "right_arm",
+      "seat_center_seam",
+      "seat_cushion",
+      "seat_frame"
+    ],
+    "prior_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "visual_changes": [
+      "increase cushion/arm roundness and padding volume",
+      "replace glossy burgundy with worn mottled medium-brown upholstery",
+      "reduce exposed dark base and add upholstered base skirt",
+      "broaden and soften upper/lower back proportions",
+      "integrate and center footrest with support continuity and a bounded hinge gap"
+    ]
+  },
+  "authoritative_art_bible": {
+    "ambiguous_substitutes_rejected": [
+      "00-MASTER-BIBLE.md (shared narrative/systems spine, not artist production authority)",
+      "08-world-texture.md (additive ambient texture pass, not the Art Direction source)",
+      "DANNY-TORNADO-ASSET-MANIFEST.md (derived manifest citing the 29-file bible)"
+    ],
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\13-art-direction.md",
+    "selection_basis": "The design-bible README explicitly routes the Artist role to 13-art-direction.md; 00-MASTER-BIBLE.md is identified as the shared systems spine, so it is rejected as an Art Bible substitute.",
+    "sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007"
+  },
+  "authority_boundary": {
+    "art_bible_and_canon": "appearance/style/identity evidence only",
+    "camera_contract": "sole immutable Plan-derived camera authority",
+    "metric_plan": "sole dimensions/transforms/placement/architecture/openings/collision/navigation authority",
+    "world_contract": "final object/relationship/binding authority"
+  },
+  "locked_canon": {
+    "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+    "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"
+  },
+  "negative_prompt": "rigid thin or blocky chair, hard rectangular slabs, narrow office-chair proportions, pedestal base, star base, caster base, swivel office base, exposed plinth wider than chair, detached floating footrest, separate ottoman, laterally shifted or misaligned footrest, footrest wider than seat, implausible mechanism gap, pristine modern showroom leather, bright red or burgundy glossy leather, plastic shell, chrome futurism, minimalist Scandinavian lounge chair, throne, gaming chair, duplicated arms or cushions, fused room wall floor rug table or ground sheet, background geometry, melted topology, blob-like neural mass, inflated balloon forms, collapsed back, missing seat, paper-thin upholstery, intersecting cushions, asymmetrical accidental deformation, open holes, non-manifold debris, external texture URI, temporary material, spatial-authority claims.",
+  "positive_prompt": "A single independently isolated 1990s-era American residential recliner matching the locked Golden Room Canon: soft overstuffed apology-shaped silhouette; warm sun-faded, cozy, slightly melancholy character; broad gently winged upper back; deep pillowed lumbar cushion; wide thick seat cushion with softly rolled front edge; two substantial rounded pillow arms that taper inward toward the seat; worn mottled medium-brown microfiber or suede-like upholstery with uneven tan, umber, and tobacco wear, softened nap, darker seams and piping; conventional low rectangular recliner base mostly concealed by an upholstered skirt; one centered footrest physically integrated with the chair mechanism, aligned to the seat center and width, extending continuously from beneath the seat with a small credible hinge gap; separate inspectable back frame, upper and lower back cushions, seat frame, seat cushion, left arm, right arm, base, skirt, support, footrest frame, footrest cushion, seams, piping, and tuft details; coherent manufactured upholstery topology, plausible padding compression, rounded transitions, durable embedded PBR materials, neutral standalone asset, no room attached.",
+  "schema": "unified-world-pipeline.task-11.8.4c.art-bible-cues-prompts.v1",
+  "source_cues": [
+    {
+      "category": "era_and_style",
+      "cue": "late-Sierra VGA warmth; nostalgic, cozy, sun-faded and a little melancholy; the world is warm",
+      "provenance": "Art Bible north star and one-line brief"
+    },
+    {
+      "category": "apartment_palette",
+      "cue": "dishwater grays, one warm lamp, dust-mote gold; lonely and faded rather than pristine",
+      "provenance": "Art Bible palette strategy: Apartment"
+    },
+    {
+      "category": "lighting",
+      "cue": "single warm lamp and soft golden light pick out the meaningful object",
+      "provenance": "Art Bible palette strategy and one-line brief"
+    },
+    {
+      "category": "silhouette",
+      "cue": "soft overstuffed recliner; broad two-part pillow back, deep seat, and thick rounded arms",
+      "provenance": "locked Canon and hash-bound recliner cutout"
+    },
+    {
+      "category": "proportion",
+      "cue": "upper back is broad and dominant; lumbar and seat are thick; arms are substantial but taper inward; base stays visually subordinate",
+      "provenance": "locked Canon and hash-bound recliner cutout"
+    },
+    {
+      "category": "upholstery_material_color",
+      "cue": "worn mottled medium brown/tan suede-like or microfiber upholstery with uneven umber/tobacco patches and dark seams",
+      "provenance": "locked Canon pixels interpreted under Art Bible sun-faded/faded palette"
+    },
+    {
+      "category": "construction",
+      "cue": "conventional low recliner base and centered integrated mechanism-supported footrest aligned beneath the seat",
+      "provenance": "locked Canon and hash-bound recliner cutout"
+    },
+    {
+      "category": "wear",
+      "cue": "softened nap, uneven fading, darker creases/piping and compressed cushion edges; lived-in, not distressed into damage",
+      "provenance": "locked Canon pixels interpreted under Art Bible nostalgic/sun-faded direction"
+    }
+  ],
+  "task": "11.8.4c"
+}

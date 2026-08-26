@@ -1,0 +1,15 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4c.bootstrap-failure.v1",
+  "task": "11.8.4c",
+  "result": "FAIL_CLOSED_BOOTSTRAP_IMPORT",
+  "stage": "generator_import",
+  "command": "python tools/refine_recliner_art_bible.py --output-dir .kiro/specs/unified-world-pipeline/evidence/task-11.8.4c-art-bible-recliner-softmass-4b80641d-c37d-4dfa-b094-d365e163902c",
+  "exit_code": 1,
+  "error": "ModuleNotFoundError: No module named 'src' while importing canon_decomposition_upbge_proof",
+  "cause": "Pushed commit 9cb2ddcd25bf0b62396db5fb4ec3ebad2e079dff added project-package imports to the baseline module; the dedicated refinement entry point exposed tools/ but not the repository root on sys.path.",
+  "authorized_minimal_correction": "Expose the existing repository root before importing the baseline module; do not change or execute the full-room convergence pipeline.",
+  "candidate_written": false,
+  "baseline_artifacts_modified": false,
+  "human_review_eligible": false,
+  "task_11_8_5": "BLOCKED_NOT_STARTED"
+}

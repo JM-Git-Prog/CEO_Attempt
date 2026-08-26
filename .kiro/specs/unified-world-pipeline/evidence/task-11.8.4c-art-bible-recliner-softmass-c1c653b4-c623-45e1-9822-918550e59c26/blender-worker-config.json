@@ -1,0 +1,13 @@
+{
+  "art_bible_sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+  "canon_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+  "output_dir": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26",
+  "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+  "source_baseline_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+  "textures": {
+    "dark_base": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\textures\\dark_base.png",
+    "dark_seam": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\textures\\dark_seam.png",
+    "worn_brown": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\textures\\worn_brown.png",
+    "worn_brown_shadow": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\textures\\worn_brown_shadow.png"
+  }
+}

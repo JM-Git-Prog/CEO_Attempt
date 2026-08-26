@@ -22,12 +22,13 @@ from pathlib import Path
 from typing import Any
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-if str(SCRIPT_DIR) not in sys.path:
-    sys.path.insert(0, str(SCRIPT_DIR))
+ROOT = Path(__file__).resolve().parents[1]
+for import_root in (SCRIPT_DIR, ROOT):
+    if str(import_root) not in sys.path:
+        sys.path.insert(0, str(import_root))
 
 import canon_decomposition_upbge_proof as baseline
 
-ROOT = Path(__file__).resolve().parents[1]
 SPEC_DIR = ROOT / ".kiro" / "specs" / "unified-world-pipeline"
 EVIDENCE_DIR = SPEC_DIR / "evidence"
 ART_BIBLE_PATH = Path(r"C:\Users\JohnM\Artificial Intelligence\Projects\Danny Tornado\danny-tornado-seven-outs-design-bible_1\danny-tornado\13-art-direction.md")
@@ -52,19 +53,26 @@ BLENDER_EXE = baseline.BLENDER_EXE
 OUTPUT_GLB_NAME = "refined-deterministic-recliner.glb"
 PROMPTS_NAME = "art-bible-cues-and-prompts.json"
 EVIDENCE_NAME = "proof-evidence.json"
+LOCAL_VISION_MODEL = "qwen3-vl:8b"
+LOCAL_VISION_MODEL_DIGEST = "901cae73216286ea8c5aba8b46d307ff7188f737285ec500c795a12f05225d28"
+LOCAL_VISION_CONFIDENCE_THRESHOLD = 0.80
 
 REQUIRED_COMPONENTS = {
     "recliner_root",
     "base",
     "base_skirt",
+    "internal_mechanism_core",
     "seat_frame",
     "seat_cushion",
     "left_arm",
     "right_arm",
     "back_frame",
+    "back_rear_cover",
+    "back_continuity_mass",
     "back_cushion_lower",
     "back_cushion_upper",
     "footrest_support",
+    "footrest_continuity_shroud",
     "footrest_frame",
     "footrest_cushion",
     "seat_center_seam",
@@ -157,6 +165,19 @@ def build_cues_and_prompts() -> dict[str, Any]:
             "camera_contract": "sole immutable Plan-derived camera authority",
             "world_contract": "final object/relationship/binding authority",
         },
+        "local_vision_screen_contract": {
+            "model": LOCAL_VISION_MODEL,
+            "digest": LOCAL_VISION_MODEL_DIGEST,
+            "confidence_threshold": LOCAL_VISION_CONFIDENCE_THRESHOLD,
+            "required_sheets": [
+                "canon-camera-comparison-contact-sheet.png",
+                "recliner-neutral-multi-angle-sheet.png",
+            ],
+            "acceptance": "Every exact sheet must return strict JSON with pass=true, empty failed_checks, and confidence >= threshold; primary adjudication remains independently mandatory.",
+            "role": "local first-pass screen only; never human, Demo Ready, qualification, or release authority",
+            "cloud_used": False,
+            "download_performed": False,
+        },
         "architecture_refinement": {
             "prior_fingerprint": BASELINE_FINGERPRINT,
             "method": "deterministic parameter refinement of the existing separate-component architecture, not neural regeneration or reuse of baseline artifact bytes",
@@ -196,11 +217,22 @@ def create_textures(output_dir: Path) -> dict[str, Path]:
                     grain += int(5 * math.sin(y / 5.0))
                 pixels[x, y] = tuple(max(0, min(255, channel + wave + grain)) for channel in base_rgb)
         draw = ImageDraw.Draw(image, "RGBA")
-        for _ in range(45):
+        for _ in range(80):
             x = rng.randrange(128)
             y = rng.randrange(128)
-            radius = rng.randrange(2, 11)
-            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=(60, 35, 20, rng.randrange(4, 14)))
+            radius = rng.randrange(5, 21)
+            draw.ellipse(
+                (x - radius, y - radius, x + radius, y + radius),
+                fill=(54, 32, 18, rng.randrange(30, 71)),
+            )
+        for _ in range(40):
+            x = rng.randrange(128)
+            y = rng.randrange(128)
+            radius = rng.randrange(4, 16)
+            draw.ellipse(
+                (x - radius, y - radius, x + radius, y + radius),
+                fill=(184, 139, 93, rng.randrange(20, 51)),
+            )
         path = texture_dir / f"{name}.png"
         image.save(path, optimize=True)
         paths[name] = path
@@ -209,6 +241,22 @@ def create_textures(output_dir: Path) -> dict[str, Path]:
     mottled("worn_brown_shadow", (91, 61, 43), 13, True)
     mottled("dark_seam", (54, 37, 28), 8)
     mottled("dark_base", (37, 31, 27), 5)
+
+    normal = Image.new("RGB", (128, 128), (128, 128, 255))
+    normal_pixels = normal.load()
+    for y in range(128):
+        for x in range(128):
+            weave_x = int(17 * math.sin((x + 2 * y) * math.pi / 5.0))
+            weave_y = int(14 * math.sin((2 * x - y) * math.pi / 7.0))
+            nap = rng.randint(-8, 8)
+            normal_pixels[x, y] = (
+                max(88, min(168, 128 + weave_x + nap)),
+                max(88, min(168, 128 + weave_y - nap)),
+                238,
+            )
+    normal_path = texture_dir / "worn_fabric_normal.png"
+    normal.save(normal_path, optimize=True)
+    paths["worn_fabric_normal"] = normal_path
     return paths
 
 
@@ -409,6 +457,7 @@ def build_evidence(output_dir: Path, prompts: dict[str, Any], blender: dict[str,
         "art_bible": prompts["authoritative_art_bible"],
         "locked_canon": prompts["locked_canon"],
         "prompt_fingerprint": prompt_fingerprint(prompts),
+        "expected_local_vision_screen": prompts["local_vision_screen_contract"],
         "immutable_input_bindings": immutable_inputs,
         "output_bindings": output_bindings,
         "glb_inspection": inspection,
@@ -451,7 +500,7 @@ def worker_main(config_path: Path) -> int:
     recliner_collection = bpy.data.collections.new("RefinedReclinerComponents")
     root_collection.children.link(recliner_collection)
 
-    def material(name: str, texture_key: str, roughness: float, metallic: float = 0.0):
+    def material(name: str, texture_key: str, roughness: float, metallic: float = 0.0, normal_texture_key: str | None = None):
         mat = bpy.data.materials.new(name)
         mat.use_nodes = True
         nodes, links = mat.node_tree.nodes, mat.node_tree.links
@@ -464,10 +513,22 @@ def worker_main(config_path: Path) -> int:
         tex.name = f"{name}_EmbeddedTexture"
         tex.image = image
         links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+        if normal_texture_key:
+            normal_image = bpy.data.images.load(str(textures[normal_texture_key]), check_existing=True)
+            normal_image.pack()
+            normal_tex = nodes.new("ShaderNodeTexImage")
+            normal_tex.name = f"{name}_EmbeddedFabricNormal"
+            normal_tex.image = normal_image
+            normal_tex.image.colorspace_settings.name = "Non-Color"
+            normal_map = nodes.new("ShaderNodeNormalMap")
+            normal_map.name = f"{name}_FabricNormalMap"
+            normal_map.inputs["Strength"].default_value = 0.48
+            links.new(normal_tex.outputs["Color"], normal_map.inputs["Color"])
+            links.new(normal_map.outputs["Normal"], bsdf.inputs["Normal"])
         return mat
 
-    fabric = material("WornBrownMicrofiber", "worn_brown", 0.72)
-    fabric_shadow = material("WornBrownShadowMicrofiber", "worn_brown_shadow", 0.76)
+    fabric = material("WornBrownMicrofiber", "worn_brown", 0.84, normal_texture_key="worn_fabric_normal")
+    fabric_shadow = material("WornBrownShadowMicrofiber", "worn_brown_shadow", 0.87, normal_texture_key="worn_fabric_normal")
     seam = material("DarkBrownSeamPiping", "dark_seam", 0.66)
     structural = material("ConventionalDarkReclinerBase", "dark_base", 0.52, 0.04)
 
@@ -495,6 +556,49 @@ def worker_main(config_path: Path) -> int:
         move_to(obj, recliner_collection)
         return obj
 
+    def add_soft_mass(
+        name,
+        dimensions,
+        location,
+        mat,
+        rotation=(0.0, 0.0, 0.0),
+        exponent=0.68,
+        center_bulge=0.08,
+        top_sag=0.035,
+    ):
+        """Create a deterministic closed pillow mass without flat slab faces."""
+        bpy.ops.mesh.primitive_uv_sphere_add(
+            segments=48,
+            ring_count=24,
+            location=location,
+            rotation=rotation,
+        )
+        obj = bpy.context.object
+        obj.name = name
+        half_x, half_y, half_z = (value / 2.0 for value in dimensions)
+
+        def signed_power(value):
+            return math.copysign(abs(value) ** exponent, value) if value else 0.0
+
+        for vertex in obj.data.vertices:
+            nx, ny, nz = vertex.co.x, vertex.co.y, vertex.co.z
+            sx, sy, sz = signed_power(nx), signed_power(ny), signed_power(nz)
+            face_center = max(0.0, (1.0 - nx * nx) * (1.0 - nz * nz))
+            sy *= 1.0 + center_bulge * face_center
+            if nz > 0.0:
+                sag_weight = max(0.0, (1.0 - abs(sx)) * (1.0 - abs(sy)))
+                sz -= top_sag * sag_weight
+            vertex.co = (sx * half_x, sy * half_y, sz * half_z)
+        for polygon in obj.data.polygons:
+            polygon.use_smooth = True
+        obj.data.name = f"{name}_mesh"
+        obj.data.materials.append(mat)
+        obj["task"] = "11.8.4c"
+        obj["component"] = name
+        obj["construction"] = "deterministic_soft_mass"
+        move_to(obj, recliner_collection)
+        return obj
+
     root = bpy.data.objects.new("recliner_root", None)
     root["stable_uuid"] = config["recliner_uuid"]
     root["source_baseline_fingerprint"] = config["source_baseline_fingerprint"]
@@ -509,32 +613,50 @@ def worker_main(config_path: Path) -> int:
         components.append(obj)
         return obj
 
-    # Refines the baseline architecture: softer volumes, hidden conventional base,
-    # broader cushions, and a centered integrated footrest with bounded hinge gap.
-    component("base", (1.46, 1.08, 0.17), (0.0, 0.07, 0.18), structural, bevel=0.065)
-    component("base_skirt", (1.54, 1.13, 0.33), (0.0, 0.04, 0.37), fabric_shadow, bevel=0.12)
-    component("seat_frame", (1.42, 1.03, 0.18), (0.0, -0.08, 0.57), structural, bevel=0.06)
-    component("seat_cushion", (1.22, 0.94, 0.34), (0.0, -0.22, 0.78), fabric, rotation=(math.radians(-3), 0.0, 0.0), bevel=0.15)
-    component("seat_center_seam", (0.026, 0.73, 0.035), (0.0, -0.28, 0.955), seam, rotation=(math.radians(-3), 0.0, 0.0), bevel=0.012)
-    component("left_arm", (0.37, 1.14, 0.67), (-0.75, -0.02, 0.89), fabric_shadow, rotation=(math.radians(-3), 0.0, math.radians(-2)), bevel=0.17)
-    component("right_arm", (0.37, 1.14, 0.67), (0.75, -0.02, 0.89), fabric_shadow, rotation=(math.radians(-3), 0.0, math.radians(2)), bevel=0.17)
-    component("left_arm_cap", (0.42, 0.88, 0.24), (-0.75, -0.20, 1.20), fabric, rotation=(math.radians(-7), math.radians(3), math.radians(-2)), bevel=0.105)
-    component("right_arm_cap", (0.42, 0.88, 0.24), (0.75, -0.20, 1.20), fabric, rotation=(math.radians(-7), math.radians(-3), math.radians(2)), bevel=0.105)
-    component("left_arm_piping", (0.035, 0.82, 0.035), (-0.965, -0.20, 1.30), seam, rotation=(math.radians(-7), 0.0, math.radians(-2)), bevel=0.012)
-    component("right_arm_piping", (0.035, 0.82, 0.035), (0.965, -0.20, 1.30), seam, rotation=(math.radians(-7), 0.0, math.radians(2)), bevel=0.012)
-    back_rotation = (math.radians(-11), 0.0, 0.0)
-    component("back_frame", (1.49, 0.24, 1.51), (0.0, 0.37, 1.56), structural, rotation=back_rotation, bevel=0.08)
-    component("back_cushion_lower", (1.23, 0.38, 0.60), (0.0, 0.15, 1.37), fabric_shadow, rotation=back_rotation, bevel=0.17)
-    component("back_cushion_upper", (1.38, 0.43, 0.73), (0.0, 0.29, 1.99), fabric, rotation=back_rotation, bevel=0.19)
-    component("back_vertical_seam", (0.030, 0.045, 1.04), (0.0, 0.035, 1.69), seam, rotation=back_rotation, bevel=0.012)
-    component("back_horizontal_seam", (1.05, 0.045, 0.030), (0.0, 0.03, 1.68), seam, rotation=back_rotation, bevel=0.012)
-    component("back_left_tuft", (0.065, 0.055, 0.065), (-0.31, 0.015, 2.00), seam, rotation=back_rotation, bevel=0.025)
-    component("back_right_tuft", (0.065, 0.055, 0.065), (0.31, 0.015, 2.00), seam, rotation=back_rotation, bevel=0.025)
-    foot_rotation = (math.radians(-18), 0.0, 0.0)
-    component("footrest_support", (0.73, 0.55, 0.13), (0.0, -0.73, 0.45), structural, rotation=foot_rotation, bevel=0.04)
-    component("footrest_frame", (1.06, 0.68, 0.15), (0.0, -0.93, 0.47), structural, rotation=foot_rotation, bevel=0.06)
-    component("footrest_cushion", (1.00, 0.70, 0.25), (0.0, -0.95, 0.59), fabric, rotation=foot_rotation, bevel=0.13)
-    component("footrest_seam", (0.026, 0.53, 0.030), (0.0, -0.985, 0.725), seam, rotation=foot_rotation, bevel=0.011)
+    def soft_component(
+        name,
+        dimensions,
+        location,
+        mat=fabric,
+        rotation=(0.0, 0.0, 0.0),
+        exponent=0.68,
+        center_bulge=0.08,
+        top_sag=0.035,
+    ):
+        obj = add_soft_mass(name, dimensions, location, mat, rotation, exponent, center_bulge, top_sag)
+        obj.parent = root
+        components.append(obj)
+        return obj
+
+    # One bounded Canon-identity correction: lower/recline the back, overlap soft
+    # masses to hide rails and segmentation, introduce mild manufactured asymmetry,
+    # round the side mass, and bridge the seat-to-footrest upholstery continuously.
+    component("base", (1.20, 0.80, 0.08), (0.0, 0.05, 0.07), fabric_shadow, bevel=0.035)
+    component("internal_mechanism_core", (0.50, 0.40, 0.10), (0.0, 0.04, 0.24), structural, bevel=0.025)
+    soft_component("base_skirt", (1.52, 1.08, 0.44), (0.0, 0.02, 0.30), fabric_shadow, exponent=0.90, center_bulge=0.055, top_sag=0.045)
+    component("seat_frame", (1.20, 0.80, 0.08), (0.0, -0.07, 0.46), fabric_shadow, bevel=0.03)
+    soft_component("seat_cushion", (1.27, 1.03, 0.38), (0.015, -0.17, 0.68), fabric, rotation=(math.radians(-6), math.radians(1), 0.0), exponent=0.90, center_bulge=0.13, top_sag=0.085)
+    component("seat_center_seam", (0.018, 0.44, 0.018), (0.015, -0.29, 0.76), fabric_shadow, rotation=(math.radians(-7), math.radians(1), 0.0), bevel=0.007)
+    soft_component("left_arm", (0.53, 1.08, 0.63), (-0.70, -0.03, 0.88), fabric_shadow, rotation=(math.radians(-8), math.radians(5), math.radians(-4)), exponent=0.94, center_bulge=0.15, top_sag=0.10)
+    soft_component("right_arm", (0.50, 1.04, 0.61), (0.71, -0.01, 0.90), fabric_shadow, rotation=(math.radians(-6), math.radians(-3), math.radians(2)), exponent=0.96, center_bulge=0.12, top_sag=0.085)
+    component("left_arm_piping", (0.018, 0.42, 0.018), (-0.70, -0.12, 0.98), fabric_shadow, rotation=(math.radians(-10), 0.0, math.radians(-4)), bevel=0.006)
+    component("right_arm_piping", (0.018, 0.40, 0.018), (0.71, -0.10, 1.00), fabric_shadow, rotation=(math.radians(-8), 0.0, math.radians(2)), bevel=0.006)
+    back_rotation = (math.radians(-21), 0.0, math.radians(-1))
+    component("back_frame", (1.06, 0.08, 1.10), (0.0, 0.49, 1.38), fabric_shadow, rotation=back_rotation, bevel=0.03)
+    soft_component("back_rear_cover", (1.35, 0.32, 1.12), (0.0, 0.49, 1.48), fabric_shadow, rotation=back_rotation, exponent=0.94, center_bulge=0.10, top_sag=0.08)
+    soft_component("back_continuity_mass", (1.38, 0.38, 1.18), (-0.015, 0.22, 1.49), fabric_shadow, rotation=back_rotation, exponent=0.92, center_bulge=0.12, top_sag=0.085)
+    soft_component("back_cushion_lower", (1.31, 0.46, 0.61), (0.025, 0.07, 1.21), fabric_shadow, rotation=back_rotation, exponent=0.91, center_bulge=0.16, top_sag=0.09)
+    soft_component("back_cushion_upper", (1.47, 0.52, 0.72), (-0.03, 0.15, 1.72), fabric, rotation=back_rotation, exponent=0.90, center_bulge=0.18, top_sag=0.11)
+    component("back_vertical_seam", (0.018, 0.020, 0.58), (-0.015, 0.12, 1.48), fabric_shadow, rotation=back_rotation, bevel=0.006)
+    component("back_horizontal_seam", (0.54, 0.020, 0.018), (0.01, 0.12, 1.47), fabric_shadow, rotation=back_rotation, bevel=0.006)
+    soft_component("back_left_tuft", (0.058, 0.043, 0.058), (-0.32, -0.105, 1.70), seam, rotation=back_rotation, exponent=0.84, center_bulge=0.0, top_sag=0.0)
+    soft_component("back_right_tuft", (0.054, 0.041, 0.054), (0.27, -0.10, 1.73), seam, rotation=back_rotation, exponent=0.88, center_bulge=0.0, top_sag=0.0)
+    foot_rotation = (math.radians(-10), 0.0, 0.0)
+    component("footrest_support", (0.42, 0.32, 0.055), (0.0, -0.62, 0.37), fabric_shadow, rotation=foot_rotation, bevel=0.02)
+    soft_component("footrest_continuity_shroud", (1.03, 0.72, 0.28), (0.0, -0.62, 0.50), fabric_shadow, rotation=foot_rotation, exponent=0.92, center_bulge=0.10, top_sag=0.055)
+    component("footrest_frame", (0.82, 0.46, 0.055), (0.0, -0.80, 0.43), fabric_shadow, rotation=foot_rotation, bevel=0.025)
+    soft_component("footrest_cushion", (1.05, 0.78, 0.29), (0.0, -0.83, 0.59), fabric, rotation=foot_rotation, exponent=0.91, center_bulge=0.13, top_sag=0.08)
+    component("footrest_seam", (0.018, 0.30, 0.018), (0.0, -0.83, 0.61), fabric_shadow, rotation=foot_rotation, bevel=0.006)
 
     bpy.ops.object.select_all(action="DESELECT")
     for obj in [root, *components]:

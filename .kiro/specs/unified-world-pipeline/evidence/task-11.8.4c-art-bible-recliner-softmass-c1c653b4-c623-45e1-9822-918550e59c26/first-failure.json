@@ -1,0 +1,76 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4c.first-failure.v1",
+  "task": "11.8.4c",
+  "recorded_at_utc": "2026-08-26T16:17:59.895773+00:00",
+  "result": "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+  "first_failure": {
+    "ordered_stage": "local_vision_screen.contact_sheet",
+    "verdict": "FAIL",
+    "detail": "The required local qwen2.5vl:7b screen of the exact contact sheet returned pass=false with confidence 0.70. The contract requires pass=true, empty failed_checks, and confidence >=0.80 for every review image.",
+    "failed_checks": [
+      "No rigid/thin/blocky form, pedestal/office base, detached footrest, pristine modern finish, fused room geometry, blob/melted topology."
+    ]
+  },
+  "candidate": {
+    "source_lane": "task_11_8_4b_deterministic_separate_component_refinement",
+    "uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "candidate_fingerprint": "7f6283d2f71c673209b43e1b0b5e3cc41dbd6de8a51e839767314aa22fbb95c8",
+    "glb_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\refined-deterministic-recliner.glb",
+    "glb_sha256": "faa76cfc73dcc203d5ac4feb9832630b2bcf0308bd17ce10bea25c642d35a759",
+    "glb_bytes": 1045840
+  },
+  "immutable_sources": {
+    "baseline_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "art_bible_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\13-art-direction.md",
+    "art_bible_sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+    "canon_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+    "canon_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"
+  },
+  "review_artifacts": {
+    "contact_sheet": {
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\canon-camera-comparison-contact-sheet.png",
+      "sha256": "f6d43befaf34bc4e255600a9e43133764c796952c78e7b707249f13af862341b",
+      "bytes": 526040,
+      "dimensions": [1920, 562]
+    },
+    "multi_angle_sheet": {
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\recliner-neutral-multi-angle-sheet.png",
+      "sha256": "4c258fd6ff5268d876b1c88311f3134e5b700444d9ba5560958fd2f8aceaf019",
+      "bytes": 1163833,
+      "dimensions": [1280, 1414]
+    }
+  },
+  "ordered_gate_results": [
+    {"gate": "task_11_8_4b_replay_checks", "pass": true, "failed_checks": []},
+    {"gate": "common_standalone_asset_gate_non_human", "pass": true, "failed_checks": []},
+    {"gate": "independent_artifact_replay", "pass": true, "evidence_sha256": "36b78e6cbd10b9c8116c3bc00b41cfa98d23301f66cd8cec47afdf8ed18986cf"},
+    {"gate": "focused_tests", "pass": true, "result": "14 passed"},
+    {"gate": "local_vision_screen_contact_sheet", "pass": false, "confidence": 0.70},
+    {"gate": "local_vision_screen_multi_angle", "pass": true, "confidence": 0.95},
+    {"gate": "primary_visual_adjudication", "pass": false, "verdict": "FAIL_CLOSED_CANON_IDENTITY_MISMATCH"},
+    {"gate": "explicit_hash_bound_human_approval", "pass": false, "status": "NOT_ELIGIBLE_DUE_TO_PRIOR_GATE_FAILURE"}
+  ],
+  "local_vision_evidence": {
+    "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\local-vision-screen.json",
+    "bytes": 5338,
+    "sha256": "dd48d64084eb09359fe80cb4d678c3e1dadbdec157d6b2162145eaf4b914f26c"
+  },
+  "primary_visual_adjudication": {
+    "pass": false,
+    "verdict": "FAIL_CLOSED_CANON_IDENTITY_MISMATCH",
+    "detail": "The candidate is smoother and materially coherent, but remains too tall, upright, symmetric, and segmented relative to the locked Canon; dark frame rails remain exposed, the side mass is squared, and the footrest still reads detached rather than integrated."
+  },
+  "human_review_eligible": false,
+  "human_approval_inferred": false,
+  "task_11_8_4c_complete": false,
+  "task_11_8_5": "BLOCKED_NOT_STARTED",
+  "forbidden_actions_confirmed_absent": [
+    "full_room_convergence_pipeline",
+    "session_or_qualification",
+    "ui_or_version_change",
+    "cloud_use",
+    "model_or_dependency_download",
+    "service_or_watcher_ownership_change",
+    "staging_commit_or_push"
+  ]
+}

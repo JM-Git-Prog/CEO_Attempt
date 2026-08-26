@@ -1,0 +1,97 @@
+{
+  "schema": "unified-world-pipeline.task-11.8.4c.local-vision-screen.v1",
+  "task": "11.8.4c",
+  "recorded_at_utc": "2026-08-26T16:17:59.895773+00:00",
+  "candidate_fingerprint": "7f6283d2f71c673209b43e1b0b5e3cc41dbd6de8a51e839767314aa22fbb95c8",
+  "candidate_glb": {
+    "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\refined-deterministic-recliner.glb",
+    "bytes": 1045840,
+    "sha256": "faa76cfc73dcc203d5ac4feb9832630b2bcf0308bd17ce10bea25c642d35a759"
+  },
+  "immutable_bindings": {
+    "art_bible_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\13-art-direction.md",
+    "art_bible_sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007",
+    "canon_path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+    "canon_sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6",
+    "baseline_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "source_lane": "task_11_8_4b_deterministic_separate_component_refinement",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c"
+  },
+  "model": {
+    "name": "qwen2.5vl:7b",
+    "digest": "5ced39dfa4bac325dc183dd1e4febaa1c46b3ea28bce48896c8e69c1e79611cc",
+    "execution": "local_ollama_mcp",
+    "cloud_used": false,
+    "download_performed": false,
+    "role": "first-pass local screen only; never final, human, Demo Ready, qualification, or release authority"
+  },
+  "acceptance_contract": {
+    "automatic_pass_requires": "Every exact sheet returns pass == true, empty failed_checks, confidence >= 0.8, and valid strict JSON; primary adjudication must also pass independently.",
+    "primary_adjudication_required": true
+  },
+  "screens": [
+    {
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\canon-camera-comparison-contact-sheet.png",
+      "bytes": 526040,
+      "sha256": "f6d43befaf34bc4e255600a9e43133764c796952c78e7b707249f13af862341b",
+      "dimensions": [1920, 562],
+      "model_raw_content": "{\n  \"pass\": false,\n  \"failed_checks\": [\n    \"No rigid/thin/blocky form, pedestal/office base, detached footrest, pristine modern finish, fused room geometry, blob/melted topology.\"\n  ],\n  \"confidence\": 0.7\n}",
+      "model_verdict": {
+        "pass": false,
+        "failed_checks": [
+          "No rigid/thin/blocky form, pedestal/office base, detached footrest, pristine modern finish, fused room geometry, blob/melted topology."
+        ],
+        "confidence": 0.7
+      },
+      "contract_valid": true,
+      "threshold_pass": false
+    },
+    {
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-softmass-c1c653b4-c623-45e1-9822-918550e59c26\\recliner-neutral-multi-angle-sheet.png",
+      "bytes": 1163833,
+      "sha256": "4c258fd6ff5268d876b1c88311f3134e5b700444d9ba5560958fd2f8aceaf019",
+      "dimensions": [1280, 1414],
+      "model_raw_content": "{\"pass\":true,\"failed_checks\":[],\"confidence\":0.95}",
+      "model_verdict": {
+        "pass": true,
+        "failed_checks": [],
+        "confidence": 0.95
+      },
+      "contract_valid": true,
+      "threshold_pass": true
+    }
+  ],
+  "first_failed_gate": {
+    "order": "local_vision_screen.contact_sheet",
+    "verdict": "FAIL",
+    "reason": "The exact contact sheet returned pass=false and confidence 0.70, below the required 0.80 threshold."
+  },
+  "primary_adjudication": {
+    "verdict": "FAIL_CLOSED_CANON_IDENTITY_MISMATCH",
+    "failed_checks": [
+      "soft_overstuffed_canon_matched_silhouette",
+      "correct_arm_back_cushion_proportions",
+      "conventional_concealed_base",
+      "integrated_footrest_visual_continuity"
+    ],
+    "observation": "The new deterministic soft masses are visibly smoother than the rejected slab candidate and the worn brown material is coherent. However, against the exact Canon and cutout the candidate remains too tall, upright, symmetric, and segmented; dark back/frame rails stay exposed; the side mass remains squared; and the footrest still reads visually separated rather than as the Canon's continuous articulated upholstery. These are target-level identity defects, so the local multi-angle pass cannot override the failed contact sheet or primary review."
+  },
+  "overall": "FAIL_CLOSED_LOCAL_VISION_SCREEN",
+  "human_review_eligible": false,
+  "human_approval_inferred": false,
+  "review_images_opened_locally": true,
+  "downstream": {
+    "task_11_8_4c": "BLOCKED_BY_LOCAL_VISION_SCREEN",
+    "task_11_8_5": "BLOCKED_NOT_STARTED"
+  },
+  "preservation": {
+    "baseline_artifacts_modified": false,
+    "prior_candidates_modified": false,
+    "full_room_convergence_executed": false,
+    "session_or_qualification_started": false,
+    "ui_or_version_changed": false,
+    "service_or_process_ownership_changed": false,
+    "cloud_or_download_used": false,
+    "staged_or_committed": false
+  }
+}

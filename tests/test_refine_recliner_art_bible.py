@@ -39,6 +39,22 @@ def test_art_bible_prompts_bind_required_appearance_and_exclusions() -> None:
         assert phrase in negative
     assert record["authority_boundary"]["metric_plan"].startswith("sole")
     assert "appearance" in record["authority_boundary"]["art_bible_and_canon"]
+    screen = record["local_vision_screen_contract"]
+    assert screen == {
+        "model": "qwen3-vl:8b",
+        "digest": "901cae73216286ea8c5aba8b46d307ff7188f737285ec500c795a12f05225d28",
+        "confidence_threshold": 0.8,
+        "required_sheets": [
+            "canon-camera-comparison-contact-sheet.png",
+            "recliner-neutral-multi-angle-sheet.png",
+        ],
+        "acceptance": "Every exact sheet must return strict JSON with pass=true, empty failed_checks, and confidence >= threshold; primary adjudication remains independently mandatory.",
+        "role": "local first-pass screen only; never human, Demo Ready, qualification, or release authority",
+        "cloud_used": False,
+        "download_performed": False,
+    }
+    assert "qwen2.5vl:7b" not in inspect.getsource(refinement)
+    assert "back_continuity_mass" in refinement.REQUIRED_COMPONENTS
 
 
 def test_common_gate_order_matches_locked_task_11_8_4_order() -> None:
