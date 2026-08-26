@@ -8,9 +8,9 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
 
 **Release generalization benchmark:** `Danny's kitchenette — a small, warm kitchen with a round table, two chairs, a counter with a coffee maker, and a window looking out at rain.` The exact 142-byte UTF-8 prompt has SHA-256 `af6759e5d516561fad3fb49b129f02ad27743e273d1345173d59430f462f32ec` and remains exclusive to the later fresh Release Profile qualification.
 
-**Profile freshness rule:** Release and fresh-benchmark runs generate without pre-generation warehouse reuse. The photo-bound Demo Profile may reuse only hash-verified, human-approved assets that pass StandaloneAssetGate.
+**Profile freshness rule:** Release and fresh-benchmark runs generate without pre-generation warehouse reuse. The photo-bound Demo Profile may inspect and assemble explicitly provisional, hash-bound Proof_Assets for the room-level milestone, but a prior asset becomes `APPROVED_DEMO_REUSE` only after the required technical, visual, standalone, and explicit human gates pass.
 
-**WorldMirror feasibility decision:** HY-World 2.0 is a candidate reconstruction/generation backend, not product architecture or spatial authority. Full HY-World worldgen remains deferred off the single-RTX-4090 critical path; only WorldMirror 2.0 receives one bounded local preflight and, after a separate explicit size/isolation confirmation, feasibility attempt before the fixed-recliner bake-off.
+**Current room-proof decision:** Requirements 44–48 and the Canon-Aligned Navigable Near-Replication Milestone govern Task 11.8. Completed WorldMirror and recliner experiments remain append-only diagnostic history; neither standalone recliner refinement nor a recliner bake-off is an active prerequisite for inventorying, assembling, rendering, navigating, and human-reviewing the complete room proof.
 
 ## Tasks
 
@@ -425,108 +425,124 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
   - Never restore, resume, clone, repair in place, or count a failed Task 11.7 session; the replacement run is Task 11.7.1 and remains deferred until Task 11.8.9 records Demo Ready
   - _Requirements: 35.7-35.11, 36.1-36.3, 42.1, 42.2, 42.4_
 
-- [ ] 11.8 Complete the photo-bound Golden Room Demo Ready milestone without starting a replacement session
-  - Preserve the counter/cabinet semantic repair as a focused regression prerequisite, run the bounded WorldMirror 2.0 feasibility decision, then reproduce the immutable photoreal Golden Room through the following leaf tasks in order
-  - Do not create a replacement zero-state or qualifying session anywhere in Task 11.8
-  - Preserve V3–V16 behavior, unrelated working-tree changes, process ownership, all failed-session evidence, and the distinction between photo-bound Demo Ready and prompt-driven Release Ready
-  - _Requirements: 38.1-38.12, 42.1-42.4, 42.9, 42.10, 43.1-43.14_
+- [ ] 11.8 Complete the Canon-aligned navigable near-replication milestone before standalone hero completion or replacement qualification
+  - **Execution truth:** Requirements 44–48 and the Canon-Aligned Navigable Near-Replication Milestone design section supersede active standalone-recliner-first sequencing for this milestone
+  - **Immediate executable dependency order:** `11.8.4a → 11.8.4b → 11.8.4c → 11.8.4d → 11.8.4e → 11.8.4f → 11.8.4g → 11.8.4h → 11.8.5 eligible`
+  - Preserve Tasks 11.8.1–11.8.4 and their outputs as completed prerequisite or diagnostic history only; they do not make standalone recliner approval a prerequisite for the room-level proof
+  - Do not create or resume a pipeline or qualification session anywhere in Task 11.8; this task-plan correction authorizes no implementation, UI/version, service/process, asset-generation, qualification, staging, or commit action
+  - Preserve V3–V16 behavior and navigation, unrelated working-tree changes, Windows ownership of the Ratchet watch, Comfy Desktop ownership of port 8188, all failed/restored sessions as append-only permanently ineligible evidence, and the distinction between photo-bound Demo evidence and always-fresh benchmark/release evidence
+  - _Requirements: 44.1-44.11, 45.1-45.12, 46.1-46.10, 47.1-47.11, 48.1-48.14_
 
-  - [x] 11.8.1 Repair counter/cabinet semantic observation and bind focused revalidation
-    - Make `counter`, `countertop`, `kitchen counter`, `built-in counter`, `cabinet`, and `cabinet/storage` reconcile to the required built-in counter/cabinet UUID without permitting unrelated full-frame detections
-    - Add or update focused regression coverage for the preserved failure, then rerun only the affected candidate validation, page/API/static-JavaScript checks, V3–V16 retention checks, and service preflight required by the repair
-    - Record the repaired exact candidate fingerprint; counter/cabinet is a regression prerequisite, not a Golden Room hero asset; do not start or resume any live pipeline session
-    - _Requirements: 38.7, 42.3, 42.9, 42.10_
+  - [x] 11.8.1 Preserve the completed counter/cabinet semantic repair as prerequisite history
+    - Keep its exact-fingerprint regression evidence unchanged; counter/cabinet is not a Golden Room hero asset and does not determine the corrected room-proof order
+    - _Requirements: 42.3, 44.3, 48.14_
 
-  - [x] 11.8.2 Bind the immutable Golden Room reference, freeze exploration, and declare the Demo Profile
-    - Bind authoritative image `C:\Users\JohnM\Artificial Intelligence\Projects\Danny Tornado\renders\danny-v4-01-canon_00002_.png` at SHA-256 `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6` and original workflow `C:\Users\JohnM\Artificial Intelligence\Projects\CEO-of-My-Life-Inc\CEO-3D-World\workflows\danny-v4.1-items.ui.json` at SHA-256 `0b5ccde89d6fb9ac5a25ab91f45a5da2dac9c5be9932d62a1e3e04812b261196` as immutable appearance/composition evidence only
-    - Confirm `C:\Users\JohnM\ComfyUI-Shared\input\danny-v4-01-canon_00002_.png` hashes identically to `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6`; fail closed and document any mismatch
-    - Record that MiniMax, DA3, MoGe, Anima, HY-Pano, WorldNav, WorldStereo, MoVerse, One2Scene, and other open-ended exploratory geometry/model work are frozen; permit no such downloads, integration, capability preflight, or new video/depth generation. The sole model-integration exception is the following bounded WorldMirror Task 11.8.2a after its explicit confirmation checkpoint; already-available recliner video-depth evidence remains permitted in Task 11.8.3
-    - Create a new immutable photo-bound Demo Profile run identity, record permitted approved warehouse reuse, and never relabel diagnostic evidence
-    - _Requirements: 38.3-38.5, 38.8, 41.1-41.3, 41.6, 41.7_
+  - [x] 11.8.2 Preserve the immutable Golden Room reference, Demo Profile declaration, and exploration freeze
+    - Keep the locked furnished Canon, mirror, and workflow paths/hashes unchanged as appearance/correspondence evidence only; MetricPlan remains sole spatial authority
+    - Keep open-ended model exploration, downloads, cloud use, live session work, and unrelated geometry work frozen
+    - _Requirements: 44.1, 44.9-44.11, 46.9, 48.14_
 
-  - [x] 11.8.2a Preflight WorldMirror 2.0 and run one bounded local feasibility gate only after renewed confirmation
-    - Phase A — documentation/preflight only: inspect the official HY-World 2.0 and WorldMirror license and redistribution terms; inventory required repository, weights, dependencies, disk, cache/output storage, peak VRAM/RAM, CUDA, Python, compiler, and native-build compatibility; identify any official reduced-memory/offload mode; confirm Golden Room inputs and all inference remain local with no telemetry, vLLM, cloud, or external data transmission
-    - Record measured or source-grounded repository/model/environment/cache/output size estimates, a fixed setup/storage budget, an isolated reversible environment path, exact cleanup steps, one-GPU ownership plan, and a 60-minute maximum active Phase-B budget; Phase A SHALL NOT install/download HY-World, start services or sessions, run inference, generate assets, or modify production code/tests/UI
-    - Stop after Phase A and request explicit user confirmation of the measured license finding, sizes, storage budget, local-only path, isolation, and cleanup. Only that later confirmation may authorize Phase B downloads/installation; this plan update does not authorize them
-    - Phase B — only after that explicit confirmation: create the reversible isolated environment, implement the smallest disposable local WorldMirror adapter/runner and deterministic evidence manifest, load WorldMirror locally or use only an official documented reduced-memory/offload mode viable on the 24GB RTX 4090, and run one bounded reconstruction from local hash-bound Golden Room evidence under safe single-GPU process ownership
-    - Capture candidate depth, normals, cameras, point cloud, 3DGS, TSDF, and mesh outputs that the official path actually emits; hash every input/output and record provenance, commands/configuration, timing, peak VRAM, peak RAM, and disk use. Keep all outputs non-authoritative and non-colliding unless later aligned, validated, contract-bound, structurally/visually gated, and human-approved
-    - PASS only when the isolated environment is reversible; the model loads or an official viable 24GB mode is documented; one reconstruction completes without OOM or unsafe ownership; output loads locally; approved-camera resemblance and at least one novel-view coherence are materially better than current source-only/depth evidence; and no placeholder or cloud demo substitutes for evidence
-    - FAIL or DEFER on multi-GPU-only requirements, >24GB use without an official viable mode, setup/time/storage overrun, CUDA/Python/native-build incompatibility, license/redistribution blocker, inability to prove local-only execution, unloadable output, or no material visual improvement. Record the exact blocker, freeze WorldMirror, and proceed directly to Task 11.8.3 without HY-Pano, WorldNav, WorldStereo, MoVerse, One2Scene, or unrelated exploration
-    - Preserve MetricPlan as sole authority for dimensions, transforms, placement, architecture, openings, collision, navigation, and CameraContract. WorldMirror cameras/depth/normals/point clouds/3DGS/TSDF/meshes are evidence only; TSDF or mesh may become a visual or collision candidate solely after explicit contract/gate/human approval and may never silently replace Plan architecture
-    - Keep full HY-World worldgen deferred because official guidance recommends at least four GPUs, reports testing on eight H20 GPUs, and uses external vLLM; any later remote/high-end or cloud evaluation requires separate explicit permission
-    - _Requirements: 43.1-43.14, 38.1, 38.8-38.10, 42.9, 42.10_
+  - [x] 11.8.2a Preserve the completed WorldMirror feasibility outcome as diagnostic history only
+    - Retain its evidence and verdict append-only; WorldMirror is not an active predecessor for Tasks 11.8.4a–11.8.4h and grants no authority or approval
+    - _Requirements: 44.1, 44.11, 46.9, 48.14_
 
-  - [x] 11.8.3 Run the fixed-recliner three-lane bake-off within 60–90 active minutes after the WorldMirror verdict
-    - Begin only after Task 11.8.2a records PASS, FAIL, or DEFER; a WorldMirror failure or deferral returns here immediately and SHALL NOT expand model exploration
-    - Use one fixed recliner UUID and common source identity across raw crop, existing Qwen amodal completion, and video-depth only if already available when the bake-off begins
-    - Bind each candidate to Golden Room source/workflow hashes, source/input hashes, workflow identity, asset hash, elapsed active time, and durable-material status
-    - Stop at the fixed budget and carry completed candidates forward; do not extend the timebox for missing lanes or new model work
-    - _Requirements: 38.9, 38.10, 39.1-39.5_
+  - [x] 11.8.3 Preserve the completed recliner bake-off as diagnostic history only
+    - Retain every lane, hash, timing record, rejection, and incomplete outcome append-only; no lane is silently promoted or made a prerequisite for room assembly
+    - _Requirements: 44.1-44.4, 45.4, 45.11, 48.9, 48.14_
 
-  - [x] 11.8.4 Apply one common StandaloneAssetGate and select the visually best recliner lane
-    - Independently load every completed candidate and inspect the same neutral multi-angle turntable rubric: silhouette/identity, reconstruction artifacts, fused scene geometry, and durable material continuity
-    - Reject placeholders, unresolved external materials, temporary materials, and Pass-1-only candidates; require human approval bound to the exact asset hash, candidate fingerprint, and Golden Room reference hashes
-    - Select the visually best passing lane; if no lane passes, record a fail-closed blocker without expanding model exploration
-    - _Requirements: 38.11, 39.1-39.5, 39.13, 39.14_
+  - [x] 11.8.4 Preserve the completed no-pass StandaloneAssetGate as diagnostic history only
+    - Preserve `task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json` and all rejected follow-up evidence without editing, relabeling, or retroactive approval
+    - Carry prior recliner candidates, including fingerprint `d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9` and GLB SHA-256 `b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e`, into Task 11.8.4a as historically good comparative candidates only, never as approved assets
+    - _Requirements: 44.2-44.4, 44.8, 45.1-45.4, 48.9, 48.14_
 
-  - [ ] 11.8.4a Remediate and approve the Golden Room source-matched raw-crop recliner
-    - Preserve Task 11.8.4 and `task-11.8.4-standalone-asset-gate-d3f9253c-130b-4a6c-b597-1fc2fa27dd75.json` as immutable no-pass evidence; do not edit, relabel, replace, or retroactively convert its verdict
-    - Use only the Golden Room source-matched `raw_crop` recliner candidate and the existing approved local material pipeline; do not use the rejected Qwen lane, WorldMirror, MoVerse, MASt3R, DUSt3R, or any unapproved model download, integration, capability preflight, or exploratory generation
-    - Produce a new independently loadable GLB with embedded durable non-temporary materials and textures, no unresolved external materials or buffers, and hash-bound neutral multi-angle evidence exposing silhouette, topology, identity, material continuity, fused geometry, and reconstruction artifacts
-    - Preserve recliner UUID `3b2cae03-3556-5c1e-a19b-ea3c1e15694c` and the raw-crop candidate's Golden Room source/workflow provenance; preserve MetricPlan as sole authority for dimensions, transforms, placement, architecture, openings, collision, and navigation, the immutable Plan-derived CameraContract as camera authority, and WorldContract as final binding authority
-    - Rerun the exact Task 11.8.4 common StandaloneAssetGate checks in the same order against the new artifact, with no lane-specific exception or weakened criterion
-    - Never manufacture human approval: if and only if every non-human check passes, present the exact artifact hash, candidate fingerprint, Golden Room reference hashes, provenance, neutral multi-angle evidence, and gate results, then pause for explicit user approval bound to those exact values
-    - Keep Task 11.8.5 blocked unless the remediated candidate passes every common-gate check, including that explicit hash-bound human approval; otherwise record a new fail-closed blocker without reopening model exploration
-    - Run targeted validation of artifact loadability, embedded material/texture durability, URI/buffer resolution, hash/provenance/UUID bindings, neutral evidence, and exact gate parity; record commands, results, input/output hashes, candidate fingerprint, approval state, and blocker or pass verdict as new immutable evidence
-    - User authorizes up to ten additional evidence-renderer-only attempts with automatic direct inspection of the authoritative Canon image, source crop, and every generated preview from disk; stop early only when every non-human common-gate check and the strict local vision gate pass, with no GLB, model, or downstream scope expansion
-    - Do not change any UI or interface version, production code or service ownership, Comfy Desktop ownership, Windows Scheduled Task or Ratchet-watch ownership, or unrelated working-tree content; do not start a replacement or qualification session and do not commit
-    - _Requirements: 38.4, 38.5, 38.8, 38.11, 39.1-39.5, 39.13, 39.14, 41.3, 41.6, 42.9_
+  - [ ] 11.8.4a Inventory local room/object evidence and complete the Scene_Inventory
+    - **Depends on:** completed historical prerequisites 11.8.1–11.8.4; this is the first active executable leaf
+    - Inspect the Locked_Furnished_Canon, candidate empty-room evidence, Canon decomposition artifacts, project and warehouse manifests, prior evidence bundles, generated-object directories, review previews, and actual asset files before any new recovery, production, assembly, or rendering
+    - Locate and evaluate the historically good prior chair/recliner and every other relevant local room/object asset; append one `Local_Recovery_Inventory` record per artifact with exact path, actual type, byte size, SHA-256, source run/session, derivation/ownership provenance, stable UUID or explicit reason, preview evidence, independent-load/resource/material/visual status, approval history, intended disposition, and supersession link where applicable
+    - Use only Requirement 44's enumerated inventory/provenance/preview/load/resource/material/visual status values; preserve conflicting claims side by side as `CONFLICTED` and block reuse until an append-only resolution identifies the authoritative record
+    - Build the complete `Scene_Inventory`: shell, floor, walls, ceiling, doors, window, lights, all five hero objects, every mandatory fidelity item, and every additional clearly visible object whose omission would materially reduce near replication; bind UUID, expected count, Canon region, role, support/occlusion relationships, and exactly one disposition of `RECOVER_LOCALLY`, `GENERATE`, `PROCEDURAL_SIMPLE_ARCHITECTURE`, `GROUPED_MINOR_SET_DRESSING`, or `BLOCKED`
+    - Append an `Inventory_Completion_Summary` with inspected roots/classes, inventory hashes, status/disposition counts, Canon records, unresolved conflicts, missing fields, blocked objects, and `COMPLETE` or `FAIL_CLOSED_INCOMPLETE`; only `COMPLETE` may advance to 11.8.4b
+    - Perform local evidence inspection only; do not download a model, add a dependency, invoke cloud inference, start a service/session, generate an asset, or modify implementation/UI
+    - _Requirements: 44.1-44.11, 45.1-45.4_
 
-  - [ ] 11.8.4b Prove Canon decomposition and deterministic shell/recliner reconstruction after the rejected neural geometry
-    - Preserve Task 11.8.4, rejected Task 11.8.4a, all prior evidence, and rejected GLB SHA-256 `4ca7009199ddcacf1eee2234423d8fcee2086e1b3b3ed7ecc78ca69916cedeaf` unchanged and append-only
-    - Run the immutable `danny-v4.1-items.api.json` SAM3 workflow against locked Canon SHA-256 `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6`; reuse the existing app's empty-twin output only and do not rerun prompt-generated Canon/restyle/colorize branches
-    - Produce a hash-bound `CanonDecompositionPack` covering the room shell, camera estimate, and every clearly visible item with stable UUID, source alpha-mask/cutout path and hash, structured positive/negative prompts, geometry/components, bounded appearance-only size estimate, material/color cues, relative pose, occlusion/confidence, and relationships
-    - Preserve MetricPlan as sole spatial authority, immutable Plan-derived CameraContract as camera authority, and WorldContract as final binding authority; decomposition, empty-twin, generated geometry, and renders remain non-authoritative appearance evidence
-    - Build a new deterministic empty-room shell and an independently loadable recliner GLB from explicitly separate back, seat, left/right arms, base, footrest, seams, and cushion segments; never reuse, modify, smooth, or rerender the rejected Task 11.8.4a GLB
-    - Require embedded durable materials, no unresolved image/buffer URI, distinct component topology, source/workflow/output hash checks, and two local review PNGs: Canon-camera comparison/contact sheet plus neutral multi-angle recliner sheet
-    - Automatically open both exact PNGs locally, but never infer approval; after all non-human checks pass, stop at `AWAITING_EXPLICIT_HUMAN_REVIEW` and leave this task unchecked until a later explicit human approval is bound to the exact hashes and candidate fingerprint
-    - Current state is `FAIL_CLOSED_HUMAN_REJECTED`: preserve candidate fingerprint `d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9` and recliner GLB SHA-256 `b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e` unchanged as the immutable closest/best-so-far structural baseline and diagnostic evidence only, never as an approved asset, Demo Ready evidence, or release evidence
-    - Bind the rejection to Canon SHA-256 `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6`, contact-sheet SHA-256 `243652bb622a4e550299de9f62f07c8704eb2e2a6423ee8ed5fb0a5e21d53443`, multi-angle-sheet SHA-256 `6d755b1555ac8c95bdc362f0895c95d118268805e9c525e582cb63ff5525aaf2`, and append-only rejection evidence `.kiro/specs/unified-world-pipeline/evidence/task-11.8.4b-human-rejection-best-structural-baseline-8b1d00d1-c773-4d62-a823-7e21041b43b5.json` SHA-256 `36d65fbf6a617959510fb297479d295d4f4c6d69d4ba1938c85b3e195ac9c509`; the user's statement that it is the closest result is comparative structural guidance and SHALL NOT be interpreted as human approval
-    - Keep this task unchecked and Task 11.8.5 `BLOCKED_NOT_STARTED`; do not start a session, qualification, downstream task, UI version, service/process ownership change, staging, or commit
-    - _Requirements: 38.4, 38.5, 38.8, 38.11, 39.1-39.5, 39.13, 39.14, 41.3, 41.6, 42.9_
+  - [ ] 11.8.4b Discover and bind exactly one Hash_Bound_Empty_Room_Canon
+    - **Depends on:** Task 11.8.4a = `COMPLETE`
+    - Select exactly one locally discovered empty-room Canon candidate and bind its accessible exact path, actual file type, byte size, exact bytes by SHA-256, derivation provenance back to the Locked_Furnished_Canon, same-room identity, framing relationship, source run/session, and ownership
+    - Reconfirm the unmodified Locked_Furnished_Canon at SHA-256 `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6`; preserve both Canons as appearance/correspondence evidence only
+    - If the empty-room Canon is missing, inaccessible, hash-ambiguous, regenerated, silently substituted, provenance-incomplete, or not unambiguously the same room/source framing, append `FAIL_CLOSED_MISSING_OR_AMBIGUOUS_CANON` and stop Tasks 11.8.4c–11.8.4h
+    - Do not regenerate, substitute, relabel, crop, mirror, warp, or otherwise alter either source Canon to manufacture a binding
+    - _Requirements: 44.1-44.3, 44.7-44.11, 47.3, 47.4_
 
-  - [ ] 11.8.4c Refine the best structural recliner baseline with the authoritative Danny Tornado Art Bible
-    - Begin only from immutable diagnostic baseline fingerprint `d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9`; locate the authoritative Danny Tornado Art Bible, record its exact path and SHA-256, reject ambiguous or unverified substitutes, and preserve the locked Canon SHA-256 `dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6`
-    - Extract recliner-specific era, style, proportion, upholstery, material, color, construction, and wear cues grounded jointly in the hash-bound Art Bible and locked Canon; record source-grounded cue provenance and distinguish appearance guidance from MetricPlan, CameraContract, and WorldContract authority
-    - Produce improved hash-bound positive and negative recliner prompts that explicitly target a softer overstuffed Canon-matched silhouette, worn brown upholstery, correct arm/back/cushion proportions, a conventional recliner base, and an integrated/aligned footrest while excluding rigid/thin/blocky forms, pedestal or office-chair bases, detached/misaligned footrests, modern pristine upholstery, fused room geometry, and blob-like or melted topology
-    - Refine rather than restart the deterministic separate-component architecture: preserve independently inspectable back, seat, left/right arms, base, footrest, seams, and cushion topology and preserve all authority boundaries; do not modify or relabel the Task 11.8.4b baseline artifact
-    - Emit a new independently loadable GLB, new candidate fingerprint, new artifact hash, durable embedded materials/textures, no unresolved image/buffer URI, and provenance binding the Art Bible, locked Canon, prior structural baseline, generator/configuration, and every output
-    - Replay the same Task 11.8.4b non-human checks and complete common StandaloneAssetGate order without exceptions or weakened criteria; produce two new hash-bound review sheets, one Canon-camera comparison/contact sheet and one neutral multi-angle recliner sheet, and automatically inspect both locally
-    - If and only if every non-human check passes, stop at `AWAITING_EXPLICIT_HUMAN_REVIEW`; require a new explicit human approval bound to the new GLB hash, new candidate fingerprint, Art Bible hash, Canon hash, both review-sheet hashes, source lane, UUID, and gate evidence before this leaf can pass
-    - Do not download or use a new model or cloud service, reopen exploratory geometry, generate a session, start qualification or downstream work, change UI/version/services/process ownership, stage, or commit
-    - _Requirements: 38.4, 38.5, 38.8, 38.11, 39.1-39.5, 39.13, 39.14, 41.3, 41.6, 42.9_
+  - [ ] 11.8.4c Recover suitable Demo assets or produce missing recognizable objects with hash-bound lineage
+    - **Depends on:** Task 11.8.4b has one unambiguous furnished/empty Canon pair
+    - For each `RECOVER_LOCALLY` object, bind the candidate to its UUID, exact asset path/hash, inventory admission record, provenance, source run/session, hash-bound preview, independent-load result, all external resources, materials/textures, visual suitability, approval history, and applicable gate verdicts
+    - Every candidate carries exactly one visible state: `PROVISIONAL_RECOVERED`, `PROVISIONAL_GENERATED`, `DIAGNOSTIC_ONLY`, `TEMPORARY_MATERIAL`, `FAILED`, `HUMAN_REJECTED`, or `APPROVED_DEMO_REUSE`; a prior asset becomes `APPROVED_DEMO_REUSE` only after every applicable technical, independent-load, material, visual, StandaloneAssetGate, and explicit human-review criterion passes
+    - For each missing recognizable object, use the proven description/Object_Canon-driven `Picker → Mesher → Painter` path and bind selected description bytes/hash, Canon region/cutout hash, picker inputs/candidates/decision/configuration, mesher inputs/configuration/output hash, painter inputs/configuration/material-texture hashes, UUID, and hash-bound previews at every stage
+    - Preserve every failed, rejected, rerun, and superseded attempt append-only; use deterministic primitives only for visually suitable simple architecture/non-hero construction, never as gross or identity-breaking hero furniture
+    - End with one explicit `Proof_Asset` state and exact hash for every Scene_Inventory object required by assembly; provisional state is allowed and does not confer standalone, warehouse, Demo Ready, or release approval
+    - Do not add/download/integrate a model, use cloud inference, reopen exploratory geometry, or alter benchmark/release freshness rules
+    - _Requirements: 45.1-45.12, 41.3-41.7, 48.5, 48.14_
 
-  - [ ] 11.8.5 Produce and approve the five standalone Golden Room hero assets only after Task 11.8.4c passes
+  - [ ] 11.8.4d Construct the MetricPlan-authoritative room shell and freeze the matched CameraContract
+    - **Depends on:** Task 11.8.4c supplies an explicit state/hash for every assembly-required Proof_Asset
+    - Bind the approved normalized MetricPlan revision/hash and derive coordinate frame, dimensions, walls, floor, ceiling, doors/windows, collision, navigation, support, circulation, and allowed tolerances only from that MetricPlan
+    - Record each shell element/opening with stable identity, MetricPlan source field, exact transform/dimensions, declared tolerance, collision/navigation binding, and measured conformance; fail closed and request a Plan revision when a required tolerance is absent or ambiguous
+    - Derive and freeze one immutable matched CameraContract from the approved MetricPlan; preserve its exact bytes/hash and prohibit post-render nudging, crop compensation, mirroring, independent-axis scaling, perspective warping, or mutation
+    - If the Plan-derived camera cannot reproduce the locked composition within the near-replication gate, append the failed Plan/camera/render hashes and localized discrepancies, then require a new validated MetricPlan revision and newly derived immutable camera before retrying
+    - _Requirements: 46.1-46.5, 46.9, 46.10_
+
+  - [ ] 11.8.4e Place the complete Scene_Inventory with UUID/hash/transform/support/correspondence evidence
+    - **Depends on:** Task 11.8.4d has a conforming room shell and frozen matched CameraContract
+    - Place every identified object with one record binding stable UUID, exact Proof/approved asset hash and state, MetricPlan revision/source fields, position, rotation, scale, dimensions/tolerances, support-surface UUID/contact, containment, collision intent, furnished-Canon region, projected correspondence, and placement-evidence hash
+    - Reproduce required counts, ordering, support/adjacency, contact, relative scale, and visible occlusion from the matched Canon while preserving MetricPlan-valid circulation, openings, containment, and non-overlap
+    - Allow explicitly provisional Proof_Assets to unblock room-level learning without approving, relabeling, or promoting them
+    - Fail the `Placement_Gate` on out-of-tolerance geometry/transforms, unrelated penetration, unsupported floating, blocked openings/routes, wrong count/UUID/identity/hash, or materially incorrect Canon region; record localized UUID/shell evidence and measured deltas where reliable
+    - _Requirements: 44.5-44.7, 46.6-46.10_
+
+  - [ ] 11.8.4f Render the strict furnished → empty → reconstructed three-view proof
+    - **Depends on:** Task 11.8.4e passes the Placement_Gate for the complete Scene_Inventory
+    - Emit three separately addressable full-resolution images in exactly this order: `(1) unmodified Locked_Furnished_Canon`, `(2) exact Hash_Bound_Empty_Room_Canon`, `(3) fresh reconstructed room from the unchanged matched CameraContract`, plus one ordered derived contact sheet
+    - Bind every image to ordinal, role, exact path, actual type, byte size, SHA-256, provenance, and candidate fingerprint; bind View 3 to the complete inventory hash, UUID-to-asset-hash/state map, MetricPlan revision/hash, CameraContract bytes/hash, WorldContract where available, transforms, materials/textures, lighting, renderer/version/configuration, and reproducible environment inputs/outputs
+    - Declare and apply one panel raster, aspect, orientation, framing, padding, and color-management policy; preserve original source bytes separately and hash/disclose every derived panel transformation
+    - Label the contact sheet with source/display hashes, candidate fingerprint, inventory hash, Plan revision/hash, CameraContract hash, and WorldContract hash where available
+    - If any image, address, byte/hash, order, label, provenance, inventory/camera binding, common-framing declaration, or reproducibility field is missing or ambiguous, append `FAIL_CLOSED_INCOMPLETE_THREE_VIEW_PROOF`, preserve the incomplete evidence, and stop Tasks 11.8.4g–11.8.4h
+    - _Requirements: 47.1-47.11_
+
+  - [ ] 11.8.4g Pass the near-replication SceneVisualGate and navigable in-room inspection
+    - **Depends on:** Task 11.8.4f has a complete, hash-bound three-view proof
+    - Produce explicit `PASS`/`FAIL` verdicts for every required View 1↔3 room, inventory, placement, silhouette, material/color, lighting, support/occlusion, and composition category and every View 2↔3 shell/opening/perspective/fused-remnant category
+    - Produce a per-object matrix keyed by stable UUID and exact asset hash with explicit presence, count, identity, projected region, transform/relative scale, silhouette, material/color, support/contact, adjacency, and occlusion verdicts; reason every legitimate `NOT_APPLICABLE` without suppressing required checks
+    - Fail closed on any category/object failure, missing inventory, wrong count, gross hero placeholder, identity-breaking silhouette, materially wrong placement, unresolved temporary material, fused remnant, or major camera/shell/lighting/composition mismatch; never average a failure away
+    - Bind navigable evidence to candidate fingerprint, WorldContract hash where available, MetricPlan revision, collision configuration, safe-spawn UUID/transform, movement/look controls, locomotion mode, and exact routes/viewpoints used to inspect the shell and every materially important object from ordinary in-room perspectives
+    - Fail navigation on unsafe spawn, broken controls, collider mismatch, blocked route/viewpoint, camera-only facade, severe off-axis break, floating/intersecting object, missing back/side geometry, or proof-camera-only recognizability; append localized hash-bound evidence and keep the candidate ineligible
+    - _Requirements: 48.1-48.9, 48.13, 48.14_
+
+  - [ ] 11.8.4h Request exact-fingerprint human approval only after every non-human gate passes
+    - **Depends on:** Tasks 11.8.4a–11.8.4g all pass for one unchanged candidate and complete evidence set
+    - Present the three separately addressable images and contact sheet for explicit review; never infer approval from file creation, preview opening, comparative praise, prior rejected evidence, or silence
+    - Bind one `Human_Approval_Record` to every source/output/panel/contact-sheet hash, candidate fingerprint, Inventory_Completion_Summary, Local_Recovery_Inventory, Scene_Inventory, MetricPlan revision/hash, unchanged CameraContract bytes/hash, WorldContract where available, every Proof_Asset hash/state, placement evidence, visual verdict matrix, navigation evidence, and all gate results
+    - On rejection or any changed byte/hash/contract/inventory/asset/placement/render/verdict/navigation artifact, append the decision/failure, make prior approval inapplicable, and return to the first invalidated leaf without deleting or relabeling evidence
+    - Only one explicit approval for the unchanged exact evidence set marks the room-level proof milestone approved and changes Task 11.8.5 from `BLOCKED_NOT_STARTED` to eligible-to-start; it does not complete Task 11.8.5, any StandaloneAssetGate, Demo Ready, Release Ready, or Platform Complete
+    - _Requirements: 47.11, 48.9-48.14_
+
+  - [ ] 11.8.5 Produce and approve the five standalone Golden Room hero assets only after Task 11.8.4h approval
     - Status: `BLOCKED_NOT_STARTED`
-    - Begin only after Task 11.8.4c records a new Art-Bible-guided deterministic recliner candidate that passes every common StandaloneAssetGate check and has explicit user approval bound to the exact artifact hash, candidate fingerprint, Art Bible hash, Golden Room reference hashes, both review-sheet hashes, UUID, source lane, and gate evidence
-    - Produce or explicitly reuse permitted approved assets for the recliner, refrigerator, CRT television, wooden TV stand, and bookshelf by stable UUID
-    - Require independent load, durable non-temporary materials, neutral turntable evidence, and human approval for every hero asset under StandaloneAssetGate
-    - Do not count placeholders, fused room geometry, temporary Pass-1-only materials, or counter/cabinet toward the five
-    - _Requirements: 39.1-39.6, 41.3, 41.6_
+    - Become eligible only after Task 11.8.4h records exact-fingerprint human approval for the unchanged complete room proof; eligibility is not completion and the room-level approval does not approve any standalone asset
+    - Produce or explicitly reuse permitted approved assets for the recliner, refrigerator, CRT television, wooden TV stand, and bookshelf by stable UUID; require independent load, durable non-temporary materials, neutral turntable evidence, the full common StandaloneAssetGate, and explicit hash-bound human approval for each
+    - Do not count placeholders, fused room geometry, temporary Pass-1-only materials, counter/cabinet, or merely provisional room-proof assets toward the five
+    - If standalone work changes any asset or other artifact bound by Task 11.8.4h, invalidate that approval and rerun the affected Tasks 11.8.4c–11.8.4h against the new exact candidate before marking 11.8.5 complete or starting 11.8.6
+    - _Requirements: 39.1-39.6, 41.3, 41.6, 45.1-45.10, 48.10-48.12_
 
-  - [ ] 11.8.6 Assemble one Golden Browser room in normative product order
-    - Confirm Prompt → Dream Preview → approved MetricPlan/Blockout → geometry-conditioned final Scene Canon → object production; the final Scene Canon must be Plan/Blockout/CameraContract-derived and visually converge on the immutable Golden Room reference without importing it as Canon
-    - Assemble the five approved UUID-bound hero assets from the approved MetricPlan, immutable CameraContract, approved Scene_Canon, and hash-bound asset bindings
-    - Include mandatory fidelity/set dressing: ceiling fan, wall mirror, area rug, telephone side table, table lamp, foreground sofa, trophy shelf/trophies, and paintings; preserve the long warm room, wood-plank floor, cream walls, rear and right wooden doors, right-side street-facing window, warm lamp/daylight balance, and approved camera composition
-    - Set dressing may use approved, procedural, or non-hero assets but may not be missing, gross placeholders, fused remnants, or visually identity-breaking; produce one Browser room only and do not start fresh qualification or engine polish
-    - _Requirements: 38.2-38.6, 39.6-39.10, 40.1, 40.2_
+  - [ ] 11.8.6 Promote the five standalone-approved hero bindings into the Golden Browser room
+    - Begin only after Task 11.8.5 is complete and any changed binding has a renewed complete room-proof approval under Task 11.8.4h
+    - Preserve the approved MetricPlan, immutable CameraContract, complete Scene_Inventory, Plan-consistent placement, and mandatory fidelity/set dressing while replacing no hash-bound binding silently
+    - Produce one Browser room only; do not start fresh qualification or unrelated engine polish
+    - _Requirements: 39.6-39.12, 40.1, 40.2, 48.11, 48.12_
 
-  - [ ] 11.8.7 Pass Golden Room SceneVisualGate and Browser playability
-    - From the approved camera, require the final room to be immediately recognizable as `danny-v4-01-canon_00002_.png`, with all five hero assets, complete fidelity inventory, recognizable shell/composition, material completeness, Plan-consistent transforms, and Golden Room-consistent palette/lighting intent
-    - Inspect at least one navigable first-person viewpoint and require the room identity and visual coherence to hold up without claiming pixel identity from the navigable view
-    - Verify safe spawn, first-person movement, collision, and access sufficient to inspect every hero asset and mandatory set-dressing region
-    - Fail closed on missing inventory, gross placeholders, fused remnants, temporary Pass-1-only materials, identity-breaking substitutions, or visual defects even when structural/hash/parity gates pass; visual success also does not excuse structural failure
-    - _Requirements: 39.7-39.14, 40.1, 40.2_
+  - [ ] 11.8.7 Pass the final Golden Room SceneVisualGate and Browser playability
+    - Revalidate the final standalone-approved room from the approved camera and ordinary navigable viewpoints; require complete fidelity inventory, recognizable composition, material completeness, Plan-consistent transforms, safe spawn, first-person movement/look, collision, and inspectable routes
+    - Fail closed on missing inventory, gross placeholders, fused remnants, temporary materials, identity-breaking substitutions, structural defects, or visual defects; neither structural nor visual success compensates for the other's failure
+    - _Requirements: 39.7-39.14, 40.1, 40.2, 48.6-48.9_
 
   - [ ] 11.8.8 Demonstrate one functional GAME interaction and one REAL read-only binding
     - Bind one user action to a stable Golden Room object UUID so it changes persistent room GAME state and displays visible score, success, or progress feedback
@@ -593,16 +609,16 @@ This plan builds the complete conversation-to-walkable-world-with-toggle pipelin
     { "id": 8, "tasks": ["8.1", "8.2", "8.3", "8.4", "8.5"], "gate": "Player walks/interacts and three-view identity passes" },
     { "id": 9, "tasks": ["9.1", "9.2", "9.3", "9.4"], "gate": "GAME persists, REAL displays data, toggle works" },
     { "id": 10, "tasks": ["10.1", "10.2", "10.3", "10.4"], "gate": "Durable pipeline resumes idempotently with leases, invalidation, and final event ordering" },
-    { "id": 11, "tasks": ["11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.8.1", "11.8.2", "11.8.2a", "11.8.3", "11.8.4", "11.8.4a", "11.8.4b", "11.8.4c", "11.8.5", "11.8.6", "11.8.7", "11.8.8", "11.8.9", "11.7.1", "11.9", "11.10", "11.11"], "gate": "Counter/cabinet regression is exact-fingerprint validated; Golden Room source/workflow/mirror hashes are bound; general exploration is frozen; one bounded WorldMirror preflight and explicitly re-authorized local feasibility verdict is recorded; one common recliner bake-off preserves its no-pass evidence; rejected Task 11.8.4a remains immutable; the rejected Task 11.8.4b candidate remains the closest/best-so-far structural baseline as diagnostic evidence only; Task 11.8.4c must hash-bind the authoritative Danny Tornado Art Bible and produce a new refined deterministic candidate that passes the same non-human/common gates and receives explicit hash-bound human approval before Task 11.8.5; five hero assets plus complete fidelity inventory produce a photo-bound Golden Browser room that passes visual/playability/GAME/REAL Demo Ready gates; only then may the distinct exact-kitchenette-prompt Release Profile smoke and five fresh headless plus five fresh human-like rounds qualify release" }
+    { "id": 11, "tasks": ["11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.8.1", "11.8.2", "11.8.2a", "11.8.3", "11.8.4", "11.8.4a", "11.8.4b", "11.8.4c", "11.8.4d", "11.8.4e", "11.8.4f", "11.8.4g", "11.8.4h", "11.8.5", "11.8.6", "11.8.7", "11.8.8", "11.8.9", "11.7.1", "11.9", "11.10", "11.11"], "gate": "Requirements 44–48 govern the active room-first chain: complete append-only local and Scene inventories, bind exactly one furnished/empty Canon pair, recover or produce explicitly state-labeled Proof_Assets, construct the MetricPlan-authoritative shell and frozen matched CameraContract, place the complete inventory, render the strict furnished-to-empty-to-reconstructed proof, pass every near-replication and navigability gate, and receive exact-fingerprint human approval. Only that approval makes Task 11.8.5 eligible; final standalone hero gates, final Browser-room validation, GAME/REAL Demo Ready proof, and later always-fresh Release Profile qualification remain separate downstream gates." }
   ]
 }
 ```
 
 ## Notes
 
-- **Current governing constraint: reach the photo-bound Golden Room Demo Ready milestone within 6–8 active coding hours.** The WorldMirror decision is one fixed local gate, not permission for open-ended backend research; FAIL/DEFER returns directly to the recliner bake-off. Defer full HY-World worldgen, new model families, and non-blocking polish rather than expanding this path.
-- HY-World 2.0 is a candidate backend in the same broad persistent/navigable 3D category, while conversation/Brief/ArtBible, MetricPlan authority, deterministic WorldContract, per-object warehouse, human gates, engine-neutral compilation, and persistent GAME/REAL overlays remain product-owned.
-- WorldMirror Phase A is documentation/preflight only. Phase B installation/download and execution require a new explicit user confirmation after measured license, size, storage, isolation, local-only, and cleanup facts are presented; no cloud use is implicit.
+- **Current governing constraint: reach the Canon-aligned navigable near-replication milestone, then the photo-bound Golden Room Demo Ready milestone, within the 6–8 active-coding-hour target.** Execute the Requirements 44–48 room-first chain and defer standalone perfection, broad tooling, model exploration, and non-blocking polish until the complete room proof exposes what materially needs improvement.
+- Completed WorldMirror and recliner experiments remain append-only diagnostic history, not active sequencing authority. HY-World remains only a candidate backend; conversation/Brief/ArtBible, MetricPlan authority, deterministic WorldContract, per-object provenance, human gates, engine-neutral compilation, and persistent GAME/REAL overlays remain product-owned.
+- Task 11.8.5 remains `BLOCKED_NOT_STARTED` until one unchanged room-proof candidate passes every non-human gate and receives exact-fingerprint explicit human approval under Task 11.8.4h. That approval creates eligibility only and does not approve any standalone asset.
 - Tasks marked ✓REUSE leverage existing V14 infrastructure (already implemented and tested)
 - Human approval gates are mandatory: Blockout, Scene_Canon, Object_Canon, Mesh Shape, and Final World QA; one durable approval writer owns each decision
 - The release and fresh-benchmark profiles remain always-fresh and NEVER consult the warehouse before generation; the Demo Profile may reuse only hash-verified, human-approved warehouse assets that pass StandaloneAssetGate.
