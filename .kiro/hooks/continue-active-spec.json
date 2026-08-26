@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Continue Active Spec",
+      "description": "When an agent turn ends, review whats been done, update kirograph embeddings, recontinue the active spec tasks",
+      "trigger": "Stop",
+      "action": {
+        "type": "agent",
+        "prompt": "If any task is incomplete, finish it. "
+      },
+      "enabled": true
+    }
+  ]
+}

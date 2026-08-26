@@ -1,0 +1,497 @@
+{
+  "active_task_state": {
+    "files": [
+      {
+        "bytes": 66290,
+        "exists": true,
+        "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\tasks.md",
+        "sha256": "a9f1de57f4e52a53fe2f69c38662addd69da9d6df35b366993353c3c3924920b"
+      },
+      {
+        "bytes": 33408,
+        "exists": true,
+        "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\recliner-canon-visual-refinement-fix\\tasks.md",
+        "sha256": "3585db92cbf0605042634c1b63055c14a7f0d7948c447084a3b2996be56b54b3"
+      }
+    ],
+    "task_11_8_4c_unchecked": true,
+    "task_11_8_5_blocked_not_started": true
+  },
+  "approved_assets": [
+    {
+      "bytes": 16128888,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\8c6119a5-f7b9-4eca-a30e-cb039aad9c71\\normalized\\8c6119a5-f7b9-4eca-a30e-cb039aad9c71.glb",
+      "sha256": "1e287b5f23176fceb73dcc42ff618abc0c31f46eb177641cfb974f38f1bcfe8b"
+    },
+    {
+      "bytes": 16130120,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\8c6119a5-f7b9-4eca-a30e-cb039aad9c71\\source\\8c6119a5-f7b9-4eca-a30e-cb039aad9c71.glb",
+      "sha256": "c7e318e91ee346cb53f5f6bde176d72ffbeb1956d83ed629422b53ffe6b1b353"
+    },
+    {
+      "bytes": 2742024,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\a4566944-5603-48e2-a0d0-ffc47dc8d225\\normalized\\a4566944-5603-48e2-a0d0-ffc47dc8d225.glb",
+      "sha256": "22f76498aaafefdcb782710b78e079f8216c76952f2fb5ecfe9b9ee5eb1a04f6"
+    },
+    {
+      "bytes": 2743280,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\a4566944-5603-48e2-a0d0-ffc47dc8d225\\source\\a4566944-5603-48e2-a0d0-ffc47dc8d225.glb",
+      "sha256": "4d118f9386a49ad5beb06adc7d010598e8c4ed73ee0e37de1b059b14466a7008"
+    },
+    {
+      "bytes": 10292312,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\e307026a-2a6b-47e8-a2a9-42b8dc7904e0\\normalized\\e307026a-2a6b-47e8-a2a9-42b8dc7904e0.glb",
+      "sha256": "975a98e5b5f9214bc06cdb71a7d05e172e15c1c75b173cef104b75b83eaf95c7"
+    },
+    {
+      "bytes": 10293568,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\e307026a-2a6b-47e8-a2a9-42b8dc7904e0\\source\\e307026a-2a6b-47e8-a2a9-42b8dc7904e0.glb",
+      "sha256": "7dced64197e104fcbe223b1e88253ec9cadb9d76f4f450d36800ca82eb90aff5"
+    },
+    {
+      "bytes": 18696288,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1\\normalized\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1.glb",
+      "sha256": "663f2d19723b56988ebdcf69a67de0cb1a3724f15159b89b0aebcd82b7af17dc"
+    },
+    {
+      "bytes": 18697540,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1\\source\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1.glb",
+      "sha256": "ac6190d4e62737604debf7cbacd30cecf2d3d6855324ebe76db689295d517f0e"
+    },
+    {
+      "bytes": 19111932,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-2\\normalized\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-2.glb",
+      "sha256": "94cdfdbc94cd02f5ee94bd9df5185191c29d965c004a82992d2d7ac451acd890"
+    },
+    {
+      "bytes": 19113188,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\meshes\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-2\\source\\ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-2.glb",
+      "sha256": "886748ff0f988413096948fe8af29e01febd4dfd673bb546d087a97d645d2bb5"
+    }
+  ],
+  "authority_inputs": [
+    {
+      "bytes": 3897,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\approved_metric_plan.json",
+      "sha256": "2cbf348fa73dd56cae2e532e1c184540e06bb01519f6ee8c438d11c64a9a3685"
+    },
+    {
+      "bytes": 13433,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\world_contract.json",
+      "sha256": "2670c044b10bac5fbeffc3e2a772a5b998317aad1fcaca6da9938cac3d980b0f"
+    },
+    {
+      "bytes": 4801,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\selected_objects.json",
+      "sha256": "89de39b04047dc4ff20f47a70ddbb16b6b9eccb59ed12877bbd7df177d12cb5e"
+    },
+    {
+      "bytes": 13597,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\spatial_solution.json",
+      "sha256": "418bb3f66d34975c33ef082821acde2d418a4edf4fa422de29824a230c420e5c"
+    },
+    {
+      "bytes": 10628,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\scene_graph.json",
+      "sha256": "e46fc4bb98dd00f46f7e331c53a84ede094b19c33cf10b8e93062a88ad7607a1"
+    }
+  ],
+  "diagnostic_id": "task-1-bug-condition-exploration-74fba659-f84f-409a-b87e-9327f458a5c7",
+  "failed_task_11_8_4c_candidate": [
+    {
+      "bytes": 6662,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\art-bible-cues-and-prompts.json",
+      "sha256": "3acdf04d9f647cf0d813b1f434defffbc6cd69876fa792899752a837511d865d"
+    },
+    {
+      "bytes": 1494,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\blender-worker-config.json",
+      "sha256": "304de3678ef0be4b0aa34ab1a1fdbe13a68998d7ac0ebafb811a4698b80e402d"
+    },
+    {
+      "bytes": 531979,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\canon-camera-comparison-contact-sheet.png",
+      "sha256": "cd558cacb5bd4127e0e35d275500f36891924f2457ec6001262fbce2442cb8e4"
+    },
+    {
+      "bytes": 5479,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\local-vision-screen.json",
+      "sha256": "f6ba827589e7d163882147ddd6656bca1d89acd04b8a234277c0c3feff81698b"
+    },
+    {
+      "bytes": 24528,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\proof-evidence.json",
+      "sha256": "59c47d77d13d68d4793d706815ead93acb145567398ca8acc8981bacc072b0e2"
+    },
+    {
+      "bytes": 461114,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\recliner-canon-view.png",
+      "sha256": "1e211caeca7d0df2e3ceb261564f368132c1d3a88543a7c4c09c182c716a3498"
+    },
+    {
+      "bytes": 492109,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\recliner-front.png",
+      "sha256": "053227cbd34aa34ef81b83b370caa02ea410e3767ee69ab7d07a287ef6cd53cd"
+    },
+    {
+      "bytes": 454270,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\recliner-left.png",
+      "sha256": "f11d6d2e7d97c4cc5bdeb92f59f4708000800f9ad64c3843ad52be749ca2fbe2"
+    },
+    {
+      "bytes": 1192473,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\recliner-neutral-multi-angle-sheet.png",
+      "sha256": "fb290ab0893e8c3e2767071440ec7568c9cec90019864fa6337477c89052497f"
+    },
+    {
+      "bytes": 447903,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\recliner-rear.png",
+      "sha256": "a2c39af9bdb66aa9ebafc3579e9f565b447828e667c23a7c0b6e5b2367bd4423"
+    },
+    {
+      "bytes": 448019,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\recliner-right.png",
+      "sha256": "e909ea463ac1db0203fd3c3bc5da31df2351f7e33f1d3251b62f84147c459a93"
+    },
+    {
+      "bytes": 931688,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\refined-deterministic-recliner.glb",
+      "sha256": "0496fafdc7d961688ac745d0161de84e97c46be0a66c428fcea53c0426aa9cb3"
+    },
+    {
+      "bytes": 290867,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\refined-recliner-proof.blend",
+      "sha256": "10dd50ae704ac8ec77d74145cc0a6bb25ed60f9509f43bd12b06bb20cfb5b39f"
+    },
+    {
+      "bytes": 15899,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\textures\\dark_base.png",
+      "sha256": "e5144349b7fc7bedb6389c4ca76314b90155bda39a354f17b071dcd16c22b700"
+    },
+    {
+      "bytes": 17412,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\textures\\dark_seam.png",
+      "sha256": "f615a61fff419b9b5de33b4a5bccb6ad25ba03912daf14965708492fd3cdc9d5"
+    },
+    {
+      "bytes": 25472,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\textures\\worn_brown.png",
+      "sha256": "ee68e84b2627ccafe5de9a5c5c74e95d26737c4e257fc68068e983bd3f21e8a4"
+    },
+    {
+      "bytes": 21741,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-art-bible-recliner-19b7c7df-c5e5-4991-9ba7-ff68f4da7be9\\textures\\worn_brown_shadow.png",
+      "sha256": "3708ef1d897cdf398e505967bb6c533ddb52e67c5128d93d5ab64936731c1c45"
+    }
+  ],
+  "git": {
+    "index_diff": {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-status"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "index_tree": {
+      "command": [
+        "git",
+        "write-tree"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "c2c0baf3b589aa8a31f49613c72a7b62880790c4\n"
+    },
+    "status": {
+      "command": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-uall"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": " M .kiro/hooks/kirograph-sync-if-dirty.json\n M .kiro/hooks/kirograph-watchmen.json\n M .kiro/hooks/kirograph-wiki-lint.json\n M tests/test_refine_recliner_art_bible.py\n?? .kiro/hooks/auto-save-commit.json\n?? .kiro/specs/recliner-canon-visual-refinement-fix/.config.kiro\n?? .kiro/specs/recliner-canon-visual-refinement-fix/bugfix.md\n?? .kiro/specs/recliner-canon-visual-refinement-fix/design.md\n?? .kiro/specs/recliner-canon-visual-refinement-fix/tasks.md\n?? .kiro/specs/recliner-canon-visual-refinement-fix/tasks.meta.json\n"
+    }
+  },
+  "kirograph_queries_performed_before_test": {
+    "context": "Execute Task 1 bug-condition exploration for complete Golden Room sparse proof",
+    "exact_revision": "7e89d697de3b4218f362f6fba0efcd5723d4917f",
+    "memory": "Task 11.8.4c recliner qwen primary failed candidate 48f2e5c6 sparse proof blocky",
+    "memory_finding": "candidate 48f2e5c6 passed qwen2.5vl but failed primary adjudication; Task 11.8.5 remains blocked"
+  },
+  "locked_references": [
+    {
+      "bytes": 1964389,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-01-canon_00002_.png",
+      "sha256": "dbbaa35c9aafd64de2735a29da8eea5a1852e08805a5746563f6f2d45100a3b6"
+    },
+    {
+      "bytes": 1372293,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-02-twin_00002_.png",
+      "sha256": "2f67a5f3d3b44a4fb1eacf1ada5e57d4fbf401662358b01ccf087c4a83a59103"
+    },
+    {
+      "bytes": 5986,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\danny-tornado-seven-outs-design-bible_1\\danny-tornado\\13-art-direction.md",
+      "sha256": "40dbcb7d0c9d3b0646668f0878ea3994f5b46178ff45909140260988a556e007"
+    }
+  ],
+  "recorded_at_utc": "2026-08-26T12:06:00.113809+00:00",
+  "schema": "recliner-canon-visual-refinement-fix.task-1-preservation-snapshot.v1",
+  "scope": "Read-only pre-production characterization; no production, task, UI, session, qualification, process, index, or historical-artifact mutation.",
+  "selected_inventory_and_decomposition": [
+    {
+      "bytes": 4801,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745\\artifacts\\selected_objects.json",
+      "sha256": "89de39b04047dc4ff20f47a70ddbb16b6b9eccb59ed12877bbd7df177d12cb5e"
+    },
+    {
+      "bytes": 53119,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-decomposition-pack.json",
+      "sha256": "78b9fced85ffd1e4577a207662f4171d9996ad6dca8e7c03db43316e3b37ffed"
+    }
+  ],
+  "task_11_8_4b_baseline_and_prior_proof": [
+    {
+      "bytes": 1851,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\blender-worker-config.json",
+      "sha256": "c5a0ba583ecaac661a9bbd442215b39dd59f514f683625cd19492dc2813d2fa0"
+    },
+    {
+      "bytes": 768310,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-camera-comparison-contact-sheet.png",
+      "sha256": "243652bb622a4e550299de9f62f07c8704eb2e2a6423ee8ed5fb0a5e21d53443"
+    },
+    {
+      "bytes": 53119,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\canon-decomposition-pack.json",
+      "sha256": "78b9fced85ffd1e4577a207662f4171d9996ad6dca8e7c03db43316e3b37ffed"
+    },
+    {
+      "bytes": 232468,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-empty-room-shell.glb",
+      "sha256": "0c7cf23a08ee36d2cd2ceb83a7bb3c04d91504dc39bcd53645698cd271633d09"
+    },
+    {
+      "bytes": 239800,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-recliner.glb",
+      "sha256": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e"
+    },
+    {
+      "bytes": 589556,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-shell-recliner-canon-camera.png",
+      "sha256": "ccd86ca75a8785972f1acc7ea3f6685477a8afaa8f62a72674894be4b01a4f2e"
+    },
+    {
+      "bytes": 169845,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\deterministic-shell-recliner-proof.blend",
+      "sha256": "c69fa2d8cb3de49d9ff73203b9ffc75aab4b48795a277e294b14c923fe019ca5"
+    },
+    {
+      "bytes": 1705,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\local-vision-screen.json",
+      "sha256": "5d7c4aa9fe8a8df1311fb21c9222b6676703f7def05c2479c45f28f029da73d0"
+    },
+    {
+      "bytes": 22942,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\proof-evidence.json",
+      "sha256": "a4df64c85b78ee31deb32e542d612c3089bc4129abdc8e29186a3f3c0ae8b75b"
+    },
+    {
+      "bytes": 281670,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-front.png",
+      "sha256": "b11434a4512c515b919f27122f36ebef1ac4ffb3c5c42f6f35928abde2d5b592"
+    },
+    {
+      "bytes": 277791,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-left.png",
+      "sha256": "6e88a48f830d6b540bb23d913ef038cdbf8a6f27c854b5654cb1f24df7ef14b3"
+    },
+    {
+      "bytes": 694382,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-neutral-multi-angle-sheet.png",
+      "sha256": "6d755b1555ac8c95bdc362f0895c95d118268805e9c525e582cb63ff5525aaf2"
+    },
+    {
+      "bytes": 265408,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-rear.png",
+      "sha256": "f4d3e212ef4e8506e51a11906e171f21233f356662dd7dbc89ab121d42871062"
+    },
+    {
+      "bytes": 269853,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\recliner-right.png",
+      "sha256": "a517e6340594ed3fb9e9edc1c4a9f05fbd5d75ec095c5135df12dbbc128a541d"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\cream.png",
+      "sha256": "f8eb0de7bac00d008bcb91adfd8da8ca084b77b1a75ce67e952bdde39ce30b34"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\dark_base.png",
+      "sha256": "51f1c80cfbce601c87b52f9791b4853cd160214f54bcf8e0caf4ce1a18164a55"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\floor.png",
+      "sha256": "b9bb4583893bf401cadd8d277f8c8d931370b4fdc9cef31c1e28e74df508e597"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\leather.png",
+      "sha256": "d9b586cf9b857ae6965e4b6af9b7fa6d37ce4e5d80dce5a077ff35768b60047d"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\leather_edge.png",
+      "sha256": "3dd2b0cce135c5beb0801fe008b48f3f0932ddd5f86c609553464b1af3c8e537"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\trim.png",
+      "sha256": "743bab46ab59c8448bbdd1388136d595785183148833a8b8e1b6f8eb818529c5"
+    },
+    {
+      "bytes": 148,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\textures\\wood.png",
+      "sha256": "ed6ac37fb4ad89525a568507e6932bac5309c83a254a531a3d784bccc5459de8"
+    }
+  ],
+  "unrelated_hooks": [
+    {
+      "bytes": 821,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\auto-save-commit.json",
+      "sha256": "b62d3f29a0700ae19ba68a2b8c654be185485a0bff835e53ad3ecf6f05de6d1d"
+    },
+    {
+      "bytes": 779,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\auto-save-commit.kiro.hook",
+      "sha256": "313f0c46602f3d749abba45a42bc66618f38e26466b896c2dc2e285ba31c2129"
+    },
+    {
+      "bytes": 420,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\continue-active-spec.kiro.hook",
+      "sha256": "214dc93128190609689857058293beb2d866284cb21357d142b06e76b8f8b8da"
+    },
+    {
+      "bytes": 558,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\kirograph-compress-hint.json",
+      "sha256": "d78da2aaf4e78b5b9812b7132beeea6466ba4edc0b03c588135304bf38a0e8ab"
+    },
+    {
+      "bytes": 575,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\kirograph-mem-capture.json",
+      "sha256": "4771f02874f8d2277887123f6a2a083d8ef357899ecdb8dff3a873120d716f9e"
+    },
+    {
+      "bytes": 243,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\kirograph-sync-if-dirty.json",
+      "sha256": "fb558bbf6ae0c4acd9af41f50cab0bbb5ad3f444045b353ea41efbff38e54816"
+    },
+    {
+      "bytes": 259,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\kirograph-watchmen.json",
+      "sha256": "8ec586ff4808349dcf06a7a93cd1566c79dd795f389540b475b661709228194b"
+    },
+    {
+      "bytes": 644,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\kirograph-wiki-ingest.json",
+      "sha256": "6baceae192b74d5e5757587a90b84a215b56df44b7f692df0f0e0762e426f2d7"
+    },
+    {
+      "bytes": 238,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\kirograph-wiki-lint.json",
+      "sha256": "92c3de0f4652f3793374665c3d1a33b21cd977a1f9dd52eceb75942b0f598471"
+    },
+    {
+      "bytes": 1462,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\ratchet-keepalive.kiro.hook",
+      "sha256": "4fd6415bf61ab148c7a3126c6dffa5a8ff7cf9b26418e50ca7cad90c9c189147"
+    },
+    {
+      "bytes": 1102,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\ratchet-keepalive.kiro.hook.bak-2026-07-29-pre-disable",
+      "sha256": "6a4f46b0db29cdbdc3df02addae8b2ff817166b762bb471a90738bc80b69da74"
+    },
+    {
+      "bytes": 1046,
+      "exists": true,
+      "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\hooks\\world-test-kit-run.kiro.hook",
+      "sha256": "b71ecc3f8df78edc5ec219fc309cc93baf1ec0f519a11fd0e5a15aa5ff9a5a44"
+    }
+  ]
+}

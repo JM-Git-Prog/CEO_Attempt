@@ -1,0 +1,148 @@
+{
+  "diagnostic_id": "task-1-bug-condition-exploration-74fba659-f84f-409a-b87e-9327f458a5c7",
+  "expected_test_outcome": "FAIL",
+  "first_exact_failure": {
+    "detail": "verify_immutable_inputs returned 9 verified bindings, but EMPTY_TWIN_PATH C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-02-twin_00002_.png is absent from EXPECTED_HASHES",
+    "empty_twin_sha256": "2f67a5f3d3b44a4fb1eacf1ada5e57d4fbf401662358b01ccf087c4a83a59103",
+    "exit_code": 0,
+    "gate": "exact_reference_config_hashes",
+    "locked_order": 1,
+    "snapshot_sha256": "af584af135eb3eb6cbb5f5dd135bd606b422be7141cbe76dc1a240c26d3bfbe9",
+    "tool": "tools/canon_decomposition_upbge_proof.py::verify_immutable_inputs",
+    "verdict": "FAIL_MISSING_EMPTY_TWIN_EXPECTED_HASH_BINDING",
+    "verdict_payload_sha256": "c4bf1e08bc8395fb0fb73ab7b595c2e7233814d10b63a35acba2be1c586a0cfa"
+  },
+  "preservation_snapshot": {
+    "path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4c-golden-room-convergence\\task-1-bug-condition-exploration-74fba659-f84f-409a-b87e-9327f458a5c7\\preservation-snapshot.json",
+    "sha256": "af584af135eb3eb6cbb5f5dd135bd606b422be7141cbe76dc1a240c26d3bfbe9"
+  },
+  "result": {
+    "all_hard_gates_pass": false,
+    "authority_bindings_valid": false,
+    "complete_inventory_exact": false,
+    "dual_replay_semantic_hashes_equal": false,
+    "first_failure": {
+      "detail": "verify_immutable_inputs returned 9 verified bindings, but EMPTY_TWIN_PATH C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-02-twin_00002_.png is absent from EXPECTED_HASHES",
+      "empty_twin_sha256": "2f67a5f3d3b44a4fb1eacf1ada5e57d4fbf401662358b01ccf087c4a83a59103",
+      "exit_code": 0,
+      "gate": "exact_reference_config_hashes",
+      "locked_order": 1,
+      "snapshot_sha256": "af584af135eb3eb6cbb5f5dd135bd606b422be7141cbe76dc1a240c26d3bfbe9",
+      "tool": "tools/canon_decomposition_upbge_proof.py::verify_immutable_inputs",
+      "verdict": "FAIL_MISSING_EMPTY_TWIN_EXPECTED_HASH_BINDING",
+      "verdict_payload_sha256": "c4bf1e08bc8395fb0fb73ab7b595c2e7233814d10b63a35acba2be1c586a0cfa"
+    },
+    "human_approval_binds_every_required_hash": false,
+    "iteration_id_is_fresh": false,
+    "kirograph_counts": {
+      "attempt": 0,
+      "problem": 0,
+      "solution": 0
+    },
+    "known_counterexamples": [
+      "current_sparse_proof",
+      "failed_recliner_48f2e5c6",
+      "missing_empty_twin_expected_hash",
+      "review_only_imageops_fit",
+      "incomplete_inventory_and_world_bindings",
+      "absent_calibrated_learned_perceptual_scoring"
+    ],
+    "percentage_claim": null,
+    "primary_pass": false,
+    "prior_bytes_unchanged": true,
+    "proof_observations": {
+      "bounded_existing_validator": {
+        "candidate_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+        "evidence_path": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\.kiro\\specs\\unified-world-pipeline\\evidence\\task-11.8.4b-canon-decomposition-a8c9e119-7b3a-48b1-9d40-67566733fcb5\\proof-evidence.json",
+        "evidence_sha256": "a4df64c85b78ee31deb32e542d612c3089bc4129abdc8e29186a3f3c0ae8b75b",
+        "human_gate": "AWAITING_EXPLICIT_HUMAN_REVIEW",
+        "pack_checks": [
+          {
+            "check": "schema",
+            "pass": true
+          },
+          {
+            "check": "complete_visible_inventory",
+            "pass": true
+          },
+          {
+            "check": "item_required_fields",
+            "pass": true
+          },
+          {
+            "check": "stable_unique_uuids",
+            "pass": true
+          },
+          {
+            "check": "hash_bound_alpha_cutouts",
+            "pass": true
+          },
+          {
+            "check": "authority_boundaries",
+            "pass": true
+          }
+        ],
+        "recliner_sha256": "b4a3358f1cec5b5c051301ae5bab136f0e3ce7eaeb5b9ed1f0dd918efff6a39e",
+        "result": "PASS",
+        "review_png_dimensions": {
+          "canon-camera-comparison-contact-sheet.png": [
+            1920,
+            470
+          ],
+          "recliner-neutral-multi-angle-sheet.png": [
+            1024,
+            1130
+          ]
+        },
+        "shell_sha256": "0c7cf23a08ee36d2cd2ceb83a7bb3c04d91504dc39bcd53645698cd271633d09"
+      },
+      "build_evidence_calls_final_validation": false,
+      "build_evidence_calls_strict_compile": false,
+      "calibrated_learned_perceptual_available": false,
+      "combine_contact_sheet_uses_imageops_fit": true,
+      "empty_twin_in_expected_hashes": false,
+      "failed_recliner_fingerprint": "48f2e5c610f0661419a9a2c70ba5bdbe7511ef70cc0c9b830e3faaebd98ce0e6",
+      "learned_perceptual_modules": {
+        "lpips": false,
+        "piq": false,
+        "skimage": false,
+        "torch": false,
+        "torchvision": false
+      },
+      "legacy_build_evidence_result": "AWAITING_EXPLICIT_HUMAN_REVIEW",
+      "main_missing_output_guard": "--output-dir is required",
+      "primary_failed_checks": [
+        "soft_overstuffed_canon_matched_silhouette",
+        "correct_arm_back_cushion_proportions",
+        "integrated_footrest_visual_continuity"
+      ],
+      "primary_verdict": "FAIL_CLOSED_MATERIAL_VISUAL_DEFECTS",
+      "qwen_confidences": [
+        0.95,
+        0.98
+      ],
+      "strict_handler_source_hashes": {
+        "handle_automated_final_validation": "de45c9742176bed18ba4145a5006226a2c3c04c07a1d57a92d8c68ca60a5303e",
+        "handle_compile": "485da043acb4ad76df391555cb48ec75cea529686dd1739c51fb20bdcf4a82e2"
+      }
+    },
+    "proof_origin": "diagnostic_shell_and_recliner_only",
+    "qwen_pass": true,
+    "recliner_v2_pass": false,
+    "render_protocol_hash_matches_calibration": false,
+    "required_uncalibrated_state": "BLOCKED_UNCALIBRATED",
+    "scores": {
+      "G": null,
+      "I": null,
+      "L": null,
+      "M": null,
+      "P": null,
+      "S": null
+    },
+    "staged_or_committed": false,
+    "state": "AWAITING_EXPLICIT_HUMAN_REVIEW",
+    "task_11_8_5": "BLOCKED_NOT_STARTED",
+    "uncalibrated_state_returned": false
+  },
+  "schema": "recliner-canon-visual-refinement-fix.task-1-first-failure.v1"
+}

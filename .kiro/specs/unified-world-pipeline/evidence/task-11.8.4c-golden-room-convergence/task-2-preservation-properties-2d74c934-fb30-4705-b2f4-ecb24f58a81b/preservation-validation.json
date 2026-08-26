@@ -1,0 +1,97 @@
+{
+  "schema": "recliner-canon-visual-refinement-fix.task-2-preservation-validation.v1",
+  "recorded_at_utc": "2026-08-26T12:14:26.0854042Z",
+  "task": "2. Lock observation-first preservation properties on the unfixed revision",
+  "result": "PASS_UNFIXED_REVISION",
+  "scope": "Tests and new append-only Task 2 evidence only; no production, UI, session, qualification, process, service, hook, git-index, staging, commit, cloud, download, or ownership change.",
+  "source_revision": "7e89d697de3b4218f362f6fba0efcd5723d4917f",
+  "git_index": {
+    "tree": "c2c0baf3b589aa8a31f49613c72a7b62880790c4",
+    "staged_name_status": ""
+  },
+  "candidate_tree_fingerprint": "4fc4f1e772d6cb8c5008a90e7306e0354d1484cef6e3910d56c1672c918aa4e6",
+  "task_1_evidence": {
+    "preservation_snapshot": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4c-golden-room-convergence/task-1-bug-condition-exploration-74fba659-f84f-409a-b87e-9327f458a5c7/preservation-snapshot.json",
+      "sha256": "af584af135eb3eb6cbb5f5dd135bd606b422be7141cbe76dc1a240c26d3bfbe9"
+    },
+    "first_failure": {
+      "path": ".kiro/specs/unified-world-pipeline/evidence/task-11.8.4c-golden-room-convergence/task-1-bug-condition-exploration-74fba659-f84f-409a-b87e-9327f458a5c7/first-failure.json",
+      "sha256": "3a8ceed8ca53a64bf10c795c95ac1c2accb3305b18e6388bd4902dedcf3d0857"
+    }
+  },
+  "changed_test_files": {
+    "tests/test_refine_recliner_art_bible.py": "3dac80dd39f43ce7d1975e0652fb202da29c3ce2e60ac4a1b2c91d9ec1f9f70b",
+    "src/unified_pipeline/tests/test_canon_compare.py": "3c0624ab6fcfd92e55786e6cf723ceefbf0bf5783785ddff86f9a1886dcf08a0"
+  },
+  "locked_authorities": {
+    "unified_world_pipeline_tasks_sha256": "a9f1de57f4e52a53fe2f69c38662addd69da9d6df35b366993353c3c3924920b",
+    "selected_manifest_file_sha256": "89de39b04047dc4ff20f47a70ddbb16b6b9eccb59ed12877bbd7df177d12cb5e",
+    "selected_manifest_internal_sha256": "dd0b648fac34c5ddbb490a6e521d25d3522372108303e234a3eb5a95aff3e75c",
+    "task_11_8_4b_fingerprint": "d220ae78b3c8fd327a5aeb6aca523fd0ee5b132429c6947b1d413e89f5d204e9",
+    "failed_task_11_8_4c_fingerprint": "48f2e5c610f0661419a9a2c70ba5bdbe7511ef70cc0c9b830e3faaebd98ce0e6",
+    "recliner_uuid": "3b2cae03-3556-5c1e-a19b-ea3c1e15694c",
+    "task_11_8_4c_unchecked": true,
+    "task_11_8_5": "BLOCKED_NOT_STARTED"
+  },
+  "preservation_checks": {
+    "snapshot_member_bytes_hashes_chronology_verdicts": "PASS",
+    "protected_historical_roots_have_no_additions_deletions_or_mutations": "PASS",
+    "canon_art_bible_exact_empty_twin_contracts_inventory_assets": "PASS",
+    "plan_uuid_inventory_and_built_in_counter": "PASS",
+    "object_isolator_remains_observation_only": "PASS",
+    "common_standalone_asset_gate_order": "PASS",
+    "plan_room_canon_regeneration_calls_absent": "PASS",
+    "placeholder_substitution_absent": "PASS",
+    "ui_version_session_qualification_changes_absent": "PASS",
+    "process_service_owner_hook_changes_by_task_absent": "PASS",
+    "git_index_staging_commit_changes_absent": "PASS",
+    "unrelated_worktree_changes_preserved": "PASS"
+  },
+  "generated_rejection_cases": [
+    "manifest_order",
+    "prior_file_mutation",
+    "prior_file_addition",
+    "prior_file_deletion",
+    "index_change",
+    "staged_change",
+    "task_state_change",
+    "hook_mutation",
+    "ui_worktree_change",
+    "session_worktree_change",
+    "qualification_worktree_change",
+    "process_owner_worktree_change",
+    "service_worktree_change",
+    "commit_change",
+    "plan_revise_call",
+    "room_regeneration_call",
+    "canon_regeneration_call",
+    "placeholder_substitution",
+    "isolator_identity_promotion",
+    "gate_order_change"
+  ],
+  "commands": [
+    {
+      "command": "python -m pytest tests/test_refine_recliner_art_bible.py src/unified_pipeline/tests/test_canon_compare.py -k property_2 -q",
+      "exit_code": 1,
+      "result": "5 passed, 1 failed, 33 deselected",
+      "diagnosis": "Expected orchestrator-owned bugfix workflow transition changed recliner-canon-visual-refinement-fix/tasks.md after Task 1. The authoritative Unified World Pipeline task file remained hash-identical. The preservation property was corrected to lock the latter and continue generating Task 11.8.4c/11.8.5 state mutations."
+    },
+    {
+      "command": "python -m pytest tests/test_refine_recliner_art_bible.py::test_property_2_task_1_snapshot_and_verdicts_are_unchanged_on_unfixed_revision -vv",
+      "exit_code": -1,
+      "result": "Harness invocation timed out before pytest execution because the command timeout was supplied as 180 milliseconds; no files or state changed."
+    },
+    {
+      "command": "python -c \"import tests.test_refine_recliner_art_bible as t; o=t._observed_preservation_state(); print('\\n'.join(t._preservation_violations(o)))\"",
+      "exit_code": 0,
+      "result": "prior_file_drift only for orchestrator-owned recliner-canon-visual-refinement-fix/tasks.md"
+    },
+    {
+      "command": "python -m pytest tests/test_refine_recliner_art_bible.py src/unified_pipeline/tests/test_canon_compare.py -k property_2 -q",
+      "exit_code": 0,
+      "result": "6 passed, 33 deselected"
+    }
+  ],
+  "blocker": null
+}

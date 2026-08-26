@@ -12,6 +12,10 @@ from pathlib import Path
 import pytest
 from hypothesis import given, settings, strategies as st
 
+from src.unified_pipeline.object_manifest import (
+    build_plan_bound_selected_manifest,
+    load_selected_manifest,
+)
 from src.unified_pipeline.canon_compare import (
     ArtifactEvidence,
     ComparisonBinding,
@@ -532,3 +536,147 @@ def test_property_identical_rotation_aware_measurements_are_green(
 
     assert report.verdict is FidelityVerdict.GREEN
     assert report.verify_hash()
+
+
+TASK_2_SELECTED_MANIFEST = (
+    Path(__file__).resolve().parents[3]
+    / "output"
+    / "diag-browser-v8-q-18ee9af4-5673-47d5-a4aa-61c6e416c745"
+    / "artifacts"
+    / "selected_objects.json"
+)
+TASK_2_PLAN_INSTANCE_IDS = (
+    "e307026a-2a6b-47e8-a2a9-42b8dc7904e0",
+    "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-1",
+    "ebd3ce47-a92a-4b8c-a2f4-843cbd24bc53-2",
+    "8c6119a5-f7b9-4eca-a30e-cb039aad9c71",
+    "a4566944-5603-48e2-a0d0-ffc47dc8d225",
+)
+
+
+def _manifest_digest(value: dict) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _plan_manifest_inputs() -> tuple[dict, dict, tuple[str, ...]]:
+    plan_ids = TASK_2_PLAN_INSTANCE_IDS
+    detection_ids = tuple(f"detection-{index}" for index in range(len(plan_ids)))
+    detected = {
+        "canon_sha256": "a" * 64,
+        "document_sha256": "b" * 64,
+        "objects": [
+            {"object_id": detection_id, "name": f"object-{index}"}
+            for index, detection_id in enumerate(detection_ids)
+        ],
+    }
+    picker = {
+        "plan_revision": 4,
+        "canon_sha256": detected["canon_sha256"],
+        "detected_objects_sha256": detected["document_sha256"],
+        "metric_plan_sha256": "c" * 64,
+        "camera_sha256": "d" * 64,
+        "blockout_visibility_sha256": "e" * 64,
+        "fuzzy_matching_used": False,
+        "required_bindings": [{"plan_binding_ids": list(plan_ids)}],
+        "objects": [
+            {
+                "object_id": detection_id,
+                "required": True,
+                "plan_binding_id": plan_id,
+                "manifest_id": plan_id.rsplit("-", 1)[0],
+                "semantic_concept": "counter" if index == 3 else f"object-{index}",
+            }
+            for index, (detection_id, plan_id) in enumerate(zip(detection_ids, plan_ids))
+        ],
+    }
+    picker["document_sha256"] = _manifest_digest(picker)
+    return detected, picker, detection_ids
+
+
+def test_property_2_build_plan_bound_manifest_is_input_order_independent() -> None:
+    """Unit anchor for the existing Plan-bound manifest builder semantics.
+
+    **Validates: Requirements 2.7, 2.8, 2.9, 3.4, 3.5, 3.14**
+    """
+    detected, picker, detection_ids = _plan_manifest_inputs()
+    expected = build_plan_bound_selected_manifest(
+        detected,
+        picker,
+        detection_ids,
+        plan_revision=4,
+        approval_revision=1,
+        approval_evidence_sha256="f" * 64,
+    )
+    reordered = build_plan_bound_selected_manifest(
+        detected,
+        picker,
+        reversed(detection_ids),
+        plan_revision=4,
+        approval_revision=1,
+        approval_evidence_sha256="f" * 64,
+    )
+
+    assert reordered == expected
+    assert tuple(expected["selected_plan_instance_ids"]) == TASK_2_PLAN_INSTANCE_IDS
+    assert tuple(item["plan_instance_id"] for item in expected["objects"]) == TASK_2_PLAN_INSTANCE_IDS
+    assert all(item["observation_authority"] is False for item in expected["objects"])
+    assert expected["detection_role"] == "bounded_segmentation_observation_only"
+
+
+def test_property_2_selected_manifest_preserves_plan_uuid_inventory_and_observation_boundary() -> None:
+    """Unit anchor for stable Plan identity, inventory, and isolator boundaries.
+
+    **Validates: Requirements 2.7, 2.8, 2.9, 3.4, 3.5, 3.7, 3.14, 3.18**
+    """
+    source_hash = hashlib.sha256(TASK_2_SELECTED_MANIFEST.read_bytes()).hexdigest()
+    manifest = load_selected_manifest(TASK_2_SELECTED_MANIFEST)
+
+    assert manifest["manifest_sha256"] == "dd0b648fac34c5ddbb490a6e521d25d3522372108303e234a3eb5a95aff3e75c"
+    assert tuple(manifest["selected_plan_instance_ids"]) == TASK_2_PLAN_INSTANCE_IDS
+    assert tuple(item["plan_instance_id"] for item in manifest["objects"]) == TASK_2_PLAN_INSTANCE_IDS
+    assert manifest["object_count"] == len(TASK_2_PLAN_INSTANCE_IDS) == 5
+    assert manifest["identity_authority"] == "approved_plan_instance_id"
+    assert manifest["detection_role"] == "bounded_segmentation_observation_only"
+    assert manifest["fuzzy_matching_used"] is False
+    assert manifest["list_index_identity_used"] is False
+    assert all(item["observation_authority"] is False for item in manifest["objects"])
+    assert all(
+        item["detection_object_id"] != item["plan_instance_id"]
+        for item in manifest["objects"]
+    )
+    assert "8c6119a5-f7b9-4eca-a30e-cb039aad9c71" in manifest["selected_plan_instance_ids"]
+    assert hashlib.sha256(TASK_2_SELECTED_MANIFEST.read_bytes()).hexdigest() == source_hash
+
+
+@settings(
+    max_examples=12,
+    deadline=None,
+    suppress_health_check=[
+        __import__("hypothesis").HealthCheck.function_scoped_fixture,
+        __import__("hypothesis").HealthCheck.filter_too_much,
+    ],
+)
+@given(order=st.permutations(tuple(range(len(TASK_2_PLAN_INSTANCE_IDS)))).filter(
+    lambda order: tuple(order) != tuple(range(len(TASK_2_PLAN_INSTANCE_IDS)))
+))
+def test_property_2_load_selected_manifest_rejects_generated_plan_order_drift(
+    tmp_path: Path,
+    order: tuple[int, ...],
+) -> None:
+    """Property 2: content-hashed object order cannot drift from Plan order.
+
+    **Validates: Requirements 2.7, 2.8, 2.9, 3.4, 3.5, 3.6, 3.14**
+    """
+    source_bytes = TASK_2_SELECTED_MANIFEST.read_bytes()
+    manifest = json.loads(source_bytes)
+    manifest["objects"] = [manifest["objects"][index] for index in order]
+    unsigned = dict(manifest)
+    unsigned.pop("manifest_sha256")
+    manifest["manifest_sha256"] = _manifest_digest(unsigned)
+    generated = tmp_path / "generated-order-drift.json"
+    generated.write_text(json.dumps(manifest, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="selected Plan identity order or set drifted"):
+        load_selected_manifest(generated)
+    assert TASK_2_SELECTED_MANIFEST.read_bytes() == source_bytes

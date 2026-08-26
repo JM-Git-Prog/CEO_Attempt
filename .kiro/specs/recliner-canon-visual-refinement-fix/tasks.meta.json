@@ -1,0 +1,167 @@
+{
+  "pbtResults": {
+    "1. Characterize the unfixed complete-room bug and preserve its exact first failure": {
+      "status": "passed",
+      "failingExample": "Falsifying example: counterexample='current_sparse_proof'. _expected_behavior returned False. First locked verdict: FAIL_MISSING_EMPTY_TWIN_EXPECTED_HASH_BINDING — verify_immutable_inputs returned 9 verified bindings, but EMPTY_TWIN_PATH C:\\Users\\JohnM\\Artificial Intelligence\\Projects\\Danny Tornado\\renders\\danny-v4-02-twin_00002_.png is absent from EXPECTED_HASHES. The proof origin is diagnostic_shell_and_recliner_only; inventory/authority/replay/hard gates are false; I/G/L/M/P/S are null; calibrated learned-perceptual capability is absent; required BLOCKED_UNCALIBRATED was not returned (legacy state AWAITING_EXPLICIT_HUMAN_REVIEW); qwen passed at 0.95/0.98 while primary adjudication failed.",
+      "lastRunTimestamp": 1787745971264
+    },
+    "2. Lock observation-first preservation properties on the unfixed revision": {
+      "status": "passed",
+      "lastRunTimestamp": 1787746443050
+    }
+  },
+  "executionHistory": {
+    "1. Characterize the unfixed complete-room bug and preserve its exact first failure": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634386
+      },
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744641061
+      },
+      {
+        "executionId": "2934a3f0-7b66-480f-8e90-e5c2fe6c064d",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787745689613
+      },
+      {
+        "executionId": "2934a3f0-7b66-480f-8e90-e5c2fe6c064d",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787746133683
+      }
+    ],
+    "2. Lock observation-first preservation properties on the unfixed revision": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634429
+      },
+      {
+        "executionId": "2934a3f0-7b66-480f-8e90-e5c2fe6c064d",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787746144966
+      },
+      {
+        "executionId": "2934a3f0-7b66-480f-8e90-e5c2fe6c064d",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787746535695
+      }
+    ],
+    "3.1 Lock exact references, authorities, inventory, assets, and toolchain (target: 0.5h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634478
+      },
+      {
+        "executionId": "2934a3f0-7b66-480f-8e90-e5c2fe6c064d",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787746547058
+      },
+      {
+        "executionId": "91be275c-7042-43bc-91e7-fdb957e83700",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787751367742
+      },
+      {
+        "executionId": "4f93ee41-edcf-4695-b829-2ea868bc8e99",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787751412034
+      }
+    ],
+    "3.2 Probe capability and freeze the immutable calibration/render contract (target: 1.25h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634540
+      }
+    ],
+    "3.3 Build the complete fixed-camera 3D assembly, manifests, renders, and masks (target: 1.5h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634585
+      }
+    ],
+    "3.4 Implement deterministic `I/G/L/M/P` scoring, hard gates, and independent recomputation (target: 1.25h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634627
+      }
+    ],
+    "3.5 Add append-only events, atomic checkpoints, KiroGraph outbox, and one-iteration execution (target: 1.0h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634662
+      }
+    ],
+    "3.6 Integrate bounded game-engine, artifact, world-load, render, and dual-replay validation (target: 1.0h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634703
+      }
+    ],
+    "3.7 Generate the hash-bound diagnostic comparison package (target: 0.5h)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634749
+      }
+    ],
+    "3.8 Run one complete bounded MVP invocation and ordered adjudication (target: 0.5h active supervision)": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634799
+      }
+    ],
+    "3.9 Verify the original bug-condition exploration property now passes": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634836
+      }
+    ],
+    "3.10 Verify preservation properties still pass": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634866
+      }
+    ],
+    "3.11 Validate the MVP implementation at its exact candidate-tree fingerprint": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634910
+      }
+    ],
+    "4. Continue durable fresh iterations using the deterministic bottleneck checkpoint": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634951
+      }
+    ],
+    "5. Final clean checkpoint - record status without advancing Unified World Pipeline work": [
+      {
+        "executionId": "b5aae0f6-ced0-4186-9985-75bfefda3590",
+        "chatSessionId": "sess_6461afdb-0ce6-4076-b21e-e39f308c5e2e",
+        "timestamp": 1787744634994
+      }
+    ],
+    "3. Implement the complete Golden Room convergence MVP (6–8 active coding hours)": [
+      {
+        "executionId": "a44690c5-e87a-42dc-b141-50b25fa4abd2",
+        "chatSessionId": "sess_8823e2f1-8bce-40be-9d2e-c78175b48759",
+        "timestamp": 1787753228654
+      }
+    ]
+  }
+}

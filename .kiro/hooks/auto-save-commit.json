@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Auto-save on high context",
+      "description": "When the agent stops (context limit approaching), automatically stage all changes, commit with a WIP message, and push to remote to preserve progress.",
+      "trigger": "Stop",
+      "action": {
+        "type": "agent",
+        "prompt": "Context is high or agent is stopping. Stage all changes with `git add -A`, then commit with a message whose first line honestly summarizes what actually changed in this batch (files/areas and why, e.g. 'wip: ratchet tier-1 mock e2e + signature normalization'); never reuse or hardcode a previous message. Push to the current remote tracking branch. Do this silently without asking for confirmation — the user pre-authorized this."
+      },
+      "enabled": true
+    }
+  ]
+}

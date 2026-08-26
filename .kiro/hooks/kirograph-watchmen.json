@@ -6,7 +6,7 @@
       "trigger": "Stop",
       "action": {
         "type": "command",
-        "command": "kirograph mem watchmen synthesize --quiet 2>&1 || true"
+        "command": "kirograph mem watchmen synthesize --quiet 2>&1 || ver >nul"
       }
     }
   ]
