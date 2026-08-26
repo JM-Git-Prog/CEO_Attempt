@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. Write bug condition exploration test
+- [x] 1. Write bug condition exploration test
   - **Property 1: Bug Condition** - Depth/overlays emitted as real lossless auxiliary channels at generation
   - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -19,7 +19,7 @@
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 2. Write preservation property tests (BEFORE implementing fix)
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
   - **Property 2: Preservation** - Non-controlled-camera, instance-ID, appearance, and RGB-only paths unchanged
   - **IMPORTANT**: Follow observation-first methodology - run the UNFIXED code first, record actual outputs, then assert those outputs
   - **Testing Approach**: Property-based testing is recommended (per design "Preservation Checking") - generate across controlled vs. non-controlled cameras, varied plans/cameras, and varied object configurations; catches edge cases like degenerate cameras, empty masks, and extreme depth ranges
@@ -35,9 +35,9 @@
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 3. Fix for reference-image overlay channel emission (emit depth + instance-ID as real lossless auxiliary channels at generation)
+- [x] 3. Fix for reference-image overlay channel emission (emit depth + instance-ID as real lossless auxiliary channels at generation)
 
-  - [ ] 3.1 Add deterministic controlled-camera depth source
+  - [x] 3.1 Add deterministic controlled-camera depth source
     - In `src/unified_pipeline/blockout_renderer.py`, use the existing `_build_projector` closure (returns `(screen_x, screen_y, depth)` from a CameraContract) as the deterministic controlled-camera z-render source for the aux depth channel
     - Render the depth channel from the approved MetricPlan + CameraContract - this is a controlled-camera z-render, NOT monocular estimation, so the monocular `.npy` path and `FORBIDDEN_DEPTH_AUTHORITIES` remain untouched
     - Bind the rendered depth to `camera_hash` + `plan_revision` for provenance
@@ -45,7 +45,7 @@
     - _Expected_Behavior: expectedBehavior(result) - "depth" IN result.channels via deterministic projection_
     - _Requirements: 2.1, 3.3, 3.4_
 
-  - [ ] 3.2 Add "at-birth" auxiliary-channel emission in the Canon generator
+  - [x] 3.2 Add "at-birth" auxiliary-channel emission in the Canon generator
     - In `src/unified_pipeline/canon_generator.py`, add a new helper `emit_reference_aux_channels(...)`
     - Invoke it from `SceneCanonGenerator.generate` AFTER the visible RGB PNG is retrieved
     - Write a lossless EXR-style multi-channel container beside the PNG (e.g., `canon_v{revision}.aux.exr`) holding depth as float32 `Z` and the instance-ID as a discrete `instance_id` label channel
@@ -55,14 +55,14 @@
     - _Expected_Behavior: expectedBehavior(result) - container_is_lossless_multichannel, overlay_encoding == SEPARATE_LOSSLESS, visible_rgb == original_visible_rgb_
     - _Requirements: 2.1, 2.2, 2.3, 3.6_
 
-  - [ ] 3.3 Extend the SceneCanon model additively
+  - [x] 3.3 Extend the SceneCanon model additively
     - In `src/unified_pipeline/models.py`, add optional fields to `SceneCanon` (e.g., `aux_channel_path`, `depth_channel`, `instance_id_channel`) referencing the container/channels
     - Default the new fields empty so existing `to_dict`/`from_dict` round-trips remain backward-compatible and the visible `image_path` is unchanged
     - _Bug_Condition: isBugCondition(emission) - depth not represented as a real channel today_
     - _Expected_Behavior: expectedBehavior(result) - channels referenced from the model additively_
     - _Requirements: 2.1, 2.2_
 
-  - [ ] 3.4 Add a deterministic direct-read unprojection consumer
+  - [x] 3.4 Add a deterministic direct-read unprojection consumer
     - Provide a new reader that consumes depth + instance-ID directly from the lossless container for deterministic unprojection of each cutout
     - Keep this additive and separate - `mesh_generators.prepare_generator_input` retains its composite-on-white / hidden-RGB-discard behavior for RGB-only encoders
     - Leave `object_isolator.apply_mask_to_image` / `isolate_bound_detection` instance-ID/alpha emission untouched; the aux container mirrors instance-ID as a channel, it does not replace the RGBA emission
@@ -70,7 +70,7 @@
     - _Expected_Behavior: expectedBehavior(result) - deterministicUnprojection(result) == TRUE from direct channel reads_
     - _Requirements: 2.4, 3.1, 3.2, 3.5_
 
-  - [ ] 3.5 Verify bug condition exploration test now passes
+  - [x] 3.5 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - Depth/overlays emitted as real lossless auxiliary channels at generation
     - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
     - The test from task 1 encodes the expected behavior; when it passes it confirms the expected behavior is satisfied
@@ -78,7 +78,7 @@
     - **EXPECTED OUTCOME**: Test PASSES (confirms depth + instance-ID are emitted as real lossless channels, no visible-RGB encoding, survives re-encode, deterministic direct-read unprojection)
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-  - [ ] 3.6 Verify preservation tests still pass
+  - [x] 3.6 Verify preservation tests still pass
     - **Property 2: Preservation** - Non-controlled-camera, instance-ID, appearance, and RGB-only paths unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
     - Run the preservation property tests from step 2
@@ -86,7 +86,7 @@
     - Confirm all tests still pass after the fix (no regressions)
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Ensure the exploration test (Property 1) passes, all preservation tests (Property 2) pass, and any unit/integration tests from the design's Testing Strategy pass
   - Confirm the visible PNG remains byte-identical and no overlay bits are written into visible RGB
   - Ensure all tests pass, ask the user if questions arise

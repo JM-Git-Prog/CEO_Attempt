@@ -387,6 +387,14 @@ class SceneCanon:
     object_verdicts: dict[str, str] = field(default_factory=dict)
     approved: bool = False
     art_bible_hash: str = ""
+    # ─── Auxiliary channel references (Req 2.1, 2.2) ──────────────────────
+    # Path to the lossless EXR-style multi-channel container beside the PNG.
+    # Empty when no controlled-camera aux emission occurred (backward compat).
+    aux_channel_path: str = ""
+    # Name of the depth channel in the aux container (default "Z" when present).
+    depth_channel: str = ""
+    # Name of the instance-ID channel in the aux container.
+    instance_id_channel: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -397,6 +405,9 @@ class SceneCanon:
             "object_verdicts": dict(self.object_verdicts),
             "approved": self.approved,
             "art_bible_hash": self.art_bible_hash,
+            "aux_channel_path": self.aux_channel_path,
+            "depth_channel": self.depth_channel,
+            "instance_id_channel": self.instance_id_channel,
         }
 
     @classmethod
@@ -409,6 +420,9 @@ class SceneCanon:
             object_verdicts=dict(data.get("object_verdicts", {})),
             approved=data.get("approved", False),
             art_bible_hash=data.get("art_bible_hash", ""),
+            aux_channel_path=data.get("aux_channel_path", ""),
+            depth_channel=data.get("depth_channel", ""),
+            instance_id_channel=data.get("instance_id_channel", ""),
         )
 
 
@@ -661,4 +675,42 @@ class QualificationResult:
             stages_failed=tuple(data.get("stages_failed", ())),
             overall_pass=data.get("overall_pass", False),
             diagnostics=dict(data.get("diagnostics", {})),
+        )
+
+
+@dataclass(frozen=True)
+class ControlledCameraDepth:
+    """Deterministic controlled-camera depth render from MetricPlan + CameraContract.
+
+    This is a geometry echo — it carries no spatial authority and does NOT override
+    MetricPlan spatial authority. It provides a per-pixel camera-space z-depth for
+    deterministic unprojection of cutouts when the pipeline fully controls the camera.
+
+    NOT monocular estimation. The monocular .npy path and FORBIDDEN_DEPTH_AUTHORITIES
+    remain untouched.
+
+    Requirements: 2.1, 3.3, 3.4
+    """
+
+    depth_map: Any = None  # np.ndarray float32 (height, width), np.inf = no geometry
+    camera_hash: str = ""
+    plan_revision: int = 1
+    provenance: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "camera_hash": self.camera_hash,
+            "plan_revision": self.plan_revision,
+            "provenance": dict(self.provenance),
+            "depth_map_shape": list(self.depth_map.shape) if self.depth_map is not None else [],
+            "depth_map_dtype": str(self.depth_map.dtype) if self.depth_map is not None else "",
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> ControlledCameraDepth:
+        return cls(
+            depth_map=None,  # depth_map must be loaded separately (binary data)
+            camera_hash=data.get("camera_hash", ""),
+            plan_revision=data.get("plan_revision", 1),
+            provenance=dict(data.get("provenance", {})),
         )

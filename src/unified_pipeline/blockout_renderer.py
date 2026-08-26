@@ -25,6 +25,7 @@ from src.unified_pipeline.camera_contract import CameraContract as CameraContrac
 from src.unified_pipeline.models import (
     BlockoutResult,
     CameraContract,
+    ControlledCameraDepth,
     MetricPlan,
 )
 
@@ -805,6 +806,172 @@ def _build_projector(camera: CameraContract | CameraContractImpl):
         return (sx, sy, depth)
 
     return project
+
+
+# ─── Controlled-Camera Depth Rendering ─────────────────────────────────────────
+
+
+def _scanline_fill_depth(
+    depth_buf: np.ndarray,
+    polygon_2d: list[tuple[float, float]],
+    depths: list[float],
+) -> None:
+    """Rasterize a polygon into the depth buffer with interpolated depth values.
+
+    Uses a scanline approach: for each row that intersects the polygon,
+    find edge intersections, sort them, and fill spans with linearly
+    interpolated depth. Nearest-wins (painter's algorithm is handled by
+    the caller ordering faces back-to-front).
+
+    Args:
+        depth_buf: Float32 array (height, width) to write into.
+        polygon_2d: List of (screen_x, screen_y) for polygon vertices.
+        depths: List of camera-space depth values corresponding to each vertex.
+    """
+    if len(polygon_2d) < 3:
+        return
+
+    height, width = depth_buf.shape
+    n = len(polygon_2d)
+
+    # Compute bounding box
+    ys = [p[1] for p in polygon_2d]
+    y_min = max(0, int(math.floor(min(ys))))
+    y_max = min(height - 1, int(math.ceil(max(ys))))
+
+    for y in range(y_min, y_max + 1):
+        # Find all edge intersections at this scanline
+        intersections: list[tuple[float, float]] = []  # (x, interpolated_depth)
+        for i in range(n):
+            j = (i + 1) % n
+            y0, y1 = polygon_2d[i][1], polygon_2d[j][1]
+            if y0 == y1:
+                continue
+            if not (min(y0, y1) <= y < max(y0, y1)):
+                continue
+            # Linear interpolation parameter along this edge
+            t = (y - y0) / (y1 - y0)
+            x = polygon_2d[i][0] + t * (polygon_2d[j][0] - polygon_2d[i][0])
+            d = depths[i] + t * (depths[j] - depths[i])
+            intersections.append((x, d))
+
+        if len(intersections) < 2:
+            continue
+
+        # Sort by x
+        intersections.sort(key=lambda item: item[0])
+
+        # Fill spans pairwise
+        for k in range(0, len(intersections) - 1, 2):
+            x_start, d_start = intersections[k]
+            x_end, d_end = intersections[k + 1]
+            ix_start = max(0, int(math.ceil(x_start)))
+            ix_end = min(width - 1, int(math.floor(x_end)))
+            if ix_start > ix_end:
+                continue
+            span_width = x_end - x_start
+            for ix in range(ix_start, ix_end + 1):
+                if span_width > 0:
+                    t_span = (ix - x_start) / span_width
+                    d = d_start + t_span * (d_end - d_start)
+                else:
+                    d = d_start
+                # Nearest wins (overwrite — caller sorts back-to-front)
+                depth_buf[y, ix] = d
+
+
+def render_controlled_depth(
+    plan: MetricPlan,
+    camera: CameraContract | CameraContractImpl,
+) -> ControlledCameraDepth:
+    """Render a deterministic controlled-camera depth map from MetricPlan + CameraContract.
+
+    Uses _build_projector to project scene geometry (walls, openings, objects) and
+    rasterizes per-pixel camera-space z-depth into a float32 numpy array. This is a
+    controlled-camera z-render, NOT monocular estimation.
+
+    The result is a geometry echo — it carries no spatial authority and does NOT
+    override MetricPlan spatial authority. It provides depth for deterministic
+    unprojection when the pipeline fully controls the camera.
+
+    Args:
+        plan: Validated MetricPlan with room_dimensions, walls, openings,
+              and object_placements.
+        camera: Immutable CameraContract defining projection parameters.
+
+    Returns:
+        ControlledCameraDepth with depth_map (float32 ndarray, shape=(height, width),
+        np.inf for pixels with no geometry), camera_hash, plan_revision, and provenance.
+
+    Requirements: 2.1, 3.3, 3.4
+    """
+    width = camera.raster_width
+    height = camera.raster_height
+
+    # Initialize depth buffer with infinity (no geometry)
+    depth_buf = np.full((height, width), np.inf, dtype=np.float32)
+
+    # Build projection function
+    project = _build_projector(camera)
+
+    # Collect all scene geometry using the same renderer logic
+    renderer = BlockoutRenderer()
+    wall_meshes = renderer._render_walls(plan)
+    opening_meshes = renderer._render_openings(plan)
+    placeholder_meshes = renderer._render_placeholders(plan)
+
+    # Combine all filled faces (skip ceiling_edge wireframes — they have < 3 verts)
+    all_faces = wall_meshes + opening_meshes + placeholder_meshes
+    filled_faces = [f for f in all_faces if len(f.get("vertices", [])) >= 3]
+
+    # Sort by depth: back-to-front (painter's algorithm) — farthest faces first
+    # so nearer faces overwrite them
+    cam_pos = np.array(camera.position, dtype=np.float64)
+
+    def _face_center_depth(face: Face) -> float:
+        center = np.mean(
+            [np.array(v, dtype=np.float64) for v in face["vertices"]], axis=0
+        )
+        return float(np.linalg.norm(center - cam_pos))
+
+    filled_faces.sort(key=_face_center_depth, reverse=True)
+
+    # Rasterize each face into the depth buffer
+    for face in filled_faces:
+        vertices = face["vertices"]
+        # Project all vertices
+        projected = [project(v) for v in vertices]
+        # Skip if any vertex is behind camera
+        if not all(projected):
+            continue
+        # Extract 2D screen coordinates and depths
+        polygon_2d = [(p[0], p[1]) for p in projected]
+        depths = [p[2] for p in projected]
+        # Scanline fill with interpolated depth
+        _scanline_fill_depth(depth_buf, polygon_2d, depths)
+
+    # Compute provenance
+    camera_hash = ""
+    if hasattr(camera, "compute_hash"):
+        camera_hash = camera.compute_hash()
+    elif hasattr(camera, "camera_hash"):
+        camera_hash = camera.camera_hash
+
+    revision = plan.revisions[-1].revision if plan.revisions else 1
+
+    provenance = {
+        "camera_hash": camera_hash,
+        "plan_revision": revision,
+        "source": "controlled_camera_z_render",
+        "authority": "geometry_echo",  # read-only, does NOT override MetricPlan
+    }
+
+    return ControlledCameraDepth(
+        depth_map=depth_buf,
+        camera_hash=camera_hash,
+        plan_revision=revision,
+        provenance=provenance,
+    )
 
 
 # ─── Background ────────────────────────────────────────────────────────────────

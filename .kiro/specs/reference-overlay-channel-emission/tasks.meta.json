@@ -1,0 +1,175 @@
+{
+  "pbtResults": {
+    "1. Write bug condition exploration test": {
+      "status": "passed",
+      "failingExample": "All 11 tests FAILED on unfixed code (this is the SUCCESS case for exploration tests — failures confirm the bug exists):\n\nCounterexample 1 — No depth channel at birth (test_no_depth_channel_at_birth × 3 cameras):\n  generate() produces only canon_v1.png (RGB) from SaveImage node \"9\". No separate lossless depth channel (canon_v1.aux.exr) exists beside the visible PNG. overlay_encoding = ABSENT.\n\nCounterexample 2 — Depth-in-visible-RGB does not survive re-encode (× 4 JPEG quality levels 95/75/50/25):\n  No lossless auxiliary channel container exists. After JPEG re-encode at any quality level, any smuggled overlay data would be corrupted/destroyed.\n\nCounterexample 3 — Unprojection cannot read depth directly:\n  No lossless aux container exists. Cannot read depth directly for deterministic unprojection. Depth must be re-derived via monocular estimation (non-authoritative) or is simply absent.\n\nCounterexample 4 — Instance-ID present but depth absent:\n  Instance-ID channel (RGBA alpha from SAM3) is present and correct, but depth is NOT emitted as a separate lossless auxiliary channel. Instance-ID correctness does NOT satisfy the depth requirement. isBugCondition still holds.\n\nCounterexample 5 — Property-based test (varied cameras):\n  Falsifying example: CameraContract(position=(0.0, 1.0, 0.0), target=(0.0, 0.0, 0.0), up=(0.0, 1.0, 0.0), vfov=30.0, raster_width=512, raster_height=384). No aux container emitted for ANY controlled-camera configuration.\n\nCounterexample 6 — SceneCanon model structural defect:\n  SceneCanon model lacks 'aux_channel_path' field entirely. The model cannot reference auxiliary channels because the fields don't exist.",
+      "lastRunTimestamp": 1787785861458
+    },
+    "3.5 Verify bug condition exploration test now passes": {
+      "status": "passed",
+      "lastRunTimestamp": 1787788493531
+    }
+  },
+  "executionHistory": {
+    "1. Write bug condition exploration test": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299819
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785308141
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785880840
+      }
+    ],
+    "2. Write preservation property tests (BEFORE implementing fix)": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299849
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785884911
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787786371962
+      }
+    ],
+    "3.1 Add deterministic controlled-camera depth source": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299871
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787786379153
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787786672991
+      }
+    ],
+    "3.2 Add \"at-birth\" auxiliary-channel emission in the Canon generator": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299890
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787786676606
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787787477960
+      }
+    ],
+    "3.3 Extend the SceneCanon model additively": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299913
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787787481545
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787787841653
+      }
+    ],
+    "3.4 Add a deterministic direct-read unprojection consumer": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299939
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787787845390
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788292532
+      }
+    ],
+    "3.5 Verify bug condition exploration test now passes": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299957
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788296579
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788522168
+      }
+    ],
+    "3.6 Verify preservation tests still pass": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299977
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788526040
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788573186
+      }
+    ],
+    "4. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787785299997
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788577608
+      },
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788644910
+      }
+    ],
+    "3. Fix for reference-image overlay channel emission (emit depth + instance-ID as real lossless auxiliary channels at generation)": [
+      {
+        "executionId": "53cefc16-37ba-4131-a7fe-91e7e6cc943a",
+        "chatSessionId": "sess_7a60d5f0-aa53-42ff-a272-85d8740ccebb",
+        "timestamp": 1787788573220
+      }
+    ]
+  }
+}
