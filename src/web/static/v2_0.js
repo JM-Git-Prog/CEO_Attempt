@@ -312,32 +312,9 @@
   function optimizeModel(model) {
     model.traverse((child) => {
       if (child.isMesh) {
-        // Enable frustum culling (Three.js default but explicit for clarity)
+        // Enable frustum culling
         child.frustumCulled = true;
-
-        // Decimate over-dense geometry on the GPU side
-        const geom = child.geometry;
-        if (geom && geom.index) {
-          const triCount = geom.index.count / 3;
-          if (triCount > MAX_TRIANGLES_PER_OBJECT) {
-            // Simplify by keeping only every Nth triangle via index slicing
-            // This is a fast client-side decimation — not as clean as server-side
-            // but prevents the renderer from choking on 500K-face meshes
-            const ratio = MAX_TRIANGLES_PER_OBJECT / triCount;
-            const oldIndex = geom.index.array;
-            const newLen = Math.floor(oldIndex.length * ratio / 3) * 3;
-            const step = Math.ceil(1 / ratio);
-            const newIndex = [];
-            for (let i = 0; i < oldIndex.length && newIndex.length < newLen; i += step * 3) {
-              newIndex.push(oldIndex[i], oldIndex[i + 1], oldIndex[i + 2]);
-            }
-            geom.setIndex(newIndex);
-            geom.computeBoundingSphere();
-            console.log(`Decimated mesh: ${triCount} → ${newIndex.length / 3} tris`);
-          }
-        }
-
-        // Dispose of unused vertex attributes to free GPU memory
+        // Ensure bounding sphere is computed for culling
         if (child.geometry) {
           child.geometry.computeBoundingSphere();
         }
