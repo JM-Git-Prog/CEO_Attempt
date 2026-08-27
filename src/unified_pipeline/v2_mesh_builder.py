@@ -347,29 +347,34 @@ def _decimate_for_browser(glb_path: Path) -> tuple[int, int]:
     try:
         loaded = trimesh.load(str(glb_path), force="scene", process=False)
         if isinstance(loaded, trimesh.Scene):
-            meshes = [g for g in loaded.geometry.values() if isinstance(g, trimesh.Trimesh)]
+            meshes = [(n, g) for n, g in loaded.geometry.items() if isinstance(g, trimesh.Trimesh)]
         elif isinstance(loaded, trimesh.Trimesh):
-            meshes = [loaded]
+            meshes = [("mesh", loaded)]
         else:
             return 0, 0
 
-        total_faces = sum(len(m.faces) for m in meshes)
+        total_faces = sum(len(g.faces) for _, g in meshes)
         if total_faces <= BROWSER_MAX_FACES:
-            total_verts = sum(len(m.vertices) for m in meshes)
+            total_verts = sum(len(g.vertices) for _, g in meshes)
             return total_faces, total_verts
 
-        # Proportional decimation across all sub-meshes
-        ratio = BROWSER_MAX_FACES / total_faces
-        for mesh in meshes:
-            target = max(MIN_FACES, int(len(mesh.faces) * ratio))
-            if len(mesh.faces) > target:
-                mesh = mesh.simplify_quadric_decimation(target)
+        # Proportional reduction: simplify_quadric_decimation takes a ratio (0-1)
+        # where ratio = fraction of faces to REMOVE
+        reduction = 1.0 - (BROWSER_MAX_FACES / total_faces)
+        reduction = max(0.01, min(0.99, reduction))
+
+        for name, geom in meshes:
+            if len(geom.faces) > 200:
+                if isinstance(loaded, trimesh.Scene):
+                    loaded.geometry[name] = geom.simplify_quadric_decimation(reduction)
+                else:
+                    loaded = geom.simplify_quadric_decimation(reduction)
 
         # Re-export
         if isinstance(loaded, trimesh.Scene):
             loaded.export(str(glb_path), file_type="glb")
         else:
-            meshes[0].export(str(glb_path), file_type="glb")
+            loaded.export(str(glb_path), file_type="glb")
 
         # Recount
         reloaded = trimesh.load(str(glb_path), force="scene", process=False)
@@ -390,6 +395,56 @@ def _decimate_for_browser(glb_path: Path) -> tuple[int, int]:
     except Exception as exc:
         logger.warning(f"  V2 decimation failed (keeping original): {exc}")
         return -1, -1  # signal to use original validation counts
+
+
+def _colorize_from_canon(
+    catalog: ObjectCatalog,
+    canon_path: Path,
+    meshes_dir: Path,
+) -> None:
+    """Sample average color from Canon bbox regions and apply to GLB materials."""
+    from PIL import Image
+    import trimesh
+
+    canon_img = Image.open(canon_path).convert("RGB")
+    img_w, img_h = canon_img.size
+
+    for entry in catalog.entries:
+        bbox = entry.bbox_in_best_view
+        x1 = max(0, min(bbox[0], img_w - 1))
+        y1 = max(0, min(bbox[1], img_h - 1))
+        x2 = max(x1 + 1, min(bbox[2], img_w))
+        y2 = max(y1 + 1, min(bbox[3], img_h))
+
+        crop = canon_img.crop((x1, y1, x2, y2))
+        arr = np.array(crop)
+        mask = arr.mean(axis=2) > 30
+        if mask.sum() > 0:
+            avg = arr[mask].mean(axis=0).astype(int)
+        else:
+            avg = arr.mean(axis=(0, 1)).astype(int)
+        r, g, b = int(avg[0]), int(avg[1]), int(avg[2])
+
+        glb_path = meshes_dir / f"{entry.uuid}.glb"
+        if not glb_path.is_file():
+            continue
+
+        try:
+            scene = trimesh.load(str(glb_path), force="scene", process=False)
+            modified = False
+            for geom in scene.geometry.values():
+                if hasattr(geom, "visual") and geom.visual.kind == "texture":
+                    if hasattr(geom.visual, "material"):
+                        geom.visual.material.baseColorFactor = np.array(
+                            [r, g, b, 255], dtype=np.uint8
+                        )
+                        modified = True
+            if modified:
+                scene.export(str(glb_path), file_type="glb")
+        except Exception:
+            pass
+
+    logger.info(f"  V2 colorized {len(catalog.entries)} meshes from Canon")
 
 
 def _validate_mesh(glb_path: Path) -> tuple[bool, int, int]:
@@ -639,6 +694,14 @@ async def build_meshes(
         emit("shell_ready", {
             "glb_url": f"/api/v2/session/{session_dir.name}/artifact/mesh_room_shell",
         })
+
+    # Colorize meshes from Canon photo (Hunyuan3D exports grey-only GLBs)
+    canon_path = session_dir / "artifacts" / "canon.png"
+    if canon_path.is_file():
+        try:
+            _colorize_from_canon(catalog, canon_path, meshes_dir)
+        except Exception as exc:
+            logger.warning(f"  V2 colorization failed: {exc}")
 
     # Save mesh manifest
     manifest = {
