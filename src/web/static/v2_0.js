@@ -519,5 +519,27 @@
 
   // ─── Init ───────────────────────────────────────────────────────────────────
   initScene();
-  startSession();
+
+  // Support restoring a completed session via ?session=<id> URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  const restoreSessionId = urlParams.get("session");
+  if (restoreSessionId) {
+    // Restore mode: skip chat, load the world directly
+    sessionId = restoreSessionId;
+    phase = "complete";
+    chatOverlay.classList.add("hidden");
+    setStatus("Loading scene...");
+    // Load hero canon for compare mode
+    heroCanonUrl = `/api/v2/session/${restoreSessionId}/artifact/hero_canon`;
+    heroImage.src = heroCanonUrl;
+    heroImage.classList.remove("hidden");
+    // Load the scene manifest
+    loadSceneManifest(`/api/v2/session/${restoreSessionId}/scene`).then(() => {
+      setStatus("");
+      showCompareButton();
+      enableFirstPerson();
+    });
+  } else {
+    startSession();
+  }
 })();
