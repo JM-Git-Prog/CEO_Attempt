@@ -230,7 +230,8 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 1.2;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.info.autoReset = false; // manual stats reset for perf monitoring
     sceneContainer.appendChild(renderer.domElement);
 
@@ -411,6 +412,9 @@
                 }
                 if (obj.rotation_y_deg) {
                   model.rotation.y = (obj.rotation_y_deg * Math.PI) / 180;
+                }
+                if (obj.scale) {
+                  model.scale.set(obj.scale.x || 1, obj.scale.y || 1, obj.scale.z || 1);
                 }
                 optimizeModel(model);
                 scene.add(model);
