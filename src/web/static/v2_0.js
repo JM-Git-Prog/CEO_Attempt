@@ -548,8 +548,8 @@
     loadSceneManifest(`/api/v2/session/${restoreSessionId}/scene`).then(() => {
       showCompareButton();
       enableFirstPerson();
-      // Point camera at center of room
-      camera.lookAt(0, 1.0, 0);
+      // Point camera toward room center (PointerLockControls uses camera rotation)
+      camera.rotation.set(0, Math.PI, 0); // face -Z (into the room)
     });
   } else {
     startSession();
