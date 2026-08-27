@@ -9,7 +9,7 @@
         "type": "agent",
         "prompt": "If any task is incomplete, finish it. "
       },
-      "enabled": true
+      "enabled": false
     }
   ]
 }
