@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "V2.0 World Refine Loop",
+      "trigger": "SessionStart",
+      "description": "Automatically identifies and fixes the top visual defect in the latest V2.0 world on each session start — iteratively refining placement, decimation, lighting, and camera until the 3D world closely matches the Canon photo.",
+      "action": {
+        "type": "agent",
+        "prompt": "You are continuing the V2.0 world refinement loop. On each session:\n\n1. Find the latest completed V2.0 session in output/ (has scene.json + mesh_manifest.json).\n2. Identify the top visual defect from this priority list:\n   a. Objects piled at origin (0,0,0) → fix placement using catalog bboxes + depth map\n   b. Meshes too dense for browser (>30K faces) → run server-side decimation\n   c. Missing textures or materials → check GLB integrity\n   d. Lighting too dark or flat → improve scene.json lighting from Canon analysis\n   e. Camera spawn wrong → adjust spawn to match Canon viewpoint\n3. Apply ONE fix (the highest-priority one not yet done).\n4. Rebuild scene.json if placements changed.\n5. Verify the fix by checking the scene manifest serves correctly.\n6. Commit the code change (not the output/ artifacts).\n7. Log what was fixed and what the next priority defect is.\n8. Provide the restore URL: http://127.0.0.1:8000/?v=2.0&session={id}\n\nKey files:\n- src/unified_pipeline/v2_mesh_builder.py (mesh generation + placement)\n- src/unified_pipeline/v2_assembler.py (scene.json assembly)\n- src/web/static/v2_0.js (Three.js renderer)\n- output/{session_id}/artifacts/scene.json (live scene manifest)\n- output/{session_id}/artifacts/mesh_manifest.json (mesh inventory)\n- output/{session_id}/artifacts/catalog.json (object catalog with bboxes)\n\nSession to refine: check output/ for the most recent directory with artifacts/scene.json.\nCurrent known defects: objects at (0,0,0), no server-side decimation applied to existing meshes."
+      }
+    }
+  ]
+}
