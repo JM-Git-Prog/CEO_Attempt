@@ -290,17 +290,22 @@ async def _generate_mesh_trellis(
     output_dir: Path,
     object_uuid: str,
 ) -> Path | None:
-    """Generate a textured GLB through the verified Trellis2 GGUF graph."""
+    """Generate a textured GLB through the verified Trellis2 GGUF one-pass graph.
+
+    Trellis2 produces mesh AND texture together — no separate paint step needed.
+    The ExportMesh_GGUF node emits a STRING output (glb_path) which may not appear
+    in ComfyUI's standard history outputs dict. Fallback: scan the ComfyUI output
+    directory for the file by prefix.
+    """
     uploaded = await client.upload_image(prepared_path)
+    prefix = f"v2-trellis-{object_uuid[:12]}"
     workflow = _build_trellis2_workflow(
         uploaded,
-        steps=18,
-        target_triangles=12000,
+        steps=12,
+        target_triangles=30000,
         seed=random.randint(1, 2**31 - 1),
     )
-    workflow["6"]["inputs"]["filename_prefix"] = (
-        f"v2-trellis-{object_uuid[:12]}"
-    )
+    workflow["6"]["inputs"]["filename_prefix"] = prefix
 
     prompt_id = await client.submit_workflow(
         workflow,
@@ -308,10 +313,37 @@ async def _generate_mesh_trellis(
         timeout_s=TRELLIS_TIMEOUT_S,
     )
     await client.wait_for_completion(prompt_id, timeout_s=TRELLIS_TIMEOUT_S)
-    glb_path = await client.get_output_mesh(
-        prompt_id, output_dir, f"{object_uuid}.glb", node_id="6"
-    )
-    return glb_path if glb_path.is_file() else None
+
+    # Primary: retrieve via standard get_output_mesh (handles file records + bare paths)
+    glb_path = output_dir / f"{object_uuid}.glb"
+    try:
+        result = await client.get_output_mesh(
+            prompt_id, output_dir, f"{object_uuid}.glb", node_id="6"
+        )
+        if result.is_file() and result.stat().st_size > 1000:
+            return result
+    except Exception:
+        pass
+
+    # Fallback: scan ComfyUI output directory for files matching our prefix
+    # (Trellis2ExportMesh_GGUF writes to ComfyUI's output dir directly)
+    comfy_output = Path(r"C:\Users\JohnM\Artificial Intelligence\Projects\Danny Tornado\renders")
+    comfy_output_alt = Path(r"C:\Users\JohnM\ComfyUI-Installs\ComfyUI\ComfyUI\output")
+    for search_dir in [comfy_output, comfy_output_alt]:
+        if not search_dir.exists():
+            continue
+        candidates = sorted(
+            search_dir.rglob(f"{prefix}*.glb"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        if candidates:
+            import shutil
+            shutil.copy2(candidates[0], glb_path)
+            if glb_path.is_file() and glb_path.stat().st_size > 1000:
+                return glb_path
+
+    return None
 
 
 def _generate_placeholder(
@@ -585,22 +617,8 @@ async def build_meshes(
         method = ""
 
         if comfyui_available:
-            # Try Hunyuan3D first.
-            if mesh_lanes["hunyuan3d_v2.1"]:
-                try:
-                    glb_path = await _generate_mesh_hunyuan(
-                        client, prepared_path, meshes_dir, entry.uuid
-                    )
-                    if glb_path and glb_path.is_file():
-                        method = "hunyuan3d_v2.1"
-                except Exception as exc:
-                    logger.warning(f"  V2 Hunyuan3D failed for {entry.name}: {exc}")
-
-            # Fall back to the verified Trellis2 one-pass lane.
-            if (
-                mesh_lanes["trellis2"]
-                and (glb_path is None or not glb_path.is_file())
-            ):
+            # Trellis2 first — produces TEXTURED mesh in one pass (no separate paint needed).
+            if mesh_lanes["trellis2"]:
                 try:
                     glb_path = await _generate_mesh_trellis(
                         client, prepared_path, meshes_dir, entry.uuid
@@ -609,6 +627,20 @@ async def build_meshes(
                         method = "trellis2"
                 except Exception as exc:
                     logger.warning(f"  V2 Trellis2 failed for {entry.name}: {exc}")
+
+            # Hunyuan3D fallback — geometry only (no texture).
+            if (
+                mesh_lanes["hunyuan3d_v2.1"]
+                and (glb_path is None or not glb_path.is_file())
+            ):
+                try:
+                    glb_path = await _generate_mesh_hunyuan(
+                        client, prepared_path, meshes_dir, entry.uuid
+                    )
+                    if glb_path and glb_path.is_file():
+                        method = "hunyuan3d_v2.1"
+                except Exception as exc:
+                    logger.warning(f"  V2 Hunyuan3D failed for {entry.name}: {exc}")
 
         # Fallback to placeholder
         if glb_path is None or not glb_path.is_file():

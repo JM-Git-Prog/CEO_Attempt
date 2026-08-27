@@ -42,23 +42,31 @@ def colorize_glb(glb_path, color_rgb):
     try:
         scene = trimesh.load(str(glb_path), force="scene", process=False)
         modified = False
+        r, g, b = color_rgb
         
         for name, geom in scene.geometry.items():
             if not hasattr(geom, "visual"):
                 continue
             visual = geom.visual
             if visual.kind == "texture" and hasattr(visual, "material"):
-                # Set PBR base color
-                r, g, b = color_rgb
                 visual.material.baseColorFactor = np.array([r, g, b, 255], dtype=np.uint8)
                 modified = True
-            elif visual.kind == "vertex" or visual.kind == "face":
-                # Set all vertex/face colors
-                r, g, b = color_rgb
-                if hasattr(geom.visual, "vertex_colors"):
-                    geom.visual.vertex_colors = np.full(
-                        (len(geom.vertices), 4), [r, g, b, 255], dtype=np.uint8
-                    )
+            elif visual.kind == "vertex":
+                geom.visual.vertex_colors = np.full(
+                    (len(geom.vertices), 4), [r, g, b, 255], dtype=np.uint8
+                )
+                modified = True
+            elif visual.kind == "face":
+                geom.visual.face_colors = np.full(
+                    (len(geom.faces), 4), [r, g, b, 255], dtype=np.uint8
+                )
+                modified = True
+            else:
+                # Force face colors on anything else
+                geom.visual = trimesh.visual.ColorVisuals(
+                    mesh=geom,
+                    face_colors=np.full((len(geom.faces), 4), [r, g, b, 255], dtype=np.uint8)
+                )
                 modified = True
         
         if modified:
@@ -91,13 +99,13 @@ def main():
         if not glb_path.exists():
             continue
         
-        print(f"  {entry['name']:30s} → RGB({color[0]:3d}, {color[1]:3d}, {color[2]:3d})", end="")
+        print(f"  {entry['name']:30s} -> RGB({color[0]:3d}, {color[1]:3d}, {color[2]:3d})", end="")
         
         if colorize_glb(glb_path, color):
-            print(" ✓")
+            print(" OK")
             colorized += 1
         else:
-            print(" ✗")
+            print(" SKIP")
     
     print(f"\nColorized {colorized}/{len(entries)} meshes from Canon photo.")
     print(f"Refresh: http://127.0.0.1:8000/?v=2.0&session={SESSION.name}")
