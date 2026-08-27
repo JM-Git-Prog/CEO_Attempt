@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Monitor Live Trace on Session Start",
+      "trigger": "SessionStart",
+      "description": "Reads the last 50 lines of the server live_trace.log at session start so the agent immediately sees recent errors, API calls, and pipeline state without the user needing to paste anything.",
+      "action": {
+        "type": "command",
+        "command": "powershell -NoProfile -Command \"if (Test-Path 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\live_trace.log') { Get-Content 'C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\output\\live_trace.log' -Tail 50 } else { Write-Output 'No live_trace.log found' }\"",
+        "timeout": 10
+      }
+    }
+  ]
+}
