@@ -92,6 +92,10 @@ app.include_router(_v15_fable_router)
 from src.web.approval_routes import router as _approval_router  # noqa: E402
 app.include_router(_approval_router)
 
+# V2.0 (2026-08-26): "One Prompt, One Room" — multi-view pipeline routes.
+from src.web.v2_routes import create_v2_router  # noqa: E402
+app.include_router(create_v2_router(lambda: OUTPUT_DIR))
+
 
 def _normalize_requested_version(value: str | None, source: str) -> int:
     """Normalize a canonical interface version without silently coercing input."""
@@ -400,6 +404,12 @@ def _snapshot_payload(builder: WorldBuilder) -> dict:
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    # V2.0 (2026-08-26): reimagined multi-view pipeline — "One Prompt, One Room".
+    # Non-numeric version string, standalone page. No V3–V16 behavior changed.
+    if request.query_params.get("v") in ("2.0", "20"):
+        page = Path(__file__).parent / "templates" / "index_v2_0.html"
+        return HTMLResponse(page.read_text(encoding="utf-8"),
+                            headers={"Cache-Control": "no-store"})
     # v15_Fable (2026-07-30): additive early branch — non-numeric version, standalone page.
     # 15_Fable_Dev (2026-07-31): SAME page, dev flag read client-side — TRELLIS 2 one-pass
     # prop lane (The Line v1.1_Dev) instead of blast+paint. Prod lane untouched.

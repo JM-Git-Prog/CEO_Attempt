@@ -1,0 +1,682 @@
+"""V2.0 Mesh Builder — Phase 4 (Build).
+
+For each cataloged object:
+1. Crop the best reference view to the object's bounding box
+2. Run SAM3 text-conditioned segmentation to get a clean RGBA cutout
+3. Feed to Hunyuan3D (fallback Trellis2, fallback placeholder)
+4. Automated quality gate only — no manual approval
+
+Also generates the parametric room shell from the MetricPlan.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import logging
+import random
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Callable
+
+import numpy as np
+
+from src.photo_pipeline.comfyui_client import ComfyUIClient
+from src.unified_pipeline.multi_view_generator import MultiViewResult
+from src.unified_pipeline.vision_catalog import CatalogEntry, ObjectCatalog
+
+logger = logging.getLogger("live_trace")
+
+# Mesh quality thresholds (same as V16)
+MIN_FACES = 100
+MIN_VERTICES = 50
+
+
+@dataclass
+class MeshResult:
+    """Result of generating one object's mesh."""
+
+    uuid: str
+    name: str
+    glb_path: str
+    face_count: int = 0
+    vertex_count: int = 0
+    generation_method: str = ""
+    is_placeholder: bool = False
+    position: tuple[float, float, float] = (0.0, 0.0, 0.0)
+    rotation_deg: float = 0.0
+    dimensions: tuple[float, float, float] = (0.5, 0.5, 0.5)
+
+
+async def _crop_and_isolate(
+    canon_path: Path,
+    bbox: list[int],
+    object_name: str,
+    output_dir: Path,
+    object_uuid: str,
+) -> Path | None:
+    """Crop the object region from the Canon and run SAM3 for RGBA isolation.
+
+    Falls back to a simple alpha-masked crop if SAM3 is unavailable.
+    """
+    from PIL import Image
+
+    if not canon_path.is_file():
+        return None
+
+    # Crop the bounding box region with padding
+    with Image.open(canon_path) as img:
+        img_w, img_h = img.size
+        x1, y1, x2, y2 = bbox
+        # Add 5% padding
+        pad_x = max(4, int((x2 - x1) * 0.05))
+        pad_y = max(4, int((y2 - y1) * 0.05))
+        x1 = max(0, x1 - pad_x)
+        y1 = max(0, y1 - pad_y)
+        x2 = min(img_w, x2 + pad_x)
+        y2 = min(img_h, y2 + pad_y)
+        crop = img.crop((x1, y1, x2, y2)).convert("RGB")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    crop_path = output_dir / "crop.png"
+    crop.save(crop_path, "PNG")
+
+    # Try SAM3 text-conditioned segmentation via ComfyUI
+    rgba_path = output_dir / "object_rgba.png"
+
+    try:
+        client = ComfyUIClient(timeout_s=120, poll_interval_s=0.75)
+        if not await client.health_check():
+            raise RuntimeError("ComfyUI unavailable")
+
+        # Upload the crop
+        uploaded = await client.upload_image(crop_path)
+
+        # Build SAM3 text-conditioned workflow
+        prompt_text = f"the {object_name}"
+        workflow = {
+            "1": {"class_type": "LoadImage", "inputs": {"image": uploaded}},
+            "2": {
+                "class_type": "CheckpointLoaderSimple",
+                "inputs": {"ckpt_name": "sam3.1_multiplex_fp16.safetensors"},
+            },
+            "3": {
+                "class_type": "CLIPTextEncode",
+                "inputs": {"clip": ["2", 1], "text": prompt_text},
+            },
+            "4": {
+                "class_type": "SAM3_Detect",
+                "inputs": {
+                    "model": ["2", 0],
+                    "conditioning": ["3", 0],
+                    "image": ["1", 0],
+                    "threshold": 0.5,
+                    "refine_iterations": 2,
+                    "individual_masks": False,
+                },
+            },
+            "5": {"class_type": "GrowMask", "inputs": {"mask": ["4", 0], "expand": 2, "tapered_corners": True}},
+            "6": {"class_type": "InvertMask", "inputs": {"mask": ["5", 0]}},
+            "7": {
+                "class_type": "JoinImageWithAlpha",
+                "inputs": {"image": ["1", 0], "alpha": ["6", 0]},
+            },
+            "8": {
+                "class_type": "SaveImage",
+                "inputs": {"images": ["7", 0], "filename_prefix": f"v2-obj-{object_uuid[:8]}"},
+            },
+        }
+
+        prompt_id = await client.submit_workflow(workflow, client_id=f"v2-sam-{object_uuid[:16]}")
+        await client.wait_for_completion(prompt_id, timeout_s=120)
+        await client.get_output_image(prompt_id, output_dir, "object_rgba.png", node_id="8")
+
+        if rgba_path.is_file():
+            return rgba_path
+
+    except Exception as exc:
+        logger.warning(f"  V2 SAM3 failed for {object_name}: {exc}")
+
+    # Fallback: create a simple RGBA by putting the crop on white with a soft edge mask
+    try:
+        from PIL import Image, ImageFilter
+
+        with Image.open(crop_path) as crop_img:
+            w, h = crop_img.size
+            # Create a simple elliptical mask
+            mask = Image.new("L", (w, h), 0)
+            from PIL import ImageDraw
+            draw = ImageDraw.Draw(mask)
+            draw.ellipse([w * 0.05, h * 0.05, w * 0.95, h * 0.95], fill=255)
+            mask = mask.filter(ImageFilter.GaussianBlur(radius=max(2, min(w, h) // 20)))
+
+            rgba = crop_img.convert("RGBA")
+            rgba.putalpha(mask)
+            rgba.save(rgba_path, "PNG")
+            return rgba_path
+    except Exception:
+        pass
+
+    return None
+
+
+async def _prepare_mesh_input(rgba_path: Path, output_dir: Path, object_uuid: str) -> Path:
+    """Prepare the RGBA image for mesh generation — composite on white, square, pad."""
+    from PIL import Image
+
+    with Image.open(rgba_path) as source:
+        rgba = source.convert("RGBA")
+        alpha = rgba.getchannel("A")
+        bbox = alpha.getbbox()
+        if bbox is None:
+            # Empty mask — use full image
+            bbox = (0, 0, rgba.width, rgba.height)
+        cropped = rgba.crop(bbox)
+        w, h = cropped.size
+
+    # Pad to square with white background
+    padding = max(4, int(max(w, h) * 0.05))
+    side = max(w, h) + 2 * padding
+    canvas = Image.new("RGB", (side, side), (255, 255, 255))
+    foreground = Image.new("RGB", cropped.size, (255, 255, 255))
+    foreground.paste(cropped.convert("RGB"), mask=cropped.getchannel("A"))
+    canvas.paste(foreground, ((side - w) // 2, (side - h) // 2))
+
+    prepared_path = output_dir / f"{object_uuid}_prepared.png"
+    canvas.save(prepared_path, "PNG")
+    return prepared_path
+
+
+async def _generate_mesh_hunyuan(
+    client: ComfyUIClient,
+    prepared_path: Path,
+    output_dir: Path,
+    object_uuid: str,
+) -> Path | None:
+    """Generate mesh via Hunyuan3D 2.1 through ComfyUI."""
+    from src.unified_pipeline.dream_preview import FLUX_MODEL  # just to verify imports work
+
+    uploaded = await client.upload_image(prepared_path)
+
+    workflow = {
+        "1": {
+            "class_type": "ImageOnlyCheckpointLoader",
+            "inputs": {"ckpt_name": "hunyuan3d-2.1-fp16.safetensors"},
+        },
+        "2": {
+            "class_type": "LoadImage",
+            "inputs": {"image": uploaded},
+        },
+        "3": {
+            "class_type": "ModelSamplingAuraFlow",
+            "inputs": {"model": ["1", 0], "shift": 1.0},
+        },
+        "4": {
+            "class_type": "CLIPVisionEncode",
+            "inputs": {"clip_vision": ["1", 1], "image": ["2", 0]},
+        },
+        "5": {
+            "class_type": "Hunyuan3Dv2Conditioning",
+            "inputs": {
+                "model": ["3", 0],
+                "clip_vision_output": ["4", 0],
+                "width": 512,
+                "height": 512,
+                "batch_size": 1,
+            },
+        },
+        "6": {
+            "class_type": "KSampler",
+            "inputs": {
+                "model": ["5", 0],
+                "positive": ["5", 1],
+                "negative": ["5", 2],
+                "latent_image": ["5", 3],
+                "seed": random.randint(1, 2**32 - 1),
+                "steps": 50,
+                "cfg": 7.0,
+                "sampler_name": "euler",
+                "scheduler": "normal",
+                "denoise": 1.0,
+            },
+        },
+        "7": {
+            "class_type": "VAEDecodeHunyuan3D",
+            "inputs": {
+                "samples": ["6", 0],
+                "vae": ["1", 2],
+                "octree_resolution": 384,
+            },
+        },
+        "8": {
+            "class_type": "VoxelToMesh",
+            "inputs": {"voxel": ["7", 0]},
+        },
+        "9": {
+            "class_type": "SaveGLB",
+            "inputs": {
+                "mesh": ["8", 0],
+                "filename_prefix": f"v2-mesh-{object_uuid[:12]}",
+            },
+        },
+    }
+
+    prompt_id = await client.submit_workflow(
+        workflow, client_id=f"v2-hunyuan-{object_uuid[:16]}", timeout_s=180
+    )
+    await client.wait_for_completion(prompt_id, timeout_s=180)
+
+    # Retrieve the GLB from ComfyUI output
+    glb_path = output_dir / f"{object_uuid}.glb"
+    try:
+        await client.get_output_image(prompt_id, output_dir, f"{object_uuid}.glb", node_id="9")
+        if glb_path.is_file():
+            return glb_path
+    except Exception:
+        # Try alternate retrieval
+        pass
+
+    return None
+
+
+async def _generate_mesh_trellis(
+    client: ComfyUIClient,
+    prepared_path: Path,
+    output_dir: Path,
+    object_uuid: str,
+) -> Path | None:
+    """Generate mesh via Trellis2 through ComfyUI (fallback)."""
+    uploaded = await client.upload_image(prepared_path)
+
+    workflow = {
+        "1": {
+            "class_type": "Trellis2LoadModel_GGUF",
+            "inputs": {"model_name": "TRELLIS-2-4B-Q4_K_M.gguf"},
+        },
+        "2": {
+            "class_type": "LoadImage",
+            "inputs": {"image": uploaded},
+        },
+        "3": {
+            "class_type": "Trellis2PreProcessImage_GGUF",
+            "inputs": {"image": ["2", 0], "model": ["1", 0]},
+        },
+        "4": {
+            "class_type": "Trellis2MeshWithVoxelGenerator_GGUF",
+            "inputs": {
+                "model": ["3", 0],
+                "images": ["3", 1],
+                "steps": 18,
+                "guidance_strength": 7.5,
+                "seed": random.randint(1, 2**32 - 1),
+            },
+        },
+        "5": {
+            "class_type": "Trellis2PostProcessAndUnWrapAndRasterizer_GGUF",
+            "inputs": {
+                "model": ["4", 0],
+                "mesh": ["4", 1],
+                "target_face_num": 12000,
+            },
+        },
+        "6": {
+            "class_type": "ExportGLB",
+            "inputs": {
+                "mesh": ["5", 0],
+                "filename_prefix": f"v2-trellis-{object_uuid[:12]}",
+            },
+        },
+    }
+
+    try:
+        prompt_id = await client.submit_workflow(
+            workflow, client_id=f"v2-trellis-{object_uuid[:16]}", timeout_s=180
+        )
+        await client.wait_for_completion(prompt_id, timeout_s=180)
+
+        glb_path = output_dir / f"{object_uuid}.glb"
+        await client.get_output_image(prompt_id, output_dir, f"{object_uuid}.glb", node_id="6")
+        if glb_path.is_file():
+            return glb_path
+    except Exception as exc:
+        logger.warning(f"  V2 Trellis2 failed: {exc}")
+
+    return None
+
+
+def _generate_placeholder(
+    object_name: str,
+    output_dir: Path,
+    object_uuid: str,
+    dimensions: tuple[float, float, float] = (0.5, 0.5, 0.5),
+) -> Path:
+    """Generate a simple colored box placeholder mesh."""
+    import trimesh
+
+    w, h, d = dimensions
+    box = trimesh.creation.box(extents=[w, h, d])
+    # Give it a neutral color
+    box.visual.face_colors = [180, 160, 140, 255]
+
+    glb_path = output_dir / f"{object_uuid}.glb"
+    box.export(str(glb_path), file_type="glb")
+    return glb_path
+
+
+def _validate_mesh(glb_path: Path) -> tuple[bool, int, int]:
+    """Validate mesh meets minimum quality thresholds.
+
+    Returns (is_valid, face_count, vertex_count).
+    """
+    import trimesh
+
+    try:
+        loaded = trimesh.load(str(glb_path), force="scene", process=False)
+        if isinstance(loaded, trimesh.Scene):
+            meshes = [g for g in loaded.geometry.values() if isinstance(g, trimesh.Trimesh)]
+            if not meshes:
+                return False, 0, 0
+            total_faces = sum(len(m.faces) for m in meshes)
+            total_verts = sum(len(m.vertices) for m in meshes)
+        elif isinstance(loaded, trimesh.Trimesh):
+            total_faces = len(loaded.faces)
+            total_verts = len(loaded.vertices)
+        else:
+            return False, 0, 0
+
+        valid = total_faces >= MIN_FACES and total_verts >= MIN_VERTICES
+        return valid, total_faces, total_verts
+    except Exception:
+        return False, 0, 0
+
+
+def _estimate_dimensions(size_estimate: str, category: str) -> tuple[float, float, float]:
+    """Estimate object dimensions based on size category."""
+    size_map = {
+        "large": {"furniture": (1.2, 0.8, 1.2), "appliance": (0.6, 1.5, 0.6), "architectural": (2.0, 2.4, 0.15)},
+        "medium": {"furniture": (0.6, 0.75, 0.6), "appliance": (0.4, 0.5, 0.4), "lighting": (0.3, 0.4, 0.3)},
+        "small": {"furniture": (0.3, 0.4, 0.3), "appliance": (0.25, 0.3, 0.2), "decor": (0.15, 0.2, 0.15)},
+        "tiny": {"decor": (0.08, 0.1, 0.08), "utensil": (0.05, 0.15, 0.05)},
+    }
+    size_defaults = {"large": (1.0, 1.0, 1.0), "medium": (0.5, 0.6, 0.5), "small": (0.25, 0.3, 0.25), "tiny": (0.1, 0.12, 0.1)}
+
+    category_map = size_map.get(size_estimate, {})
+    return category_map.get(category, size_defaults.get(size_estimate, (0.5, 0.5, 0.5)))
+
+
+async def build_meshes(
+    catalog: ObjectCatalog,
+    views: MultiViewResult,
+    session_dir: Path,
+    *,
+    emit_fn: Callable[[str, dict[str, Any]], None] | None = None,
+) -> list[MeshResult]:
+    """Generate 3D meshes for all cataloged objects (Phase 4: Build).
+
+    For each catalog entry:
+    1. Crop best view to bbox → SAM3 isolation → RGBA
+    2. Hunyuan3D → Trellis2 → placeholder fallback chain
+    3. Automated quality gate (no manual approval)
+
+    Also generates the room shell from MetricPlan.
+
+    Args:
+        catalog: ObjectCatalog from Phase 3.
+        views: MultiViewResult from Phase 2.
+        session_dir: Session output directory.
+        emit_fn: Optional SSE event emitter.
+
+    Returns:
+        List of MeshResult for all generated objects.
+    """
+    def emit(etype: str, data: dict[str, Any]) -> None:
+        if emit_fn:
+            emit_fn(etype, data)
+
+    meshes_dir = session_dir / "artifacts" / "meshes"
+    meshes_dir.mkdir(parents=True, exist_ok=True)
+    objects_dir = session_dir / "artifacts" / "objects"
+    objects_dir.mkdir(parents=True, exist_ok=True)
+
+    results: list[MeshResult] = []
+
+    # Build view index for quick lookup
+    view_map = {v.index: v for v in views.views}
+
+    # Initialize ComfyUI client
+    client = ComfyUIClient(timeout_s=600, poll_interval_s=0.75)
+    comfyui_available = await client.health_check()
+
+    # Get MetricPlan placements for positioning
+    plan_data = {}
+    plan_path = session_dir / "artifacts" / "metric_plan.json"
+    if plan_path.is_file():
+        plan_data = json.loads(plan_path.read_text(encoding="utf-8"))
+    placements = plan_data.get("object_placements", [])
+    room_dims = plan_data.get("room_dimensions", [4.0, 4.0, 2.7])
+
+    # Generate mesh for each cataloged object
+    for idx, entry in enumerate(catalog.entries):
+        logger.info(f"  V2 mesh {idx+1}/{len(catalog.entries)}: {entry.name} (uuid={entry.uuid[:8]})")
+
+        obj_dir = objects_dir / entry.uuid
+        obj_dir.mkdir(parents=True, exist_ok=True)
+
+        # Get the best view for this object
+        best_view = view_map.get(entry.best_view_index)
+        if best_view is None:
+            best_view = views.views[0] if views.views else None
+        if best_view is None:
+            logger.warning(f"  V2 no view available for {entry.name}")
+            continue
+
+        # Step 1: Crop and isolate
+        canon_path = Path(best_view.canon_path)
+        rgba_path = await _crop_and_isolate(
+            canon_path, entry.bbox_in_best_view, entry.name, obj_dir, entry.uuid
+        )
+
+        if rgba_path is None:
+            logger.warning(f"  V2 crop/isolate failed for {entry.name}")
+            # Generate placeholder
+            dims = _estimate_dimensions(entry.size_estimate, entry.category)
+            glb_path = _generate_placeholder(entry.name, meshes_dir, entry.uuid, dims)
+            results.append(MeshResult(
+                uuid=entry.uuid, name=entry.name, glb_path=str(glb_path),
+                face_count=12, vertex_count=8, generation_method="placeholder",
+                is_placeholder=True, dimensions=dims,
+            ))
+            emit("mesh_ready", {"uuid": entry.uuid, "name": entry.name, "face_count": 12, "method": "placeholder",
+                                "glb_url": f"/api/v2/session/{session_dir.name}/artifact/mesh_{entry.uuid}"})
+            continue
+
+        # Step 2: Prepare for mesh generation
+        prepared_path = await _prepare_mesh_input(rgba_path, obj_dir, entry.uuid)
+
+        # Step 3: Mesh generation with fallback chain
+        glb_path: Path | None = None
+        method = ""
+
+        if comfyui_available:
+            # Try Hunyuan3D first
+            try:
+                glb_path = await _generate_mesh_hunyuan(client, prepared_path, meshes_dir, entry.uuid)
+                if glb_path and glb_path.is_file():
+                    method = "hunyuan3d_v2.1"
+            except Exception as exc:
+                logger.warning(f"  V2 Hunyuan3D failed for {entry.name}: {exc}")
+
+            # Fallback to Trellis2
+            if glb_path is None or not glb_path.is_file():
+                try:
+                    glb_path = await _generate_mesh_trellis(client, prepared_path, meshes_dir, entry.uuid)
+                    if glb_path and glb_path.is_file():
+                        method = "trellis2"
+                except Exception as exc:
+                    logger.warning(f"  V2 Trellis2 failed for {entry.name}: {exc}")
+
+        # Fallback to placeholder
+        if glb_path is None or not glb_path.is_file():
+            dims = _estimate_dimensions(entry.size_estimate, entry.category)
+            glb_path = _generate_placeholder(entry.name, meshes_dir, entry.uuid, dims)
+            method = "placeholder"
+
+        # Step 4: Validate
+        is_valid, face_count, vertex_count = _validate_mesh(glb_path)
+        if not is_valid and method != "placeholder":
+            logger.warning(f"  V2 mesh validation failed for {entry.name} ({face_count}f/{vertex_count}v), using placeholder")
+            dims = _estimate_dimensions(entry.size_estimate, entry.category)
+            glb_path = _generate_placeholder(entry.name, meshes_dir, entry.uuid, dims)
+            method = "placeholder"
+            face_count, vertex_count = 12, 8
+
+        # Determine position from MetricPlan placements
+        position = (0.0, 0.0, 0.0)
+        rotation = 0.0
+        dims = _estimate_dimensions(entry.size_estimate, entry.category)
+
+        # Try to match to a placement by name similarity
+        from difflib import SequenceMatcher
+        for placement in placements:
+            if isinstance(placement, dict):
+                p_name = placement.get("name", "")
+                if SequenceMatcher(None, entry.name.lower(), p_name.lower()).ratio() > 0.5:
+                    x = float(placement.get("x", 0)) - room_dims[0] / 2
+                    y = float(placement.get("elevation", 0))
+                    z = float(placement.get("y", 0)) - room_dims[1] / 2
+                    position = (x, y, z)
+                    rotation = float(placement.get("rotation_deg", 0))
+                    dims = (
+                        float(placement.get("width", dims[0])),
+                        float(placement.get("height", dims[1])),
+                        float(placement.get("depth", dims[2])),
+                    )
+                    break
+
+        result = MeshResult(
+            uuid=entry.uuid,
+            name=entry.name,
+            glb_path=str(glb_path),
+            face_count=face_count,
+            vertex_count=vertex_count,
+            generation_method=method,
+            is_placeholder=(method == "placeholder"),
+            position=position,
+            rotation_deg=rotation,
+            dimensions=dims,
+        )
+        results.append(result)
+
+        emit("mesh_ready", {
+            "uuid": entry.uuid,
+            "name": entry.name,
+            "face_count": face_count,
+            "method": method,
+            "glb_url": f"/api/v2/session/{session_dir.name}/artifact/mesh_{entry.uuid}",
+            "position": {"x": position[0], "y": position[1], "z": position[2]},
+            "rotation": rotation,
+        })
+
+        logger.info(f"  V2 mesh done: {entry.name} → {method} ({face_count}f)")
+
+    # Release VRAM after all mesh generation
+    if comfyui_available:
+        try:
+            await client.release_vram()
+        except Exception:
+            pass
+
+    # Generate room shell
+    emit("phase_start", {"phase": "shell", "message": "Building room shell..."})
+    shell_path = _generate_room_shell(room_dims, meshes_dir)
+    if shell_path:
+        emit("shell_ready", {
+            "glb_url": f"/api/v2/session/{session_dir.name}/artifact/mesh_room_shell",
+        })
+
+    # Save mesh manifest
+    manifest = {
+        "meshes": [
+            {
+                "uuid": m.uuid,
+                "name": m.name,
+                "glb_path": m.glb_path,
+                "face_count": m.face_count,
+                "vertex_count": m.vertex_count,
+                "method": m.generation_method,
+                "is_placeholder": m.is_placeholder,
+                "position": list(m.position),
+                "rotation_deg": m.rotation_deg,
+                "dimensions": list(m.dimensions),
+            }
+            for m in results
+        ],
+        "room_shell": str(shell_path) if shell_path else "",
+        "room_dimensions": room_dims,
+        "total_objects": len(results),
+    }
+    (session_dir / "artifacts" / "mesh_manifest.json").write_text(
+        json.dumps(manifest, indent=2), encoding="utf-8"
+    )
+
+    logger.info(f"  V2 mesh builder complete: {len(results)} objects built")
+    return results
+
+
+def _generate_room_shell(
+    room_dimensions: list[float],
+    output_dir: Path,
+) -> Path | None:
+    """Generate a simple parametric room shell (floor + walls) as GLB."""
+    try:
+        import trimesh
+
+        w, d, h = room_dimensions[0], room_dimensions[1], room_dimensions[2]
+
+        # Floor
+        floor = trimesh.creation.box(extents=[w, 0.05, d])
+        floor.apply_translation([0, -0.025, 0])
+        floor.visual.face_colors = [60, 50, 45, 255]
+
+        # Ceiling
+        ceiling = trimesh.creation.box(extents=[w, 0.05, d])
+        ceiling.apply_translation([0, h + 0.025, 0])
+        ceiling.visual.face_colors = [240, 238, 235, 255]
+
+        # Walls (4 sides)
+        # North wall (+Z)
+        north = trimesh.creation.box(extents=[w, h, 0.1])
+        north.apply_translation([0, h / 2, d / 2 + 0.05])
+        north.visual.face_colors = [230, 225, 220, 255]
+
+        # South wall (-Z)
+        south = trimesh.creation.box(extents=[w, h, 0.1])
+        south.apply_translation([0, h / 2, -d / 2 - 0.05])
+        south.visual.face_colors = [230, 225, 220, 255]
+
+        # East wall (+X)
+        east = trimesh.creation.box(extents=[0.1, h, d])
+        east.apply_translation([w / 2 + 0.05, h / 2, 0])
+        east.visual.face_colors = [225, 220, 215, 255]
+
+        # West wall (-X)
+        west = trimesh.creation.box(extents=[0.1, h, d])
+        west.apply_translation([-w / 2 - 0.05, h / 2, 0])
+        west.visual.face_colors = [225, 220, 215, 255]
+
+        # Combine into a scene
+        scene = trimesh.Scene()
+        scene.add_geometry(floor, node_name="floor")
+        scene.add_geometry(ceiling, node_name="ceiling")
+        scene.add_geometry(north, node_name="wall_north")
+        scene.add_geometry(south, node_name="wall_south")
+        scene.add_geometry(east, node_name="wall_east")
+        scene.add_geometry(west, node_name="wall_west")
+
+        shell_path = output_dir / "room_shell.glb"
+        scene.export(str(shell_path), file_type="glb")
+        logger.info(f"  V2 room shell generated: {shell_path}")
+        return shell_path
+
+    except Exception as exc:
+        logger.error(f"  V2 room shell generation failed: {exc}")
+        return None
