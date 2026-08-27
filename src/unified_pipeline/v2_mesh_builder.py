@@ -333,6 +333,65 @@ def _generate_placeholder(
     return glb_path
 
 
+# Target for browser-friendly mesh density (30K faces balances quality vs framerate)
+BROWSER_MAX_FACES = 30000
+
+
+def _decimate_for_browser(glb_path: Path) -> tuple[int, int]:
+    """Decimate a GLB to BROWSER_MAX_FACES if it exceeds the budget.
+
+    Modifies the file in-place. Returns (final_faces, final_verts).
+    """
+    import trimesh
+
+    try:
+        loaded = trimesh.load(str(glb_path), force="scene", process=False)
+        if isinstance(loaded, trimesh.Scene):
+            meshes = [g for g in loaded.geometry.values() if isinstance(g, trimesh.Trimesh)]
+        elif isinstance(loaded, trimesh.Trimesh):
+            meshes = [loaded]
+        else:
+            return 0, 0
+
+        total_faces = sum(len(m.faces) for m in meshes)
+        if total_faces <= BROWSER_MAX_FACES:
+            total_verts = sum(len(m.vertices) for m in meshes)
+            return total_faces, total_verts
+
+        # Proportional decimation across all sub-meshes
+        ratio = BROWSER_MAX_FACES / total_faces
+        for mesh in meshes:
+            target = max(MIN_FACES, int(len(mesh.faces) * ratio))
+            if len(mesh.faces) > target:
+                mesh = mesh.simplify_quadric_decimation(target)
+
+        # Re-export
+        if isinstance(loaded, trimesh.Scene):
+            loaded.export(str(glb_path), file_type="glb")
+        else:
+            meshes[0].export(str(glb_path), file_type="glb")
+
+        # Recount
+        reloaded = trimesh.load(str(glb_path), force="scene", process=False)
+        if isinstance(reloaded, trimesh.Scene):
+            final_meshes = [g for g in reloaded.geometry.values() if isinstance(g, trimesh.Trimesh)]
+            final_faces = sum(len(m.faces) for m in final_meshes)
+            final_verts = sum(len(m.vertices) for m in final_meshes)
+        elif isinstance(reloaded, trimesh.Trimesh):
+            final_faces = len(reloaded.faces)
+            final_verts = len(reloaded.vertices)
+        else:
+            final_faces, final_verts = 0, 0
+
+        logger.info(
+            f"  V2 decimated mesh: {total_faces} → {final_faces} faces for browser perf"
+        )
+        return final_faces, final_verts
+    except Exception as exc:
+        logger.warning(f"  V2 decimation failed (keeping original): {exc}")
+        return -1, -1  # signal to use original validation counts
+
+
 def _validate_mesh(glb_path: Path) -> tuple[bool, int, int]:
     """Validate mesh meets minimum quality thresholds.
 
@@ -510,6 +569,12 @@ async def build_meshes(
             glb_path = _generate_placeholder(entry.name, meshes_dir, entry.uuid, dims)
             method = "placeholder"
             face_count, vertex_count = 12, 8
+
+        # Step 5: Decimate for browser performance (in-place)
+        if method != "placeholder" and face_count > BROWSER_MAX_FACES:
+            dec_faces, dec_verts = _decimate_for_browser(glb_path)
+            if dec_faces > 0:
+                face_count, vertex_count = dec_faces, dec_verts
 
         # Determine position from MetricPlan placements
         position = (0.0, 0.0, 0.0)
