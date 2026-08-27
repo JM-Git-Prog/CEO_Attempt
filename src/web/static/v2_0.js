@@ -414,6 +414,9 @@
 
       // Load any objects not already loaded via SSE (catches race conditions)
       if (manifest.objects) {
+        let loaded = 0;
+        const total = manifest.objects.length;
+        setStatus(`Loading meshes: 0/${total}...`);
         for (const obj of manifest.objects) {
           if (obj.glb_url) {
             // Only load if not already in scene (check by name)
@@ -434,6 +437,15 @@
                 }
                 optimizeModel(model);
                 scene.add(model);
+                loaded++;
+                setStatus(`Loading meshes: ${loaded}/${total}...`);
+                console.log(`Loaded: ${obj.name} (${loaded}/${total})`);
+                if (loaded >= total) setStatus("");
+              }, undefined, (err) => {
+                loaded++;
+                console.error(`FAILED to load ${obj.name}: ${obj.glb_url}`, err);
+                setStatus(`Loading meshes: ${loaded}/${total}...`);
+                if (loaded >= total) setStatus("");
               });
             }
           }
@@ -535,9 +547,10 @@
     heroImage.classList.remove("hidden");
     // Load the scene manifest
     loadSceneManifest(`/api/v2/session/${restoreSessionId}/scene`).then(() => {
-      setStatus("");
       showCompareButton();
       enableFirstPerson();
+      // Point camera at center of room
+      camera.lookAt(0, 1.0, 0);
     });
   } else {
     startSession();
