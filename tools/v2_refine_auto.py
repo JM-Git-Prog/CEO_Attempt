@@ -29,38 +29,149 @@ OLLAMA_URL = "http://127.0.0.1:11434"
 
 
 async def capture_screenshot(session_id: str) -> Path | None:
-    """Capture the 3D walkthrough via headless Playwright."""
-    try:
-        from playwright.async_api import async_playwright
-    except ImportError:
-        print("  [capture] playwright not installed")
-        return None
+    """Render the 3D scene server-side using trimesh for instant capture."""
+    import trimesh
+    import numpy as np
+    from PIL import Image
 
     captures_dir = ARTIFACTS / "refine_captures"
     captures_dir.mkdir(parents=True, exist_ok=True)
-    url = f"{BASE_URL}/?v=2.0&session={session_id}"
-
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page(viewport={"width": 1280, "height": 720})
-        await page.goto(url)
-        # Wait for mesh loading (status bar clears or 30s max)
+    
+    scene_path = ARTIFACTS / "scene.json"
+    if not scene_path.exists():
+        return None
+    
+    scene_data = json.loads(scene_path.read_text())
+    meshes_dir = ARTIFACTS / "meshes"
+    
+    # Build a trimesh scene from all the objects
+    render_scene = trimesh.Scene()
+    
+    # Load room shell
+    shell_path = meshes_dir / "room_shell.glb"
+    if shell_path.exists():
+        shell = trimesh.load(str(shell_path), force="scene", process=False)
+        for name, geom in shell.geometry.items():
+            render_scene.add_geometry(geom, node_name=f"shell_{name}")
+    
+    # Load objects with positions and scales
+    for obj in scene_data.get("objects", []):
+        glb_path = meshes_dir / f"{obj['uuid']}.glb"
+        if not glb_path.exists():
+            continue
         try:
-            await page.wait_for_function(
-                """() => {
-                    const s = document.getElementById('statusBar');
-                    return !s || !s.textContent || s.textContent === '';
-                }""",
-                timeout=30000,
-            )
+            loaded = trimesh.load(str(glb_path), force="scene", process=False)
+            pos = obj.get("position", {})
+            scale = obj.get("scale", {})
+            sx = scale.get("x", 1)
+            sy = scale.get("y", 1) 
+            sz = scale.get("z", 1)
+            
+            transform = np.eye(4)
+            transform[0, 0] = sx
+            transform[1, 1] = sy
+            transform[2, 2] = sz
+            transform[0, 3] = pos.get("x", 0)
+            transform[1, 3] = pos.get("y", 0)
+            transform[2, 3] = pos.get("z", 0)
+            
+            for name, geom in loaded.geometry.items():
+                render_scene.add_geometry(
+                    geom, node_name=f"{obj['uuid'][:8]}_{name}",
+                    transform=transform
+                )
         except Exception:
             pass
-        await page.wait_for_timeout(3000)  # extra render time
+    
+    # Render from camera position
+    cam_pos = scene_data.get("camera", {}).get("position", {"x": 0, "y": 1.62, "z": 3})
+    cam_target = scene_data.get("camera", {}).get("target", {"x": 0, "y": 1, "z": 0})
+    
+    # Use trimesh's built-in scene rendering (saves to PNG)
+    screenshot_path = captures_dir / f"iter_{int(time.time())}.png"
+    
+    try:
+        # Build camera transform manually (look_at equivalent)
+        eye = np.array([cam_pos["x"], cam_pos["y"], cam_pos["z"]])
+        target = np.array([cam_target["x"], cam_target["y"], cam_target["z"]])
+        up = np.array([0.0, 1.0, 0.0])
         
-        screenshot_path = captures_dir / f"iter_{int(time.time())}.png"
-        await page.screenshot(path=str(screenshot_path))
-        await browser.close()
-        return screenshot_path
+        forward = target - eye
+        forward = forward / (np.linalg.norm(forward) + 1e-8)
+        right = np.cross(forward, up)
+        right = right / (np.linalg.norm(right) + 1e-8)
+        new_up = np.cross(right, forward)
+        
+        camera_transform = np.eye(4)
+        camera_transform[:3, 0] = right
+        camera_transform[:3, 1] = new_up
+        camera_transform[:3, 2] = -forward
+        camera_transform[:3, 3] = eye
+        
+        # Render with pyrender
+        import pyrender
+        
+        pr_scene = pyrender.Scene(ambient_light=np.array([0.4, 0.35, 0.3]))
+        
+        # Add geometries
+        for name, geom in render_scene.geometry.items():
+            if hasattr(geom, "faces") and len(geom.faces) > 0:
+                try:
+                    # Get color from material
+                    color = [0.7, 0.5, 0.3, 1.0]  # default warm
+                    if hasattr(geom, "visual") and hasattr(geom.visual, "material"):
+                        bcf = getattr(geom.visual.material, "baseColorFactor", None)
+                        if bcf is not None:
+                            color = [bcf[0]/255, bcf[1]/255, bcf[2]/255, 1.0]
+                    elif hasattr(geom, "visual") and hasattr(geom.visual, "face_colors"):
+                        fc = geom.visual.face_colors[0]
+                        color = [fc[0]/255, fc[1]/255, fc[2]/255, 1.0]
+                    
+                    material = pyrender.MetallicRoughnessMaterial(
+                        baseColorFactor=color,
+                        metallicFactor=0.0,
+                        roughnessFactor=0.8,
+                    )
+                    mesh = pyrender.Mesh.from_trimesh(geom, material=material)
+                    # Get the node transform from the scene graph
+                    node_name = name
+                    node_transform = render_scene.graph.get(node_name)[0] if node_name in render_scene.graph else np.eye(4)
+                    pr_scene.add(mesh, pose=node_transform)
+                except Exception:
+                    pass
+        
+        camera = pyrender.PerspectiveCamera(yfov=np.radians(60))
+        pr_scene.add(camera, pose=camera_transform)
+        
+        light = pyrender.DirectionalLight(color=np.ones(3), intensity=3.0)
+        pr_scene.add(light, pose=camera_transform)
+        
+        renderer = pyrender.OffscreenRenderer(1280, 720)
+        color_img, _ = renderer.render(pr_scene)
+        renderer.delete()
+        
+        img = Image.fromarray(color_img)
+        img.save(str(screenshot_path))
+        print(f"  [capture] Rendered {len(render_scene.geometry)} geometries")
+    except Exception as e:
+        print(f"  [capture] Render failed: {e}")
+        # Fallback: create diagnostic info image for the vision model
+        from PIL import ImageDraw
+        img = Image.new("RGB", (1280, 720), (40, 30, 20))
+        draw = ImageDraw.Draw(img)
+        y = 20
+        draw.text((20, y), f"Scene: {len(scene_data.get('objects', []))} objects", fill=(200, 200, 200))
+        y += 30
+        draw.text((20, y), f"Room: {scene_data['room_dimensions']}", fill=(200, 200, 200))
+        y += 30
+        for obj in scene_data.get("objects", [])[:15]:
+            p = obj.get("position", {})
+            s = obj.get("scale", {})
+            draw.text((20, y), f"  {obj['name'][:25]}: pos=({p.get('x',0):.1f},{p.get('y',0):.1f},{p.get('z',0):.1f}) scale=({s.get('x',1):.1f},{s.get('y',1):.1f},{s.get('z',1):.1f})", fill=(150, 150, 150))
+            y += 20
+        img.save(str(screenshot_path))
+    
+    return screenshot_path
 
 
 def vision_assess(screenshot_path: Path, canon_path: Path, extra_context: str = "") -> str:
