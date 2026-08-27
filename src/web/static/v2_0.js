@@ -261,8 +261,18 @@
       if (phase === "complete") controls.lock();
     });
 
+    // Show instruction overlay
+    const hint = document.createElement("div");
+    hint.id = "controlHint";
+    hint.style.cssText = "position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:90;padding:10px 20px;border-radius:8px;background:rgba(10,23,19,0.85);color:#8edbb8;font-size:13px;letter-spacing:0.03em;pointer-events:none;transition:opacity 1s;";
+    hint.textContent = "Click to look around • WASD to move";
+    document.body.appendChild(hint);
+
+    controls.addEventListener("lock", () => { hint.style.opacity = "0"; });
+    controls.addEventListener("unlock", () => { hint.style.opacity = "1"; });
+
+    // Allow WASD even without pointer lock (free movement)
     document.addEventListener("keydown", (e) => {
-      if (!controls.isLocked) return;
       switch (e.code) {
         case "KeyW": case "ArrowUp": moveForward = true; break;
         case "KeyS": case "ArrowDown": moveBackward = true; break;
@@ -289,7 +299,9 @@
 
     const delta = Math.min(clock.getDelta(), 0.05); // cap to prevent spiral on lag spikes
 
-    if (controls && controls.isLocked) {
+    // Movement works with or without pointer lock
+    const isMoving = moveForward || moveBackward || moveLeft || moveRight;
+    if (isMoving) {
       velocity.x -= velocity.x * 8.0 * delta;
       velocity.z -= velocity.z * 8.0 * delta;
 
@@ -302,6 +314,9 @@
 
       controls.moveRight(-velocity.x * delta);
       controls.moveForward(-velocity.z * delta);
+    } else {
+      velocity.x = 0;
+      velocity.z = 0;
     }
 
     renderer.render(scene, camera);
