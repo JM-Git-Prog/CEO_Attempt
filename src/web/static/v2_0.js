@@ -218,7 +218,7 @@
   // ─── Three.js Scene ─────────────────────────────────────────────────────────
   function initScene() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x050a08);
+    scene.background = new THREE.Color(0x2a1a0a);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.05, 100);
     camera.position.set(0, 1.62, 0);
@@ -236,8 +236,13 @@
     sceneContainer.appendChild(renderer.domElement);
 
     // Ambient light
-    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
+
+    // Hemisphere light (sky blue + warm ground bounce)
+    const hemi = new THREE.HemisphereLight(0xfff8f0, 0x8b6914, 0.4);
+    hemi.position.set(0, 10, 0);
+    scene.add(hemi);
 
     // Point light (simulates room lighting)
     const point = new THREE.PointLight(0xfff5e6, 1.0, 10);
