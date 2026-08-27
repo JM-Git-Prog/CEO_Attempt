@@ -1,0 +1,89 @@
+error: Expecting ',' delimiter: line 36 column 2 (char 2094)
+------------------------------------------------------------
+{
+  "room_purpose": "apartment",
+  "atmosphere": {
+    "mood": "cheesy",
+    "lighting_direction": "string (no specific direction mentioned)",
+    "time_of_day": "string (no specific time mentioned, defaulting to daytime)"
+  },
+  "era": {
+    "period": "1980s",
+    "style_exclusions": ["string (no specific style exclusions mentioned, defaulting to empty array)"]
+  },
+  "palette": {
+    "primary": "string (no specific primary color mentioned, defaulting to a common 80s color like neon pink)",
+    "accent": "string (no specific accent color mentioned, defaulting to a common 80s color like electric blue)",
+    "material_finishes": ["string (no specific material finishes mentioned, defaulting to a common 80s finish like glossy)"
+  ],
+  "object_manifest": [
+    {"name": "sofa", "role": "furniture", "count": 1, "material_hint": "velvet", "is_architectural": false},
+    {"name": "coffee table", "role": "furniture", "count": 1, "material_hint": "wood", "is_architectural": false},
+    {"name": "TV", "role": "electronic", "count": 1, "material_hint": "plastic", "is_architectural": false},
+    {"name": "stereo", "role": "electronic", "count": 1, "material_hint": "wood", "is_architectural": false},
+    {"name": "rug", "role": "textile", "count": 1, "material_hint": "shag", "is_architectural": false}
+  ],
+  "game_concept": {
+    "theme": "new york in the 80s",
+    "mechanics": "string (no specific game mechanics mentioned, defaulting to a common mechanic like exploration)",
+    "scoring": "string (no specific scoring system mentioned, defaulting to a common system like points)",
+    "win_condition": "string (no specific win condition mentioned, defaulting to a common condition like completing a level)"
+  },
+  "real_capabilities": [
+    {"tool_type": "string (no specific tool type mentioned, defaulting to a common tool type like hammer)",
+    "surface_binding": "string (no specific surface binding mentioned, defaulting to a common binding like nails)",
+    "read_only_v1": true}
+  ],
+  "success_criteria": "the user feels like they're living in a 1980s new york apartment"
+} 
+
+  
+
+
+
+
+
+ 
+  
+
+
+
+
+
+ 
+  
+
+
+
+
+
+ 
+  
+
+
+
+
+
+ 
+  
+
+
+
+
+
+ 
+  
+
+
+
+
+
+ 
+  
+
+
+
+
+
+ 
+  
