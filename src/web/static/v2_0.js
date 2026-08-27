@@ -541,10 +541,8 @@
     phase = "complete";
     chatOverlay.classList.add("hidden");
     setStatus("Loading scene...");
-    // Load hero canon for compare mode
+    // Store hero canon URL for compare mode (don't show the overlay)
     heroCanonUrl = `/api/v2/session/${restoreSessionId}/artifact/hero_canon`;
-    heroImage.src = heroCanonUrl;
-    heroImage.classList.remove("hidden");
     // Load the scene manifest
     loadSceneManifest(`/api/v2/session/${restoreSessionId}/scene`).then(() => {
       showCompareButton();
