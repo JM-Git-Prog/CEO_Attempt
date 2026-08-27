@@ -18,9 +18,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
+import httpx
 import numpy as np
 
 from src.photo_pipeline.comfyui_client import ComfyUIClient
+from src.photo_pipeline.stages.hunyuan3d_v2_generator import (
+    _build_hunyuan3d_v2_workflow,
+)
+from src.photo_pipeline.stages.trellis2_generator import _build_trellis2_workflow
 from src.unified_pipeline.multi_view_generator import MultiViewResult
 from src.unified_pipeline.vision_catalog import CatalogEntry, ObjectCatalog
 
@@ -29,6 +34,8 @@ logger = logging.getLogger("live_trace")
 # Mesh quality thresholds (same as V16)
 MIN_FACES = 100
 MIN_VERTICES = 50
+HUNYUAN_TIMEOUT_S = 600
+TRELLIS_TIMEOUT_S = 3600
 
 
 @dataclass
@@ -186,96 +193,95 @@ async def _prepare_mesh_input(rgba_path: Path, output_dir: Path, object_uuid: st
     return prepared_path
 
 
+def _workflow_schema_errors(
+    workflow: dict[str, Any], object_info: dict[str, Any]
+) -> list[str]:
+    """Return missing node types or invalid input names for a live ComfyUI schema."""
+    errors: list[str] = []
+    for node_id, node in workflow.items():
+        class_type = node.get("class_type")
+        schema = object_info.get(class_type)
+        if not isinstance(schema, dict):
+            errors.append(f"node {node_id}: missing class {class_type}")
+            continue
+
+        schema_inputs = schema.get("input", {})
+        declared_inputs: set[str] = set()
+        for input_group in ("required", "optional", "hidden"):
+            group = schema_inputs.get(input_group, {})
+            if isinstance(group, dict):
+                declared_inputs.update(group)
+
+        supplied_inputs = set(node.get("inputs", {}))
+        unknown_inputs = sorted(supplied_inputs - declared_inputs)
+        if unknown_inputs:
+            errors.append(
+                f"node {node_id} ({class_type}): unknown inputs {unknown_inputs}"
+            )
+
+        required = schema_inputs.get("required", {})
+        if isinstance(required, dict):
+            missing_inputs = sorted(set(required) - supplied_inputs)
+            if missing_inputs:
+                errors.append(
+                    f"node {node_id} ({class_type}): missing inputs {missing_inputs}"
+                )
+    return errors
+
+
+async def _preflight_mesh_lanes(client: ComfyUIClient) -> dict[str, bool]:
+    """Validate both mesh workflows against one live ``/object_info`` response."""
+    lanes = {
+        "hunyuan3d_v2.1": _build_hunyuan3d_v2_workflow("preflight.png"),
+        "trellis2": _build_trellis2_workflow("preflight.png"),
+    }
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as http_client:
+            response = await http_client.get(f"{client.base_url}/object_info")
+            response.raise_for_status()
+            object_info = response.json()
+    except (httpx.HTTPError, ValueError) as exc:
+        logger.warning("  V2 mesh schema preflight unavailable: %s", exc)
+        return {lane: True for lane in lanes}
+
+    availability: dict[str, bool] = {}
+    for lane, workflow in lanes.items():
+        errors = _workflow_schema_errors(workflow, object_info)
+        availability[lane] = not errors
+        if errors:
+            logger.warning("  V2 %s preflight failed: %s", lane, "; ".join(errors))
+        else:
+            logger.info("  V2 %s preflight passed", lane)
+    return availability
+
+
 async def _generate_mesh_hunyuan(
     client: ComfyUIClient,
     prepared_path: Path,
     output_dir: Path,
     object_uuid: str,
 ) -> Path | None:
-    """Generate mesh via Hunyuan3D 2.1 through ComfyUI."""
-    from src.unified_pipeline.dream_preview import FLUX_MODEL  # just to verify imports work
-
+    """Generate a real GLB through the verified Hunyuan3D 2.1 graph."""
     uploaded = await client.upload_image(prepared_path)
-
-    workflow = {
-        "1": {
-            "class_type": "ImageOnlyCheckpointLoader",
-            "inputs": {"ckpt_name": "hunyuan3d-2.1-fp16.safetensors"},
-        },
-        "2": {
-            "class_type": "LoadImage",
-            "inputs": {"image": uploaded},
-        },
-        "3": {
-            "class_type": "ModelSamplingAuraFlow",
-            "inputs": {"model": ["1", 0], "shift": 1.0},
-        },
-        "4": {
-            "class_type": "CLIPVisionEncode",
-            "inputs": {"clip_vision": ["1", 1], "image": ["2", 0]},
-        },
-        "5": {
-            "class_type": "Hunyuan3Dv2Conditioning",
-            "inputs": {
-                "model": ["3", 0],
-                "clip_vision_output": ["4", 0],
-                "width": 512,
-                "height": 512,
-                "batch_size": 1,
-            },
-        },
-        "6": {
-            "class_type": "KSampler",
-            "inputs": {
-                "model": ["5", 0],
-                "positive": ["5", 1],
-                "negative": ["5", 2],
-                "latent_image": ["5", 3],
-                "seed": random.randint(1, 2**32 - 1),
-                "steps": 50,
-                "cfg": 7.0,
-                "sampler_name": "euler",
-                "scheduler": "normal",
-                "denoise": 1.0,
-            },
-        },
-        "7": {
-            "class_type": "VAEDecodeHunyuan3D",
-            "inputs": {
-                "samples": ["6", 0],
-                "vae": ["1", 2],
-                "octree_resolution": 384,
-            },
-        },
-        "8": {
-            "class_type": "VoxelToMesh",
-            "inputs": {"voxel": ["7", 0]},
-        },
-        "9": {
-            "class_type": "SaveGLB",
-            "inputs": {
-                "mesh": ["8", 0],
-                "filename_prefix": f"v2-mesh-{object_uuid[:12]}",
-            },
-        },
-    }
+    workflow = _build_hunyuan3d_v2_workflow(
+        uploaded,
+        steps=50,
+        cfg=7.0,
+        octree_resolution=384,
+        seed=random.randint(1, 2**32 - 1),
+    )
+    workflow["9"]["inputs"]["filename_prefix"] = f"v2-mesh-{object_uuid[:12]}"
 
     prompt_id = await client.submit_workflow(
-        workflow, client_id=f"v2-hunyuan-{object_uuid[:16]}", timeout_s=180
+        workflow,
+        client_id=f"v2-hunyuan-{object_uuid[:16]}",
+        timeout_s=HUNYUAN_TIMEOUT_S,
     )
-    await client.wait_for_completion(prompt_id, timeout_s=180)
-
-    # Retrieve the GLB from ComfyUI output
-    glb_path = output_dir / f"{object_uuid}.glb"
-    try:
-        await client.get_output_image(prompt_id, output_dir, f"{object_uuid}.glb", node_id="9")
-        if glb_path.is_file():
-            return glb_path
-    except Exception:
-        # Try alternate retrieval
-        pass
-
-    return None
+    await client.wait_for_completion(prompt_id, timeout_s=HUNYUAN_TIMEOUT_S)
+    glb_path = await client.get_output_mesh(
+        prompt_id, output_dir, f"{object_uuid}.glb", node_id="9"
+    )
+    return glb_path if glb_path.is_file() else None
 
 
 async def _generate_mesh_trellis(
@@ -284,63 +290,28 @@ async def _generate_mesh_trellis(
     output_dir: Path,
     object_uuid: str,
 ) -> Path | None:
-    """Generate mesh via Trellis2 through ComfyUI (fallback)."""
+    """Generate a textured GLB through the verified Trellis2 GGUF graph."""
     uploaded = await client.upload_image(prepared_path)
+    workflow = _build_trellis2_workflow(
+        uploaded,
+        steps=18,
+        target_triangles=12000,
+        seed=random.randint(1, 2**31 - 1),
+    )
+    workflow["6"]["inputs"]["filename_prefix"] = (
+        f"v2-trellis-{object_uuid[:12]}"
+    )
 
-    workflow = {
-        "1": {
-            "class_type": "Trellis2LoadModel_GGUF",
-            "inputs": {"model_name": "TRELLIS-2-4B-Q4_K_M.gguf"},
-        },
-        "2": {
-            "class_type": "LoadImage",
-            "inputs": {"image": uploaded},
-        },
-        "3": {
-            "class_type": "Trellis2PreProcessImage_GGUF",
-            "inputs": {"image": ["2", 0], "model": ["1", 0]},
-        },
-        "4": {
-            "class_type": "Trellis2MeshWithVoxelGenerator_GGUF",
-            "inputs": {
-                "model": ["3", 0],
-                "images": ["3", 1],
-                "steps": 18,
-                "guidance_strength": 7.5,
-                "seed": random.randint(1, 2**32 - 1),
-            },
-        },
-        "5": {
-            "class_type": "Trellis2PostProcessAndUnWrapAndRasterizer_GGUF",
-            "inputs": {
-                "model": ["4", 0],
-                "mesh": ["4", 1],
-                "target_face_num": 12000,
-            },
-        },
-        "6": {
-            "class_type": "ExportGLB",
-            "inputs": {
-                "mesh": ["5", 0],
-                "filename_prefix": f"v2-trellis-{object_uuid[:12]}",
-            },
-        },
-    }
-
-    try:
-        prompt_id = await client.submit_workflow(
-            workflow, client_id=f"v2-trellis-{object_uuid[:16]}", timeout_s=180
-        )
-        await client.wait_for_completion(prompt_id, timeout_s=180)
-
-        glb_path = output_dir / f"{object_uuid}.glb"
-        await client.get_output_image(prompt_id, output_dir, f"{object_uuid}.glb", node_id="6")
-        if glb_path.is_file():
-            return glb_path
-    except Exception as exc:
-        logger.warning(f"  V2 Trellis2 failed: {exc}")
-
-    return None
+    prompt_id = await client.submit_workflow(
+        workflow,
+        client_id=f"v2-trellis-{object_uuid[:16]}",
+        timeout_s=TRELLIS_TIMEOUT_S,
+    )
+    await client.wait_for_completion(prompt_id, timeout_s=TRELLIS_TIMEOUT_S)
+    glb_path = await client.get_output_mesh(
+        prompt_id, output_dir, f"{object_uuid}.glb", node_id="6"
+    )
+    return glb_path if glb_path.is_file() else None
 
 
 def _generate_placeholder(
@@ -442,9 +413,12 @@ async def build_meshes(
     # Build view index for quick lookup
     view_map = {v.index: v for v in views.views}
 
-    # Initialize ComfyUI client
-    client = ComfyUIClient(timeout_s=600, poll_interval_s=0.75)
+    # Initialize ComfyUI client and validate both expensive lanes once.
+    client = ComfyUIClient(timeout_s=HUNYUAN_TIMEOUT_S, poll_interval_s=0.75)
     comfyui_available = await client.health_check()
+    mesh_lanes = {"hunyuan3d_v2.1": False, "trellis2": False}
+    if comfyui_available:
+        mesh_lanes = await _preflight_mesh_lanes(client)
 
     # Get MetricPlan placements for positioning
     plan_data = {}
@@ -497,18 +471,26 @@ async def build_meshes(
         method = ""
 
         if comfyui_available:
-            # Try Hunyuan3D first
-            try:
-                glb_path = await _generate_mesh_hunyuan(client, prepared_path, meshes_dir, entry.uuid)
-                if glb_path and glb_path.is_file():
-                    method = "hunyuan3d_v2.1"
-            except Exception as exc:
-                logger.warning(f"  V2 Hunyuan3D failed for {entry.name}: {exc}")
-
-            # Fallback to Trellis2
-            if glb_path is None or not glb_path.is_file():
+            # Try Hunyuan3D first.
+            if mesh_lanes["hunyuan3d_v2.1"]:
                 try:
-                    glb_path = await _generate_mesh_trellis(client, prepared_path, meshes_dir, entry.uuid)
+                    glb_path = await _generate_mesh_hunyuan(
+                        client, prepared_path, meshes_dir, entry.uuid
+                    )
+                    if glb_path and glb_path.is_file():
+                        method = "hunyuan3d_v2.1"
+                except Exception as exc:
+                    logger.warning(f"  V2 Hunyuan3D failed for {entry.name}: {exc}")
+
+            # Fall back to the verified Trellis2 one-pass lane.
+            if (
+                mesh_lanes["trellis2"]
+                and (glb_path is None or not glb_path.is_file())
+            ):
+                try:
+                    glb_path = await _generate_mesh_trellis(
+                        client, prepared_path, meshes_dir, entry.uuid
+                    )
                     if glb_path and glb_path.is_file():
                         method = "trellis2"
                 except Exception as exc:
