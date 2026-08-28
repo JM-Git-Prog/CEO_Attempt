@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 SESSION_ID = "8df83612-1b81-4428-b711-7fbabc9536bb"
 SESSION = Path(f"output/{SESSION_ID}")
 ARTIFACTS = SESSION / "artifacts"
-MAX_CYCLES = 50
+MAX_CYCLES = 500
 BASE_URL = "http://127.0.0.1:8000"
 OLLAMA_URL = "http://127.0.0.1:11434"
 
