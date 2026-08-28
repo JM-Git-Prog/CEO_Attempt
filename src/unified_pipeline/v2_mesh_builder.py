@@ -617,22 +617,8 @@ async def build_meshes(
         method = ""
 
         if comfyui_available:
-            # Trellis2 first — produces TEXTURED mesh in one pass (no separate paint needed).
-            if mesh_lanes["trellis2"]:
-                try:
-                    glb_path = await _generate_mesh_trellis(
-                        client, prepared_path, meshes_dir, entry.uuid
-                    )
-                    if glb_path and glb_path.is_file():
-                        method = "trellis2"
-                except Exception as exc:
-                    logger.warning(f"  V2 Trellis2 failed for {entry.name}: {exc}")
-
-            # Hunyuan3D fallback — geometry only (no texture).
-            if (
-                mesh_lanes["hunyuan3d_v2.1"]
-                and (glb_path is None or not glb_path.is_file())
-            ):
+            # Try Hunyuan3D first (proven working, geometry-only).
+            if mesh_lanes["hunyuan3d_v2.1"]:
                 try:
                     glb_path = await _generate_mesh_hunyuan(
                         client, prepared_path, meshes_dir, entry.uuid
@@ -641,6 +627,20 @@ async def build_meshes(
                         method = "hunyuan3d_v2.1"
                 except Exception as exc:
                     logger.warning(f"  V2 Hunyuan3D failed for {entry.name}: {exc}")
+
+            # Trellis2 fallback (textured one-pass, but GGUF has torch 2.10 compat issues).
+            if (
+                mesh_lanes["trellis2"]
+                and (glb_path is None or not glb_path.is_file())
+            ):
+                try:
+                    glb_path = await _generate_mesh_trellis(
+                        client, prepared_path, meshes_dir, entry.uuid
+                    )
+                    if glb_path and glb_path.is_file():
+                        method = "trellis2"
+                except Exception as exc:
+                    logger.warning(f"  V2 Trellis2 failed for {entry.name}: {exc}")
 
         # Fallback to placeholder
         if glb_path is None or not glb_path.is_file():
