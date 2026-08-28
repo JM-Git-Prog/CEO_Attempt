@@ -213,10 +213,14 @@ DEFECT: <category>
 DETAIL: <specific actionable fix with numbers>
 """
 
+    # Two-phase model: kimi-k3:cloud for first 50 cycles (smarter), then qwen3-vl:8b (local, fast)
+    CLOUD_CYCLES = 50
+    model_name = "kimi-k3:cloud" if _current_cycle <= CLOUD_CYCLES else "qwen3-vl:8b"
+
     response = httpx.post(
         f"{OLLAMA_URL}/api/chat",
         json={
-            "model": "qwen3-vl:8b",
+            "model": model_name,
             "messages": [
                 {
                     "role": "user",
@@ -282,6 +286,12 @@ def _rebuild_room_shell(dims):
 
 # Track previous assessments to avoid loops
 _previous_fixes = []
+_current_cycle = 0
+
+
+def _update_cycle(c):
+    global _current_cycle
+    _current_cycle = c
 
 
 async def apply_fix(assessment: str) -> bool:
@@ -573,8 +583,9 @@ async def run_loop():
     print()
 
     for cycle in range(1, MAX_CYCLES + 1):
+        _update_cycle(cycle)
         print(f"{'='*60}")
-        print(f"CYCLE {cycle}/{MAX_CYCLES}")
+        print(f"CYCLE {cycle}/{MAX_CYCLES} [model: {'kimi-k3:cloud' if cycle <= 50 else 'qwen3-vl:8b'}]")
         print(f"{'='*60}")
 
         # Step 1: Capture
@@ -585,7 +596,7 @@ async def run_loop():
             continue
 
         # Step 2: Vision assessment (include history + learned successes)
-        print("  [2] Vision assessment via qwen3-vl...")
+        print(f"  [2] Vision assessment via {'kimi-k3:cloud' if cycle <= 50 else 'qwen3-vl:8b'}...")
         history_note = ""
         if _previous_fixes:
             history_note = f"\n\nALREADY TRIED (do not repeat): {', '.join(_previous_fixes[-5:])}"
