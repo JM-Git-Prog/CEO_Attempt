@@ -8,9 +8,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #111; color: #eee; font: 14px/1.4 Inter, system-ui, sans-serif; overflow: hidden; height: 100vh; display: flex; }
 
-    /* Canon backdrop */
-    #canvas-area { flex: 1; position: relative; overflow: hidden; }
-    #canon-bg { width: 100%; height: 100%; object-fit: contain; display: block; }
+    /* Canon backdrop — whitewashed so dragged pieces are visible */
+    #canvas-area { flex: 1; position: relative; overflow: hidden; background: #fff; }
+    #canon-bg { width: 100%; height: 100%; object-fit: contain; display: block; opacity: 0.35; }
     
     /* Placed objects overlay */
     .placed-marker { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: rgba(142, 219, 184, 0.7); border: 2px solid #8edbb8; transform: translate(-50%, -50%); pointer-events: none; font-size: 9px; display: flex; align-items: center; justify-content: center; color: #050a08; font-weight: 700; }
@@ -20,9 +20,13 @@
     #sidebar h2 { font-size: 12px; color: #8edbb8; margin-bottom: 10px; letter-spacing: 0.05em; }
     .obj-card { background: #222; border: 1px solid #333; border-radius: 8px; padding: 6px; margin-bottom: 8px; cursor: grab; transition: border-color 0.2s; }
     .obj-card:hover { border-color: #8edbb8; }
-    .obj-card.placed { opacity: 0.4; border-color: #555; }
-    .obj-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 4px; pointer-events: none; }
-    .obj-card .name { font-size: 11px; font-weight: 600; }
+    .obj-card.placed { opacity: 0.3; border-color: #555; pointer-events: none; }
+    .obj-card img { width: 100%; border-radius: 4px; pointer-events: none; }
+    .obj-card .name { font-size: 10px; font-weight: 600; margin-top: 4px; text-align: center; }
+    
+    /* Placed pieces on the Canon — actual size crops positioned absolutely */
+    .placed-piece { position: absolute; pointer-events: none; border: 2px solid rgba(142, 219, 184, 0.8); border-radius: 2px; box-shadow: 0 0 8px rgba(142, 219, 184, 0.4); }
+    .placed-piece img { width: 100%; height: 100%; display: block; }
 
     /* Drag ghost */
     .dragging { opacity: 0.5; }
@@ -152,19 +156,54 @@
       const px = (e.clientX - rect.left) / rect.width;   // normalized [0,1]
       const py = (e.clientY - rect.top) / rect.height;   // normalized [0,1]
 
-      // Mark as placed
+      // Mark as placed in sidebar
       placed[idx] = { px, py };
       document.querySelectorAll(".obj-card")[idx].classList.add("placed");
 
-      // Show marker
-      const marker = document.createElement("div");
-      marker.className = "placed-marker";
-      marker.style.left = `${e.clientX - canvasArea.getBoundingClientRect().left}px`;
-      marker.style.top = `${e.clientY - canvasArea.getBoundingClientRect().top}px`;
-      marker.textContent = (idx + 1).toString();
-      canvasArea.appendChild(marker);
+      // Place the actual-sized crop on the Canon at the drop point
+      const catEntry = catalogEntries.find(en => en.uuid === obj.uuid);
+      if (catEntry && catEntry.bbox_in_best_view) {
+        const [x1, y1, x2, y2] = catEntry.bbox_in_best_view;
+        const bboxW = x2 - x1;
+        const bboxH = y2 - y1;
+        
+        // Scale bbox dimensions to displayed image size
+        const displayScale = rect.width / canonImg.naturalWidth;
+        const pieceW = bboxW * displayScale;
+        const pieceH = bboxH * displayScale;
+        
+        // Position centered on drop point
+        const pieceLeft = (e.clientX - rect.left) - pieceW / 2;
+        const pieceTop = (e.clientY - rect.top) - pieceH / 2;
+        
+        // Create placed piece with the crop
+        const piece = document.createElement("div");
+        piece.className = "placed-piece";
+        piece.style.left = pieceLeft + "px";
+        piece.style.top = pieceTop + "px";
+        piece.style.width = pieceW + "px";
+        piece.style.height = pieceH + "px";
+        
+        // Crop the Canon at the original bbox
+        const cropCanvas2 = document.createElement("canvas");
+        cropCanvas2.width = bboxW;
+        cropCanvas2.height = bboxH;
+        cropCanvas2.getContext("2d").drawImage(canonImg, x1, y1, bboxW, bboxH, 0, 0, bboxW, bboxH);
+        const img = document.createElement("img");
+        img.src = cropCanvas2.toDataURL();
+        piece.appendChild(img);
+        canvasArea.appendChild(piece);
+      } else {
+        // Fallback marker
+        const marker = document.createElement("div");
+        marker.className = "placed-marker";
+        marker.style.left = `${e.clientX - canvasArea.getBoundingClientRect().left}px`;
+        marker.style.top = `${e.clientY - canvasArea.getBoundingClientRect().top}px`;
+        marker.textContent = (idx + 1).toString();
+        canvasArea.appendChild(marker);
+      }
 
-      // Send to server
+      // Send to server for 3D back-projection
       savePlacement(obj.uuid, px, py, idx);
     }
 
