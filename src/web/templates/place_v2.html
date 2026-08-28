@@ -65,11 +65,15 @@
 
     // Load data
     async function init() {
-      // Load Canon image
+      // Load Canon image and wait for it to be ready
+      const canonReady = new Promise((resolve) => {
+        canonImg.onload = resolve;
+        canonImg.onerror = () => { setStatus("Canon failed to load"); resolve(); };
+      });
       canonImg.src = `/api/v2/session/${SESSION_ID}/artifact/hero_canon`;
-      
-      // Wait for Canon to load so we can crop from it
-      canonImg.onload = () => { canonLoaded = canonImg; };
+      await canonReady;
+      canonLoaded = canonImg;
+      console.log("Canon loaded:", canonImg.naturalWidth, "x", canonImg.naturalHeight);
 
       // Load scene
       try {
@@ -84,14 +88,17 @@
         if (catResp.ok) {
           const catData = await catResp.json();
           catalogEntries = catData.entries || [];
+          console.log("Catalog loaded:", catalogEntries.length, "entries");
         }
-      } catch(e) {}
+      } catch(e) { console.error("Catalog failed", e); }
 
-      // Populate sidebar — use CATALOG entries (real objects with bboxes), not scene.objects
+      // Use CATALOG entries (real objects with bboxes), not scene.objects
       const objects = catalogEntries.length > 0 ? catalogEntries : (scene.objects || []);
       
-      // Wait for Canon to fully load
-      await new Promise(r => { if (canonImg.complete && canonImg.naturalWidth) r(); else canonImg.onload = r; });
+      if (objects.length === 0) {
+        setStatus("No objects found in catalog");
+        return;
+      }
       
       // Create a hidden canvas for cropping
       const cropCanvas = document.createElement("canvas");
