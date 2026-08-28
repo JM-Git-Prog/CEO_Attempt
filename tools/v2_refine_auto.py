@@ -175,42 +175,41 @@ async def capture_screenshot(session_id: str) -> Path | None:
 
 
 def vision_assess(screenshot_path: Path, canon_path: Path, extra_context: str = "") -> str:
-    """Send screenshot + canon to Qwen 2.5VL and get assessment."""
+    """Send screenshot + canon to Qwen 3.6 27B and get assessment."""
     import httpx
 
-    # Read and encode images
     screenshot_b64 = base64.b64encode(screenshot_path.read_bytes()).decode()
     canon_b64 = base64.b64encode(canon_path.read_bytes()).decode()
 
-    prompt = """You are comparing a 3D room reconstruction (the screenshot) against the target Canon photo.
+    prompt = """You are a 3D scene reconstruction quality inspector. Compare these two images:
+Image 1 (first): The TARGET - a Canon photo of a bohemian room.
+Image 2 (second): The CURRENT STATE - a 3D reconstruction rendered via pyrender.
 
-The screenshot shows the current state of a Three.js walkable 3D world.
-The Canon photo shows what the room SHOULD look like.
+The room dimensions are already set. Do NOT suggest changing room dimensions.
 
-Assess the 3D world and identify the SINGLE MOST IMPORTANT defect to fix next.
-Be extremely specific and actionable. Choose from these categories:
+Focus on these aspects IN ORDER of visual impact:
+1. Are objects the right COLOR? (terracotta orange walls, green plants, colorful pouf, warm wood)
+2. Are objects the right SIZE/SCALE relative to each other?
+3. Are objects in the right POSITION? (ottoman center, chandelier hanging, cabinet left, plants on back wall)
+4. Is the LIGHTING warm enough? (the Canon has warm amber tones)
+5. Is anything MISSING that should be visible?
+6. Is anything ROTATED wrong?
 
-- POSITION: "object X should be at (x,y,z) but is at wrong location" 
-- SCALE: "object X is too large/small, should be scale (sx,sy,sz)"
-- COLOR: "objects are grey/wrong color, should show Canon colors"
-- LIGHTING: "scene is too dark/bright, need more/less light"
-- CAMERA: "camera should start at position (x,y,z) looking at (tx,ty,tz)"
-- ROOM: "room dimensions should be (w,d,h) meters"
-- MISSING: "object X from the Canon is not visible in the 3D scene"
-- ROTATION: "object X should be rotated Y degrees"
+Pick the SINGLE most impactful defect that is NOT about room dimensions.
+Be extremely specific with numbers.
 
-If the 3D world looks very close to the Canon, respond with just: PASS
+Categories: SCALE, POSITION, COLOR, LIGHTING, MISSING, ROTATION, CAMERA
 """ + extra_context + """
 
-Respond in this exact format:
+Respond EXACTLY in this format (two lines only):
 DEFECT: <category>
-DETAIL: <specific fix instruction with numbers>
+DETAIL: <specific actionable fix with numbers>
 """
 
     response = httpx.post(
         f"{OLLAMA_URL}/api/chat",
         json={
-            "model": "qwen2.5vl:7b",
+            "model": "qwen3-vl:8b",
             "messages": [
                 {
                     "role": "user",
@@ -220,7 +219,7 @@ DETAIL: <specific fix instruction with numbers>
             ],
             "stream": False,
         },
-        timeout=120.0,
+        timeout=180.0,
     )
 
     if response.status_code != 200:
