@@ -29,7 +29,7 @@ OLLAMA_URL = "http://127.0.0.1:11434"
 
 
 async def capture_screenshot(session_id: str) -> Path | None:
-    """Render the 3D scene server-side using trimesh for instant capture."""
+    """Render the 3D scene and create a side-by-side Compare image (Canon | 3D)."""
     import trimesh
     import numpy as np
     from PIL import Image
@@ -38,7 +38,8 @@ async def capture_screenshot(session_id: str) -> Path | None:
     captures_dir.mkdir(parents=True, exist_ok=True)
     
     scene_path = ARTIFACTS / "scene.json"
-    if not scene_path.exists():
+    canon_path = ARTIFACTS / "canon.png"
+    if not scene_path.exists() or not canon_path.exists():
         return None
     
     scene_data = json.loads(scene_path.read_text())
@@ -58,7 +59,11 @@ async def capture_screenshot(session_id: str) -> Path | None:
     for obj in scene_data.get("objects", []):
         glb_path = meshes_dir / f"{obj['uuid']}.glb"
         if not glb_path.exists():
-            continue
+            # Try gen_ prefix for generated objects
+            alt_name = obj.get("uuid", "").replace("gen-", "gen_") + ".glb"
+            glb_path = meshes_dir / alt_name
+            if not glb_path.exists():
+                continue
         try:
             loaded = trimesh.load(str(glb_path), force="scene", process=False)
             pos = obj.get("position", {})
@@ -83,15 +88,17 @@ async def capture_screenshot(session_id: str) -> Path | None:
         except Exception:
             pass
     
-    # Render from camera position
-    cam_pos = scene_data.get("camera", {}).get("position", {"x": 0, "y": 1.62, "z": 3})
-    cam_target = scene_data.get("camera", {}).get("target", {"x": 0, "y": 1, "z": 0})
+    # Camera from scene.json (same as Compare view uses)
+    cam = scene_data.get("camera", {})
+    cam_pos = cam.get("position", {"x": 0, "y": 1.5, "z": 1.8})
+    cam_target = cam.get("target", {"x": 0, "y": 0.8, "z": -1.2})
     
-    # Use trimesh's built-in scene rendering (saves to PNG)
-    screenshot_path = captures_dir / f"iter_{int(time.time())}.png"
+    # Render at Canon aspect ratio (4:3)
+    render_w, render_h = 768, 576  # 4:3, manageable size
+    screenshot_path = captures_dir / f"compare_{int(time.time())}.png"
     
     try:
-        # Build camera transform manually (look_at equivalent)
+        # Build camera transform
         eye = np.array([cam_pos["x"], cam_pos["y"], cam_pos["z"]])
         target = np.array([cam_target["x"], cam_target["y"], cam_target["z"]])
         up = np.array([0.0, 1.0, 0.0])
@@ -111,14 +118,15 @@ async def capture_screenshot(session_id: str) -> Path | None:
         # Render with pyrender
         import pyrender
         
-        pr_scene = pyrender.Scene(ambient_light=np.array([0.4, 0.35, 0.3]))
+        pr_scene = pyrender.Scene(
+            ambient_light=np.array([0.5, 0.4, 0.3]),
+            bg_color=np.array([0.0, 0.0, 0.0, 1.0]),
+        )
         
-        # Add geometries
         for name, geom in render_scene.geometry.items():
             if hasattr(geom, "faces") and len(geom.faces) > 0:
                 try:
-                    # Get color from material
-                    color = [0.7, 0.5, 0.3, 1.0]  # default warm
+                    color = [0.7, 0.5, 0.3, 1.0]
                     if hasattr(geom, "visual") and hasattr(geom.visual, "material"):
                         bcf = getattr(geom.visual.material, "baseColorFactor", None)
                         if bcf is not None:
@@ -133,75 +141,71 @@ async def capture_screenshot(session_id: str) -> Path | None:
                         roughnessFactor=0.8,
                     )
                     mesh = pyrender.Mesh.from_trimesh(geom, material=material)
-                    # Get the node transform from the scene graph
-                    node_name = name
-                    node_transform = render_scene.graph.get(node_name)[0] if node_name in render_scene.graph else np.eye(4)
-                    pr_scene.add(mesh, pose=node_transform)
+                    pr_scene.add(mesh)
                 except Exception:
                     pass
         
         camera = pyrender.PerspectiveCamera(yfov=np.radians(60))
         pr_scene.add(camera, pose=camera_transform)
         
-        light = pyrender.DirectionalLight(color=np.ones(3), intensity=3.0)
+        light = pyrender.DirectionalLight(color=np.array([1.0, 0.9, 0.8]), intensity=3.0)
         pr_scene.add(light, pose=camera_transform)
         
-        renderer = pyrender.OffscreenRenderer(1280, 720)
+        renderer = pyrender.OffscreenRenderer(render_w, render_h)
         color_img, _ = renderer.render(pr_scene)
         renderer.delete()
         
-        img = Image.fromarray(color_img)
-        img.save(str(screenshot_path))
-        print(f"  [capture] Rendered {len(render_scene.geometry)} geometries")
+        render_pil = Image.fromarray(color_img)
+        
+        # Create side-by-side composite: Canon (left) | 3D Render (right)
+        canon_img = Image.open(canon_path).convert("RGB")
+        canon_resized = canon_img.resize((render_w, render_h), Image.LANCZOS)
+        
+        composite = Image.new("RGB", (render_w * 2, render_h), (0, 0, 0))
+        composite.paste(canon_resized, (0, 0))
+        composite.paste(render_pil, (render_w, 0))
+        composite.save(str(screenshot_path))
+        
+        print(f"  [capture] Compare image: {render_w*2}x{render_h}, {len(render_scene.geometry)} geometries")
     except Exception as e:
         print(f"  [capture] Render failed: {e}")
-        # Fallback: create diagnostic info image for the vision model
+        # Fallback: just use Canon alone
         from PIL import ImageDraw
-        img = Image.new("RGB", (1280, 720), (40, 30, 20))
-        draw = ImageDraw.Draw(img)
-        y = 20
-        draw.text((20, y), f"Scene: {len(scene_data.get('objects', []))} objects", fill=(200, 200, 200))
-        y += 30
-        draw.text((20, y), f"Room: {scene_data['room_dimensions']}", fill=(200, 200, 200))
-        y += 30
-        for obj in scene_data.get("objects", [])[:15]:
-            p = obj.get("position", {})
-            s = obj.get("scale", {})
-            draw.text((20, y), f"  {obj['name'][:25]}: pos=({p.get('x',0):.1f},{p.get('y',0):.1f},{p.get('z',0):.1f}) scale=({s.get('x',1):.1f},{s.get('y',1):.1f},{s.get('z',1):.1f})", fill=(150, 150, 150))
-            y += 20
-        img.save(str(screenshot_path))
+        canon_img = Image.open(canon_path).convert("RGB").resize((render_w, render_h))
+        composite = Image.new("RGB", (render_w * 2, render_h), (0, 0, 0))
+        composite.paste(canon_img, (0, 0))
+        draw = ImageDraw.Draw(composite)
+        draw.text((render_w + 20, 20), f"Render failed: {str(e)[:60]}", fill=(255, 100, 100))
+        composite.save(str(screenshot_path))
     
     return screenshot_path
 
 
 def vision_assess(screenshot_path: Path, canon_path: Path, extra_context: str = "") -> str:
-    """Send screenshot + canon to Qwen 3.6 27B and get assessment."""
+    """Send the side-by-side Compare image to Qwen 3 VL for assessment."""
     import httpx
 
+    # The screenshot IS already a side-by-side composite (Canon left | 3D right)
     screenshot_b64 = base64.b64encode(screenshot_path.read_bytes()).decode()
-    canon_b64 = base64.b64encode(canon_path.read_bytes()).decode()
 
-    prompt = """You are a 3D scene reconstruction quality inspector. Compare these two images:
-Image 1 (first): The TARGET - a Canon photo of a bohemian room.
-Image 2 (second): The CURRENT STATE - a 3D reconstruction rendered via pyrender.
+    prompt = """You are looking at a side-by-side comparison image.
+LEFT HALF: The target Canon photo of a bohemian room.
+RIGHT HALF: The current 3D reconstruction from the same camera angle.
+
+Your job: identify the SINGLE most impactful difference between left and right that needs fixing.
 
 The room dimensions are already set. Do NOT suggest changing room dimensions.
 
-Focus on these aspects IN ORDER of visual impact:
-1. Are objects the right COLOR? (terracotta orange walls, green plants, colorful pouf, warm wood)
-2. Are objects the right SIZE/SCALE relative to each other?
-3. Are objects in the right POSITION? (ottoman center, chandelier hanging, cabinet left, plants on back wall)
-4. Is the LIGHTING warm enough? (the Canon has warm amber tones)
-5. Is anything MISSING that should be visible?
-6. Is anything ROTATED wrong?
+Look for these IN ORDER of visual impact:
+1. POSITION: An object on the right is in the wrong location compared to where it appears on the left. Give the direction and estimated distance to move it (e.g. "move ottoman 0.5m to the left and 0.3m forward").
+2. SCALE: An object on the right is too big or too small compared to the left.
+3. MISSING: Something clearly visible on the left is completely absent on the right.
+4. COLOR: The colors on the right don't match the left (wrong hue, too dark, too bright).
+5. LIGHTING: The overall brightness or warmth differs between the two halves.
+6. ROTATION: An object is facing the wrong direction.
 
-Pick the SINGLE most impactful defect that is NOT about room dimensions.
-Be extremely specific with numbers.
-
-Categories: SCALE, POSITION, COLOR, LIGHTING, MISSING, ROTATION, CAMERA, REGENERATE
-
-MISSING means: generate a new 3D object that should be in the scene but isn't.
-REGENERATE means: re-create an existing object that looks wrong (bad geometry/shape).
+Be VERY specific with measurements (meters for position, multipliers for scale).
+Name the exact object.
 """ + extra_context + """
 
 Respond EXACTLY in this format (two lines only):
@@ -217,7 +221,7 @@ DETAIL: <specific actionable fix with numbers>
                 {
                     "role": "user",
                     "content": prompt,
-                    "images": [canon_b64, screenshot_b64],
+                    "images": [screenshot_b64],
                 }
             ],
             "stream": False,
