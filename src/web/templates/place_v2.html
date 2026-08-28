@@ -87,47 +87,52 @@
         }
       } catch(e) {}
 
-      // Populate sidebar — crop Canon image at each object's bbox
-      const objects = scene.objects || [];
+      // Populate sidebar — use CATALOG entries (real objects with bboxes), not scene.objects
+      const objects = catalogEntries.length > 0 ? catalogEntries : (scene.objects || []);
       
       // Wait for Canon to fully load
-      await new Promise(r => { if (canonImg.complete) r(); else canonImg.onload = r; });
+      await new Promise(r => { if (canonImg.complete && canonImg.naturalWidth) r(); else canonImg.onload = r; });
       
       // Create a hidden canvas for cropping
       const cropCanvas = document.createElement("canvas");
       const cropCtx = cropCanvas.getContext("2d");
       
-      objects.forEach((obj, idx) => {
+      objects.forEach((entry, idx) => {
         const card = document.createElement("div");
         card.className = "obj-card";
         card.draggable = true;
         card.dataset.idx = idx;
-        card.dataset.uuid = obj.uuid;
+        card.dataset.uuid = entry.uuid;
         
-        // Find bbox in catalog
-        const catEntry = catalogEntries.find(e => e.uuid === obj.uuid);
+        // Crop from Canon at this object's bounding box
         let thumbHtml = "";
+        const bbox = entry.bbox_in_best_view;
         
-        if (catEntry && catEntry.bbox_in_best_view) {
-          // Crop from Canon image
-          const [x1, y1, x2, y2] = catEntry.bbox_in_best_view;
-          const cw = x2 - x1;
-          const ch = y2 - y1;
+        if (bbox && bbox.length === 4) {
+          const [x1, y1, x2, y2] = bbox;
+          const cw = Math.max(1, x2 - x1);
+          const ch = Math.max(1, y2 - y1);
           cropCanvas.width = cw;
           cropCanvas.height = ch;
-          // Scale factors (Canon image may be displayed at different size)
-          const scaleX = canonImg.naturalWidth / canonImg.naturalWidth;
-          const scaleY = canonImg.naturalHeight / canonImg.naturalHeight;
           cropCtx.drawImage(canonImg, x1, y1, cw, ch, 0, 0, cw, ch);
           const dataUrl = cropCanvas.toDataURL("image/png");
           thumbHtml = `<img src="${dataUrl}" draggable="false">`;
         } else {
-          // Colored placeholder
-          const hue = (obj.name.length * 37 + idx * 73) % 360;
-          thumbHtml = `<div style="background:hsl(${hue},50%,35%);width:100%;height:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px;">${obj.name.charAt(0).toUpperCase()}</div>`;
+          const hue = ((entry.name || "").length * 37 + idx * 73) % 360;
+          thumbHtml = `<div style="background:hsl(${hue},50%,35%);width:100%;height:60px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;">${(entry.name || "?").charAt(0).toUpperCase()}</div>`;
         }
         
-        card.innerHTML = `${thumbHtml}<div class="name">${obj.name}</div>`;
+        card.innerHTML = `${thumbHtml}<div class="name">${entry.name || "unknown"}</div>`;
+        
+        card.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", idx.toString());
+          e.dataTransfer.setData("application/uuid", entry.uuid);
+          card.classList.add("dragging");
+        });
+        card.addEventListener("dragend", () => card.classList.remove("dragging"));
+        
+        objList.appendChild(card);
+      });
         
         card.addEventListener("dragstart", (e) => {
           e.dataTransfer.setData("text/plain", idx.toString());
@@ -148,22 +153,23 @@
     function handleDrop(e) {
       e.preventDefault();
       const idx = parseInt(e.dataTransfer.getData("text/plain"));
-      const obj = scene.objects[idx];
-      if (!obj) return;
+      const uuid = e.dataTransfer.getData("application/uuid") || (objects[idx] && objects[idx].uuid);
+      const entry = objects[idx];
+      if (!entry) return;
 
       // Get drop position relative to the Canon image
       const rect = canonImg.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;   // normalized [0,1]
-      const py = (e.clientY - rect.top) / rect.height;   // normalized [0,1]
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
 
       // Mark as placed in sidebar
       placed[idx] = { px, py };
       document.querySelectorAll(".obj-card")[idx].classList.add("placed");
 
       // Place the actual-sized crop on the Canon at the drop point
-      const catEntry = catalogEntries.find(en => en.uuid === obj.uuid);
-      if (catEntry && catEntry.bbox_in_best_view) {
-        const [x1, y1, x2, y2] = catEntry.bbox_in_best_view;
+      const bbox = entry.bbox_in_best_view;
+      if (bbox && bbox.length === 4) {
+        const [x1, y1, x2, y2] = bbox;
         const bboxW = x2 - x1;
         const bboxH = y2 - y1;
         
@@ -204,7 +210,7 @@
       }
 
       // Send to server for 3D back-projection
-      savePlacement(obj.uuid, px, py, idx);
+      savePlacement(uuid || entry.uuid, px, py, idx);
     }
 
     async function savePlacement(uuid, px, py, idx) {
