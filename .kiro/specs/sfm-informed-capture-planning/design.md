@@ -1,10 +1,17 @@
-# Design Document — SfM-Informed Capture Planning
+# Design Document — Geometry-Injected Capture Planning
 
 ## Overview
 
-This design adds an SfM measurement and capture-planning layer between MetricPlan generation and multi-view image generation. The layer has two phases: a research spike that measures geometric signal quality from existing AI-generated imagery, and a production module that uses those measurements to compute optimal camera positions for downstream extractability.
+This design implements the **inject-then-validate** architecture for geometry-informed multi-view generation. The previous design (commit `f27e2ff`) attempted to extract geometry from AI-generated video via classical SfM. Adversarial review conclusively demonstrated that approach is invalid: AI video lacks real epipolar geometry, classical feature matchers fail on AI textures, and the extracted "evidence" was structurally discarded by the authority model anyway.
 
-The design preserves the pipeline's "one truth per concern" architecture by operating strictly as a **specification layer** (telling the generator where to point cameras) and an **evidence layer** (producing depth evidence with identical authority constraints as DA3). It never claims spatial authority.
+The corrected architecture:
+1. **Inject** — MetricPlan renders depth maps along a planned camera trajectory; these directly condition the AI generator via ControlNet.
+2. **Generate** — FLUX/MiniMax H3 produces images forced to follow MetricPlan geometry.
+3. **Validate** — DA3 depth on the output is compared against the injected conditioning to verify fidelity.
+4. **Back-project** — validated depth maps are unprojected into 3D using exact known camera matrices (no pose estimation).
+5. **Fuse** — multi-view point clouds merge into a dense mesh replacing the parametric room shell.
+
+No SfM. No feature matching. No essential matrix. No triangulation from hallucinated content.
 
 ---
 
@@ -15,41 +22,67 @@ The design preserves the pipeline's "one truth per concern" architecture by oper
 │                    SPATIAL AUTHORITY (unchanged)                      │
 │                         MetricPlan                                    │
 │                    CameraContract (frozen)                            │
+└────────────┬───────────────────────────────────────┬────────────────┘
+             │ room geometry                          │ hero camera
+             ▼                                        ▼
+┌────────────────────────┐              ┌─────────────────────────────┐
+│   CapturePlanner       │              │  Depth Sequence Renderer     │
+│                        │              │                              │
+│ MetricPlan + hero →    │──────────────▶ For each planned camera:    │
+│ deterministic camera   │   cameras     │ render float32 depth map   │
+│ trajectory (exact)     │              │ from MetricPlan geometry     │
+└────────────────────────┘              └──────────────┬──────────────┘
+                                                       │ depth_maps[]
+                                                       ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              ControlNet Depth-Conditioned Generation                  │
+│                                                                       │
+│  FLUX img2img:  blockout + depth ControlNet → Canon                  │
+│  Multi-view:    depth[i] + ControlNet → view[i]                      │
+│  Video:         depth[0] conditions frame 0; verify drift            │
+│                                                                       │
+│  Conditioning strength: configurable (default 0.8)                   │
+│  Fallback: unconditioned generation if ControlNet unavailable        │
 └────────────────────────────┬────────────────────────────────────────┘
-                             │ room_dimensions, hero camera
+                             │ generated views[]
                              ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                   NEW: CapturePlanner                                 │
+│              Geometry Validation Gate                                 │
 │                                                                       │
-│  Input:  MetricPlan + CameraContract + CaptureSpec                   │
-│  Output: CaptureManifest (list of cameras to generate)               │
+│  For each generated view:                                            │
+│    1. Run DA3 → estimated depth                                      │
+│    2. Compare estimated vs conditioning depth                        │
+│    3. PASS if: corr ≥ 0.7 AND MAE ≤ 0.5m AND SSIM ≥ 0.6           │
+│    4. FAIL → re-generate with stronger conditioning (max 3 tries)    │
 │                                                                       │
-│  Role: SPECIFICATION ONLY — tells generator WHERE to point           │
-│         cameras for maximum geometric extractability.                 │
-│         Does NOT carry or produce spatial authority.                  │
+│  Role: QA gate. Does NOT override MetricPlan.                        │
+│  Triggers re-roll on failure, never spatial correction.              │
 └────────────────────────────┬────────────────────────────────────────┘
-                             │ CaptureManifest
+                             │ validated views[] + DA3 depth[]
                              ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│               Multi-View Generator (modified)                        │
+│              Dense Back-Projection (known poses)                      │
 │                                                                       │
-│  Was: 5 hardcoded cardinal cameras from _compute_cardinal_cameras    │
-│  Now: Cameras from CaptureManifest (hero + stereo + coverage)        │
-│       + optional MiniMax H3 video generation                         │
+│  For each validated view:                                            │
+│    P_world = R^T * (K^{-1} * [u,v,1]^T * depth - t)                │
 │                                                                       │
-│  Backward compat: falls back to cardinal cameras if no CaptureSpec   │
+│  Camera matrices: EXACT from CaptureManifest (not estimated)         │
+│  Filter: depth 0.1–15m, DA3 confidence threshold                    │
+│  Deduplicate: merge points within 2cm                                │
+│                                                                       │
+│  Output: dense fused point cloud (PLY)                               │
 └────────────────────────────┬────────────────────────────────────────┘
-                             │ generated views + video frames
+                             │ fused point cloud
                              ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│              NEW: StereoDepthEstimator                                │
+│              Volumetric Mesh Reconstruction                           │
 │                                                                       │
-│  Input:  Video frames OR view pairs with known camera transforms     │
-│  Process: Feature detect → Match → Essential matrix → Triangulate    │
-│  Output: StereoDepthEvidence (same deny-list as DA3 DepthEvidence)   │
+│  Method: TSDF fusion (Open3D) or Poisson (trimesh)                   │
+│  Constraints: Y-up, meters, inward normals, 10K–250K verts          │
+│  Texture: UV-project generated views using known cameras             │
+│  Fallback: parametric room shell if reconstruction fails             │
 │                                                                       │
-│  Authority: NONE. Evidence only. Cannot override MetricPlan.         │
-│  Confidence map: high at triangulated, low at interpolated.          │
+│  Output: room_shell.glb (replaces flat-box shell)                    │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -57,253 +90,280 @@ The design preserves the pipeline's "one truth per concern" architecture by oper
 
 ## Key Design Decisions
 
-### 1. Video-first stereo signal
+### 1. Inject geometry, don't extract it
 
-**Decision:** Use MiniMax H3 video frames as the primary stereo source rather than attempting true stereo from independent FLUX generations.
+**Decision:** MetricPlan renders depth maps that directly condition the AI generator. No geometry is ever extracted from AI-generated content.
 
-**Rationale:** A video generation maintains temporal coherence between frames — the same 3D scene is depicted with smooth camera motion. Independent FLUX text-to-image samples do not share a 3D state: the same window might be different sizes or positions in adjacent views. Video frames are the cheapest multi-view consistency source already available in the pipeline (via `canon_geometry_spike.py`'s MiniMax H3 workflow).
+**Rationale (from adversarial review):**
+- AI video generators use latent-space interpolation, not pinhole camera simulation
+- Essential matrix decomposition on AI frames yields poses corresponding to no physical reality
+- Classical feature matchers (ORB/SIFT) fail catastrophically on AI textures
+- Two independent hallucinations (SfM + DA3) of a non-existent scene do not produce meaningful correlation
 
-**Consequence:** The CaptureSpec may ultimately recommend video generation as the primary multi-view source, with individual FLUX views used only for high-resolution hero shots. Requirement 5 (FLUX consistency measurement) provides the empirical data to confirm or overturn this hypothesis.
+**Consequence:** The entire SfM pipeline from the previous design (feature matching, pose estimation, triangulation) is eliminated. Camera poses are **declared**, not **estimated**.
 
-### 2. CaptureSpec is empirically derived, not theoretical
+### 2. Known poses eliminate the hardest problem in 3D reconstruction
 
-**Decision:** All capture parameters (baseline, overlap, feature density requirements) come from actual measurements on AI-generated imagery, not from classical photogrammetry rules-of-thumb for real photos.
+**Decision:** All camera matrices are exact, deterministic, and derived from MetricPlan + CameraContract. There is no pose estimation step anywhere in the pipeline.
 
-**Rationale:** AI-generated images have fundamentally different characteristics from real photographs:
-- Cleaner, more uniform textures (fewer natural features)
-- No lens distortion or chromatic aberration
-- Potential geometric inconsistencies between frames (hallucinated objects, breathing walls)
-- Different noise characteristics (no sensor noise, but generation artifacts)
+**Rationale:** The single hardest problem in multi-view reconstruction is accurate camera pose estimation. By declaring poses from the spatial authority (which we control), we skip this entirely. DA3's monocular depth — normally only useful as relative depth — becomes metrically useful when back-projected through exact known transforms because the scale ambiguity is resolved by the known camera baseline.
 
-Classical rules like "baseline = 15% of scene depth" assume real-world feature distributions. Measuring actual keypoint density and match quality from the pipeline's specific generators gives reliable spec values.
+**Consequence:** DA3 depth goes from "non-authoritative evidence" to "dense geometry source" — not because DA3 gained authority, but because the known camera matrices provide the missing scale and alignment that DA3 alone cannot. The authority flows from MetricPlan (via known cameras), not from DA3.
 
-**Consequence:** Tasks 1–5 MUST complete before the CaptureSpec can be derived. The spec is not a theoretical document — it's an empirical measurement.
+### 3. Validation gate fails closed
 
-### 3. Same authority model as DA3 depth
+**Decision:** If the generated image diverges from the conditioning depth, trigger re-generation — never override MetricPlan or accept divergent geometry.
 
-**Decision:** `StereoDepthEvidence` carries identical authority constraints to `DepthEvidence`: `spatial_authority=False`, `collision_enabled=False`, same `FORBIDDEN_DEPTH_AUTHORITIES` deny-list, raises `DepthAuthorityError` on violation.
+**Rationale:** ControlNet conditioning is not a hard constraint — it's a soft bias in the diffusion process. The generator can (and sometimes does) ignore or partially follow conditioning. The validation gate catches these failures before downstream stages consume garbage geometry.
 
-**Rationale:** The existing depth authority firewall exists for good reason — monocular depth estimation drifts under lighting/material changes and cannot be trusted for absolute spatial decisions. Stereo depth is more geometrically grounded (triangulation is a physical measurement, not a learned prior), but in this pipeline the "stereo" comes from AI-generated video which can still hallucinate. Until the evidence is proven reliable enough for bounded authority promotion (a future spec gate), it stays at the same trust level as DA3.
+**Failure modes detected:**
+- **Conditioning collapse** — ControlNet ignored entirely (correlation near 0)
+- **Partial drift** — walls correct but furniture displaced (regional MAE spikes)
+- **Conditioning bleed** — geometry correct but textures destroyed (visual quality failure, not geometry failure)
 
-**Consequence:** StereoDepthEvidence can be used for:
-- Visual quality assessment (does the world "look right" from novel views?)
-- Object shape refinement hints (non-authoritative)
-- Geometric consistency validation (does the Canon agree with MetricPlan?)
+### 4. CapturePlanner survives but changes role
 
-It CANNOT be used for:
-- Room dimensions, openings, architectural geometry
-- Collision or navigation geometry
-- Object transforms or camera parameters
+**Decision:** The CapturePlanner computes optimal camera positions from MetricPlan — same concept as before, but the cameras now serve two purposes: (1) render depth maps for conditioning, and (2) define the exact back-projection transforms for depth fusion.
 
-### 4. CapturePlanner is pure specification, not authority
+**Previous role:** Compute cameras for "optimal stereo triangulation"
+**New role:** Compute cameras for "maximum room coverage with known transforms for depth fusion"
 
-**Decision:** The CapturePlanner computes WHERE to put cameras based on the MetricPlan's known room geometry and the CaptureSpec's requirements. It never claims to know what the geometry IS.
+The optimization criterion changes from "baseline-to-depth ratio for triangulation" to "surface coverage with minimum occlusion for back-projection completeness."
 
-**Rationale:** The planner uses MetricPlan dimensions to ensure cameras are inside the room and have sufficient baseline. This is using spatial authority as INPUT (reading from MetricPlan), not claiming it as OUTPUT. The planner's job is analogous to a photographer choosing where to stand — it doesn't change the room, it optimizes the observation.
+### 5. Existing infrastructure is reused, not rebuilt
 
-**Consequence:** The planner's output (CaptureManifest) is a generation instruction, not a measurement result. Downstream code that receives generated images must still extract geometry through measurement (SfM, depth estimation), not assume the manifest's geometry is truth.
+**Decision:** The controlled-camera depth render already exists in `blockout_renderer.py`. The aux channel emission already writes depth beside Canon PNGs. The ControlNet depth nodes exist in ComfyUI. DA3 is already integrated. We're connecting existing capabilities, not building from scratch.
 
-### 5. Incremental: spike then production, same codebase
-
-**Decision:** The research spike (`tools/sfm_spike/`) and production modules (`src/unified_pipeline/`) share core algorithms but differ in interface. The spike is CLI-driven for interactive measurement; the production modules are async, pipeline-integrated, and emit structured evidence.
-
-**Rationale:** Building the spike as throwaway code creates rewrite risk. Building it directly in production creates premature integration risk. The middle path: spike code is structured cleanly enough to be imported by production modules, but lives in `tools/` where it's clearly experimental.
-
-**Consequence:** `capture_spec.py` and core matching/triangulation functions in the spike are importable by the production `capture_planner.py` and `stereo_depth_bridge.py`. No algorithm duplication — only interface wrapping.
+**Reused components:**
+| Component | Already exists in | New role |
+|---|---|---|
+| Depth render from MetricPlan | `blockout_renderer.py` `_build_projector` | Conditioning input for ControlNet |
+| Aux depth channel emission | `canon_generator.py` `emit_reference_aux_channels` | Provenance binding for conditioning |
+| DA3 depth estimation | `depth_bridge.py` `UnifiedDepthEstimator` | Validation comparison + back-projection source |
+| ComfyUI ControlNet | ComfyUI PaintShop install | Depth conditioning for FLUX |
+| Camera intrinsics | `camera_contract.py` (60° vFOV, 1024×768) | Back-projection K matrix |
+| trimesh | Already a dependency | Mesh export + Poisson reconstruction |
 
 ---
 
 ## Module Layout
 
 ```
-tools/sfm_spike/                         # Research spike (Tasks 1-6)
+tools/conditioning_spike/                # Research spike (Task 1-2)
 ├── __init__.py
-├── frame_extractor.py                   # Req 1: video → frames at configurable interval
-├── feature_matcher.py                   # Req 1: ORB/SIFT detection + BFMatcher + Lowe's ratio + RANSAC
-├── pose_estimator.py                    # Req 2: essential matrix → camera trajectory
-├── triangulator.py                      # Req 3: multi-view triangulation + filtering
-├── depth_comparison.py                  # Req 4: stereo vs DA3 vs MetricPlan comparison
-├── flux_view_matcher.py                 # Req 5: FLUX cardinal view consistency measurement
-├── capture_spec.py                      # Req 6: CaptureSpec derivation from measurements
-└── run_spike.py                         # CLI runner: runs all measurements, outputs CaptureSpec
+├── conditioning_tester.py              # Req 8: test ControlNet fidelity
+├── strength_sweep.py                   # Req 8: sweep conditioning strengths
+└── run.py                              # CLI runner
 
-src/unified_pipeline/                    # Production modules (Tasks 7-9)
-├── capture_planner.py                   # Req 7: CapturePlanner + CaptureManifest
-├── stereo_depth_bridge.py              # Req 8: StereoDepthEstimator + StereoDepthEvidence
-└── multi_view_generator.py             # Req 7/9: modified to use CapturePlanner (backward compat)
+src/unified_pipeline/                    # Production modules (Tasks 3-7)
+├── capture_planner.py                  # Req 2: CapturePlanner + CaptureManifest (rewritten)
+├── depth_sequence_renderer.py          # Req 1: render MetricPlan depth along trajectory
+├── controlnet_conditioner.py           # Req 3: ControlNet depth conditioning for FLUX/MiniMax
+├── geometry_validation_gate.py         # Req 4: DA3 vs conditioning comparison
+├── depth_backprojector.py              # Req 5: back-project DA3 depth with known poses
+├── volumetric_reconstructor.py         # Req 6: point cloud → mesh
+└── multi_view_generator.py             # Modified: uses CapturePlanner + conditioning
 
-tests/                                   # Tests
-├── test_sfm_spike.py                   # Reqs 1-6 unit tests
-├── test_capture_planner.py             # Req 7 unit tests
-├── test_stereo_depth.py                # Req 8 unit tests
+tests/
+├── test_capture_planner.py             # Req 2 unit tests
+├── test_depth_sequence_renderer.py     # Req 1 unit tests
+├── test_geometry_validation_gate.py    # Req 4 unit tests
+├── test_depth_backprojector.py         # Req 5 unit tests
+├── test_volumetric_reconstructor.py    # Req 6 unit tests
 └── e2e/
-    └── test_sfm_capture_planning.py    # Req 9 integration tests
+    └── test_inject_validate_pipeline.py  # Req 7 integration tests
 ```
 
 ---
 
-## Data Flow
+## Data Flow (Detailed)
 
-### Phase A: Research Spike (offline, developer-triggered)
-
-```
-MiniMax H3 Video (MP4)
-    │
-    ▼ frame_extractor.py (every Nth frame)
-Extracted Frames (PNG[])
-    │
-    ▼ feature_matcher.py (ORB/SIFT + BFMatcher + RANSAC)
-Match Results (keypoints, matches, inliers, fundamental matrices)
-    │
-    ├─▶ pose_estimator.py (essential matrix → R, t → trajectory)
-    │       │
-    │       ▼
-    │   Camera Trajectory (4×4 extrinsics[])
-    │       │
-    │       ▼ triangulator.py (cv2.triangulatePoints + filtering)
-    │   Sparse Point Cloud (Nx3 + confidence)
-    │       │
-    │       ▼ depth_comparison.py (project → interpolate → compare)
-    │   Depth Comparison Report (MAE, correlation, scale factor, viz PNG)
-    │
-    ├─▶ flux_view_matcher.py (same pipeline on FLUX cardinal views)
-    │   FLUX Consistency Report (inlier ratios, verdict)
-    │
-    └─▶ capture_spec.py (analyze all results → derive parameters)
-        CaptureSpec (frozen dataclass: baseline, overlap, density, method)
-```
-
-### Phase B: Production Integration (pipeline runtime)
+### Phase 1: Plan + Render (deterministic, no GPU)
 
 ```
-MetricPlan + CameraContract + CaptureSpec
+MetricPlan
+    │ room_dimensions, walls, openings, placements
+    ▼
+CapturePlanner.plan()
+    │ CaptureManifest: list of PlannedCamera (position, target, K, R, t)
+    ▼
+DepthSequenceRenderer.render_all(manifest, metric_plan)
+    │ For each camera in manifest:
+    │   project MetricPlan geometry → float32 depth map (1024×768)
+    │   project MetricPlan geometry → float32 normal map
+    │   bind: camera_hash + plan_revision
+    ▼
+Output: depth_maps[] + normal_maps[] + manifest (all deterministic)
+```
+
+### Phase 2: Conditioned Generation (GPU, ComfyUI)
+
+```
+depth_maps[i] + text_prompt + Art_Bible
     │
-    ▼ capture_planner.py
-CaptureManifest (cameras: hero + stereo_pairs + coverage)
+    ▼
+ControlNetConditioner.generate(depth_map, prompt, strength=0.8)
+    │ ComfyUI workflow:
+    │   LoadImage(depth_map) → ControlNetApply(strength) →
+    │   CLIPTextEncode(prompt) → KSampler → VAEDecode → SaveImage
+    ▼
+Output: generated_view[i] (PNG, 1024×768)
+```
+
+### Phase 3: Validation Gate (GPU, DA3)
+
+```
+generated_view[i] + conditioning_depth[i]
     │
-    ▼ multi_view_generator.py (generates views per manifest)
-Generated Views + Optional MiniMax H3 Video
+    ▼
+GeometryValidationGate.validate(view, conditioning_depth)
+    │ 1. DA3(view) → estimated_depth
+    │ 2. scale_align(estimated, conditioning) → aligned_depth
+    │ 3. metrics = compare(aligned_depth, conditioning_depth)
+    │    - pearson_r ≥ 0.7?
+    │    - scale_aligned_MAE ≤ 0.5m?
+    │    - depth_SSIM ≥ 0.6?
+    │ 4. PASS or FAIL
+    ▼
+Output: ValidationResult(pass/fail, metrics, aligned_da3_depth)
+```
+
+### Phase 4: Back-Projection + Fusion (CPU, numpy)
+
+```
+For each validated view:
+    aligned_da3_depth[i] + known_camera[i] (from manifest)
+        │
+        ▼
+    DepthBackprojector.backproject(depth, K, R, t)
+        │ For each valid pixel (u, v):
+        │   ray = K^{-1} * [u, v, 1]^T
+        │   P_camera = ray * depth[v, u]
+        │   P_world = R^T * (P_camera - t)
+        ▼
+    point_cloud[i] (Nx3 + RGB from generated view)
+
+All point_cloud[i]:
     │
-    ├─▶ (existing) vision_catalog.py → v2_mesh_builder.py
+    ▼
+DepthBackprojector.fuse(clouds, merge_radius=0.02)
+    │ Merge overlapping points within 2cm
+    ▼
+fused_cloud (Mx3 + RGB)
     │
-    └─▶ stereo_depth_bridge.py (video → SfM → evidence)
-        StereoDepthEvidence (non-authoritative, with confidence map)
+    ▼
+VolumetricReconstructor.reconstruct(fused_cloud)
+    │ TSDF or Poisson → watertight mesh
+    │ Filter bridge triangles (gradient > 0.5m)
+    │ Orient normals inward
+    │ Decimate to 10K–250K verts
+    │ UV-project textures from generated views
+    ▼
+Output: room_shell.glb (replaces parametric box shell)
 ```
 
 ---
 
-## Detailed Component Design
+## Component Designs
 
-### CaptureSpec (frozen dataclass)
+### CapturePlanner (rewritten)
 
 ```python
 @dataclass(frozen=True)
-class CaptureSpec:
-    """Empirically-derived capture parameters for optimal geometry extraction."""
-
-    # Baseline
-    min_baseline_m: float          # Minimum camera displacement for useful parallax
-    optimal_baseline_m: float      # Best baseline for depth accuracy/coverage tradeoff
-    max_baseline_m: float          # Beyond this, feature matching degrades
-
-    # Overlap and coverage
-    min_overlap_fraction: float    # Minimum shared scene fraction between adjacent views
-    min_feature_density_kp_mpx: float  # Minimum keypoints per megapixel
-
-    # Generation method
-    recommended_method: str        # "video" | "depth_conditioned_stills" | "independent_stills"
-    optimal_frame_interval: int    # For video: sample every Nth frame
-
-    # Provenance
-    derivation_evidence: dict      # Measurement session ID + key statistics
-```
-
-### CaptureManifest (dataclass)
-
-```python
-@dataclass
 class PlannedCamera:
-    """One camera position in the capture manifest."""
+    """One camera in the planned trajectory with exact known transforms."""
     position: tuple[float, float, float]
     target: tuple[float, float, float]
-    camera_type: str               # "hero" | "stereo_left" | "stereo_right" | "coverage"
-    baseline_m: float = 0.0        # For stereo pairs: distance from partner
-    pair_id: str = ""              # Links stereo_left and stereo_right
-    fov: float = 60.0
-    label: str = ""
+    extrinsic: np.ndarray      # 4×4 world-to-camera [R|t]
+    intrinsic: np.ndarray      # 3×3 camera matrix K
+    camera_type: str           # "hero" | "coverage" | "transition"
+    label: str
+    hash: str                  # SHA-256 of canonical serialization
 
 @dataclass
 class CaptureManifest:
-    """Complete set of cameras to generate for a session."""
+    """Complete camera trajectory with exact known transforms."""
     cameras: list[PlannedCamera]
-    capture_spec_hash: str         # Provenance: which CaptureSpec produced this
     room_dimensions: tuple[float, float, float]
-    generation_method: str         # "video" | "stills" | "hybrid"
+    plan_revision_hash: str
+    total_surface_coverage: float  # estimated fraction of room surfaces visible
 ```
 
-### StereoDepthEvidence (frozen dataclass)
+**Planning algorithm:**
+1. Hero camera: from CameraContract (unchanged)
+2. Coverage cameras: one per wall not fully visible from hero. Position at room center, rotate to face each wall.
+3. Transition cameras: interpolate between coverage views (for video conditioning continuity)
+4. All cameras at eye height (1.62m or 60% ceiling height, whichever is lower)
+5. Validate: all inside room with 0.3m clearance; clamp if needed
+6. Compute exact K, R, t for each camera
+
+### GeometryValidationGate
 
 ```python
 @dataclass(frozen=True)
-class StereoDepthEvidence:
-    """Video-derived stereo depth — same authority constraints as DA3 DepthEvidence."""
+class ValidationResult:
+    """Result of comparing generated geometry against conditioning."""
+    passed: bool
+    pearson_r: float           # depth correlation
+    scale_aligned_mae_m: float # mean absolute error after scale alignment
+    depth_ssim: float          # structural similarity of depth maps
+    scale_factor: float        # optimal s: min ||s*estimated - conditioning||²
+    coverage_fraction: float   # fraction of pixels with valid DA3 depth
+    failure_reason: str = ""   # empty if passed
 
-    depth_map_path: str
-    confidence_map_path: str       # Per-pixel confidence (0-1)
-    coverage_fraction: float       # Fraction of pixels with evidence
-    scale_factor: float            # SfM → metric alignment factor
-    triangulated_point_count: int
-
-    # Provenance
-    source_video_sha256: str
-    frame_count_used: int
-    total_inlier_count: int
-
-    # Authority constraints (IDENTICAL to DepthEvidence)
-    evidence_kind: str = "stereo_depth_evidence"
-    optional: bool = True
-    collision_enabled: bool = False
-    spatial_authority: bool = False
-    authority_claims: tuple[str, ...] = ()
-    forbidden_authorities: tuple[str, ...] = FORBIDDEN_DEPTH_AUTHORITIES
+@dataclass
+class ValidationConfig:
+    min_correlation: float = 0.7
+    max_mae_m: float = 0.5
+    min_ssim: float = 0.6
+    max_retries: int = 3
+    strength_increment: float = 0.1
+    max_strength: float = 1.0
 ```
 
-### CapturePlanner Algorithm
+### DepthBackprojector
 
-```
-Input: MetricPlan(w, d, h), CameraContract(hero_pos, hero_target), CaptureSpec
+```python
+class DepthBackprojector:
+    """Back-project depth maps into 3D using exact known camera matrices."""
 
-1. Hero camera: unchanged from CameraContract
-2. Stereo pair for hero:
-   - baseline = min(spec.optimal_baseline, min(w, d) * 0.25)
-   - stereo_left  = hero_pos + (-baseline/2, 0, 0)  [left of hero]
-   - stereo_right = hero_pos + (+baseline/2, 0, 0)  [right of hero]
-   - both target hero_target
-   - validate: both inside room with 0.3m clearance; clamp if needed
-3. Coverage views:
-   - For each wall not visible from hero (>90° from hero direction):
-     compute a camera at room center looking at that wall
-   - Ensure min_overlap between adjacent coverage views
-4. Adapt to room size:
-   - If room is small (min(w,d) < 3m): reduce baseline, reduce number of coverage views
-   - If room is large (min(w,d) > 6m): increase coverage views, add intermediate stereo pairs
-5. Validate all cameras: inside room, 0.3m from walls, not coincident
+    def backproject(
+        self,
+        depth_map: np.ndarray,       # float32 (H, W)
+        intrinsic: np.ndarray,       # 3×3
+        extrinsic: np.ndarray,       # 4×4 [R|t] world-to-camera
+        rgb_image: np.ndarray = None,  # optional (H, W, 3) for coloring
+        min_depth: float = 0.1,
+        max_depth: float = 15.0,
+    ) -> tuple[np.ndarray, np.ndarray | None]:
+        """Returns (Nx3 points, Nx3 colors or None)."""
+        ...
 
-Output: CaptureManifest
+    def fuse(
+        self,
+        clouds: list[np.ndarray],
+        colors: list[np.ndarray | None],
+        merge_radius_m: float = 0.02,
+    ) -> tuple[np.ndarray, np.ndarray | None]:
+        """Merge overlapping points from multiple views."""
+        ...
 ```
 
 ---
 
-## Camera Intrinsics Derivation
-
-From CameraContract (60° vFOV, 1024×768):
+## Camera Intrinsics (from CameraContract)
 
 ```python
-vfov_rad = math.radians(60.0)
-fy = (768 / 2) / math.tan(vfov_rad / 2)  # ≈ 665.1
-fx = fy  # square pixels assumed
-cx = 1024 / 2  # = 512.0
-cy = 768 / 2   # = 384.0
+import math
+import numpy as np
+
+vfov_deg = 60.0
+width, height = 1024, 768
+
+fy = (height / 2) / math.tan(math.radians(vfov_deg) / 2)  # ≈ 665.1
+fx = fy  # square pixels
+cx = width / 2   # 512.0
+cy = height / 2  # 384.0
 
 K = np.array([
     [fx,  0, cx],
@@ -312,66 +372,70 @@ K = np.array([
 ], dtype=np.float64)
 ```
 
-This intrinsic matrix is used by:
-- `pose_estimator.py` for essential matrix computation
-- `triangulator.py` for point unprojection
-- `stereo_depth_bridge.py` for the production evidence pipeline
-
 ---
 
 ## Failure Modes and Mitigations
 
 | Failure | Detection | Mitigation |
 |---------|-----------|------------|
-| AI video has no matchable features (smooth walls, uniform textures) | Keypoint count < 50/frame | Report as "insufficient feature density"; CaptureSpec records it; recommend textured generation prompts |
-| Camera motion too small (pure rotation, no parallax) | `recoverPose` inlier count < 10 or translation near-zero | Flag "degenerate motion"; skip triangulation; increase frame interval |
-| Hallucinated geometry between frames (object appears/disappears) | Outlier ratio > 70% in RANSAC | Use only geometrically-consistent subset; report coverage loss |
-| Point cloud scale wildly wrong vs MetricPlan | Bounding box ratio > 3× or < 0.3× MetricPlan | Flag "scale alignment unreliable"; increase scale factor uncertainty in evidence |
-| No video available for a session | Video path doesn't exist | Fall back to monocular DA3 only; StereoDepthEvidence not produced |
-| FLUX views have zero geometric consistency | All 10 pairs < 30% inlier ratio | Confirm video-first strategy; document as empirical finding |
+| ControlNet nodes not installed in ComfyUI | Health check at pipeline start | Fall back to img2img with blockout (existing behavior) |
+| ControlNet conditioning ignored (collapse) | Validation gate: correlation < 0.3 | Increase strength and retry (max 3×) |
+| ControlNet strength too high (texture destruction) | Visual QA / Canon presence validation | Reduce strength by 0.1 |
+| DA3 fails on generated image | < 50% valid pixels in DA3 output | Skip validation for that view; use conditioning depth directly |
+| Back-projected point cloud too sparse | < 30% room surface coverage | Add more camera positions to manifest |
+| Mesh reconstruction degenerate | < 10K vertices or non-manifold output | Fall back to parametric room shell |
+| VRAM contention (ControlNet + DA3) | OOM exception | Sequential execution with VRAM release between stages |
 
 ---
 
 ## Dependencies
 
-### Already Available (no new installs)
+### Already Available (no new installs needed)
 
-- `opencv-python` (cv2) — keypoint detection, matching, essential matrix, triangulation
-- `numpy` — array operations, linear algebra
-- `scipy` — `griddata` for depth interpolation
-- `trimesh` — PLY export (already used for room shell)
-- `Pillow` (PIL) — image I/O for visualizations
-- `matplotlib` — optional, for comparison plots in spike
+- `opencv-python` (cv2) — depth map manipulation, image I/O
+- `numpy` — back-projection math, array operations
+- `scipy` — SSIM computation, point cloud processing
+- `trimesh` — mesh export, Poisson reconstruction fallback
+- `Pillow` (PIL) — depth map visualization
+- ComfyUI ControlNet nodes — depth conditioning (verify availability)
 
-### Not Required
+### May Need Installation
 
-- No COLMAP (too heavy for this use case; OpenCV's two-view SfM is sufficient)
-- No new ML models (features are classical CV, not learned)
-- No new ComfyUI nodes (video generation already available)
+- `open3d` — TSDF volumetric fusion (preferred for multi-view fusion). If unavailable, fall back to trimesh Poisson.
+
+### Not Needed (eliminated by architecture correction)
+
+- ~~COLMAP~~ — no pose estimation
+- ~~SuperPoint/SuperGlue/LoFTR~~ — no feature matching
+- ~~SfM libraries~~ — no structure from motion
+- ~~Optical flow~~ — no frame-to-frame correspondence
 
 ---
 
 ## Relationship to Scene Recovery Problem
 
-This spec implements the **practical measurement arm** of the Scene Recovery research:
+This design implements several insights from the theoretical program:
 
-| Scene Recovery Board Node | This Spec's Contribution |
-|---------------------------|--------------------------|
-| B2 (null space characterization) | Req 5 measures what one FLUX view cannot tell you vs what stereo can |
-| B3 (gauge group) | CaptureSpec quantifies which side information (baseline, overlap) purchases which geometry |
-| C3 (information budget) | Depth comparison (Req 4) empirically measures the views × prior tradeoff |
-| E1 (landscape for continuous solve) | Point cloud sanity check measures whether local optimization could converge |
-| F3 (certified metric scale) | Scale factor alignment quantifies the metric gap between SfM and ground truth |
-| G1 (a-posteriori certificate) | Reprojection error serves as a weak certificate: low error = consistent geometry |
+| Scene Recovery Node | This Design's Implementation |
+|---|---|
+| B3 (gauge group + side information pricing) | Known camera matrices collapse the depth-scale gauge completely — one known baseline purchases metric depth from monocular estimation |
+| F3 (certified metric scale) | Scale comes from MetricPlan via exact known cameras, not from estimation — certified by construction |
+| G1 (a-posteriori certificate) | Validation gate is a weak G1: render conditioning vs DA3 comparison serves as a "does this image match the geometry?" check |
+| E2 (amortized inversion with certificates) | DA3 is the amortized inverse; validation gate is the certificate; known cameras provide the missing guarantee |
+| C3 (information budget) | Adding ControlNet conditioning is adding "prior strength" in the information budget sense — more prior → less ambiguity → better reconstruction |
 
-This spec does NOT attempt to prove any Scene Recovery theorem. It provides **empirical data** that the theoretical program can consume, and it builds **production infrastructure** that a future certified recovery algorithm could plug into.
+The key insight: **you don't need to solve the Scene Recovery Problem if you control the generation process.** The difficulty of photo→3D comes from not knowing the camera, the scene, or the rendering process. When you own all three (MetricPlan owns scene, CameraContract owns camera, FLUX owns rendering), the "inversion" becomes trivial back-projection.
 
 ---
 
-## Future Considerations (explicitly out of scope for this spec)
+## What Changed From Previous Design
 
-1. **Bounded authority promotion** — allowing stereo depth to carry spatial authority within MetricPlan's uncertainty envelope. Requires a future spec gate with defined error bounds.
-2. **Multi-view diffusion conditioning** — using SfM-derived depth as ControlNet conditioning for geometrically-consistent FLUX generation. Requires ControlNet-depth integration.
-3. **Real photograph input** — accepting a user's actual photo (not AI-generated) and running full scene recovery. Requires solving the Canon-from-photo pathway.
-4. **Dense MVS (Multi-View Stereo)** — going beyond sparse triangulation to dense depth maps via PatchMatch or learned MVS. Only valuable once sparse signal is proven reliable.
-5. **Loop closure and bundle adjustment** — full COLMAP-style optimization for large-scale scenes. Overkill for single-room indoor scenes with 5–75 frames.
+| Previous (f27e2ff) | This Design | Why |
+|---|---|---|
+| SfM pipeline (detect, match, decompose, triangulate) | Eliminated entirely | AI video lacks epipolar geometry |
+| Pose estimation from correspondences | Known poses from CaptureManifest | No estimation needed when you declare the camera |
+| CaptureSpec from empirical measurements | CaptureManifest from MetricPlan geometry | Parameters come from authority, not from measuring hallucinations |
+| StereoDepthEvidence (non-authoritative) | Back-projected DA3 depth (authority from known cameras) | Authority flows from MetricPlan via exact cameras |
+| 9 tasks (6 spike + 3 production) | 7 tasks (2 spike + 5 production) | Less research needed — the approach is well-understood |
+| Classical feature matchers | None needed | No correspondence problem to solve |
+| FLUX consistency measurement | Conditioning fidelity measurement | Right question: "did ControlNet hold?" not "do views agree?" |
