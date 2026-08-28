@@ -294,6 +294,58 @@ def _update_cycle(c):
     _current_cycle = c
 
 
+async def _meta_diagnosis(cycle: int, recent_log: list[dict]):
+    """Every 10 cycles, send results to kimi-k3 for meta-analysis of parsing bugs and convergence."""
+    import httpx
+
+    summary = []
+    for entry in recent_log:
+        assessment = entry.get("assessment", "")[:200]
+        success = entry.get("fix_applied", False)
+        summary.append(f"  Cycle {entry.get('cycle')}: success={success} | {assessment}")
+
+    prompt = f"""You are a meta-debugger for an autonomous 3D scene refinement loop.
+
+Here are the last 10 cycle results:
+{chr(10).join(summary)}
+
+The loop works by: capturing a side-by-side image (Canon photo | 3D render), 
+sending it to a vision model for assessment, parsing the response into 
+DEFECT category + DETAIL, then applying a fix.
+
+Analyze these results and identify:
+1. PARSING BUGS: Is the fix handler correctly extracting values from the assessment text? 
+   (e.g., are positions being confused with dimensions?)
+2. CONVERGENCE ISSUES: Is the loop making progress or stuck repeating similar fixes?
+3. PROMPT IMPROVEMENTS: What specific changes to the vision assessment prompt would 
+   produce more actionable, parseable output?
+
+Output EXACTLY in this format:
+DIAGNOSIS: <one sentence summary of the biggest issue>
+FIX: <specific code change or prompt change to implement>
+PRIORITY: <what the loop should focus on next to make visible progress>
+"""
+
+    try:
+        response = httpx.post(
+            f"{OLLAMA_URL}/api/chat",
+            json={
+                "model": "kimi-k3:cloud",
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": False,
+            },
+            timeout=120.0,
+        )
+        if response.status_code == 200:
+            content = response.json().get("message", {}).get("content", "")
+            print(f"\n  [META-DIAGNOSIS cycle {cycle}]")
+            print(f"  {content[:500]}")
+            # Store the diagnosis in learning DB
+            record_outcome(cycle, "META", content[:200], True)
+    except Exception as e:
+        print(f"  [META] Failed: {e}")
+
+
 async def apply_fix(assessment: str) -> bool:
     """Parse the vision assessment and apply the fix to scene.json."""
     global _previous_fixes
@@ -654,6 +706,10 @@ async def run_loop():
 
         # Brief pause to let changes settle
         await asyncio.sleep(1)
+
+        # Meta-diagnosis every 10 cycles: send recent results to kimi-k3 for analysis
+        if cycle % 10 == 0 and cycle <= 50:
+            await _meta_diagnosis(cycle, log[-10:])
 
     # Save log
     log_path.write_text(json.dumps(log, indent=2))
