@@ -461,6 +461,98 @@ async def apply_fix(assessment: str) -> bool:
     return True
 
 
+# ─── Learning Layer: Embed outcomes, query past successes ─────────────────────
+
+LEARNING_DB = ARTIFACTS / "learning_db.json"
+
+
+def _load_learning_db() -> list[dict]:
+    """Load the learning database (cycle outcomes with embeddings)."""
+    if LEARNING_DB.exists():
+        return json.loads(LEARNING_DB.read_text())
+    return []
+
+
+def _save_learning_db(db: list[dict]):
+    LEARNING_DB.write_text(json.dumps(db, indent=2))
+
+
+def _embed_text(text: str) -> list[float] | None:
+    """Embed text via Ollama's nomic-embed-text model."""
+    import httpx
+    try:
+        resp = httpx.post(
+            f"{OLLAMA_URL}/api/embed",
+            json={"model": "nomic-embed-text", "input": text},
+            timeout=30.0,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            embeddings = data.get("embeddings", [])
+            return embeddings[0] if embeddings else None
+    except Exception:
+        pass
+    return None
+
+
+def _cosine_similarity(a: list[float], b: list[float]) -> float:
+    """Cosine similarity between two vectors."""
+    import math
+    dot = sum(x * y for x, y in zip(a, b))
+    norm_a = math.sqrt(sum(x * x for x in a))
+    norm_b = math.sqrt(sum(x * x for x in b))
+    if norm_a == 0 or norm_b == 0:
+        return 0.0
+    return dot / (norm_a * norm_b)
+
+
+def record_outcome(cycle: int, category: str, detail: str, success: bool):
+    """Record a cycle outcome with its embedding for future retrieval."""
+    db = _load_learning_db()
+    text = f"{category}: {detail} (success={success})"
+    embedding = _embed_text(text)
+    db.append({
+        "cycle": cycle,
+        "category": category,
+        "detail": detail[:200],
+        "success": success,
+        "timestamp": time.time(),
+        "embedding": embedding,
+    })
+    _save_learning_db(db)
+
+
+def query_past_successes(current_assessment: str, top_k: int = 3) -> str:
+    """Query learning DB for past successful fixes similar to the current defect."""
+    db = _load_learning_db()
+    if not db:
+        return ""
+
+    # Embed the current assessment
+    query_emb = _embed_text(current_assessment)
+    if not query_emb:
+        return ""
+
+    # Find most similar successful fixes
+    scored = []
+    for entry in db:
+        if not entry.get("success") or not entry.get("embedding"):
+            continue
+        sim = _cosine_similarity(query_emb, entry["embedding"])
+        scored.append((sim, entry))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = scored[:top_k]
+
+    if not top:
+        return ""
+
+    lines = ["\n\nPAST SUCCESSFUL FIXES (use these as guidance):"]
+    for sim, entry in top:
+        lines.append(f"  - [{entry['category']}] {entry['detail']} (similarity={sim:.2f})")
+    return "\n".join(lines)
+
+
 async def run_loop():
     """Main refine loop — up to MAX_CYCLES iterations."""
     canon_path = ARTIFACTS / "canon.png"
@@ -488,12 +580,14 @@ async def run_loop():
             print("  [1] Capture failed — skipping cycle")
             continue
 
-        # Step 2: Vision assessment (include history of previous fixes)
-        print("  [2] Vision assessment via qwen2.5vl...")
+        # Step 2: Vision assessment (include history + learned successes)
+        print("  [2] Vision assessment via qwen3-vl...")
         history_note = ""
         if _previous_fixes:
-            history_note = f"\n\nALREADY FIXED (do not repeat these): {', '.join(_previous_fixes[-5:])}"
-        assessment = vision_assess(screenshot, canon_path, extra_context=history_note)
+            history_note = f"\n\nALREADY TRIED (do not repeat): {', '.join(_previous_fixes[-5:])}"
+        # Query learning DB for past successes similar to what we might need
+        learned_context = query_past_successes(f"3D room reconstruction defect")
+        assessment = vision_assess(screenshot, canon_path, extra_context=history_note + learned_context)
         print(f"  [2] Response: {assessment[:300]}")
 
         if "PASS" in assessment.upper() and "DEFECT" not in assessment.upper():
@@ -504,6 +598,18 @@ async def run_loop():
         # Step 3: Apply fix
         print("  [3] Applying fix...")
         success = await apply_fix(assessment)
+
+        # Step 4: Record outcome for learning
+        category = ""
+        detail = ""
+        for line in assessment.strip().split("\n"):
+            if line.startswith("DEFECT:"):
+                category = line.split(":", 1)[1].strip()
+            elif line.startswith("DETAIL:"):
+                detail = line.split(":", 1)[1].strip()
+        if category:
+            record_outcome(cycle, category, detail, success)
+            print(f"  [4] Recorded: {category} success={success}")
         
         log_entry = {
             "cycle": cycle,
