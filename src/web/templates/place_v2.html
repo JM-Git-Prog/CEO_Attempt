@@ -140,15 +140,6 @@
         
         objList.appendChild(card);
       });
-        
-        card.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text/plain", idx.toString());
-          card.classList.add("dragging");
-        });
-        card.addEventListener("dragend", () => card.classList.remove("dragging"));
-        
-        objList.appendChild(card);
-      });
 
       // Drop zone
       canvasArea.addEventListener("dragover", (e) => { e.preventDefault(); });
