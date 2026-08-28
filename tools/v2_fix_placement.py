@@ -119,7 +119,7 @@ def main():
                 }
                 break
         
-        print(f"  {entry['name']:30s} depth={depth_val:3.0f} → ({room_x:+5.2f}, {room_y:4.2f}, {room_z:+5.2f})")
+        print(f"  {entry['name']:30s} depth={depth_val:3.0f} -> ({room_x:+5.2f}, {room_y:4.2f}, {room_z:+5.2f})")
     
     # Camera: spawn at the near end of the room, looking forward
     scene["camera"]["position"] = {"x": 0.0, "y": 1.62, "z": room_d * 0.35}
