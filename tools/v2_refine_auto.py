@@ -198,7 +198,10 @@ Focus on these aspects IN ORDER of visual impact:
 Pick the SINGLE most impactful defect that is NOT about room dimensions.
 Be extremely specific with numbers.
 
-Categories: SCALE, POSITION, COLOR, LIGHTING, MISSING, ROTATION, CAMERA
+Categories: SCALE, POSITION, COLOR, LIGHTING, MISSING, ROTATION, CAMERA, REGENERATE
+
+MISSING means: generate a new 3D object that should be in the scene but isn't.
+REGENERATE means: re-create an existing object that looks wrong (bad geometry/shape).
 """ + extra_context + """
 
 Respond EXACTLY in this format (two lines only):
@@ -277,7 +280,7 @@ def _rebuild_room_shell(dims):
 _previous_fixes = []
 
 
-def apply_fix(assessment: str) -> bool:
+async def apply_fix(assessment: str) -> bool:
     """Parse the vision assessment and apply the fix to scene.json."""
     global _previous_fixes
     scene_path = ARTIFACTS / "scene.json"
@@ -372,6 +375,84 @@ def apply_fix(assessment: str) -> bool:
                     obj["rotation_y_deg"] = float(nums[-1])
                 break
 
+    elif category == "MISSING":
+        # Generate a new mesh for the missing object via Hunyuan3D
+        import re
+        import asyncio
+        print(f"  [fix] Generating missing object mesh...")
+
+        # Extract object name from detail
+        obj_name = detail.split("(")[0].strip().lower()
+        # Clean up common prefixes
+        for prefix in ["add ", "add the ", "include ", "place "]:
+            if obj_name.startswith(prefix):
+                obj_name = obj_name[len(prefix):]
+        obj_name = obj_name.strip()
+
+        # Create a crop from the Canon for this object (center region as approximation)
+        from PIL import Image
+        canon = Image.open(ARTIFACTS / "canon.png").convert("RGB")
+        # Use center crop as input for the mesh (best approximation without bbox)
+        w, h = canon.size
+        crop = canon.crop((w // 4, h // 4, 3 * w // 4, 3 * h // 4))
+        # Put on white background
+        canvas = Image.new("RGB", (max(crop.size), max(crop.size)), (255, 255, 255))
+        canvas.paste(crop, ((canvas.width - crop.width) // 2, (canvas.height - crop.height) // 2))
+
+        obj_id = obj_name.replace(" ", "_")[:20]
+        input_path = ARTIFACTS / "meshes" / f"gen_{obj_id}_input.png"
+        canvas.save(str(input_path))
+
+        # Submit Hunyuan3D via the existing builder
+        try:
+            from src.photo_pipeline.comfyui_client import ComfyUIClient
+            from src.photo_pipeline.stages.hunyuan3d_v2_generator import _build_hunyuan3d_v2_workflow
+            import random
+
+            client = ComfyUIClient(timeout_s=600, poll_interval_s=2.0)
+            if await client.health_check():
+                await client.release_vram()
+                uploaded = await client.upload_image(input_path)
+                workflow = _build_hunyuan3d_v2_workflow(
+                    uploaded, steps=30, cfg=5.0, octree_resolution=256,
+                    seed=random.randint(1, 2**32 - 1),
+                )
+                workflow["9"]["inputs"]["filename_prefix"] = f"v2-gen-{obj_id}"
+                prompt_id = await client.submit_workflow(workflow, client_id=f"v2-gen-{obj_id}", timeout_s=600)
+                await client.wait_for_completion(prompt_id, timeout_s=600)
+                glb_path = ARTIFACTS / "meshes" / f"gen_{obj_id}.glb"
+                await client.get_output_mesh(prompt_id, ARTIFACTS / "meshes", f"gen_{obj_id}.glb", node_id="9")
+
+                if glb_path.is_file() and glb_path.stat().st_size > 1000:
+                    # Add to scene
+                    nums = re.findall(r"[-+]?\d*\.?\d+", detail)
+                    pos_x = float(nums[0]) if len(nums) >= 1 else 0.0
+                    pos_y = float(nums[1]) if len(nums) >= 2 else 0.0
+                    pos_z = float(nums[2]) if len(nums) >= 3 else 0.0
+                    scene["objects"].append({
+                        "uuid": f"gen-{obj_id}",
+                        "name": obj_name,
+                        "glb_url": f"/api/v2/session/{SESSION_ID}/artifact/mesh_gen_{obj_id}",
+                        "position": {"x": pos_x, "y": pos_y, "z": pos_z},
+                        "rotation_y_deg": 0,
+                        "scale": {"x": 0.5, "y": 0.5, "z": 0.5},
+                    })
+                    print(f"  [fix] Generated and placed: {obj_name}")
+                else:
+                    print(f"  [fix] GLB not produced for {obj_name}")
+                    return False
+            else:
+                print(f"  [fix] ComfyUI not available for mesh generation")
+                return False
+        except Exception as e:
+            print(f"  [fix] Mesh generation failed: {e}")
+            return False
+
+    elif category == "REGENERATE":
+        # Re-generate an existing object with Hunyuan3D
+        print(f"  [fix] Regeneration not yet implemented — skipping")
+        return False
+
     else:
         print(f"  [fix] Unknown category: {category}")
         return False
@@ -422,7 +503,7 @@ async def run_loop():
 
         # Step 3: Apply fix
         print("  [3] Applying fix...")
-        success = apply_fix(assessment)
+        success = await apply_fix(assessment)
         
         log_entry = {
             "cycle": cycle,
