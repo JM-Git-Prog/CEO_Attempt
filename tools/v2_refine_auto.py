@@ -438,11 +438,25 @@ async def apply_fix(assessment: str) -> bool:
                 await client.get_output_mesh(prompt_id, ARTIFACTS / "meshes", f"gen_{obj_id}.glb", node_id="9")
 
                 if glb_path.is_file() and glb_path.stat().st_size > 1000:
-                    # Add to scene
-                    nums = re.findall(r"[-+]?\d*\.?\d+", detail)
-                    pos_x = float(nums[0]) if len(nums) >= 1 else 0.0
-                    pos_y = float(nums[1]) if len(nums) >= 2 else 0.0
-                    pos_z = float(nums[2]) if len(nums) >= 3 else 0.0
+                    # Extract position from detail — look for [x=N, y=N, z=N] pattern
+                    import re
+                    pos_x, pos_y, pos_z = 0.0, 0.0, 0.0
+                    # Try explicit x=, y=, z= format first
+                    x_match = re.search(r'x\s*=\s*([-+]?\d*\.?\d+)', detail)
+                    y_match = re.search(r'y\s*=\s*([-+]?\d*\.?\d+)', detail)
+                    z_match = re.search(r'z\s*=\s*([-+]?\d*\.?\d+)', detail)
+                    if x_match:
+                        pos_x = float(x_match.group(1))
+                    if y_match:
+                        pos_y = float(y_match.group(1))
+                    if z_match:
+                        pos_z = float(z_match.group(1))
+                    # Clamp to room bounds
+                    room_dims = scene.get("room_dimensions", [4.5, 4.5, 3.0])
+                    pos_x = max(-room_dims[0]/2, min(room_dims[0]/2, pos_x))
+                    pos_z = max(-room_dims[1]/2, min(room_dims[1]/2, pos_z))
+                    pos_y = max(0, min(room_dims[2], pos_y))
+                    
                     scene["objects"].append({
                         "uuid": f"gen-{obj_id}",
                         "name": obj_name,
@@ -451,7 +465,7 @@ async def apply_fix(assessment: str) -> bool:
                         "rotation_y_deg": 0,
                         "scale": {"x": 0.5, "y": 0.5, "z": 0.5},
                     })
-                    print(f"  [fix] Generated and placed: {obj_name}")
+                    print(f"  [fix] Generated and placed: {obj_name} at ({pos_x:.1f}, {pos_y:.1f}, {pos_z:.1f})")
                 else:
                     print(f"  [fix] GLB not produced for {obj_name}")
                     return False
