@@ -218,7 +218,7 @@
   // ─── Three.js Scene ─────────────────────────────────────────────────────────
   function initScene() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x2a1a0a);
+    scene.background = new THREE.Color(0x000000);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.05, 100);
     camera.position.set(0, 1.62, 0);
@@ -500,7 +500,13 @@
         leftPane.appendChild(img);
       }
 
-      // Right pane: take a snapshot from the canon camera angle
+      // Right pane: render a snapshot at the Canon photo's aspect ratio
+      const canonAspect = 4 / 3; // 1024x768
+      const snapWidth = Math.min(960, window.innerWidth / 2);
+      const snapHeight = snapWidth / canonAspect;
+      renderer.setSize(snapWidth, snapHeight);
+      camera.aspect = canonAspect;
+      camera.updateProjectionMatrix();
       renderer.render(scene, camera);
       const rightPane = document.getElementById("compareRight");
       rightPane.querySelectorAll("img").forEach(el => el.remove());
@@ -508,6 +514,10 @@
       snapImg.src = renderer.domElement.toDataURL("image/png");
       snapImg.alt = "3D world from same angle";
       rightPane.appendChild(snapImg);
+      // Restore renderer to full viewport
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
 
       compareBtn.textContent = "Close Compare";
     } else {
