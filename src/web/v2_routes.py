@@ -268,6 +268,7 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
         artifact_map = {
             "hero_canon": session_dir / "artifacts" / "canon.png",
             "depth": session_dir / "artifacts" / "depth.png",
+            "catalog": session_dir / "artifacts" / "catalog.json",
         }
 
         # Check for view artifacts: view_0, view_1, etc.
@@ -289,10 +290,10 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
         path = artifact_map.get(artifact_name)
         if path and path.is_file():
             suffix = path.suffix.lower()
-            media = {"png": "image/png", ".jpg": "image/jpeg", ".glb": "model/gltf-binary"}.get(
+            media = {".png": "image/png", ".jpg": "image/jpeg", ".glb": "model/gltf-binary", ".json": "application/json"}.get(
                 suffix, "application/octet-stream"
             )
-            return FileResponse(path, media_type="image/png")
+            return FileResponse(path, media_type=media)
 
         return JSONResponse({"error": f"Artifact '{artifact_name}' not found"}, status_code=404)
 
