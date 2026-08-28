@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place Objects — V2.0</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111; color: #eee; font: 14px/1.4 Inter, system-ui, sans-serif; overflow: hidden; height: 100vh; display: flex; }
+
+    /* Canon backdrop */
+    #canvas-area { flex: 1; position: relative; overflow: hidden; }
+    #canon-bg { width: 100%; height: 100%; object-fit: contain; display: block; }
+    
+    /* Placed objects overlay */
+    .placed-marker { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: rgba(142, 219, 184, 0.7); border: 2px solid #8edbb8; transform: translate(-50%, -50%); pointer-events: none; font-size: 9px; display: flex; align-items: center; justify-content: center; color: #050a08; font-weight: 700; }
+
+    /* Sidebar with draggable objects */
+    #sidebar { width: 240px; background: #1a1a1a; border-left: 1px solid #333; overflow-y: auto; padding: 12px; }
+    #sidebar h2 { font-size: 12px; color: #8edbb8; margin-bottom: 10px; letter-spacing: 0.05em; }
+    .obj-card { background: #222; border: 1px solid #333; border-radius: 8px; padding: 8px; margin-bottom: 8px; cursor: grab; transition: border-color 0.2s; }
+    .obj-card:hover { border-color: #8edbb8; }
+    .obj-card.placed { opacity: 0.4; border-color: #555; }
+    .obj-card .name { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+    .obj-card .meta { font-size: 10px; color: #888; }
+
+    /* Drag ghost */
+    .dragging { opacity: 0.5; }
+
+    /* Status */
+    #status { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(10,23,19,0.9); padding: 8px 16px; border-radius: 6px; font-size: 11px; color: #8edbb8; z-index: 100; }
+    
+    /* Instructions */
+    #instructions { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: rgba(10,23,19,0.9); padding: 8px 16px; border-radius: 6px; font-size: 12px; color: #ccc; z-index: 100; }
+  </style>
+</head>
+<body>
+  <div id="canvas-area">
+    <img id="canon-bg" src="" alt="Canon photo" draggable="false">
+  </div>
+  <div id="sidebar">
+    <h2>OBJECTS</h2>
+    <div id="obj-list"></div>
+  </div>
+  <div id="instructions">Drag objects from the sidebar onto the Canon photo to place them</div>
+  <div id="status"></div>
+
+  <script>
+    const SESSION_ID = new URLSearchParams(window.location.search).get("session") || "8df83612-1b81-4428-b711-7fbabc9536bb";
+    const canonImg = document.getElementById("canon-bg");
+    const objList = document.getElementById("obj-list");
+    const canvasArea = document.getElementById("canvas-area");
+    const statusEl = document.getElementById("status");
+
+    let catalog = [];
+    let scene = {};
+    let placed = {};
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    // Load data
+    async function init() {
+      // Load Canon image
+      canonImg.src = `/api/v2/session/${SESSION_ID}/artifact/hero_canon`;
+
+      // Load catalog
+      try {
+        const resp = await fetch(`/api/v2/session/${SESSION_ID}/scene`);
+        scene = await resp.json();
+      } catch(e) { console.error("Scene load failed", e); }
+
+      // Load catalog for object names
+      try {
+        const resp = await fetch(`/api/v2/session/${SESSION_ID}/artifact/hero_canon`);
+      } catch(e) {}
+
+      // Populate sidebar from scene objects
+      const objects = scene.objects || [];
+      objects.forEach((obj, idx) => {
+        const card = document.createElement("div");
+        card.className = "obj-card";
+        card.draggable = true;
+        card.dataset.idx = idx;
+        card.dataset.uuid = obj.uuid;
+        card.innerHTML = `<div class="name">${obj.name}</div><div class="meta">${obj.uuid.substring(0,8)}</div>`;
+        
+        card.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", idx.toString());
+          card.classList.add("dragging");
+        });
+        card.addEventListener("dragend", () => card.classList.remove("dragging"));
+        
+        objList.appendChild(card);
+      });
+
+      // Drop zone
+      canvasArea.addEventListener("dragover", (e) => { e.preventDefault(); });
+      canvasArea.addEventListener("drop", handleDrop);
+
+      setStatus(`${objects.length} objects ready to place`);
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const idx = parseInt(e.dataTransfer.getData("text/plain"));
+      const obj = scene.objects[idx];
+      if (!obj) return;
+
+      // Get drop position relative to the Canon image
+      const rect = canonImg.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;   // normalized [0,1]
+      const py = (e.clientY - rect.top) / rect.height;   // normalized [0,1]
+
+      // Mark as placed
+      placed[idx] = { px, py };
+      document.querySelectorAll(".obj-card")[idx].classList.add("placed");
+
+      // Show marker
+      const marker = document.createElement("div");
+      marker.className = "placed-marker";
+      marker.style.left = `${e.clientX - canvasArea.getBoundingClientRect().left}px`;
+      marker.style.top = `${e.clientY - canvasArea.getBoundingClientRect().top}px`;
+      marker.textContent = (idx + 1).toString();
+      canvasArea.appendChild(marker);
+
+      // Send to server
+      savePlacement(obj.uuid, px, py, idx);
+    }
+
+    async function savePlacement(uuid, px, py, idx) {
+      try {
+        const resp = await fetch(`/api/v2/session/${SESSION_ID}/place`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uuid, px, py }),
+        });
+        const data = await resp.json();
+        if (data.position) {
+          setStatus(`Placed #${idx+1} at (${data.position.x.toFixed(2)}, ${data.position.y.toFixed(2)}, ${data.position.z.toFixed(2)})`);
+        }
+      } catch(e) {
+        setStatus(`Place failed: ${e.message}`);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

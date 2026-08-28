@@ -312,6 +312,109 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
 
         return json.loads(scene_path.read_text(encoding="utf-8"))
 
+    # ─── GET /api/v2/session/{id}/place-ui — placement game page ──────────────
+
+    @router.get("/api/v2/place")
+    async def v2_place_page():
+        """Serve the drag-and-drop placement game UI."""
+        from fastapi.responses import HTMLResponse
+        template_path = Path(__file__).parent / "templates" / "place_v2.html"
+        return HTMLResponse(template_path.read_text(encoding="utf-8"))
+
+    # ─── POST /api/v2/session/{id}/place — back-project drop to 3D ────────────
+
+    @router.post("/api/v2/session/{session_id}/place")
+    async def v2_place_object(session_id: str, request: Request):
+        """Receive a drop coordinate (px, py) and back-project to 3D via depth map."""
+        import math
+        import numpy as np
+        from PIL import Image
+
+        try:
+            session_dir = _session_dir(session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=404)
+
+        body = await request.json()
+        uuid = body.get("uuid")
+        px = body.get("px")  # normalized [0,1]
+        py = body.get("py")  # normalized [0,1]
+
+        if uuid is None or px is None or py is None:
+            return JSONResponse({"error": "uuid, px, py required"}, status_code=400)
+
+        # Load depth map
+        depth_path = session_dir / "artifacts" / "depth.png"
+        if not depth_path.is_file():
+            return JSONResponse({"error": "No depth map"}, status_code=404)
+
+        depth = np.array(Image.open(depth_path).convert("L")).astype(np.float32)
+        img_h, img_w = depth.shape
+
+        # Sample depth at drop point
+        dx = int(px * img_w)
+        dy = int(py * img_h)
+        dx = max(0, min(img_w - 1, dx))
+        dy = max(0, min(img_h - 1, dy))
+        # Median of patch for robustness
+        patch_r = 10
+        patch = depth[max(0, dy-patch_r):dy+patch_r, max(0, dx-patch_r):dx+patch_r]
+        depth_val = float(np.median(patch)) if patch.size > 0 else 128.0
+
+        # Load scene for room dimensions
+        scene_path = session_dir / "artifacts" / "scene.json"
+        scene = json.loads(scene_path.read_text(encoding="utf-8"))
+        room_dims = scene.get("room_dimensions", [4.5, 4.5, 3.0])
+        room_d = room_dims[1]
+
+        # Back-project: depth convention 0=far, 255=near
+        min_depth_m = 0.5
+        max_depth_m = room_d
+        metric_depth = max_depth_m - (depth_val / 255.0) * (max_depth_m - min_depth_m)
+
+        # Pinhole back-projection (60 deg horizontal FOV)
+        fov_h_rad = math.radians(70.0)
+        focal_length_px = (img_w / 2) / math.tan(fov_h_rad / 2)
+
+        room_x = (px * img_w - img_w / 2) / focal_length_px * metric_depth
+        room_z = -(metric_depth - room_d / 2)
+
+        # Y elevation: use vertical position as hint
+        # Objects in lower half of image = floor level, upper = elevated
+        if py > 0.7:
+            room_y = 0.0
+        elif py > 0.4:
+            room_y = 0.5
+        elif py > 0.2:
+            room_y = 1.5
+        else:
+            room_y = 2.2  # ceiling-level
+
+        # Clamp to room
+        room_w = room_dims[0]
+        room_x = max(-room_w/2, min(room_w/2, room_x))
+        room_z = max(-room_d/2, min(room_d/2, room_z))
+
+        # Update scene.json
+        for obj in scene.get("objects", []):
+            if obj["uuid"] == uuid:
+                obj["position"] = {
+                    "x": round(float(room_x), 3),
+                    "y": round(float(room_y), 3),
+                    "z": round(float(room_z), 3),
+                }
+                break
+
+        scene_path.write_text(json.dumps(scene, indent=2), encoding="utf-8")
+
+        return {
+            "ok": True,
+            "uuid": uuid,
+            "pixel": {"px": px, "py": py},
+            "depth_value": depth_val,
+            "position": {"x": round(float(room_x), 3), "y": round(float(room_y), 3), "z": round(float(room_z), 3)},
+        }
+
     return router
 
 
