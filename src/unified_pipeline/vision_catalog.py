@@ -1,6 +1,7 @@
 """V2.0 Vision Catalog — Phase 3 (Catalog).
 
-Sends all generated views to a vision model (qwen3-vl:8b) to detect
+Sends all generated views to a vision model (qwen2.5vl:7b, a non-thinking
+vision model — see _analyze_view note) to detect
 every visible object, then merges results across views to produce a
 unified, deduplicated object catalog with stable UUIDs.
 
@@ -169,7 +170,7 @@ def _bbox_area(bbox: list[int]) -> int:
 
 async def _analyze_view(
     view: ViewResult,
-    model: str = "qwen3-vl:8b",
+    model: str = "qwen2.5vl:7b",
 ) -> list[dict[str, Any]]:
     """Send one view to the vision model and extract detected objects.
 
@@ -220,8 +221,13 @@ async def _analyze_view(
         },
     }
 
-    # Try vision models in order
-    for model_name in [model, "qwen3.6:27b"]:
+    # Try vision models in order. IMPORTANT: use NON-thinking vision models
+    # here. qwen3-vl:8b is a reasoning model that spends its entire token
+    # budget in the (unsurfaced) thinking channel and returns empty content
+    # for this structured-extraction task — verified done_reason=length,
+    # content_len=0 even at num_predict=6000. qwen2.5vl:7b (no thinking mode)
+    # returns valid JSON reliably. Do not "upgrade" this to a thinking model.
+    for model_name in [model, "minicpm-v:latest"]:
         try:
             async with httpx.AsyncClient(timeout=VISION_TIMEOUT) as client:
                 resp = await client.post(
