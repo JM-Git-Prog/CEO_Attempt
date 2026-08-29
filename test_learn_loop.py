@@ -1,7 +1,7 @@
 """Self-improving test loop: run pipeline, QA with vision model, learn, repeat.
 
 After each pass generates floor plan + blockout + canon, we send all three
-to qwen2.5vl:7b for a structured 7-category analysis. The findings get
+to qwen3-vl:8b for a structured 7-category analysis. The findings get
 fed back as improvements to the next run's prompt/parameters.
 """
 
@@ -84,14 +84,14 @@ def http_bytes(path):
 
 
 def vision_qa(svg_bytes: bytes, blockout_bytes: bytes, canon_bytes: bytes) -> dict:
-    """Send all three artifacts to qwen2.5vl for structured QA."""
+    """Send all three artifacts to qwen3-vl for structured QA."""
     images = [
         base64.b64encode(svg_bytes).decode(),
         base64.b64encode(blockout_bytes).decode(),
         base64.b64encode(canon_bytes).decode(),
     ]
     payload = {
-        "model": "qwen2.5vl:7b",
+        "model": "qwen3-vl:8b",
         "messages": [
             {"role": "user", "content": VISION_QA_PROMPT, "images": images}
         ],

@@ -510,8 +510,8 @@ async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
         },
     }
 
-    # Try qwen3-vl:8b first, fall back to qwen3.6:27b
-    for model in ["qwen3-vl:8b", "qwen3.6:27b"]:
+    # Try qwen3-vl:8b first, fall back to the heavier qwen3.8:27b
+    for model in ["qwen3-vl:8b", "qwen3.8:27b"]:
         try:
             async with httpx.AsyncClient(timeout=180.0) as client:
                 resp = await client.post(

@@ -1,6 +1,6 @@
 """V2.0 Vision Catalog — Phase 3 (Catalog).
 
-Sends all generated views to a vision model (qwen2.5vl:7b) to detect
+Sends all generated views to a vision model (qwen3-vl:8b) to detect
 every visible object, then merges results across views to produce a
 unified, deduplicated object catalog with stable UUIDs.
 
@@ -73,7 +73,7 @@ def _bbox_area(bbox: list[int]) -> int:
 
 async def _analyze_view(
     view: ViewResult,
-    model: str = "qwen2.5vl:7b",
+    model: str = "qwen3-vl:8b",
 ) -> list[dict[str, Any]]:
     """Send one view to the vision model and extract detected objects.
 

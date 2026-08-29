@@ -56,6 +56,9 @@ FLUX_VAE = "flux2-vae.safetensors"
 
 # Object presence validation via vision model
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+# Default qwen3-vl:8b (fully GPU-resident on a 24GB 4090 while ComfyUI runs).
+# Set VISION_MODEL=qwen3.8:27b for a higher-quality pass when the GPU is free
+# (27B needs ~17.4GB and will spill to system RAM under contention).
 VISION_MODEL = os.getenv("VISION_MODEL", "qwen3-vl:8b")
 VISION_TIMEOUT = float(os.getenv("VISION_TIMEOUT", "30"))
 
@@ -394,7 +397,7 @@ async def _validate_presence_via_vision(
 ) -> dict[str, str]:
     """Validate object presence using a vision model.
 
-    Sends the Canon image to a vision-capable model (qwen2.5vl) and asks
+    Sends the Canon image to a vision-capable model (qwen3-vl:8b) and asks
     it to verify whether each manifest object is visible in the scene.
 
     Req 8.3: Each manifest object receives present/missing/uncertain verdict.
@@ -875,7 +878,7 @@ class SceneCanonGenerator:
 
         Req 8.3: Each manifest object receives present/missing/uncertain verdict.
 
-        Uses a vision model (qwen2.5vl) to analyze the generated Canon image
+        Uses a vision model (qwen3-vl:8b) to analyze the generated Canon image
         and determine which objects from the manifest are visible. Falls back
         to heuristic (all uncertain) if vision model unavailable.
 

@@ -115,10 +115,10 @@ def poll_until(session_id: str, target_states: set[str], timeout: float = POLL_T
 
 
 def ollama_vision_qa(image_bytes: bytes, checklist: str) -> dict:
-    """Use Ollama qwen2.5vl:7b to QA a generated image against a checklist."""
+    """Use Ollama qwen3-vl:8b to QA a generated image against a checklist."""
     b64 = base64.b64encode(image_bytes).decode()
     payload = {
-        "model": "qwen2.5vl:7b",
+        "model": "qwen3-vl:8b",
         "messages": [
             {"role": "system", "content": "You are a visual QA inspector for architectural renders. "
              "Respond ONLY with valid JSON: {\"pass\": bool, \"failed_checks\": [...], \"confidence\": 0.0-1.0, \"notes\": \"...\"}"},
