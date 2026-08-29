@@ -269,6 +269,8 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
             "hero_canon": session_dir / "artifacts" / "canon.png",
             "depth": session_dir / "artifacts" / "depth.png",
             "catalog": session_dir / "artifacts" / "catalog.json",
+            "canon_injected": session_dir / "artifacts" / "canon_injected.png",
+            "synthetic_depth": session_dir / "artifacts" / "synthetic_depth.png",
         }
 
         # Check for view artifacts: view_0, view_1, etc.
@@ -583,6 +585,15 @@ async def _run_v2_pipeline(session_id: str, session_dir: Path) -> None:
         emit("phase_start", {"phase": "assemble", "message": "Assembling walkable world..."})
         from src.unified_pipeline.v2_assembler import assemble_world
         scene = await assemble_world(brief, meshes, session_dir, emit_fn=emit)
+
+        # Phase 6: Geometry injection — render depth from the assembled scene,
+        # generate a photorealistic Canon conditioned on it, texture meshes from it.
+        # "Don't extract geometry — inject it." Positions are ground truth.
+        try:
+            from src.unified_pipeline.geometry_injection import inject_geometry
+            await inject_geometry(brief, session_dir, emit_fn=emit)
+        except Exception as inj_exc:
+            _log.warning(f"V2 geometry injection skipped: {inj_exc}")
 
         # Done
         emit("world_ready", {
