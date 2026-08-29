@@ -1,10 +1,16 @@
 """ControlNet depth-conditioned generation for the Unified World Pipeline.
 
-Injects MetricPlan-authored depth maps into FLUX image generation via ComfyUI
+Injects MetricPlan-authored depth maps into SDXL image generation via ComfyUI
 ControlNet, so generated images follow MetricPlan geometry BY CONSTRUCTION.
 This is the "inject" half of the inject-then-validate architecture: geometry
 flows downhill from the spatial authority into generation, never uphill from a
 hallucinated image back into geometry.
+
+Depth conditioning uses the proven-compatible SDXL base + promax union
+ControlNet (depth) stack from geometry_injection.py. Non-SDXL backbones
+(FLUX/Z-Image/Lumina2) are INCOMPATIBLE with the promax ControlNet, so this
+module deliberately targets SDXL to match the only installed, architecture-
+compatible depth ControlNet.
 
 The depth map produced by depth_sequence_renderer uses meters with ``np.inf``
 for "no geometry". ControlNet depth models expect a normalized, disparity-like
@@ -27,13 +33,23 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_STRENGTH = 0.8
-# FLUX model files (match canon_generator / multi_view_generator conventions).
-FLUX_MODEL = "flux-2-klein-base-4b-fp8.safetensors"
-FLUX_CLIP = "qwen_3_4b.safetensors"
-FLUX_VAE = "flux2-vae.safetensors"
+# Proven-compatible depth conditioning stack (see geometry_injection.py):
+# SDXL base + promax union ControlNet (depth). FLUX/Z-Image/Lumina2 + promax is
+# INCOMPATIBLE (architecture mismatch), so this module targets SDXL.
+SDXL_CHECKPOINT = "sd_xl_base_1.0.safetensors"
+PROMAX_CONTROLNET = "diffusion_pytorch_model_promax.safetensors"
+# Depth conditioning strength / schedule proven in geometry_injection.py.
+DEFAULT_STRENGTH = 0.45
+DEFAULT_END_PERCENT = 0.6
+DEFAULT_NEGATIVE = (
+    "blurry, distorted, low quality, warped, deformed, cartoon, illustration"
+)
 # ControlNet node class types we require to be present.
-REQUIRED_CONTROLNET_NODES = ("ControlNetLoader", "ControlNetApply")
+REQUIRED_CONTROLNET_NODES = (
+    "ControlNetLoader",
+    "SetUnionControlNetType",
+    "ControlNetApplyAdvanced",
+)
 
 
 def normalize_depth_for_controlnet(
@@ -78,11 +94,15 @@ class ControlNetConditioner:
         self,
         comfyui_url: str = "http://localhost:8188",
         default_strength: float = DEFAULT_STRENGTH,
-        controlnet_model: str = "flux-depth-controlnet.safetensors",
+        controlnet_model: str = PROMAX_CONTROLNET,
+        checkpoint: str = SDXL_CHECKPOINT,
+        end_percent: float = DEFAULT_END_PERCENT,
     ) -> None:
         self._url = comfyui_url.rstrip("/")
         self._default_strength = default_strength
         self._controlnet_model = controlnet_model
+        self._checkpoint = checkpoint
+        self._end_percent = end_percent
 
     # ── Availability ─────────────────────────────────────────────────────────
 
@@ -132,14 +152,20 @@ class ControlNetConditioner:
         seed: int = -1,
         width: int = 1024,
         height: int = 768,
-        negative_prompt: str = "blurry, low quality, deformed, text, watermark",
+        negative_prompt: str = DEFAULT_NEGATIVE,
     ) -> dict[str, Any]:
-        """Build a ComfyUI FLUX + ControlNet-depth workflow graph.
+        """Build a ComfyUI SDXL + promax depth-ControlNet workflow graph.
+
+        Matches the proven-compatible pair from geometry_injection.py: SDXL base
+        checkpoint + promax union ControlNet set to depth mode via
+        SetUnionControlNetType, applied with ControlNetApplyAdvanced. This is the
+        only depth-conditioning stack with an installed, architecture-compatible
+        ControlNet model on this machine.
 
         Args:
             depth_filename: Filename of the uploaded depth conditioning image.
             prompt: Positive text prompt.
-            strength: ControlNet conditioning strength (default from ctor).
+            strength: ControlNet conditioning strength (default from ctor, 0.45).
             seed: Sampler seed (-1 for random handled by caller/ComfyUI).
             width: Output width.
             height: Output height.
@@ -153,21 +179,16 @@ class ControlNetConditioner:
 
         return {
             "1": {
-                "class_type": "UNETLoader",
-                "inputs": {"unet_name": FLUX_MODEL, "weight_dtype": "default"},
+                "class_type": "CheckpointLoaderSimple",
+                "inputs": {"ckpt_name": self._checkpoint},
             },
-            "2": {
-                "class_type": "CLIPLoader",
-                "inputs": {"clip_name": FLUX_CLIP, "type": "flux2", "device": "default"},
-            },
-            "3": {"class_type": "VAELoader", "inputs": {"vae_name": FLUX_VAE}},
             "4": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"text": prompt, "clip": ["2", 0]},
+                "inputs": {"clip": ["1", 1], "text": prompt},
             },
             "5": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"text": negative_prompt, "clip": ["2", 0]},
+                "inputs": {"clip": ["1", 1], "text": negative_prompt},
             },
             "6": {
                 "class_type": "LoadImage",
@@ -177,41 +198,48 @@ class ControlNetConditioner:
                 "class_type": "ControlNetLoader",
                 "inputs": {"control_net_name": self._controlnet_model},
             },
+            "14": {
+                "class_type": "SetUnionControlNetType",
+                "inputs": {"control_net": ["7", 0], "type": "depth"},
+            },
             "8": {
-                "class_type": "ControlNetApply",
+                "class_type": "ControlNetApplyAdvanced",
                 "inputs": {
-                    "conditioning": ["4", 0],
-                    "control_net": ["7", 0],
+                    "positive": ["4", 0],
+                    "negative": ["5", 0],
+                    "control_net": ["14", 0],
                     "image": ["6", 0],
                     "strength": strength,
+                    "start_percent": 0.0,
+                    "end_percent": self._end_percent,
                 },
             },
-            "9": {
-                "class_type": "EmptyFlux2LatentImage",
+            "10": {
+                "class_type": "EmptyLatentImage",
                 "inputs": {"width": width, "height": height, "batch_size": 1},
             },
-            "10": {
+            "11": {
                 "class_type": "KSampler",
                 "inputs": {
                     "model": ["1", 0],
                     "positive": ["8", 0],
-                    "negative": ["5", 0],
-                    "latent_image": ["9", 0],
+                    "negative": ["8", 1],
+                    "latent_image": ["10", 0],
                     "seed": seed,
-                    "steps": 20,
-                    "cfg": 5.0,
-                    "sampler_name": "euler",
-                    "scheduler": "simple",
+                    "steps": 25,
+                    "cfg": 6.5,
+                    "sampler_name": "dpmpp_2m",
+                    "scheduler": "karras",
                     "denoise": 1.0,
                 },
             },
-            "11": {
-                "class_type": "VAEDecode",
-                "inputs": {"samples": ["10", 0], "vae": ["3", 0]},
-            },
             "12": {
+                "class_type": "VAEDecode",
+                "inputs": {"samples": ["11", 0], "vae": ["1", 2]},
+            },
+            "13": {
                 "class_type": "SaveImage",
-                "inputs": {"images": ["11", 0], "filename_prefix": "conditioned_view"},
+                "inputs": {"images": ["12", 0], "filename_prefix": "conditioned_view"},
             },
         }
 
@@ -245,12 +273,18 @@ class ControlNetConditioner:
         Raises:
             RuntimeError: If ComfyUI is unavailable or generation fails.
         """
+        import random
+
         from PIL import Image
 
         from src.photo_pipeline.comfyui_client import ComfyUIClient
 
         out_dir = Path(output_dir) if output_dir else Path("output/conditioned")
         out_dir.mkdir(parents=True, exist_ok=True)
+
+        # KSampler requires a non-negative seed; -1 means "pick a random one".
+        if seed is None or seed < 0:
+            seed = random.randint(1, 2**32 - 1)
 
         # Normalize depth -> conditioning image and write it to disk for upload.
         cond_img = normalize_depth_for_controlnet(depth_render.depth_map)
