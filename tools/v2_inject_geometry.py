@@ -120,23 +120,27 @@ def render_synthetic_depth(scene_path: Path, output_path: Path, width=1024, heig
     _, depth_buffer = renderer.render(pr_scene)
     renderer.delete()
 
-    # Normalize depth to 0-255 (0=near, 255=far for ControlNet convention)
+    # ControlNet depth convention: WHITE=near (255), BLACK=far (0).
+    # pyrender depth_buffer: larger value = farther. So we INVERT.
     valid_mask = depth_buffer > 0
     if valid_mask.sum() > 0:
         min_d = depth_buffer[valid_mask].min()
         max_d = depth_buffer[valid_mask].max()
         if max_d > min_d:
             normalized = np.zeros_like(depth_buffer, dtype=np.float32)
-            normalized[valid_mask] = (depth_buffer[valid_mask] - min_d) / (max_d - min_d)
+            # Invert: near surfaces -> 1.0 (white), far -> low. Background (0) stays black.
+            normalized[valid_mask] = 1.0 - (depth_buffer[valid_mask] - min_d) / (max_d - min_d)
             depth_8bit = (normalized * 255).astype(np.uint8)
         else:
             depth_8bit = np.zeros((height, width), dtype=np.uint8)
     else:
         depth_8bit = np.zeros((height, width), dtype=np.uint8)
 
-    # Save as PNG
-    Image.fromarray(depth_8bit).save(str(output_path))
-    print(f"Synthetic depth rendered: {output_path} ({width}x{height})")
+    # Slight blur so faceted mesh blocks read as continuous surfaces (more photoreal)
+    from PIL import ImageFilter
+    depth_img = Image.fromarray(depth_8bit).filter(ImageFilter.GaussianBlur(radius=2))
+    depth_img.save(str(output_path))
+    print(f"Synthetic depth rendered (inverted, blurred): {output_path} ({width}x{height})")
     return output_path
 
 
@@ -182,7 +186,8 @@ def build_depth_conditioned_workflow(
             "class_type": "SetUnionControlNetType",
             "inputs": {"control_net": ["7", 0], "type": "depth"},
         },
-        # Apply ControlNet depth conditioning
+        # Apply ControlNet depth conditioning — lower strength + early cutoff
+        # gives SDXL freedom to render photorealistic detail while keeping layout
         "8": {
             "class_type": "ControlNetApplyAdvanced",
             "inputs": {
@@ -190,9 +195,9 @@ def build_depth_conditioned_workflow(
                 "negative": ["5", 0],
                 "control_net": ["14", 0],
                 "image": ["6", 0],
-                "strength": 0.75,
+                "strength": 0.45,
                 "start_percent": 0.0,
-                "end_percent": 0.9,
+                "end_percent": 0.6,
             },
         },
         # Empty latent (SDXL native 1024)
@@ -259,7 +264,7 @@ async def main():
     # Step 3: Build and submit depth-conditioned workflow
     print("\n[3] Submitting depth-conditioned Canon generation...")
     import random
-    prompt = "A warm bohemian living room with terracotta walls, macrame chandelier, colorful ottoman, carved wooden sideboard, lush green living wall, persian rug, pendant lights, potted plants, natural daylight from window. Interior photography, wide angle, warm ambient lighting."
+    prompt = "professional interior photograph of a warm bohemian living room, terracotta plaster walls, macrame fringe chandelier, colorful crocheted ottoman pouf, carved wooden sideboard credenza, lush green living plant wall, vintage persian rug, amber glass pendant lights, terracotta potted plants, bright natural daylight from a large window, photorealistic, high detail, 35mm architectural photography, soft warm ambient lighting, shallow depth of field, 8k, magazine quality"
     seed = random.randint(1, 2**32 - 1)
 
     workflow = build_depth_conditioned_workflow(depth_uploaded, prompt, seed)
