@@ -152,82 +152,74 @@ def build_depth_conditioned_workflow(
     Based on the proven z-image-prop.api.json structure with ControlNet inserted.
     """
     return {
-        # Anima base UNET — matches the anima-lllite-depth patch architecture
+        # SDXL base — proven-compatible with the promax depth ControlNet
         "1": {
-            "class_type": "UNETLoader",
-            "inputs": {"unet_name": "anima-base-v1.0.safetensors", "weight_dtype": "default"},
+            "class_type": "CheckpointLoaderSimple",
+            "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
         },
-        # CLIP — lumina2 type with device default (proven)
-        "2": {
-            "class_type": "CLIPLoader",
-            "inputs": {"clip_name": "qwen_3_4b.safetensors", "type": "lumina2", "device": "default"},
-        },
-        # VAE
-        "3": {
-            "class_type": "VAELoader",
-            "inputs": {"vae_name": "ae.safetensors"},
-        },
-        # Text encode (positive)
+        # Positive text encode (SDXL uses the checkpoint's built-in CLIP)
         "4": {
             "class_type": "CLIPTextEncode",
-            "inputs": {"clip": ["2", 0], "text": prompt},
+            "inputs": {"clip": ["1", 1], "text": prompt},
         },
-        # Zero conditioning (negative)
+        # Negative text encode
         "5": {
-            "class_type": "ConditioningZeroOut",
-            "inputs": {"conditioning": ["4", 0]},
+            "class_type": "CLIPTextEncode",
+            "inputs": {"clip": ["1", 1], "text": "blurry, distorted, low quality, warped, deformed"},
         },
         # Depth conditioning image
         "6": {
             "class_type": "LoadImage",
             "inputs": {"image": depth_image_name},
         },
-        # Z-Image depth model patch (Lumina2-compatible, NOT SDXL controlnet)
+        # ControlNet loader (promax = SDXL depth/union controlnet)
         "7": {
-            "class_type": "ModelPatchLoader",
-            "inputs": {"name": "anima-lllite-depth-1.safetensors"},
+            "class_type": "ControlNetLoader",
+            "inputs": {"control_net_name": "diffusion_pytorch_model_promax.safetensors"},
         },
-        # Apply Z-Image depth conditioning via model patch
+        # Set union controlnet type to depth
+        "14": {
+            "class_type": "SetUnionControlNetType",
+            "inputs": {"control_net": ["7", 0], "type": "depth"},
+        },
+        # Apply ControlNet depth conditioning
         "8": {
-            "class_type": "ZImageFunControlnet",
+            "class_type": "ControlNetApplyAdvanced",
             "inputs": {
-                "model": ["1", 0],
-                "model_patch": ["7", 0],
-                "vae": ["3", 0],
-                "strength": 0.8,
+                "positive": ["4", 0],
+                "negative": ["5", 0],
+                "control_net": ["14", 0],
                 "image": ["6", 0],
+                "strength": 0.75,
+                "start_percent": 0.0,
+                "end_percent": 0.9,
             },
         },
-        # ModelSamplingAuraFlow on the patched model (proven — shift=3)
-        "9": {
-            "class_type": "ModelSamplingAuraFlow",
-            "inputs": {"model": ["8", 0], "shift": 3},
-        },
-        # SD3 latent (proven uses EmptySD3LatentImage)
+        # Empty latent (SDXL native 1024)
         "10": {
-            "class_type": "EmptySD3LatentImage",
+            "class_type": "EmptyLatentImage",
             "inputs": {"width": width, "height": height, "batch_size": 1},
         },
-        # KSampler (proven: res_multistep, 8 steps, cfg=1) — clean text conditioning
+        # KSampler (SDXL settings)
         "11": {
             "class_type": "KSampler",
             "inputs": {
-                "model": ["9", 0],
-                "positive": ["4", 0],
-                "negative": ["5", 0],
+                "model": ["1", 0],
+                "positive": ["8", 0],
+                "negative": ["8", 1],
                 "latent_image": ["10", 0],
                 "seed": seed,
-                "steps": 8,
-                "cfg": 1.0,
-                "sampler_name": "res_multistep",
-                "scheduler": "simple",
+                "steps": 25,
+                "cfg": 6.5,
+                "sampler_name": "dpmpp_2m",
+                "scheduler": "karras",
                 "denoise": 1.0,
             },
         },
-        # VAE Decode
+        # VAE Decode (SDXL checkpoint VAE)
         "12": {
             "class_type": "VAEDecode",
-            "inputs": {"samples": ["11", 0], "vae": ["3", 0]},
+            "inputs": {"samples": ["11", 0], "vae": ["1", 2]},
         },
         # Save
         "13": {
