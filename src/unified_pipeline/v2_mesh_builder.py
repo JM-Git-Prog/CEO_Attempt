@@ -719,9 +719,30 @@ async def build_meshes(
         except Exception:
             pass
 
-    # Generate room shell
+    # Generate room shell. Prefer depth-back-projected reconstruction from the
+    # capture manifest (exact known cameras); fall back to the parametric shell
+    # when no manifest / insufficient coverage / reconstruction fails (Req 6.7).
     emit("phase_start", {"phase": "shell", "message": "Building room shell..."})
-    shell_path = _generate_room_shell(room_dims, meshes_dir)
+    shell_path: Path | None = None
+    capture_manifest = getattr(views, "capture_manifest", None)
+    if capture_manifest is not None and views.metric_plan is not None:
+        try:
+            from src.unified_pipeline.room_shell_reconstruction import (
+                reconstruct_room_shell,
+            )
+
+            shell_path = reconstruct_room_shell(
+                views.metric_plan, capture_manifest, meshes_dir
+            )
+            if shell_path:
+                logger.info("  V2 room shell: reconstructed from capture manifest")
+        except Exception as exc:  # noqa: BLE001 - fall back to parametric
+            logger.warning("  V2 reconstruction failed (%s); using parametric", exc)
+            shell_path = None
+
+    if shell_path is None:
+        shell_path = _generate_room_shell(room_dims, meshes_dir)
+
     if shell_path:
         emit("shell_ready", {
             "glb_url": f"/api/v2/session/{session_dir.name}/artifact/mesh_room_shell",

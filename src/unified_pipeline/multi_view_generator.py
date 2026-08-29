@@ -48,6 +48,58 @@ class MultiViewResult:
     views: list[ViewResult] = field(default_factory=list)
     metric_plan: MetricPlan | None = None
     room_dimensions: tuple[float, float, float] = (4.0, 4.0, 2.7)
+    # Exact-pose capture manifest (from CapturePlanner) when available. Carries
+    # per-camera K/R/t for downstream depth back-projection. None when the
+    # legacy cardinal-camera path is used.
+    capture_manifest: Any = None
+
+
+def _planner_cameras(
+    metric_plan: MetricPlan,
+    width: float,
+    depth: float,
+    ceiling: float,
+) -> tuple[list[dict[str, Any]], Any]:
+    """Build cameras from CapturePlanner, returning legacy dicts + the manifest.
+
+    The returned dict list matches the shape produced by
+    ``_compute_cardinal_cameras`` (position/target/label) so the existing
+    generation loop is unchanged. The CaptureManifest is returned alongside so
+    downstream stages can use the exact known K/R/t for back-projection.
+
+    Falls back to legacy cardinal cameras (manifest=None) if CapturePlanner is
+    unavailable or errors — preserving backward compatibility.
+    """
+    try:
+        from src.unified_pipeline.capture_planner import CapturePlanner
+        from src.unified_pipeline.models import CameraContract
+
+        eye_height = min(1.62, ceiling * 0.6)
+        contract = CameraContract(
+            position=(0.0, eye_height, 0.0),
+            target=(0.0, eye_height * 0.9, -depth / 2),
+        )
+        manifest = CapturePlanner(metric_plan, contract).plan()
+        cameras = [
+            {
+                "position": cam.position,
+                "target": cam.target,
+                "label": cam.label,
+            }
+            for cam in manifest.cameras
+        ]
+        if not cameras:
+            raise ValueError("CapturePlanner produced no cameras")
+        logger.info(
+            "  V2 using CapturePlanner: %d cameras (exact K/R/t manifest)",
+            len(cameras),
+        )
+        return cameras, manifest
+    except Exception as exc:  # noqa: BLE001 - fall back to legacy path
+        logger.warning(
+            "  V2 CapturePlanner unavailable (%s); using cardinal cameras", exc
+        )
+        return _compute_cardinal_cameras(width, depth, ceiling), None
 
 
 def _compute_cardinal_cameras(
@@ -343,8 +395,19 @@ async def generate_multi_views(
         json.dumps(plan_data, indent=2, default=str), encoding="utf-8"
     )
 
-    # Compute camera positions
-    cameras = _compute_cardinal_cameras(width, depth, ceiling)
+    # Compute camera positions. Prefer CapturePlanner (exact K/R/t manifest),
+    # fall back to legacy cardinal cameras. Existing generation loop is unchanged.
+    cameras, capture_manifest = _planner_cameras(metric_plan, width, depth, ceiling)
+
+    # Persist the manifest for downstream back-projection when available.
+    if capture_manifest is not None:
+        try:
+            (artifacts_dir / "capture_manifest.json").write_text(
+                json.dumps(capture_manifest.to_dict(), indent=2, default=str),
+                encoding="utf-8",
+            )
+        except Exception as exc:  # noqa: BLE001 - manifest persistence is best-effort
+            logger.warning("  V2 could not persist capture_manifest: %s", exc)
 
     # View 0 = hero Canon (already exists)
     hero_path = artifacts_dir / "canon.png"
@@ -354,6 +417,7 @@ async def generate_multi_views(
     result = MultiViewResult(
         metric_plan=metric_plan,
         room_dimensions=(width, depth, ceiling),
+        capture_manifest=capture_manifest,
     )
 
     # Add hero view (index 0) — already generated
