@@ -467,6 +467,15 @@ class CapturePlanner:
         z = float(np.clip(position[2], -half_d, half_d))
         return (x, y, z)
 
+    def _plan_hash(self) -> str:
+        """Stable hash of the MetricPlan revision for provenance binding."""
+        if self._plan is None:
+            return "no_plan"
+        canonical = json.dumps(
+            self._plan.to_dict(), sort_keys=True, separators=(",", ":")
+        )
+        return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
+
     # ── Analysis ─────────────────────────────────────────────────────────────
 
     def _estimate_surface_coverage(
