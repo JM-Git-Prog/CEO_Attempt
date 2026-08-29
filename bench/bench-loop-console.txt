@@ -7373,3 +7373,18 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p086: blocked  (54.1s) out_of_bounds,physical_overlap,physical_overlap
   p087: blocked  (19.8s) physical_overlap,out_of_bounds,opening_blocked
 [07:46:18] bench batch rc=3221225786
+[07:07:07] bench loop up - waiting for training chain to finish first
+[07:07:07] GPU turn acquired - continuous benching begins
+[07:07:07] batch: prompts 85..99 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p086: error    (2.6s) 
+  p087: error    (2.5s) 
+  p088: error    (2.5s) 
+  !! LANE ABORTED after 3 consecutive backend errors. Infrastructure failure, not a model score.
+  LANE RESULT: NO SCORE - all 3 calls failed at the backend. Fix the backend, then re-run.
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260829T070707.json
+[07:07:15] bench batch rc=0
+[07:07:15] ingest: ingest: +2 records | 893 already banked | 4421 plan-less rows skipped
+[07:08:45] PAUSE-BENCH.txt present - sleeping 5 min

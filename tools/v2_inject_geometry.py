@@ -62,10 +62,14 @@ def render_synthetic_depth(scene_path: Path, output_path: Path, width=1024, heig
             loaded = trimesh.load(str(glb_path), force="scene", process=False)
             pos = obj.get("position", {})
             scale = obj.get("scale", {})
+            # Guard against zero/degenerate scales (causes Eigenvalue errors)
+            sx = max(0.05, abs(scale.get("x", 1)))
+            sy = max(0.05, abs(scale.get("y", 1)))
+            sz = max(0.05, abs(scale.get("z", 1)))
             transform = np.eye(4)
-            transform[0, 0] = scale.get("x", 1)
-            transform[1, 1] = scale.get("y", 1)
-            transform[2, 2] = scale.get("z", 1)
+            transform[0, 0] = sx
+            transform[1, 1] = sy
+            transform[2, 2] = sz
             transform[0, 3] = pos.get("x", 0)
             transform[1, 3] = pos.get("y", 0)
             transform[2, 3] = pos.get("z", 0)
@@ -148,10 +152,10 @@ def build_depth_conditioned_workflow(
     Based on the proven z-image-prop.api.json structure with ControlNet inserted.
     """
     return {
-        # Z-Image Turbo UNET (weight_dtype default, per proven workflow)
+        # Anima base UNET — matches the anima-lllite-depth patch architecture
         "1": {
             "class_type": "UNETLoader",
-            "inputs": {"unet_name": "z_image_turbo_bf16.safetensors", "weight_dtype": "default"},
+            "inputs": {"unet_name": "anima-base-v1.0.safetensors", "weight_dtype": "default"},
         },
         # CLIP — lumina2 type with device default (proven)
         "2": {
@@ -178,42 +182,39 @@ def build_depth_conditioned_workflow(
             "class_type": "LoadImage",
             "inputs": {"image": depth_image_name},
         },
-        # ControlNet loader
+        # Z-Image depth model patch (Lumina2-compatible, NOT SDXL controlnet)
         "7": {
-            "class_type": "ControlNetLoader",
-            "inputs": {"control_net_name": "diffusion_pytorch_model_promax.safetensors"},
+            "class_type": "ModelPatchLoader",
+            "inputs": {"name": "anima-lllite-depth-1.safetensors"},
         },
-        # Apply ControlNet depth conditioning
+        # Apply Z-Image depth conditioning via model patch
         "8": {
-            "class_type": "ControlNetApplyAdvanced",
+            "class_type": "ZImageFunControlnet",
             "inputs": {
-                "positive": ["4", 0],
-                "negative": ["5", 0],
-                "control_net": ["7", 0],
-                "image": ["6", 0],
-                "strength": 0.65,
-                "start_percent": 0.0,
-                "end_percent": 0.85,
+                "model": ["1", 0],
+                "model_patch": ["7", 0],
                 "vae": ["3", 0],
+                "strength": 0.8,
+                "image": ["6", 0],
             },
         },
-        # ModelSamplingAuraFlow (proven — shift=3)
+        # ModelSamplingAuraFlow on the patched model (proven — shift=3)
         "9": {
             "class_type": "ModelSamplingAuraFlow",
-            "inputs": {"model": ["1", 0], "shift": 3},
+            "inputs": {"model": ["8", 0], "shift": 3},
         },
         # SD3 latent (proven uses EmptySD3LatentImage)
         "10": {
             "class_type": "EmptySD3LatentImage",
             "inputs": {"width": width, "height": height, "batch_size": 1},
         },
-        # KSampler (proven: res_multistep, 8 steps, cfg=1)
+        # KSampler (proven: res_multistep, 8 steps, cfg=1) — clean text conditioning
         "11": {
             "class_type": "KSampler",
             "inputs": {
                 "model": ["9", 0],
-                "positive": ["8", 0],
-                "negative": ["8", 1],
+                "positive": ["4", 0],
+                "negative": ["5", 0],
                 "latent_image": ["10", 0],
                 "seed": seed,
                 "steps": 8,
