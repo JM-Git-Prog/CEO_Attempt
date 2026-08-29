@@ -28,6 +28,99 @@ logger = logging.getLogger("live_trace")
 OLLAMA_URL = "http://127.0.0.1:11434"
 VISION_TIMEOUT = 180.0
 
+# Category enum derived from the master taxonomy's Consumer_Furnishings
+# sub-category names (data/master_taxonomy_engine.json ->
+# Commercial_Institutional_Residential/Consumer_Furnishings) plus a few
+# room-level classes a vision model plausibly reports. This replaces the old
+# advisory 8-value free-string so detections speak the taxonomy's vocabulary
+# and a future TaxonomyResolver can bind them to a Taxonomy_Path.
+# See arch/master-taxonomy-engine (three-tier integration plan, step 1).
+TAXONOMY_CATEGORIES: tuple[str, ...] = (
+    "seating",
+    "tables_surfaces",
+    "storage_casegoods",
+    "sleeping",
+    "lighting_fixtures",
+    "soft_goods_textiles",
+    "appliances_major",
+    "appliances_small",
+    "electronics_entertainment",
+    "kitchen_tableware",
+    "decor_accessories",
+    "bathroom_fixtures",
+    "window_wall_treatments",
+    "outdoor_patio",
+    "kids_nursery",
+    "office_workspace",
+    "fitness_recreation",
+    "pet",
+    "cleaning_utility",
+    "personal_everyday",
+    "hardware_fixtures",
+    "architectural",
+    "other",
+)
+
+# Maps the legacy advisory values and common vision-model synonyms onto the
+# taxonomy category enum. Unknown values fall back to "other".
+_CATEGORY_ALIASES: dict[str, str] = {
+    "furniture": "seating",
+    "chair": "seating",
+    "sofa": "seating",
+    "couch": "seating",
+    "table": "tables_surfaces",
+    "desk": "office_workspace",
+    "surface": "tables_surfaces",
+    "lighting": "lighting_fixtures",
+    "lamp": "lighting_fixtures",
+    "light": "lighting_fixtures",
+    "storage": "storage_casegoods",
+    "cabinet": "storage_casegoods",
+    "shelf": "storage_casegoods",
+    "shelving": "storage_casegoods",
+    "bed": "sleeping",
+    "appliance": "appliances_major",
+    "utensil": "kitchen_tableware",
+    "kitchenware": "kitchen_tableware",
+    "tableware": "kitchen_tableware",
+    "electronics": "electronics_entertainment",
+    "electronic": "electronics_entertainment",
+    "tv": "electronics_entertainment",
+    "decor": "decor_accessories",
+    "decoration": "decor_accessories",
+    "art": "decor_accessories",
+    "rug": "soft_goods_textiles",
+    "textile": "soft_goods_textiles",
+    "curtain": "window_wall_treatments",
+    "blinds": "window_wall_treatments",
+    "window": "window_wall_treatments",
+    "plant": "decor_accessories",
+    "bathroom": "bathroom_fixtures",
+    "office": "office_workspace",
+    "outdoor": "outdoor_patio",
+    "patio": "outdoor_patio",
+    "fixture": "hardware_fixtures",
+    "hardware": "hardware_fixtures",
+}
+
+
+def normalize_category(raw: str) -> str:
+    """Normalize a free-text vision category onto the taxonomy category enum.
+
+    Direct enum hits pass through; known synonyms are aliased; everything
+    else falls back to "other" (never silently kept as free text).
+    """
+    if not raw:
+        return "other"
+    key = re.sub(r"[^a-z0-9_ ]", "", raw.lower().strip()).replace(" ", "_")
+    if key in TAXONOMY_CATEGORIES:
+        return key
+    # try alias on the whole string, then on the first token
+    if key in _CATEGORY_ALIASES:
+        return _CATEGORY_ALIASES[key]
+    first = key.split("_")[0]
+    return _CATEGORY_ALIASES.get(first, "other")
+
 
 @dataclass
 class CatalogEntry:
@@ -43,6 +136,9 @@ class CatalogEntry:
     views_visible_in: list[int]
     brief_manifest_match: str = ""
     count: int = 1
+    # Reserved seam for the future TaxonomyResolver (step 2). Left empty here;
+    # a later additive pass will populate it with a master-taxonomy path.
+    taxonomy_path: str = ""
 
 
 @dataclass
@@ -101,13 +197,14 @@ async def _analyze_view(
         f"- name: short descriptive name (e.g. 'round wooden table', 'pendant light')\n"
         f"- bbox: [x1, y1, x2, y2] pixel bounding box\n"
         f"- material: primary material (wood, metal, glass, fabric, ceramic, plastic, stone)\n"
-        f"- category: one of (furniture, lighting, decor, appliance, utensil, plant, architectural, storage)\n"
+        f"- category: one of ({', '.join(TAXONOMY_CATEGORIES)})\n"
         f"- size_estimate: one of (large, medium, small, tiny)\n\n"
         f"Respond ONLY with a JSON array. No markdown, no explanation.\n"
-        f'Example: [{{"name":"kitchen island","bbox":[100,200,600,500],"material":"wood","category":"furniture","size_estimate":"large"}}]'
+        f'Example: [{{"name":"kitchen island","bbox":[100,200,600,500],"material":"wood","category":"tables_surfaces","size_estimate":"large"}}]'
     )
 
-    # Schema for constrained output
+    # Schema for constrained output. category is enum-constrained to the
+    # taxonomy category vocabulary so detections are directly resolvable.
     inventory_schema = {
         "type": "array",
         "items": {
@@ -116,7 +213,7 @@ async def _analyze_view(
                 "name": {"type": "string"},
                 "bbox": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4},
                 "material": {"type": "string"},
-                "category": {"type": "string"},
+                "category": {"type": "string", "enum": list(TAXONOMY_CATEGORIES)},
                 "size_estimate": {"type": "string"},
             },
             "required": ["name", "bbox", "material", "category", "size_estimate"],
@@ -266,12 +363,13 @@ def _merge_detections(
             uuid=str(uuid.uuid4()),
             name=name,
             material=best.get("material", "unknown"),
-            category=best.get("category", "furniture"),
+            category=normalize_category(best.get("category", "")),
             size_estimate=best.get("size_estimate", "medium"),
             best_view_index=best["_view_index"],
             bbox_in_best_view=best.get("bbox", [0, 0, 0, 0]),
             views_visible_in=views_visible,
             brief_manifest_match=manifest_match,
+            taxonomy_path="",  # reserved seam — populated by future TaxonomyResolver
         )
         entries.append(entry)
 
@@ -336,6 +434,7 @@ async def catalog_objects(
                 "views_visible_in": e.views_visible_in,
                 "brief_manifest_match": e.brief_manifest_match,
                 "count": e.count,
+                "taxonomy_path": e.taxonomy_path,
             }
             for e in catalog.entries
         ],
