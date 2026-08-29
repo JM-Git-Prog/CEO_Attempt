@@ -1,20 +1,20 @@
 {
-  "generated": "2026-07-29 07:45:30",
+  "generated": "2026-08-29 07:07:19",
   "live": true,
-  "passed": 12,
-  "failed": 0,
+  "passed": 11,
+  "failed": 1,
   "checks": [
     {
       "check": "1 imports",
       "ok": true,
       "detail": "every module the loop needs imports cleanly",
-      "seconds": 0.3
+      "seconds": 0.6
     },
     {
       "check": "2 training interpreter",
       "ok": true,
       "detail": "torch 2.11.0+cu126, CUDA available",
-      "seconds": 8.8
+      "seconds": 8.5
     },
     {
       "check": "3 relation reconciler",
@@ -61,7 +61,7 @@
     {
       "check": "6 stuck detector",
       "ok": true,
-      "detail": "stage='done' (62.3h old) - not a training stage, so there is nothing for the detector to act on",
+      "detail": "stage='done' (805.6h old) - not a training stage, so there is nothing for the detector to act on",
       "seconds": 0.0
     },
     {
@@ -72,9 +72,9 @@
     },
     {
       "check": "8 live end-to-end",
-      "ok": true,
-      "detail": "real generation -> blocked (2 relations synthesized)",
-      "seconds": 22.5
+      "ok": false,
+      "detail": "real generation -> error: all configured LLM backends failed -> ollama(llama3.1): ConnectError: All connection attempts failed",
+      "seconds": 2.8
     }
   ]
 }

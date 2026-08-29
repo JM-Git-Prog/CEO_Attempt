@@ -1,0 +1,77 @@
+{
+ "started": "2026-08-29 07:07:07",
+ "prompts": 15,
+ "lanes": {
+  "glm-5.2:cloud": {
+   "legal": 0,
+   "total": 3,
+   "attempted": 0,
+   "backend_errors": 3,
+   "backend_healthy": false,
+   "legal_rate": null,
+   "violation_census": {
+    "error:LLMError": 3
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(glm-5.2:cloud): ConnectError: All connection attempts failed",
+     "seconds": 2.5,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(glm-5.2:cloud): ConnectError: All connection attempts failed",
+     "seconds": 2.4,
+     "prompt_id": "p002"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(glm-5.2:cloud): ConnectError: All connection attempts failed",
+     "seconds": 2.4,
+     "prompt_id": "p003"
+    }
+   ],
+   "aborted": "3 consecutive backend errors - lane frozen. This is an infrastructure failure, NOT a model result."
+  },
+  "kimi-k2.6:cloud": {
+   "legal": 0,
+   "total": 3,
+   "attempted": 0,
+   "backend_errors": 3,
+   "backend_healthy": false,
+   "legal_rate": null,
+   "violation_census": {
+    "error:LLMError": 3
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(kimi-k2.6:cloud): ConnectError: All connection attempts failed",
+     "seconds": 2.4,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(kimi-k2.6:cloud): ConnectError: All connection attempts failed",
+     "seconds": 2.4,
+     "prompt_id": "p002"
+    },
+    {
+     "status": "error",
+     "error_type": "LLMError",
+     "error": "all configured LLM backends failed -> ollama(kimi-k2.6:cloud): ConnectError: All connection attempts failed",
+     "seconds": 2.4,
+     "prompt_id": "p003"
+    }
+   ],
+   "aborted": "3 consecutive backend errors - lane frozen. This is an infrastructure failure, NOT a model result."
+  }
+ },
+ "finished": "2026-08-29 07:07:22"
+}
