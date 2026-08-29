@@ -355,7 +355,7 @@ async def generate_vision_json(
     import base64
     from pathlib import Path
 
-    vision_model = model or os.getenv("VISION_MODEL", "qwen2.5vl:7b")
+    vision_model = model or os.getenv("VISION_MODEL", "qwen3-vl:8b")
     images = [base64.b64encode(Path(path).read_bytes()).decode("ascii") for path in image_paths]
     raw = ""
     last_error: json.JSONDecodeError | None = None

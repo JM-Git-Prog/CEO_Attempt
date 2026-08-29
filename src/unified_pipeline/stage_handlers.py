@@ -441,7 +441,7 @@ async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
     """Vision analysis — detect ALL objects in canon image via Ollama vision model.
 
     Replaces per-object SAM3 segmentation with a full scene analysis:
-    1. Sends the canon image to Ollama qwen2.5vl:7b for object detection
+    1. Sends the canon image to Ollama qwen3-vl:8b for object detection
     2. Gets back a list of ALL visible objects with bounding boxes
     3. Saves detected_objects.json for the interactive picker UI
     4. SAM3 segmentation happens LATER only for selected objects (mesh_generation)
@@ -487,10 +487,10 @@ async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
         f'[{{"name": "kitchen island", "bbox": [100, 200, 600, 500], "material": "wood", "category": "furniture", "size_estimate": "large"}}]'
     )
 
-    _log.info("  segment(vision): analyzing canon %dx%d with qwen2.5vl:7b...", width, height)
+    _log.info("  segment(vision): analyzing canon %dx%d with qwen3-vl:8b...", width, height)
 
     detected_objects = []
-    model_used = "qwen2.5vl:7b"
+    model_used = "qwen3-vl:8b"
     inventory_schema = {
         "type": "array",
         "items": {
@@ -510,8 +510,8 @@ async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
         },
     }
 
-    # Try qwen2.5vl:7b first, fall back to qwen3.6:27b
-    for model in ["qwen2.5vl:7b", "qwen3.6:27b"]:
+    # Try qwen3-vl:8b first, fall back to qwen3.6:27b
+    for model in ["qwen3-vl:8b", "qwen3.6:27b"]:
         try:
             async with httpx.AsyncClient(timeout=180.0) as client:
                 resp = await client.post(

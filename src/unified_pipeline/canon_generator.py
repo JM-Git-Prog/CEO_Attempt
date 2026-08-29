@@ -56,7 +56,7 @@ FLUX_VAE = "flux2-vae.safetensors"
 
 # Object presence validation via vision model
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-VISION_MODEL = os.getenv("VISION_MODEL", "qwen2.5vl:7b")
+VISION_MODEL = os.getenv("VISION_MODEL", "qwen3-vl:8b")
 VISION_TIMEOUT = float(os.getenv("VISION_TIMEOUT", "30"))
 
 
