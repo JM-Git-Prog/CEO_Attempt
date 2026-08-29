@@ -30,7 +30,12 @@ class QACategory(StrEnum):
 
 ALL_QA_CATEGORIES = tuple(QACategory)
 AUTO_PASS_CONFIDENCE = 0.8
-QWEN_MODEL_ID = "qwen2.5vl:7b"
+# Legacy vision model recorded by pre-2026-08 evidence. Retained so previously
+# written vision-screening/v1 records still validate on load.
+LEGACY_QWEN_MODEL_ID = "qwen2.5vl:7b"
+# Current runtime vision model (see canon_generator.VISION_MODEL). New evidence
+# records this. The schema accepts either value.
+QWEN_MODEL_ID = "qwen3-vl:8b"
 
 
 class ArtifactBinding(QAModel):
@@ -103,7 +108,7 @@ class CategoryAssessment(QAModel):
 
 class VisionScreening(QAModel):
     schema_version: Literal["vision-screening/v1"] = "vision-screening/v1"
-    model_id: Literal["qwen2.5vl:7b"] = QWEN_MODEL_ID
+    model_id: Literal["qwen2.5vl:7b", "qwen3-vl:8b"] = QWEN_MODEL_ID
     status: Literal["completed", "unavailable", "failed"]
     passed: bool | None = None
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
