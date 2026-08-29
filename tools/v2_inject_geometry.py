@@ -40,12 +40,14 @@ def render_synthetic_depth(scene_path: Path, output_path: Path, width=1024, heig
     # Build trimesh scene
     render_scene = trimesh.Scene()
 
-    # Room shell
+    # Room shell — floor + back wall only (skip side walls that occlude from inside)
     shell_path = meshes_dir / "room_shell.glb"
     if shell_path.exists():
         shell = trimesh.load(str(shell_path), force="scene", process=False)
         for name, geom in shell.geometry.items():
-            render_scene.add_geometry(geom, node_name=f"shell_{name}")
+            # Only include floor and back wall for depth structure
+            if "floor" in name.lower() or "north" in name.lower() or "wall_n" in name.lower():
+                render_scene.add_geometry(geom, node_name=f"shell_{name}")
 
     # Objects
     for obj in scene_data.get("objects", []):
@@ -94,15 +96,18 @@ def render_synthetic_depth(scene_path: Path, output_path: Path, width=1024, heig
     camera_transform[:3, 2] = -forward
     camera_transform[:3, 3] = eye
 
-    # Render depth with pyrender
+    # Render depth with pyrender — apply each node's transform from the scene graph
     pr_scene = pyrender.Scene()
-    for name, geom in render_scene.geometry.items():
-        if hasattr(geom, "faces") and len(geom.faces) > 0:
-            try:
-                mesh = pyrender.Mesh.from_trimesh(geom)
-                pr_scene.add(mesh)
-            except Exception:
-                pass
+    for node_name in render_scene.graph.nodes_geometry:
+        transform, geom_name = render_scene.graph[node_name]
+        geom = render_scene.geometry.get(geom_name)
+        if geom is None or not hasattr(geom, "faces") or len(geom.faces) == 0:
+            continue
+        try:
+            mesh = pyrender.Mesh.from_trimesh(geom, smooth=False)
+            pr_scene.add(mesh, pose=transform)
+        except Exception as exc:
+            print(f"  skip {geom_name}: {exc}")
 
     camera = pyrender.PerspectiveCamera(yfov=np.radians(fov))
     pr_scene.add(camera, pose=camera_transform)
