@@ -270,12 +270,12 @@ async def main():
         prompt_id = await client.submit_workflow(workflow, client_id="v2-inject-canon", timeout_s=600)
         print(f"  Queued: {prompt_id}")
 
-        await client.wait_for_completion(prompt_id, timeout_s=120)
+        await client.wait_for_completion(prompt_id, timeout_s=180)
         print("  Complete!")
 
-        # Retrieve the image
+        # Retrieve the image (SaveImage is node 13)
         injected_path = ARTIFACTS / "canon_injected.png"
-        await client.get_output_image(prompt_id, ARTIFACTS, "canon_injected.png", node_id="12")
+        await client.get_output_image(prompt_id, ARTIFACTS, "canon_injected.png", node_id="13")
 
         if injected_path.is_file():
             size_kb = injected_path.stat().st_size / 1024
@@ -287,43 +287,6 @@ async def main():
 
     except Exception as e:
         print(f"  ERROR: {e}")
-        print("  The DiffControlNetLoader may need different wiring.")
-        print("  Falling back to standard ControlNetApply...")
-
-        # Fallback: try without DiffControlNetLoader
-        workflow_fallback = {
-            "1": {"class_type": "UNETLoader", "inputs": {"unet_name": "z_image_turbo_bf16.safetensors", "weight_dtype": "bf16"}},
-            "2": {"class_type": "CLIPLoader", "inputs": {"clip_name": "qwen_3_4b.safetensors", "type": "lumina2"}},
-            "3": {"class_type": "VAELoader", "inputs": {"vae_name": "ae.safetensors"}},
-            "4": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["2", 0], "text": prompt}},
-            "5": {"class_type": "ConditioningZeroOut", "inputs": {"conditioning": ["4", 0]}},
-            "6": {"class_type": "LoadImage", "inputs": {"image": depth_uploaded}},
-            "7": {"class_type": "ControlNetLoader", "inputs": {"control_net_name": "diffusion_pytorch_model_promax.safetensors"}},
-            "8": {"class_type": "ControlNetApplyAdvanced", "inputs": {
-                "positive": ["4", 0], "negative": ["5", 0], "control_net": ["7", 0],
-                "image": ["6", 0], "strength": 0.7, "start_percent": 0.0, "end_percent": 0.9,
-            }},
-            "9": {"class_type": "EmptyLatentImage", "inputs": {"width": 1024, "height": 768, "batch_size": 1}},
-            "10": {"class_type": "KSampler", "inputs": {
-                "model": ["1", 0], "positive": ["8", 0], "negative": ["8", 1],
-                "latent_image": ["9", 0], "seed": seed, "steps": 4, "cfg": 1.0,
-                "sampler_name": "euler", "scheduler": "simple", "denoise": 1.0,
-            }},
-            "11": {"class_type": "VAEDecode", "inputs": {"samples": ["10", 0], "vae": ["3", 0]}},
-            "12": {"class_type": "SaveImage", "inputs": {"images": ["11", 0], "filename_prefix": "v2-injected-canon"}},
-        }
-
-        try:
-            prompt_id = await client.submit_workflow(workflow_fallback, client_id="v2-inject-fallback", timeout_s=600)
-            print(f"  Fallback queued: {prompt_id}")
-            await client.wait_for_completion(prompt_id, timeout_s=120)
-            await client.get_output_image(prompt_id, ARTIFACTS, "canon_injected.png", node_id="12")
-            if (ARTIFACTS / "canon_injected.png").is_file():
-                print(f"  FALLBACK SUCCESS: canon_injected.png")
-            else:
-                print("  FALLBACK FAILED")
-        except Exception as e2:
-            print(f"  FALLBACK ERROR: {e2}")
 
 
 if __name__ == "__main__":
