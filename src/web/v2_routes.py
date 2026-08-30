@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 
 from src.models import SessionMode
 from src.session_manager import SessionManager
@@ -273,10 +273,12 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
             "synthetic_depth": session_dir / "artifacts" / "synthetic_depth.png",
         }
 
-        # Check for view artifacts: view_0, view_1, etc.
+        # Check for view artifacts: view_0, view_1, ... and view_0_depth, etc.
         if artifact_name.startswith("view_"):
-            idx = artifact_name.split("_")[1]
-            path = session_dir / "artifacts" / "views" / f"view_{idx}" / "canon.png"
+            parts = artifact_name.split("_")
+            idx = parts[1]
+            fname = "depth.png" if artifact_name.endswith("_depth") else "canon.png"
+            path = session_dir / "artifacts" / "views" / f"view_{idx}" / fname
             if path.is_file():
                 return FileResponse(path, media_type="image/png")
             return JSONResponse({"error": "View not found"}, status_code=404)
@@ -314,6 +316,183 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
             return JSONResponse({"error": "Scene not yet assembled"}, status_code=404)
 
         return json.loads(scene_path.read_text(encoding="utf-8"))
+
+    # ─── Pipeline Inspector: JSON artifact routes ─────────────────────────────
+    # These serve the on-disk stage artifacts that had no route before, so the
+    # HITL inspector can render every pipeline stage. Read-only; no authority.
+
+    def _serve_json_artifact(session_id: str, filename: str, missing_msg: str):
+        try:
+            session_dir = _session_dir(session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=404)
+        path = session_dir / "artifacts" / filename
+        if not path.is_file():
+            return JSONResponse({"error": missing_msg}, status_code=404)
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return JSONResponse(
+                {"error": f"Could not read {filename}: {exc}"}, status_code=500
+            )
+
+    @router.get("/api/v2/session/{session_id}/metric-plan")
+    async def v2_metric_plan(session_id: str):
+        """Return the MetricPlan (room dims, placements, walls, openings)."""
+        return _serve_json_artifact(
+            session_id, "metric_plan.json", "MetricPlan not yet generated"
+        )
+
+    @router.get("/api/v2/session/{session_id}/capture-manifest")
+    async def v2_capture_manifest(session_id: str):
+        """Return the CaptureManifest (planned cameras with exact K/R/t)."""
+        return _serve_json_artifact(
+            session_id, "capture_manifest.json", "CaptureManifest not yet generated"
+        )
+
+    @router.get("/api/v2/session/{session_id}/room-shell")
+    async def v2_room_shell(session_id: str):
+        """Serve the reconstructed room-shell GLB."""
+        from fastapi.responses import FileResponse
+
+        try:
+            session_dir = _session_dir(session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=404)
+        path = session_dir / "artifacts" / "meshes" / "room_shell.glb"
+        if not path.is_file():
+            return JSONResponse({"error": "Room shell not yet built"}, status_code=404)
+        return FileResponse(path, media_type="model/gltf-binary")
+
+    # ─── GET /api/v2/session/{id}/inspect-data — HITL aggregator ──────────────
+
+    @router.get("/api/v2/session/{session_id}/inspect-data")
+    async def v2_inspect_data(session_id: str):
+        """Aggregate every pipeline stage's status + artifact refs for the HITL
+        inspector. Each stage reports present/absent independently so a partial
+        (mid-build or failed) session still renders without crashing.
+        """
+        try:
+            session_dir = _session_dir(session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=404)
+
+        artifacts = session_dir / "artifacts"
+        base = f"/api/v2/session/{session_id}"
+
+        def _read_json(name: str) -> Any | None:
+            p = artifacts / name
+            if not p.is_file():
+                return None
+            try:
+                return json.loads(p.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                return None
+
+        def _exists(rel: str) -> bool:
+            return (artifacts / rel).is_file()
+
+        # Read the state from meta if present.
+        state = "unknown"
+        meta_p = session_dir / "meta.json"
+        if meta_p.is_file():
+            try:
+                state = json.loads(meta_p.read_text(encoding="utf-8")).get(
+                    "state", "unknown"
+                )
+            except (OSError, json.JSONDecodeError):
+                pass
+
+        brief = _read_json("brief.json")
+        plan = _read_json("metric_plan.json")
+        manifest = _read_json("capture_manifest.json")
+        catalog = _read_json("catalog.json")
+        mesh_manifest = _read_json("mesh_manifest.json")
+        scene = _read_json("scene.json")
+
+        # Views: enumerate views/view_*/canon.png + depth.png.
+        views: list[dict[str, Any]] = []
+        views_dir = artifacts / "views"
+        if views_dir.is_dir():
+            for vd in sorted(views_dir.glob("view_*")):
+                idx = vd.name.split("_")[-1]
+                canon = vd / "canon.png"
+                depth = vd / "depth.png"
+                if canon.is_file():
+                    views.append({
+                        "index": idx,
+                        "canon_url": f"{base}/artifact/view_{idx}",
+                        "depth_url": f"{base}/artifact/view_{idx}_depth"
+                        if depth.is_file() else None,
+                    })
+
+        # Meshes: from manifest (has names + methods + placeholder flags).
+        meshes: list[dict[str, Any]] = []
+        if mesh_manifest and isinstance(mesh_manifest.get("meshes"), list):
+            for m in mesh_manifest["meshes"]:
+                meshes.append({
+                    "uuid": m.get("uuid", ""),
+                    "name": m.get("name", "object"),
+                    "method": m.get("method", ""),
+                    "face_count": m.get("face_count", 0),
+                    "is_placeholder": bool(m.get("is_placeholder", False)),
+                    "glb_url": f"{base}/artifact/mesh_{m.get('uuid', '')}",
+                })
+
+        def _stage(key: str, title: str, present: bool, **extra: Any) -> dict[str, Any]:
+            return {
+                "key": key,
+                "title": title,
+                "status": "complete" if present else "absent",
+                **extra,
+            }
+
+        stages = [
+            _stage("brief", "Brief", brief is not None,
+                   data=brief, kind="json"),
+            _stage("plan", "Metric Plan", plan is not None,
+                   data=plan, kind="plan",
+                   url=f"{base}/metric-plan"),
+            _stage("capture", "Capture Manifest", manifest is not None,
+                   camera_count=len(manifest.get("cameras", [])) if manifest else 0,
+                   data=manifest, kind="capture",
+                   url=f"{base}/capture-manifest"),
+            _stage("views", "Views + Depth", bool(views),
+                   views=views, kind="views"),
+            _stage("catalog", "Catalog", catalog is not None,
+                   object_count=len(catalog.get("entries", [])) if catalog else 0,
+                   data=catalog, kind="catalog"),
+            _stage("meshes", "Object Meshes", bool(meshes),
+                   mesh_count=len(meshes), meshes=meshes, kind="meshes"),
+            _stage("shell", "Room Shell", _exists("meshes/room_shell.glb"),
+                   glb_url=f"{base}/room-shell", kind="glb"),
+            _stage("world", "Assembled World", scene is not None,
+                   object_count=len(scene.get("objects", [])) if scene else 0,
+                   scene_url=f"{base}/scene",
+                   world_url=f"/?v=2.0&session={session_id}", kind="world"),
+        ]
+
+        return {
+            "session_id": session_id,
+            "state": state,
+            "prompt": (brief or {}).get("room_purpose", ""),
+            "hero_canon_url": f"{base}/artifact/hero_canon"
+            if _exists("canon.png") else None,
+            "stages": stages,
+        }
+
+    # ─── GET /api/v2/inspect — HITL Pipeline Inspector page ───────────────────
+
+    @router.get("/api/v2/inspect")
+    async def v2_inspect_page():
+        """Serve the horizontal HITL Pipeline Inspector page."""
+        template_path = Path(__file__).parent / "templates" / "inspect_v2.html"
+        if not template_path.is_file():
+            return JSONResponse({"error": "Inspector template missing"}, status_code=404)
+        return HTMLResponse(
+            template_path.read_text(encoding="utf-8"),
+            headers={"Cache-Control": "no-store"},
+        )
 
     # ─── GET /api/v2/session/{id}/place-ui — placement game page ──────────────
 

@@ -4683,3 +4683,18 @@ O^O/ \_/ \    Batch size per device = 1 | Gradient accumulation steps = 4
   p003: legal    (65.7s) 
   p004: timeout  (120.0s) 
   p005: blocked  (48.7s) out_of_bounds,camera_inside_geometry
+  p006: timeout  (120.0s) 
+  p007: timeout  (120.0s) 
+  p008: blocked  (62.9s) out_of_bounds,opening_blocked,opening_blocked
+  p009: error    (48.1s) 
+  p010: error    (72.6s) 
+  p011: blocked  (54.8s) camera_inside_geometry
+  p012: legal    (53.8s) 
+  p013: legal    (107.0s) 
+  p014: timeout  (120.0s) 
+  p015: legal    (79.6s) 
+  LANE RESULT: 5/15 legal plans (33%)
+
+=== LANE kimi-k2.6:cloud — 15 prompts ===
+  p001: timeout  (120.0s) 
+  p002: timeout  (120.0s) 

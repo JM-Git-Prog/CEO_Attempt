@@ -7413,3 +7413,49 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260830T163540.json
 [16:42:19] bench batch rc=0
 [16:42:19] ingest: ingest: +8 records | 895 already banked | 4436 plan-less rows skipped
+[16:43:49] batch: prompts 15..29 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p016: error    (39.3s) 
+  p017: error    (18.1s) 
+  p018: error    (53.1s) 
+  p019: error    (24.6s) 
+  p020: error    (21.5s) 
+  p021: error    (26.2s) 
+  p022: blocked  (31.4s) physical_overlap,physical_overlap,physical_overlap
+  p023: error    (20.6s) 
+  p024: blocked  (37.1s) physical_overlap,physical_overlap,physical_overlap
+  p025: error    (23.5s) 
+  p026: error    (26.1s) 
+  p027: error    (45.8s) 
+  p028: error    (41.6s) 
+  p029: error    (28.6s) 
+  p030: blocked  (19.4s) physical_overlap,opening_blocked
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260830T164349.json
+[16:51:27] bench batch rc=0
+[16:51:27] ingest: ingest: +6 records | 903 already banked | 4452 plan-less rows skipped
+[16:52:57] batch: prompts 30..44 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p031: error    (52.2s) 
+  p032: error    (26.4s) 
+  p033: error    (24.8s) 
+  p034: blocked  (50.7s) physical_overlap,physical_overlap,physical_overlap
+  p035: error    (26.0s) 
+  p036: error    (25.1s) 
+  p037: error    (25.2s) 
+  p038: error    (23.3s) 
+  p039: error    (23.8s) 
+  p040: error    (40.1s) 
+  p041: error    (63.1s) 
+  p042: error    (34.3s) 
+  p043: blocked  (28.1s) out_of_bounds,opening_blocked
+  p044: error    (20.8s) 
+  p045: error    (26.2s) 
+  LANE RESULT: 0/15 legal plans (0%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260830T165257.json
+[17:01:07] bench batch rc=0
+[17:01:08] ingest: ingest: +4 records | 909 already banked | 4468 plan-less rows skipped
