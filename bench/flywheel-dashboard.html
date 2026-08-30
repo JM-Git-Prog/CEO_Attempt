@@ -19,7 +19,7 @@
 </style></head><body>
 
 <h1>The Living Room - Flywheel Dashboard</h1>
-<div class="sub">Generated 2026-08-29 07:07:20 - reopen the Desktop launcher any time to refresh.</div>
+<div class="sub">Generated 2026-08-30 16:35:49 - reopen the Desktop launcher any time to refresh.</div>
 
 <h2>The vision</h2>
 <p>You describe a room in plain conversation. The AI designs it - proposes a look, furniture,
@@ -43,7 +43,7 @@ often as possible, across all kinds of rooms. Get this reliable and the
 <b>Corpus right now:</b> 700 organic (llama3.1 harvester) + 148 synthetic
 (cloud top-up) + 183 from earlier pipeline runs = 1031 rows -&gt;
 <b>252 pass validation</b> and become trainable exemplars.<br>
-<b>Pace:</b> 65 new rows in 796.0 hours (~0.1/hour, real observed pace including any stalls).
+<b>Pace:</b> 65 new rows in 829.4 hours (~0.1/hour, real observed pace including any stalls).
 </div>
 
 <div class="card">
@@ -65,8 +65,8 @@ GPU: 4.0% util, 15.3/24.0 GB VRAM
 <h2>Why rows get thrown away</h2>
 <p>Every generated blueprint that fails the checker is discarded. Corpus growth =
 how fast we generate x how many survive. Right now <b>227 of
-5318</b> attempts ever recorded survived. Here's what happened to the
-5091 that didn't:</p>
+5319</b> attempts ever recorded survived. Here's what happened to the
+5092 that didn't:</p>
 <div class="card">
 <b>Rescued by the free repair pass so far:</b> <span class="ok">
 48 rows</span> that would have been discarded were nudged back into
@@ -85,7 +85,7 @@ numbers. <code>src/solver_repair.py</code> already fixes exactly this in ~19ms w
 no model call, but it is only wired into the full pipeline - <b>not</b> into the
 harvester that feeds this corpus. So these were generated, then thrown away.<br><br>
 <b>Not a placement problem:</b> 344 timed out
-(7%), 3992 errored or failed schema
+(7%), 3993 errored or failed schema
 (78%), 0 had both a placement fault and a
 schema fault (0%). Moving furniture cannot save these - they
 need a faster/stricter generation step, not a repair pass.

@@ -1,0 +1,285 @@
+{
+ "started": "2026-08-30 16:35:40",
+ "prompts": 15,
+ "lanes": {
+  "llama3.1": {
+   "legal": 1,
+   "total": 5,
+   "attempted": 5,
+   "backend_errors": 0,
+   "backend_healthy": true,
+   "legal_rate": 0.2,
+   "violation_census": {
+    "error:ValidationError": 4
+   },
+   "rows": [
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "3 validation errors for FloorPlanV11\nrelationships\n  Field required [type=missing, input_value={'name': '1980s Cottage K...sion': 'floor-plan/v11'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nopening_intents\n  Field required [type=missing, input_val",
+     "seconds": 30.7,
+     "prompt_id": "p001"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 0,
+     "items": 6,
+     "seconds": 29.8,
+     "plan": {
+      "name": "1950s Diner Counter",
+      "room": {
+       "width": 6.0,
+       "depth": 4.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "counter_1",
+        "name": "1950s Diner Counter",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 4.0,
+        "depth": 1.5,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A 1950s diner counter"
+       },
+       {
+        "id": "stool_1",
+        "name": "Chrome Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.55,
+        "z": 0.43301270189221935,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "A chrome stool"
+       },
+       {
+        "id": "stool_2",
+        "name": "Chrome Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.3,
+        "z": 6.123233995736766e-17,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "A chrome stool"
+       },
+       {
+        "id": "stool_3",
+        "name": "Chrome Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.55,
+        "z": -0.43301270189221924,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "A chrome stool"
+       },
+       {
+        "id": "stool_4",
+        "name": "Chrome Stool",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.77,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "A chrome stool"
+       },
+       {
+        "id": "pendant_lamp",
+        "name": "Pendant Lamp",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.8,
+        "elevation": 1.9999999999999998,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A pendant lamp"
+       }
+      ],
+      "openings": [
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 1.5,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -2.55,
+       "y": 1.6,
+       "z": 1.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "A 1950s diner counter with four chrome stools, a pendant lamp, and rain on the window."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "counter_1",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_1",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_2",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_3",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "stool_4",
+        "kind": "adjacent_to",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_lamp",
+        "kind": "above",
+        "target_id": "counter_1",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 1.0,
+         "distribution_span_m": 0.6
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "window_1",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "counter_1",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "repaired_by_math": true,
+     "repairs_applied": [
+      "Nudged Chrome Stool (stool_4) inward by 0.030m (from [2.800, 0.000] to [2.770, 0.000])"
+     ],
+     "blockers_before_repair": [
+      "out_of_bounds"
+     ],
+     "prompt_id": "p002"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nitems.2.height\n  Input should be greater than 0 [type=greater_than, input_value=0.0, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.12/v/greater_than",
+     "seconds": 23.8,
+     "prompt_id": "p003"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'shelf', '...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nrelationships.3\n  Valu",
+     "seconds": 21.6,
+     "prompt_id": "p004"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.2\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'globe_sta...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 20.6,
+     "prompt_id": "p005"
+    }
+   ]
+  }
+ }
+}
