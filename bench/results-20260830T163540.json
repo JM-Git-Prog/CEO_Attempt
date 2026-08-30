@@ -4,15 +4,16 @@
  "lanes": {
   "llama3.1": {
    "legal": 1,
-   "total": 9,
-   "attempted": 9,
+   "total": 14,
+   "attempted": 14,
    "backend_errors": 0,
    "backend_healthy": true,
-   "legal_rate": 0.11,
+   "legal_rate": 0.07,
    "violation_census": {
-    "error:ValidationError": 6,
-    "opening_blocked": 4,
-    "physical_overlap": 3
+    "error:ValidationError": 9,
+    "opening_blocked": 7,
+    "physical_overlap": 4,
+    "out_of_bounds": 4
    },
    "rows": [
     {
@@ -649,6 +650,521 @@
      "error": "4 validation errors for FloorPlanV11\nrelationships.0\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'bunk_bed_...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nrelationships.1\n  Valu",
      "seconds": 24.1,
      "prompt_id": "p009"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.4\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'mirror', ...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 30.5,
+     "prompt_id": "p010"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\n  Value error, dangling Plan relation target window [type=value_error, input_value={'name': '1940s Detective...: 1.2, 'fov_deg': 55.0}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 27.8,
+     "prompt_id": "p011"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "out_of_bounds",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 9,
+     "seconds": 39.1,
+     "plan": {
+      "name": "Coffee Shop Corner",
+      "room": {
+       "width": 5.0,
+       "depth": 5.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "service_counter",
+        "name": "Service Counter",
+        "category": "furniture",
+        "mount": "wall",
+        "x": 0.0,
+        "z": 1.7,
+        "width": 2.0,
+        "depth": 1.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Counter for serving customers"
+       },
+       {
+        "id": "table_1",
+        "name": "Table 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -0.5000000000000004,
+        "z": -0.8660254037844385,
+        "width": 1.2,
+        "depth": 0.8,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Table for customers"
+       },
+       {
+        "id": "table_2",
+        "name": "Table 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.4,
+        "z": 0.0,
+        "width": 1.2,
+        "depth": 0.8,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Table for customers"
+       },
+       {
+        "id": "table_3",
+        "name": "Table 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 1.2,
+        "depth": 0.8,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Table for customers"
+       },
+       {
+        "id": "chair_1",
+        "name": "Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.925,
+        "z": 0.649519052838329,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Chair for customers"
+       },
+       {
+        "id": "chair_2",
+        "name": "Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.9249999999999994,
+        "z": -0.6495190528383289,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Chair for customers"
+       },
+       {
+        "id": "chair_3",
+        "name": "Chair 3",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 1.6,
+        "z": 1.2124355652982142,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Chair for customers"
+       },
+       {
+        "id": "chair_4",
+        "name": "Chair 4",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.3,
+        "z": 0.0,
+        "width": 0.4,
+        "depth": 0.4,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "Chair for customers"
+       },
+       {
+        "id": "pendant_light_1",
+        "name": "Pendant Light 1",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 0.0,
+        "z": 1.7,
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.3,
+        "elevation": 2.5,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "Lighting for the counter"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 1.0,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -2.05,
+       "y": 1.6,
+       "z": 2.05,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 1.7,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "Use simple daylight for lighting."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "service_counter",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_1",
+        "kind": "centered",
+        "target_id": "service_counter",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_2",
+        "kind": "centered",
+        "target_id": "service_counter",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "table_3",
+        "kind": "centered",
+        "target_id": "service_counter",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_1",
+        "kind": "adjacent_to",
+        "target_id": "table_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_2",
+        "kind": "adjacent_to",
+        "target_id": "table_2",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_3",
+        "kind": "adjacent_to",
+        "target_id": "table_3",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chair_4",
+        "kind": "adjacent_to",
+        "target_id": "table_3",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "pendant_light_1",
+        "kind": "above",
+        "target_id": "service_counter",
+        "wall": null,
+        "parameters_m": {
+         "distribution_index": 0.0,
+         "distribution_count": 1.0,
+         "distribution_span_m": 0.0
+        },
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "service_counter",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p012"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "6 validation errors for FloorPlanV11\nrelationships.0\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'arcade_ca...arget_id': 'wall_north'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nrelationships.1\n  Valu",
+     "seconds": 24.5,
+     "prompt_id": "p013"
+    },
+    {
+     "status": "blocked",
+     "blockers": [
+      "physical_overlap",
+      "out_of_bounds",
+      "out_of_bounds",
+      "out_of_bounds",
+      "opening_blocked",
+      "opening_blocked"
+     ],
+     "advisories": [],
+     "warnings": 0,
+     "items": 5,
+     "seconds": 26.4,
+     "plan": {
+      "name": "Victorian Parlor",
+      "room": {
+       "width": 6.0,
+       "depth": 8.0,
+       "height": 2.8
+      },
+      "items": [
+       {
+        "id": "chaise_lounge",
+        "name": "Chaise Lounge",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 2.0,
+        "depth": 1.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A comfortable chaise lounge for relaxation"
+       },
+       {
+        "id": "wingback_chair_1",
+        "name": "Wingback Chair 1",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.0,
+        "width": 1.5,
+        "depth": 1.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A comfortable wingback chair for reading"
+       },
+       {
+        "id": "wingback_chair_2",
+        "name": "Wingback Chair 2",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 3.25,
+        "width": 1.5,
+        "depth": 1.5,
+        "height": 1.2,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A comfortable wingback chair for reading"
+       },
+       {
+        "id": "tea_table",
+        "name": "Tea Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 2.25,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 1.5,
+        "height": 0.8,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A small tea table for serving refreshments"
+       },
+       {
+        "id": "chandelier",
+        "name": "Chandelier",
+        "category": "fixture",
+        "mount": "ceiling",
+        "x": 2.25,
+        "z": 0.0,
+        "width": 1.5,
+        "depth": 1.5,
+        "height": 1.5,
+        "elevation": 1.2999999999999998,
+        "rotation_deg": 0.0,
+        "fixed": true,
+        "clearance_m": 0.75,
+        "description": "A beautiful chandelier for lighting the room"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door",
+        "kind": "door",
+        "wall": "north",
+        "offset": 0.0,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       }
+      ],
+      "camera": {
+       "x": -2.55,
+       "y": 1.6,
+       "z": 3.55,
+       "target_x": 0.0,
+       "target_y": 1.2,
+       "target_z": 0.0,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Maintain at least 0.8m clear paths between the door and all zones."
+      ],
+      "design_notes": [
+       "The room should have a comfortable and inviting atmosphere."
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "chaise_lounge",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "wingback_chair_1",
+        "kind": "north_of",
+        "target_id": "chaise_lounge",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "wingback_chair_2",
+        "kind": "north_of",
+        "target_id": "wingback_chair_1",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "tea_table",
+        "kind": "adjacent_to",
+        "target_id": "chaise_lounge",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "chandelier",
+        "kind": "above",
+        "target_id": "tea_table",
+        "wall": null,
+        "parameters_m": {},
+        "weight": 1.0,
+        "relaxable": false
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door",
+        "wall": "north",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "northwest",
+       "target_id": "chaise_lounge",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 1.2,
+       "fov_deg": 55.0
+      }
+     },
+     "prompt_id": "p014"
     }
    ]
   }

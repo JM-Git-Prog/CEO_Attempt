@@ -4,11 +4,11 @@
  "lanes": {
   "glm-5.2:cloud": {
    "legal": 2,
-   "total": 3,
-   "attempted": 3,
+   "total": 4,
+   "attempted": 4,
    "backend_errors": 0,
    "backend_healthy": true,
-   "legal_rate": 0.67,
+   "legal_rate": 0.5,
    "violation_census": {},
    "rows": [
     {
@@ -447,6 +447,11 @@
      },
      "dropped_duplicate_relations": 1,
      "prompt_id": "p003"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p004"
     }
    ]
   }
