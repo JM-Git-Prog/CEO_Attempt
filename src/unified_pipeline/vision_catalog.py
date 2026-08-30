@@ -23,6 +23,7 @@ from typing import Any, Callable
 import httpx
 
 from src.unified_pipeline.multi_view_generator import MultiViewResult, ViewResult
+from src.unified_pipeline.taxonomy_resolver import get_resolver
 
 logger = logging.getLogger("live_trace")
 
@@ -137,9 +138,13 @@ class CatalogEntry:
     views_visible_in: list[int]
     brief_manifest_match: str = ""
     count: int = 1
-    # Reserved seam for the future TaxonomyResolver (step 2). Left empty here;
-    # a later additive pass will populate it with a master-taxonomy path.
+    # Canonical master-taxonomy identity (populated by TaxonomyResolver, step 2).
+    # `name` remains the RAW descriptive detection (drives SAM3 prompting,
+    # placement matching, provenance); these add the canonical identity on top.
     taxonomy_path: str = ""
+    taxonomy_display_name: str = ""
+    taxonomy_entity_id: str = ""
+    taxonomy_confidence: float = 0.0
 
 
 @dataclass
@@ -365,17 +370,26 @@ def _merge_detections(
                     manifest_match = obj_name
                     break
 
+        category = normalize_category(best.get("category", ""))
+
+        # Bind to the master taxonomy for a canonical identity. Additive: the
+        # raw descriptive `name` is preserved for SAM3/placement/provenance.
+        tax = get_resolver().resolve(name, category)
+
         entry = CatalogEntry(
             uuid=str(uuid.uuid4()),
             name=name,
             material=best.get("material", "unknown"),
-            category=normalize_category(best.get("category", "")),
+            category=category,
             size_estimate=best.get("size_estimate", "medium"),
             best_view_index=best["_view_index"],
             bbox_in_best_view=best.get("bbox", [0, 0, 0, 0]),
             views_visible_in=views_visible,
             brief_manifest_match=manifest_match,
-            taxonomy_path="",  # reserved seam — populated by future TaxonomyResolver
+            taxonomy_path=tax.taxonomy_path,
+            taxonomy_display_name=tax.display_name,
+            taxonomy_entity_id=tax.entity_id,
+            taxonomy_confidence=tax.confidence,
         )
         entries.append(entry)
 
@@ -441,6 +455,9 @@ async def catalog_objects(
                 "brief_manifest_match": e.brief_manifest_match,
                 "count": e.count,
                 "taxonomy_path": e.taxonomy_path,
+                "taxonomy_display_name": e.taxonomy_display_name,
+                "taxonomy_entity_id": e.taxonomy_entity_id,
+                "taxonomy_confidence": e.taxonomy_confidence,
             }
             for e in catalog.entries
         ],

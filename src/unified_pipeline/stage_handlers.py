@@ -576,6 +576,22 @@ async def _handle_segment(ctx: StageExecutionContext) -> StageResult:
         except Exception as exc:
             _log.warning("  segment(vision): %s failed: %s", model, exc)
 
+    # Bind each detection to the master taxonomy (additive — raw name kept).
+    if detected_objects:
+        try:
+            from src.unified_pipeline.taxonomy_resolver import get_resolver
+            _resolver = get_resolver()
+            for _obj in detected_objects:
+                if not isinstance(_obj, dict):
+                    continue
+                _tax = _resolver.resolve(_obj.get("name", ""), _obj.get("category", ""))
+                _obj["taxonomy_path"] = _tax.taxonomy_path
+                _obj["taxonomy_display_name"] = _tax.display_name
+                _obj["taxonomy_entity_id"] = _tax.entity_id
+                _obj["taxonomy_confidence"] = _tax.confidence
+        except Exception as _tax_exc:
+            _log.warning("  segment(vision): taxonomy resolve skipped: %s", _tax_exc)
+
     detected_data = build_detected_document(
         detected_objects,
         canon_path=canon_path,
