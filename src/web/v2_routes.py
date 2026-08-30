@@ -154,10 +154,21 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
         )
         _write_meta(session_dir, state="generating_hero", user_prompt=message)
 
+        # Gather removal instructions across ALL user turns (refinements like
+        # "remove the chandelier") so they persist through re-generation.
+        user_messages = [
+            t.content for t in engine._state.turns if t.role == "user"  # noqa: SLF001
+        ]
+        removals = _extract_removals(user_messages)
+        if removals:
+            _log.info(f"V2 describe: removals detected: {removals}")
+
         # Generate hero Canon via ComfyUI FLUX
         hero_url = ""
         try:
-            hero_path = await _generate_hero_canon(session_id, session_dir, brief_doc, message)
+            hero_path = await _generate_hero_canon(
+                session_id, session_dir, brief_doc, message, removals=removals
+            )
             hero_url = f"/api/v2/session/{session_id}/artifact/hero_canon"
             _emit_event(session_id, "hero_ready", {"image_url": hero_url})
             _write_meta(session_dir, state="awaiting_approval", hero_canon=str(hero_path))
@@ -603,11 +614,58 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
 # ─── Hero Canon Generation ─────────────────────────────────────────────────────
 
 
+_REMOVAL_PATTERNS = (
+    r"(?:remove|delete|get rid of|take out|no more|drop the|lose the)\s+(?:the\s+)?(.+)",
+    r"(?:without|no|hide the)\s+(?:the\s+)?(.+)",
+)
+
+
+def _extract_removals(messages: list[str]) -> list[str]:
+    """Scan user messages for removal instructions and return the removed item
+    phrases (e.g. "remove the chandelier" -> "chandelier").
+
+    Deterministic negation handling so refinement turns actually drop objects
+    from the positive prompt and push them into the FLUX negative prompt,
+    instead of leaking the object name back into the positive request.
+    """
+    import re
+
+    removed: list[str] = []
+    for msg in messages:
+        low = (msg or "").strip().lower()
+        if not low:
+            continue
+        for pat in _REMOVAL_PATTERNS:
+            m = re.match(pat, low)
+            if m:
+                # Trim trailing punctuation / filler and cap phrase length.
+                phrase = re.sub(r"[.!,;]+$", "", m.group(1)).strip()
+                phrase = re.sub(r"\s+(please|now|from the room|entirely)$", "", phrase).strip()
+                if phrase and len(phrase) <= 40:
+                    removed.append(phrase)
+                break
+    return removed
+
+
+def _apply_removals(object_names: str, removals: list[str]) -> str:
+    """Drop any comma-separated object whose name matches a removal phrase."""
+    if not removals:
+        return object_names
+    kept = []
+    for name in [n.strip() for n in object_names.split(",") if n.strip()]:
+        low = name.lower()
+        if any(r in low or low in r for r in removals):
+            continue
+        kept.append(name)
+    return ", ".join(kept)
+
+
 async def _generate_hero_canon(
     session_id: str,
     session_dir: Path,
     brief: dict[str, Any],
     user_prompt: str,
+    removals: list[str] | None = None,
 ) -> Path:
     """Generate the hero Canon image via FLUX through ComfyUI.
 
@@ -626,18 +684,29 @@ async def _generate_hero_canon(
     palette = brief.get("palette", {})
     primary = palette.get("primary", "") if isinstance(palette, dict) else ""
 
+    removals = removals or []
+
     objects = brief.get("object_manifest", [])
     object_names = ", ".join(
         item.get("name", "") for item in objects[:8]
         if isinstance(item, dict) and item.get("name")
     ) or "furniture and fixtures"
+    # Drop removed items from the positive prompt so FLUX stops rendering them.
+    object_names = _apply_removals(object_names, removals) or "furniture and fixtures"
+
+    # The latest user message drives "exact request", but a removal instruction
+    # must NOT go into the positive prompt (FLUX would just see the object word
+    # and render it). Suppress it here; it goes to the negative prompt instead.
+    exact_request = user_prompt
+    if _extract_removals([user_prompt]):
+        exact_request = ""
 
     prompt = (
         f"Photorealistic interior photograph of a "
         f"{period + ' ' if period else ''}{room_purpose}, "
         f"{mood} atmosphere, featuring {object_names}. "
         f"{primary + ' tones. ' if primary else ''}"
-        f"Exact user request: {user_prompt}. "
+        f"{'Exact user request: ' + exact_request + '. ' if exact_request else ''}"
         f"Professional architectural photography, natural lighting, "
         f"high detail, 8K resolution, sharp focus, magazine quality."
     )
@@ -646,6 +715,9 @@ async def _generate_hero_canon(
         "blurry, low quality, deformed, sketch, wireframe, cartoon, "
         "3d render, text, watermark, duplicate objects, empty room"
     )
+    # Push removed items into the negative prompt so FLUX actively suppresses them.
+    if removals:
+        negative = negative + ", " + ", ".join(removals)
 
     # Output path
     artifacts_dir = session_dir / "artifacts"
