@@ -4698,3 +4698,12 @@ O^O/ \_/ \    Batch size per device = 1 | Gradient accumulation steps = 4
 === LANE kimi-k2.6:cloud — 15 prompts ===
   p001: timeout  (120.0s) 
   p002: timeout  (120.0s) 
+  p003: timeout  (120.0s) 
+  p004: timeout  (120.0s) 
+  p005: timeout  (120.0s) 
+  p006: timeout  (120.0s) 
+  p007: timeout  (120.0s) 
+  p008: timeout  (120.0s) 
+  p009: timeout  (120.0s) 
+  p010: error    (117.3s) 
+  p011: timeout  (120.0s) 

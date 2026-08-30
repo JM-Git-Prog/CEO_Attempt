@@ -7459,3 +7459,43 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
 Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260830T165257.json
 [17:01:07] bench batch rc=0
 [17:01:08] ingest: ingest: +4 records | 909 already banked | 4468 plan-less rows skipped
+[17:02:38] batch: prompts 45..59 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p046: error    (21.7s) 
+  p047: error    (44.2s) 
+  p048: error    (39.2s) 
+  p049: error    (29.7s) 
+  p050: error    (21.4s) 
+  p051: blocked  (50.8s) physical_overlap,physical_overlap,physical_overlap
+  p052: blocked  (32.8s) physical_overlap,physical_overlap,physical_overlap
+  p053: error    (28.7s) 
+  p054: blocked  (30.1s) physical_overlap
+  p055: error    (22.7s) 
+  p056: legal    (9.9s) 
+  p057: error    (20.9s) 
+  p058: error    (25.6s) 
+  p059: error    (24.8s) 
+  p060: error    (19.8s) 
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260830T170238.json
+[17:09:40] bench batch rc=0
+[17:09:40] ingest: ingest: +4 records | 913 already banked | 4483 plan-less rows skipped
+[17:11:10] batch: prompts 60..74 (llama3.1)
+
+=== LANE llama3.1 — 15 prompts ===
+  p061: blocked  (96.6s) physical_overlap,physical_overlap,physical_overlap
+  p062: error    (23.9s) 
+  p063: error    (23.1s) 
+  p064: error    (23.6s) 
+  p065: error    (34.5s) 
+  p066: blocked  (31.8s) physical_overlap,out_of_bounds
+  p067: error    (35.5s) 
+  p068: error    (24.4s) 
+  p069: error    (32.3s) 
+  p070: error    (26.4s) 
+  p071: error    (21.8s) 
+  p072: blocked  (17.2s) opening_blocked
+  p073: error    (25.5s) 
+[17:18:23] bench batch rc=3221225786

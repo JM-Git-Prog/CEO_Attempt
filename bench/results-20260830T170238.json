@@ -4,15 +4,15 @@
  "lanes": {
   "llama3.1": {
    "legal": 1,
-   "total": 13,
-   "attempted": 13,
+   "total": 15,
+   "attempted": 15,
    "backend_errors": 0,
    "backend_healthy": true,
-   "legal_rate": 0.08,
+   "legal_rate": 0.07,
    "violation_census": {
     "physical_overlap": 31,
     "opening_blocked": 12,
-    "error:ValidationError": 9
+    "error:ValidationError": 11
    },
    "rows": [
     {
@@ -1131,8 +1131,23 @@
      "error": "8 validation errors for FloorPlanV11\nitems.3.width\n  Input should be greater than 0 [type=greater_than, input_value=0.0, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.12/v/greater_than\nitems.3.depth\n  Input should be greater than 0 [type=greater_than, input_value=",
      "seconds": 25.6,
      "prompt_id": "p058"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'dresser',...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error",
+     "seconds": 24.8,
+     "prompt_id": "p059"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "2 validation errors for FloorPlanV11\nrelationships.1\n  Value error, against_wall requires wall [type=value_error, input_value={'subject_id': 'bookshelf...1.0, 'relaxable': False}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\nrelationships.2\n  Valu",
+     "seconds": 19.8,
+     "prompt_id": "p060"
     }
    ]
   }
- }
+ },
+ "finished": "2026-08-30 17:09:40"
 }
