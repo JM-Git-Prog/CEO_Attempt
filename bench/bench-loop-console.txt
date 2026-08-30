@@ -7403,3 +7403,13 @@ Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\
   p008: blocked  (26.8s) opening_blocked
   p009: error    (24.1s) 
   p010: error    (30.5s) 
+  p011: error    (27.8s) 
+  p012: blocked  (39.1s) out_of_bounds,opening_blocked
+  p013: error    (24.5s) 
+  p014: blocked  (26.4s) physical_overlap,out_of_bounds,out_of_bounds
+  p015: error    (29.0s) 
+  LANE RESULT: 1/15 legal plans (7%)
+
+Results written: C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\bench\results-20260830T163540.json
+[16:42:19] bench batch rc=0
+[16:42:19] ingest: ingest: +8 records | 895 already banked | 4436 plan-less rows skipped

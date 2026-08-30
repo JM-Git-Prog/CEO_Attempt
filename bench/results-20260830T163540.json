@@ -4,13 +4,13 @@
  "lanes": {
   "llama3.1": {
    "legal": 1,
-   "total": 14,
-   "attempted": 14,
+   "total": 15,
+   "attempted": 15,
    "backend_errors": 0,
    "backend_healthy": true,
    "legal_rate": 0.07,
    "violation_census": {
-    "error:ValidationError": 9,
+    "error:ValidationError": 10,
     "opening_blocked": 7,
     "physical_overlap": 4,
     "out_of_bounds": 4
@@ -1165,8 +1165,16 @@
       }
      },
      "prompt_id": "p014"
+    },
+    {
+     "status": "error",
+     "error_type": "ValidationError",
+     "error": "1 validation error for FloorPlanV11\nitems.6.depth\n  Input should be greater than 0 [type=greater_than, input_value=0.0, input_type=float]\n    For further information visit https://errors.pydantic.dev/2.12/v/greater_than",
+     "seconds": 29.0,
+     "prompt_id": "p015"
     }
    ]
   }
- }
+ },
+ "finished": "2026-08-30 16:42:19"
 }
