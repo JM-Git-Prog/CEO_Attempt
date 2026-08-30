@@ -3,12 +3,12 @@
  "prompts": 15,
  "lanes": {
   "glm-5.2:cloud": {
-   "legal": 1,
-   "total": 1,
-   "attempted": 1,
+   "legal": 2,
+   "total": 3,
+   "attempted": 3,
    "backend_errors": 0,
    "backend_healthy": true,
-   "legal_rate": 1.0,
+   "legal_rate": 0.67,
    "violation_census": {},
    "rows": [
     {
@@ -271,6 +271,182 @@
       "out_of_bounds"
      ],
      "prompt_id": "p001"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p002"
+    },
+    {
+     "status": "legal",
+     "blockers": [],
+     "advisories": [],
+     "warnings": 2,
+     "items": 3,
+     "seconds": 65.7,
+     "plan": {
+      "name": "1970s Living Room",
+      "room": {
+       "width": 5.5,
+       "depth": 5.0,
+       "height": 2.7
+      },
+      "items": [
+       {
+        "id": "sofa",
+        "name": "Low Orange Sofa",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 1.8750000000000002,
+        "width": 2.2,
+        "depth": 0.85,
+        "height": 0.7,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.75,
+        "description": "1970s low-profile sofa with burnt-orange upholstery, tufted cushions, and chrome legs"
+       },
+       {
+        "id": "coffee_table",
+        "name": "Round Coffee Table",
+        "category": "furniture",
+        "mount": "floor",
+        "x": -2.5717582782094415e-16,
+        "z": -1.7499999999999998,
+        "width": 0.9,
+        "depth": 0.9,
+        "height": 0.4,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.6,
+        "description": "Circular wood-grain coffee table with a smoky glass top, typical 70s styling"
+       },
+       {
+        "id": "shag_rug",
+        "name": "Shag Area Rug",
+        "category": "furniture",
+        "mount": "floor",
+        "x": 0.0,
+        "z": 0.0,
+        "width": 3.0,
+        "depth": 2.5,
+        "height": 0.04,
+        "elevation": 0.0,
+        "rotation_deg": 0.0,
+        "fixed": false,
+        "clearance_m": 0.0,
+        "description": "Deep-pile cream shag rug anchoring the seating zone"
+       }
+      ],
+      "openings": [
+       {
+        "id": "door_1",
+        "kind": "door",
+        "wall": "south",
+        "offset": 1.4999999999999998,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_height": 0.0
+       },
+       {
+        "id": "window_1",
+        "kind": "window",
+        "wall": "west",
+        "offset": 0.0,
+        "width": 1.6,
+        "height": 1.2,
+        "sill_height": 0.9
+       }
+      ],
+      "camera": {
+       "x": 2.3,
+       "y": 1.6,
+       "z": -2.05,
+       "target_x": -2.5717582782094415e-16,
+       "target_y": 0.9,
+       "target_z": -1.7499999999999998,
+       "fov_deg": 55.0
+      },
+      "circulation_notes": [
+       "Door on south wall swings inward; 1.0m clearance arc kept clear of all furniture",
+       "Path from door to sofa runs north along the east side of the coffee table with 0.8m minimum clearance",
+       "Floor lamp tucked into southwest corner so it does not impede circulation"
+      ],
+      "design_notes": [
+       "Sofa placed against north wall as the primary focal piece, facing south into the room",
+       "Round coffee table centered 0.5m in front of the sofa for easy reach from seating",
+       "Shag rug spans beneath both sofa and coffee table to unify the seating zone",
+       "Floor lamp in the southwest corner provides ambient accent lighting without blocking views",
+       "West-facing window admits daylight across the rug and sofa, enhancing the warm 70s palette"
+      ],
+      "schema_version": "floor-plan/v11",
+      "relationships": [
+       {
+        "subject_id": "sofa",
+        "kind": "against_wall",
+        "target_id": null,
+        "wall": "north",
+        "parameters_m": {
+         "along_offset_m": 0.0,
+         "wall_gap_m": 0.2
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "coffee_table",
+        "kind": "south_of",
+        "target_id": "sofa",
+        "wall": null,
+        "parameters_m": {
+         "gap_m": 0.5
+        },
+        "weight": 1.0,
+        "relaxable": false
+       },
+       {
+        "subject_id": "shag_rug",
+        "kind": "centered",
+        "target_id": null,
+        "wall": null,
+        "parameters_m": {
+         "offset_x_m": 0.0,
+         "offset_z_m": 0.9
+        },
+        "weight": 1.0,
+        "relaxable": true
+       }
+      ],
+      "opening_intents": [
+       {
+        "opening_id": "door_1",
+        "wall": "south",
+        "placement": "near_corner",
+        "corner": "southeast",
+        "margin_m": 0.8
+       },
+       {
+        "opening_id": "window_1",
+        "wall": "west",
+        "placement": "centered",
+        "corner": null,
+        "margin_m": 0.1
+       }
+      ],
+      "camera_intent": {
+       "corner": "southeast",
+       "target_id": "coffee_table",
+       "inset_m": 0.45,
+       "eye_height_m": 1.6,
+       "target_height_m": 0.9,
+       "fov_deg": 55.0
+      }
+     },
+     "dropped_duplicate_relations": 1,
+     "prompt_id": "p003"
     }
    ]
   }
