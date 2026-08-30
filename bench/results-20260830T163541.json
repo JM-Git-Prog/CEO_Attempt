@@ -2459,8 +2459,8 @@
   },
   "kimi-k2.6:cloud": {
    "legal": 0,
-   "total": 2,
-   "attempted": 2,
+   "total": 6,
+   "attempted": 6,
    "backend_errors": 0,
    "backend_healthy": true,
    "legal_rate": 0.0,
@@ -2475,6 +2475,26 @@
      "status": "timeout",
      "seconds": 120.0,
      "prompt_id": "p002"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p003"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p004"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p005"
+    },
+    {
+     "status": "timeout",
+     "seconds": 120.0,
+     "prompt_id": "p006"
     }
    ]
   }
