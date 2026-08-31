@@ -410,6 +410,15 @@ async def index(request: Request):
         page = Path(__file__).parent / "templates" / "index_v2_0.html"
         return HTMLResponse(page.read_text(encoding="utf-8"),
                             headers={"Cache-Control": "no-store"})
+    # V2.1 (2026-08-31): panorama-first walkable room. A 360° equirectangular
+    # panorama is generated from the room center and rendered as an inside-out
+    # sky-sphere (immediate non-empty view), with the panorama also projected
+    # onto the exact room box for collidable walls. Additive standalone page;
+    # V2.0 remains accessible and behaviorally unchanged.
+    if request.query_params.get("v") in ("2.1", "21"):
+        page = Path(__file__).parent / "templates" / "index_v2_1.html"
+        return HTMLResponse(page.read_text(encoding="utf-8"),
+                            headers={"Cache-Control": "no-store"})
     # V17 (2026-08-30): split-screen — builder-agent chat (left) + live walkable
     # Three.js world (right). Additive early branch, standalone page. Reuses the
     # V16 unified pipeline API verbatim; no V3–V16 behavior changed.

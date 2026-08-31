@@ -282,6 +282,7 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
             "catalog": session_dir / "artifacts" / "catalog.json",
             "canon_injected": session_dir / "artifacts" / "canon_injected.png",
             "synthetic_depth": session_dir / "artifacts" / "synthetic_depth.png",
+            "panorama": session_dir / "artifacts" / "panorama.png",
         }
 
         # Check for view artifacts: view_0, view_1, ... and view_0_depth, etc.

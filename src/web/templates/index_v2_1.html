@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050a08">
+  <title>The Living Room · V2.1</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #050a08; color: #e8f2ed; font: 15px/1.5 Inter, system-ui, sans-serif; overflow: hidden; height: 100vh; }
+    a { color: #8edbb8; text-decoration: none; }
+
+    /* Version nav — minimal top-right */
+    .version-nav { position: fixed; top: 10px; right: 14px; z-index: 200; display: flex; gap: 5px; opacity: 0.5; transition: opacity .2s; }
+    .version-nav:hover { opacity: 1; }
+    .version-nav a { padding: 2px 5px; border-radius: 3px; color: #6b8a7e; font-size: 10px; }
+    .version-nav a:hover, .version-nav .selected { color: #050a08; background: #8edbb8; }
+
+    /* Brand watermark */
+    .brand { position: fixed; top: 12px; left: 16px; z-index: 200; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #3a5a4c; opacity: 0.7; }
+
+    /* Three.js canvas fills viewport */
+    #scene { position: fixed; inset: 0; width: 100vw; height: 100vh; background: #050a08; }
+    #scene canvas { display: block; width: 100%; height: 100%; }
+
+    /* Chat overlay — floating bottom-left */
+    .chat-overlay { position: fixed; bottom: 20px; left: 20px; z-index: 100; width: min(380px, calc(100vw - 40px)); max-height: 60vh; display: flex; flex-direction: column; background: rgba(10, 23, 19, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(142, 219, 184, 0.15); border-radius: 14px; padding: 16px; transition: opacity .3s, transform .3s; }
+    .chat-overlay.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; max-height: 30vh; }
+    .chat-msg { padding: 8px 12px; border-radius: 8px; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
+    .chat-msg.assistant { background: rgba(142, 219, 184, 0.08); color: #c8e8da; }
+    .chat-msg.user { background: rgba(142, 219, 184, 0.15); color: #e8f2ed; margin-left: 20%; }
+
+    .chat-input { display: flex; gap: 8px; }
+    .chat-input textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; padding: 10px 12px; color: #e8f2ed; background: rgba(5, 10, 8, 0.8); border: 1px solid rgba(142, 219, 184, 0.2); border-radius: 8px; font: inherit; font-size: 14px; }
+    .chat-input textarea::placeholder { color: #5a7a6e; }
+    .chat-input textarea:focus { outline: none; border-color: #8edbb8; }
+    .chat-input button { padding: 10px 16px; border: none; border-radius: 8px; background: #8edbb8; color: #050a08; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .chat-input button:disabled { opacity: 0.4; cursor: wait; }
+    .chat-input button:hover:not(:disabled) { background: #a8eece; }
+
+    /* Build button — appears over the hero canon */
+    .build-btn { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 150; padding: 14px 32px; border: none; border-radius: 10px; background: #8edbb8; color: #050a08; font: 700 16px/1 Inter, system-ui, sans-serif; cursor: pointer; box-shadow: 0 4px 24px rgba(142, 219, 184, 0.3); transition: transform .2s, box-shadow .2s; }
+    .build-btn:hover { transform: translateX(-50%) scale(1.04); box-shadow: 0 6px 32px rgba(142, 219, 184, 0.5); }
+    .build-btn.hidden { display: none; }
+
+    /* Compare toggle */
+    .compare-btn { position: fixed; bottom: 20px; right: 20px; z-index: 150; padding: 8px 16px; border: 1px solid rgba(142, 219, 184, 0.3); border-radius: 8px; background: rgba(10, 23, 19, 0.8); backdrop-filter: blur(8px); color: #8edbb8; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .compare-btn:hover { background: rgba(142, 219, 184, 0.15); }
+    .compare-btn.hidden { display: none; }
+
+    /* Inspect pipeline link — sits left of Compare */
+    .inspect-btn { position: fixed; bottom: 20px; right: 118px; z-index: 150; padding: 8px 16px; border: 1px solid rgba(142, 219, 184, 0.3); border-radius: 8px; background: rgba(10, 23, 19, 0.8); backdrop-filter: blur(8px); color: #8edbb8; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .2s; }
+    .inspect-btn:hover { background: rgba(142, 219, 184, 0.15); }
+    .inspect-btn.hidden { display: none; }
+
+    /* Status indicator — subtle bottom-center */
+    .status-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 90; padding: 6px 14px; border-radius: 6px; background: rgba(10, 23, 19, 0.7); backdrop-filter: blur(6px); color: #6b8a7e; font-size: 11px; letter-spacing: 0.04em; transition: opacity .3s; }
+    .status-bar.hidden { opacity: 0; }
+
+    /* Hero image display on canvas */
+    #heroImage { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: #050a08; transition: opacity .6s; }
+    #heroImage.hidden { opacity: 0; pointer-events: none; }
+    #heroImage img { max-width: 85vw; max-height: 80vh; border-radius: 8px; box-shadow: 0 8px 48px rgba(0,0,0,0.6); }
+
+    /* Compare split view */
+    #compareView { position: fixed; inset: 0; z-index: 80; display: grid; grid-template-columns: 1fr 1fr; background: #000; }
+    #compareView.hidden { display: none; }
+    #compareView .compare-pane { display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000; }
+    #compareView .compare-pane img { width: 100%; height: 100%; object-fit: cover; }
+    #compareView .compare-label { position: absolute; top: 12px; padding: 4px 10px; background: rgba(10,23,19,0.8); border-radius: 4px; font-size: 11px; color: #8edbb8; letter-spacing: 0.06em; }
+    #compareView .compare-label.left { left: 12px; }
+    #compareView .compare-label.right { right: 12px; }
+  </style>
+</head>
+<body>
+  <!-- Brand -->
+  <div class="brand">THE LIVING ROOM · 360</div>
+
+  <!-- Version navigation (V2.0 retained + accessible; V2.1 is the panorama build) -->
+  <nav class="version-nav" aria-label="Interface versions">
+    <a href="/?v=3">V3</a><a href="/?v=4">V4</a><a href="/?v=5">V5</a><a href="/?v=6">V6</a>
+    <a href="/?v=7">V7</a><a href="/?v=8">V8</a><a href="/?v=9">V9</a><a href="/?v=10">V10</a>
+    <a href="/?v=11">V11</a><a href="/?v=12">V12</a><a href="/?v=13">V13</a><a href="/?v=14">V14</a>
+    <a href="/?v=15_Fable">V15</a><a href="/?v=16">V16</a>
+    <a href="/?v=2.0">V2.0</a>
+    <a class="selected" aria-current="page" href="/?v=2.1">V2.1</a>
+  </nav>
+
+  <!-- Three.js scene container -->
+  <div id="scene"></div>
+
+  <!-- Hero image overlay (shown after Canon generation) -->
+  <div id="heroImage" class="hidden"></div>
+
+  <!-- Compare split view -->
+  <div id="compareView" class="hidden">
+    <div class="compare-pane" id="compareLeft">
+      <span class="compare-label left">CANON PHOTO</span>
+    </div>
+    <div class="compare-pane" id="compareRight">
+      <span class="compare-label right">3D WORLD</span>
+    </div>
+  </div>
+
+  <!-- Chat overlay -->
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+      <textarea id="chatInput" rows="2" placeholder="Describe the room you want to build..." autofocus></textarea>
+      <button id="chatSend" type="button">Send</button>
+    </div>
+  </div>
+
+  <!-- Build confirmation button -->
+  <button class="build-btn hidden" id="buildBtn" type="button">Build this room</button>
+
+  <!-- Inspect pipeline (opens the 8-stage HITL filmstrip in a new tab) -->
+  <a class="inspect-btn hidden" id="inspectBtn" target="_blank" rel="noopener">🔍 Inspect Pipeline</a>
+
+  <!-- Compare toggle -->
+  <button class="compare-btn hidden" id="compareBtn" type="button">Compare</button>
+
+  <!-- Status bar -->
+  <div class="status-bar hidden" id="statusBar"></div>
+
+  <!-- Three.js (r128 — global UMD pattern for non-module scripts) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <!-- V2.1 client logic -->
+  <script src="/static/v2_1.js?v=2.1" defer></script>
+</body>
+</html>
