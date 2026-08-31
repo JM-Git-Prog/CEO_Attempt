@@ -566,13 +566,31 @@ async def build_meshes(
     if comfyui_available:
         mesh_lanes = await _preflight_mesh_lanes(client)
 
-    # Get MetricPlan placements for positioning
+    # Load room dimensions from the MetricPlan (spatial authority for the box).
     plan_data = {}
     plan_path = session_dir / "artifacts" / "metric_plan.json"
     if plan_path.is_file():
         plan_data = json.loads(plan_path.read_text(encoding="utf-8"))
-    placements = plan_data.get("object_placements", [])
     room_dims = plan_data.get("room_dimensions", [4.0, 4.0, 2.7])
+
+    # Depth/geometry-driven placement: back-project each object's bbox through
+    # its view camera onto the floor plane, using the known room box as the
+    # spatial prior. Replaces the fragile name-match-to-MetricPlan path that
+    # defaulted unmatched objects to the origin (empty-world bug). Each object's
+    # world (x,y,z) is looked up from this dict by uuid below.
+    from src.unified_pipeline.depth_placement import place_objects as _place_objects
+    capture_manifest_data = None
+    manifest_path = session_dir / "artifacts" / "capture_manifest.json"
+    if manifest_path.is_file():
+        try:
+            capture_manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"  V2 placement: capture_manifest unreadable ({exc})")
+    depth_placements = _place_objects(catalog.entries, capture_manifest_data, room_dims)
+    _pm = {}
+    for _p in depth_placements.values():
+        _pm[_p.method] = _pm.get(_p.method, 0) + 1
+    logger.info(f"  V2 placement: {len(depth_placements)} objects placed via depth back-projection {_pm}")
 
     # Generate mesh for each cataloged object
     for idx, entry in enumerate(catalog.entries):
@@ -663,28 +681,14 @@ async def build_meshes(
             if dec_faces > 0:
                 face_count, vertex_count = dec_faces, dec_verts
 
-        # Determine position from MetricPlan placements
-        position = (0.0, 0.0, 0.0)
+        # Determine position by depth back-projection (computed above).
         rotation = 0.0
         dims = _estimate_dimensions(entry.size_estimate, entry.category)
-
-        # Try to match to a placement by name similarity
-        from difflib import SequenceMatcher
-        for placement in placements:
-            if isinstance(placement, dict):
-                p_name = placement.get("name", "")
-                if SequenceMatcher(None, entry.name.lower(), p_name.lower()).ratio() > 0.5:
-                    x = float(placement.get("x", 0)) - room_dims[0] / 2
-                    y = float(placement.get("elevation", 0))
-                    z = float(placement.get("y", 0)) - room_dims[1] / 2
-                    position = (x, y, z)
-                    rotation = float(placement.get("rotation_deg", 0))
-                    dims = (
-                        float(placement.get("width", dims[0])),
-                        float(placement.get("height", dims[1])),
-                        float(placement.get("depth", dims[2])),
-                    )
-                    break
+        _dp = depth_placements.get(entry.uuid)
+        if _dp is not None:
+            position = (_dp.x, _dp.y, _dp.z)
+        else:
+            position = (0.0, 0.0, 0.0)
 
         result = MeshResult(
             uuid=entry.uuid,
