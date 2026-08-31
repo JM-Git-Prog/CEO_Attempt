@@ -86,6 +86,76 @@ def _semantic_concept(name: str, *, source: str) -> str | None:
     return None
 
 
+# Minimum intersection-over-union at which two same-concept detections are
+# treated as one over-segmented physical surface rather than two distinct
+# objects. Vision models routinely report one counter as "counter"+"countertop"
+# (or two adjacent segments of an L-shaped surface) with heavily overlapping
+# boxes; a genuine second object sits in a spatially disjoint box. This gate is
+# identity/inventory only — coalescing never emits coordinates or scale.
+_OVERSEGMENT_IOU = 0.5
+
+
+def _bbox(item: Mapping[str, Any]) -> tuple[float, float, float, float] | None:
+    raw = item.get("bbox")
+    if not isinstance(raw, (list, tuple)) or len(raw) != 4:
+        return None
+    try:
+        x0, y0, x1, y1 = (float(v) for v in raw)
+    except (TypeError, ValueError):
+        return None
+    if x1 <= x0 or y1 <= y0:
+        return None
+    return (x0, y0, x1, y1)
+
+
+def _iou(a: Mapping[str, Any], b: Mapping[str, Any]) -> float:
+    """Intersection-over-union of two detection boxes; 0.0 if either lacks one."""
+    box_a = _bbox(a)
+    box_b = _bbox(b)
+    if box_a is None or box_b is None:
+        return 0.0
+    ax0, ay0, ax1, ay1 = box_a
+    bx0, by0, bx1, by1 = box_b
+    ix0, iy0 = max(ax0, bx0), max(ay0, by0)
+    ix1, iy1 = min(ax1, bx1), min(ay1, by1)
+    inter = max(0.0, ix1 - ix0) * max(0.0, iy1 - iy0)
+    if inter <= 0.0:
+        return 0.0
+    area_a = (ax1 - ax0) * (ay1 - ay0)
+    area_b = (bx1 - bx0) * (by1 - by0)
+    union = area_a + area_b - inter
+    return inter / union if union > 0.0 else 0.0
+
+
+def _coalesce_oversegmented(
+    matches: list[Mapping[str, Any]],
+) -> list[list[Mapping[str, Any]]]:
+    """Group same-concept detections that overlap into one physical surface.
+
+    Returns a list of groups, each a list of detections that transitively
+    overlap (IoU >= threshold). One group == one physical object. Spatially
+    disjoint detections form their own single-member groups and therefore
+    remain distinct (genuine duplicates stay ambiguous downstream). Order is
+    deterministic: groups are keyed and sorted by their lowest detection_index.
+    """
+    def _index(item: Mapping[str, Any]) -> int:
+        return int(item.get("detection_index", 0))
+
+    ordered = sorted(matches, key=lambda item: (_index(item), str(item.get("object_id", ""))))
+    groups: list[list[Mapping[str, Any]]] = []
+    for item in ordered:
+        placed = False
+        for group in groups:
+            if any(_iou(item, member) >= _OVERSEGMENT_IOU for member in group):
+                group.append(item)
+                placed = True
+                break
+        if not placed:
+            groups.append([item])
+    groups.sort(key=lambda group: min(_index(member) for member in group))
+    return groups
+
+
 def _bind_semantic_observations(
     brief: Brief, detected: Mapping[str, Any]
 ) -> dict[str, Any]:
@@ -141,15 +211,44 @@ def _bind_semantic_observations(
                 f"missing required semantic observations for {manifest.name!r}: "
                 f"expected {required_count}, found {len(matches)}"
             )
+
+        # More detections than the manifest requires is only ambiguous if they
+        # are spatially DISTINCT objects. Vision models over-segment a single
+        # physical surface (e.g. one counter reported as "counter"+"countertop")
+        # into overlapping boxes; those coalesce into one object. Genuine
+        # duplicates sit in disjoint boxes and remain ambiguous → fail closed.
+        coalesced_object_ids: list[str] = []
         if len(matches) > required_count:
-            raise CandidateAuthorityError(
-                f"ambiguous required semantic observations for {manifest.name!r}: "
-                f"expected {required_count}, found {len(matches)}"
-            )
+            groups = _coalesce_oversegmented(matches)
+            if len(groups) != required_count:
+                raise CandidateAuthorityError(
+                    f"ambiguous required semantic observations for {manifest.name!r}: "
+                    f"expected {required_count}, found {len(groups)} spatially "
+                    f"distinct (from {len(matches)} detections)"
+                )
+            # One representative per group (lowest detection_index); the other
+            # over-segments are recorded as coalesced members, not extras.
+            representatives: list[Mapping[str, Any]] = []
+            for group in groups:
+                group_sorted = sorted(
+                    group,
+                    key=lambda item: (
+                        int(item.get("detection_index", 0)),
+                        str(item.get("object_id", "")),
+                    ),
+                )
+                representatives.append(group_sorted[0])
+                coalesced_object_ids.extend(
+                    str(member["object_id"]) for member in group_sorted[1:]
+                )
+            matches = representatives
 
         detected_ids = [str(item["object_id"]) for item in matches]
         used_detection_ids.update(detected_ids)
-        bindings.append({
+        # Coalesced over-segments are consumed too, so they are not later
+        # reported as unrelated extra observations.
+        used_detection_ids.update(coalesced_object_ids)
+        binding = {
             "manifest_id": str(manifest.id),
             "manifest_name": manifest.name,
             "semantic_concept": concept,
@@ -160,7 +259,10 @@ def _bind_semantic_observations(
             "plan_binding_ids": [],
             "identity_authority": "brief_manifest_uuid",
             "observation_authority": False,
-        })
+        }
+        if coalesced_object_ids:
+            binding["coalesced_oversegment_ids"] = coalesced_object_ids
+        bindings.append(binding)
 
     extras = [
         dict(item)
