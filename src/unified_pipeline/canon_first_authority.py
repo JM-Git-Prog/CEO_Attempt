@@ -212,22 +212,26 @@ def _bind_semantic_observations(
                 f"expected {required_count}, found {len(matches)}"
             )
 
-        # More detections than the manifest requires is only ambiguous if they
-        # are spatially DISTINCT objects. Vision models over-segment a single
-        # physical surface (e.g. one counter reported as "counter"+"countertop")
-        # into overlapping boxes; those coalesce into one object. Genuine
-        # duplicates sit in disjoint boxes and remain ambiguous → fail closed.
+        # Surplus detections are reconciled in two layered steps, and the Brief
+        # manifest count is the authority throughout (identity intent owns the
+        # count; vision observations never override it).
+        #
+        #   1. Coalesce over-SEGMENTATION: one physical surface reported as
+        #      multiple overlapping boxes (e.g. "counter"+"countertop") merges
+        #      into a single object via bbox IoU.
+        #   2. Coalesced/counted down to the required N: if spatially DISTINCT
+        #      instances still exceed the Brief count (e.g. vision finds 3 chairs
+        #      when the Brief says 2), the Brief wins — bind the first N
+        #      (deterministic by detection_index) and let the surplus distinct
+        #      detections fall through to extra_observations. The pipeline never
+        #      silently discards them: they are preserved as extras, and no
+        #      coordinates/scale are emitted here.
         coalesced_object_ids: list[str] = []
+        surplus_object_ids: list[str] = []
         if len(matches) > required_count:
             groups = _coalesce_oversegmented(matches)
-            if len(groups) != required_count:
-                raise CandidateAuthorityError(
-                    f"ambiguous required semantic observations for {manifest.name!r}: "
-                    f"expected {required_count}, found {len(groups)} spatially "
-                    f"distinct (from {len(matches)} detections)"
-                )
-            # One representative per group (lowest detection_index); the other
-            # over-segments are recorded as coalesced members, not extras.
+            # One representative per group (lowest detection_index); other
+            # members of the same group are recorded as coalesced over-segments.
             representatives: list[Mapping[str, Any]] = []
             for group in groups:
                 group_sorted = sorted(
@@ -241,12 +245,21 @@ def _bind_semantic_observations(
                 coalesced_object_ids.extend(
                     str(member["object_id"]) for member in group_sorted[1:]
                 )
-            matches = representatives
+            if len(representatives) > required_count:
+                # Brief count is authority: bind the first N distinct instances,
+                # surplus distinct detections become extra observations.
+                bound_reps = representatives[:required_count]
+                surplus_reps = representatives[required_count:]
+                surplus_object_ids = [str(item["object_id"]) for item in surplus_reps]
+                matches = bound_reps
+            else:
+                matches = representatives
 
         detected_ids = [str(item["object_id"]) for item in matches]
         used_detection_ids.update(detected_ids)
-        # Coalesced over-segments are consumed too, so they are not later
-        # reported as unrelated extra observations.
+        # Coalesced over-segments are consumed (not unrelated extras). Surplus
+        # distinct detections are intentionally NOT marked used, so the extras
+        # collector below preserves them as extra_observations.
         used_detection_ids.update(coalesced_object_ids)
         binding = {
             "manifest_id": str(manifest.id),
@@ -262,6 +275,8 @@ def _bind_semantic_observations(
         }
         if coalesced_object_ids:
             binding["coalesced_oversegment_ids"] = coalesced_object_ids
+        if surplus_object_ids:
+            binding["surplus_observation_ids"] = surplus_object_ids
         bindings.append(binding)
 
     extras = [

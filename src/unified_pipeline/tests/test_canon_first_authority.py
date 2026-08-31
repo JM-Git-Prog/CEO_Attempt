@@ -305,17 +305,38 @@ def test_builtin_counter_accepts_live_cabinet_storage_without_spatial_authority(
     assert cabinet["metric_plan_sha256"] == reference["metric_plan_sha256"]
     assert cabinet["camera_sha256"] == reference["camera_sha256"]
 
+    # Brief count is authority (Option 1): when vision reports a surplus
+    # spatially-distinct instance of a required singular object, the Brief wins
+    # — bind the required count and preserve the surplus as an extra
+    # observation rather than failing closed. The identity of the bound object
+    # is still the Brief manifest UUID.
     duplicate_root = tmp_path / "duplicate-cabinet-storage"
-    with pytest.raises(CandidateAuthorityError, match="ambiguous required semantic observations"):
-        handle_spatial_reconstruction(
-            _prepare_session(
-                duplicate_root,
-                counter_name="cabinet/storage",
-                counter_category="storage",
-                duplicate="cabinet/storage",
-            )
+    handle_spatial_reconstruction(
+        _prepare_session(
+            duplicate_root,
+            counter_name="cabinet/storage",
+            counter_category="storage",
+            duplicate="cabinet/storage",
         )
-    assert not (duplicate_root / "artifacts" / "spatial_solution.json").exists()
+    )
+    duplicate = _load_hashed(
+        duplicate_root / "artifacts" / "spatial_solution.json", "solution_sha256"
+    )
+    dup_binding = next(
+        item
+        for item in duplicate["semantic_bindings"]["required_bindings"]
+        if item["semantic_concept"] == "counter"
+    )
+    assert dup_binding["manifest_id"] == MANIFEST_IDS["counter"]
+    assert dup_binding["plan_binding_ids"] == [MANIFEST_IDS["counter"]]
+    assert len(dup_binding["detected_object_ids"]) == 1
+    assert len(dup_binding["surplus_observation_ids"]) == 1
+    # The surplus distinct detection is preserved, never silently dropped.
+    surplus_id = dup_binding["surplus_observation_ids"][0]
+    assert surplus_id in {
+        str(item.get("object_id", ""))
+        for item in duplicate["semantic_bindings"]["extra_observations"]
+    }
 
     wrong_category_root = tmp_path / "cabinet-wrong-category"
     with pytest.raises(CandidateAuthorityError, match="missing required semantic observations"):
@@ -347,21 +368,54 @@ def test_builtin_counter_accepts_live_cabinet_storage_without_spatial_authority(
     ("missing", "duplicate", "message"),
     [
         ("coffee machine", "", "missing required semantic observations"),
-        ("", "table", "ambiguous required semantic observations"),
     ],
 )
-def test_missing_or_ambiguous_required_object_fails_closed(
+def test_missing_required_object_fails_closed(
     tmp_path: Path, missing: str, duplicate: str, message: str
 ) -> None:
+    """Too FEW observations of a required object still fails closed."""
     root = tmp_path / f"failure-{missing or duplicate}"
     ctx = _prepare_session(root, missing=missing, duplicate=duplicate)
 
     with pytest.raises(CandidateAuthorityError, match=message):
         handle_spatial_reconstruction(ctx)
 
-    assert not (root / "artifacts" / "spatial_solution.json").exists()
-    assert not (root / "artifacts" / "blockout.png").exists()
-    assert not (root / "artifacts" / "object_picker.json").exists()
+
+def test_surplus_distinct_observation_defers_to_brief_count(tmp_path: Path) -> None:
+    """Brief count is authority (Option 1).
+
+    When vision reports MORE spatially-distinct instances of a required object
+    than the Brief specifies (here a second, disjoint 'table'), the pipeline
+    does not fail: it binds the Brief's required count and preserves the surplus
+    distinct detection as an extra observation. This is over-DETECTION of a
+    countable object, distinct from over-SEGMENTATION of one surface (counter),
+    and distinct from too-few observations (which still fails closed).
+    """
+    root = tmp_path / "surplus-table"
+    handle_spatial_reconstruction(
+        _prepare_session(root, duplicate="table", raster=(1024, 768))
+    )
+    solution = _load_hashed(
+        root / "artifacts" / "spatial_solution.json", "solution_sha256"
+    )
+    table_binding = next(
+        item
+        for item in solution["semantic_bindings"]["required_bindings"]
+        if item["semantic_concept"] == "table"
+    )
+    # Brief says one round table → exactly one bound instance.
+    assert table_binding["manifest_id"] == MANIFEST_IDS["table"]
+    assert len(table_binding["detected_object_ids"]) == 1
+    assert len(table_binding["surplus_observation_ids"]) == 1
+    # The surplus distinct table is preserved as an extra observation.
+    surplus_id = table_binding["surplus_observation_ids"][0]
+    assert surplus_id in {
+        str(item.get("object_id", ""))
+        for item in solution["semantic_bindings"]["extra_observations"]
+    }
+    # Identity/plan authority unchanged: still the Brief manifest UUID.
+    assert table_binding["plan_binding_ids"] == [MANIFEST_IDS["table"]]
+    assert solution["semantic_bindings"]["detection_coordinates_used_for_plan"] is False
 
 
 def test_blockout_renderer_consumes_generator_opening_and_placement_fields(tmp_path: Path) -> None:
