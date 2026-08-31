@@ -483,14 +483,97 @@ def create_v2_router(output_root: Callable[[], Path]) -> APIRouter:
                    world_url=f"/?v=2.0&session={session_id}", kind="world"),
         ]
 
+        # Effective state: if meta.json is missing/unknown but every stage
+        # produced its artifact, the session is complete. This keeps the state
+        # pill honest for older sessions written before meta.json existed.
+        all_complete = all(s["status"] == "complete" for s in stages)
+        effective_state = state
+        if all_complete and state in ("unknown", "building"):
+            effective_state = "complete"
+
         return {
             "session_id": session_id,
-            "state": state,
+            "state": effective_state,
+            "raw_state": state,
             "prompt": (brief or {}).get("room_purpose", ""),
             "hero_canon_url": f"{base}/artifact/hero_canon"
             if _exists("canon.png") else None,
             "stages": stages,
         }
+
+    # ─── HITL verdicts: server-side persistence ───────────────────────────────
+    # Read-only-phase gating support: verdicts persist to hitl_verdicts.json
+    # beside the session so they survive across browsers/devices. They record a
+    # human's per-stage judgement; they do not (yet) halt or re-run the pipeline.
+
+    @router.get("/api/v2/session/{session_id}/verdicts")
+    async def v2_get_verdicts(session_id: str):
+        """Return the persisted per-stage HITL verdicts for a session."""
+        try:
+            session_dir = _session_dir(session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=404)
+        path = session_dir / "hitl_verdicts.json"
+        if not path.is_file():
+            return {"session_id": session_id, "verdicts": {}}
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            data = {}
+        return {"session_id": session_id, "verdicts": data.get("verdicts", data)}
+
+    @router.post("/api/v2/session/{session_id}/verdicts")
+    async def v2_set_verdict(session_id: str, request: Request):
+        """Persist a single stage verdict. Body: {stage, verdict} where verdict
+        is 'approve' | 'reject' | null (to clear). Merges into hitl_verdicts.json.
+        """
+        try:
+            session_dir = _session_dir(session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=404)
+
+        try:
+            body = await request.json()
+        except (ValueError, json.JSONDecodeError):
+            return JSONResponse({"error": "invalid JSON body"}, status_code=400)
+
+        stage = body.get("stage")
+        verdict = body.get("verdict")
+        if not stage or not isinstance(stage, str):
+            return JSONResponse({"error": "stage (string) required"}, status_code=400)
+        if verdict not in ("approve", "reject", None):
+            return JSONResponse(
+                {"error": "verdict must be 'approve', 'reject', or null"},
+                status_code=400,
+            )
+
+        path = session_dir / "hitl_verdicts.json"
+        current: dict[str, Any] = {}
+        if path.is_file():
+            try:
+                loaded = json.loads(path.read_text(encoding="utf-8"))
+                current = loaded.get("verdicts", loaded) or {}
+            except (OSError, json.JSONDecodeError):
+                current = {}
+
+        if verdict is None:
+            current.pop(stage, None)
+        else:
+            current[stage] = verdict
+
+        payload = {
+            "verdicts": current,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+        }
+        tmp = path.with_suffix(".json.tmp")
+        try:
+            tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            tmp.replace(path)
+        except OSError as exc:
+            return JSONResponse(
+                {"error": f"could not persist verdict: {exc}"}, status_code=500
+            )
+        return {"ok": True, "stage": stage, "verdict": verdict, "verdicts": current}
 
     # ─── GET /api/v2/inspect — HITL Pipeline Inspector page ───────────────────
 

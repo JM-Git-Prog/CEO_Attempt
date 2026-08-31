@@ -91,16 +91,39 @@
     setTimeout(() => { modalBody.innerHTML = ""; }, 220);
   }
 
-  // ─── HITL verdicts (localStorage-persisted) ──────────────────────────────────
+  // ─── HITL verdicts (server-persisted, localStorage fallback) ─────────────────
+  // In-memory cache populated from the server at boot; each change is written
+  // through to the server AND mirrored to localStorage as an offline fallback.
+  let VERDICTS = {};
   function verdictKey() { return "hitl:" + sessionId; }
-  function loadVerdicts() {
-    try { return JSON.parse(localStorage.getItem(verdictKey()) || "{}"); }
-    catch (_) { return {}; }
+
+  function loadVerdicts() { return VERDICTS; }
+
+  async function fetchVerdicts() {
+    // Prefer the server copy; fall back to localStorage if the call fails.
+    try {
+      const r = await fetch(
+        "/api/v2/session/" + encodeURIComponent(sessionId) + "/verdicts");
+      if (r.ok) {
+        const d = await r.json();
+        VERDICTS = d.verdicts || {};
+        return;
+      }
+    } catch (_) { /* fall through to localStorage */ }
+    try { VERDICTS = JSON.parse(localStorage.getItem(verdictKey()) || "{}"); }
+    catch (_) { VERDICTS = {}; }
   }
+
   function saveVerdict(stageKey, value) {
-    const v = loadVerdicts();
-    v[stageKey] = value;
-    try { localStorage.setItem(verdictKey(), JSON.stringify(v)); } catch (_) {}
+    VERDICTS[stageKey] = value;
+    // Local mirror (instant, offline-safe).
+    try { localStorage.setItem(verdictKey(), JSON.stringify(VERDICTS)); } catch (_) {}
+    // Write through to the server (best-effort; UI already reflects the change).
+    fetch("/api/v2/session/" + encodeURIComponent(sessionId) + "/verdicts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stage: stageKey, verdict: value }),
+    }).catch(() => { /* offline: localStorage mirror holds it */ });
   }
 
   // ─── Panel builders (per kind) ───────────────────────────────────────────────
@@ -126,12 +149,44 @@
 
   function buildThumb3D(title, glbUrl, label) {
     const m = el("div", "media clickable");
+    // Cube placeholder shown until the model-viewer loads (or if GLB is a
+    // scene manifest URL rather than a direct .glb — then we keep the cube).
+    const isDirectGlb = /\/room-shell$|\.glb($|\?)/.test(glbUrl || "");
     m.innerHTML =
       '<div class="thumb-3d">' +
       '<span class="cube">' + ICON.cube + "</span>" +
       '<span class="lbl">' + esc(label || "3D model") + "</span>" +
       "</div>" +
       '<div class="media-overlay"><span class="icon">' + ICON.expand + " View 3D</span></div>";
+
+    if (isDirectGlb) {
+      // Inline live preview: a small auto-rotating model-viewer as the thumbnail.
+      const mv = document.createElement("model-viewer");
+      mv.setAttribute("src", glbUrl);
+      mv.setAttribute("auto-rotate", "");
+      mv.setAttribute("rotation-per-second", "24deg");
+      mv.setAttribute("camera-controls", "");
+      mv.setAttribute("disable-zoom", "");
+      mv.setAttribute("interaction-prompt", "none");
+      mv.setAttribute("shadow-intensity", "0.6");
+      mv.setAttribute("exposure", "1.05");
+      mv.style.position = "absolute";
+      mv.style.inset = "0";
+      mv.style.width = "100%";
+      mv.style.height = "100%";
+      mv.style.setProperty("--poster-color", "transparent");
+      // When the model loads, drop the cube placeholder underneath it.
+      mv.addEventListener("load", () => {
+        const ph = m.querySelector(".thumb-3d");
+        if (ph) ph.style.opacity = "0";
+      });
+      mv.addEventListener("error", () => {
+        // keep the cube placeholder; expand modal still works
+      });
+      // Insert the viewer beneath the overlay so the "View 3D" hint stays on top.
+      m.insertBefore(mv, m.querySelector(".media-overlay"));
+    }
+
     m.addEventListener("click", () => openModelModal(title, glbUrl));
     return m;
   }
@@ -359,8 +414,12 @@
 
     let data;
     try {
-      const resp = await fetch(
-        "/api/v2/session/" + encodeURIComponent(sessionId) + "/inspect-data");
+      // Fetch stage data + persisted verdicts in parallel; verdicts must be
+      // loaded before panels render so saved Approve/Reject states show.
+      const [resp] = await Promise.all([
+        fetch("/api/v2/session/" + encodeURIComponent(sessionId) + "/inspect-data"),
+        fetchVerdicts(),
+      ]);
       if (!resp.ok) {
         const e = await resp.json().catch(() => ({}));
         throw new Error(e.error || ("HTTP " + resp.status));
