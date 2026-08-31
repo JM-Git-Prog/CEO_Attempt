@@ -12,6 +12,7 @@
   const chatSend = document.getElementById("chatSend");
   const buildBtn = document.getElementById("buildBtn");
   const compareBtn = document.getElementById("compareBtn");
+  const inspectBtn = document.getElementById("inspectBtn");
   const statusBar = document.getElementById("statusBar");
   const heroImage = document.getElementById("heroImage");
   const compareView = document.getElementById("compareView");
@@ -45,6 +46,17 @@
 
   function showBuildButton() {
     buildBtn.classList.remove("hidden");
+  }
+
+  function showInspectButton() {
+    // Reveal the Inspect Pipeline link and point it at this live session's
+    // 8-stage HITL filmstrip. The session id is known the moment a session
+    // exists, so no hunting for it.
+    if (inspectBtn && sessionId) {
+      inspectBtn.href =
+        "/api/v2/inspect?session=" + encodeURIComponent(sessionId);
+      inspectBtn.classList.remove("hidden");
+    }
   }
 
   function hideBuildButton() {
@@ -98,6 +110,7 @@
         showHeroImage(data.hero_image_url);
         addMessage("assistant", "Here's my vision for your room. Does this look right?");
         showBuildButton();
+        showInspectButton();
         setStatus("");
       } else {
         addMessage("assistant", data.message || "Generating your room...");

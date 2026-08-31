@@ -50,6 +50,11 @@
     .compare-btn:hover { background: rgba(142, 219, 184, 0.15); }
     .compare-btn.hidden { display: none; }
 
+    /* Inspect pipeline link — sits left of Compare */
+    .inspect-btn { position: fixed; bottom: 20px; right: 118px; z-index: 150; padding: 8px 16px; border: 1px solid rgba(142, 219, 184, 0.3); border-radius: 8px; background: rgba(10, 23, 19, 0.8); backdrop-filter: blur(8px); color: #8edbb8; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .2s; }
+    .inspect-btn:hover { background: rgba(142, 219, 184, 0.15); }
+    .inspect-btn.hidden { display: none; }
+
     /* Status indicator — subtle bottom-center */
     .status-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 90; padding: 6px 14px; border-radius: 6px; background: rgba(10, 23, 19, 0.7); backdrop-filter: blur(6px); color: #6b8a7e; font-size: 11px; letter-spacing: 0.04em; transition: opacity .3s; }
     .status-bar.hidden { opacity: 0; }
@@ -109,6 +114,9 @@
 
   <!-- Build confirmation button -->
   <button class="build-btn hidden" id="buildBtn" type="button">Build this room</button>
+
+  <!-- Inspect pipeline (opens the 8-stage HITL filmstrip in a new tab) -->
+  <a class="inspect-btn hidden" id="inspectBtn" target="_blank" rel="noopener">🔍 Inspect Pipeline</a>
 
   <!-- Compare toggle -->
   <button class="compare-btn hidden" id="compareBtn" type="button">Compare</button>
