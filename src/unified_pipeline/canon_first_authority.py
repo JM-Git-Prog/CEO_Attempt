@@ -179,9 +179,27 @@ def _bind_semantic_observations(
             ) from exc
         concept = _semantic_concept(manifest.name, source="brief")
         if concept is None:
-            raise CandidateAuthorityError(
-                f"required Brief object has no constrained semantic rule: {manifest.name!r}"
-            )
+            # Tolerant gate: the conversation can propose objects outside the
+            # constrained concept table (throw pillows, a vase, a rug…). Rather
+            # than fail the whole build, bind the object's identity as
+            # UNCONSTRAINED and best-effort. It is still placed by the Plan
+            # (plan_generator places every manifest object), keeps its Brief
+            # UUID, and is skipped by strict detection/count matching — its
+            # absence from the vision inventory never blocks the pipeline.
+            bindings.append({
+                "manifest_id": str(manifest.id),
+                "manifest_name": manifest.name,
+                "semantic_concept": "unconstrained",
+                "required_count": int(manifest.count),
+                "is_architectural": bool(manifest.is_architectural),
+                "detected_object_ids": [],
+                "detected_categories": [],
+                "plan_binding_ids": [],
+                "identity_authority": "brief_manifest_uuid",
+                "observation_authority": False,
+                "tolerant_unconstrained": True,
+            })
+            continue
         rules = _CONCEPTS[concept]
         matches = []
         for item in detections:
@@ -285,6 +303,10 @@ def _bind_semantic_observations(
         if isinstance(item, Mapping)
         and str(item.get("object_id", "")) not in used_detection_ids
     ]
+    tolerant_ids = [
+        item["manifest_id"] for item in bindings
+        if item.get("tolerant_unconstrained")
+    ]
     return {
         "required_bindings": bindings,
         "extra_observations": extras,
@@ -292,6 +314,7 @@ def _bind_semantic_observations(
         "semantic_gate_precedes_plan_generation": True,
         "fuzzy_matching_used": False,
         "detection_coordinates_used_for_plan": False,
+        "tolerant_unconstrained_manifest_ids": tolerant_ids,
     }
 
 

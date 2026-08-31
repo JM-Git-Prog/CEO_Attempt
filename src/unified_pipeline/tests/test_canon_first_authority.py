@@ -418,6 +418,56 @@ def test_surplus_distinct_observation_defers_to_brief_count(tmp_path: Path) -> N
     assert solution["semantic_bindings"]["detection_coordinates_used_for_plan"] is False
 
 
+def test_unconstrained_brief_object_is_tolerated_not_fatal() -> None:
+    """Tolerant gate (John's ruling).
+
+    The conversation can propose objects outside the constrained concept table
+    (e.g. 'plush throw pillows'). Such objects must NOT fail the build: they
+    bind as unconstrained/best-effort, keep their Brief UUID, and are skipped by
+    strict detection matching. Known objects still bind normally, and the
+    unrelated detection is preserved as an extra observation.
+    """
+    from src.unified_pipeline.canon_first_authority import _bind_semantic_observations
+    from src.unified_pipeline.models import Brief, ManifestObject
+
+    table_id = "d1e2f3a4-0000-4000-8000-000000000001"
+    pillow_id = "d1e2f3a4-0000-4000-8000-000000000002"
+    brief = Brief(
+        room_purpose="kitchenette",
+        object_manifest=(
+            ManifestObject(id=table_id, name="round table", role="dining", count=1),
+            ManifestObject(id=pillow_id, name="plush throw pillows", role="decor", count=1),
+        ),
+        success_criteria="cozy",
+    )
+    detected = {
+        "objects": [
+            {"object_id": "t0", "detection_index": 0, "name": "table", "bbox": [70, 100, 180, 220], "category": "furniture"},
+            {"object_id": "p0", "detection_index": 1, "name": "pillow", "bbox": [10, 10, 40, 40], "category": "decor"},
+        ]
+    }
+
+    result = _bind_semantic_observations(brief, detected)
+    by_name = {item["manifest_name"]: item for item in result["required_bindings"]}
+
+    # Known object binds normally.
+    assert by_name["round table"]["semantic_concept"] == "table"
+    assert by_name["round table"]["detected_object_ids"] == ["t0"]
+
+    # Unknown object is tolerated, not fatal.
+    pillow = by_name["plush throw pillows"]
+    assert pillow["semantic_concept"] == "unconstrained"
+    assert pillow["tolerant_unconstrained"] is True
+    assert pillow["identity_authority"] == "brief_manifest_uuid"
+    assert pillow["detected_object_ids"] == []  # strict matching skipped
+    assert pillow_id in result["tolerant_unconstrained_manifest_ids"]
+
+    # The unmatched detection is preserved as an extra observation, not dropped.
+    assert "p0" in {str(item.get("object_id", "")) for item in result["extra_observations"]}
+    # No coordinates leaked into planning authority.
+    assert result["detection_coordinates_used_for_plan"] is False
+
+
 def test_blockout_renderer_consumes_generator_opening_and_placement_fields(tmp_path: Path) -> None:
     root = tmp_path / "renderer-contract"
     handle_spatial_reconstruction(_prepare_session(root))
