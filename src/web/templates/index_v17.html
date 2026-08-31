@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09110f">
+  <title>The Living Room · V17 Split-Screen World Builder</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; color: #e8f2ed; background: #07100d; font: 15px/1.5 Inter, system-ui, sans-serif; overflow: hidden; }
+    a { color: #8edbb8; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 18px; border-bottom: 1px solid #244238; background: #0a1713; height: 52px; }
+    .brand { font-weight: 800; letter-spacing: .04em; white-space: nowrap; }
+    .brand .tag { color: #8edbb8; }
+    .version-nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+    .version-nav a { padding: 3px 6px; border-radius: 4px; color: #8ca69b; text-decoration: none; font-size: 11px; }
+    .version-nav a:hover, .version-nav .selected { color: #07100d; background: #8edbb8; }
+
+    main { display: grid; grid-template-columns: minmax(320px, 38%) 1fr; height: calc(100vh - 52px); }
+
+    /* ── Left: builder-agent chat ─────────────────────────────────────── */
+    .left { display: flex; flex-direction: column; border-right: 1px solid #244238; background: #0a1713; min-width: 0; }
+    .left-head { padding: 14px 18px 8px; }
+    .left-head h1 { margin: 0 0 4px; font-size: 20px; line-height: 1.1; }
+    .left-head .lede { color: #a7bcb3; font-size: 12.5px; margin: 0; }
+    .stage-strip { display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-top: 1px solid #163027; border-bottom: 1px solid #163027; background: #08130f; font-size: 12px; }
+    .stage-strip .status { color: #8edbb8; text-transform: uppercase; letter-spacing: .1em; font-size: 11px; }
+    .stage-strip .stageTitle { color: #cfe6dc; }
+    .stage-strip .sessionId { margin-left: auto; color: #8ca69b; font-family: ui-monospace, monospace; font-size: 11px; }
+    .progress { height: 4px; background: #14271f; overflow: hidden; }
+    #progressFill { width: 0; height: 100%; background: #8edbb8; transition: width .25s; }
+    #messages { flex: 1; display: flex; flex-direction: column; gap: 9px; overflow: auto; padding: 14px 18px; }
+    .message { padding: 9px 12px; border: 1px solid #244238; border-radius: 8px; background: #10221b; white-space: pre-wrap; font-size: 14px; }
+    .message.user { align-self: flex-end; max-width: 88%; background: #173629; }
+    .message.assistant { align-self: flex-start; max-width: 92%; }
+    .message.system { align-self: center; color: #8ca69b; background: transparent; border: 0; font-size: 12px; padding: 2px; }
+    #artifactStrip { display: flex; gap: 8px; overflow-x: auto; padding: 0 18px 8px; }
+    #artifactStrip img { height: 64px; border-radius: 6px; border: 1px solid #244238; cursor: pointer; }
+    form#composer { display: grid; gap: 8px; padding: 12px 18px; border-top: 1px solid #244238; background: #08130f; }
+    textarea#message { width: 100%; resize: none; min-height: 60px; max-height: 160px; padding: 10px; color: #e8f2ed; background: #07100d; border: 1px solid #376453; border-radius: 7px; font: inherit; }
+    .composer-row { display: flex; gap: 8px; }
+    button { border: 0; border-radius: 6px; padding: 10px 14px; color: #07100d; background: #8edbb8; font-weight: 700; cursor: pointer; }
+    button.ghost { background: transparent; color: #8edbb8; border: 1px solid #376453; }
+    button:disabled { opacity: .45; cursor: wait; }
+    #send { flex: 1; }
+    #approval { display: none; }
+    .meta { color: #8ca69b; font-family: ui-monospace, monospace; font-size: 11px; padding: 0 18px 10px; margin: 0; }
+
+    /* ── Right: live 3D world ─────────────────────────────────────────── */
+    .right { position: relative; min-width: 0; background: #050a08; }
+    #worldCanvas { width: 100%; height: 100%; display: block; }
+    .world-hud { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+    .world-hud .chip { background: rgba(10,23,19,.82); border: 1px solid #244238; padding: 4px 9px; border-radius: 5px; font-size: 11px; color: #8edbb8; text-transform: uppercase; letter-spacing: .06em; }
+    .world-controls { position: absolute; bottom: 12px; left: 12px; display: flex; gap: 8px; }
+    .world-controls .hint { position: absolute; bottom: 0; left: 0; transform: translateY(120%); color: #6f8a80; font-size: 11px; white-space: nowrap; }
+    .world-empty { position: absolute; inset: 0; display: grid; place-items: center; color: #6f8a80; font-size: 13px; text-align: center; padding: 24px; pointer-events: none; }
+    .world-empty.hidden { display: none; }
+    @media (max-width: 860px) {
+      main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      .left { border-right: 0; border-bottom: 1px solid #244238; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">LR · <span class="tag">V17 SPLIT-SCREEN</span></div>
+    <nav class="version-nav" aria-label="Retained interface versions">
+      <a href="/?v=3">V3</a><a href="/?v=4">V4</a><a href="/?v=5">V5</a><a href="/?v=6">V6</a>
+      <a href="/?v=7">V7</a><a href="/?v=8">V8</a><a href="/?v=9">V9</a><a href="/?v=10">V10</a>
+      <a href="/?v=11">V11</a><a href="/?v=12">V12</a><a href="/?v=13">V13</a><a href="/?v=14">V14</a>
+      <a href="/?v=15_Fable">V15</a><a href="/?v=16">V16</a><a href="/?v=2.0">V2.0</a>
+      <a class="selected" aria-current="page" href="/?v=17">V17</a>
+    </nav>
+  </header>
+  <main>
+    <!-- LEFT: builder-agent chat -->
+    <section class="left">
+      <div class="left-head">
+        <h1>Describe a place. Watch it build.</h1>
+        <p class="lede">The builder agent listens, plans, and kicks off the pipeline. The world assembles on the right as approvals pass.</p>
+      </div>
+      <div class="stage-strip">
+        <span class="status" id="status">CONNECTING</span>
+        <span class="stageTitle" id="stageTitle">Fresh V17 session</span>
+        <span class="sessionId" id="sessionId">—</span>
+      </div>
+      <div class="progress"><div id="progressFill"></div></div>
+      <div id="messages" aria-live="polite"><div class="message system">Starting a fresh conversation…</div></div>
+      <div id="artifactStrip" aria-label="Stage artifacts"></div>
+      <p class="meta" id="details">No prior session is used for this run.</p>
+      <form id="composer">
+        <label class="meta" for="message" style="padding:0;">Continue the design conversation</label>
+        <textarea id="message" placeholder="A small, warm kitchen with a round table…" required></textarea>
+        <div class="composer-row">
+          <button id="send" type="submit">Send direction</button>
+          <button id="approval" class="ghost" type="button">Approve stage</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RIGHT: live 3D world -->
+    <section class="right">
+      <canvas id="worldCanvas"></canvas>
+      <div class="world-hud">
+        <span class="chip" id="worldMode">ORBIT</span>
+        <span class="chip" id="worldObjects">0 objects</span>
+      </div>
+      <div class="world-empty" id="worldEmpty">The world builds here in real time.<br>Meshes stream in as each object is approved and generated.</div>
+      <div class="world-controls">
+        <button id="enterWorld" class="ghost" type="button">Walk in (WASD)</button>
+        <span class="hint">Click canvas to look · WASD move · E interact · Esc exit</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.APP_VERSION = 16;            // pipeline API version (v17 is a UI over V16)
+    window.PAGE_VERSION = 17;
+    // Three.js addons resolve against the same CDN the V16 world compiler uses.
+  </script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="/static/unified_v17.js?v=17" defer></script>
+  <script type="module" src="/static/world_v17.js?v=17"></script>
+</body>
+</html>

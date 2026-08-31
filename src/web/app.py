@@ -410,6 +410,13 @@ async def index(request: Request):
         page = Path(__file__).parent / "templates" / "index_v2_0.html"
         return HTMLResponse(page.read_text(encoding="utf-8"),
                             headers={"Cache-Control": "no-store"})
+    # V17 (2026-08-30): split-screen — builder-agent chat (left) + live walkable
+    # Three.js world (right). Additive early branch, standalone page. Reuses the
+    # V16 unified pipeline API verbatim; no V3–V16 behavior changed.
+    if request.query_params.get("v") in ("17", "17.0"):
+        page = Path(__file__).parent / "templates" / "index_v17.html"
+        return HTMLResponse(page.read_text(encoding="utf-8"),
+                            headers={"Cache-Control": "no-store"})
     # v15_Fable (2026-07-30): additive early branch — non-numeric version, standalone page.
     # 15_Fable_Dev (2026-07-31): SAME page, dev flag read client-side — TRELLIS 2 one-pass
     # prop lane (The Line v1.1_Dev) instead of blast+paint. Prod lane untouched.
