@@ -633,7 +633,14 @@ class PlanValidator:
             return violations
 
         # Historical pathless plans retain broad room-spacing diagnostics.
+        # Wall-hosted architectural fixtures (counters, cabinets, sinks,
+        # built-in appliances) are exempt: they are meant to sit against a wall
+        # and beside one another, so charging them the 0.6m walkable clearance
+        # is wrong (Req 17 — architectural elements are parameterized along a
+        # parent wall). Circulation clearance applies to free-standing furniture.
         for i, obj in enumerate(placements):
+            if obj.get("is_architectural"):
+                continue
             x, y = obj.get("x", 0), obj.get("y", 0)
             ow, od = obj.get("width", 0.5), obj.get("depth", 0.5)
 
@@ -660,6 +667,14 @@ class PlanValidator:
 
         for i in range(len(placements)):
             for j in range(i + 1, len(placements)):
+                # A walkable gap is only required between free-standing objects.
+                # If either object is a wall-hosted architectural fixture, the
+                # gap is not a circulation path (a chair tucked beside a counter
+                # is expected), so skip the pairwise clearance check.
+                if placements[i].get("is_architectural") or placements[j].get(
+                    "is_architectural"
+                ):
+                    continue
                 gap = _gap_between_objects(placements[i], placements[j])
                 if 0 <= gap < MIN_CIRCULATION_WIDTH:
                     violations.append(ValidationViolation(

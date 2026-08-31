@@ -188,103 +188,215 @@ def _deterministic_placements(
     depth: float,
     openings: tuple[dict[str, Any], ...] = (),
 ) -> tuple[dict[str, Any], ...]:
-    """Place Brief instances on a bounded deterministic valid grid.
+    """Place Brief instances deterministically.
 
-    True openings are represented by Plan opening records. Other requested
-    architectural fixtures (for example a counter) remain Plan-owned instances.
+    Placement is split by object nature so that circulation capacity is only
+    charged against free-standing furniture:
+
+    - True openings (door/window/opening) are represented by Plan opening
+      records, never by placements.
+    - Architectural, wall-hosted fixtures (``is_architectural`` — counters,
+      cabinets, sinks, stoves, refrigerators) are placed against the room
+      perimeter, parameterized along a wall and facing inward. They do not
+      consume a center-floor circulation cell (Req 17: architectural elements
+      are parameterized along their parent wall).
+    - Free-standing furniture is placed on the bounded center-floor grid that
+      preserves 0.6m circulation clearance (Req 5.3).
+
     Positions derive only from template dimensions and Brief identity; semantic
     observations never provide coordinates or scale.
     """
     opening_names = {"door", "window", "opening"}
-    objects = [
+    placeable = [
         obj for obj in brief.object_manifest
         if " ".join(obj.name.casefold().replace("-", " ").split())
         not in opening_names
     ]
-    total = sum(obj.count for obj in objects)
-    if total == 0:
+    if not placeable:
         return ()
+
+    # Split perimeter (wall-hosted architectural) fixtures from free-standing
+    # furniture. Only free-standing objects charge against circulation capacity.
+    perimeter_objects = [obj for obj in placeable if obj.is_architectural]
+    freestanding_objects = [obj for obj in placeable if not obj.is_architectural]
+    freestanding_total = sum(obj.count for obj in freestanding_objects)
 
     object_span = 0.5
     edge_clearance = 0.6
     minimum_gap = 0.6
 
-    def axis_capacity(span: float) -> int:
-        center_span = span - 2.0 * (edge_clearance + object_span / 2.0)
-        if center_span < -1e-9:
-            return 0
-        return 1 + max(0, int(center_span // (object_span + minimum_gap)))
-
-    max_columns = axis_capacity(width)
-    max_rows = axis_capacity(depth)
-    if max_columns <= 0 or max_rows <= 0 or total > max_columns * max_rows:
-        raise ValueError(
-            "template cannot place all required objects with 0.6m circulation"
-        )
-
-    columns = min(max_columns, total)
-    rows = (total + columns - 1) // columns
-
-    def axis_centers(span: float, count: int) -> tuple[float, ...]:
-        margin = edge_clearance + object_span / 2.0
-        if count == 1:
-            return (span / 2.0,)
-        step = (span - 2.0 * margin) / (count - 1)
-        return tuple(margin + index * step for index in range(count))
-
-    x_centers = axis_centers(width, columns)
-    y_centers = axis_centers(depth, rows)
-    # Consume cells farthest from the actual template door hinge first so a
-    # partially filled grid leaves the swing's most constrained cell empty.
-    door = next(
-        (
-            item for item in openings
-            if item.get("type", item.get("kind")) == "door"
-        ),
-        {"wall": "south", "parameter": 0.5, "width": 0.9},
-    )
-    wall = str(door.get("wall", "south"))
-    parameter = float(door.get("parameter", 0.5))
-    door_width = float(door.get("width", 0.9))
-    wall_length = width if wall in {"north", "south"} else depth
-    hinge = parameter * wall_length - door_width / 2.0
-    if wall == "north":
-        hinge_xy = (hinge, 0.0)
-    elif wall == "south":
-        hinge_xy = (hinge, depth)
-    elif wall == "east":
-        hinge_xy = (width, hinge)
-    else:
-        hinge_xy = (0.0, hinge)
-
-    cells = [(x, y) for y in y_centers for x in x_centers]
-    cells.sort(
-        key=lambda cell: (
-            -((cell[0] - hinge_xy[0]) ** 2 + (cell[1] - hinge_xy[1]) ** 2),
-            cell[1],
-            cell[0],
-        )
-    )
-
     placements: list[dict[str, Any]] = []
-    index = 0
+
+    # ── Free-standing furniture: bounded center-floor circulation grid ──────────
+    if freestanding_total > 0:
+        def axis_capacity(span: float) -> int:
+            center_span = span - 2.0 * (edge_clearance + object_span / 2.0)
+            if center_span < -1e-9:
+                return 0
+            return 1 + max(0, int(center_span // (object_span + minimum_gap)))
+
+        max_columns = axis_capacity(width)
+        max_rows = axis_capacity(depth)
+        if (
+            max_columns <= 0
+            or max_rows <= 0
+            or freestanding_total > max_columns * max_rows
+        ):
+            raise ValueError(
+                "template cannot place all required free-standing objects "
+                "with 0.6m circulation"
+            )
+
+        columns = min(max_columns, freestanding_total)
+        rows = (freestanding_total + columns - 1) // columns
+
+        def axis_centers(span: float, count: int) -> tuple[float, ...]:
+            margin = edge_clearance + object_span / 2.0
+            if count == 1:
+                return (span / 2.0,)
+            step = (span - 2.0 * margin) / (count - 1)
+            return tuple(margin + index * step for index in range(count))
+
+        x_centers = axis_centers(width, columns)
+        y_centers = axis_centers(depth, rows)
+        # Consume cells farthest from the actual template door hinge first so a
+        # partially filled grid leaves the swing's most constrained cell empty.
+        door = next(
+            (
+                item for item in openings
+                if item.get("type", item.get("kind")) == "door"
+            ),
+            {"wall": "south", "parameter": 0.5, "width": 0.9},
+        )
+        wall = str(door.get("wall", "south"))
+        parameter = float(door.get("parameter", 0.5))
+        door_width = float(door.get("width", 0.9))
+        wall_length = width if wall in {"north", "south"} else depth
+        hinge = parameter * wall_length - door_width / 2.0
+        if wall == "north":
+            hinge_xy = (hinge, 0.0)
+        elif wall == "south":
+            hinge_xy = (hinge, depth)
+        elif wall == "east":
+            hinge_xy = (width, hinge)
+        else:
+            hinge_xy = (0.0, hinge)
+
+        cells = [(x, y) for y in y_centers for x in x_centers]
+        cells.sort(
+            key=lambda cell: (
+                -((cell[0] - hinge_xy[0]) ** 2 + (cell[1] - hinge_xy[1]) ** 2),
+                cell[1],
+                cell[0],
+            )
+        )
+
+        index = 0
+        for obj in freestanding_objects:
+            for instance_index in range(obj.count):
+                x, y = cells[index]
+                instance_id = (
+                    obj.id if obj.count == 1
+                    else f"{obj.id}-{instance_index + 1}"
+                )
+                placements.append({
+                    "id": instance_id,
+                    "name": obj.name,
+                    "x": x,
+                    "y": y,
+                    "rotation_deg": 0,
+                    "width": object_span,
+                    "depth": object_span,
+                    "height": 0.8,
+                    "is_architectural": False,
+                })
+                index += 1
+
+    # ── Wall-hosted architectural fixtures: perimeter placement ─────────────────
+    if perimeter_objects:
+        placements.extend(
+            _perimeter_placements(
+                perimeter_objects, width, depth, object_span, openings
+            )
+        )
+
+    return tuple(placements)
+
+
+# Perimeter walls in deterministic order; each entry defines how a fixture at
+# parameter t (0..1 along the wall) maps to a center position and inward-facing
+# rotation. Fixtures sit half a span off the wall so they rest against it.
+_PERIMETER_WALLS: tuple[str, ...] = ("north", "east", "south", "west")
+
+
+def _perimeter_placements(
+    objects: list[Any],
+    width: float,
+    depth: float,
+    object_span: float,
+    openings: tuple[dict[str, Any], ...] = (),
+) -> list[dict[str, Any]]:
+    """Place wall-hosted architectural fixtures along the room perimeter.
+
+    Fixtures are distributed across walls in deterministic order, seated against
+    the wall (half a span inward) and rotated to face the room interior. They do
+    not consume center-floor circulation capacity. This mirrors Req 17: derived,
+    parameterized-along-wall placement rather than hand-placed coordinates.
+    """
+    offset = object_span / 2.0
+    edge = object_span / 2.0 + 0.05  # keep off the exact corner
+
+    def wall_span(wall: str) -> float:
+        return width if wall in {"north", "south"} else depth
+
+    def place_on_wall(wall: str, t: float) -> tuple[float, float, int]:
+        span = wall_span(wall)
+        # position along the wall, clamped off the corners
+        along = edge + t * max(0.0, span - 2.0 * edge)
+        if wall == "north":
+            return (along, offset, 180)
+        if wall == "south":
+            return (along, depth - offset, 0)
+        if wall == "east":
+            return (width - offset, along, 270)
+        return (offset, along, 90)  # west
+
+    # Count how many fixture instances land on each wall so we can distribute
+    # them evenly along that wall.
+    instances: list[Any] = []
     for obj in objects:
         for instance_index in range(obj.count):
-            x, y = cells[index]
-            instance_id = obj.id if obj.count == 1 else f"{obj.id}-{instance_index + 1}"
+            instances.append((obj, instance_index))
+
+    # Assign instances to walls round-robin in deterministic order.
+    per_wall: dict[str, list[Any]] = {w: [] for w in _PERIMETER_WALLS}
+    for i, item in enumerate(instances):
+        wall = _PERIMETER_WALLS[i % len(_PERIMETER_WALLS)]
+        per_wall[wall].append(item)
+
+    placements: list[dict[str, Any]] = []
+    for wall in _PERIMETER_WALLS:
+        wall_items = per_wall[wall]
+        n = len(wall_items)
+        for slot, (obj, instance_index) in enumerate(wall_items):
+            t = 0.5 if n == 1 else slot / (n - 1)
+            x, y, rot = place_on_wall(wall, t)
+            instance_id = (
+                obj.id if obj.count == 1
+                else f"{obj.id}-{instance_index + 1}"
+            )
             placements.append({
                 "id": instance_id,
                 "name": obj.name,
                 "x": x,
                 "y": y,
-                "rotation_deg": 0,
+                "rotation_deg": rot,
                 "width": object_span,
                 "depth": object_span,
                 "height": 0.8,
-                "is_architectural": bool(obj.is_architectural),
+                "is_architectural": True,
             })
-            index += 1
-    return tuple(placements)
+    return placements
 
 
 def _normalize_openings(raw_openings: list[dict[str, Any]]) -> tuple[dict[str, Any], ...]:
