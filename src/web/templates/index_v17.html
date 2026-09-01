@@ -65,6 +65,7 @@
     .fx-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 7px; }
     .fx-head strong { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #8edbb8; }
     .fx-status { color: #8ca69b; font-size: 11.5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fx-hint-line { margin: 0 0 9px; color: #6f8a80; font-size: 11.5px; font-style: italic; }
     .fx-make { display: flex; gap: 6px; margin-bottom: 9px; }
     .fx-make input { flex: 1; min-width: 0; padding: 7px 9px; color: #e8f2ed; background: #07100d; border: 1px solid #376453; border-radius: 6px; font: inherit; font-size: 13px; }
     .fx-make button { padding: 7px 12px; font-size: 13px; }
@@ -123,10 +124,13 @@
           <strong>Furniture</strong>
           <span class="fx-status" id="fxStatus">checking…</span>
         </div>
-        <form class="fx-make" id="fxMake">
-          <input id="fxSubject" type="text" maxlength="80" placeholder="a walnut credenza with brass pulls…">
-          <button type="submit" id="fxMakeBtn">Make</button>
-        </form>
+        <!-- 2026-09-01 (John): there was a "make a prop" text box here. Removed.
+             The design conversation belongs in the ONE chat below - the AI should
+             take what he writes, sharpen it, and ask its questions inline there.
+             A second input box is a form, and the vision doc is explicit that the
+             front door is a conversation, not a form. This panel now only shows
+             gates that need his eye; starting work happens in the chat. -->
+        <p class="fx-hint-line">Ask for it in the chat below — it gets built here.</p>
         <div id="fxGate" hidden>
           <div class="pick-head">
             <strong id="pickSubject"></strong>
@@ -271,17 +275,9 @@
         currentItem && verdict(currentItem, currentStage, false, why);
       });
 
-      $('fxMake').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const subject = $('fxSubject').value.trim();
-        if (!subject) return;
-        $('fxMakeBtn').disabled = true; showErr('');
-        try {
-          await post('/api/v17/make', { subject });
-          $('fxSubject').value = '';
-        } catch (err) { showErr(String(err.message || err)); }
-        finally { $('fxMakeBtn').disabled = false; }
-      });
+      // The "make a prop" form used to live here. Removed 2026-09-01 — starting
+      // work belongs in the chat, not in a second box. POST /api/v17/make is still
+      // the endpoint; the chat should call it once it can read the intent.
 
       function setStatus(jobs) {
         const c = jobs && jobs.current;
