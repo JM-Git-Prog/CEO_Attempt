@@ -96,6 +96,12 @@ app.include_router(_approval_router)
 from src.web.v2_routes import create_v2_router  # noqa: E402
 app.include_router(create_v2_router(lambda: OUTPUT_DIR))
 
+# V17 (2026-08-31): the hero-pick gate lives INSIDE the split screen. Proxies the
+# Pick Board (:8194) so John never opens a second window; the board stays the one
+# approval writer. Additive — no V2-V16 route changes.
+from src.web.v17_pick_routes import router as _v17_pick_router  # noqa: E402
+app.include_router(_v17_pick_router)
+
 
 def _normalize_requested_version(value: str | None, source: str) -> int:
     """Normalize a canonical interface version without silently coercing input."""

@@ -27,7 +27,7 @@
         "mcp-server-fetch@latest"
       ],
       "env": {},
-      "disabled": true,
+      "disabled": false,
       "autoApprove": [
         "fetch"
       ]

@@ -139,8 +139,15 @@ import { PointerLockControls } from "three/addons/controls/PointerLockControls.j
   let sessionId = "";
 
   function setObjectCount() {
-    worldObjectsChip.textContent = `${loaded.size} object${loaded.size === 1 ? "" : "s"}`;
-    if (loaded.size > 0) worldEmpty?.classList.add("hidden");
+    // Count provisional boxes too: the room is genuinely on screen once the
+    // Plan is drawn, and reporting 0 objects while three boxes are visible is
+    // the kind of counter/observation disagreement that wastes an afternoon.
+    const provisional = planBoxes.size;
+    const total = loaded.size + provisional;
+    const suffix = provisional > 0 ? ` (${provisional} planned)` : "";
+    worldObjectsChip.textContent =
+      `${total} object${total === 1 ? "" : "s"}${suffix}`;
+    if (total > 0) worldEmpty?.classList.add("hidden");
   }
 
   function applyTransform(obj, instance) {
@@ -150,7 +157,9 @@ import { PointerLockControls } from "three/addons/controls/PointerLockControls.j
     const s = instance.scale || {};
     obj.position.set(Number(p.x) || 0, Number(p.y) || 0, Number(p.z) || 0);
     // rotation may be Euler degrees or a quaternion-ish dict; handle both simply.
-    if ("w" in r) obj.quaternion.set(Number(r.x) || 0, Number(r.y) || 0, Number(r.z) || 0, Number(r.w) || 1);
+    // w must use ?? not || — a 180-degree turn is w === 0, and `0 || 1` would
+    // silently rewrite it to the identity rotation.
+    if ("w" in r) obj.quaternion.set(Number(r.x) || 0, Number(r.y) || 0, Number(r.z) || 0, Number(r.w ?? 1));
     else obj.rotation.set(deg(r.x), deg(r.y), deg(r.z));
     obj.scale.set(Number(s.x) || 1, Number(s.y) || 1, Number(s.z) || 1);
   }
@@ -200,7 +209,192 @@ import { PointerLockControls } from "three/addons/controls/PointerLockControls.j
     if (prev) worldRoot.remove(prev);
     worldRoot.add(obj);
     loaded.set(objectId, obj);
+    dropPlanBox(objectId);   // the real mesh replaces its provisional box
     setObjectCount();
+  }
+
+  // ─── Provisional plan preview ─────────────────────────────────────────────
+  //
+  // /scene_graph stays empty until world_contract (stage 17), so the panel used
+  // to sit black for almost the whole run while the header promised the world
+  // would assemble as approvals passed. The Plan has known the room and every
+  // placement since spatial_reconstruction (stage 9), so draw THAT first: a real
+  // room shell and one grey box per object. Each box is replaced the moment its
+  // actual mesh lands, so the room fills in rather than appearing all at once.
+
+  const planRoot = new THREE.Group();
+  scene.add(planRoot);
+  const planBoxes = new Map();        // objectId -> placeholder Object3D
+  let planRoom = null;                // {width, depth, height}
+
+  const SHELL_COLOR = 0x9aa8a0;
+  const BOX_COLOR = 0xd8b57a;
+
+  function clearGroup(group) {
+    while (group.children.length) group.remove(group.children[0]);
+  }
+
+  // Plan space: x across 0..width, y down 0..depth, origin at a room corner.
+  // Three space: x across, z into the screen, y up, room centred on the origin.
+  function planToWorld(x, y, room) {
+    return { x: x - room.width / 2, z: y - room.depth / 2 };
+  }
+
+  // Windows carry a height but no sill in the Plan, so assume a conventional
+  // sill. Stated here rather than buried as a magic number, because it IS an
+  // assumption: if the Plan ever grows a sill field, read that instead.
+  const WINDOW_SILL_M = 0.9;
+
+  let planOpenings = [];
+
+  function buildWall(span, height, wallId, material) {
+    // A wall is built as rectangles AROUND its openings rather than one plane,
+    // so a door is a hole you can see (and walk) through. Solid walls made the
+    // door invisible, which in a walkable room means walking into a wall.
+    const group = new THREE.Group();
+    const mine = planOpenings
+      .filter((o) => String(o.wall || "") === wallId)
+      .map((o) => {
+        const w = Number(o.width) || 0.9;
+        const h = Number(o.height) || 2.1;
+        const centre = (Number(o.parameter) ?? 0.5) * span;
+        const sill = String(o.type || o.kind) === "door" ? 0 : WINDOW_SILL_M;
+        return {
+          left: Math.max(0, centre - w / 2),
+          right: Math.min(span, centre + w / 2),
+          sill,
+          top: Math.min(height, sill + h),
+        };
+      })
+      .sort((a, b) => a.left - b.left);
+
+    const piece = (pieceSpan, pieceHeight, alongCentre, upCentre) => {
+      if (pieceSpan <= 0.001 || pieceHeight <= 0.001) return;
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(pieceSpan, pieceHeight), material
+      );
+      // Local frame: x runs along the wall from -span/2, y is up.
+      mesh.position.set(alongCentre - span / 2, upCentre, 0);
+      mesh.receiveShadow = true;
+      group.add(mesh);
+    };
+
+    let cursor = 0;
+    for (const hole of mine) {
+      piece(hole.left - cursor, height, (cursor + hole.left) / 2, height / 2);
+      const holeSpan = hole.right - hole.left;
+      const alongCentre = (hole.left + hole.right) / 2;
+      if (hole.sill > 0) piece(holeSpan, hole.sill, alongCentre, hole.sill / 2);
+      piece(holeSpan, height - hole.top, alongCentre, (hole.top + height) / 2);
+      cursor = hole.right;
+    }
+    piece(span - cursor, height, (cursor + span) / 2, height / 2);
+    return group;
+  }
+
+  function buildRoomShell(room) {
+    const { width, depth, height } = room;
+    const floor = new THREE.Mesh(
+      new THREE.BoxGeometry(width, 0.04, depth),
+      new THREE.MeshStandardMaterial({ color: 0x8a8378, roughness: 0.95 })
+    );
+    floor.position.set(0, -0.02, 0);
+    floor.receiveShadow = true;
+    planRoot.add(floor);
+
+    // The dollhouse cutaway: each wall is a single-sided PLANE facing into the
+    // room. A wall between the camera and the room is therefore back-facing and
+    // gets culled, so you always look straight in from any orbit angle.
+    //
+    // This has to be planes, not slabs. BoxGeometry walls still draw their own
+    // inner face toward the camera, which renders the room as one solid block
+    // however the material is sided.
+    const wallMaterial = new THREE.MeshStandardMaterial({
+      color: SHELL_COLOR, roughness: 0.95, side: THREE.FrontSide,
+    });
+    const halfW = width / 2, halfD = depth / 2;
+    const walls = [
+      ["north", width, 0, -halfD, 0],
+      ["south", width, 0, halfD, Math.PI],
+      ["west", depth, -halfW, 0, Math.PI / 2],
+      ["east", depth, halfW, 0, -Math.PI / 2],
+    ];
+    for (const [id, span, px, pz, rotY] of walls) {
+      const group = buildWall(span, height, id, wallMaterial);
+      group.position.set(px, 0, pz);
+      group.rotation.y = rotY;
+      planRoot.add(group);
+    }
+
+    grid.visible = false;   // the real floor replaces the placeholder grid
+
+    // Frame the camera to THIS room. The default (3.5, 1.7, 3.5) was set for an
+    // empty scene and lands outside a 4.98m room, looking at it edge-on through
+    // a wall. Pull back and up so the whole floor plan is legible at a glance.
+    const reach = Math.max(width, depth);
+    camera.position.set(reach * 0.85, reach * 0.80, reach * 0.85);
+    camera.near = 0.05;
+    camera.far = Math.max(200, reach * 12);
+    camera.updateProjectionMatrix();
+    orbit.target.set(0, Math.min(0.9, height / 3), 0);
+    orbit.update();
+  }
+
+  function buildPlanBox(placement, room) {
+    const box = new THREE.Mesh(
+      new THREE.BoxGeometry(placement.width, placement.height, placement.depth),
+      // Opaque and warm, so a planned object reads clearly against the shell
+      // instead of dissolving into it.
+      new THREE.MeshStandardMaterial({ color: BOX_COLOR, roughness: 0.7 })
+    );
+    const world = planToWorld(placement.x, placement.y, room);
+    box.position.set(world.x, placement.height / 2, world.z);
+    box.rotation.y = -(Number(placement.rotationDeg) || 0) * Math.PI / 180;
+    box.castShadow = true;
+    return box;
+  }
+
+  async function refreshPlanPreview() {
+    if (!sessionId) return;
+    let plan = null;
+    try {
+      const response = await fetch(`/api/session/${sessionId}/plan_preview`);
+      if (!response.ok) return;
+      plan = await response.json();
+    } catch (_) {
+      return;
+    }
+    if (!plan || !plan.ready || !plan.room) return;
+
+    const room = plan.room;
+    const changed = !planRoom
+      || planRoom.width !== room.width
+      || planRoom.depth !== room.depth
+      || planRoom.height !== room.height;
+    const openingsKey = JSON.stringify(plan.openings || []);
+    if (changed || openingsKey !== JSON.stringify(planOpenings)) {
+      clearGroup(planRoot);
+      planBoxes.clear();
+      planRoom = room;
+      planOpenings = plan.openings || [];
+      buildRoomShell(room);
+    }
+
+    for (const placement of plan.objects || []) {
+      const id = placement.objectId;
+      if (!id || loaded.has(id) || planBoxes.has(id)) continue;
+      const box = buildPlanBox(placement, room);
+      planRoot.add(box);
+      planBoxes.set(id, box);
+    }
+    setObjectCount();
+  }
+
+  function dropPlanBox(objectId) {
+    const box = planBoxes.get(objectId);
+    if (!box) return;
+    planRoot.remove(box);
+    planBoxes.delete(objectId);
   }
 
   // ─── Scene graph polling ──────────────────────────────────────────────────
@@ -218,6 +412,8 @@ import { PointerLockControls } from "three/addons/controls/PointerLockControls.j
   }
 
   async function refreshScene(force = false) {
+    // Draw the Plan first so the room appears at blockout, not at compile.
+    await refreshPlanPreview();
     const graph = await fetchSceneGraph();
     if (!graph || !Array.isArray(graph.objects)) return;
     for (const instance of graph.objects) {
@@ -260,7 +456,9 @@ import { PointerLockControls } from "three/addons/controls/PointerLockControls.j
       if (payload.type === "material_update" && payload.object_id) {
         const id = payload.object_id;
         const meshUrl = payload.mesh_url || `/api/session/${sessionId}/mesh/${encodeURIComponent(id)}`;
-        const instance = { position: loaded.get(id)?.position, rotation: loaded.get(id)?.rotation, scale: loaded.get(id)?.scale };
+        // .quaternion (carries w), NOT .rotation — that is a THREE.Euler in radians, and
+        // applyTransform's degree branch would scale it by pi/180 and flatten the object.
+        const instance = { position: loaded.get(id)?.position, rotation: loaded.get(id)?.quaternion, scale: loaded.get(id)?.scale };
         enqueue(id, meshUrl, instance);   // reload with pass-2 materials
       }
     });
@@ -293,4 +491,19 @@ import { PointerLockControls } from "three/addons/controls/PointerLockControls.j
       connectMaterials();
     },
   };
+
+  // Self-attach when the page was opened with ?session=... .
+  //
+  // unified_v17.js is a classic deferred script and runs BEFORE this module, so
+  // on the resume path it reaches world()?.attach() while window.LRWorld is
+  // still undefined and silently no-ops - the 3D panel then never polls at all.
+  // The fresh-session path only works by accident, because its awaited POST to
+  // /session/unified/start gives this module time to register first.
+  //
+  // Reading the session from the URL here removes the ordering dependency
+  // entirely rather than relying on that timing.
+  const urlSession = new URLSearchParams(location.search).get("session");
+  if (urlSession) {
+    window.LRWorld.attach(urlSession);
+  }
 })();

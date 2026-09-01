@@ -196,14 +196,39 @@ async def _handle_dream_preview(ctx: StageExecutionContext) -> StageResult:
     primary = palette.get("primary", "") if isinstance(palette, dict) else ""
 
     objects = brief.get("object_manifest", [])
-    object_names = ", ".join(
-        item.get("name", "") for item in objects[:6]
-        if isinstance(item, dict) and item.get("name")
-    ) or "table, chairs, counter"
+
+    # Counted, exclusive inventory — the same discipline canon_generation uses.
+    #
+    # This prompt used to say "featuring table, chair": no counts, no "nothing
+    # else", and no sight of the user's own words. FLUX read that as a hint and
+    # furnished the rest from its prior, so "empty room with a table and 2
+    # chairs" previewed as a full living room with a sofa, bookshelf, plant and
+    # artwork. The single most important word in the request - "empty" - never
+    # reached the generator, because only room_purpose and bare object names
+    # were passed through.
+    counted = []
+    for item in objects[:8]:
+        if not isinstance(item, dict) or not item.get("name"):
+            continue
+        count = int(item.get("count", 1) or 1)
+        name = str(item["name"])
+        counted.append(f"exactly {count} {name}" + ("s" if count != 1 else ""))
+    inventory = ", ".join(counted) or "exactly 1 table, exactly 2 chairs"
+
+    source_prompt = _first_authoritative_user_prompt(ctx.session_dir)
+    request_clause = (
+        f"Exact user request (authoritative): {source_prompt}. "
+        if source_prompt else ""
+    )
 
     prompt = (
         f"Interior photograph of a {period + ' ' if period else ''}{room_purpose}, "
-        f"{mood} atmosphere, featuring {object_names}. "
+        f"{mood} atmosphere. "
+        f"NON-NEGOTIABLE VISIBLE INVENTORY: {inventory}, and nothing else. "
+        f"Every listed object fully visible, spatially separate, non-duplicated "
+        f"and correctly counted. No additional furniture, no plants, no artwork, "
+        f"no rugs, no shelving, no lamps beyond the listed inventory. "
+        f"{request_clause}"
         f"{primary + ' tones. ' if primary else ''}"
         f"Photorealistic, architectural photography, warm natural lighting, "
         f"high detail, 8K quality."
@@ -1182,6 +1207,56 @@ async def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
     output_dir = ctx.session_dir / "meshes"
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # --- Instance sharing -------------------------------------------------
+    #
+    # canon_first_authority mints one object id PER INSTANCE ("<uuid>-1",
+    # "<uuid>-2"), so a Brief asking for 2 chairs produced two independent
+    # Hunyuan3D runs from two different crops. Measured on session 39009e89:
+    # the two chairs came back as unrelated geometry (0.49x0.84x1.97 versus
+    # 1.74x1.97x1.44) - two visibly different chairs where the Brief asked
+    # for two of the same one, at twice the GPU cost.
+    #
+    # The Brief's count is an instance count, not a design count. One manifest
+    # object means one mesh. Assets are content-addressed by sha256 and the
+    # contract already lets several instances bind the same asset_id, so
+    # sharing needs no schema change - only a session-scoped record of which
+    # base object has already been generated.
+    share_path = output_dir / "instance_share.json"
+    base_object_id = str(object_id or "")
+    tail = base_object_id.rsplit("-", 1)[-1]
+    # Length-bounded: a UUID's final segment is 12 hex characters and is all
+    # digits roughly 0.7% of the time ((10/16)^12), which would silently strip
+    # a real object id down to a base that never existed. Instance suffixes
+    # are small ordinals, so only those can be stripped.
+    if tail.isdigit() and len(tail) <= 3:
+        base_object_id = base_object_id.rsplit("-", 1)[0]
+
+    def _read_shared() -> dict[str, Any]:
+        if not share_path.is_file():
+            return {}
+        try:
+            return json.loads(share_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {}
+
+    def _record_shared(payload: dict[str, Any]) -> None:
+        # Re-read before writing: sibling instances of the same Brief object
+        # may be recorded between this stage's read and its write.
+        current = _read_shared()
+        current[base_object_id] = payload
+        share_path.write_text(json.dumps(current, indent=2), encoding="utf-8")
+
+    shared = _read_shared().get(base_object_id)
+    if shared and Path(str(shared.get("mesh_path", ""))).is_file():
+        _log.info(
+            "  mesh_gen[%s]: reusing mesh already generated for this Brief object "
+            "(shared from %s)",
+            str(object_id)[:12], str(shared.get("generated_for", ""))[:12],
+        )
+        reused = dict(shared)
+        reused["shared_instance"] = True
+        return _immediate(reused, ctx)
+
     async def _approved_real_output(result: Any, generator: str) -> dict[str, Any]:
         mesh_path = Path(result.mesh_path).resolve()
         mesh_sha256 = await asyncio.to_thread(
@@ -1214,6 +1289,8 @@ async def _handle_mesh_generation(ctx: StageExecutionContext) -> StageResult:
                 "source_mesh_extents": evidence["source_extents_m"],
                 "normalization": evidence,
             })
+        # Offer this mesh to the sibling instances of the same Brief object.
+        _record_shared({**output, "generated_for": object_id})
         return output
 
     # Try the real fallback chain: Hunyuan3D → Trellis2 → placeholder

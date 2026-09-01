@@ -8,19 +8,21 @@
   <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; }
-    body { margin: 0; color: #e8f2ed; background: #07100d; font: 15px/1.5 Inter, system-ui, sans-serif; overflow: hidden; }
+    /* Column flex instead of a hard-coded 52px topbar: the version nav wraps on
+       narrow windows, and calc(100vh - 52px) went wrong the moment it did. */
+    body { margin: 0; color: #e8f2ed; background: #07100d; font: 15px/1.5 Inter, system-ui, sans-serif; overflow: hidden; display: flex; flex-direction: column; }
     a { color: #8edbb8; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 18px; border-bottom: 1px solid #244238; background: #0a1713; height: 52px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 18px; border-bottom: 1px solid #244238; background: #0a1713; min-height: 52px; flex: 0 0 auto; }
     .brand { font-weight: 800; letter-spacing: .04em; white-space: nowrap; }
     .brand .tag { color: #8edbb8; }
     .version-nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
     .version-nav a { padding: 3px 6px; border-radius: 4px; color: #8ca69b; text-decoration: none; font-size: 11px; }
     .version-nav a:hover, .version-nav .selected { color: #07100d; background: #8edbb8; }
 
-    main { display: grid; grid-template-columns: minmax(320px, 38%) 1fr; height: calc(100vh - 52px); }
+    main { display: grid; grid-template-columns: minmax(320px, 38%) 1fr; flex: 1 1 auto; min-height: 0; }
 
     /* ── Left: builder-agent chat ─────────────────────────────────────── */
-    .left { display: flex; flex-direction: column; border-right: 1px solid #244238; background: #0a1713; min-width: 0; }
+    .left { display: flex; flex-direction: column; border-right: 1px solid #244238; background: #0a1713; min-width: 0; min-height: 0; }
     .left-head { padding: 14px 18px 8px; }
     .left-head h1 { margin: 0 0 4px; font-size: 20px; line-height: 1.1; }
     .left-head .lede { color: #a7bcb3; font-size: 12.5px; margin: 0; }
@@ -30,7 +32,8 @@
     .stage-strip .sessionId { margin-left: auto; color: #8ca69b; font-family: ui-monospace, monospace; font-size: 11px; }
     .progress { height: 4px; background: #14271f; overflow: hidden; }
     #progressFill { width: 0; height: 100%; background: #8edbb8; transition: width .25s; }
-    #messages { flex: 1; display: flex; flex-direction: column; gap: 9px; overflow: auto; padding: 14px 18px; }
+    /* min-height:0 is what makes overflow:auto actually scroll inside a flex column. */
+    #messages { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 9px; overflow: auto; padding: 14px 18px; }
     .message { padding: 9px 12px; border: 1px solid #244238; border-radius: 8px; background: #10221b; white-space: pre-wrap; font-size: 14px; }
     .message.user { align-self: flex-end; max-width: 88%; background: #173629; }
     .message.assistant { align-self: flex-start; max-width: 92%; }
@@ -56,6 +59,32 @@
     .world-controls .hint { position: absolute; bottom: 0; left: 0; transform: translateY(120%); color: #6f8a80; font-size: 11px; white-space: nowrap; }
     .world-empty { position: absolute; inset: 0; display: grid; place-items: center; color: #6f8a80; font-size: 13px; text-align: center; padding: 24px; pointer-events: none; }
     .world-empty.hidden { display: none; }
+    /* ── Hero pick gate (in-pane; never a second window) ──────────────── */
+    /* Capped so a gate can never push the composer off the bottom. */
+    #factory { border-top: 1px solid #244238; background: #08130f; padding: 10px 18px 12px; flex: 0 0 auto; max-height: 46vh; overflow-y: auto; }
+    .fx-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 7px; }
+    .fx-head strong { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #8edbb8; }
+    .fx-status { color: #8ca69b; font-size: 11.5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fx-make { display: flex; gap: 6px; margin-bottom: 9px; }
+    .fx-make input { flex: 1; min-width: 0; padding: 7px 9px; color: #e8f2ed; background: #07100d; border: 1px solid #376453; border-radius: 6px; font: inherit; font-size: 13px; }
+    .fx-make button { padding: 7px 12px; font-size: 13px; }
+    #fxGate[hidden], #fxViewer[hidden], .pick-grid[hidden], #fxReason[hidden] { display: none; }
+    #fxModel { width: 100%; height: 200px; background: #07100d; border: 1px solid #244238; border-radius: 8px; --poster-color: transparent; }
+    .fx-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .fx-actions button { flex: 1; font-size: 13px; padding: 8px 10px; }
+    #fxReason { display: flex; gap: 6px; margin-top: 8px; }
+    #fxReason input { flex: 1; min-width: 0; padding: 7px 9px; color: #e8f2ed; background: #07100d; border: 1px solid #7a4a4a; border-radius: 6px; font: inherit; font-size: 13px; }
+    .pick-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 9px; flex-wrap: wrap; }
+    .pick-head strong { font-size: 13.5px; color: #cfe6dc; }
+    .pick-head .pick-note { color: #8ca69b; font-size: 11.5px; }
+    .pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .pick-tile { position: relative; padding: 0; border: 1px solid #376453; border-radius: 8px; background: #07100d; cursor: pointer; overflow: hidden; aspect-ratio: 1; }
+    .pick-tile img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .pick-tile:hover, .pick-tile:focus-visible { border-color: #8edbb8; outline: none; }
+    .pick-tile .pick-tag { position: absolute; left: 6px; bottom: 6px; padding: 2px 6px; border-radius: 4px; background: rgba(7,16,13,.85); color: #8edbb8; font: 700 10px/1.4 ui-monospace, monospace; letter-spacing: .06em; }
+    .pick-tile[disabled] { opacity: .4; cursor: wait; }
+    .pick-error { color: #e6a3a3; font-size: 12px; margin: 8px 0 0; }
+
     @media (max-width: 860px) {
       main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .left { border-right: 0; border-bottom: 1px solid #244238; }
@@ -88,6 +117,36 @@
       <div class="progress"><div id="progressFill"></div></div>
       <div id="messages" aria-live="polite"><div class="message system">Starting a fresh conversation…</div></div>
       <div id="artifactStrip" aria-label="Stage artifacts"></div>
+      <!-- THE FACTORY — every furniture gate happens in this pane, never on :8194. -->
+      <section id="factory" aria-live="polite">
+        <div class="fx-head">
+          <strong>Furniture</strong>
+          <span class="fx-status" id="fxStatus">checking…</span>
+        </div>
+        <form class="fx-make" id="fxMake">
+          <input id="fxSubject" type="text" maxlength="80" placeholder="a walnut credenza with brass pulls…">
+          <button type="submit" id="fxMakeBtn">Make</button>
+        </form>
+        <div id="fxGate" hidden>
+          <div class="pick-head">
+            <strong id="pickSubject"></strong>
+            <span class="pick-note" id="fxHint"></span>
+          </div>
+          <div class="pick-grid" id="pickGrid" hidden></div>
+          <div id="fxViewer" hidden>
+            <model-viewer id="fxModel" camera-controls auto-rotate touch-action="pan-y"></model-viewer>
+            <div class="fx-actions">
+              <button type="button" id="fxApprove">Looks right →</button>
+              <button type="button" class="ghost" id="fxReject">Something's wrong</button>
+            </div>
+            <div id="fxReason" hidden>
+              <input id="fxReasonText" type="text" maxlength="120" placeholder="what's wrong with it?">
+              <button type="button" id="fxReasonSend">Send back</button>
+            </div>
+          </div>
+        </div>
+        <p class="pick-error" id="pickError" hidden></p>
+      </section>
       <p class="meta" id="details">No prior session is used for this run.</p>
       <form id="composer">
         <label class="meta" for="message" style="padding:0;">Continue the design conversation</label>
@@ -115,6 +174,151 @@
   </main>
 
   <script>
+    // ── THE FACTORY, in-pane ──────────────────────────────────────────────
+    // John, 2026-08-31: everything is operated from inside V17. The furniture
+    // line has three human gates — PICK (choose 1 of 4), MESH CHECK (is the
+    // shape right?) and PAINT CHECK (is the finish right?). All three render
+    // here; every verdict is forwarded to the Pick Board, which stays the only
+    // writer of decisions, approvals and flags.
+    (function () {
+      const $ = (id) => document.getElementById(id);
+      const statusEl = $('fxStatus'), gate = $('fxGate'), grid = $('pickGrid');
+      const subjectEl = $('pickSubject'), hintEl = $('fxHint'), errEl = $('pickError');
+      const viewer = $('fxViewer'), model = $('fxModel');
+      const reason = $('fxReason'), reasonText = $('fxReasonText');
+
+      let showing = null;   // "stage:slug/id" on screen now
+      let busy = false;     // a verdict or pick is in flight
+      let mvAsked = false;  // model-viewer module requested once
+
+      const showErr = (m) => { errEl.textContent = m || ''; errEl.hidden = !m; };
+
+      function needViewer() {
+        if (mvAsked) return;
+        mvAsked = true;
+        const s = document.createElement('script');
+        s.type = 'module'; s.src = '/api/v17/model-viewer.js';
+        s.onerror = () => showErr('3D viewer failed to load from the board.');
+        document.head.append(s);
+      }
+
+      function renderPick(item) {
+        subjectEl.textContent = item.subject || item.id;
+        hintEl.textContent = 'Pick the one you like — the rest are discarded.';
+        grid.replaceChildren();
+        for (const v of (item.variants || [])) {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'pick-tile'; b.title = 'Choose ' + v.tag;
+          const img = document.createElement('img');
+          img.src = v.url; img.alt = (item.subject || item.id) + ' option ' + v.tag;
+          const tag = document.createElement('span');
+          tag.className = 'pick-tag'; tag.textContent = v.tag;
+          b.append(img, tag);
+          b.addEventListener('click', () => choose(item, v.tag));
+          grid.append(b);
+        }
+        grid.hidden = false; viewer.hidden = true; reason.hidden = true; gate.hidden = false;
+      }
+
+      function renderModel(item, stage) {
+        needViewer();
+        subjectEl.textContent = item.subject || item.id;
+        hintEl.textContent = stage === 'mesh'
+          ? 'Is the shape right? Drag to turn it.'
+          : 'Is the finish right? Drag to turn it.';
+        model.src = item.glb;
+        model.alt = (item.subject || item.id) + ' in 3D';
+        grid.hidden = true; viewer.hidden = false; reason.hidden = true; gate.hidden = false;
+      }
+
+      async function post(url, body) {
+        const r = await fetch(url, {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const out = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(out.error || (r.status + ''));
+        return out;
+      }
+
+      async function choose(item, winner) {
+        if (busy) return; busy = true; showErr('');
+        for (const t of grid.querySelectorAll('.pick-tile')) t.disabled = true;
+        try {
+          await post('/api/v17/pick', { slug: item.slug, id: item.id, winner });
+          gate.hidden = true; showing = null;
+        } catch (e) {
+          showErr(String(e.message || e));
+          for (const t of grid.querySelectorAll('.pick-tile')) t.disabled = false;
+        } finally { busy = false; }
+      }
+
+      async function verdict(item, stage, ok, why) {
+        if (busy) return; busy = true; showErr('');
+        try {
+          await post('/api/v17/verdict', { slug: item.slug, id: item.id, stage, ok, reason: why || '' });
+          gate.hidden = true; showing = null; reason.hidden = true; reasonText.value = '';
+        } catch (e) { showErr(String(e.message || e)); }
+        finally { busy = false; }
+      }
+
+      let currentItem = null, currentStage = null;
+      $('fxApprove').addEventListener('click', () => currentItem && verdict(currentItem, currentStage, true));
+      $('fxReject').addEventListener('click', () => { reason.hidden = false; reasonText.focus(); });
+      $('fxReasonSend').addEventListener('click', () => {
+        const why = reasonText.value.trim();
+        if (!why) { showErr("Say what's wrong — that's what gets fixed."); return; }
+        currentItem && verdict(currentItem, currentStage, false, why);
+      });
+
+      $('fxMake').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const subject = $('fxSubject').value.trim();
+        if (!subject) return;
+        $('fxMakeBtn').disabled = true; showErr('');
+        try {
+          await post('/api/v17/make', { subject });
+          $('fxSubject').value = '';
+        } catch (err) { showErr(String(err.message || err)); }
+        finally { $('fxMakeBtn').disabled = false; }
+      });
+
+      function setStatus(jobs) {
+        const c = jobs && jobs.current;
+        const q = (jobs && jobs.queue || []).length;
+        if (!c) { statusEl.textContent = q ? q + ' waiting' : 'idle'; return; }
+        const what = c.waiting_for_pick ? 'waiting on you' : (c.status || 'running');
+        statusEl.textContent = what + ' · ' + (c.label || '') + (q ? '  (+' + q + ' queued)' : '');
+      }
+
+      async function poll() {
+        if (busy) return;
+        try {
+          const [pipe, jobs] = await Promise.all([
+            fetch('/api/v17/pipeline', { cache: 'no-store' }).then((r) => r.ok ? r.json() : null),
+            fetch('/api/v17/jobs', { cache: 'no-store' }).then((r) => r.ok ? r.json() : null),
+          ]);
+          if (!pipe) { statusEl.textContent = 'board offline'; return; }
+          setStatus(jobs);
+
+          // One gate at a time, in the order the line reaches them.
+          let item = (pipe.pick || [])[0], stage = 'pick';
+          if (!item) { item = (pipe.mesh_check || [])[0]; stage = 'mesh'; }
+          if (!item) { item = (pipe.paint_check || [])[0]; stage = 'paint'; }
+          if (!item) { gate.hidden = true; showing = null; currentItem = null; return; }
+
+          const key = stage + ':' + item.slug + '/' + item.id;
+          if (key === showing) return;
+          showErr(''); showing = key; currentItem = item; currentStage = stage;
+          if (stage === 'pick') renderPick(item); else renderModel(item, stage);
+        } catch { /* transient — the next tick retries */ }
+      }
+
+      poll();
+      setInterval(poll, 3000);
+    })();
+  </script>
+  <script>
     window.APP_VERSION = 16;            // pipeline API version (v17 is a UI over V16)
     window.PAGE_VERSION = 17;
     // Three.js addons resolve against the same CDN the V16 world compiler uses.
@@ -127,7 +331,11 @@
       }
     }
   </script>
-  <script src="/static/unified_v17.js?v=17" defer></script>
-  <script type="module" src="/static/world_v17.js?v=17"></script>
+  <!-- The version token must change whenever these files change, or the browser
+       keeps executing a cached module and edits appear to have no effect. That
+       cost two debugging rounds on 2026-08-31: the served bytes were new while
+       the running module was old. Bump this token on every JS edit. -->
+  <script src="/static/unified_v17.js?v=17e" defer></script>
+  <script type="module" src="/static/world_v17.js?v=17e"></script>
 </body>
 </html>

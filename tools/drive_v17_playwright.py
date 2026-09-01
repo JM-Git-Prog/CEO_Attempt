@@ -105,6 +105,7 @@ def main() -> int:
         # wait for each stage to finish before moving on.
         last_signature = ""
         approvals_clicked = 0
+        same_gate_clicks: dict[str, int] = {}
         idle_since = time.time()
 
         while time.time() < deadline:
@@ -140,13 +141,24 @@ def main() -> int:
             # Human approval gate: the Approve button becomes visible.
             try:
                 if page.is_visible("#approval"):
+                    # Cap repeated clicks on the SAME gate signature so a
+                    # rejected approval (e.g. canon/Brief mismatch) does not spin
+                    # forever. A human would click once and read the result.
+                    gate_key = signature
+                    clicks_here = same_gate_clicks.get(gate_key, 0)
+                    if clicks_here >= 3:
+                        log(f"  gate {label if (label:=(page.text_content('#approval') or '').strip()) else ''!r} not advancing after 3 clicks — stopping (diagnostic)")
+                        shot(page, "gate_stuck")
+                        browser.close()
+                        return 2
                     label = (page.text_content("#approval") or "approve").strip()
-                    log(f"  APPROVAL GATE visible: {label!r} — clicking like a human")
+                    log(f"  APPROVAL GATE visible: {label!r} — clicking like a human (attempt {clicks_here+1})")
                     shot(page, f"gate_{approvals_clicked+1}_{label.replace(' ','_')}")
                     page.click("#approval")
+                    same_gate_clicks[gate_key] = clicks_here + 1
                     approvals_clicked += 1
                     idle_since = time.time()
-                    time.sleep(2.0)  # let the approval POST + resume settle
+                    time.sleep(2.5)  # let the approval POST + resume settle
                     continue
             except Exception as exc:  # noqa: BLE001
                 log(f"  approval check error: {exc}")

@@ -195,14 +195,28 @@
     approval.disabled = true;
     try {
       const body = { approved: true };
-      // Blockout approval requires a selected-objects list; approve all detected.
+      // Blockout approval maps selected DETECTION ids to required Plan
+      // placements. The backend rejects (409) any detection that lacks a
+      // required plan_binding_id, so send ONLY detections flagged required.
       if (currentApproval.stage === "blockout") {
-        try {
-          const picker = await fetch(`/api/session/${sessionId}/object_picker`).then((r) => (r.ok ? r.json() : null));
-          if (picker && Array.isArray(picker.objects)) {
-            body.selected_object_ids = picker.objects.map((o) => o.object_id || o.id).filter(Boolean);
-          }
-        } catch (_) { /* fall through — server will 409 if it truly needs selection */ }
+        const picker = await fetch(`/api/session/${sessionId}/object_picker`).then((r) => (r.ok ? r.json() : null));
+        const objects = picker && Array.isArray(picker.objects) ? picker.objects : [];
+        const requiredIds = objects
+          .filter((o) => o.required === true && (o.object_id || o.id))
+          .map((o) => o.object_id || o.id);
+        if (requiredIds.length === 0) {
+          // No detection binds to a required Plan object — the canon did not
+          // contain the Brief's required objects (canon/Brief mismatch). Fail
+          // loudly instead of looping a doomed approval.
+          appendMessage(
+            "system",
+            "Cannot approve blockout: the generated scene has no objects matching the " +
+              "required plan. This is a canon/Brief mismatch — regenerate the canon.",
+          );
+          approval.disabled = false;
+          return;
+        }
+        body.selected_object_ids = requiredIds;
       }
       if (currentApproval.object_id) body.object_id = currentApproval.object_id;
       await jsonRequest(`/api/session/${sessionId}/approve/${currentApproval.stage}`, {

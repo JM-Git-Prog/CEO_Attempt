@@ -813,13 +813,17 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
             return JSONResponse({"error": "Unified session not found"}, status_code=404)
 
-        # Canonical detection document is authoritative; picker JSON is legacy presentation data.
+        # Prefer object_picker.json: it carries the per-detection `required` flag
+        # and `plan_binding_id` the blockout UI needs to select only detections
+        # that map to a required Plan placement (avoids sending unbindable IDs
+        # that the approval endpoint rejects with 409). Fall back to the raw
+        # detected_objects.json only if the picker artifact is absent.
         artifacts_dir = session_dir / "artifacts"
         detected_path = artifacts_dir / "detected_objects.json"
         picker_path = artifacts_dir / "object_picker.json"
 
         data = None
-        for path in (detected_path, picker_path):
+        for path in (picker_path, detected_path):
             if path.is_file():
                 try:
                     data = json.loads(path.read_text(encoding="utf-8"))
@@ -911,6 +915,87 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
             return JSONResponse(
                 {"objects": [], "ready": False, "error": str(exc)}, status_code=409
+            )
+
+    @router.get("/api/session/{session_id}/plan_preview")
+    async def unified_plan_preview(session_id: str):
+        """Provisional room geometry from the validated Plan, BEFORE any mesh exists.
+
+        /scene_graph deliberately returns nothing until world_contract.json and
+        scene_graph.json are both on disk - the seventeenth stage. That left the
+        V17 right-hand panel empty for almost the whole run, even though the Plan
+        has known the room dimensions, the walls, the openings and every object's
+        metric placement since spatial_reconstruction, eight stages earlier.
+
+        This is additive and explicitly PROVISIONAL. It never touches the
+        hash-bound contract projection: /scene_graph stays the single source of
+        finalized truth, and everything here is labelled provisional so nothing
+        downstream can mistake a placeholder for a delivered mesh.
+        """
+        try:
+            session_dir = _session_dir(output_root(), session_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
+            return JSONResponse({"error": "Unified session not found"}, status_code=404)
+
+        solution_path = session_dir / "artifacts" / "spatial_solution.json"
+        if not solution_path.is_file():
+            # Not an error: the Plan simply does not exist yet.
+            return {"provisional": True, "ready": False, "objects": []}
+
+        try:
+            solution = json.loads(solution_path.read_text(encoding="utf-8"))
+            plan = solution.get("metric_plan") or {}
+            dimensions = plan.get("room_dimensions") or solution.get("room_dimensions_m")
+            if not dimensions or len(dimensions) < 3:
+                return {"provisional": True, "ready": False, "objects": []}
+            width, depth, ceiling = (float(value) for value in dimensions[:3])
+
+            objects = []
+            for placement in plan.get("object_placements", []):
+                objects.append({
+                    "objectId": placement.get("id", ""),
+                    "name": placement.get("name", ""),
+                    "x": float(placement.get("x", 0.0)),
+                    "y": float(placement.get("y", 0.0)),
+                    "rotationDeg": float(placement.get("rotation_deg", 0)),
+                    "width": float(placement.get("width", 0.5)),
+                    "depth": float(placement.get("depth", 0.5)),
+                    "height": float(placement.get("height", 0.8)),
+                    "isArchitectural": bool(placement.get("is_architectural", False)),
+                })
+
+            # Standing rule: every room carries nine cameras. Derived from the
+            # room's own dimensions, so this needs no per-room authoring and
+            # cannot drift out of sync with the Plan.
+            from src.unified_pipeline.camera_rig import rig_payload
+
+            centre = next(
+                (o for o in objects if not o["isArchitectural"]
+                 and abs(o["x"] - width / 2) < 0.6 and abs(o["y"] - depth / 2) < 0.6),
+                None,
+            )
+            focus = (
+                (centre["x"] - width / 2, centre["height"], centre["y"] - depth / 2)
+                if centre else None
+            )
+
+            return {
+                "provisional": True,
+                "ready": True,
+                "sessionId": session_id,
+                "room": {"width": width, "depth": depth, "height": ceiling},
+                "openings": plan.get("openings", []),
+                "objects": objects,
+                "cameraRig": rig_payload(width, depth, ceiling, focus),
+                "planRevision": solution.get("plan_revision", 0),
+                "state": _meta(session_dir).get("state", "unknown"),
+            }
+        except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            return JSONResponse(
+                {"provisional": True, "ready": False, "objects": [], "error": str(exc)},
+                status_code=409,
             )
 
     @router.websocket("/api/session/{session_id}/materials")

@@ -84,6 +84,32 @@ def _object_key(name: str) -> str:
     return " ".join(words)
 
 
+# Room-type keywords → canonical room_purpose noun. Used to anchor the Brief's
+# room_purpose to the durable user prompt so extraction cannot drift the room
+# type (e.g. a "kitchenette" being extracted as a "living space"). Order matters:
+# more specific terms first.
+_ROOM_TYPE_KEYWORDS: tuple[tuple[tuple[str, ...], str], ...] = (
+    (("kitchenette", "kitchen", "diner", "cooking"), "kitchen"),
+    (("bedroom", "sleeping", "nursery"), "bedroom"),
+    (("bathroom", "washroom", "restroom"), "bathroom"),
+    (("office", "study", "workspace", "workshop"), "office"),
+    (("living room", "living space", "lounge", "sitting room", "family room"), "living room"),
+    (("dining room",), "dining room"),
+    (("studio", "loft"), "studio"),
+    (("classroom",), "classroom"),
+    (("garage",), "garage"),
+)
+
+
+def _room_type_of(text: str) -> str | None:
+    """Return the canonical room-type noun implied by ``text``, if any."""
+    lowered = f" {text.lower()} "
+    for keywords, canonical in _ROOM_TYPE_KEYWORDS:
+        if any(kw in lowered for kw in keywords):
+            return canonical
+    return None
+
+
 def _first_turn_requested_objects(message: str) -> list[dict[str, Any]]:
     """Extract explicitly counted objects from a first design prompt.
 
@@ -748,10 +774,36 @@ class ConversationEngine:
         # Parse object manifest. User-authoritative proposal objects are unioned
         # into the extraction so a later LLM pass cannot silently drop them.
         proposed_objects = self._state.proposed_brief.get("objects", [])
+        if not isinstance(proposed_objects, list):
+            proposed_objects = []
+        else:
+            proposed_objects = [obj for obj in proposed_objects if isinstance(obj, dict)]
+
+        # ANCHOR TO THE DURABLE FIRST USER PROMPT. The explicitly-requested
+        # objects parsed from the authoritative source prompt are authority no
+        # matter which path reached extraction (normal steering, confirm
+        # fast-path, or LLM fallback). This prevents Brief drift — e.g. a
+        # kitchenette prompt being extracted as a generic living room — by
+        # guaranteeing the user's own words survive into the manifest with their
+        # exact counts. Existing proposal objects are merged after, so they
+        # cannot override a first-prompt object's count or drop it.
+        source_prompt = str(self._state.proposed_brief.get("source_prompt", "")) or next(
+            (turn.content for turn in self._state.turns if turn.role == "user"),
+            "",
+        )
+        anchored_objects = _first_turn_requested_objects(source_prompt)
+        anchored_keys = {_object_key(str(obj.get("name", ""))) for obj in anchored_objects}
+        # Prepend anchored objects, then any proposal objects not already anchored.
+        merged_proposed: list[dict[str, Any]] = list(anchored_objects)
+        for obj in proposed_objects:
+            if _object_key(str(obj.get("name", ""))) not in anchored_keys:
+                merged_proposed.append(obj)
+        proposed_objects = merged_proposed
+
         authoritative_keys = [
             _object_key(str(obj.get("name", "")))
             for obj in proposed_objects if isinstance(obj, dict)
-        ] if isinstance(proposed_objects, list) else []
+        ]
         objects_raw = [
             dict(obj) for obj in data.get("object_manifest", [])
             if isinstance(obj, dict) and sum(
@@ -830,8 +882,23 @@ class ConversationEngine:
             ).hexdigest() if source_prompt else "",
         }
 
+        # Anchor room_purpose to the durable user prompt: if the prompt names a
+        # room type and the LLM's extracted purpose implies a different type (or
+        # none), the user's stated type wins. Prevents "kitchenette" drifting to
+        # "living space". If the prompt names no room type, keep the LLM value.
+        room_purpose = str(data.get("room_purpose", "")).strip()
+        prompt_room_type = _room_type_of(source_prompt)
+        if prompt_room_type is not None:
+            extracted_room_type = _room_type_of(room_purpose)
+            if extracted_room_type != prompt_room_type:
+                room_purpose = prompt_room_type
+        provenance["room_purpose_anchored_to_prompt"] = str(
+            prompt_room_type is not None
+            and _room_type_of(str(data.get("room_purpose", ""))) != prompt_room_type
+        )
+
         return Brief(
-            room_purpose=data.get("room_purpose", ""),
+            room_purpose=room_purpose,
             atmosphere=atmosphere,
             era=era,
             palette=palette,
