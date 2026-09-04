@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 import uuid
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -81,54 +80,19 @@ def _strict_real(context: StageExecutionContext) -> bool:
     return context.values.get("execution_profile") == "strict_real"
 
 
-def _user_turns(session_dir: Path) -> list[str]:
+def _first_authoritative_user_prompt(session_dir: Path) -> str:
+    """Load the first durable user turn, excluding the creative opening."""
     conversation_path = session_dir / "conversation.json"
     try:
         document = json.loads(conversation_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError, TypeError):
-        return []
-    return [
+        return ""
+    return next((
         str(turn.get("content", "")).strip()
         for turn in document.get("turns", [])
         if isinstance(turn, dict) and turn.get("role") == "user"
         and str(turn.get("content", "")).strip()
-    ]
-
-
-def _first_authoritative_user_prompt(session_dir: Path) -> str:
-    """Load the first durable user turn, excluding the creative opening."""
-    turns = _user_turns(session_dir)
-    return turns[0] if turns else ""
-
-
-# Words that only confirm a decision — they steer nothing and must not become
-# the "authoritative request" the renderer is told to obey.
-_CONFIRMATION_ONLY = re.compile(
-    r"^(?:no[,. ]*)?(?:ok(?:ay)?|yes|yep|sure|go|do it|build it|lock it in|"
-    r"looks good|sounds good|perfect|approved|ship it|proceed|go ahead)[.! ]*$",
-    re.IGNORECASE,
-)
-
-
-def authoritative_user_prompt(session_dir: Path) -> str:
-    """Everything John actually asked for, not only his opening sentence.
-
-    Slice 2a (2026-09-02). The renderer injects this as "Exact user request
-    (authoritative)". Using turn 1 alone meant every later correction was
-    invisible to the picture: steer an interrogation room toward a noir office
-    and the prompt still swore the authoritative request was the first thing
-    typed. Confirmations ("build it") carry no design intent, so they are
-    dropped rather than appended.
-    """
-    turns = [t for t in _user_turns(session_dir) if not _CONFIRMATION_ONLY.match(t)]
-    if not turns:
-        return _first_authoritative_user_prompt(session_dir)
-    joined = turns[0]
-    for extra in turns[1:]:
-        if len(joined) + len(extra) + 8 > 600:
-            break
-        joined += f"; then: {extra}"
-    return joined
+    ), "")
 
 
 async def _release_local_ollama_models() -> None:
@@ -210,255 +174,28 @@ def _handle_art_bible(ctx: StageExecutionContext) -> StageResult:
     return _immediate({"status": "art_bible_generated"}, ctx)
 
 
-# ---------------------------------------------------------------------------
-# Prompt vocabulary (V17 Slice 2a, 2026-09-02)
-# ---------------------------------------------------------------------------
+async def _handle_dream_preview(ctx: StageExecutionContext) -> StageResult:
+    """Generate a real FLUX Dream Preview via ComfyUI.
 
-# A hex code is not a word FLUX understands: "#F7F7F7 tones" on John's
-# interrogation room produced a white minimalist gallery. The models keep
-# emitting hex, so translate it to the nearest plain colour name instead of
-# passing it through. Deterministic, no dependencies.
-_COLOUR_NAMES: tuple[tuple[str, tuple[int, int, int]], ...] = (
-    ("black", (0, 0, 0)), ("charcoal", (54, 54, 54)), ("dark grey", (90, 90, 90)),
-    ("grey", (128, 128, 128)), ("light grey", (190, 190, 190)), ("off-white", (240, 240, 238)),
-    ("white", (255, 255, 255)), ("cream", (245, 235, 205)), ("beige", (222, 205, 175)),
-    ("tan", (196, 164, 122)), ("brown", (120, 80, 50)), ("dark brown", (72, 48, 32)),
-    ("walnut brown", (94, 64, 44)), ("red", (200, 40, 40)), ("oxblood", (110, 30, 35)),
-    ("orange", (225, 130, 40)), ("amber", (220, 170, 60)), ("yellow", (235, 215, 80)),
-    ("olive", (120, 125, 60)), ("green", (60, 140, 80)), ("dark green", (35, 80, 55)),
-    ("teal", (40, 130, 130)), ("light blue", (150, 190, 220)), ("blue", (50, 90, 175)),
-    ("navy", (25, 40, 85)), ("purple", (110, 60, 150)), ("pink", (230, 150, 170)),
-    ("brass", (181, 145, 70)), ("gold", (212, 175, 55)), ("silver", (192, 192, 192)),
-)
-
-
-def colour_word(value: str) -> str:
-    """A plain colour name for a palette entry, translating hex when given."""
-    text = str(value or "").strip()
-    if not text.startswith("#"):
-        return text
-    digits = text[1:]
-    if len(digits) == 3:
-        digits = "".join(c * 2 for c in digits)
-    if len(digits) != 6:
-        return ""
-    try:
-        rgb = tuple(int(digits[i:i + 2], 16) for i in (0, 2, 4))
-    except ValueError:
-        return ""
-    return min(
-        _COLOUR_NAMES,
-        key=lambda item: sum((a - b) ** 2 for a, b in zip(rgb, item[1])),
-    )[0]
-
-
-def load_revisions(session_dir: Path) -> tuple[str, ...]:
-    """John's "what's wrong" notes, newest last. Written by POST /revise."""
-    path = session_dir / "artifacts" / "revisions.json"
-    try:
-        document = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError, TypeError):
-        return ()
-    items = document.get("revisions", []) if isinstance(document, dict) else []
-    return tuple(
-        str(item.get("reason", "")).strip()
-        for item in items
-        if isinstance(item, dict) and str(item.get("reason", "")).strip()
-    )
-
-
-def _light_clause(brief: Mapping[str, Any]) -> str:
-    """Lighting from the brief, instead of the hard-coded 'warm natural lighting'."""
-    atmosphere = brief.get("atmosphere", {})
-    if not isinstance(atmosphere, dict):
-        return "natural lighting"
-    direction = str(atmosphere.get("lighting_direction", "")).strip()
-    time_of_day = str(atmosphere.get("time_of_day", "")).strip()
-    parts = [p for p in (direction, f"{time_of_day} light" if time_of_day else "") if p]
-    return ", ".join(parts) if parts else "natural lighting"
-
-
-def _style_clause(brief: Mapping[str, Any]) -> str:
-    """Palette, finishes and era exclusions — all extracted today, all thrown away before."""
-    palette = brief.get("palette", {})
-    palette = palette if isinstance(palette, dict) else {}
-    colours = [c for c in (colour_word(palette.get("primary", "")),
-                           colour_word(palette.get("accent", ""))) if c]
-    finishes = palette.get("material_finishes", [])
-    finishes = [str(f).strip() for f in finishes if str(f).strip()] if isinstance(finishes, list) else []
-    era = brief.get("era", {})
-    exclusions = era.get("style_exclusions", []) if isinstance(era, dict) else []
-    exclusions = [str(x).strip() for x in exclusions if str(x).strip()] if isinstance(exclusions, list) else []
-    clause = ""
-    if colours:
-        clause += f"{' and '.join(colours)} palette. "
-    if finishes:
-        clause += f"{', '.join(finishes[:3])} finishes. "
-    if exclusions:
-        clause += f"Nothing {', nothing '.join(exclusions[:3])}. "
-    return clause
-
-
-# Leading count words are not part of an object's name: "a single vase" and
-# "vase" are the same object, and listing both told the renderer to show two.
-_LEADING_COUNT = re.compile(
-    r"^(?:(?:a|an|one|single|lone|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+)+",
-    re.IGNORECASE,
-)
-
-
-def object_key(name: str) -> str:
-    """Normalized object name, count words and plural 's' removed.
-
-    Repeats on purpose: "a single vase" must reduce to "vase", not "single vase".
+    Calls DreamPreviewGenerator which submits a FLUX workflow to ComfyUI
+    on localhost:8188. Returns the result path on success, or a degraded
+    result if ComfyUI is unavailable.
     """
-    text = _LEADING_COUNT.sub("", str(name or "").strip().lower())
-    text = re.sub(r"[^a-z0-9 ]", " ", text)
-    words = text.split()
-    if words and words[-1].endswith("s") and not words[-1].endswith("ss"):
-        words[-1] = words[-1][:-1]
-    return " ".join(words)
+    import logging
+    from src.unified_pipeline.dream_preview import DreamPreviewGenerator
 
+    _log = logging.getLogger("live_trace")
 
-def dedupe_objects(objects) -> list:
-    """One entry per real object, keeping the largest count.
-
-    Fixes briefs already on disk as well as new ones. Two shapes of duplicate
-    have both reached the renderer and both made it draw one object twice:
-      * "vase" + "a single vase"                      — count word kept as a name
-      * "vase" + "vase in the center of the table"    — a placement phrase kept
-        as a separate object (John's 07:05 render was ordered to show both)
-    The second is why a containing phrase collapses into the shorter name.
-    """
-    merged: dict[str, dict] = {}
-    for item in objects:
-        if not isinstance(item, dict) or not str(item.get("name", "")).strip():
-            continue
-        key = object_key(item["name"])
-        if not key:
-            continue
-        current = merged.get(key)
-        if current is None:
-            # Match on the key, but keep the readable name: "one-way mirror"
-            # must not reach the renderer as "one way mirror".
-            merged[key] = {**item, "name": _LEADING_COUNT.sub("", str(item["name"]).strip().lower())}
-            continue
-        try:
-            current["count"] = max(int(current.get("count", 1) or 1), int(item.get("count", 1) or 1))
-        except (TypeError, ValueError):
-            pass
-    # Collapse phrases that merely describe an object already listed.
-    keys = sorted(merged, key=len)
-    for long_key in list(merged):
-        for short_key in keys:
-            if short_key != long_key and short_key in merged and (
-                long_key.startswith(f"{short_key} ") or f" {short_key} " in f" {long_key} "
-            ):
-                merged.pop(long_key, None)
-                break
-    return list(merged.values())
-
-
-# ---------------------------------------------------------------------------
-# Room archetypes — the fixtures a room of this type always has
-# ---------------------------------------------------------------------------
-#
-# 2026-09-02, from John looking at three renders in a row and saying "clearly
-# not an interrogation room". The extractor turns his sentence into nouns, and
-# the anti-hallucination law then forbids everything not on that list — so
-# "a plain interrogation room with a vase on the table" renders as a table and
-# a vase in an empty gallery, because chairs, the caged light and the mirror
-# were never listed and were explicitly banned.
-#
-# This is the cheap rung of the vision's "Type 1 — predefined archetypes"
-# (00-Vision-Product §5): apply known rules instead of imagining them. No model
-# call, no GPU, deterministic. John's own objects always win a name clash.
-_ROOM_FIXTURES: tuple[tuple[tuple[str, ...], tuple[tuple[str, int], ...]], ...] = (
-    (("interrogation", "interview room"),
-     (("plain steel table", 1), ("metal chair", 2), ("caged ceiling light", 1),
-      ("large one-way mirror on the wall", 1), ("heavy windowless door", 1))),
-    (("office", "study", "workspace"),
-     (("desk", 1), ("office chair", 1), ("desk lamp", 1), ("window", 1))),
-    (("kitchen", "kitchenette"),
-     (("counter", 1), ("sink", 1), ("upper cabinet", 2), ("window", 1))),
-    (("bedroom",),
-     (("bed", 1), ("nightstand", 1), ("table lamp", 1), ("window", 1))),
-    (("bathroom", "washroom", "restroom"),
-     (("sink", 1), ("mirror", 1), ("toilet", 1))),
-    (("classroom",),
-     (("student desk", 4), ("teacher desk", 1), ("whiteboard", 1), ("window", 1))),
-    (("dining room",),
-     (("dining table", 1), ("dining chair", 4), ("ceiling light", 1))),
-    (("living room", "living space", "lounge", "sitting room"),
-     (("sofa", 1), ("coffee table", 1), ("floor lamp", 1), ("window", 1))),
-    (("diner", "restaurant"),
-     (("counter", 1), ("stool", 4), ("booth", 2), ("pendant light", 2))),
-    (("garage", "workshop"),
-     (("workbench", 1), ("tool shelf", 1), ("garage door", 1), ("strip light", 1))),
-    (("cell", "holding cell"),
-     (("bench", 1), ("barred door", 1), ("caged ceiling light", 1))),
-)
-
-
-def room_fixtures(room_purpose: str) -> list[dict]:
-    """The objects that make a room of this type read as that type."""
-    text = f" {str(room_purpose or '').lower()} "
-    for keywords, fixtures in _ROOM_FIXTURES:
-        if any(word in text for word in keywords):
-            return [
-                {"name": name, "count": count, "role": "defining fixture",
-                 "is_fixture": True, "is_architectural": False}
-                for name, count in fixtures
-            ]
-    return []
-
-
-def inventory_objects(brief: Mapping[str, Any]) -> list[dict]:
-    """John's objects plus the room type's own fixtures, de-duplicated.
-
-    John's entries are added first so a name clash keeps HIS count and material.
-    """
-    listed = brief.get("object_manifest", brief.get("objects", []))
-    listed = listed if isinstance(listed, list) else []
-    return dedupe_objects([*listed, *room_fixtures(brief.get("room_purpose", ""))])
-
-
-def _revision_clause(revisions) -> str:
-    """John's corrections, last one loudest — the V9 'Revision requirement' pattern."""
-    items = [str(r).strip() for r in (revisions or ()) if str(r).strip()]
-    if not items:
-        return ""
-    return (
-        "REVISION REQUIREMENTS (John corrected the previous render; these override "
-        f"every generic instruction): {'; '.join(items[-4:])}. "
-    )
-
-
-def compose_dream_prompt(
-    brief: Mapping[str, Any], source_prompt: str, revisions=(),
-) -> str:
-    """The exact Dream Preview prompt for a brief (or an in-progress proposal).
-
-    Extracted 2026-09-02 (V17 Slice 1) so the chat can show John the prompt it
-    WOULD render right now, built by the same code that renders it. Accepts the
-    final brief (``object_manifest``) and the conversation's proposed brief
-    (``objects``) alike.
-
-    Slice 2a (2026-09-02): it now spends the whole brief. The old version used
-    room_purpose, mood, period, the object counts and the primary colour, and
-    dropped everything else on the floor — then hard-coded "warm natural
-    lighting" over the top. John's interrogation room asked for cool evening
-    light and got a sunlit white gallery with flowers, because the brief's
-    lighting_direction, time_of_day, accent, finishes and style_exclusions
-    never reached FLUX and "#F7F7F7" was pasted in as if it were a word.
-    """
+    brief = ctx.values.get("brief", {})
     room_purpose = brief.get("room_purpose", "cozy room")
     atmosphere = brief.get("atmosphere", {})
     mood = atmosphere.get("mood", "warm and inviting") if isinstance(atmosphere, dict) else "warm"
     era = brief.get("era", {})
     period = era.get("period", "") if isinstance(era, dict) else ""
+    palette = brief.get("palette", {})
+    primary = palette.get("primary", "") if isinstance(palette, dict) else ""
 
-    objects = inventory_objects(brief)
+    objects = brief.get("object_manifest", [])
 
     # Counted, exclusive inventory — the same discipline canon_generation uses.
     #
@@ -478,43 +215,23 @@ def compose_dream_prompt(
         counted.append(f"exactly {count} {name}" + ("s" if count != 1 else ""))
     inventory = ", ".join(counted) or "exactly 1 table, exactly 2 chairs"
 
+    source_prompt = _first_authoritative_user_prompt(ctx.session_dir)
     request_clause = (
         f"Exact user request (authoritative): {source_prompt}. "
         if source_prompt else ""
     )
 
-    return (
-        f"{_revision_clause(revisions)}"
+    prompt = (
         f"Interior photograph of a {period + ' ' if period else ''}{room_purpose}, "
         f"{mood} atmosphere. "
         f"NON-NEGOTIABLE VISIBLE INVENTORY: {inventory}, and nothing else. "
         f"Every listed object fully visible, spatially separate, non-duplicated "
-        f"and correctly counted. Nothing beyond the listed inventory — no extra "
-        f"furniture, plants, artwork, rugs or shelving. "
+        f"and correctly counted. No additional furniture, no plants, no artwork, "
+        f"no rugs, no shelving, no lamps beyond the listed inventory. "
         f"{request_clause}"
-        f"{_style_clause(brief)}"
-        f"Photorealistic, architectural photography, {_light_clause(brief)}, "
+        f"{primary + ' tones. ' if primary else ''}"
+        f"Photorealistic, architectural photography, warm natural lighting, "
         f"high detail, 8K quality."
-    )
-
-
-async def _handle_dream_preview(ctx: StageExecutionContext) -> StageResult:
-    """Generate a real FLUX Dream Preview via ComfyUI.
-
-    Calls DreamPreviewGenerator which submits a FLUX workflow to ComfyUI
-    on localhost:8188. Returns the result path on success, or a degraded
-    result if ComfyUI is unavailable.
-    """
-    import logging
-    from src.unified_pipeline.dream_preview import DreamPreviewGenerator
-
-    _log = logging.getLogger("live_trace")
-
-    brief = ctx.values.get("brief", {})
-    prompt = compose_dream_prompt(
-        brief,
-        authoritative_user_prompt(ctx.session_dir),
-        load_revisions(ctx.session_dir),
     )
 
     output_dir = ctx.session_dir / "artifacts" / "dream_previews"
@@ -579,10 +296,10 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
     mood = atmosphere.get("mood", "warm and inviting") if isinstance(atmosphere, dict) else "warm"
     era = brief.get("era", {}) if isinstance(brief, dict) else {}
     period = era.get("period", "") if isinstance(era, dict) else ""
-    # Palette/finishes/exclusions now go through _style_clause (Slice 2a), which
-    # also turns a hex code into a colour word FLUX can actually read.
+    palette = brief.get("palette", {}) if isinstance(brief, dict) else {}
+    primary = palette.get("primary", "") if isinstance(palette, dict) else ""
 
-    objects = inventory_objects(brief if isinstance(brief, dict) else {})
+    objects = brief.get("object_manifest", []) if isinstance(brief, dict) else []
     count_words = {
         1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
         6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten",
@@ -606,10 +323,7 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
         inventory.append(f"exactly {count_words.get(count, str(count))} distinct {name}")
     required_inventory = "; ".join(inventory) or "all requested furniture and fixtures"
     success_criteria = str(brief.get("success_criteria", "")) if isinstance(brief, dict) else ""
-    # Slice 2a: every steering turn counts, and John's corrections outrank the
-    # generic tail of this prompt.
-    source_prompt = authoritative_user_prompt(ctx.session_dir)
-    revisions = load_revisions(ctx.session_dir)
+    source_prompt = _first_authoritative_user_prompt(ctx.session_dir)
     if _strict_real(ctx) and not source_prompt:
         raise RuntimeError("strict-real Canon generation requires the durable first user prompt")
     source_authority = source_prompt or success_criteria
@@ -638,7 +352,6 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
         )
 
     prompt = (
-        f"{_revision_clause(revisions)}"
         f"{composition_requirement}Photorealistic interior photograph of a "
         f"{period + ' ' if period else ''}{room_purpose}, {mood} atmosphere. "
         f"NON-NEGOTIABLE VISIBLE INVENTORY: "
@@ -647,8 +360,8 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
         f"{coffee_requirement}{rain_requirement}"
         f"Exact user request (authoritative): {source_authority}. "
         f"Design intent: {success_criteria}. "
-        f"{_style_clause(brief if isinstance(brief, dict) else {})}"
-        f"Professional architectural photography, {_light_clause(brief if isinstance(brief, dict) else {})}, "
+        f"{primary + ' color palette. ' if primary else ''}"
+        f"Professional architectural photography, natural lighting, "
         f"high detail, 8K resolution, sharp focus, magazine quality, "
         f"realistic materials and textures, ambient occlusion."
     )
@@ -723,39 +436,6 @@ async def _handle_canon_generation(ctx: StageExecutionContext) -> StageResult:
             "inputs": {"images": ["8", 0], "filename_prefix": "canon"},
         },
     }
-
-    # THE WALL (2026-09-03, the station kit): if John asked in the chat to choose
-    # between versions ("which of these rooms do you like?"), render that many
-    # with different seeds, hang them on the garage wall through the Pick Board,
-    # and leave canon.png unwritten — the canon_approval gate parks the pipeline
-    # as it always did, and his choice in the garage (applied by the wall route)
-    # becomes canon.png and the approval. No rule → one picture, as before.
-    from src.unified_pipeline import stations
-    rule = stations.rule_for(ctx.session_dir, "canon_generation")
-    if rule:
-        count = int(rule.get("count", 3))
-        wall_no = sum(1 for w in stations.load(ctx.session_dir)["walls"] if w.get("stage") == "canon_generation") + 1
-        candidates: list[Path] = []
-        for k in range(count):
-            workflow["7"]["inputs"]["seed"] = random.randint(1, 2**32 - 1)
-            name = f"canon-wall{wall_no}-c{k + 1}.png"
-            _log.info(f"  canon_generation: wall picture {k + 1}/{count} — {name}")
-            pid = await client.submit_workflow(workflow, client_id=f"canon-{ctx.session_id}-c{k + 1}")
-            await client.wait_for_completion(pid, timeout_s=600)
-            await client.get_output_image(prompt_id=pid, output_dir=artifacts_dir, filename=name)
-            candidates.append(artifacts_dir / name)
-        await client.release_vram()
-        wall = await stations.post_wall(ctx.session_dir, ctx.session_id, "canon_generation", str(rule.get("question") or "Which of these rooms do you like?"), candidates)
-        _log.info(f"  canon_generation: {count} pictures on the garage wall — station {wall['id']}")
-        return _immediate({
-            "status": "canon_on_the_wall",
-            "image_path": "",
-            "wall": wall["id"],
-            "candidates": [str(p) for p in candidates],
-            "prompt": prompt,
-            "source_prompt": source_prompt,
-            "source_prompt_sha256": hashlib.sha256(source_prompt.encode("utf-8")).hexdigest() if source_prompt else "",
-        }, ctx)
 
     prompt_id = await client.submit_workflow(
         workflow, client_id=f"canon-{ctx.session_id}"

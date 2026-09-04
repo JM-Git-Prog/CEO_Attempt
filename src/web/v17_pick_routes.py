@@ -127,6 +127,18 @@ async def _get(path: str, timeout: float = 10.0):
         return await cl.get(f"{PICKBOARD}{path}")
 
 
+@router.get("/station-words")
+async def v17_station_words():
+    """The sentence shapes that mean "let me choose" — from stations.py, the one source.
+
+    The page's place editor (neighbourhood_v17.js) reads these so a check request is
+    never mistaken for a place edit (2026-09-03: "which of these rooms do you like?"
+    built a cul-de-sac named after itself).
+    """
+    from src.unified_pipeline import stations
+    return {"check": stations._CHECK.pattern, "materials": [m["material"] for m in stations.MATERIALS]}
+
+
 @router.get("/pipeline")
 async def v17_pipeline():
     """The whole kanban (pick / mesh_check / painting / paint_check / shelf).
@@ -193,6 +205,35 @@ async def v17_glb(slug: str, pid: str):
         headers={"Cache-Control": "no-store",
                  "X-Glb-Name": r.headers.get("x-glb-name", "")},
     )
+
+
+@router.get("/world-health")
+async def v17_world_health():
+    """Is THE world (:5173) actually up? Asked from the SERVER, not the browser.
+
+    2026-09-02. The pane first asked with a cross-origin fetch from the page,
+    which some browsers block outright — so it reported John's world dead while
+    it was serving. The second version just mounted the iframe and trusted its
+    `load` event: Chrome fires `load` for its own "frame failed" error page too,
+    so a dead world looked like a live one.
+
+    Both failures share a cause: the browser is the wrong place to ask. This
+    server is on the same machine as the world, with no CORS and nothing to
+    block it, so it can simply answer.
+    """
+    url = "http://127.0.0.1:5173/"
+    try:
+        async with httpx.AsyncClient(timeout=4.0) as cl:
+            r = await cl.get(url)
+        return {"up": r.status_code < 400, "status": r.status_code, "url": url}
+    except Exception as exc:
+        return {
+            "up": False,
+            "url": url,
+            "error": str(exc)[:200],
+            "hint": "Start it from your own console with RESTART-MY-OFFICE.bat — "
+                    "a world started by a tool that later times out gets killed with it.",
+        }
 
 
 @router.get("/model-viewer.js")

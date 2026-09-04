@@ -64,7 +64,10 @@ def _user_confirms_stable(message: str) -> bool:
 
 
 _COUNT_WORDS = {
-    "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4,
+    # "single" added 2026-09-02 (Slice 2a): John asked for "a single vase" and the
+    # brief came back with BOTH "vase" and "single vase" as separate objects, so
+    # the renderer was ordered to show two. It is a count word, not a name.
+    "a": 1, "an": 1, "one": 1, "single": 1, "two": 2, "three": 3, "four": 4,
     "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
 }
 _EXPLICIT_OBJECT = re.compile(
@@ -142,12 +145,21 @@ def _first_turn_requested_objects(message: str) -> list[dict[str, Any]]:
 # ─── System prompts ────────────────────────────────────────────────────────────
 
 OPENING_SYSTEM = """\
-You are a creative interior-design AI that leads conversations about room creation.
-You propose ideas — you never ask the user to fill in blanks.
+You are the AI John builds Mr. John's Neighborhood with — one persistent 3D place: homes
+around a cul-de-sac, the rooms inside them, a workshop garage where he judges what gets made.
+You talk like a good contractor: plain words, two sentences at most, no sales pitch, no
+invented gadgets. You never ask him to fill in blanks and you never read a list back to him.
 
-Your job: greet the user warmly, ask what kind of space they'd like to build,
-and immediately propose an art direction (era, mood, palette, key objects, spatial character).
-Be vivid and specific. Suggest 4-6 key objects that would make the room feel alive.
+Your job now: greet him in one short line and ask what he wants — a home on the block, the
+inside of a house, or a single room — with one concrete suggestion of your own.
+WHERE HE IS STANDING will be given to you as a line above this one, reported live by the 3D
+world he is looking at. Your suggestion must be about THAT — if he is outdoors on the block,
+suggest something on the block; if he is inside a room, suggest something in that room. If you
+were told nothing about where he is, ask him where he wants to work instead of guessing. Never
+assume he is indoors. (2026-09-03: it opened with "let's start with a cozy reading nook" while
+the pane showed his street — it had no idea what he was looking at, and nothing had told it.)
+The proposed_* fields below are working defaults for the room pipeline; fill them modestly and
+do NOT mention them in the greeting.
 
 Respond in JSON with these fields:
 {
@@ -160,18 +172,24 @@ Respond in JSON with these fields:
 """
 
 INTERPRET_SYSTEM = """\
-You are a creative interior-design AI interpreting user feedback about a room design.
-The user has responded to your proposal. Extract their intent and propose refinements.
+You are the AI John builds Mr. John's Neighborhood with, reading a sentence that may be about
+the inside of a room, or about the outside of a house, or about the grounds around it. Extract
+what he wants and keep the working brief current. If the sentence is not about the inside of a
+room, say so plainly in one line — do NOT invent a room, a palette, or furniture to fill the
+fields below.
 
-You MUST propose (not just acknowledge):
-- Updated art direction if they redirected style
-- GAME concept (theme, mechanics, scoring, win_condition) tailored to the space
-- REAL capabilities (which tools could wire to which surfaces)
-- Any objects they want added or removed
+The "interpretation" is what he reads in the chat. It is at most two plain sentences: what
+you understood and what happens next ("say build it"). No pitch, no adjectives piled up, no
+invented gadgets (no AR, tablets, trivia nights, roof terraces he did not ask for). Never
+restate a list of objects or finishes back to him — the brief holds those.
+
+Keep the structured fields honest and modest: art direction only where he redirected it;
+the GAME concept and REAL capabilities are quiet defaults for later, never mentioned in the
+interpretation unless he asked about games or tools; objects only as he named them.
 
 Respond in JSON:
 {
-  "interpretation": "your understanding of what they want changed or confirmed",
+  "interpretation": "two plain sentences at most",
   "room_purpose": "primary purpose of the space",
   "atmosphere": {
     "mood": "updated mood description",
@@ -346,8 +364,15 @@ class ConversationEngine:
 
     # ─── Opening ───────────────────────────────────────────────────────────
 
-    async def generate_opening(self) -> str:
+    async def generate_opening(self, where: str | None = None) -> str:
         """Generate the opening conversational prompt.
+
+        `where` (2026-09-03) is one plain sentence the 3D pane reported about where
+        John is actually standing — e.g. "outdoors on the street in
+        mr-johns-neighborhood". Nothing here assumes a location: if the world said
+        nothing, the greeting asks instead of guessing. This is what stopped it
+        opening with "let's start with a cozy reading nook" at a man looking at his
+        own street.
 
         Requirement 1.1: present a conversational prompt, never a form.
         Returns the AI's opening greeting and proposal.
@@ -357,7 +382,10 @@ class ConversationEngine:
         """
         # Fix #1: Prepend a session-unique seed to bust Ollama KV cache
         session_seed = f"[session:{self._state.session_id}:{time.time()}]\n"
-        system_prompt = session_seed + OPENING_SYSTEM
+        # WHERE HE IS STANDING, straight from the 3D pane. Sits above OPENING_SYSTEM
+        # because that prompt refers to it as "a line above this one".
+        standing = f"WHERE HE IS STANDING RIGHT NOW: {where.strip()}\n\n" if (where or "").strip() else ""
+        system_prompt = session_seed + standing + OPENING_SYSTEM
 
         try:
             result = await generate_json(
@@ -387,7 +415,8 @@ class ConversationEngine:
 
     # ─── User Response Interpretation ──────────────────────────────────────
 
-    async def interpret_response(self, user_message: str) -> str:
+    async def interpret_response(self, user_message: str, picture_summary: str | None = None,
+                                 where: str | None = None) -> str:
         """Interpret a user response, propose refinements, detect stability.
 
         Requirements 1.2, 1.3, 1.4, 1.7: interpret, propose GAME/REAL, steer.
@@ -397,6 +426,12 @@ class ConversationEngine:
         of the last assistant turn. Retries once with temperature bump if duplicate.
         Fix #4: User's current message is appended to turns BEFORE building context,
         ensuring it appears as the LAST item in the messages array sent to Ollama.
+
+        picture_summary (2026-09-03, Phase 1): the room brain has no vision of its own
+        and is never getting any — when given, one plain-English line naming what a
+        reference photo actually shows is prepended to the model's context, so it
+        stops being blind to a picture the user attached. Optional; a caller that
+        passes nothing behaves exactly as before.
         """
         # The first substantive user message supersedes the creative opening.
         # Opening suggestions are non-authoritative and must not leak into the
@@ -418,6 +453,18 @@ class ConversationEngine:
             })
 
         conversation_context = self._build_conversation_context()
+        if picture_summary:
+            conversation_context = (
+                f"The user has attached a photo. What is actually in it: {picture_summary}\n\n"
+                + conversation_context
+            )
+        # Where he is standing, reported live by the 3D pane (2026-09-03). Never
+        # assumed here — absent means absent, and the prompt says to ask, not guess.
+        if (where or "").strip():
+            conversation_context = (
+                f"He is currently {where.strip()}. Answer about THAT place.\n\n"
+                + conversation_context
+            )
         interpret_system = INTERPRET_SYSTEM
         if first_user_turn:
             interpret_system += (

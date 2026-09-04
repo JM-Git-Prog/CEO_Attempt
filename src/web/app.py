@@ -102,6 +102,17 @@ app.include_router(create_v2_router(lambda: OUTPUT_DIR))
 from src.web.v17_pick_routes import router as _v17_pick_router  # noqa: E402
 app.include_router(_v17_pick_router)
 
+# V17 (2026-09-02): "build a cul-de-sac with multiple homes" typed into the Living Room
+# builds it headlessly in UPBGE via the Neighbourhood Builder (:8196). Additive proxy.
+from src.web.v17_neighbourhood_routes import router as _v17_nb_router  # noqa: E402
+app.include_router(_v17_nb_router)
+
+# V17 (2026-09-03), Phase 1: POST /api/v17/say — one router that classifies a chat
+# sentence (grounds/house/room/check/question/command/gap/unknown) instead of the
+# browser's eleven regexes. Additive — no V2-V17 route changes.
+from src.web.v17_say_routes import router as _v17_say_router  # noqa: E402
+app.include_router(_v17_say_router)
+
 
 def _normalize_requested_version(value: str | None, source: str) -> int:
     """Normalize a canonical interface version without silently coercing input."""

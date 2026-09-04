@@ -1,509 +1,228 @@
 /*
- * V17 split-screen — RIGHT PANEL: live walkable Three.js world.
+ * V17 split-screen — RIGHT PANEL: THE WORLD.
  *
- * Pure client over the existing V16 unified pipeline API. It exposes a small
- * hook object on window.LRWorld that the left chat panel (unified_v17.js) calls;
- * the two files stay decoupled — this one never touches the chat DOM.
+ * 2026-09-02, Slice 3a. This file used to be a private Three.js scene: it drew a
+ * grey shell and a box per planned object for THIS session only, and forgot all
+ * of it the moment John started another one. Meanwhile the real world — the
+ * tower, the grounds, 128 warehouse assets, Rapier physics, walk rules, the
+ * finish system — has been running at :5173 the whole time, and the two had
+ * never been connected.
  *
- * Data sources (all V16 routes, no backend change):
- *   GET  /api/session/{id}/scene_graph          → { objects:[{objectId,name,position,rotation,scale,meshUrl,hasMesh,...}], ready, ... }
- *   GET  /api/session/{id}/mesh/{object_id}      → GLB (model/gltf-binary)
- *   WS   /api/session/{id}/materials             → { type:"material_update", object_id, mesh_url, pass, ... }
+ * John, looking at the pane: "this is where I want to see the entire game world
+ * come to life... all while I steer from the chat box." So the pane now shows
+ * THE world, not a sketch of one. Decision 13 (00-Vision-Product §2): the world
+ * is a playable game, not a viewer.
  *
- * Rendering strategy honours the spec's "structural integrity over instant
- * frames": meshes load through a sequential queue so a slow GLB never stalls the
- * others, and a failed load degrades to a labelled placeholder box rather than
- * crashing the session.
+ * WHY AN IFRAME, and not a port of the world into this page:
+ *   - :5173 IS the world (single-world rule, John 2026-07-07). Re-implementing
+ *     it here would create the second copy that BUILD-RULES G7 forbids, and the
+ *     hand-copied towerPlan drift is exactly what caused the 5173 migration.
+ *   - Decision 7 already says the front end is swappable and the world sits
+ *     underneath. An embed is that architecture, not a shortcut around it.
+ *   - It costs nothing to keep current: the world updates, the pane updates.
+ *
+ * WHAT IS NOT WIRED YET, stated rather than implied:
+ *   - Objects a session generates do NOT yet appear in the world; they land in
+ *     the warehouse and need a scene.json write to be placed. That bridge is the
+ *     next slice, and until it exists the pane shows the world as it is on disk.
+ *   - :8000 and :5173 are different origins, so this page cannot reach into the
+ *     world's scene. Steering it needs a postMessage channel on the world side.
+ *
+ * window.LRWorld keeps the same shape the chat panel already calls, so
+ * unified_v17.js needs no changes.
  */
-import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
-
 (() => {
   "use strict";
 
+  const WORLD_ORIGIN = "http://localhost:5173";
+  // John's call, 2026-09-02: "at the front gate, every time." The world already
+  // spawns outside the tower's south entrance (GROUNDS_SPAWN in spawn.ts), so
+  // loading /my-office fresh each session IS the ritual — no override needed.
+  // ?mode=play: open ON FOOT at the gate, not in the builder. Without it the
+  // world's remembered mode wins, and John's first screen was the Build panel
+  // inside the tower — the opposite of "front gate, every time".
+  // THE ONE WORLD (decision 22, John 2026-09-03: "a single persistent world for me with
+  // all of these homes, rooms, and minigames. Call it Mr. John's Neighborhood."). The
+  // pane opens at its entrance — the road's origin, looking down the cul-de-sac — and
+  // every order from the chat is the next version of this place. The old default
+  // (/my-office) is one of the places to be moved in.
+  const HOME = "mr-johns-neighborhood";
+  const WORLD_URL = `${WORLD_ORIGIN}/${HOME}?mode=play`;
+  // THE REVIEW GARAGE (John, 2026-09-03): remade props wait on pedestals inside the
+  // neighborhood's workshop garage; walk up, the door rolls up, stamp each piece. The
+  // numbers are the world's own geometry — the "H1 Garage Door" node (the seed was
+  // cul-de-sac-5) is centred at x −11.1, z −28.2 (read from the GLB, not typed) —
+  // and the spawn stands 7 m out on the drive, looking at that door. The world
+  // reads ?spawn / ?look / ?garage (modules/environment/outdoor.ts).
+  const REVIEW_GARAGE = { slug: HOME, garage: "H1", spawn: "-6,1.7,-23", look: "-11.1,1.5,-28.2" };
+  const GARAGE_URL = `${WORLD_ORIGIN}/${REVIEW_GARAGE.slug}?garage=${REVIEW_GARAGE.garage}&spawn=${REVIEW_GARAGE.spawn}&look=${REVIEW_GARAGE.look}`;
+  // A rehearsal: four finished pieces stand in as practice — every stamp lands, nothing is
+  // filed (the world skips the board when ?reviewtest= is on the address). Opened with
+  // V17's own address: /?v=17&garage=rehearsal
+  const REHEARSAL_IDS = ["a-file-cabinet-mk2-r1", "bankers-desk-lamp-solid-dome-shade-ro-r1", "oak-wine-barrel-thick-wooden-staves-s-r2", "rustic-wooden-step-stool-with-faded-g-r1"];
+  const REHEARSAL_URL = `${GARAGE_URL}&reviewtest=${REHEARSAL_IDS.join(",")}`;
+  // The paint bake-off (2026-09-03): the lamp painted by the Trellis2 projection route (66 s on
+  // the GPU) on one pedestal, the regular route's lamp beside it once it lands — John picks.
+  // "@paint" puts a piece's PAINTED file on the pedestal (its paint gate). /?v=17&garage=bakeoff
+  // three pedestals: the hybrid lamp (Trellis2 unwrap on the GPU + Hunyuan 360 paint — appears once its
+  // paint lands), the front-only Trellis2 projection lamp, and the same lamp unpainted (grey) for the shape
+  // + the regular hour-long lamp (John: "keep it — I want to compare"); a pedestal stays empty until its file lands
+  const BAKEOFF_IDS = ["bankers-desk-lamp-solid-dome-r1-hybrid@paint", "bankers-desk-lamp-solid-dome-shade-ro-r1@paint", "bankers-desk-lamp-solid-dome-shade-ro-r1-trellis@paint", "bankers-desk-lamp-solid-dome-shade-ro-r1"];
+  const BAKEOFF_URL = `${GARAGE_URL}&reviewtest=${BAKEOFF_IDS.join(",")}`;
+  const pageAsk = new URLSearchParams(window.location.search).get("garage");
+  let currentUrl = pageAsk === "rehearsal" ? REHEARSAL_URL : pageAsk === "bakeoff" ? BAKEOFF_URL : pageAsk === "1" ? GARAGE_URL : WORLD_URL;
+  let pendingNote = pageAsk ? "The garage ahead of you. Walk up (W) and the door rolls up. Click once to take the mouse, then left-click ✓ approve · right-click ✗ no" + (pageAsk === "rehearsal" ? " — practice only, nothing is filed." : pageAsk === "bakeoff" ? " — the bake-off: the painted lamp is the fast route, the grey one is the same mesh unpainted; nothing is filed." : ".") : ""; // shown once the place has loaded
+
+  const holder = document.getElementById("worldHolder");
   const canvas = document.getElementById("worldCanvas");
-  const worldModeChip = document.getElementById("worldMode");
-  const worldObjectsChip = document.getElementById("worldObjects");
-  const worldEmpty = document.getElementById("worldEmpty");
-  const enterWorldBtn = document.getElementById("enterWorld");
-  if (!canvas) return;
+  const empty = document.getElementById("worldEmpty");
+  const note = document.getElementById("worldNote");
+  const enterBtn = document.getElementById("enterWorld");
+  if (!holder) return;
 
-  // ─── Renderer / scene / camera ──────────────────────────────────────────
+  // The old canvas belonged to the scratch scene. Nothing draws to it now.
+  canvas?.remove();
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  let frame = null;
+  let ready = false;
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0a1713);
-
-  const camera = new THREE.PerspectiveCamera(60, 1, 0.05, 200);
-  camera.position.set(3.5, 1.7, 3.5);
-  camera.lookAt(0, 1.2, 0);
-
-  // Baseline lighting so streamed geometry is visible before contract lighting
-  // (contract lighting is applied by the compiled world; here we keep it simple).
-  const hemi = new THREE.HemisphereLight(0xdff0e8, 0x0a1713, 0.9);
-  scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xfff2e0, 1.1);
-  key.position.set(4, 6, 3);
-  key.castShadow = true;
-  scene.add(key);
-
-  const grid = new THREE.GridHelper(20, 20, 0x244238, 0x14271f);
-  scene.add(grid);
-
-  const worldRoot = new THREE.Group();
-  scene.add(worldRoot);
-
-  // ─── Controls: orbit (default) + first-person pointer lock ──────────────
-
-  const orbit = new OrbitControls(camera, renderer.domElement);
-  orbit.enableDamping = true;
-  orbit.target.set(0, 1.2, 0);
-
-  const fp = new PointerLockControls(camera, renderer.domElement);
-  const keys = new Set();
-  let mode = "orbit";
-  const MOVE_SPEED = 3.0;       // metres / second
-  const EYE_HEIGHT = 1.7;
-
-  function setMode(next) {
-    mode = next;
-    worldModeChip.textContent = next === "first_person" ? "WALKING" : "ORBIT";
-    orbit.enabled = next === "orbit";
+  function setNote(text) {
+    if (!note) return;
+    note.textContent = text || "";
+    note.hidden = !text;
   }
 
-  function enterFirstPerson() {
-    if (mode === "first_person") return;
-    camera.position.y = EYE_HEIGHT;
-    fp.lock();
-  }
-  fp.addEventListener("lock", () => setMode("first_person"));
-  fp.addEventListener("unlock", () => setMode("orbit"));
-
-  enterWorldBtn?.addEventListener("click", enterFirstPerson);
-  window.addEventListener("keydown", (e) => {
-    keys.add(e.code);
-    if (e.code === "Escape" && mode === "first_person") fp.unlock();
-  });
-  window.addEventListener("keyup", (e) => keys.delete(e.code));
-
-  function updateFirstPerson(delta) {
-    if (mode !== "first_person") return;
-    const step = MOVE_SPEED * delta;
-    if (keys.has("KeyW")) fp.moveForward(step);
-    if (keys.has("KeyS")) fp.moveForward(-step);
-    if (keys.has("KeyA")) fp.moveRight(-step);
-    if (keys.has("KeyD")) fp.moveRight(step);
-    camera.position.y = EYE_HEIGHT;   // basic gravity: stay at eye height on the floor
+  function showMessage(title, detail) {
+    if (!empty) return;
+    empty.innerHTML = "";
+    const h = document.createElement("div");
+    h.style.cssText = "font-size:14px;color:#cfe6dc;margin-bottom:6px;";
+    h.textContent = title;
+    const p = document.createElement("div");
+    p.textContent = detail || "";
+    empty.append(h, p);
+    empty.classList.remove("hidden");
   }
 
-  // ─── Resize ──────────────────────────────────────────────────────────────
-
-  function resize() {
-    const w = canvas.clientWidth || canvas.parentElement.clientWidth;
-    const h = canvas.clientHeight || canvas.parentElement.clientHeight;
-    if (w === 0 || h === 0) return;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  const resizeObserver = new ResizeObserver(resize);
-  resizeObserver.observe(canvas.parentElement || canvas);
-  window.addEventListener("resize", resize);
-
-  // ─── Render loop ──────────────────────────────────────────────────────────
-
-  const clock = new THREE.Clock();
-  function animate() {
-    const delta = Math.min(clock.getDelta(), 0.1);
-    updateFirstPerson(delta);
-    if (mode === "orbit") orbit.update();
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-  }
-  resize();
-  animate();
-
-  // ─── Mesh loading (sequential queue, graceful degradation) ───────────────
-
-  const loader = new GLTFLoader();
-  const loaded = new Map();          // objectId → THREE.Object3D
-  const queue = [];                  // pending { objectId, meshUrl, instance }
-  let draining = false;
-  let sessionId = "";
-
-  function setObjectCount() {
-    // Count provisional boxes too: the room is genuinely on screen once the
-    // Plan is drawn, and reporting 0 objects while three boxes are visible is
-    // the kind of counter/observation disagreement that wastes an afternoon.
-    const provisional = planBoxes.size;
-    const total = loaded.size + provisional;
-    const suffix = provisional > 0 ? ` (${provisional} planned)` : "";
-    worldObjectsChip.textContent =
-      `${total} object${total === 1 ? "" : "s"}${suffix}`;
-    if (total > 0) worldEmpty?.classList.add("hidden");
+  function mount() {
+    if (frame) return;
+    frame = document.createElement("iframe");
+    frame.id = "worldFrame";
+    frame.src = currentUrl;
+    frame.title = "CEO of My Life — the world";
+    frame.allow = "fullscreen; pointer-lock";
+    frame.setAttribute("loading", "eager");
+    frame.addEventListener("load", () => {
+      ready = true;
+      empty?.classList.add("hidden");
+      setNote(pendingNote);
+      if (pendingNote) setTimeout(() => setNote(""), 9000);
+      pendingNote = "";
+    });
+    holder.appendChild(frame);
   }
 
-  function applyTransform(obj, instance) {
-    if (!instance) return;
-    const p = instance.position || {};
-    const r = instance.rotation || {};
-    const s = instance.scale || {};
-    obj.position.set(Number(p.x) || 0, Number(p.y) || 0, Number(p.z) || 0);
-    // rotation may be Euler degrees or a quaternion-ish dict; handle both simply.
-    // w must use ?? not || — a 180-degree turn is w === 0, and `0 || 1` would
-    // silently rewrite it to the identity rotation.
-    if ("w" in r) obj.quaternion.set(Number(r.x) || 0, Number(r.y) || 0, Number(r.z) || 0, Number(r.w ?? 1));
-    else obj.rotation.set(deg(r.x), deg(r.y), deg(r.z));
-    obj.scale.set(Number(s.x) || 1, Number(s.y) || 1, Number(s.z) || 1);
-  }
-
-  function deg(v) { return ((Number(v) || 0) * Math.PI) / 180; }
-
-  function placeholderFor(instance) {
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(0.5, 0.8, 0.5),
-      new THREE.MeshStandardMaterial({ color: 0x2a6650, roughness: 0.9, transparent: true, opacity: 0.55 })
-    );
-    box.castShadow = true;
-    applyTransform(box, instance);
-    return box;
-  }
-
-  function enqueue(objectId, meshUrl, instance) {
-    if (!objectId || !meshUrl) return;
-    // Replace an existing entry (material hot-swap / regeneration).
-    queue.push({ objectId, meshUrl, instance });
-    drain();
-  }
-
-  async function drain() {
-    if (draining) return;
-    draining = true;
-    while (queue.length) {
-      const job = queue.shift();
-      try {
-        const gltf = await loader.loadAsync(`${job.meshUrl}?t=${Date.now()}`);
-        const obj = gltf.scene || gltf.scenes?.[0];
-        if (!obj) throw new Error("empty gltf");
-        obj.traverse((n) => { if (n.isMesh) { n.castShadow = true; n.receiveShadow = true; } });
-        applyTransform(obj, job.instance);
-        swapIn(job.objectId, obj);
-      } catch (err) {
-        // Degrade to a labelled placeholder rather than stalling the queue.
-        if (!loaded.has(job.objectId)) swapIn(job.objectId, placeholderFor(job.instance));
-        console.warn(`world_v17: mesh ${job.objectId} failed, placeholder used`, err);
-      }
-    }
-    draining = false;
-  }
-
-  function swapIn(objectId, obj) {
-    const prev = loaded.get(objectId);
-    if (prev) worldRoot.remove(prev);
-    worldRoot.add(obj);
-    loaded.set(objectId, obj);
-    dropPlanBox(objectId);   // the real mesh replaces its provisional box
-    setObjectCount();
-  }
-
-  // ─── Provisional plan preview ─────────────────────────────────────────────
+  // Is the world actually up?
   //
-  // /scene_graph stays empty until world_contract (stage 17), so the panel used
-  // to sit black for almost the whole run while the header promised the world
-  // would assemble as approvals passed. The Plan has known the room and every
-  // placement since spatial_reconstruction (stage 9), so draw THAT first: a real
-  // room shell and one grey box per object. Each box is replaced the moment its
-  // actual mesh lands, so the room fills in rather than appearing all at once.
+  // The first version asked with a cross-origin `fetch(..., {mode:'no-cors'})`
+  // and treated a throw as "world is down". That reported John's world dead
+  // while it was demonstrably serving — some browsers (and this app's own
+  // preview pane) block localhost XHR outright, so the probe was measuring the
+  // browser, not the server. A probe that can be wrong about the thing it
+  // probes is worse than no probe.
+  //
+  // So: mount the world and let IT answer. Its own load event is ground truth;
+  // silence past a deadline is the only thing reported as trouble, and even
+  // then the frame is left in place in case it is merely slow.
+  const LOAD_DEADLINE_MS = 12000;
+  let deadline = null;
 
-  const planRoot = new THREE.Group();
-  scene.add(planRoot);
-  const planBoxes = new Map();        // objectId -> placeholder Object3D
-  let planRoom = null;                // {width, depth, height}
-
-  const SHELL_COLOR = 0x9aa8a0;
-  const BOX_COLOR = 0xd8b57a;
-
-  function clearGroup(group) {
-    while (group.children.length) group.remove(group.children[0]);
+  function offerRetry() {
+    if (!empty || document.getElementById("worldRetry")) return;
+    const retry = document.createElement("button");
+    retry.id = "worldRetry";
+    retry.type = "button";
+    retry.textContent = "Retry";
+    retry.style.cssText = "margin-top:10px;pointer-events:auto;padding:8px 14px;border:0;border-radius:6px;background:#8edbb8;color:#07100d;font-weight:700;cursor:pointer;";
+    retry.addEventListener("click", () => {
+      empty.innerHTML = "";
+      frame?.remove();
+      frame = null;
+      ready = false;
+      check();
+    });
+    empty.appendChild(retry);
   }
 
-  // Plan space: x across 0..width, y down 0..depth, origin at a room corner.
-  // Three space: x across, z into the screen, y up, room centred on the origin.
-  function planToWorld(x, y, room) {
-    return { x: x - room.width / 2, z: y - room.depth / 2 };
-  }
+  async function check() {
+    if (ready) return;
+    showMessage("Checking your world…", `${WORLD_ORIGIN}`);
+    // Ask OUR OWN server whether the world is up. It sits on the same machine
+    // with no CORS and nothing to block it — unlike the page, which cannot be
+    // trusted here: a cross-origin fetch gets blocked, and an iframe's `load`
+    // event fires even for Chrome's own "frame failed" error page. Both of
+    // those shipped today and both lied in opposite directions.
+    let health = null;
+    try {
+      health = await fetch("/api/v17/world-health", { cache: "no-store" }).then((r) => r.json());
+    } catch (_) { /* our own server is unreachable; fall through to mounting */ }
 
-  // Windows carry a height but no sill in the Plan, so assume a conventional
-  // sill. Stated here rather than buried as a magic number, because it IS an
-  // assumption: if the Plan ever grows a sill field, read that instead.
-  const WINDOW_SILL_M = 0.9;
-
-  let planOpenings = [];
-
-  function buildWall(span, height, wallId, material) {
-    // A wall is built as rectangles AROUND its openings rather than one plane,
-    // so a door is a hole you can see (and walk) through. Solid walls made the
-    // door invisible, which in a walkable room means walking into a wall.
-    const group = new THREE.Group();
-    const mine = planOpenings
-      .filter((o) => String(o.wall || "") === wallId)
-      .map((o) => {
-        const w = Number(o.width) || 0.9;
-        const h = Number(o.height) || 2.1;
-        const centre = (Number(o.parameter) ?? 0.5) * span;
-        const sill = String(o.type || o.kind) === "door" ? 0 : WINDOW_SILL_M;
-        return {
-          left: Math.max(0, centre - w / 2),
-          right: Math.min(span, centre + w / 2),
-          sill,
-          top: Math.min(height, sill + h),
-        };
-      })
-      .sort((a, b) => a.left - b.left);
-
-    const piece = (pieceSpan, pieceHeight, alongCentre, upCentre) => {
-      if (pieceSpan <= 0.001 || pieceHeight <= 0.001) return;
-      const mesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(pieceSpan, pieceHeight), material
+    if (health && health.up === false) {
+      showMessage(
+        "Your world isn't running.",
+        health.hint || `Start ${WORLD_ORIGIN} with RESTART-MY-OFFICE.bat, then click Retry.`,
       );
-      // Local frame: x runs along the wall from -span/2, y is up.
-      mesh.position.set(alongCentre - span / 2, upCentre, 0);
-      mesh.receiveShadow = true;
-      group.add(mesh);
-    };
-
-    let cursor = 0;
-    for (const hole of mine) {
-      piece(hole.left - cursor, height, (cursor + hole.left) / 2, height / 2);
-      const holeSpan = hole.right - hole.left;
-      const alongCentre = (hole.left + hole.right) / 2;
-      if (hole.sill > 0) piece(holeSpan, hole.sill, alongCentre, hole.sill / 2);
-      piece(holeSpan, height - hole.top, alongCentre, (hole.top + height) / 2);
-      cursor = hole.right;
-    }
-    piece(span - cursor, height, (cursor + span) / 2, height / 2);
-    return group;
-  }
-
-  function buildRoomShell(room) {
-    const { width, depth, height } = room;
-    const floor = new THREE.Mesh(
-      new THREE.BoxGeometry(width, 0.04, depth),
-      new THREE.MeshStandardMaterial({ color: 0x8a8378, roughness: 0.95 })
-    );
-    floor.position.set(0, -0.02, 0);
-    floor.receiveShadow = true;
-    planRoot.add(floor);
-
-    // The dollhouse cutaway: each wall is a single-sided PLANE facing into the
-    // room. A wall between the camera and the room is therefore back-facing and
-    // gets culled, so you always look straight in from any orbit angle.
-    //
-    // This has to be planes, not slabs. BoxGeometry walls still draw their own
-    // inner face toward the camera, which renders the room as one solid block
-    // however the material is sided.
-    const wallMaterial = new THREE.MeshStandardMaterial({
-      color: SHELL_COLOR, roughness: 0.95, side: THREE.FrontSide,
-    });
-    const halfW = width / 2, halfD = depth / 2;
-    const walls = [
-      ["north", width, 0, -halfD, 0],
-      ["south", width, 0, halfD, Math.PI],
-      ["west", depth, -halfW, 0, Math.PI / 2],
-      ["east", depth, halfW, 0, -Math.PI / 2],
-    ];
-    for (const [id, span, px, pz, rotY] of walls) {
-      const group = buildWall(span, height, id, wallMaterial);
-      group.position.set(px, 0, pz);
-      group.rotation.y = rotY;
-      planRoot.add(group);
-    }
-
-    grid.visible = false;   // the real floor replaces the placeholder grid
-
-    // Frame the camera to THIS room. The default (3.5, 1.7, 3.5) was set for an
-    // empty scene and lands outside a 4.98m room, looking at it edge-on through
-    // a wall. Pull back and up so the whole floor plan is legible at a glance.
-    const reach = Math.max(width, depth);
-    camera.position.set(reach * 0.85, reach * 0.80, reach * 0.85);
-    camera.near = 0.05;
-    camera.far = Math.max(200, reach * 12);
-    camera.updateProjectionMatrix();
-    orbit.target.set(0, Math.min(0.9, height / 3), 0);
-    orbit.update();
-  }
-
-  function buildPlanBox(placement, room) {
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(placement.width, placement.height, placement.depth),
-      // Opaque and warm, so a planned object reads clearly against the shell
-      // instead of dissolving into it.
-      new THREE.MeshStandardMaterial({ color: BOX_COLOR, roughness: 0.7 })
-    );
-    const world = planToWorld(placement.x, placement.y, room);
-    box.position.set(world.x, placement.height / 2, world.z);
-    box.rotation.y = -(Number(placement.rotationDeg) || 0) * Math.PI / 180;
-    box.castShadow = true;
-    return box;
-  }
-
-  async function refreshPlanPreview() {
-    if (!sessionId) return;
-    let plan = null;
-    try {
-      const response = await fetch(`/api/session/${sessionId}/plan_preview`);
-      if (!response.ok) return;
-      plan = await response.json();
-    } catch (_) {
+      offerRetry();
       return;
     }
-    if (!plan || !plan.ready || !plan.room) return;
 
-    const room = plan.room;
-    const changed = !planRoom
-      || planRoom.width !== room.width
-      || planRoom.depth !== room.depth
-      || planRoom.height !== room.height;
-    const openingsKey = JSON.stringify(plan.openings || []);
-    if (changed || openingsKey !== JSON.stringify(planOpenings)) {
-      clearGroup(planRoot);
-      planBoxes.clear();
-      planRoom = room;
-      planOpenings = plan.openings || [];
-      buildRoomShell(room);
-    }
-
-    for (const placement of plan.objects || []) {
-      const id = placement.objectId;
-      if (!id || loaded.has(id) || planBoxes.has(id)) continue;
-      const box = buildPlanBox(placement, room);
-      planRoot.add(box);
-      planBoxes.set(id, box);
-    }
-    setObjectCount();
+    showMessage("Opening your world…", `${WORLD_ORIGIN} — the tower, the grounds, everything you've built.`);
+    mount();
+    clearTimeout(deadline);
+    deadline = setTimeout(() => {
+      if (ready) return;
+      showMessage("Your world is taking a while…", "It may still be starting. Give it a moment, or Retry.");
+      offerRetry();
+    }, LOAD_DEADLINE_MS);
   }
 
-  function dropPlanBox(objectId) {
-    const box = planBoxes.get(objectId);
-    if (!box) return;
-    planRoot.remove(box);
-    planBoxes.delete(objectId);
+  // "Walk in" now just focuses the world; the world owns its own controls.
+  enterBtn?.addEventListener("click", () => {
+    if (!ready) { check(); return; }
+    frame?.focus();
+    setNote("Click inside the world to look around · WASD to move · Esc to release the mouse.");
+    setTimeout(() => setNote(""), 6000);
+  });
+
+  // ─── The hook the chat panel calls (unchanged shape) ─────────────────────
+  //
+  // These are deliberately honest no-ops for now. The session's own meshes are
+  // not in the world yet — writing scene.json from a session is the next slice —
+  // and claiming otherwise would be the "fake progress" this slice removed.
+  // Swap the pane to another place (the review garage) or back to the front gate.
+  function goTo(url) {
+    if (currentUrl === url && ready) { frame?.focus(); return; }
+    currentUrl = url;
+    frame?.remove(); frame = null; ready = false;
+    if (empty) empty.innerHTML = "";
+    check();
   }
-
-  // ─── Scene graph polling ──────────────────────────────────────────────────
-
-  let pollTimer = null;
-  async function fetchSceneGraph() {
-    if (!sessionId) return null;
-    try {
-      const r = await fetch(`/api/session/${sessionId}/scene_graph`);
-      if (!r.ok) return null;
-      return await r.json();
-    } catch (_) {
-      return null;
-    }
-  }
-
-  async function refreshScene(force = false) {
-    // Draw the Plan first so the room appears at blockout, not at compile.
-    await refreshPlanPreview();
-    const graph = await fetchSceneGraph();
-    if (!graph || !Array.isArray(graph.objects)) return;
-    for (const instance of graph.objects) {
-      const id = instance.objectId || instance.object_id;
-      const meshUrl = instance.meshUrl || (id ? `/api/session/${sessionId}/mesh/${encodeURIComponent(id)}` : null);
-      const hasMesh = instance.hasMesh !== false;
-      if (!id || !meshUrl || !hasMesh) continue;
-      if (force || !loaded.has(id)) enqueue(id, meshUrl, instance);
-      else {
-        const obj = loaded.get(id);
-        if (obj) applyTransform(obj, instance);   // keep transforms in sync
-      }
-    }
-    if (graph.ready) stopPolling();
-  }
-
-  function startPolling() {
-    if (pollTimer) return;
-    refreshScene();
-    pollTimer = setInterval(refreshScene, 3000);
-  }
-  function stopPolling() {
-    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-  }
-
-  // ─── Materials WebSocket (pass-2 PBR hot-swap) ──────────────────────────
-
-  let materialsWs = null;
-  function connectMaterials() {
-    if (!sessionId || materialsWs) return;
-    const proto = location.protocol === "https:" ? "wss" : "ws";
-    try {
-      materialsWs = new WebSocket(`${proto}://${location.host}/api/session/${sessionId}/materials`);
-    } catch (_) {
-      return;
-    }
-    materialsWs.addEventListener("message", (event) => {
-      let payload = {};
-      try { payload = JSON.parse(event.data); } catch (_) { return; }
-      if (payload.type === "material_update" && payload.object_id) {
-        const id = payload.object_id;
-        const meshUrl = payload.mesh_url || `/api/session/${sessionId}/mesh/${encodeURIComponent(id)}`;
-        // .quaternion (carries w), NOT .rotation — that is a THREE.Euler in radians, and
-        // applyTransform's degree branch would scale it by pi/180 and flatten the object.
-        const instance = { position: loaded.get(id)?.position, rotation: loaded.get(id)?.quaternion, scale: loaded.get(id)?.scale };
-        enqueue(id, meshUrl, instance);   // reload with pass-2 materials
-      }
-    });
-    materialsWs.addEventListener("close", () => { materialsWs = null; });
-    materialsWs.addEventListener("error", () => { try { materialsWs?.close(); } catch (_) {} });
-    // Keepalive ping matching the server's ping/pong contract.
-    setInterval(() => { try { materialsWs?.readyState === 1 && materialsWs.send("ping"); } catch (_) {} }, 25000);
-  }
-
-  // ─── Public hook consumed by unified_v17.js ─────────────────────────────
 
   window.LRWorld = {
-    attach(id) {
-      sessionId = id || "";
-      if (!sessionId) return;
-      startPolling();
-      connectMaterials();
-    },
+    attach() { check(); },
+    goToGarage() { pendingNote = "The garage ahead of you. Walk up and the door rolls up. Left-click ✓ approve · right-click ✗ no · WASD to move, click to look."; goTo(GARAGE_URL); },
+    goHome() { goTo(WORLD_URL); },
+    atGarage() { return currentUrl === GARAGE_URL; },
     beginBuild() {
-      startPolling();
-      connectMaterials();
+      check();
+      setNote("Building. Finished props land in the warehouse; placing them in the world is the next step.");
     },
-    onObjectReady(_objectId) {
-      // A specific object finished; a scene-graph refresh will pick up its mesh
-      // once the contract binds it. Cheap to call repeatedly.
-      refreshScene();
-    },
-    refreshScene(force = false) {
-      refreshScene(force);
-      connectMaterials();
+    onObjectReady() { /* nothing to stream into the world yet */ },
+    refreshScene() {
+      // The world hot-reloads its own scene.json, so a finished build shows up
+      // without this page doing anything.
     },
   };
 
-  // Self-attach when the page was opened with ?session=... .
-  //
-  // unified_v17.js is a classic deferred script and runs BEFORE this module, so
-  // on the resume path it reaches world()?.attach() while window.LRWorld is
-  // still undefined and silently no-ops - the 3D panel then never polls at all.
-  // The fresh-session path only works by accident, because its awaited POST to
-  // /session/unified/start gives this module time to register first.
-  //
-  // Reading the session from the URL here removes the ordering dependency
-  // entirely rather than relying on that timing.
-  const urlSession = new URLSearchParams(location.search).get("session");
-  if (urlSession) {
-    window.LRWorld.attach(urlSession);
-  }
+  check();
 })();

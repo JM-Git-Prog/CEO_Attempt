@@ -7,8 +7,6 @@ remains in :class:`UnifiedOrchestrator`.
 from __future__ import annotations
 
 import asyncio
-import base64
-import binascii
 import hashlib
 import json
 import logging
@@ -43,15 +41,7 @@ from src.unified_pipeline.orchestrator import (
     DurableCheckpointStore,
     UnifiedOrchestrator,
 )
-from src.unified_pipeline import warehouse
-from src.unified_pipeline import model_router
-from src.unified_pipeline import stations
-from src.unified_pipeline.stage_handlers import (
-    authoritative_user_prompt,
-    build_handlers,
-    compose_dream_prompt,
-    load_revisions,
-)
+from src.unified_pipeline.stage_handlers import build_handlers
 from src.workflow_provenance import profile_for
 
 INTERFACE_VERSION = 16
@@ -184,55 +174,6 @@ def _write_meta(session_dir: Path, **changes: object) -> dict:
     return document
 
 
-# ── reference pictures (2026-09-03): pasted or dropped into the chat box ──
-_REFERENCE_MAX_BYTES = 12 * 1024 * 1024
-
-
-def _references_path(session_dir: Path) -> Path:
-    return session_dir / "artifacts" / "references.json"
-
-
-def _references(session_dir: Path) -> dict:
-    path = _references_path(session_dir)
-    if not path.is_file():
-        return {"references": []}
-    try:
-        document = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError, TypeError):
-        return {"references": []}
-    if not isinstance(document, dict) or not isinstance(document.get("references"), list):
-        return {"references": []}
-    return document
-
-
-def _write_references(session_dir: Path, document: dict) -> None:
-    path = _references_path(session_dir)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(".json.tmp")
-    temporary.write_text(json.dumps(document, indent=2), encoding="utf-8")
-    temporary.replace(path)
-
-
-def _note_reference(session_dir: Path, reference: object, message: str) -> None:
-    """The sentence sent right after a picture is that picture's note (what it is for)."""
-    if reference is None:
-        return
-    try:
-        n = int(reference)
-    except (TypeError, ValueError):
-        return
-    document = _references(session_dir)
-    for record in document["references"]:
-        if isinstance(record, dict) and record.get("id") == n:
-            record["note"] = message
-            document["last_used"] = n
-            try:
-                _write_references(session_dir, document)
-            except OSError as exc:
-                logging.getLogger("live_trace").warning("  reference #%s note not saved: %s", n, exc)
-            return
-
-
 def _append_progress(session_dir: Path, event: dict) -> None:
     """Append a progress event to the orchestrator progress.jsonl for SSE delivery."""
     progress_dir = session_dir / "orchestrator"
@@ -272,72 +213,6 @@ def _save_conversation(engine: ConversationEngine, session_dir: Path) -> None:
     _conversation_path(session_dir).write_text(
         json.dumps(document, indent=2), encoding="utf-8"
     )
-
-
-async def _start_missing_props(session_id: str, missing: list) -> list[str]:
-    """Start the $0 prop factory for anything the warehouse does not hold.
-
-    2026-09-02, John: "if we don't have assets that we can use, you can make sure
-    the chat is intelligent enough to make them and catalog them." §6 of the
-    vision has described this since June and nothing had ever checked the shelf.
-
-    Deliberately routed through the Pick Board rather than spawned here: the board
-    owns the job queue, the duplicate check and the GPU lock (the 4090 is a
-    one-person workshop), and it is the single writer of decisions — so every
-    prop still stops at John's PICK gate, and filing itself in the warehouse is
-    what the factory already does. Nothing here spends money.
-    """
-    import httpx
-
-    _log = logging.getLogger("live_trace")
-    started: list[str] = []
-    for item in missing[:6]:  # a room's worth; never an unbounded queue
-        subject = " ".join(str(item.get("name", "")).split())[:80]
-        if not re.fullmatch(r"[A-Za-z0-9 ]{2,80}", subject):
-            continue
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                response = await client.post(
-                    "http://127.0.0.1:8194/api/make",
-                    json={"subject": subject, "seeds": 4},
-                )
-            if response.status_code < 400:
-                started.append(subject)
-                _log.info("  warehouse gap -> factory queued: %s", subject)
-            else:
-                _log.info("  warehouse gap -> board refused %s: %s", subject, response.status_code)
-        except Exception as exc:
-            _log.info("  warehouse gap -> board unreachable for %s: %s", subject, exc)
-            break  # the board is down; stop trying the rest
-    return started
-
-
-def _first_user_prompt(engine: ConversationEngine) -> str:
-    """The same 'authoritative' sentence the Dream Preview stage injects."""
-    return next(
-        (turn.content.strip() for turn in engine.state.turns
-         if turn.role == "user" and turn.content.strip()),
-        "",
-    )
-
-
-def _proposal_view(engine: ConversationEngine, session_dir: Path | None = None) -> dict:
-    """What the chat shows John after every reply (V17 Slice 1, 2026-09-02):
-    the exact prompt that would render right now, plus the game and REAL ideas
-    the model already computed but the page used to throw away."""
-    proposed = engine.state.proposed_brief
-    # Slice 2a: the shown prompt must match what the renderer will build, which
-    # now includes every steering turn and John's revision requirements.
-    if session_dir is not None:
-        source = authoritative_user_prompt(session_dir)
-        revisions = load_revisions(session_dir)
-    else:
-        source, revisions = _first_user_prompt(engine), ()
-    return {
-        "render_prompt": compose_dream_prompt(proposed, source or _first_user_prompt(engine), revisions),
-        "game_concept": proposed.get("game_concept") or None,
-        "real_capabilities": proposed.get("real_capabilities") or None,
-    }
 
 
 def _load_conversation(session_id: str, session_dir: Path) -> ConversationEngine | None:
@@ -593,18 +468,11 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             queue_policy="shared_fifo_compilation",
             lifecycle="session_manager_ttl",
         )
-        # The router picks the talking model (cloud first, by the house law) — the
-        # chat no longer answers on the local 8B that shares the card with the painters.
-        engine = ConversationEngine(model=await model_router.pick("talk"))
+        engine = ConversationEngine()
         engine.state.session_id = session.session_id
-        _log.info(f"  session={session.session_id} — calling Ollama ({engine._model}) for opening...")  # noqa: SLF001
+        _log.info(f"  session={session.session_id} — calling Ollama for opening...")
         try:
-            # Where the 3D pane says he is standing, if it has reported yet. Absent
-            # is fine — the greeting then asks instead of assuming he is indoors.
-            _where = str(payload.get("where") or "").strip() or None
-            if _where:
-                _log.info("  world says: %s", _where[:120])
-            opening = await engine.generate_opening(_where)
+            opening = await engine.generate_opening()
             _log.info(f"  opening generated ({len(opening)} chars)")
         except Exception as exc:
             _log.error(f"  OPENING FAILED: {exc}\n{traceback.format_exc()[-300:]}")
@@ -617,7 +485,6 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             "interface_version": INTERFACE_VERSION,
             "state": "awaiting_description",
             "opening_message": opening,
-            "model": engine._model,  # noqa: SLF001 - the rail shows who is talking
             "events_url": f"/api/session/{session.session_id}/events",
             "materials_ws_url": f"/api/session/{session.session_id}/materials",
             "stage_urls": {
@@ -654,59 +521,10 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         except (ValueError, TypeError, AttributeError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         _log.info(f"POST /message session={session_id[:8]} msg={message[:80]}")
-        _note_reference(session_dir, payload.get("reference"), message)
-        # ── a check John asks for becomes a garage wall (the station kit, 2026-09-03) ──
-        # "which of these rooms do you like?" is not steering — it is a rule for this
-        # session: at the room-picture step, render N and let him choose in the garage.
-        rule = stations.parse_rule(message)
-        if rule:
-            stations.add_rule(session_dir, rule)
-            _log.info(f"  STATION RULE {session_id[:8]}: {rule['material']} x{rule['count']}")
-            return {
-                "session_id": session_id,
-                "interface_version": INTERFACE_VERSION,
-                "message": stations.rule_sentence(rule, already_rendered=(session_dir / "artifacts" / "canon.png").exists()),
-                "steering_stable": False,
-                "model_used": None,
-                "command": "station-rule",
-                "rule": rule,
-            }
-        # ── the model router, in the chat (John 2026-09-03: auto, override with a word) ──
-        if model_router.is_models_command(message):
-            return {
-                "session_id": session_id,
-                "interface_version": INTERFACE_VERSION,
-                "message": await model_router.models_sentence(),
-                "steering_stable": False,
-                "model_used": None,
-                "command": "models",
-            }
-        forced_name, message = model_router.override(message)
-        forced = None
-        if forced_name:
-            forced = await model_router.resolve_override(forced_name)
-            if not forced:
-                have = await model_router.garage()
-                return {
-                    "session_id": session_id,
-                    "interface_version": INTERFACE_VERSION,
-                    "message": f"I don't have \"{forced_name}\" installed. " + (
-                        "You have: " + ", ".join(have.all) + '. Say "models" for the lane I use.' if have.all else "Ollama's list is unreachable right now."
-                    ),
-                    "steering_stable": False,
-                    "model_used": None,
-                    "command": "override-missing",
-                }
         async with _locks.setdefault(session_id, asyncio.Lock()):
             engine = _load_conversation(session_id, session_dir)
             if engine is None:
                 return JSONResponse({"error": "Conversation state is unavailable"}, status_code=409)
-            # the session's own model is chosen once (a restored session chooses now); a
-            # forced model applies to THIS sentence only — every message starts from the default
-            if getattr(engine, "_session_model", None) is None:
-                engine._session_model = engine._model or await model_router.pick("talk")  # noqa: SLF001
-            engine._model = forced or engine._session_model  # noqa: SLF001
-            model_used = engine._model  # noqa: SLF001
 
             # Fix #3: Confirmation detection — enforce BEFORE calling interpret_response
             # If user clearly confirms, skip the LLM call entirely and extract brief immediately
@@ -725,38 +543,17 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 _write_meta(session_dir, state="brief_ready")
                 _save_conversation(engine, session_dir)
                 _launch_pipeline(session_id, session_dir, brief_document)
-                stock = warehouse.check(
-                    brief_document.get("object_manifest", []),
-                    str(brief_document.get("room_purpose", "")),
-                )
-                stock["started"] = await _start_missing_props(session_id, stock["missing"])
                 return {
                     "session_id": session_id,
                     "interface_version": INTERFACE_VERSION,
                     "message": "Brief locked. Starting pipeline...",
                     "steering_stable": True,
                     "turn_count": engine.state.turn_count,
-                    "model_used": model_used,
                     "brief": brief_document,
-                    "warehouse": stock,
-                    "warehouse_message": warehouse.sentence(stock),
-                    "render_prompt": compose_dream_prompt(
-                        brief_document,
-                        authoritative_user_prompt(session_dir) or _first_user_prompt(engine),
-                        load_revisions(session_dir),
-                    ),
                 }
 
             try:
-                # The room brain has no eyes. /api/v17/say already looked at any
-                # attached photo with minicpm-v; the page carries that one line here
-                # so this model stops answering "this one" from its own defaults.
-                # (2026-09-03: a brick mansion produced a teal living room.)
-                response = await engine.interpret_response(
-                    message,
-                    str(payload.get("picture_summary") or "").strip() or None,
-                    str(payload.get("where") or "").strip() or None,
-                )
+                response = await engine.interpret_response(message)
                 _log.info(f"  response ({len(response)} chars): {response[:100]}")
             except Exception as exc:
                 _log.error(f"  MESSAGE FAILED: {exc}\n{traceback.format_exc()[-300:]}")
@@ -767,8 +564,6 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 "message": response,
                 "steering_stable": engine.is_stable,
                 "turn_count": engine.state.turn_count,
-                "model_used": model_used,
-                **_proposal_view(engine, session_dir),
             }
             if engine.is_stable:
                 _log.info("  steering stabilized — extracting Brief")
@@ -784,14 +579,6 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 _log.info(f"  Brief saved — {len(brief_document.get('object_manifest', []))} objects")
                 # Kick off the durable pipeline
                 _launch_pipeline(session_id, session_dir, brief_document)
-                # ...and check the shelf before making anything from scratch.
-                stock = warehouse.check(
-                    brief_document.get("object_manifest", []),
-                    str(brief_document.get("room_purpose", "")),
-                )
-                stock["started"] = await _start_missing_props(session_id, stock["missing"])
-                result["warehouse"] = stock
-                result["warehouse_message"] = warehouse.sentence(stock)
             _save_conversation(engine, session_dir)
             return result
 
@@ -816,20 +603,6 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             return JSONResponse({"error": "invalid request"}, status_code=400)
 
         _log.info(f"  game_message[{session_id[:8]}]: {message[:60]}")
-        _note_reference(session_dir, payload.get("reference"), message)
-
-        # a check asked for mid-build is a station rule too (the kit, 2026-09-03) —
-        # it takes effect the next time that picture is rendered
-        rule = stations.parse_rule(message)
-        if rule:
-            stations.add_rule(session_dir, rule)
-            _log.info(f"  STATION RULE {session_id[:8]} (mid-build): {rule['material']} x{rule['count']}")
-            return {
-                "session_id": session_id,
-                "message": stations.rule_sentence(rule, already_rendered=(session_dir / "artifacts" / "canon.png").exists()),
-                "command": "station-rule",
-                "rule": rule,
-            }
 
         # Get the brief for context
         brief_path = session_dir / "artifacts" / "brief.json"
@@ -843,10 +616,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             except Exception:
                 pass
 
-        # Use Ollama for game design conversation — the router's choice (cloud first,
-        # by the house law), not a hard-coded local model sharing the card with the
-        # painters. (2026-09-03, Phase 1: was hard-coded to llama3.1:latest.)
-        model_used = await model_router.pick("talk")
+        # Use Ollama for game design conversation
         try:
             import httpx
             ollama_prompt = (
@@ -859,7 +629,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 resp = await client.post(
                     "http://127.0.0.1:11434/api/generate",
-                    json={"model": model_used, "prompt": ollama_prompt, "stream": False,
+                    json={"model": "llama3.1:latest", "prompt": ollama_prompt, "stream": False,
                           "options": {"temperature": 0.8, "num_predict": 150}},
                 )
                 if resp.status_code == 200:
@@ -881,7 +651,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
         game_history.append({"role": "assistant", "content": response})
         game_conv_path.write_text(json.dumps(game_history, indent=2), encoding="utf-8")
 
-        return {"message": response, "turn": len(game_history) // 2, "model_used": model_used}
+        return {"message": response, "turn": len(game_history) // 2}
 
     @router.post("/api/session/{session_id}/approve/{stage}")
     async def unified_approve(session_id: str, stage: str, request: Request):
@@ -1270,473 +1040,6 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                     continue
         except WebSocketDisconnect:
             return
-
-    @router.get("/api/session/{session_id}/conversation")
-    async def unified_conversation(session_id: str):
-        """V17 Slice 1 (2026-09-02): everything a reload needs to put the chat
-        back — the saved turns plus the session's real state — so the page never
-        has to guess which lane it is in or sit on RESUMING forever."""
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        meta = _meta(session_dir)
-        if meta.get("interface_version") != INTERFACE_VERSION:
-            return JSONResponse({"error": "Unified session not found"}, status_code=404)
-
-        def _turns(path: Path, key: str | None) -> list[dict]:
-            try:
-                raw = json.loads(path.read_text(encoding="utf-8"))
-            except (OSError, ValueError, TypeError):
-                return []
-            items = raw.get(key, []) if key else raw
-            return [
-                {"role": str(t.get("role", "")), "content": str(t.get("content", ""))}
-                for t in (items if isinstance(items, list) else []) if isinstance(t, dict)
-            ]
-
-        turns = _turns(_conversation_path(session_dir), "turns")
-        game_turns = _turns(session_dir / "game_conversation.json", None)
-        proposal: dict = {}
-        model = None
-        if any(t["role"] == "user" for t in turns):
-            engine = _load_conversation(session_id, session_dir)
-            if engine is not None:
-                proposal = _proposal_view(engine, session_dir)
-                model = getattr(engine, "_session_model", None) or engine._model  # noqa: SLF001
-        if model is None:
-            model = await model_router.pick("talk")  # what the next sentence will use
-        # Slice 2a: a restart is not a crash. SessionManager.mark_failed_on_restart
-        # stamps every unfinished session as error/server_restart at boot, which
-        # the page then reported as a failed build. Say what actually happened.
-        error = meta.get("error")
-        restarted = "server_restart" in str(error or "")
-        return {
-            "session_id": session_id,
-            "state": str(meta.get("state", "unknown")),
-            "error": ("the Living Room was restarted while this build was running"
-                      if restarted else error),
-            "restarted": restarted,
-            "pending_stage": meta.get("pending_stage") or meta.get("approval_stage"),
-            "pipeline_attached": session_id in _orchestrators,
-            "revisions": list(load_revisions(session_dir)),
-            "turns": turns,
-            "game_turns": game_turns,
-            "model": model,
-            **proposal,
-        }
-
-    @router.post("/api/session/{session_id}/retry")
-    async def unified_retry(session_id: str):
-        """V17 Slice 1 (2026-09-02): "Try again" after a failed stage.
-
-        The orchestrator re-runs a FAILED checkpoint on its next run() — only
-        COMPLETED checkpoints are skipped (orchestrator._run_unit) — so a retry
-        is: clear the error state and run again from where it stopped. After a
-        server restart the orchestrator is not attached; rebuild it from the
-        brief on disk exactly as the first launch did.
-        """
-        _log = logging.getLogger("live_trace")
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        meta = _meta(session_dir)
-        if meta.get("interface_version") != INTERFACE_VERSION:
-            return JSONResponse({"error": "Unified session not found"}, status_code=404)
-        state = str(meta.get("state", "unknown"))
-        if state != "error":
-            return JSONResponse(
-                {"error": f"Nothing to retry — the session is {state}.", "state": state},
-                status_code=409,
-            )
-        running = _tasks.get(session_id)
-        if running is not None and not running.done():
-            return JSONResponse({"error": "The build is still running."}, status_code=409)
-
-        orchestrator = _orchestrators.get(session_id)
-        if orchestrator is None:
-            try:
-                brief = json.loads(
-                    (session_dir / "artifacts" / "brief.json").read_text(encoding="utf-8")
-                )
-            except (OSError, ValueError, TypeError):
-                return JSONResponse({"error": "No saved brief to retry from."}, status_code=409)
-            _log.info("  RETRY (rebuild after restart) for %s", session_id[:8])
-            _write_meta(session_dir, state="running", error=None,
-                        retried_at=datetime.now(timezone.utc).isoformat())
-            _launch_pipeline(session_id, session_dir, brief)
-            return {"session_id": session_id, "state": "running", "mode": "rebuilt"}
-
-        _log.info("  RETRY (resume) for %s", session_id[:8])
-        _write_meta(session_dir, state="running", error=None,
-                    retried_at=datetime.now(timezone.utc).isoformat())
-
-        async def _retry_pipeline():
-            try:
-                result = await orchestrator.run()
-                _log.info("  PIPELINE RESULT after retry: state=%s stage=%s", result.state, result.stage)
-                if result.state == "awaiting_approval":
-                    _write_meta(session_dir, state="awaiting_approval", pending_stage=result.stage)
-                    _append_progress(session_dir, {
-                        "session_id": session_id,
-                        "current_stage": result.stage,
-                        "state": "awaiting_approval",
-                        "plan_revision": orchestrator.current_plan_revision,
-                        "canonical_hash": result.canonical_hash,
-                        "finality": "provisional",
-                        "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
-                    })
-                elif result.state == "completed":
-                    _write_meta(session_dir, state="completed")
-                elif result.state == "awaiting_external":
-                    _write_meta(session_dir, state="awaiting_external", pending_stage=result.stage)
-                else:
-                    _write_meta(session_dir, state=result.state)
-            except Exception as exc:
-                _log.error("  PIPELINE ERROR after retry: %s\n%s", exc, traceback.format_exc()[-400:])
-                _write_meta(session_dir, state="error", error=str(exc))
-
-        _tasks[session_id] = asyncio.create_task(_retry_pipeline())
-        return {"session_id": session_id, "state": "running", "mode": "resumed"}
-
-    @router.post("/api/session/{session_id}/revise")
-    async def unified_revise(session_id: str, request: Request):
-        """V17 Slice 2a (2026-09-02): "Something's wrong" actually changes the picture.
-
-        Rejecting a picture used to record an opinion and nothing else: the
-        approval was stored as not-approved with the reason as a diagnostic, the
-        stage stayed parked, and the same image sat there (orchestrator
-        _approval_checkpoint). John's only real options were approve it or start
-        over. Now the reason is appended to the durable revision list that both
-        prompt composers read, the picture stage and everything after it are
-        archived (never overwritten) with a fresh Plan revision, and the pipeline
-        re-runs — so a correction produces a different picture.
-        """
-        _log = logging.getLogger("live_trace")
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
-            return JSONResponse({"error": "Unified session not found"}, status_code=404)
-        try:
-            payload = await request.json()
-            reason = " ".join(str((payload or {}).get("reason", "")).split())[:300]
-        except Exception:
-            reason = ""
-        if not reason:
-            return JSONResponse(
-                {"error": "Say what's wrong — that sentence is what gets rendered next."},
-                status_code=400,
-            )
-        stage = str((payload or {}).get("stage", "canon_generation"))
-        return await _revise(session_id, session_dir, reason, stage)
-
-    async def _revise(session_id: str, session_dir, reason: str, stage: str, record: bool = True):
-        """The revise body, shared with the garage wall's "none of these" (2026-09-03).
-
-        record=False re-renders without adding the reason to the durable revision
-        list — "none of these" is a re-roll, not a correction the prompt should carry.
-        """
-        _log = logging.getLogger("live_trace")
-        if stage not in {"canon_generation", "dream_preview"}:
-            return JSONResponse({"error": f"Cannot revise {stage}"}, status_code=400)
-        orchestrator = _orchestrators.get(session_id)
-        if orchestrator is None:
-            return JSONResponse(
-                {"error": "This build is not attached any more — press Try again first."},
-                status_code=409,
-            )
-        running = _tasks.get(session_id)
-        if running is not None and not running.done():
-            return JSONResponse({"error": "The build is still running."}, status_code=409)
-
-        # Durable, append-only: John's taste is an asset, and a re-render must be
-        # able to see every correction, not just the newest one.
-        artifacts = session_dir / "artifacts"
-        artifacts.mkdir(parents=True, exist_ok=True)
-        revisions_path = artifacts / "revisions.json"
-        try:
-            document = json.loads(revisions_path.read_text(encoding="utf-8"))
-            if not isinstance(document, dict) or not isinstance(document.get("revisions"), list):
-                raise ValueError
-        except (OSError, ValueError, TypeError):
-            document = {"revisions": []}
-        if record:
-            document["revisions"].append({
-                "reason": reason,
-                "stage": stage,
-                "recorded_at": datetime.now(timezone.utc).isoformat(),
-            })
-            temporary = revisions_path.with_suffix(".json.tmp")
-            temporary.write_text(json.dumps(document, indent=2), encoding="utf-8")
-            temporary.replace(revisions_path)
-        _log.info("  REVISE %s (%s%s): %s", session_id[:8], stage, "" if record else ", re-roll", reason[:80])
-
-        try:
-            await orchestrator.invalidate_from(
-                stage,
-                reason=f"John: {reason}",
-                new_plan_revision=orchestrator.current_plan_revision + 1,
-            )
-        except (KeyError, ValueError, RuntimeError, OSError) as exc:
-            return JSONResponse({"error": f"Could not reopen that stage: {exc}"}, status_code=409)
-
-        _write_meta(session_dir, state="running", error=None,
-                    revised_at=datetime.now(timezone.utc).isoformat())
-
-        async def _rerun():
-            try:
-                result = await orchestrator.run()
-                _log.info("  PIPELINE RESULT after revise: state=%s stage=%s", result.state, result.stage)
-                if result.state == "awaiting_approval":
-                    _write_meta(session_dir, state="awaiting_approval", pending_stage=result.stage)
-                    _append_progress(session_dir, {
-                        "session_id": session_id,
-                        "current_stage": result.stage,
-                        "state": "awaiting_approval",
-                        "plan_revision": orchestrator.current_plan_revision,
-                        "canonical_hash": result.canonical_hash,
-                        "finality": "provisional",
-                        "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
-                    })
-                elif result.state == "completed":
-                    _write_meta(session_dir, state="completed")
-                elif result.state == "awaiting_external":
-                    _write_meta(session_dir, state="awaiting_external", pending_stage=result.stage)
-                else:
-                    _write_meta(session_dir, state=result.state)
-            except Exception as exc:
-                _log.error("  PIPELINE ERROR after revise: %s\n%s", exc, traceback.format_exc()[-400:])
-                _write_meta(session_dir, state="error", error=str(exc))
-
-        _tasks[session_id] = asyncio.create_task(_rerun())
-        return {
-            "session_id": session_id,
-            "state": "running",
-            "revisions": [item["reason"] for item in document["revisions"]],
-        }
-
-    @router.get("/api/session/{session_id}/wall")
-    async def unified_wall(session_id: str):
-        """The garage wall for this session (the station kit, 2026-09-03).
-
-        The page polls this while the pipeline waits at the picture gate. It says
-        which wall is up, and — the moment the board holds John's answer — applies
-        it, once:
-          choose → the picture he clicked becomes canon.png, the picture gate is
-                   approved in his name, the build continues;
-          more   → (John: "#2 while in the background working on #1") three new
-                   ones start rendering with the same words right away, and the
-                   page asks what should change — a fix he types re-renders again.
-        """
-        _log = logging.getLogger("live_trace")
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
-            return JSONResponse({"error": "Unified session not found"}, status_code=404)
-        wall = stations.open_wall(session_dir)
-        if not wall:
-            last = (stations.load(session_dir)["walls"] or [None])[-1]
-            return {"session_id": session_id, "wall": None, "last": last}
-        try:
-            answer = await stations.wall_answer(wall["id"])
-        except Exception as exc:
-            return {"session_id": session_id, "wall": wall, "answer": None, "board": f"unreachable: {exc}"}
-        if not answer:
-            return {"session_id": session_id, "wall": wall, "answer": None}
-
-        running = _tasks.get(session_id)
-        if running is not None and not running.done():
-            return {"session_id": session_id, "wall": wall, "answer": answer, "applied": False, "why": "the build is still running"}
-        orchestrator = _orchestrators.get(session_id)
-        if orchestrator is None:
-            return JSONResponse({"error": "This build is not attached any more — press Try again first."}, status_code=409)
-
-        if answer.get("action") == "choose":
-            try:
-                stations.apply_choice(session_dir, wall, str(answer.get("tag")))
-            except (ValueError, OSError) as exc:
-                return JSONResponse({"error": f"Could not use that picture: {exc}"}, status_code=409)
-            stations.mark_applied(session_dir, wall["id"], answer)
-            try:
-                with orchestrator.approval_writer("garage-wall") as writer_token:
-                    decision = orchestrator.record_approval(
-                        stage="canon_approval", writer_id="garage-wall", writer_token=writer_token,
-                        plan_revision=orchestrator.current_plan_revision, approved=True, object_id=None,
-                        feedback=f"chosen on the garage wall: {answer.get('tag')}",
-                    )
-            except (ValueError, RuntimeError, KeyError, TypeError, OSError) as exc:
-                return JSONResponse({"error": str(exc)}, status_code=409)
-            _log.info("  WALL %s: chose %s → canon.png, picture gate approved, resuming", session_id[:8], answer.get("tag"))
-
-            async def _resume_after_wall():
-                try:
-                    result = await orchestrator.run()
-                    _log.info("  PIPELINE RESULT after wall: state=%s stage=%s", result.state, result.stage)
-                    if result.state == "awaiting_approval":
-                        _write_meta(session_dir, state="awaiting_approval", pending_stage=result.stage)
-                        _append_progress(session_dir, {
-                            "session_id": session_id, "current_stage": result.stage, "state": "awaiting_approval",
-                            "plan_revision": orchestrator.current_plan_revision, "canonical_hash": result.canonical_hash,
-                            "finality": "provisional", "message": f"Waiting for approval on {result.stage.replace('_', ' ')}",
-                        })
-                    elif result.state == "completed":
-                        _write_meta(session_dir, state="completed")
-                    elif result.state == "awaiting_external":
-                        _write_meta(session_dir, state="awaiting_external", pending_stage=result.stage)
-                    else:
-                        _write_meta(session_dir, state=result.state)
-                except Exception as exc:
-                    _log.error("  PIPELINE ERROR after wall: %s\n%s", exc, traceback.format_exc()[-400:])
-                    _write_meta(session_dir, state="error", error=str(exc))
-
-            _tasks[session_id] = asyncio.create_task(_resume_after_wall())
-            _write_meta(session_dir, state="running")
-            return {"session_id": session_id, "wall": wall, "answer": answer, "applied": True, "action": "choose", "decision": decision.to_dict()}
-
-        # "more": new ones now, same words; the page asks what should change
-        stations.mark_applied(session_dir, wall["id"], answer)
-        _log.info("  WALL %s: none of these — rendering new ones, asking what should change", session_id[:8])
-        out = await _revise(session_id, session_dir, "none of these — new ones", "canon_generation", record=False)
-        if isinstance(out, JSONResponse):
-            return out
-        return {"session_id": session_id, "wall": wall, "answer": answer, "applied": True, "action": "more", "ask_fix": True}
-
-    @router.post("/api/session/{session_id}/note")
-    async def unified_note(session_id: str, request: Request):
-        """V17 Slice 2a (2026-09-02): a note to Claude, from inside the app.
-
-        John asked whether the chat box could be a direct line to Claude so he
-        could improve V17 without leaving V17. A live agent inside the page would
-        mix two jobs in one box, bill API rates, and die with the server it just
-        edited — so instead, a message that starts with @claude is filed here,
-        into a file Claude reads at the start of a session. Same one box, no
-        second input, no spend, and the note carries what was on screen when it
-        was written.
-        """
-        _log = logging.getLogger("live_trace")
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        try:
-            payload = await request.json()
-            text = " ".join(str((payload or {}).get("text", "")).split())[:1000]
-        except Exception:
-            text = ""
-        if not text:
-            return JSONResponse({"error": "The note was empty."}, status_code=400)
-        context = " ".join(str((payload or {}).get("context", "")).split())[:200]
-        stamp = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M")
-        line = (
-            f"- [ ] **{stamp}** — {text}\n"
-            f"      _session {session_id[:8]}"
-            f"{', on screen: ' + context if context else ''}_\n"
-        )
-        notes_path = Path(__file__).resolve().parents[2] / "NOTES-FOR-CLAUDE.md"
-        try:
-            if not notes_path.exists():
-                notes_path.write_text(
-                    "# Notes for Claude — written from inside V17\n\n"
-                    "John types `@claude ...` in the V17 chat and the line lands here.\n"
-                    "Claude reads this at the start of a session and ticks items off.\n\n",
-                    encoding="utf-8",
-                )
-            with notes_path.open("a", encoding="utf-8") as handle:
-                handle.write(line)
-        except OSError as exc:
-            return JSONResponse({"error": f"Could not save the note: {exc}"}, status_code=500)
-        _log.info("  NOTE for Claude [%s]: %s", session_id[:8], text[:80])
-        return {"ok": True, "saved_to": str(notes_path), "note": text}
-
-    @router.post("/api/session/{session_id}/reference")
-    async def unified_reference(session_id: str, request: Request):
-        """A reference picture, pasted or dropped into the chat box (2026-09-03).
-
-        The bytes are kept exactly as they came (PNG or JPEG) under
-        artifacts/references/<n>.<ext>; the sentence John types next becomes
-        the picture's note through /message or /game_message.
-        """
-        _log = logging.getLogger("live_trace")
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        if _meta(session_dir).get("interface_version") != INTERFACE_VERSION:
-            return JSONResponse({"error": "Unified session not found"}, status_code=404)
-        try:
-            payload = await request.json()
-            image = str((payload or {}).get("image", "")).strip()
-            name = " ".join(str((payload or {}).get("name", "")).split())[:200]
-        except Exception:
-            return JSONResponse({"error": "invalid request"}, status_code=400)
-        if image.startswith("data:"):
-            image = image.split(",", 1)[1] if "," in image else ""
-        if not image:
-            return JSONResponse({"error": "image is required"}, status_code=400)
-        if len(image) > _REFERENCE_MAX_BYTES * 4 // 3 + 4:
-            return JSONResponse({"error": "That picture is over 12 MB."}, status_code=413)
-        try:
-            raw = base64.b64decode(image)
-        except (binascii.Error, ValueError):
-            return JSONResponse({"error": "The picture data was not valid base64."}, status_code=400)
-        if len(raw) > _REFERENCE_MAX_BYTES:
-            return JSONResponse({"error": "That picture is over 12 MB."}, status_code=413)
-        if raw.startswith(b"\x89PNG\r\n\x1a\n"):
-            suffix = ".png"
-        elif raw.startswith(b"\xff\xd8\xff"):
-            suffix = ".jpg"
-        else:
-            return JSONResponse({"error": "PNG or JPEG pictures only."}, status_code=400)
-
-        folder = session_dir / "artifacts" / "references"
-        folder.mkdir(parents=True, exist_ok=True)
-        document = _references(session_dir)
-        records = document["references"]
-        n = max([int(r.get("id", 0)) for r in records if isinstance(r, dict)] + [0]) + 1
-        while (folder / f"{n}.png").exists() or (folder / f"{n}.jpg").exists():
-            n += 1
-        target = folder / f"{n}{suffix}"
-        try:
-            with target.open("xb") as handle:   # create-only: never overwrite a picture
-                handle.write(raw)
-            records.append({
-                "id": n,
-                "file": str(target),
-                "name": name,
-                "added_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
-                "note": "",
-            })
-            _write_references(session_dir, document)
-        except OSError as exc:
-            return JSONResponse({"error": f"Could not save the picture: {exc}"}, status_code=500)
-        _log.info("  REFERENCE #%s [%s]: %s bytes %s", n, session_id[:8], len(raw), suffix)
-        return {"id": n, "url": f"/api/session/{session_id}/reference/{n}", "count": len(records)}
-
-    @router.get("/api/session/{session_id}/reference/{n}")
-    async def unified_reference_file(session_id: str, n: int):
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        folder = session_dir / "artifacts" / "references"
-        for suffix, media_type in ((".png", "image/png"), (".jpg", "image/jpeg")):
-            target = folder / f"{n}{suffix}"
-            if target.is_file():
-                return FileResponse(str(target), media_type=media_type, headers={"Cache-Control": "no-store"})
-        return JSONResponse({"error": "Reference picture not found"}, status_code=404)
-
-    @router.get("/api/session/{session_id}/references")
-    async def unified_references(session_id: str):
-        try:
-            session_dir = _session_dir(output_root(), session_id)
-        except ValueError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-        return _references(session_dir)
 
     @router.get("/api/session/{session_id}/health")
     async def unified_health(session_id: str):
