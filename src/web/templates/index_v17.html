@@ -168,7 +168,7 @@
       <canvas id="worldCanvas"></canvas>
       <div class="world-hud">
         <span class="chip" id="worldMode">THE WORLD</span>
-        <span class="chip" id="worldObjects">localhost:5173</span>
+        <span class="chip" id="worldObjects">127.0.0.1:5173</span>
       </div>
       <div class="world-note" id="worldNote" hidden></div>
       <div class="world-empty" id="worldEmpty">Opening your world…</div>
@@ -314,15 +314,15 @@
        keeps executing a cached module and edits appear to have no effect. That
        cost two debugging rounds on 2026-08-31: the served bytes were new while
        the running module was old. Bump this token on every JS edit. -->
-  <script src="/static/unified_v17.js?v=27" defer></script>
+  <script src="/static/unified_v17.js?v=31" defer></script>
   <!-- No longer a module: the world pane is an embed of :5173, so it needs no
        Three.js import map of its own (the world brings its own engine). -->
-  <script src="/static/world_v17.js?v=23" defer></script>
+  <script src="/static/world_v17.js?v=25" defer></script>
   <!-- Neighbourhood orders (2026-09-02): "build a cul-de-sac with multiple homes" in the
        composer builds headlessly in UPBGE, lands as a new place in THE world (:5173) and the
        pane walks into it. Since Phase 1 (2026-09-03) it listens to NOTHING: it exposes its
        workers on window.LRNeighbourhood and unified_v17.js calls them after /api/v17/say
        has decided what the sentence is. -->
-  <script src="/static/neighbourhood_v17.js?v=16" defer></script>
+  <script src="/static/neighbourhood_v17.js?v=17" defer></script>
 </body>
 </html>

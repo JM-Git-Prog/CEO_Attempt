@@ -62,7 +62,10 @@
   const shownArtifacts = new Set();
 
   const APP_VERSION = String(window.APP_VERSION || 16);
-  const WORLD_ORIGIN = "http://localhost:5173"; // world_v17.js's origin literal for its iframe — kept in sync there
+  const WORLD_ORIGIN = "http://127.0.0.1:5173"; // world_v17.js's origin literal for its iframe — kept in sync there
+  // 127.0.0.1 not localhost: this string is also the postMessage origin CHECK, so it must
+  // match whatever host the iframe was actually loaded from, or every world report is
+  // silently rejected and the chat goes blind again (2026-09-04).
 
   // ─── Words, not codes ───────────────────────────────────────────────────
 
@@ -706,7 +709,9 @@
     return parts.join(" · ");
   }
 
-  async function routeMessage(message) {
+  // `answered` carries John's reply when the router asked which he meant:
+  // { forced_kind, guessed_kind }. It skips the classifier and is logged as a correction.
+  async function routeMessage(message, answered) {
     // the reference picture id rides with this sentence; it is only taken (cleared) once
     // we actually know which lane is going to use it, so a rejected/unknown sentence
     // leaves it in place for the next try.
@@ -717,7 +722,8 @@
       try {
         data = await jsonRequest("/api/v17/say", {
           method: "POST",
-          body: JSON.stringify({ session: sessionId, message, reference, world: worldState }),
+          body: JSON.stringify({ session: sessionId, message, reference, world: worldState,
+                                 ...(answered || {}) }),
         });
       } catch (error) {
         appendMessage("system", `Couldn't reach the router: ${error.message}. Nothing was sent.`);
@@ -754,9 +760,40 @@
           else appendMessage("system", `Unknown command "${cmd.name}" — nothing happened.`);
           return;
         }
-        case "unknown":
-          appendMessage("system", `${data.reason || "Not sure what that means."} Did you mean something inside a room, or something out on the block?`);
+        case "problem":
+          // a complaint about the app is never an order (2026-09-04). Say what the chat
+          // can actually see from here, and build nothing.
+          appendMessage("system", worldState
+            ? `Noted: ${data.reason || "something looks wrong."} The world last told me you were ${worldState.standing}.`
+            : "Noted — and I can confirm it from this side: the 3D pane has not reported in at all, so it is blank or not running. Nothing was built.");
           return;
+        case "unknown": {
+          // ASK BEFORE ACTING (John, 2026-09-04). The router stopped rather than spend a
+          // render pass on a coin flip. Show its question with real answers; clicking one
+          // re-sends the SAME sentence with the kind he chose, and the router writes that
+          // down as a correction — the sentence, the wrong guess, and the right answer in
+          // one row. The old hardcoded "did you mean a room or the block?" asked a
+          // question he had no way to answer and learned nothing from.
+          const clarify = data.clarify;
+          if (!clarify || !Array.isArray(clarify.options) || !clarify.options.length) {
+            appendMessage("system", `${data.reason || "Not sure what that means."} Say it another way and I'll have another go.`);
+            return;
+          }
+          const item = appendMessage("system gate", clarify.question);
+          clarify.options.forEach((opt) => {
+            if (!opt || !opt.kind || !opt.label) return;
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "walk";
+            btn.textContent = opt.label;
+            btn.addEventListener("click", () => {
+              item.querySelectorAll("button").forEach((b) => { b.disabled = true; });
+              routeMessage(message, { forced_kind: opt.kind, guessed_kind: clarify.guessed });
+            });
+            item.append(" ", btn);
+          });
+          return;
+        }
         default:
           appendMessage("system", `The router returned a kind I don't know ("${data.kind}") — nothing was sent.`);
           return;
@@ -859,6 +896,11 @@
     sessionId = id;
     sessionLabel.textContent = id.slice(0, 8);
     setStrip("Resuming", "reading the saved conversation");
+    // Ask the world where we are on a RELOAD too, not only on a fresh session
+    // (2026-09-04). Reloading a page that already carries ?session= takes this path,
+    // which never asked — so every sentence typed after a refresh went out with no
+    // idea which room John was standing in, and the pane's silence read as "fine".
+    askWorld();
     let conv = null;
     try {
       conv = await jsonRequest(`/api/session/${id}/conversation`);

@@ -1,1 +1,15 @@
-V17 one box: the model routes every sentence, and the panes finally know each other (2026-09-03/04). New POST /api/v17/say classifies grounds/house/room/check/question/command/gap with the cloud lane and replaces eleven browser regexes plus the second capture-phase submit handler, which were auctioning John's sentences between two brains. minicpm-v now glances at every pasted photo (1.7s) and gemma4:cloud reads a house order out of it; that reading reaches the builder as words instead of being shown and dropped. The room brain is no longer blind - it receives what the photo showed and where John is standing. The world reports its place and room over postMessage; the greeting waits for it and asks rather than assuming. game_message unpinned from llama3.1 to the router. Vision schema widened for column count/colour and roof shape; key-name aliases and essential-only validation so a correct cloud answer is not binned for calling kind "classification" or omitting "reason". Fails closed: unknown is said out loud, never a silent fallback to the room chat.
+V17: a new house order takes down its own earlier wall, plus a morning of parallel-session work that was never committed
+
+WHAT THIS SESSION CHANGED AND VERIFIED (one file):
+
+src/web/v17_neighbourhood_routes.py - _post_station now calls a new _withdraw_superseded_house_walls after hanging a wall. Every house order hung a wall on the garage and nothing ever expired, so four orders for the SAME colonial in one morning left four walls waiting; with three older ones already up, seven unanswered walls competed for the three slots the garage displays, and nothing on a wall said which order it came from. John could walk in and never find the set worth choosing from. The helper withdraws only this route's own unanswered house- walls (it checks made_by is v17-neighbourhood, so another line's wall is never touched) and uses the new withdraw action rather than choose, because choose BUILDS the house on that picture. It runs AFTER the post and swallows every exception, so a board that cannot withdraw yet can never stop a new wall being hung. Verified: parses, helper defined and called. Requires the Pick Board change in the ceo-of-my-life-inc repo (commit b9019a6) and a restart of both services before it does anything.
+
+ALSO CARRIED, AND NOT WRITTEN BY THIS SESSION - fourteen files modified 2026-09-04 between 08:42 and 12:12, uncommitted since the last commit at 06:43 that morning:
+
+  src/unified_pipeline/event_log.py, model_router.py, taxonomy_resolver.py, conversation.py
+  src/web/v17_say_routes.py, unified_routes.py
+  src/web/static/unified_v17.js, neighbourhood_v17.js, world_v17.js
+  src/web/templates/index_v17.html
+  RUN-BRING-UP-DETACHED.bat, RUN-LIVING-ROOM-DETACHED.bat, RUN-VERIFY-EVENT-LOG.bat, VERIFY-EVENT-LOG.py
+
+This session did not read those diffs and is not describing what they do beyond what the project's own notes record: a parallel session added event_log.py and wired it into v17_say_routes.py, and taxonomy_resolver.py was given a step that writes every bind and every miss to CEO-3D-World/tools/taxonomy-misses.jsonl. Treat that as provenance, not as a verified summary. They are committed here because a morning of real work had been sitting on one disk with no history, not because anyone signed them off.

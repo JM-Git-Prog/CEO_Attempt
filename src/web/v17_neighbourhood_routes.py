@@ -45,8 +45,23 @@ _FILE = re.compile(r"[a-z0-9_\-]{1,40}\.png")
 _SLUG = re.compile(r"[a-z0-9][a-z0-9\-]{0,40}")
 
 
-def _builder_down(exc: Exception) -> JSONResponse:
-    return JSONResponse({"error": f"Neighbourhood Builder unreachable: {exc}", "hint": _HINT}, status_code=502)
+def _builder_down(exc: Exception, url: str) -> JSONResponse:
+    """Turn a failed call to the builder into a message that names what actually failed.
+
+    httpx's own timeout exceptions (ConnectTimeout/ReadTimeout/...) very often stringify to ""
+    — the underlying httpcore/anyio timeout is raised with no message and httpx just forwards
+    that empty string along — so `str(exc)` alone can say nothing at all (this is what John saw:
+    "unreachable: "). Always show the exception TYPE and the URL that was tried, and say plainly
+    whether it timed out (no answer in time) or was refused (nothing listening / connection error)."""
+    kind = type(exc).__name__
+    if isinstance(exc, httpx.TimeoutException):
+        reason = f"{kind} — {url} did not answer in time"
+    else:
+        reason = f"{kind} — could not reach {url}"
+    detail = str(exc)
+    if detail:
+        reason = f"{reason} ({detail})"
+    return JSONResponse({"error": f"Neighbourhood Builder unreachable: {reason}", "hint": _HINT}, status_code=502)
 
 
 def _rewrite(status: dict) -> dict:
@@ -139,7 +154,7 @@ async def v17_nb_models():
             r = await cl.get(f"{BUILDER}/api/models")
         return r.json()
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/api/models")
 
 
 @router.post("/build")
@@ -157,7 +172,7 @@ async def v17_nb_build(body: dict):
             r = await cl.post(f"{BUILDER}/api/build", json={"text": text, "base": base or None})
         data = r.json()
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/api/build")
     if r.status_code == 200:
         _route_gaps((data.get("brief") or {}).get("gaps") or [], f"build {data.get('job')}")
     return JSONResponse(data, status_code=r.status_code)
@@ -235,7 +250,38 @@ async def _post_station(order_id: str, text: str, cands: list[dict]) -> str:
         r = await cl.post(f"{PICKBOARD}/api/stations", json=body)
     if r.status_code not in (200, 409):   # 409 = already hung (a repeated poll)
         raise RuntimeError(f"the Pick Board would not hang the wall ({r.status_code}): {r.text[:160]}")
+    await _withdraw_superseded_house_walls(station_id)
     return station_id
+
+
+async def _withdraw_superseded_house_walls(keep_id: str) -> None:
+    """A new house order takes down its own earlier unanswered walls (John, 2026-09-05).
+
+    Every order hung a wall and nothing ever expired, so four orders for the SAME colonial in one
+    morning left four walls waiting - and with three older ones already up, seven competed for the
+    three slots the garage displays, with nothing on a wall to say which order it came from. John
+    could walk in and not find the set worth choosing from. He was never going to pick an earlier
+    attempt at the same house, so the older wall comes down by itself.
+
+    Withdraw, not choose: 'choose' would BUILD the house on that picture. Best-effort by design -
+    a board that cannot withdraw (older build, or down) must never stop the new wall being hung,
+    which is why this runs AFTER the post and swallows everything.
+    """
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as cl:
+            r = await cl.get(f"{PICKBOARD}/api/stations")
+            if r.status_code != 200:
+                return
+            for s in r.json().get("stations", []):
+                sid = s.get("id") or ""
+                if sid == keep_id or s.get("answer") or not sid.startswith("house-"):
+                    continue
+                if (s.get("made_by") or "") != "v17-neighbourhood":
+                    continue          # somebody else's wall is not ours to take down
+                await cl.post(f"{PICKBOARD}/api/stations/{sid}/answer",
+                              json={"action": "withdraw", "reason": f"superseded by {keep_id}"})
+    except Exception:
+        return                        # never let tidying break an order
 
 
 async def _station_answer(station_id: str) -> dict | None:
@@ -332,7 +378,7 @@ async def v17_nb_order(body: dict):
             r = await cl.post(f"{BUILDER}/api/candidates", json={"text": builder_text, "base": base, **({"image": str(image)} if image else {})})
         data = r.json()
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/api/candidates")
     if r.status_code != 200:
         return JSONResponse(data, status_code=r.status_code)
     if image:
@@ -369,7 +415,7 @@ async def _order_stage(order_id: str, o: dict):
             r = await cl.get(f"{BUILDER}/api/job/{order_id}")
         st = r.json()
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/api/job/{order_id}")
     if st.get("status") == "failed":
         o["stage"] = "failed"
         return {"order": order_id, "stage": "failed", "error": (st.get("error") or st.get("stage") or "")[-600:]}
@@ -398,7 +444,7 @@ async def _order_stage(order_id: str, o: dict):
                 r = await cl.post(f"{BUILDER}/api/build", json={"text": o["text"], "base": o["base"], "house": chosen.get("house") or {}})
             data = r.json()
         except Exception as exc:
-            return _builder_down(exc)
+            return _builder_down(exc, f"{BUILDER}/api/build")
         if r.status_code != 200:
             return JSONResponse(data, status_code=r.status_code)
         o["stage"] = "building"; o["build_job"] = data["job"]
@@ -409,7 +455,7 @@ async def _order_stage(order_id: str, o: dict):
             r = await cl.post(f"{BUILDER}/api/candidates", json={"text": o["text"], "base": o["base"], **({"image": o["image"]} if o.get("image") else {})})
         data = r.json()
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/api/candidates")
     if r.status_code != 200:
         return JSONResponse(data, status_code=r.status_code)
     _orders[data["job"]] = {"text": o["text"], "base": o["base"], "station": None, "build_job": None, "stage": "rendering", "image": o.get("image"), "factory": o.get("factory")}
@@ -426,7 +472,7 @@ async def v17_nb_job(job_id: str):
             r = await cl.get(f"{BUILDER}/api/job/{job_id}")
         data = r.json()
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/api/job/{job_id}")
     return _rewrite(data)
 
 
@@ -439,7 +485,7 @@ async def v17_nb_image(job_id: str, file: str):
         async with httpx.AsyncClient(timeout=15.0) as cl:
             r = await cl.get(f"{BUILDER}/jobs/{job_id}/{file}")
     except Exception as exc:
-        return _builder_down(exc)
+        return _builder_down(exc, f"{BUILDER}/jobs/{job_id}/{file}")
     if r.status_code != 200:
         return JSONResponse({"error": "no such picture"}, status_code=404)
     return Response(content=r.content, media_type="image/png", headers={"Cache-Control": "no-store"})

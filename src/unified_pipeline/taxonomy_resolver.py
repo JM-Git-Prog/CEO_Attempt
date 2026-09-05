@@ -23,7 +23,9 @@ The taxonomy JSON is loaded once and cached process-wide.
 """
 from __future__ import annotations
 
+import datetime as _dt
 import json
+import json as _json
 import re
 from dataclasses import dataclass
 from difflib import SequenceMatcher
@@ -207,6 +209,49 @@ def _load_entries(path_str: str) -> tuple[_Entry, ...]:
     return tuple(entries)
 
 
+# ── THE RETURN PATH (2026-09-04) ────────────────────────────────────────────
+# John: "I thought we were building a self-learning (but prepopulated)
+# master_taxonomy_engine.json that would handle all of this."
+#
+# It nearly is. It is prepopulated, it binds free text to a path with a score, it
+# refuses to guess below the floor, and its hydrators grow it idempotently. The one
+# missing part was this: when the world met something it could not name, the miss was
+# DISCARDED — unresolved() handed back confidence 0.0, the caller wrote an empty path,
+# and the lesson evaporated. A dictionary forgets; an engine writes it down.
+#
+# Every resolve() now appends one line here — hits AND misses, with the score and the
+# candidate it nearly matched. Capture everything, curate later: capture is
+# irreversible and curation is only a query (John's capture law, 2026-09-04). The gap
+# router already turns a ledger like this into proposals; this gives it a second feed.
+#
+# Never throws, never blocks: a ledger that breaks a render is worse than no ledger.
+_MISS_LEDGER = Path(
+    r"C:\Users\JohnM\Artificial Intelligence\Projects\CEO-of-My-Life-Inc\CEO-3D-World"
+    r"\tools\taxonomy-misses.jsonl"
+)
+
+
+def _note(detected_name: str, category: str, score: float, best, resolved: bool) -> None:
+    try:
+        row = {
+            "at": _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+            "asked": detected_name,
+            "category": category or "",
+            "resolved": resolved,
+            "score": round(float(score), 3),
+            "floor": _CONFIDENCE_FLOOR,
+            # what it ALMOST was — the single most useful field for proposing a new leaf
+            "nearest": getattr(best, "taxonomy_path", "") if best is not None else "",
+            "nearest_name": getattr(best, "display_name", "") if best is not None else "",
+            "status": "new",
+        }
+        _MISS_LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        with _MISS_LEDGER.open("a", encoding="utf-8") as fh:
+            fh.write(_json.dumps(row) + "\n")
+    except Exception:   # noqa: BLE001 — a broken ledger must never break a build
+        pass
+
+
 class TaxonomyResolver:
     """Resolves detected/generated object names to canonical taxonomy identities."""
 
@@ -245,8 +290,10 @@ class TaxonomyResolver:
                     best = entry
 
         if best is None or best_score < _CONFIDENCE_FLOOR:
+            _note(detected_name, category, best_score, best, resolved=False)
             return TaxonomyMatch.unresolved(detected_name)
 
+        _note(detected_name, category, best_score, best, resolved=True)
         return TaxonomyMatch(
             entity_id=best.entity_id,
             taxonomy_path=best.taxonomy_path,

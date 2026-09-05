@@ -27,7 +27,7 @@
   if (!composer || !input || !messages || !right) return;
 
   const API = "/api/v17/neighbourhood";
-  const WORLD_ORIGIN = "http://localhost:5173";
+  const WORLD_ORIGIN = "http://127.0.0.1:5173";   // must match world_v17.js — see the note there
   // THE ONE PLACE every order builds on (decision 22)
   const HOME = "mr-johns-neighborhood";
   const HOME_NAME = "Mr. John's Neighborhood";

@@ -32,7 +32,9 @@ import base64
 import hashlib
 import json
 import logging
+import os
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -40,7 +42,7 @@ import httpx
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from src.unified_pipeline import model_router, stations
+from src.unified_pipeline import event_log, model_router, stations
 from src.web.v17_neighbourhood_routes import _reference_png
 
 router = APIRouter(prefix="/api/v17", tags=["v17_say"])
@@ -52,8 +54,47 @@ GAP_LEDGER = Path(
 
 VISION_MODEL = "minicpm-v:latest"
 ORDER_MODEL = "gemma4:cloud"
-_KINDS = {"grounds", "house", "room", "check", "question", "command", "gap", "unknown"}
+_KINDS = {"grounds", "house", "room", "check", "question", "command", "gap", "problem", "unknown"}
 _CALL_TIMEOUT = 25.0
+
+# ── ASK BEFORE ACTING (John's call, 2026-09-04) ───────────────────────────────
+# "When it isn't sure what you meant, ask me one short question first."
+# A confident classification acts as before. Anything below the floor, on a kind that
+# BUILDS something, stops and asks — because the damage case was never a confused
+# model saying "unknown", it was a mediocre guess acted on: "i cannot see the culdsac
+# on the right" read as a grounds order, twice, each costing a render pass.
+# The answer John gives comes back as `forced_kind` and is logged as a human
+# correction — the sentence, the wrong guess, and the right answer in one row. Those
+# are the most valuable training rows the system can produce, and they only exist
+# because it asked.
+CONFIDENCE_FLOOR = float(os.getenv("V17_CONFIDENCE_FLOOR", "0.75"))
+_ACTING = {"house", "grounds", "room"}          # the kinds that make something appear
+_SIBLING = {"house": "grounds", "grounds": "house", "room": "grounds"}
+_LABEL = {
+    "house": "build a house on the block",
+    "grounds": "change something outside",
+    "room": "change something in here",
+    "problem": "nothing — something looks broken",
+    "question": "nothing — I'm just asking",
+}
+
+
+def _clarify(kind: str) -> dict:
+    """One short question, two or three concrete answers. Never free text."""
+    options: list[dict] = []
+    if kind in _ACTING:
+        options.append({"kind": kind, "label": _LABEL[kind]})
+        sib = _SIBLING.get(kind)
+        if sib:
+            options.append({"kind": sib, "label": _LABEL[sib]})
+        question = "Before I build anything — which did you mean?"
+    else:
+        options.append({"kind": "room", "label": _LABEL["room"]})
+        options.append({"kind": "grounds", "label": _LABEL["grounds"]})
+        question = "I'm not sure what you meant — which is it?"
+    options.append({"kind": "problem", "label": _LABEL["problem"]})
+    options.append({"kind": "question", "label": _LABEL["question"]})
+    return {"question": question, "options": options, "guessed": kind}
 
 VISION_SYSTEM = (
     "You read a reference photo a user pasted into a home-building app. Describe "
@@ -62,6 +103,13 @@ VISION_SYSTEM = (
     "English words. Never use any non-English characters. "
     # 2026-09-04: COUNT things. The builder reads a number straight out of these words,
     # so "four columns" builds four and "columns" builds a default of four by luck.
+    # 2026-09-04, live: John's Georgian mansion came back as subject="object", so the
+    # summary collapsed to "a colonial brick object" — no storeys, no columns, no roof.
+    # The whole photo lane is worthless if this field is wrong, so it is spelled out.
+    "SUBJECT FIRST, and get it right: a photograph of a house, a mansion, or any building "
+    "seen from outside is 'exterior_building' — ALWAYS, even when it is grand or far away. "
+    "'object' means ONE item like a chair, a lamp or a cash register. 'interior_room' means "
+    "you are standing inside a room. Never call a house an object. "
     "COUNT what you can count: if there are columns, say how many in column_count and "
     "their colour in column_color. Keep material and colour APART — wall_material is "
     "'brick', wall_color is 'red'. Keep roof shape apart from roof material — roof_shape "
@@ -116,6 +164,10 @@ You classify one sentence John typed into a home-building chat app. Decide exact
   prompt?", "how would you describe the photo")
 - command: open/load/show/go to <place>, leave/home, models
 - gap: asking for something the world plainly cannot make yet
+- problem: reporting that the APP is broken — the right-hand pane is black or empty,
+  something did not load, a button does nothing, he cannot see the world. This is a
+  complaint, NOT an order. "I cannot see the cul-de-sac on the right", "the world is
+  blank", "nothing is happening", "it's frozen". NEVER build anything from one of these.
 - unknown: you genuinely cannot tell
 
 A sentence that follows an exterior photo is about the OUTSIDE unless it clearly
@@ -291,11 +343,12 @@ def _summarize_picture(fields: dict) -> str:
         column_count = int(fields.get("column_count") or 0)
     except (TypeError, ValueError):
         column_count = 0
+    # computed ONCE, for every branch — a mislabelled subject must not cost John the storeys
+    story_word = ""
+    if isinstance(stories, (int, float)) and stories:
+        story_word = _STORY_WORDS.get(int(stories), f"{int(stories)}-storey")
 
     if subject == "exterior_building":
-        story_word = ""
-        if isinstance(stories, (int, float)) and stories:
-            story_word = _STORY_WORDS.get(int(stories), f"{int(stories)}-storey")
         head = "a " + " ".join(b for b in (story_word, wall_color, wall, "exterior") if b)
         extras = []
         if columns:
@@ -315,11 +368,24 @@ def _summarize_picture(fields: dict) -> str:
     if subject == "interior_room":
         head = ("a " + " ".join(b for b in (style, wall) if b) + " room") if (style or wall) else "a room"
         return head + (f" with {_join(features[:3])}" if features else "")
-    if subject == "object":
-        bits = [b for b in (style, wall) if b]
-        return ("a " + " ".join(bits) + " object") if bits else "an object"
-    bits = [b for b in (style, wall, *features[:3]) if b]
-    return _join(bits) if bits else "an image whose subject isn't clear"
+    # object / other / anything unrecognised: SAY WHAT WAS SEEN ANYWAY.
+    # 2026-09-04, live: the model mislabelled John's three-storey Georgian mansion as
+    # "object", and this branch reported "a colonial brick object" — dropping the storeys,
+    # the four white columns, the hipped roof, both chimneys and both dormers, all of which
+    # the model HAD returned. A wrong subject must degrade the wording, never the content.
+    head = " ".join(b for b in (story_word, wall_color, wall, style) if b).strip()
+    extras = []
+    if columns:
+        count_word = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight"}.get(column_count)
+        extras.append(" ".join(b for b in (count_word, column_color, "columns") if b))
+    roof_words = " ".join(b for b in (roof_shape, roof) if b)
+    if roof_words:
+        extras.append(roof_words if "roof" in roof_words.lower() else f"a {roof_words} roof")
+    extras.extend(features)
+    if not head and not extras:
+        return "an image whose subject isn't clear"
+    lead = f"a {head}" if head else "something"
+    return lead + (f" with {_join(extras)}" if extras else "")
 
 
 async def _picture_glance(png: Path) -> dict | None:
@@ -392,7 +458,8 @@ async def _order_fields(png: Path, fallback_fields: dict) -> tuple[dict | None, 
         return (fallback_fields or None), note
 
 
-def _file_gaps(phrases: list[str], *, source: str, session: str, request: str, target: str) -> list[str]:
+def _file_gaps(phrases: list[str], *, source: str, session: str, request: str, target: str,
+               model: str | None = None) -> list[str]:
     """Append-only write to the capability-gaps ledger (CONTRACT.md §1). Never
     read-modify-write, never fatal to the caller."""
     if not phrases:
@@ -406,6 +473,10 @@ def _file_gaps(phrases: list[str], *, source: str, session: str, request: str, t
         lines.append(json.dumps({
             "id": gap_id, "at": now, "source": source, "session": session,
             "request": request, "phrase": phrase,
+            # which model called this phrase unbuildable. Was recoverable only by
+            # joining on session+request against events.jsonl; inline now so the row
+            # stands on its own (2026-09-04).
+            "model": model,
             "context": {"target": context_target},
             "status": "new",
         }))
@@ -433,14 +504,84 @@ def _build_receipt(kind: str, message: str, picture: dict | None, gaps_filed: li
     return {"got": got, "making": making, "needs": needs}
 
 
+def _capture(out: dict, ctx: dict) -> None:
+    """One event-log row per turn, on EVERY path — the station rule, the literal
+    commands, a transport failure, an unusable answer, and the classified answer.
+
+    John's 2026-09-04 decision is capture everything including the misses: the rows
+    where the classifier failed are the only evidence of what failure looks like, and
+    a log of successes alone can train nothing to avoid one. Never fatal — see
+    event_log.append_event."""
+    picture = out.get("picture") or None
+    router_decision = ctx.get("router") or {}
+    models = out.get("models") or {}
+    event_log.append_event(
+        stage="say",
+        session=ctx.get("session"),
+        input={
+            "message": ctx.get("message"),
+            # the EXACT string the classifier saw — assembled from the standing line,
+            # the picture summary and the sentence. That template drifts, so the
+            # sentence alone will not reproduce this call later.
+            "prompt_rendered": ctx.get("prompt_rendered"),
+            "prompt_sha": event_log.sha(ctx.get("prompt_rendered") or ctx.get("message") or ""),
+            "standing": ctx.get("standing") or "",
+            "standing_reported": bool(ctx.get("standing")),
+            "reference": ctx.get("reference") or 0,
+        },
+        router=router_decision,
+        model={
+            "route": models.get("route"),
+            "digest": router_decision.get("digest", ""),
+            "cloud": router_decision.get("cloud"),
+            "picture": models.get("picture"),
+            "order": models.get("order"),
+            "order_note": models.get("order_note"),
+        },
+        outcome={
+            "ok": bool(ctx.get("ok", True)),
+            # transport vs bad_answer stay APART: a backend outage must never be
+            # scored as a wrong answer (house law).
+            "error": ctx.get("error"),
+            "ms": ctx.get("ms"),
+            "path": ctx.get("path"),
+        },
+        result={
+            "kind": out.get("kind"),
+            "confidence": out.get("confidence"),
+            "reason": out.get("reason"),
+            "command": out.get("command"),
+            "gaps_filed": out.get("gaps_filed") or [],
+            "order_hint": out.get("order_hint"),
+            "clarify": out.get("clarify"),
+        },
+        # THE GOLD ROW. Set only when John answered the question himself: the sentence,
+        # what the model guessed, and what he said it actually was. A supervised example
+        # produced by the disagreement, which no amount of unlabelled traffic can replace.
+        correction=ctx.get("correction"),
+        picture={
+            "subject": picture.get("subject"),
+            "summary": picture.get("summary"),
+            "fields": picture.get("fields"),
+        } if picture else None,
+        # John typed the sentence; every model-authored field is named above. Keeps the
+        # provenance filter enforceable when these rows become a training set.
+        origin={"message": "human", "classification": models.get("route") or None},
+    )
+
+
 def _final(*, kind: str, confidence: float, reason: str, command: dict | None,
            picture: dict | None, order_hint: dict | None, gaps_filed: list[str],
-           models: dict, receipt: dict) -> dict:
-    return {
+           models: dict, receipt: dict, capture: dict | None = None,
+           clarify: dict | None = None) -> dict:
+    out = {
         "kind": kind, "confidence": confidence, "reason": reason,
         "command": command, "picture": picture, "order_hint": order_hint,
         "receipt": receipt, "gaps_filed": gaps_filed, "models": dict(models),
+        "clarify": clarify,
     }
+    _capture(out, capture or {})
+    return out
 
 
 @router.post("/say")
@@ -465,6 +606,15 @@ async def v17_say(body: dict):
     world = body.get("world")
     standing = str((world or {}).get("standing") or "").strip() if isinstance(world, dict) else ""
 
+    # Everything this turn will tell the event log. Filled in as the turn proceeds and
+    # handed to _final on EVERY path, so a turn that fails is recorded exactly as
+    # faithfully as one that succeeds.
+    turn: dict = {
+        "session": session, "message": message, "standing": standing, "reference": ref_n,
+        "path": None, "ok": True, "error": None, "prompt_rendered": None,
+        "router": None, "ms": None,
+    }
+
     # a) the picture glance — best-effort, never fatal to the request
     picture: dict | None = None
     picture_png: Path | None = None
@@ -484,28 +634,61 @@ async def v17_say(body: dict):
         "order_note": None,
     }
 
+    # John answered the question the pane asked him. His word is final: no model call,
+    # and the disagreement is written down as a correction — the sentence, the wrong
+    # guess, and the right answer, which is the best training row this system makes.
+    forced_kind = str(body.get("forced_kind") or "").strip().lower()
+    if forced_kind in _KINDS:
+        turn["path"] = "human-correction"
+        turn["correction"] = {
+            "guessed": str(body.get("guessed_kind") or "").strip().lower() or None,
+            "chose": forced_kind,
+            "by": "john",
+        }
+        # a confirmed house/grounds order still deserves the good photo read, or
+        # answering the question would quietly cost him the order fields
+        forced_hint = None
+        if forced_kind in ("house", "grounds") and picture is not None and picture_png is not None:
+            models["order"] = ORDER_MODEL
+            forced_hint, note = await _order_fields(picture_png, picture.get("fields") or {})
+            models["order_note"] = note
+        return _final(
+            kind=forced_kind, confidence=1.0,
+            reason="John was asked which he meant, and chose this himself",
+            command=None, picture=picture, order_hint=forced_hint, gaps_filed=[],
+            models=models, receipt=_build_receipt(forced_kind, message, picture, []),
+            capture=turn,
+        )
+
     # a station rule ("which of these rooms do you like?") — the cheapest rung,
     # checked before the literal commands too: "show me the rooms" must never be
     # misread as a navigation command to a place named "rooms".
     rule = stations.parse_rule(message)
     if rule:
+        turn["path"] = "station-rule"
         return _final(
             kind="check", confidence=1.0, reason="matched a station check phrase",
             command=None, picture=picture, order_hint=None, gaps_filed=[],
             models=models, receipt=_build_receipt("check", message, picture, []),
+            capture=turn,
         )
 
     # the three literal commands — exact words, a model call would be waste
     command = _detect_command(message)
     if command:
+        turn["path"] = "literal-command"
         return _final(
             kind="command", confidence=1.0, reason="matched a literal command",
             command=command, picture=picture, order_hint=None, gaps_filed=[],
             models=models, receipt=_build_receipt("command", message, picture, []),
+            capture=turn,
         )
 
     # b) classify
-    route_model = await model_router.pick("talk")
+    decision = await model_router.pick_verbose("talk")
+    route_model = decision["chosen"]
+    turn["router"] = decision
+    turn["path"] = "classifier"
     models["route"] = route_model
     # Everything the two panes know about each other, handed to the classifier as
     # plain lines (2026-09-03, John: "nothing hard coded because the vision model in
@@ -515,24 +698,45 @@ async def v17_say(body: dict):
     lines = []
     if standing:
         lines.append(f"Where he is standing right now, reported by the 3D pane: {standing}")
+    else:
+        # SILENCE IS NOT AGREEMENT (2026-09-04). The world only speaks when it is alive,
+        # so a blank pane reported nothing and the classifier could not tell that from a
+        # healthy world — which is how "i cannot see the culdsac on the right" became a
+        # grounds order and built John a house he never asked for. Twice.
+        lines.append(
+            "The 3D pane has NOT reported where he is. It may be blank, still loading, or not "
+            "running at all. If his sentence sounds like he cannot see the world, that is a "
+            "'problem' report about the app — never an order to build."
+        )
     if picture:
         lines.append(f"The photo he attached shows: {picture['summary']}")
     lines.append(f"John's sentence: {message}")
     user = "\n\n".join(lines)
+    turn["prompt_rendered"] = user
+    started = time.monotonic()
     try:
         result = await _classify(route_model, user)
     except _Transport as exc:
+        turn["ok"] = False
+        turn["ms"] = int((time.monotonic() - started) * 1000)
+        turn["error"] = {"kind": "transport", "msg": str(exc)[:300]}
         return _final(
             kind="unknown", confidence=0.0, reason=f"the Ollama backend failed after 3 tries: {exc}",
             command=None, picture=picture, order_hint=None, gaps_filed=[],
             models=models, receipt=_build_receipt("unknown", message, picture, []),
+            capture=turn,
         )
     except _BadAnswer as exc:
+        turn["ok"] = False
+        turn["ms"] = int((time.monotonic() - started) * 1000)
+        turn["error"] = {"kind": "bad_answer", "msg": str(exc)[:300]}
         return _final(
             kind="unknown", confidence=0.0, reason=f"the model's answer could not be understood: {exc}",
             command=None, picture=picture, order_hint=None, gaps_filed=[],
             models=models, receipt=_build_receipt("unknown", message, picture, []),
+            capture=turn,
         )
+    turn["ms"] = int((time.monotonic() - started) * 1000)
 
     kind = str(result.get("kind") or "").strip()
     if kind not in _KINDS:
@@ -551,6 +755,22 @@ async def v17_say(body: dict):
         kind = "unknown"
         reason = f"model said command but no literal command matched (model reason: {reason})"
 
+    # ASK BEFORE ACTING. An unsure guess on a kind that BUILDS something stops here and
+    # asks one short question rather than spending a render pass on a coin flip. The
+    # unbuildable phrases are still filed first — a question must never cost data — but
+    # the second vision call is skipped, because there is nothing to order yet.
+    if kind == "unknown" or (kind in _ACTING and confidence < CONFIDENCE_FLOOR):
+        turn["path"] = "clarify"
+        gaps_filed = _file_gaps(phrases, source="v17-chat", session=session,
+                                request=message, target=kind, model=route_model)
+        return _final(
+            kind="unknown", confidence=confidence,
+            reason=reason or "not sure enough to act on that",
+            command=None, picture=picture, order_hint=None, gaps_filed=gaps_filed,
+            models=models, receipt=_build_receipt("unknown", message, picture, gaps_filed),
+            capture=turn, clarify=_clarify(kind),
+        )
+
     # c) order fields — only a house/grounds order that carries a picture
     order_hint: dict | None = None
     if kind in ("house", "grounds") and picture is not None and picture_png is not None:
@@ -559,10 +779,12 @@ async def v17_say(body: dict):
         models["order_note"] = order_note
 
     # d) file gaps — append-only, never fatal
-    gaps_filed = _file_gaps(phrases, source="v17-chat", session=session, request=message, target=kind)
+    gaps_filed = _file_gaps(phrases, source="v17-chat", session=session, request=message,
+                            target=kind, model=route_model)
 
     return _final(
         kind=kind, confidence=confidence, reason=reason, command=None,
         picture=picture, order_hint=order_hint, gaps_filed=gaps_filed,
         models=models, receipt=_build_receipt(kind, message, picture, gaps_filed),
+        capture=turn,
     )

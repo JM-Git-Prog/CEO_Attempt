@@ -919,8 +919,12 @@ class ConversationEngine:
             success_criteria = f"{success_criteria.rstrip('.')} . {suffix}".replace(" .", ".")
 
         # Build provenance (Req 2.3)
+        # `model` added 2026-09-04: this dict is literally called provenance and named
+        # every field EXCEPT the one that matters for owning the output — which model
+        # wrote it. 227 archived briefs are unusable for exactly that reason.
         provenance = {
             "session_id": self._state.session_id,
+            "model": getattr(self, "_model", None),
             "turn_count": str(self._state.turn_count),
             "extraction_method": "llm",
             "source_prompt": source_prompt,
@@ -1049,6 +1053,7 @@ class ConversationEngine:
         )
         provenance = {
             "session_id": self._state.session_id,
+            "model": getattr(self, "_model", None),
             "turn_count": str(self._state.turn_count),
             "extraction_method": "state_fallback",
             "source_prompt": source_prompt,

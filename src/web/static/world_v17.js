@@ -34,7 +34,11 @@
 (() => {
   "use strict";
 
-  const WORLD_ORIGIN = "http://localhost:5173";
+  // 127.0.0.1, NOT localhost (2026-09-04). Same server either way for John's Chrome,
+  // but Claude's own in-app browser pane REFUSES http://localhost:5173 outright while
+  // http://127.0.0.1:5173 loads the world fine — so the whole right-hand pane was
+  // invisible to Claude, and every world problem this week needed John to screenshot it.
+  const WORLD_ORIGIN = "http://127.0.0.1:5173";
   // John's call, 2026-09-02: "at the front gate, every time." The world already
   // spawns outside the tower's south entrance (GROUNDS_SPAWN in spawn.ts), so
   // loading /my-office fresh each session IS the ritual — no override needed.
@@ -110,7 +114,11 @@
     frame.id = "worldFrame";
     frame.src = currentUrl;
     frame.title = "CEO of My Life — the world";
-    frame.allow = "fullscreen; pointer-lock";
+    // NOT "pointer-lock" (2026-09-04): Chrome logs "Unrecognized feature: 'pointer-lock'"
+    // because it never shipped that Permissions Policy — the Keyboard/Pointer Lock
+    // permission was trialled and dropped (developer.chrome.com/blog/keyboard-lock-pointer-lock-permission).
+    // Pointer lock still works: the world calls requestPointerLock() itself on a click.
+    frame.allow = "fullscreen";
     frame.setAttribute("loading", "eager");
     frame.addEventListener("load", () => {
       ready = true;

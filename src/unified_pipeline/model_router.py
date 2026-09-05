@@ -55,6 +55,10 @@ def is_cloud(name: str) -> bool:
 class Garage:
     cloud: list[str] = field(default_factory=list)
     local: list[str] = field(default_factory=list)
+    # name -> digest. A TAG REPOINTS to different weights over time, so the tag alone
+    # does not say which weights answered; only the digest freezes that. Captured here
+    # because /api/tags already carries it — recovering it after the fact is impossible.
+    digests: dict[str, str] = field(default_factory=dict)
     fetched_at: float = 0.0
     error: str = ""
 
@@ -82,10 +86,14 @@ async def garage(force: bool = False) -> Garage:
                 if not name:
                     continue
                 (g.cloud if is_cloud(name) else g.local).append(name)
+                digest = str(m.get("digest") or "")
+                if digest:
+                    g.digests[name] = digest[:16]
     except Exception as exc:  # the chat must still answer when Ollama's list is unreachable
         g.error = f"{type(exc).__name__}: {exc}"
         if _cache.all:
             g.cloud, g.local = _cache.cloud, _cache.local
+            g.digests = dict(_cache.digests)
     _cache = g
     return g
 
@@ -114,6 +122,41 @@ async def pick(kind: str = "talk") -> str:
         if hit:
             return hit
     return os.getenv("LLM_MODEL", "llama3.1")
+
+
+async def pick_verbose(kind: str = "talk") -> dict:
+    """``pick()``, but showing its working — the decision as a loggable object.
+
+    A log that names only the winner cannot train a better router later: it never
+    says what the alternatives were, so nothing can learn that a cheaper rung would
+    have done just as well. So the candidate lane goes down with the choice, in
+    preference order, with the chosen model's rank and its digest.
+
+    There are no scores here on purpose. Today the lane IS the policy — first
+    installed wins — and inventing a score would be a fake number in a training set.
+    When a learned policy replaces the lane, its real scores go in ``candidates``.
+    """
+    g = await garage()
+    lane = talk_lane()
+    chosen, rank = None, -1
+    for i, want in enumerate(lane):
+        hit = _installed(want, g.all)
+        if hit:
+            chosen, rank = hit, i
+            break
+    if chosen is None:
+        chosen = os.getenv("LLM_MODEL", "llama3.1")
+    return {
+        "lane": kind,
+        "candidates": lane,
+        "installed": [c for c in lane if _installed(c, g.all)],
+        "chosen": chosen,
+        "rank": rank,
+        "policy": "ordered-lane/v1",
+        "cloud": is_cloud(chosen),
+        "digest": g.digests.get(chosen, ""),
+        "garage_error": g.error,
+    }
 
 
 def override(text: str) -> tuple[str | None, str]:

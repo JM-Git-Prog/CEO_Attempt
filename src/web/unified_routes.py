@@ -14,6 +14,7 @@ import json
 import logging
 import mimetypes
 import re
+import time
 import traceback
 import uuid
 from contextlib import suppress
@@ -44,7 +45,7 @@ from src.unified_pipeline.orchestrator import (
     UnifiedOrchestrator,
 )
 from src.unified_pipeline import warehouse
-from src.unified_pipeline import model_router
+from src.unified_pipeline import event_log, model_router
 from src.unified_pipeline import stations
 from src.unified_pipeline.stage_handlers import (
     authoritative_user_prompt,
@@ -260,9 +261,14 @@ def _conversation_path(session_dir: Path) -> Path:
 
 
 def _save_conversation(engine: ConversationEngine, session_dir: Path) -> None:
+    # PROVENANCE (2026-09-04). Every `role:"assistant"` turn below is raw model output,
+    # and until today this file recorded no model at all. That cost 227 archived sessions
+    # — their briefs and floor plans are unusable as training data because nothing can
+    # prove which model wrote them. One field prevents the whole class.
     state = engine.state
     document = {
         "session_id": state.session_id,
+        "model": getattr(engine, "_model", None) or getattr(engine, "_session_model", None),
         "turns": [asdict(turn) for turn in state.turns],
         "proposed_brief": state.proposed_brief,
         "steering_stable": state.steering_stable,
@@ -752,6 +758,7 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 # attached photo with minicpm-v; the page carries that one line here
                 # so this model stops answering "this one" from its own defaults.
                 # (2026-09-03: a brick mansion produced a teal living room.)
+                _turn_started = time.monotonic()
                 response = await engine.interpret_response(
                     message,
                     str(payload.get("picture_summary") or "").strip() or None,
@@ -760,6 +767,19 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 _log.info(f"  response ({len(response)} chars): {response[:100]}")
             except Exception as exc:
                 _log.error(f"  MESSAGE FAILED: {exc}\n{traceback.format_exc()[-300:]}")
+                # The misses are kept too (John, 2026-09-04). A conversation log of
+                # successes alone cannot teach anything to avoid a failure.
+                event_log.append_event(
+                    stage="chat", session=session_id,
+                    input={"message": message, "message_sha": event_log.sha(message),
+                           "prompt_rendered": None,
+                           "picture_summary": str(payload.get("picture_summary") or "").strip(),
+                           "where": str(payload.get("where") or "").strip()},
+                    model={"route": model_used, "forced": bool(forced)},
+                    outcome={"ok": False, "ms": int((time.monotonic() - _turn_started) * 1000),
+                             "error": {"kind": "engine", "msg": f"{type(exc).__name__}: {exc}"[:300]}},
+                    result=None,
+                )
                 raise
             result: dict[str, object] = {
                 "session_id": session_id,
@@ -792,6 +812,37 @@ def create_unified_router(output_root: Callable[[], Path]) -> APIRouter:
                 stock["started"] = await _start_missing_props(session_id, stock["missing"])
                 result["warehouse"] = stock
                 result["warehouse_message"] = warehouse.sentence(stock)
+            # THE ROW THE NORTH STAR NEEDS: John's sentence in, the answer out, with the
+            # model that produced it and its digest. Captured here because this is the
+            # endpoint the left pane actually calls for a conversational turn —
+            # /api/v17/say only classifies, and instrumenting it alone caught nothing.
+            _digest = ""
+            try:
+                _digest = (await model_router.garage()).digests.get(model_used or "", "")
+            except Exception:  # noqa: BLE001 - a missing digest must never cost an answer
+                _digest = ""
+            event_log.append_event(
+                stage="chat", session=session_id,
+                input={"message": message, "message_sha": event_log.sha(message),
+                       # NOT prompt_rendered. The conversation engine assembles its system
+                       # prompt at six separate call sites, so the exact string sent is not
+                       # reachable from here; the only honest choke point is generate_json,
+                       # and stashing it there would race across concurrent sessions. Named
+                       # message_sha so it can never be mistaken for the rendered prompt the
+                       # `say` rows really do carry. KNOWN GAP, 2026-09-04.
+                       "prompt_rendered": None,
+                       "picture_summary": str(payload.get("picture_summary") or "").strip(),
+                       "where": str(payload.get("where") or "").strip(),
+                       "turn_count": engine.state.turn_count},
+                model={"route": model_used, "digest": _digest,
+                       "cloud": model_router.is_cloud(model_used or ""),
+                       "forced": bool(forced), "forced_name": forced_name or None},
+                outcome={"ok": True, "ms": int((time.monotonic() - _turn_started) * 1000),
+                         "error": None, "path": "conversation"},
+                result={"reply": response, "steering_stable": engine.is_stable,
+                        "brief_extracted": "brief" in result},
+                origin={"message": "human", "reply": model_used},
+            )
             _save_conversation(engine, session_dir)
             return result
 
