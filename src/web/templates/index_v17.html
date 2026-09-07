@@ -70,7 +70,11 @@
     .world-hud .chip { background: rgba(10,23,19,.82); border: 1px solid #244238; padding: 4px 9px; border-radius: 5px; font-size: 11px; color: #8edbb8; text-transform: uppercase; letter-spacing: .06em; }
     .world-controls { position: absolute; bottom: 12px; left: 12px; display: flex; gap: 8px; }
     .world-controls .hint { position: absolute; bottom: 0; left: 0; transform: translateY(120%); color: #6f8a80; font-size: 11px; white-space: nowrap; }
-    .world-empty { position: absolute; inset: 0; display: grid; place-items: center; color: #6f8a80; font-size: 13px; text-align: center; padding: 24px; pointer-events: none; }
+    /* 2026-09-05: this overlay is inset:0 and sits ABOVE #worldHolder in the DOM, so with no
+       background of its own "Opening your world…" floated over the previous place's frame and
+       read as a glitch. Give it the world's own first-frame sky-over-ground wash (the same one
+       app/src/modules/ui/WorldOpening.tsx paints behind the canvas) so the words land on sky. */
+    .world-empty { position: absolute; inset: 0; display: grid; place-items: center; color: #33414a; font-size: 13px; text-align: center; padding: 24px; pointer-events: none; background: linear-gradient(#8fbfe4 0%, #bcd8ee 55%, #86975f 55%, #6e7f56 100%); }
     .world-empty.hidden { display: none; }
     /* Slice 1 (2026-09-02): the right pane says in words what it is waiting for. */
     .world-note { position: absolute; top: 12px; right: 12px; max-width: 46%; background: rgba(10,23,19,.86); border: 1px solid #244238; padding: 6px 10px; border-radius: 5px; font-size: 12px; color: #cfe6dc; pointer-events: none; }

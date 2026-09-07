@@ -42,16 +42,23 @@ def scene_path(slug: str = "my-office") -> Path:
     return worlds_root() / slug / "scene.json"
 
 
-def _read_scene(path: Path) -> dict:
-    """Read the live file. A missing or unreadable scene is an empty one, never
-    an exception — a broken read must not cost John the rooms already placed."""
+def _read_scene(path: Path) -> dict | None:
+    """Read the live file. ABSENT is an empty scene — a first placement may
+    create it. PRESENT BUT UNREADABLE (half-written by another writer, or a bad
+    hand edit) is None, and the caller must refuse to write: writing over it
+    would cost John every room already placed, which is exactly the site-log
+    wipe of 2026-07-10 in a new coat. Absent is not corrupt (gate law, 2026-09-02).
+    Verified 2026-09-06: the old version returned an empty scene for both and
+    place() then wrote a file holding only the new room."""
+    if not path.exists():
+        return {"version": 1, "instances": []}
     try:
         doc = json.loads(path.read_text(encoding="utf-8"))
-        if isinstance(doc, dict) and isinstance(doc.get("instances"), list):
-            return doc
-    except (OSError, ValueError, TypeError):
-        pass
-    return {"version": 1, "instances": []}
+    except (OSError, ValueError):
+        return None
+    if isinstance(doc, dict) and isinstance(doc.get("instances"), list):
+        return doc
+    return None
 
 
 def arrange(objects, room: str, centre, room_size=(2.4, 3.0)) -> list[dict]:
@@ -100,6 +107,8 @@ def place(instances: list[dict], room: str, slug: str = "my-office") -> dict:
         return {"ok": False, "error": f"no world at {path.parent}"}
 
     scene = _read_scene(path)          # re-read live, never write from memory
+    if scene is None:                  # fail closed: never write over a broken scene
+        return {"ok": False, "error": f"{path} exists but is not a readable scene; refusing to write over it"}
     others = [
         item for item in scene["instances"]
         if isinstance(item, dict) and str(item.get("room", "")) != room

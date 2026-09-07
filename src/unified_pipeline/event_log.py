@@ -56,6 +56,40 @@ def sha(text: str) -> str:
     return hashlib.sha256((text or "").encode("utf-8")).hexdigest()[:16]
 
 
+def _versions() -> dict:
+    """Stamp the code that produced the row - the fifth unrecoverable field.
+
+    A row's meaning depends on the code that wrote it: the prompt template, the lane
+    order and the capture shape all drift. Read a sentence back a month later against
+    a changed template and you are reading a different experiment. Computed ONCE at
+    import (never per row); every failure is swallowed, exactly like the append.
+    """
+    here = Path(__file__).resolve().parent          # ...\\src\\unified_pipeline
+    out: dict[str, str] = {}
+    for label, path in (
+        ("event_log", here / "event_log.py"),
+        ("model_router", here / "model_router.py"),
+        ("say_routes", here.parent / "web" / "v17_say_routes.py"),
+    ):
+        try:
+            out[label] = sha(path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 - a missing file must never cost a row
+            out[label] = ""
+    # The commit, read as plain text. Never shells out to git.
+    try:
+        repo = here.parents[1] / ".git"
+        head = (repo / "HEAD").read_text(encoding="utf-8").strip()
+        if head.startswith("ref: "):
+            head = (repo / head[5:].strip()).read_text(encoding="utf-8").strip()
+        out["git"] = head[:12]
+    except Exception:  # noqa: BLE001
+        out["git"] = ""
+    return out
+
+
+VERSIONS = _versions()
+
+
 def append_event(**fields) -> str | None:
     """Append one row. Returns its event_id, or None if the write failed.
 
@@ -68,6 +102,7 @@ def append_event(**fields) -> str | None:
             "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
             "schema_v": SCHEMA_VERSION,
             "app": APP,
+            "versions": VERSIONS,
             **fields,
         }
         path = log_path()
