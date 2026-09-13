@@ -73,6 +73,23 @@
   // + the regular hour-long lamp (John: "keep it — I want to compare"); a pedestal stays empty until its file lands
   const BAKEOFF_IDS = ["bankers-desk-lamp-solid-dome-r1-hybrid@paint", "bankers-desk-lamp-solid-dome-shade-ro-r1@paint", "bankers-desk-lamp-solid-dome-shade-ro-r1-trellis@paint", "bankers-desk-lamp-solid-dome-shade-ro-r1"];
   const BAKEOFF_URL = `${GARAGE_URL}&reviewtest=${BAKEOFF_IDS.join(",")}`;
+  // THE SIGNBOARD (decision 25, John 2026-09-10: "Four pictures of candidate houses stand on a
+  // signboard on the lot, I pick one you build it"). A house order answers with the place's next
+  // empty lot (`lot`: id, sign_glb [x,y,z] = the sign's ground point in the world's frame, yaw_deg =
+  // the lot's facing, the builder's convention: the sign faces the street along (sin yaw, cos yaw)).
+  // The pane walks John to a spot on the street side of that sign, looking at the board — the
+  // same ?spawn/?look door the garage errand uses; nothing new in the world for this.
+  const SIGN_BOARD_Y = 1.55;   // the board's centre height (build-neighbourhood.py signboard())
+  function lotUrl(lot) {
+    const g = lot && Array.isArray(lot.sign_glb) && lot.sign_glb.length === 3 ? lot.sign_glb : (lot && Array.isArray(lot.glb) ? lot.glb : null);
+    if (!g || !g.every((v) => Number.isFinite(v))) return null;
+    const yaw = (Number(lot.yaw_deg) || 0) * Math.PI / 180;
+    const fx = Math.sin(yaw), fz = Math.cos(yaw);       // the sign's facing, toward the street
+    const r = (v) => Math.round(v * 100) / 100;
+    const spawn = `${r(g[0] + fx * 5.5)},1.7,${r(g[2] + fz * 5.5)}`;
+    const look = `${r(g[0])},${SIGN_BOARD_Y},${r(g[2])}`;
+    return `${WORLD_ORIGIN}/${HOME}?mode=play&spawn=${spawn}&look=${look}`;
+  }
   const pageAsk = new URLSearchParams(window.location.search).get("garage");
   let currentUrl = pageAsk === "rehearsal" ? REHEARSAL_URL : pageAsk === "bakeoff" ? BAKEOFF_URL : pageAsk === "1" ? GARAGE_URL : WORLD_URL;
   let pendingNote = pageAsk ? "The garage ahead of you. Walk up (W) and the door rolls up. Click once to take the mouse, then left-click ✓ approve · right-click ✗ no" + (pageAsk === "rehearsal" ? " — practice only, nothing is filed." : pageAsk === "bakeoff" ? " — the bake-off: the painted lamp is the fast route, the grey one is the same mesh unpainted; nothing is filed." : ".") : ""; // shown once the place has loaded
@@ -216,11 +233,20 @@
     check();
   }
 
+  function goToGarageFallback() { pendingNote = "The garage ahead of you. Walk up and the door rolls up. Left-click ✓ approve · right-click ✗ no · WASD to move, click to look."; goTo(GARAGE_URL); }
   window.LRWorld = {
     attach() { check(); },
     goToGarage() { pendingNote = "The garage ahead of you. Walk up and the door rolls up. Left-click ✓ approve · right-click ✗ no · WASD to move, click to look."; goTo(GARAGE_URL); },
     goHome() { goTo(WORLD_URL); },
     atGarage() { return currentUrl === GARAGE_URL; },
+    // decision 25: walk to the next empty lot's signboard, where the four pictures stand
+    goToLot(lot) {
+      const url = lotUrl(lot);
+      if (!url) { goToGarageFallback(); return false; }
+      pendingNote = `The signboard ahead of you on lot ${lot.id || ""}: four pictures. Walk up (W), click once to take the mouse, then left-click your favorite · right-click for four new ones.`;
+      goTo(url);
+      return true;
+    },
     beginBuild() {
       check();
       setNote("Building. Finished props land in the warehouse; placing them in the world is the next step.");

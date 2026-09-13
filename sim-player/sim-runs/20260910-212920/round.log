@@ -1,0 +1,30 @@
+21:29:20 round 20260910-212920 session sim-575e10389434 model gpt-oss:120b-cloud world v0
+21:29:23 turn 1 [vision] see: 'I see: version 0, eight houses on the street, nothing else.' type: 'a house right here with a big porch'
+21:29:26 turn 2 [vision] see: 'I see version 0 neighborhood, eight houses, no changes.' type: 'Two floors.'
+21:29:28 turn 3 [vision] see: 'I see: version 0 neighborhood, eight houses, unchanged.' type: 'white siding'
+21:29:30 turn 4 [vision] see: 'I see version 0, eight houses on the street, no changes since last loo' type: 'Shingles roof.'
+21:29:34 turn 5 [vision] see: 'I see: version 0, eight houses, no changes, house plan with big porch,' type: 'a red flowerpot by the door'
+21:30:23 turn 6 [card] see: 'I see version 0, eight houses on the street, unchanged since last look' type: 'Build it'
+21:30:25 turn 7: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 0 neighborhood with 8 houses and a plan for a white colonial with a grand porch.",
+  ")
+21:30:25 turn 7 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 0 neighborhood with 8 houses and a plan for a white colonial with a grand porch.",
+  "
+21:30:37 turn 8: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "A plan)
+21:30:37 turn 8 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "A plan
+21:32:11 turn 9 [card] see: 'I see version 0 neighborhood with 8 houses and a plan for a white colo' type: 'asphalt shingles, wooden railing, flowerpot permanent'
+21:32:13 turn 10: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see:)
+21:32:13 turn 10 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see:
+21:33:35 turn 11 [wall] see: 'I see version 0 neighborhood, 8 houses unchanged, a house being built ' type: 'make the porch smaller'
+21:33:38 turn 12: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 1 neighborhood, 8 houses, my house with big porch, white siding, red flowerpot.",)
+21:33:38 turn 12 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 1 neighborhood, 8 houses, my house with big porch, white siding, red flowerpot.",
+21:33:53 turn 13 [vision] see: 'still just eight houses, no new house appeared' type: 'make the porch smaller'
+21:33:56 turn 14 [vision] see: 'I see version 1 of the neighborhood with eight houses, unchanged, and ' type: 'two'
+21:33:56 round over: turns after 14 turns, world v0 -> v1

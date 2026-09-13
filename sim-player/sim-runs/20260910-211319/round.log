@@ -1,0 +1,19 @@
+21:13:19 round 20260910-211319 session sim-4b4282a41ebb model gpt-oss:120b-cloud world v0
+21:13:21 turn 1 [vision] see: 'I see version 0 of the neighborhood, 8 houses on the street, unchanged' type: 'a red house with a big porch on the empty lot'
+21:13:23 turn 2: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 0 neighborhood, eight houses, a red house with a big porch on an empty lot, asking how many)
+21:13:23 turn 2 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 0 neighborhood, eight houses, a red house with a big porch on an empty lot, asking how many
+21:13:35 turn 3 [vision] see: 'I see: version 0 of the neighborhood, eight houses on the street, empt' type: 'two'
+21:13:36 turn 4 [vision] see: 'I see: version 0 neighborhood, 8 houses, unchanged since last look.' type: 'shingles'
+21:13:38 turn 5 [vision] see: 'I see version 0, eight houses, empty lot unchanged, no new house yet.' type: 'add a swing in the yard'
+21:14:41 turn 6 [card] see: 'I see version 0, eight houses, unchanged since last look.' type: 'Build it'
+21:14:42 turn 7: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:14:42 turn 7 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:14:54 turn 8: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see a plan for a red two‑storey house with a porch and yard swing, asking orientation, interior layout, )
+21:14:54 turn 8 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see a plan for a red two‑storey house with a porch and yard swing, asking orientation, interior layout, 
+21:15:06 turn 9: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:15:06 turn 9 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:15:06 round over: backend after 9 turns, world v0 -> v0

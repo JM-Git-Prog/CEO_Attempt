@@ -380,38 +380,21 @@ class ConversationEngine:
         Includes a session-unique seed in the system prompt to invalidate
         any cached Ollama KV context from prior sessions (prevents persona bleed).
         """
-        # Fix #1: Prepend a session-unique seed to bust Ollama KV cache
-        session_seed = f"[session:{self._state.session_id}:{time.time()}]\n"
-        # WHERE HE IS STANDING, straight from the 3D pane. Sits above OPENING_SYSTEM
-        # because that prompt refers to it as "a line above this one".
-        standing = f"WHERE HE IS STANDING RIGHT NOW: {where.strip()}\n\n" if (where or "").strip() else ""
-        system_prompt = session_seed + standing + OPENING_SYSTEM
-
-        try:
-            result = await generate_json(
-                system=system_prompt,
-                user="Generate an opening greeting for a new room design session. Be warm, creative, and immediately propose a direction.",
-                model=self._model,
-                timeout_seconds=self._deadline,
-            )
-            greeting = result.get("greeting", "")
-            # Store the opening proposal in state for later reference
-            self._state.proposed_brief = {
-                "proposed_era": result.get("proposed_era", ""),
-                "proposed_mood": result.get("proposed_mood", ""),
-                "proposed_palette": result.get("proposed_palette", ""),
-                "proposed_objects": result.get("proposed_objects", []),
-            }
-            self._state.turns.append(ConversationTurn(role="assistant", content=greeting))
-            return greeting
-        except (LLMError, TimeoutError):
-            fallback = (
-                "Welcome! Let's design a space together. I'm imagining a warm, "
-                "cozy room — maybe something with natural wood, soft lighting, "
-                "and a lived-in feel. What kind of space are you thinking of?"
-            )
-            self._state.turns.append(ConversationTurn(role="assistant", content=fallback))
-            return fallback
+        # John, 2026-09-10: "the greeting suggests random things" — the model's invented
+        # opener ("let's start with a cozy reading nook…") came back even with the
+        # 09-03 where-line, so the greeting no longer asks a model at all. The page's
+        # own front-door line already says what he can ask for; this line only adds
+        # where he is standing (when the world has said) and what happens next.
+        # DECISION 32 (John, 2026-09-11) made the old promise untrue: the plan no longer
+        # comes BEFORE the build, it comes with it. A greeting that contradicts the product
+        # on turn zero is worse than no greeting, so it now says what actually happens.
+        standing = (where or "").strip()
+        greeting = (f"You're standing {standing}. " if standing else "") + \
+            "Say it in one sentence and I'll start building — I'll tell you anything I had " \
+            "to make up, and you can change it while it goes up."
+        self._state.proposed_brief = {}
+        self._state.turns.append(ConversationTurn(role="assistant", content=greeting))
+        return greeting
 
     # ─── User Response Interpretation ──────────────────────────────────────
 

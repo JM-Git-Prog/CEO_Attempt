@@ -1,0 +1,25 @@
+20:32:34 round 20260910-203234 session sim-7426d1164e38 model gpt-oss:120b-cloud world v0
+20:32:38 turn 1 [vision] see: 'I see: version 0 neighborhood, 8 houses on the street, nothing changed' type: 'a house right here with a big porch'
+20:32:40 turn 2 [vision] see: 'I see version 0 of the neighborhood, eight houses on the street, uncha' type: 'two floors'
+20:32:42 turn 3 [vision] see: 'I see: version 0 neighborhood, 8 houses, unchanged.' type: 'red brick walls'
+20:32:44 turn 4 [vision] see: 'I see: version 0 neighborhood, 8 houses, unchanged.' type: 'shingles'
+20:32:47 turn 5 [vision] see: 'I see: version 0, eight houses on the street, nothing new where I want' type: 'Add a blue front door with a flowerpot on each side.'
+20:33:45 turn 6 [card] see: 'I see: version 0 of the neighborhood, 8 houses on the street, unchange' type: 'Build it.'
+20:33:49 turn 7: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "Version 0 neighborhood,)
+20:33:49 turn 7 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "Version 0 neighborhood,
+20:34:01 turn 8: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see a plan for a Brick Porch House with red brick, shingled roof, blue door, flowerpots, and three quest)
+20:34:01 turn 8 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see a plan for a Brick Porch House with red brick, shingled roof, blue door, flowerpots, and three quest
+20:35:26 turn 9 [card] see: 'A plan for Brick Porch House: two‑story red brick, large porch, blue d' type: 'Build it.'
+20:35:28 turn 10: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:35:28 turn 10 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:35:41 turn 11: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0, eight houses unchanged, and four identical red brick colonial pictures on the garage wall)
+20:35:41 turn 11 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0, eight houses unchanged, and four identical red brick colonial pictures on the garage wall
+20:35:53 turn 12: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:35:53 turn 12 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:35:53 round over: backend after 12 turns, world v0 -> v0

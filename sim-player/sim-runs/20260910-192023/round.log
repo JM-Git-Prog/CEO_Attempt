@@ -1,0 +1,16 @@
+19:20:23 round 20260910-192023 session sim-f51685cdc54b model gpt-oss:120b-cloud world v0
+19:20:26 turn 1 [vision] see: 'I see: version 0 of the neighborhood, 8 houses on the street, unchange' type: 'a house right here with a big porch'
+19:20:29 turn 2 [vision] see: 'I see version 0 of the neighborhood with eight houses, no new house ye' type: 'two floors'
+19:20:31 turn 3 [vision] see: 'I see: version 0, eight houses, nothing new' type: 'white siding'
+19:20:33 turn 4 [vision] see: 'I see version 0 of the neighborhood with eight houses, no new house ye' type: 'shingles'
+19:20:35 turn 5 [vision] see: 'I see version 0 of the neighborhood, eight houses on the street, nothi' type: 'add a blue door'
+19:21:22 turn 6 [card] see: 'I see version 0, eight houses, nothing changed.' type: 'build it'
+19:21:24 turn 7: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+19:21:24 turn 7 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+19:21:36 turn 8: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: a plan for a two‑story colonial house with white siding, shingles, porch, blue door, asking column )
+19:21:36 turn 8 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: a plan for a two‑story colonial house with white siding, shingles, porch, blue door, asking column 
+19:21:48 turn 9: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+19:21:48 turn 9 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+19:21:48 round over: backend after 9 turns, world v0 -> v0

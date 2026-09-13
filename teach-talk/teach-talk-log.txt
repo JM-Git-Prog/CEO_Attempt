@@ -1,0 +1,79 @@
+08:24:37 === teach-talk: drafting 12 turns on gpt-oss:120b-cloud (cloud — the 4090 stays free)
+08:24:38   1/12 kept     [storeys] You’d like the walls to be red brick. How many floors should it have—one, two, or three?
+08:24:38   2/12 kept     [storeys] You’d like a really big porch. How many floors should it have—one, two, or three?
+08:24:39   3/12 kept     [storeys] You’d like a tall house with lots of windows. How many floors would you like—one, two, or 
+08:24:40   4/12 kept     [storeys] You’d like a small white cottage with a red flowerpot by the door and a swing in the yard.
+08:24:40   5/12 kept     [wall] You’d like a house with a swing on the porch and two floors. Could you tell me what the ou
+08:24:42   6/12 kept     [storeys] You’d like a blue house on the empty lot. How many floors should it have—one, two, or thre
+08:24:42   7/12 REJECTED [wall] never repeated back what he just said
+08:24:43   8/12 kept     [storeys] You’d like a blue house on the empty lot with a flag by the path. How many floors should i
+08:24:43   9/12 kept     [roof] I hear you want red brick walls. What kind of roof would you like—shingles, metal, or flat
+08:24:44   10/12 kept     [storeys] You’d like a garage on the left side of the red‑brick house with a flag by the path. How m
+08:24:45   11/12 REJECTED [roof] invented a detail he never said: floor
+08:24:46   12/12 kept     [yard] I hear you want a green house with a big front door, a garage on the left, a metal roof, a
+08:24:46 === kept 10 of 12 — survivors in talk-sft.jsonl, the rest with their reason in talk-rejected.jsonl
+08:32:42   rescued [wall] once refused for: never repeated back what he just said
+08:32:42   rescued [roof] once refused for: invented a detail he never said: floor
+08:32:42 === regrade: 2 of 2 earlier rejections are teachable under today's grader
+08:32:42 === teach-talk: drafting 60 turns on gpt-oss:120b-cloud (cloud — the 4090 stays free)
+08:32:43   1/60 kept     [storeys] You’d like a small white cottage with a really big porch. How many floors should it have—o
+08:32:44   2/60 kept     [roof] You’d like white siding. Which kind of roof would you prefer—shingles, metal, or flat?
+08:32:45   3/60 kept     [storeys] You’d like a blue house on the empty lot. How many floors should it have—one, two, or thre
+08:32:46   4/60 kept     [storeys] You’d like a tall house with lots of windows, a really big porch, and a flag by the path. 
+08:32:47   5/60 kept     [storeys] You’d like a yellow house near the garage. How many floors should it have—one, two, or thr
+08:32:47   6/60 kept     [storeys] You’d like a flag by the path. How many floors should it have—one, two, or three?
+08:32:48   7/60 kept     [storeys] You’d love a swing in the yard. How many floors should it have—one, two, or three?
+08:32:49   8/60 kept     [storeys] You’d like the house to be blue. How many floors would you like—one, two, or three?
+08:32:50   9/60 kept     [yard] Got it, you want a really big porch. Would you like anything special in the yard or by the
+08:32:51   10/60 kept     [storeys] You’d like a tall house with lots of windows and a metal roof. How many floors should it h
+08:32:53   11/60 kept     [wall] You’d like a tall house with lots of windows and three floors. What would you like the out
+08:32:54   12/60 kept     [storeys] You’d like a blue house right here with a big porch. How many floors should it have—one, t
+08:32:55   13/60 kept     [roof] Got it, you want white siding. What kind of roof would you like—shingles, metal, or flat?
+08:32:56   14/60 kept     [storeys] I hear you want a really big porch. How many floors would you like—one, two, or three?
+08:33:00   15/60 kept     [storeys] You’d like a big porch. How many floors should it have—one, two, or three?
+08:33:00   16/60 kept     [storeys] You’d like a yellow house near the garage with a swing in the yard, but now you want it bl
+08:33:01   17/60 kept     [storeys] You’d like a house with a swing on the porch. How many floors should it have—one, two, or 
+08:33:02   18/60 kept     [roof] You’d like a small white cottage with two floors, a big porch, and it should be blue. Whic
+08:33:03   19/60 REJECTED [roof] invented a detail he never said: story
+08:33:04   20/60 kept     [storeys] You’d like a house with a swing on the porch. How many floors should it have—one, two, or 
+08:33:04   21/60 kept     [storeys] You’d like a red‑brick house like your grandma’s with a big porch. How many floors should 
+08:33:05   22/60 kept     [storeys] Got it, you want red brick walls. How many floors would you like—one, two, or three?
+08:33:06   23/60 kept     [storeys] You’d like a swing in the yard. How many floors would you like—one, two, or three?
+08:33:07   24/60 kept     [storeys] You’d like a tall house with lots of windows. How many floors would you like—one, two, or 
+08:33:08   25/60 kept     [storeys] You’d love a house with a swing on the porch. How many floors should it have—one, two, or 
+08:33:08   26/60 kept     [storeys] You’d like a small white cottage with white siding. How many floors should it have—one, tw
+08:33:09   27/60 kept     [storeys] You’d like the house to be blue. How many floors would you like—one, two, or three?
+08:33:10   28/60 kept     [storeys] You’d like a red‑brick house like your grandma’s, with shingles and a flag by the path. Ho
+08:33:11   29/60 kept     [storeys] Got it, you want a garage on the left. How many floors would you like—one, two, or three?
+08:33:12   30/60 kept     [storeys] You’d like a blue house on the empty lot with a flag by the path and shingles. How many fl
+08:33:12   31/60 REJECTED [roof] invented a detail he never said: story
+08:33:13   32/60 kept     [storeys] Got it, you’d like a metal roof. How many floors should it have—one, two, or three?
+08:33:14   33/60 kept     [storeys] Got it, you’d like the house to have white siding. How many floors should it have—one, two
+08:33:15   34/60 kept     [roof] You’d like three floors. Which style of roof would you prefer—shingles, metal, or flat?
+08:33:15   35/60 kept     [storeys] You’d like a house right here with a big porch. How many floors should it have—one, two, o
+08:33:16   36/60 kept     [storeys] Got it, you want white siding on your red‑brick house with a big porch. How many floors wo
+08:33:17   37/60 kept     [roof] You’d like a two‑floor house with a big porch, red brick walls, and a garage on the left. 
+08:33:17   38/60 kept     [storeys] You’d love a swing in the yard. How many floors should it have—one, two, or three?
+08:33:18   39/60 kept     [storeys] You’d like the house to be blue. How many floors should it have—one, two, or three?
+08:33:19   40/60 kept     [roof] Got it, you want a green house with a big front door, a big porch, white siding, and three
+08:33:19   41/60 kept     [storeys] You’d like a yellow house near the garage with a flag by the path. How many floors should 
+08:33:20   42/60 kept     [storeys] You’d like a house right here with a big porch and a red door. How many floors would you l
+08:33:21   43/60 kept     [wall] You’d like a three‑floor house. What would you like the outside walls to be made of and wh
+08:33:22   44/60 kept     [storeys] You’d like a small white cottage with a really big porch. How many floors would you like—o
+08:33:22   45/60 kept     [wall] Got it—you’d like three floors. What material and color would you like for the outside wal
+08:33:23   46/60 kept     [storeys] You’d like a red‑brick house with shingles, white siding, and a big porch. How many floors
+08:33:28   47/60 kept     [roof] You’d like a blue two‑floor house on the empty lot. What kind of roof would you prefer—shi
+08:33:28   48/60 kept     [storeys] You’d like a house right here with a big porch and a metal roof. How many floors would you
+08:33:29   49/60 kept     [storeys] Got it, you want a green house with a big front door, shingles, and a metal roof. How many
+08:33:30   50/60 kept     [storeys] You’d like a tall house with lots of windows. How many floors should it have—one, two, or 
+08:33:30   51/60 kept     [storeys] You’d like a red‑brick house just like your grandma’s. How many floors should it have—one,
+08:33:31   52/60 kept     [storeys] I hear you want a green house with a big front door, a garage on the left, and shingles. H
+08:33:32   53/60 kept     [storeys] You’d like a yellow house near the garage. How many floors would you like—one, two, or thr
+08:33:32   54/60 kept     [roof] Got it, you’d like three floors. What kind of roof would you like—shingles, metal, or flat
+08:33:33   55/60 kept     [storeys] Got it, you want a metal roof. How many floors would you like—one, two, or three?
+08:33:34   56/60 kept     [storeys] Got it, you want a garage on the left. How many floors would you like—one, two, or three?
+08:33:34   57/60 kept     [storeys] You’d like a big porch with a swing on it. How many floors should it have—one, two, or thr
+08:33:35   58/60 kept     [roof] You’d like red brick walls for your two‑floor house, just like Grandma’s. What kind of roo
+08:33:35   59/60 kept     [storeys] You’d like a small white cottage that’s painted blue. How many floors should it have—one, 
+08:33:36   60/60 kept     [storeys] You’d love a house with a swing on the porch. How many floors should it have—one, two, or 
+08:33:36 === kept 58 of 60 — survivors in talk-sft.jsonl, the rest with their reason in talk-rejected.jsonl

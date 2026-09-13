@@ -269,7 +269,7 @@
 
       function setRail(n) {
         railWait.hidden = n === 0;
-        railWait.textContent = n === 1 ? '1 waiting in the garage → walk' : n + ' waiting in the garage → walk';
+        railWait.textContent = n === 1 ? '1 thing needs your eye in the garage → walk over' : n + ' things need your eye in the garage → walk over';
       }
 
       async function poll() {

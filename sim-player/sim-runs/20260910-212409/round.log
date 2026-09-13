@@ -1,0 +1,19 @@
+21:24:09 round 20260910-212409 session sim-8c4d30b6cc3f model gpt-oss:120b-cloud world v0
+21:24:12 turn 1 [vision] see: 'I see version 0, eight houses on the street, no new things.' type: 'a yellow house with a big porch on the empty lot'
+21:24:14 turn 2 [vision] see: 'I see version 0, eight houses, an empty lot with a yellow house and bi' type: 'Two floors.'
+21:24:16 turn 3: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:24:16 turn 3 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:24:29 turn 4 [vision] see: 'I see: version 0, eight houses, unchanged, asking what kind of roof.' type: 'shingles'
+21:24:31 turn 5 [vision] see: 'I see version 0 of the neighborhood, eight houses, no changes since la' type: 'add a red mailbox and a blue swing on the porch'
+21:24:33 turn 6: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood with eight houses, no changes, and a plan for a yellow house with a big porch)
+21:24:33 turn 6 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood with eight houses, no changes, and a plan for a yellow house with a big porch
+21:25:48 turn 7 [card] see: 'I see version 0 neighborhood, 8 houses, unchanged; plan shows yellow h' type: 'build it'
+21:25:50 turn 8: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:25:50 turn 8 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:26:01 turn 9: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:26:01 turn 9 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:26:13 turn 10: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:26:13 turn 10 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:26:13 round over: backend after 10 turns, world v0 -> v0

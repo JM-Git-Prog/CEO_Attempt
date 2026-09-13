@@ -1,0 +1,20 @@
+{
+ "nights": 1,
+ "wants": {
+  "i'm proud of it": {
+   "thing": "I'm proud of it",
+   "room": "living room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 1
+  }
+ },
+ "rooms": {
+  "living room": 1
+ },
+ "houses": [
+  "colonial"
+ ],
+ "version": 1
+}

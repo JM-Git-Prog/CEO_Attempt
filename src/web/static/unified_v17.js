@@ -709,8 +709,91 @@
     return parts.join(" · ");
   }
 
+  // The architect's card as a gate: plain text lines (no HTML from the model), one
+  // collapsed "full description" line, and the two answers as buttons.
+  function renderArchitectCard(card, message) {
+    const item = appendMessage("system gate", "");
+    const line = (label, text) => {
+      if (!text) return;
+      const p = document.createElement("div");
+      p.textContent = label ? `${label}: ${text}` : text;
+      item.appendChild(p);
+    };
+    // Shape (John, 2026-09-10, "the plan is a wall of small text"): a bold title, the
+    // summary, then the questions he can actually answer; the long lists fold away.
+    const fold = (label, lines) => {
+      if (!lines || !lines.length) return;
+      const more = document.createElement("details");
+      const sum = document.createElement("summary");
+      sum.textContent = label;
+      more.appendChild(sum);
+      lines.forEach((t) => { const p = document.createElement("div"); p.textContent = t; more.appendChild(p); });
+      item.appendChild(more);
+    };
+    const title = document.createElement("div");
+    const strong = document.createElement("strong");
+    strong.textContent = `The architect's plan${card.name ? " — " + card.name : ""}`;
+    title.appendChild(strong);
+    const from = String(card.model || "");
+    title.append(from.startsWith("catalog:") ? " · from your shelf, instant" : (from ? ` · drawn by ${from}${card.seconds ? " in " + card.seconds + " s" : ""}` : ""));
+    item.appendChild(title);
+    line("", card.summary);
+    // The pattern book (2026-09-10): the real catalog designs the plan was drawn against, each
+    // with its original plate. Text is set as textContent; the images come from the plate route,
+    // which serves only JPEGs from the shelf. Click a plate to open it full size.
+    if (Array.isArray(card.references) && card.references.length) {
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;margin:6px 0";
+      const cap = document.createElement("div");
+      cap.style.flexBasis = "100%";
+      cap.textContent = `Drawn against the catalog: ${card.references.map((r) => r && r.name).filter(Boolean).join(", ")}`;
+      row.appendChild(cap);
+      card.references.forEach((r) => {
+        if (!r || !r.id || !r.plate) return;
+        const a = document.createElement("a");
+        a.href = r.plate; a.target = "_blank"; a.rel = "noopener"; a.title = r.line || r.name || r.id;
+        const img = document.createElement("img");
+        img.src = r.plate; img.alt = r.name || r.id;          // eager on purpose: lazy images never load in a background tab (the black-worlds lesson)
+        img.style.cssText = "height:110px;width:auto;border:1px solid #bbb;border-radius:3px;background:#fff";
+        a.appendChild(img);
+        row.appendChild(a);
+      });
+      const notes = (card.references[0] && card.references[0].notes) || [];
+      if (notes.length) { const n = document.createElement("div"); n.style.flexBasis = "100%"; n.textContent = notes.join("; "); row.appendChild(n); }
+      item.appendChild(row);
+    }
+    (card.questions || []).forEach((q) => line("It would like to know", q));
+    fold(`How it gets built (${(card.plan || []).length} steps)`, (card.plan || []).map((s, i) => `${i + 1}. ${s}`));
+    fold(`Parts (${card.part_count || (card.parts || []).length})`, [(card.parts || []).join(", ")]);
+    fold(`What it assumed (${(card.assumptions || []).length})`, card.assumptions || []);
+    const g = card.gates || {};
+    fold("Full description and checks", [card.description || "", Object.keys(g).length ? `Checks: schema ${g.schema}, parts fit ${g.parts_fit ? "yes" : "NO"}, plan ${g.plan ? "ok" : "thin"}, ${g.words} words` : ""].filter(Boolean));
+    line("", card.question || "Build it as planned, or change something first?");
+    (card.options || []).forEach((opt) => {
+      if (!opt || !opt.kind || !opt.label) return;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "walk";
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => {
+        item.querySelectorAll("button").forEach((b) => { b.disabled = true; });
+        if (opt.kind === "build") {
+          routeMessage(message, { card_decision: { id: card.id, chose: "build" } });
+        } else {
+          // change something first: the sentence goes back to the composer, nothing is sent
+          input.value = message;
+          input.focus();
+          appendMessage("system", "Change the sentence and send it again — the architect will draw a new plan.");
+        }
+      });
+      item.append(" ", btn);
+    });
+    return item;
+  }
+
   // `answered` carries John's reply when the router asked which he meant:
-  // { forced_kind, guessed_kind }. It skips the classifier and is logged as a correction.
+  // { forced_kind, guessed_kind } — or his answer to the architect's card:
+  // { card_decision: { id, chose: "build" } }. Both skip the classifier and are logged.
   async function routeMessage(message, answered) {
     // the reference picture id rides with this sentence; it is only taken (cleared) once
     // we actually know which lane is going to use it, so a rejected/unknown sentence
@@ -730,24 +813,103 @@
         return;
       }
 
+      // The "Got: … · Making: …" receipt is skipped when the architect's plan follows —
+      // the plan IS the answer, and two answers in a row read as confusion (John, 2026-09-10).
       const receipt = receiptLine(data.receipt);
-      if (receipt) appendMessage("system", receipt);
+      if (receipt && !(data.card && Array.isArray(data.card.options))) appendMessage("system", receipt);
       if (data.picture && data.picture.summary) appendMessage("system", `Looking at your photo: ${data.picture.summary}`);
+
+      // VISION TALK (John, 2026-09-10): "build it" closes the conversation and hands the
+      // WHOLE vision to the existing house/grounds path below — this line says so before
+      // whatever comes next (a plan card, or straight to the builder) appears.
+      if (data.vision_built) appendMessage("system", `Building your vision: ${data.vision_built}`);
+
+      // THE ARCHITECT'S CARD (John, 2026-09-07/10): a confident house/grounds order comes
+      // back as a planned-out plan first — summary, the build plan, the parts, what it
+      // assumed, what it would ask — and waits. "Build it as planned" re-sends the SAME
+      // sentence with the card's id; the router then hands the ornate brief to the builder.
+      // "Change something first" gives the sentence back to the composer. Law G1 at the
+      // sentence level; a gate in the chat column, never a window (G5).
+      if (data.card && Array.isArray(data.card.options)) {
+        // JOHN, 2026-09-11: "i don't like all this business in the v17 chat box. just the
+        // chat and the discussions with the model router... anything else that should
+        // happen should happen in the right pane, because they can talk to each other."
+        // So the PLAN - summary, parts, assumptions, checks - is machinery and goes to the
+        // world pane. The chat column keeps only what the builder SAYS to him. The plan is
+        // still a gate when it is a gate: a card he must answer still renders here, with
+        // its buttons, because answering it IS the conversation.
+        if (data.card.auto) {
+          window.dispatchEvent(new CustomEvent("v17:plan", { detail: data.card }));
+        } else {
+          renderArchitectCard(data.card, message);
+        }
+        // DECISION 32 (John, 2026-09-11, "type a sentence and then boom a room"): on the
+        // FIRST sentence the card is no longer a gate, it is the receipt. The workshop is
+        // already the answer, so the same "Build it as planned" message the buttons would
+        // send goes at once, the buttons are dead, and the chat says in one plain line
+        // what the architect invented - computed from his own words, not claimed by the
+        // model. Every later sentence that changes something comes back through here the
+        // same way.
+        if (data.card.auto) {
+          if (data.card.guessed_line) appendMessage("assistant", data.card.guessed_line);
+          // DECISION 33: what the plan promises that the workshop never even attempts -
+          // the rooms inside, the stairs, the furniture - said BEFORE he walks up to it.
+          if (data.card.not_yet_line) appendMessage("assistant", data.card.not_yet_line);
+          routeMessage(message, { card_decision: { id: data.card.id, chose: "build" } });
+        }
+        return;
+      }
 
       const nb = neighbourhood();
       switch (data.kind) {
+        case "vision": {
+          // THE VISION TALK (John, 2026-09-10): a conversation before the build, not a
+          // plan. `data.reply` is the friendly-builder line; `data.summary` is the running
+          // list of everything he's said so far, with Build it / Start over underneath —
+          // a house/grounds sentence never falls into the order branch below while this
+          // conversation is open.
+          appendMessage("assistant", data.reply || "");
+          if (data.summary) {
+            const item = appendMessage("system", data.summary);
+            const build = document.createElement("button");
+            build.type = "button";
+            build.className = "walk";
+            build.textContent = "Build it";
+            build.addEventListener("click", () => routeMessage("build it"));
+            const reset = document.createElement("button");
+            reset.type = "button";
+            reset.className = "walk";
+            reset.textContent = "Start over";
+            reset.addEventListener("click", () => routeMessage("start over"));
+            item.append(" ", build, " ", reset);
+          }
+          setStrip("Your move", "answer, add more, or press Build it");
+          return;
+        }
         case "house":
         case "grounds":
           if (!nb) { appendMessage("system", "The neighbourhood builder isn't loaded — reload the page."); return; }
           if (window.LRReference) window.LRReference.take();
           // gemma4's read of the photo goes to the builder too — showing it to John and
-          // then dropping it was the waste found on review (2026-09-03).
-          await nb.order(message, reference, data.order_hint);
+          // then dropping it was the waste found on review (2026-09-03). The architect's
+          // confirmed plan (card_clause) rides along the same way, and its card_id lets
+          // the order look the parts back up for the jobsite (2026-09-10).
+          await nb.order(message, reference, data.order_hint, data.card_clause || null, data.card_id || null);
+          return;
+        case "gap":
+          // DECISION 34 (John, 2026-09-11): a wish the world cannot grant is an ORDER, not
+          // a deflection. Until tonight `gap` was handed to the ROOM brain with the three
+          // below, which is why "a little red car" came back as "we can begin a room design
+          // whenever you describe the interior space you'd like to create" while the order
+          // was quietly filed and never mentioned. The promise is the server's, computed
+          // from what was actually written to the ledger; with no promise to make, the old
+          // path still runs rather than leaving him with silence.
+          if (data.promise) { appendMessage("assistant", data.promise); return; }
+          await sendMessage(message, data.picture && data.picture.summary);
           return;
         case "room":
         case "question":
         case "check":
-        case "gap":
           // carry what the router SAW into the room brain — it has no eyes of its own
           await sendMessage(message, data.picture && data.picture.summary);
           return;
@@ -921,7 +1083,7 @@
     pipelineStarted = !["", "unknown", "awaiting_description"].includes(state);
     if (!pipelineStarted) {
       showProposal(conv);
-      setStrip("Your move", "resumed — still designing");
+      setStrip("Your move", "say what to add or change");
       setWorldNote("");   // the pane's own centre text already says "Empty on purpose"
     } else if (state === "error") {
       lastStage = conv.pending_stage || lastStage;
@@ -971,7 +1133,7 @@
       // The front-door question is already on the page; the AI's greeting goes under it.
       appendMessage("assistant", data.opening_message || "Describe the space you'd like to create.");
       if (data.model) setModel(data.model);
-      setStrip("Your move", "describe the place, or answer the question above");
+      setStrip("Your move", "say what to add or change");
       connectEvents(data.events_url || `/api/session/${sessionId}/events`);
       world()?.attach(sessionId);
       askWorld();

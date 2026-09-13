@@ -19,6 +19,7 @@ Additive: no V2-V16 route or behavior changes.
 
 from __future__ import annotations
 
+import os
 import re
 
 import httpx
@@ -27,7 +28,10 @@ from fastapi.responses import JSONResponse, Response
 
 router = APIRouter(prefix="/api/v17", tags=["v17_pick"])
 
-PICKBOARD = "http://127.0.0.1:8194"
+# 2026-09-11, the sim's own board: the Sam Loop runs a SECOND Pick Board on :8294 with its own
+# stations and its own preferences.jsonl, so a robot's picks never land in John's. Unset, this is
+# exactly the address it always was - John's Living Room talks to John's board, unchanged.
+PICKBOARD = os.getenv("PICKBOARD", "http://127.0.0.1:8194")
 
 _SLUG = re.compile(r"[a-z0-9\-]{2,40}")
 _TAG = re.compile(r"v\d{1,3}")

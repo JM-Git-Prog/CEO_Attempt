@@ -1,0 +1,93 @@
+{
+  "round": "20260910-212622",
+  "at": "2026-09-11T02:29:18Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 4,
+    "changes_seen": 0,
+    "nothing_streak_max": 1,
+    "questions_asked": 4,
+    "questions_answered": 3,
+    "walls_posted": 0,
+    "walls_picked": 0,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 4,
+    "http_5xx": 0,
+    "exceptions": 4,
+    "seconds_build_to_house": [],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "a blue house with a big porch right here",
+      "verdict": "unjudged",
+      "evidence": "judge backend",
+      "judge": "unjudged",
+      "phrase": "a blue house with a big porch right here"
+    },
+    {
+      "turn": 4,
+      "text": "Add a swing in the yard.",
+      "verdict": "unjudged",
+      "evidence": "judge backend",
+      "judge": "unjudged",
+      "phrase": "Add a swing in the yard."
+    },
+    {
+      "turn": 5,
+      "text": "Build it.",
+      "verdict": "unjudged",
+      "evidence": "judge backend",
+      "judge": "unjudged",
+      "phrase": "Build it."
+    },
+    {
+      "turn": 14,
+      "text": "Build it",
+      "verdict": "unjudged",
+      "evidence": "judge backend",
+      "judge": "unjudged",
+      "phrase": "Build it"
+    }
+  ],
+  "defects": [
+    {
+      "kind": "exception",
+      "turn": 7,
+      "detail": "backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')",
+      "route": "/api/v17/say",
+      "excerpt": "null"
+    },
+    {
+      "kind": "exception",
+      "turn": 8,
+      "detail": "backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {\n  \"i_see\": \"I see version 0 neighborhood, eight unchanged houses, and a plan for a two‑story sky‑blue house with woode",
+      "route": "/api/v17/say",
+      "excerpt": "null"
+    },
+    {
+      "kind": "exception",
+      "turn": 10,
+      "detail": "backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')",
+      "route": "/api/v17/say",
+      "excerpt": "null"
+    },
+    {
+      "kind": "exception",
+      "turn": 12,
+      "detail": "backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')",
+      "route": "/api/v17/say",
+      "excerpt": "null"
+    }
+  ],
+  "gaps_filed": [],
+  "judge_model": "gpt-oss:120b-cloud",
+  "judge_status": "backend"
+}

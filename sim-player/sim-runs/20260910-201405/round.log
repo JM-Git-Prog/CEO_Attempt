@@ -1,0 +1,13 @@
+20:14:05 round 20260910-201405 session sim-946631263f99 model gpt-oss:120b-cloud world v0
+20:14:08 turn 1 [vision] see: 'I see version 0 of the neighborhood, eight houses on the street, nothi' type: 'Add a blue house with a big porch right here.'
+20:14:09 turn 2 [vision] see: 'I see: version 0, eight houses, unchanged, asking how many floors.' type: 'two floors'
+20:14:12 turn 3 [vision] see: 'I see: version 0, eight houses, no new house yet, asking roof type (sh' type: 'shingles'
+20:14:15 turn 4 [vision] see: 'I see: version 0 neighborhood, 8 houses, unchanged, chat asking for ya' type: 'add a red flowerpot by the front door'
+20:14:55 turn 5 [card] see: 'I see: version 0, eight houses, nothing changed.' type: 'Build it'
+20:14:57 turn 6: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:14:57 turn 6 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:15:09 turn 7: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:15:09 turn 7 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:15:22 turn 8: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:15:22 turn 8 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:15:22 round over: backend after 8 turns, world v0 -> v0

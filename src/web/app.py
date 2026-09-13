@@ -113,6 +113,11 @@ app.include_router(_v17_nb_router)
 from src.web.v17_say_routes import router as _v17_say_router  # noqa: E402
 app.include_router(_v17_say_router)
 
+# V17 (2026-09-10): the Home Builders Catalog — the pattern book the architect card is drawn
+# against. Read-only: the lookup, a design's plate, a design's record. Additive.
+from src.web.hbc_routes import router as _v17_hbc_router  # noqa: E402
+app.include_router(_v17_hbc_router)
+
 
 def _normalize_requested_version(value: str | None, source: str) -> int:
     """Normalize a canonical interface version without silently coercing input."""

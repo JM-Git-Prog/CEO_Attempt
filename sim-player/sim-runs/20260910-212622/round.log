@@ -1,0 +1,22 @@
+21:26:22 round 20260910-212622 session sim-e023d3b792ae model gpt-oss:120b-cloud world v0
+21:26:25 turn 1 [vision] see: 'I see: version 0 of the neighborhood, eight houses on the street, noth' type: 'a blue house with a big porch right here'
+21:26:27 turn 2 [vision] see: 'I see: version 0, 8 houses, no change.' type: 'two floors'
+21:26:29 turn 3 [vision] see: 'I see version 0 with eight houses, a blue house with a big porch right' type: 'shingles'
+21:26:32 turn 4 [vision] see: 'I see version 0, eight houses, unchanged.' type: 'Add a swing in the yard.'
+21:27:34 turn 5 [card] see: 'I see: version 0, eight houses, plan for a blue house with big porch, ' type: 'Build it.'
+21:27:37 turn 6 [vision] see: 'I see: version 0 neighborhood, eight houses unchanged, plan for Blue P' type: 'Sky blue, wooden porch floor, metal railings, hanging swing about six feet long.'
+21:27:39 turn 7: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:27:39 turn 7 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:27:51 turn 8: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood, eight unchanged houses, and a plan for a two‑story sky‑blue house with woode)
+21:27:51 turn 8 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood, eight unchanged houses, and a plan for a two‑story sky‑blue house with woode
+21:28:03 turn 9 [vision] see: 'I see a plan for a two‑story blue porch house with a yard swing and qu' type: 'Light sky blue, wooden floor, metal railings, hanging swing six feet long.'
+21:28:05 turn 10: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:28:05 turn 10 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:28:18 turn 11 [card] see: 'I see: version 0, eight houses unchanged, a plan asking shade, porch m' type: 'Build it'
+21:28:20 turn 12: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:28:20 turn 12 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:28:33 turn 13 [vision] see: 'I see: version 0 neighborhood, eight houses on the street, unchanged, ' type: 'nothing happened'
+21:29:10 turn 14 [card] see: 'Version 0, eight houses on the street, nothing changed, chat says say ' type: 'Build it'
+21:29:10 round over: turns after 14 turns, world v0 -> v0

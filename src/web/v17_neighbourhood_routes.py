@@ -32,6 +32,8 @@ import httpx
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse, Response
 
+from src.web import architect_card, jobsite
+from src.web.candidate_labels import candidate_labels
 from src.web.unified_routes import _references, _session_dir
 
 router = APIRouter(prefix="/api/v17/neighbourhood", tags=["v17_neighbourhood"])
@@ -180,13 +182,24 @@ async def v17_nb_build(body: dict):
 
 # ─── A NEW HOUSE: pictures first, then John chooses (2026-09-03, decision 21 applied to homes) ───
 # John: "Pictures first, then I choose." An order for a new house does not build; it asks the
-# builder for three candidate houses rendered as pictures (--preview, nothing written into the
-# world), hangs them on the garage wall through the Pick Board (the station kit), and only the
-# house he clicks is built — as the next version of Mr. John's Neighborhood. Right-click = three
+# builder for candidate houses rendered as pictures (--preview, nothing written into the
+# world), hangs them through the Pick Board (the station kit), and only the
+# house he clicks is built — as the next version of Mr. John's Neighborhood. Right-click =
 # new candidates. The page polls GET /order/<job> and follows the stage it reports.
-PICKBOARD = "http://127.0.0.1:8194"
+# Decision 25 (John, 2026-09-10: "Four pictures of candidate houses stand on a signboard on the
+# lot, I pick one you build it"): the order asks for FOUR takes, and the wall hangs on the next
+# empty lot's signboard in the world instead of the garage — the world hangs any wall made by
+# `v17-neighbourhood` whose id starts with `house-` on its manifest's `lots.next` sign (the same
+# lot the jobsite uses), and the builder's answer carries that lot (`lot`) so the page can walk
+# John to it. The Pick Board's station file is unchanged: the same record, a different stand.
+# 2026-09-11, the sim's own board: the Sam Loop runs a SECOND Pick Board on :8294 with its own
+# stations and its own preferences.jsonl, so a robot's picks never land in John's. Unset, this is
+# exactly the address it always was - John's Living Room talks to John's board, unchanged.
+PICKBOARD = os.getenv("PICKBOARD", "http://127.0.0.1:8194")
 HOME = "mr-johns-neighborhood"
-_orders: dict[str, dict] = {}   # preview job id -> {text, base, station, build_job, stage, image, factory}
+_orders: dict[str, dict] = {}   # preview job id -> {text, base, station, build_job, stage, image, factory, lot}
+CANDIDATES = 4                  # decision 25: four pictures on the signboard (the garage wall hung three)
+SIGN_QUESTION = "Which one is your favorite?"   # John's words, 2026-09-10
 
 
 # ─── A PICTURE with the order (2026-09-03): the photo John pasted into the chat box ───
@@ -237,15 +250,19 @@ async def _intake(session: str, n: int, text: str, png: Path) -> dict:
     return {"id": slug, "job": (data.get("job") or {}).get("n"), "raw": (data.get("intake") or {}).get("raw"), "image": str(png)}
 
 
+# DECISION 28 (John, 2026-09-11): the four pictures are four DIFFERENT houses — the builder may
+# ignore some of what he asked for so they read as real alternatives — and each label says which
+# parts it changed, as a DIFF against candidate 1 (never a sentence a model wrote). The Sam Loop
+# found the defect that forced this: see src/web/candidate_labels.py for the evidence.
 async def _post_station(order_id: str, text: str, cands: list[dict]) -> str:
-    """Hang the candidates on the garage wall; the board serves the pictures from the builder's job folder."""
+    """Hang the candidates as a station wall; the board serves the pictures from the builder's job folder.
+    The world stands this wall on the next empty lot's signboard (decision 25) — see the section header."""
     station_id = f"house-{order_id}"
     items = []
-    for c in cands:
-        s = c.get("summary") or {}
-        label = " ".join(str(s.get(k, "")) for k in ("color", "wall", "style")).strip() or c.get("tag", "")
+    labels = candidate_labels(cands)
+    for c, label in zip(cands, labels):
         items.append({"tag": c["tag"], "label": label, "image": c["image"]})
-    body = {"id": station_id, "kind": "wall", "question": "Which house?", "made_by": "v17-neighbourhood", "items": items, "actions": {"right": "more"}}
+    body = {"id": station_id, "kind": "wall", "question": SIGN_QUESTION, "made_by": "v17-neighbourhood", "items": items, "actions": {"right": "more"}}
     async with httpx.AsyncClient(timeout=10.0) as cl:
         r = await cl.post(f"{PICKBOARD}/api/stations", json=body)
     if r.status_code not in (200, 409):   # 409 = already hung (a repeated poll)
@@ -372,24 +389,38 @@ async def v17_nb_order(body: dict):
     if clause:
         builder_text = f"{text}. From the photo: {clause}"
         log.info("  NB ORDER photo clause: %s", clause[:160])
+    # The architect's confirmed plan (2026-09-10): the ornate brief John said "build it as
+    # planned" to, appended so the builder's order form is read from the planned-out
+    # description, not the six-word sentence. His words still lead.
+    card_clause = str((body or {}).get("card_clause") or "").strip()
+    if card_clause:
+        builder_text = f"{builder_text}. Architect's brief: {card_clause[:1200]}"
+        log.info("  NB ORDER architect clause: %s", card_clause[:160])
+    # THE JOBSITE (2026-09-10): the confirmed card's id rides with the order so the world can
+    # show its own parts arriving and assembling — best-effort, never fatal to the order.
+    card_id = str((body or {}).get("card_id") or "")
+    card = architect_card.find(card_id) if card_id else None
     await _ensure_builder()
     try:
         async with httpx.AsyncClient(timeout=120.0) as cl:
-            r = await cl.post(f"{BUILDER}/api/candidates", json={"text": builder_text, "base": base, **({"image": str(image)} if image else {})})
+            r = await cl.post(f"{BUILDER}/api/candidates", json={"text": builder_text, "base": base, "count": CANDIDATES, **({"image": str(image)} if image else {})})
         data = r.json()
     except Exception as exc:
         return _builder_down(exc, f"{BUILDER}/api/candidates")
     if r.status_code != 200:
         return JSONResponse(data, status_code=r.status_code)
+    lot = data.get("lot") if isinstance(data.get("lot"), dict) else None   # the next empty lot (decision 25); None on a place without a plat
     if image:
         try:
             factory = await _intake(session, ref_n, text, image)
         except Exception as exc:
             log.warning("  NB ORDER %s intake failed: %s", data["job"], exc)
             factory = {"error": str(exc)}
-    _orders[data["job"]] = {"text": text, "base": base, "station": None, "build_job": None, "stage": "rendering", "image": str(image) if image else None, "factory": factory}
+    _orders[data["job"]] = {"text": text, "base": base, "station": None, "build_job": None, "stage": "rendering",
+                             "image": str(image) if image else None, "factory": factory, "lot": lot,
+                             "jobsite": jobsite.facts(card) if card else None, "t_order": time.time(), "t_building": None}
     _route_gaps((data.get("brief") or {}).get("gaps") or [], f"order {data['job']}")
-    return {"order": data["job"], "brief": data.get("brief"), "stage": "rendering", "factory": factory}
+    return {"order": data["job"], "brief": data.get("brief"), "stage": "rendering", "factory": factory, "lot": lot, "count": CANDIDATES}
 
 
 @router.get("/order/{order_id}")
@@ -404,7 +435,32 @@ async def v17_nb_order_status(order_id: str):
     resp = await _order_stage(order_id, o)
     if isinstance(resp, dict):
         resp["factory"] = o.get("factory")
+        resp["lot"] = o.get("lot")
+        block = _jobsite_block(order_id, o, resp.get("stage"), error=resp.get("error"))
+        if block:
+            resp["jobsite"] = block
     return resp
+
+
+_JOBSITE_STAGE = {"more": "rendering"}   # a re-roll is still parts arriving, from the world's point of view
+
+
+def _jobsite_block(order_id: str, o: dict, stage: str | None, *, error: str | None = None) -> dict | None:
+    """The `jobsite` block of an /order or /job answer, or None when this order carries no card.
+    Fails soft (house law): a bad card or a math error must never break the order flow."""
+    js = o.get("jobsite")
+    if not js:
+        return None
+    try:
+        stage = _JOBSITE_STAGE.get(stage or o.get("stage") or "rendering", stage or o.get("stage") or "rendering")
+        plan = js.get("plan") or []
+        parts_total = sum(int(p.get("count") or 1) for p in js.get("parts") or [])
+        progress = jobsite.progress(stage, o.get("t_order"), o.get("t_building"), time.time(),
+                                     len(plan), parts_total, plan, error=error)
+        return {**js, "order": order_id, "stage": stage, "progress": progress}
+    except Exception as exc:
+        logging.getLogger("live_trace").warning("  NB JOBSITE %s: %s", order_id, exc)
+        return None
 
 
 async def _order_stage(order_id: str, o: dict):
@@ -447,20 +503,26 @@ async def _order_stage(order_id: str, o: dict):
             return _builder_down(exc, f"{BUILDER}/api/build")
         if r.status_code != 200:
             return JSONResponse(data, status_code=r.status_code)
-        o["stage"] = "building"; o["build_job"] = data["job"]
+        o["stage"] = "building"; o["build_job"] = data["job"]; o["t_building"] = time.time()
         return {"order": order_id, "stage": "building", "build_job": data["job"], "station": o["station"], "chosen": chosen.get("summary")}
-    # more: three new candidates, same words (and the same picture, if there was one)
+    # more: new candidates, same words (and the same picture, if there was one)
     try:
         async with httpx.AsyncClient(timeout=120.0) as cl:
-            r = await cl.post(f"{BUILDER}/api/candidates", json={"text": o["text"], "base": o["base"], **({"image": o["image"]} if o.get("image") else {})})
+            r = await cl.post(f"{BUILDER}/api/candidates", json={"text": o["text"], "base": o["base"], "count": CANDIDATES, **({"image": o["image"]} if o.get("image") else {})})
         data = r.json()
     except Exception as exc:
         return _builder_down(exc, f"{BUILDER}/api/candidates")
     if r.status_code != 200:
         return JSONResponse(data, status_code=r.status_code)
-    _orders[data["job"]] = {"text": o["text"], "base": o["base"], "station": None, "build_job": None, "stage": "rendering", "image": o.get("image"), "factory": o.get("factory")}
+    _orders[data["job"]] = {"text": o["text"], "base": o["base"], "station": None, "build_job": None, "stage": "rendering",
+                             "image": o.get("image"), "factory": o.get("factory"),
+                             "lot": data.get("lot") if isinstance(data.get("lot"), dict) else o.get("lot"),
+                             "jobsite": o.get("jobsite"), "t_order": time.time(), "t_building": None}
     o["stage"] = "more"; o["next_order"] = data["job"]
     return {"order": order_id, "stage": "more", "next_order": data["job"], "station": o["station"]}
+
+
+_JOB_STATUS_TO_JOBSITE = {"building": "building", "done": "done", "failed": "failed"}
 
 
 @router.get("/job/{job_id}")
@@ -473,7 +535,18 @@ async def v17_nb_job(job_id: str):
         data = r.json()
     except Exception as exc:
         return _builder_down(exc, f"{BUILDER}/api/job/{job_id}")
-    return _rewrite(data)
+    data = _rewrite(data)
+    try:
+        found = next(((oid, o) for oid, o in _orders.items() if o.get("build_job") == job_id), None)
+        if found:
+            oid, o = found
+            stage = _JOB_STATUS_TO_JOBSITE.get(data.get("status"), "building")
+            block = _jobsite_block(oid, o, stage, error=data.get("error") if stage == "failed" else None)
+            if block:
+                data["jobsite"] = block
+    except Exception as exc:
+        logging.getLogger("live_trace").warning("  NB JOBSITE job %s: %s", job_id, exc)
+    return data
 
 
 @router.get("/jobs/{job_id}/{file}")

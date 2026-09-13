@@ -1,0 +1,127 @@
+"""Vision talk — the conversation before the build (John, 2026-09-10): "it needs to
+understand and ask questions to collect the data needed to build what I want,
+conversational... we discuss my vision, then when i click enter, my v17 backend
+builds it." Pure module: no FastAPI, no model calls. Holds one running "vision" per
+session — every sentence John has said about the place, in order — and answers what
+v17_say_routes.py needs: is this sentence a build command, a reset, or more vision;
+the running summary; the whole vision as one brief for the builder; and the next
+question to ask.
+"""
+from __future__ import annotations
+
+import re
+import time
+from typing import Any
+
+Vision = dict[str, Any]
+_visions: dict[str, Vision] = {}
+
+
+def open_vision(session: str, first_line: str) -> Vision:
+    v: Vision = {"session": session, "lines": [first_line], "asked": [], "answers": [], "opened": time.time()}
+    _visions[session] = v
+    return v
+
+
+def get(session: str) -> Vision | None:
+    return _visions.get(session)
+
+
+def add(session: str, line: str) -> Vision | None:
+    v = _visions.get(session)
+    if v is not None:
+        v["lines"].append(line)
+    return v
+
+
+def close(session: str) -> None:
+    _visions.pop(session, None)
+
+
+def _normalize(text: str) -> str:
+    """"Build it!" and "build it." both become "build it" — case/punctuation-insensitive."""
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9\s]", "", (text or "").lower())).strip()
+
+
+_BUILD_PHRASES = {
+    "build it", "build", "go", "go build it", "thats it", "do it", "make it",
+    "ok build", "yes build it", "build it now", "lets build",
+}
+_RESET_PHRASES = {"start over", "forget that", "new house", "scrap it"}
+
+
+def is_build_command(text: str) -> bool:
+    """The phrase ALONE — "build it with a red door" is more vision, not a command."""
+    return _normalize(text) in _BUILD_PHRASES
+
+
+def is_reset_command(text: str) -> bool:
+    return _normalize(text) in _RESET_PHRASES
+
+
+def _clause(line: str) -> str:
+    s = line.strip()
+    if s.endswith("."):
+        s = s[:-1]
+    return (s[0].lower() + s[1:]) if s else s
+
+
+def summary(vision: Vision) -> str:
+    clauses = [c for c in (_clause(l) for l in vision.get("lines", [])) if c]
+    return ("So far: " + " · ".join(clauses))[:400]
+
+
+def brief_text(vision: Vision) -> str:
+    """Every word he said, as one sentence — nothing summarised away."""
+    lines = [l.strip() for l in vision.get("lines", []) if l.strip()]
+    if not lines:
+        return ""
+    if len(lines) == 1:
+        return lines[0]
+    return lines[0] + "; also: " + "; ".join(lines[1:])
+
+
+# Simple keyword regexes over the joined vision text — "mentioned", not "correct".
+_NUM = r"(one|two|three|four|five|six|seven|eight|nine|ten|\d+)"
+_STOREY_RE = re.compile(rf"\b{_NUM}\b[\s-]{{0,2}}(storeys?|storys?|stories|floors?|levels?)\b", re.I)
+_MATERIAL_RE = re.compile(r"\b(brick|siding|plaster|stone|wood)\b", re.I)
+_COLOR_RE = re.compile(r"\b(red|white|black|blue|green|yellow|brown|grey|gray|beige|tan|cream|orange|purple|pink)\b", re.I)
+_ROOF_RE = re.compile(r"\b(roof|shingles?|metal|flat|tiles?)\b", re.I)
+_PORCH_RE = re.compile(r"\b(porch|garage|carport)\b", re.I)
+# "flower" has no trailing boundary so it also catches John's own "flowerpot" (one word).
+_YARD_RE = re.compile(r"\bflower|\b(pot|swing|flag|bench|tree|fence|mailbox|path)\b", re.I)
+
+_QUESTIONS = (  # priority order — the first unmentioned, unasked one is asked next
+    ("storeys", "How many floors should it have — one, two, or three?"),
+    ("wall", "What are the outside walls made of, and what colour — like white siding or red brick?"),
+    ("roof", "What kind of roof — shingles, metal, or flat?"),
+    ("porch", "Should it have a porch or a garage? Or neither?"),
+    ("yard", "Anything in the yard or by the door — a flowerpot, a swing, a flag?"),
+)
+
+
+def _mentioned(key: str, text: str) -> bool:
+    if key == "storeys":
+        return bool(_STOREY_RE.search(text))
+    if key == "wall":
+        return bool(_MATERIAL_RE.search(text) or _COLOR_RE.search(text))
+    if key == "roof":
+        return bool(_ROOF_RE.search(text))
+    if key == "porch":
+        return bool(_PORCH_RE.search(text))
+    return bool(_YARD_RE.search(text))  # "yard"
+
+
+def still_needed(vision: Vision) -> list[str]:
+    """Unmentioned, unasked fields, in priority order — the same question never repeats."""
+    text = " ".join(vision.get("lines", []))
+    asked = set(vision.get("asked", []))
+    return [q for key, q in _QUESTIONS if not _mentioned(key, text) and q not in asked]
+
+
+def next_question(vision: Vision) -> str | None:
+    """The next thing to ask, or None once covered or four questions have been asked."""
+    if len(vision.get("asked", [])) >= 4:
+        return None
+    needed = still_needed(vision)
+    return needed[0] if needed else None

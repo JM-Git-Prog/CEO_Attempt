@@ -42,7 +42,10 @@ import httpx
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+import asyncio
+
 from src.unified_pipeline import event_log, model_router, stations
+from src.web import architect_card, build_report, vision_fill, vision_talk
 from src.web.v17_neighbourhood_routes import _reference_png
 
 router = APIRouter(prefix="/api/v17", tags=["v17_say"])
@@ -79,6 +82,13 @@ _LABEL = {
 }
 
 
+def _by(session: str) -> str:
+    """Who answered: John — unless the session is a sim- one (the Sam Loop, decision 23). The nightly
+    training keeps only `by == "john"` rows (train_student.py real_rows), so a simulated user's
+    confirm or correction must never wear his name."""
+    return "sim" if str(session or "").startswith("sim-") else "john"
+
+
 def _clarify(kind: str) -> dict:
     """One short question, two or three concrete answers. Never free text."""
     options: list[dict] = []
@@ -95,6 +105,28 @@ def _clarify(kind: str) -> dict:
     options.append({"kind": "problem", "label": _LABEL["problem"]})
     options.append({"kind": "question", "label": _LABEL["question"]})
     return {"question": question, "options": options, "guessed": kind}
+
+# VISION TALK (John, 2026-09-10): "it needs to understand and ask questions to collect
+# the data needed to build what I want, conversational... then when i click enter, my
+# v17 backend builds it." A confident house/grounds sentence no longer goes straight to
+# the architect's card — it opens a conversation that remembers every line he adds (red
+# door, a flowerpot by the door, a porch swing…) and asks one thing at a time until he
+# says "build it". src/web/vision_talk.py is the pure module holding the state and the
+# question-picking rules; this is only the one short reply the talk lane writes back.
+VISION_TALK_SYSTEM = (
+    "You are a kind builder talking with an eight-year-old about the house he wants. "
+    "Repeat back in one short sentence what you just heard, then ask exactly ONE "
+    "question. The question is GIVEN to you below — rephrase it warmly, or ask it "
+    "as-is. If no question is given, say the place sounds ready and that he can say "
+    '"build it" whenever he likes. Two sentences max. No lists. Never invent a detail '
+    "he did not say."
+)
+VISION_REPLY_SCHEMA = {
+    "type": "object",
+    "properties": {"reply": {"type": "string"}},
+    "required": ["reply"],
+}
+VISION_TALK_TIMEOUT = 20.0
 
 VISION_SYSTEM = (
     "You read a reference photo a user pasted into a home-building app. Describe "
@@ -458,6 +490,137 @@ async def _order_fields(png: Path, fallback_fields: dict) -> tuple[dict | None, 
         return (fallback_fields or None), note
 
 
+async def _ollama_text(model: str, system: str, user: str, *, timeout: float = _CALL_TIMEOUT) -> str:
+    """POST /api/chat for a lane whose answer is PLAIN PROSE, not a filled-in form.
+
+    Deliberately not _ollama_chat: that one is the JSON router and raises _BadAnswer when a
+    reply carries no object, which is correct for every lane that asks for fields and wrong for
+    the one lane that asks for two warm sentences. Transport failures still raise, so a dead
+    daemon is never mistaken for a bad answer (the distinction the router exists to keep).
+    A reply that DOES arrive as {"reply": "..."} is unwrapped, so a local model whose grammar
+    constrains it to the old envelope keeps working unchanged.
+    """
+    payload = {"model": model, "stream": False,
+               "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+               "options": {"temperature": 0.15}}
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as cl:
+            r = await cl.post(f"{model_router.OLLAMA_URL}/api/chat", json=payload)
+    except Exception as exc:
+        raise _Transport(f"{type(exc).__name__}: {exc}") from exc
+    if r.status_code != 200:
+        raise _Transport(f"HTTP {r.status_code}: {r.text[:200]}")
+    try:
+        body = r.json()
+    except Exception as exc:
+        raise _Transport(f"non-JSON response: {exc}") from exc
+    text = str((body.get("message") or {}).get("content") or "").strip()
+    if not text:
+        raise _Transport(f"empty message (done_reason={body.get('done_reason')!r})")
+    if text.startswith("{"):
+        try:
+            wrapped = json.loads(text).get("reply")
+            if isinstance(wrapped, str) and wrapped.strip():
+                return wrapped.strip()
+        except (ValueError, AttributeError):
+            pass
+    return text
+
+
+async def _vision_reply(vision: dict, message: str, question: str | None,
+                        *, changes: list[dict] | None = None,
+                        follow: str | None = None) -> str:
+    """One short reply in the friendly-builder voice — the talk lane, cloud first, the
+    same router the classifier uses (house law: reuse it, never a new client). A
+    deterministic fallback covers a failed or slow (>20s) model, so the conversation
+    never stalls waiting on Ollama."""
+    # The CORRECTED order, not the transcript (card 5, 2026-09-11): if he changed his
+    # mind the model must never see the value he retracted, or it will keep talking
+    # about it.
+    lines_so_far = vision_talk.brief_text(vision) or "; ".join(vision.get("lines", []))
+    user = f"What he has told you about the house so far: {lines_so_far}\n\n"
+    asked_before = (vision.get("asked") or [])
+    if asked_before:
+        user += f"The question you asked him last turn: {asked_before[-1]}\n\n"
+    about = vision.get("answering_topic")
+    if about:
+        # Live, 2026-09-11: asked where the SWING should go, he said "a red one", and the
+        # reply came back "you'd like a red house" while the order correctly said a red
+        # swing. The reply must never tell him something the order does not say.
+        user += (f"His latest line is an ANSWER ABOUT THE {about.upper()}, not about the "
+                 f"house itself - so \"a red one\" means a red {about}. Repeat it back that "
+                 "way.\n\n")
+    user += f"His latest line: {message}\n\n"
+    if follow:
+        # CARD 1 (John, 2026-09-11): follow him first. The question is not handed down from
+        # a list - the model asks about the thing he just brought up.
+        user += (f'He has JUST mentioned: "{follow}". Ask him ONE question about the {follow} '
+                 "and nothing else - what it looks like, what colour it is, how big it is, or "
+                 "where it should go. Do NOT ask about floors, walls, roofs or porches on this "
+                 "turn; those are already taken care of.")
+    else:
+        user += (f"Ask him this, in your own warm words: {question}" if question
+                 else "He has told you everything the builder needs. No question is needed.")
+    swap_note = vision_talk.change_text(changes)
+    if swap_note:
+        user += ("\n\nHe has JUST CHANGED HIS MIND: " + "; ".join(
+            f"the {c['slot'].replace('_', ' ')} is now {c['to']}, it was {c['from']}"
+            for c in (changes or [])) +
+            ". The swap has already been said back to him word for word, so never mention "
+            "the old one again — just carry on from the new one.")
+    fallback = f"Got it — {message.strip()}. " + (
+        vision_talk.fallback_follow_question(follow) if follow
+        else (question or "Say build it when you are ready."))
+    try:
+        model = await model_router.pick("talk")
+        # 2026-09-11: this lane used to demand the VISION_REPLY_SCHEMA envelope and FAILED ON
+        # EVERY TURN — ~60 in one evening, each one falling back to the canned line above, which
+        # is why the conversation John designed (decision 26) had never actually run. Root cause,
+        # measured against the live daemon rather than guessed: the cloud tag ignores Ollama's
+        # `format` argument entirely — the schema object AND plain "json" both came back as
+        # prose, HTTP 200, done_reason "stop". Every other lane survives because its own system
+        # prompt SAYS "reply with only a JSON object"; this one deliberately says the opposite
+        # ("two sentences, no lists"). A reply here is ONE STRING, so there is nothing for an
+        # envelope to carry: take the text. JSON is still accepted, for a local model whose
+        # grammar does constrain it.
+        reply = await _ollama_text(model, VISION_TALK_SYSTEM, user, timeout=VISION_TALK_TIMEOUT)
+        return reply or fallback
+    except Exception as exc:
+        logging.getLogger("live_trace").info("  VISION TALK reply failed (%s): %s", type(exc).__name__, exc)
+        return fallback
+
+
+async def _vision_ask(v: dict, message: str, changes: list[dict] | None) -> tuple[str, str | None]:
+    """One turn of the conversation, in John's own order of preference (board 0h).
+
+    FOLLOW HIM FIRST (card 1): if he has just brought something up and the budget still
+    leaves room for every required answer afterwards, this turn is spent on HIS subject
+    and the model writes the question itself. Otherwise the backstop list takes over, so
+    the builder is never short of an answer. When nothing is left to ask, the order is
+    read back and a yes is waited for (card 3). A change of mind is said out loud
+    whichever of those three happens (card 5).
+    Returns (what he is told, the required-field question still open, if any)."""
+    # CARD 5's "out loud" half lives HERE and nowhere else: one place, on every path,
+    # written by the code, so a slow or silly model can never swallow it.
+    note = vision_talk.change_text(changes, explicit=bool(v.get("last_change_explicit", True)))
+    say = (note + " ") if note else ""
+
+    topic = vision_talk.follow_topic(v) if vision_talk.should_follow(v) else None
+    if topic:
+        reply = await _vision_reply(v, message, None, changes=changes, follow=topic)
+        vision_talk.note_asked(
+            v, vision_talk.question_in(reply) or vision_talk.fallback_follow_question(topic),
+            topic=topic)
+        return say + reply, None
+    q = vision_talk.next_question(v)
+    if q:
+        reply = await _vision_reply(v, message, q, changes=changes)
+        v["asked"].append(q)      # AFTER the call, so the model sees what it asked LAST turn
+        return say + reply, q
+    v["confirm_pending"] = True
+    return say + vision_talk.confirm_text(v), None
+
+
 def _file_gaps(phrases: list[str], *, source: str, session: str, request: str, target: str,
                model: str | None = None) -> list[str]:
     """Append-only write to the capability-gaps ledger (CONTRACT.md §1). Never
@@ -537,6 +700,8 @@ def _capture(out: dict, ctx: dict) -> None:
             "picture": models.get("picture"),
             "order": models.get("order"),
             "order_note": models.get("order_note"),
+            "architect": models.get("architect"),
+            "architect_note": models.get("architect_note"),
         },
         outcome={
             "ok": bool(ctx.get("ok", True)),
@@ -554,11 +719,23 @@ def _capture(out: dict, ctx: dict) -> None:
             "gaps_filed": out.get("gaps_filed") or [],
             "order_hint": out.get("order_hint"),
             "clarify": out.get("clarify"),
+            "card_id": (out.get("card") or {}).get("id") if isinstance(out.get("card"), dict) else None,
+            "card_clause": out.get("card_clause"),
         },
         # THE GOLD ROW. Set only when John answered the question himself: the sentence,
         # what the model guessed, and what he said it actually was. A supervised example
         # produced by the disagreement, which no amount of unlabelled traffic can replace.
         correction=ctx.get("correction"),
+        # THE ARCHITECT'S CARD (2026-09-10): the full card the model wrote for his sentence,
+        # and — on the confirming turn — his decision on it. Together they are the training
+        # row the architect lane cannot make by itself: a real brief, answered, judged by John.
+        card=ctx.get("card"),
+        card_decision=ctx.get("card_decision"),
+        # VISION TALK (2026-09-10): the running conversation's lines, and — on the turn
+        # that closes it — the whole brief that was handed to the builder. Captured the
+        # same way as card/card_decision above.
+        vision=ctx.get("vision"),
+        vision_built=ctx.get("vision_built"),
         picture={
             "subject": picture.get("subject"),
             "summary": picture.get("summary"),
@@ -573,15 +750,46 @@ def _capture(out: dict, ctx: dict) -> None:
 def _final(*, kind: str, confidence: float, reason: str, command: dict | None,
            picture: dict | None, order_hint: dict | None, gaps_filed: list[str],
            models: dict, receipt: dict, capture: dict | None = None,
-           clarify: dict | None = None) -> dict:
+           clarify: dict | None = None, card: dict | None = None,
+           card_clause: str | None = None, card_id: str | None = None) -> dict:
     out = {
         "kind": kind, "confidence": confidence, "reason": reason,
         "command": command, "picture": picture, "order_hint": order_hint,
         "receipt": receipt, "gaps_filed": gaps_filed, "models": dict(models),
         "clarify": clarify,
+        "card": card,                    # the architect's plan for John to answer (2026-09-10)
+        "card_clause": card_clause,      # his confirmed plan, as words for the builder
+        "card_id": card_id,              # the card's id, so the jobsite order can look up its parts (2026-09-10)
+        # set only on the turn that closed a vision talk by building it (2026-09-10) —
+        # read off the capture context so every _final() call site gets it for free.
+        "vision_built": (capture or {}).get("vision_built"),
+        # DECISION 34 (John, 2026-09-11): what to SAY about a wish the world cannot grant.
+        # Set only on that path; the page shows it instead of routing him to the room brain.
+        "promise": (capture or {}).get("promise"),
     }
     _capture(out, capture or {})
     return out
+
+
+def _final_vision(*, reply: str, summary_text: str | None, question: str | None,
+                   vision: dict | None, capture: dict) -> dict:
+    """The vision-talk turn's shape: a reply, the running summary, the one question
+    still open, and the vision itself (None once reset). Captured exactly like a card."""
+    out = {"kind": "vision", "reply": reply, "summary": summary_text,
+           "question": question, "vision": vision}
+    _capture(out, capture)
+    return out
+
+
+@router.post("/couldnt")
+async def v17_couldnt(body: dict):
+    """DECISION 33 / card 9 (John, 2026-09-11): the builder's factual line about what it
+    could not make, re-said in the voice he is actually talking to. The wording has ONE
+    owner (src/web/build_report.py, 14 checks); the world pane asks for it rather than
+    keeping a second copy in JavaScript that would drift from it by next week. An empty
+    answer is the page's signal to print the original unchanged - a line about a missing
+    part must never itself go missing."""
+    return {"said": build_report.in_his_voice(str((body or {}).get("couldnt") or ""))}
 
 
 @router.post("/say")
@@ -634,6 +842,95 @@ async def v17_say(body: dict):
         "order_note": None,
     }
 
+    # VISION TALK (John, 2026-09-10) — see src/web/vision_talk.py. Runs before
+    # card_decision/forced_kind/station/command/classify: an open conversation always
+    # gets first say over anything else this sentence might otherwise have meant.
+    existing_vision = vision_talk.get(session)
+    if existing_vision is not None and not isinstance(body.get("card_decision"), dict):
+        if vision_talk.is_reset_command(message):
+            vision_talk.close(session)
+            turn["path"] = "vision-reset"
+            return _final_vision(
+                reply="Okay, fresh start — tell me about the place you want.",
+                summary_text=None, question=None, vision=None, capture=turn,
+            )
+        # CARD 3 (John, 2026-09-11): once the order has been read back, a plain "yes" IS
+        # the go-ahead. `confirm_pending` is only true while a read-back is on the table,
+        # so a stray "yes" mid-conversation is still just another thing he said.
+        if vision_talk.is_build_command(message) or (
+                existing_vision.get("confirm_pending") and vision_talk.is_yes(message)):
+            text = vision_talk.brief_text(existing_vision)
+            turn["vision"] = {"lines": list(existing_vision["lines"])}
+            turn["vision_built"] = text
+            vision_talk.close(session)
+            # Fall through: the EXISTING confident-house path (classify, the architect's
+            # card, order fields) now runs on the WHOLE vision, exactly as if John had
+            # typed `text` himself. Nothing downstream changes.
+            message = text
+        elif existing_vision.get("built_once"):
+            # DECISION 32 (John, 2026-09-11): the house already exists, so this sentence is
+            # a CHANGE ORDER, not an answer to a question. Absorb it, and if it actually
+            # changed or added something, hand the whole corrected order straight back to
+            # the workshop - no read-back, no yes, no four questions.
+            vision_talk.add(session, message)
+            if vision_talk.worth_rebuilding(existing_vision):
+                turn["path"] = "vision-change"
+                turn["changes"] = list(existing_vision.get("last_changes") or [])
+                turn["vision_built"] = vision_talk.brief_text(existing_vision)
+                turn["build_on_turn_one"] = True
+                message = vision_talk.brief_text(existing_vision)
+            else:
+                turn["path"] = "vision-chat"
+                reply = await _vision_reply(existing_vision, message, None)
+                return _final_vision(
+                    reply=reply, summary_text=vision_talk.summary(existing_vision),
+                    question=None, vision={"lines": list(existing_vision["lines"])},
+                    capture=turn,
+                )
+        else:
+            vision_talk.add(session, message)
+            turn["path"] = "vision-turn"
+            # CARD 5: the change of mind has ALREADY replaced the old answer in the order.
+            # It is said out loud here, in code, so he can trust that it happened.
+            changes = list(existing_vision.get("last_changes") or [])
+            reply, q = await _vision_ask(existing_vision, message, changes)
+            turn["vision"] = {
+                "lines": list(existing_vision["lines"]),
+                "order": vision_talk.brief_text(existing_vision),
+                "changes": changes,
+                "confirm_pending": bool(existing_vision.get("confirm_pending")),
+            }
+            return _final_vision(
+                reply=reply, summary_text=vision_talk.summary(existing_vision), question=q,
+                vision={"lines": list(existing_vision["lines"])}, capture=turn,
+            )
+
+    # John answered the ARCHITECT's card (2026-09-10): "Build it as planned". His word is
+    # final — no classifier, no second card. The ornate brief the card holds rides to the
+    # builder as `card_clause`, and the decision is written down beside the card it answered.
+    decision_in = body.get("card_decision")
+    if isinstance(decision_in, dict) and str(decision_in.get("chose") or "") == "build":
+        card = architect_card.find(decision_in.get("id"))
+        if card is None:
+            return JSONResponse({"error": "that plan is gone (V17 restarted?) — say it again"}, status_code=404)
+        kind_c = str(card.get("_kind") or "house")
+        turn["path"] = "architect-confirmed"
+        turn["card"] = {k: v for k, v in card.items() if not k.startswith("_chain")}
+        turn["card_decision"] = {"id": card["_id"], "chose": "build", "by": _by(session)}
+        models["architect"] = card.get("_model")
+        forced_hint = None
+        if kind_c in ("house", "grounds") and picture is not None and picture_png is not None:
+            models["order"] = ORDER_MODEL
+            forced_hint, note = await _order_fields(picture_png, picture.get("fields") or {})
+            models["order_note"] = note
+        return _final(
+            kind=kind_c, confidence=1.0,
+            reason="John read the architect's plan and said build it as planned",
+            command=None, picture=picture, order_hint=forced_hint, gaps_filed=[],
+            models=models, receipt=_build_receipt(kind_c, message, picture, []),
+            capture=turn, card_clause=architect_card.builder_clause(card), card_id=card["_id"],
+        )
+
     # John answered the question the pane asked him. His word is final: no model call,
     # and the disagreement is written down as a correction — the sentence, the wrong
     # guess, and the right answer, which is the best training row this system makes.
@@ -643,7 +940,7 @@ async def v17_say(body: dict):
         turn["correction"] = {
             "guessed": str(body.get("guessed_kind") or "").strip().lower() or None,
             "chose": forced_kind,
-            "by": "john",
+            "by": _by(session),
         }
         # a confirmed house/grounds order still deserves the good photo read, or
         # answering the question would quietly cost him the order fields
@@ -755,6 +1052,13 @@ async def v17_say(body: dict):
         kind = "unknown"
         reason = f"model said command but no literal command matched (model reason: {reason})"
 
+    # "build it" on an open vision (decision 26): John already said what it is over several
+    # sentences and then said go. The joined text can read oddly to the classifier; his word
+    # decides — a vision is a house on the block unless the classifier itself said grounds.
+    if turn.get("vision_built") and kind not in ("house", "grounds"):
+        kind, confidence = "house", 1.0
+        reason = "John said build it on his vision — his word, not a classifier guess"
+
     # ASK BEFORE ACTING. An unsure guess on a kind that BUILDS something stops here and
     # asks one short question rather than spending a render pass on a coin flip. The
     # unbuildable phrases are still filed first — a question must never cost data — but
@@ -771,6 +1075,71 @@ async def v17_say(body: dict):
             capture=turn, clarify=_clarify(kind),
         )
 
+    # VISION TALK (John, 2026-09-10). A fresh, confident house/grounds sentence no longer
+    # jumps straight to a plan — it opens the conversation instead, and the plan comes
+    # later once he says "build it" (handled above). `vision_built` is set above only when
+    # THIS turn is that later "build it" continuing on the whole vision — that one skips
+    # straight to the architect's card below, exactly like the old direct-to-builder flow.
+    if kind in ("house", "grounds") and not turn.get("vision_built"):
+        # DECISION 32 (John, 2026-09-11, "type a sentence and then boom a room"): the
+        # conversation stops being a GATE. The first sentence opens the vision - so every
+        # later sentence is a change to a house that exists - and then falls straight
+        # through to the architect and the workshop. Nothing is asked first.
+        v = vision_talk.open_vision(session, message)
+        v["built_once"] = True
+        turn["path"] = "vision-open-and-build"
+        turn["build_on_turn_one"] = True
+        turn["vision"] = {"lines": list(v["lines"]), "order": vision_talk.brief_text(v)}
+
+    # THE ARCHITECT'S CARD (John, 2026-09-07/10). A confident house/grounds order is shown
+    # as a planned-out card first — plan, parts, assumptions, questions — and waits for his
+    # "build it as planned" before anything is rendered (law G1 at the sentence level). The
+    # card is written by the Night Shift's architect lane (one source of truth); a backend
+    # failure there costs nothing: it is logged and the old direct-to-builder flow runs.
+    if architect_card.ENABLED and kind in ("house", "grounds"):
+        models["architect"] = architect_card.MODEL
+        started_card = time.monotonic()
+        try:
+            card = await asyncio.to_thread(architect_card.write_card, message, standing)
+        except Exception as exc:                    # the bench raises its own Backend class; any failure = no card
+            card = None
+            models["architect_note"] = f"no card ({type(exc).__name__}: {str(exc)[:120]}) — built from the sentence alone"
+            log.info("  SAY architect card failed [%s]: %s", session[:8], exc)
+        if card is not None:
+            card["_kind"] = kind
+            turn["path"] = "architect-card"
+            turn["ms"] = (turn["ms"] or 0) + int((time.monotonic() - started_card) * 1000)
+            turn["card"] = {k: v for k, v in card.items() if not k.startswith("_chain")}
+            gaps_filed = _file_gaps(phrases, source="v17-chat", session=session, request=message,
+                                    target=kind, model=route_model)
+            shown = architect_card.gate(card, message)
+            if turn.get("build_on_turn_one"):
+                # DECISION 32: the card stops being a gate and becomes the RECEIPT. The
+                # build starts at once; what the architect invented is computed from
+                # John's own words (never taken from the model, which got it backwards on
+                # the 2026-09-11 probe) and said in one plain line he can argue with.
+                checked = vision_fill.audit(message, card)
+                shown["auto"] = True
+                shown["guessed_line"] = vision_fill.guessed_sentence(checked)
+                shown["struck"] = checked["struck"]
+                # DECISION 33 (John, 2026-09-11, "i care if its complete"): the plan can
+                # promise rooms the workshop never attempts, so no ledger downstream will
+                # ever report them missing. Caught here, from the plan, and said BEFORE he
+                # walks up to the house rather than after he wonders where the door went.
+                not_yet = build_report.not_yet(shown)
+                shown["not_yet"] = not_yet
+                shown["not_yet_line"] = build_report.not_yet_line(not_yet)
+                turn["not_yet"] = not_yet
+                turn["fill_audit"] = {"guessed": [p for _, p in checked["guessed"]],
+                                      "struck": checked["struck"],
+                                      "he_chose": checked["he_chose"]}
+            return _final(
+                kind=kind, confidence=confidence, reason=reason, command=None,
+                picture=picture, order_hint=None, gaps_filed=gaps_filed,
+                models=models, receipt=_build_receipt(kind, message, picture, gaps_filed),
+                capture=turn, card=shown,
+            )
+
     # c) order fields — only a house/grounds order that carries a picture
     order_hint: dict | None = None
     if kind in ("house", "grounds") and picture is not None and picture_png is not None:
@@ -778,9 +1147,18 @@ async def v17_say(body: dict):
         order_hint, order_note = await _order_fields(picture_png, picture.get("fields") or {})
         models["order_note"] = order_note
 
+    # DECISION 34 (John, 2026-09-11, card 2/7): a wish the world cannot grant is an ORDER.
+    # The classifier can say "gap" and name no phrase - then his whole sentence IS the
+    # thing, and it has to reach the ledger, because the promise made below must never
+    # claim an order nobody wrote down.
+    if kind == "gap" and not phrases and message.strip():
+        phrases = [message.strip()]
+
     # d) file gaps — append-only, never fatal
     gaps_filed = _file_gaps(phrases, source="v17-chat", session=session, request=message,
                             target=kind, model=route_model)
+    if kind == "gap":
+        turn["promise"] = build_report.promise_line(phrases, message, filed=bool(gaps_filed))
 
     return _final(
         kind=kind, confidence=confidence, reason=reason, command=None,

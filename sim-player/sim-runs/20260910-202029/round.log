@@ -1,0 +1,25 @@
+20:20:29 round 20260910-202029 session sim-412258cf1374 model gpt-oss:120b-cloud world v0
+20:20:34 turn 1 [vision] see: 'I see: version 0, eight houses on the street, nothing changed.' type: 'a house right here with a big porch'
+20:20:36 turn 2 [vision] see: 'I see: version 0, eight houses, nothing changed' type: 'two floors'
+20:20:38 turn 3 [vision] see: 'I see: version 0 neighborhood, 8 houses, unchanged.' type: 'white siding for the walls.'
+20:20:41 turn 4 [vision] see: 'I see: version 0 neighborhood, eight houses, no changes, roof choice q' type: 'shingles'
+20:20:43 turn 5 [vision] see: 'I see: version 0, 8 houses, no new house yet.' type: 'add a red flowerpot by the front door'
+20:20:45 turn 6: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 0 neighborhood, eight houses)
+20:20:45 turn 6 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see: version 0 neighborhood, eight houses
+20:20:57 turn 7: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see":)
+20:20:57 turn 7 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see":
+20:21:58 turn 8 [card] see: 'version 0, eight houses, unchanged; plan shows a house here with big p' type: 'build it'
+20:22:02 turn 9 [idle] see: 'I see: version 0 neighborhood, 8 houses, a plan for a Colonial Porch H' type: 'wood columns, permanent flowerpot, standard bathroom fixtures.'
+20:22:03 turn 10: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:22:03 turn 10 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:22:15 turn 11: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+20:22:15 turn 11 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+20:22:27 turn 12: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version)
+20:22:27 turn 12 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version
+20:22:27 round over: backend after 12 turns, world v0 -> v0

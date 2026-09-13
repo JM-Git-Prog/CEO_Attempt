@@ -1,0 +1,75 @@
+18:25:18 Sam Loop start: rounds=12 depth=C factory=False turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+18:25:18 GPU busy (22601 MB in use, threshold 8000) — waiting 5 minutes before the round
+18:30:18 GPU busy (22485 MB in use, threshold 8000) — waiting 5 minutes before the round
+18:35:18 GPU busy (23506 MB in use, threshold 8000) — waiting 5 minutes before the round
+18:40:19 GPU busy (23569 MB in use, threshold 8000) — waiting 5 minutes before the round
+18:45:19 GPU busy (23546 MB in use, threshold 8000) — waiting 5 minutes before the round
+18:50:19 GPU busy (23656 MB in use, threshold 8000) — waiting 5 minutes before the round
+18:55:19 GPU busy (23567 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:00:19 GPU busy (23595 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:05:19 GPU busy (23659 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:10:19 GPU busy (23646 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:15:19 GPU busy (8046 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:20:21 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+19:20:23 the sim Living Room :8001 is up after 2 s
+19:20:23 seeded sim-neighborhood from mr-johns-neighborhood v9
+19:21:48 round 20260910-192023: backend after 9 turns, world v0 -> v0
+19:21:53 round 20260910-192023: 2 wishes, 3 defects, 0 gaps filed, judge unparseable
+19:21:54 mechanic: patched=False gate=fail why=backend files=[]
+19:21:54 GPU busy (12638 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:26:54 GPU busy (19588 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:31:54 GPU busy (18699 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:36:54 GPU busy (18699 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:41:54 GPU busy (18695 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:46:54 GPU busy (12639 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:53:57 round 20260910-195154: backend after 10 turns, world v0 -> v0
+19:54:04 round 20260910-195154: 3 wishes, 3 defects, 0 gaps filed, judge unparseable
+19:54:04 mechanic: patched=False gate=fail why=backend files=[]
+19:54:04 GPU busy (18542 MB in use, threshold 8000) — waiting 5 minutes before the round
+19:59:04 GPU busy (19456 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:04:04 GPU busy (18554 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:09:04 GPU busy (18552 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:15:22 round 20260910-201405: backend after 8 turns, world v0 -> v0
+20:15:28 round 20260910-201405: 3 wishes, 3 defects, 0 gaps filed, judge unparseable
+20:15:28 mechanic: patched=False gate=fail why=backend files=[]
+20:15:28 GPU busy (18560 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:22:27 round 20260910-202029: backend after 12 turns, world v0 -> v0
+20:22:33 round 20260910-202029: 3 wishes, 5 defects, 0 gaps filed, judge unparseable
+20:22:34 mechanic: patched=False gate=fail why=backend files=[]
+20:22:34 GPU busy (18500 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:27:34 GPU busy (18533 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:35:53 round 20260910-203234: backend after 12 turns, world v0 -> v0
+20:36:02 round 20260910-203234: 3 wishes, 5 defects, 0 gaps filed, judge unparseable
+20:36:02 mechanic: patched=False gate=fail why=backend files=[]
+20:36:02 GPU busy (19275 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:41:02 GPU busy (18373 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:46:02 GPU busy (18371 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:51:02 GPU busy (19439 MB in use, threshold 8000) — waiting 5 minutes before the round
+20:56:02 GPU busy (16991 MB in use, threshold 8000) — waiting 5 minutes before the round
+21:01:02 GPU busy (16991 MB in use, threshold 8000) — waiting 5 minutes before the round
+21:08:13 round 20260910-210603: backend after 9 turns, world v0 -> v0
+21:08:18 round 20260910-210603: 3 wishes, 3 defects, 0 gaps filed, judge unparseable
+21:08:18 mechanic: patched=False gate=fail why=backend files=[]
+21:08:18 GPU busy (19470 MB in use, threshold 8000) — waiting 5 minutes before the round
+21:15:06 round 20260910-211319: backend after 9 turns, world v0 -> v0
+21:15:12 round 20260910-211319: 3 wishes, 4 defects, 0 gaps filed, judge unparseable
+21:15:12 mechanic: patched=False gate=fail why=backend files=[]
+21:18:24 round 20260910-211512: backend after 9 turns, world v0 -> v0
+21:18:31 round 20260910-211512: 1 wishes, 4 defects, 0 gaps filed, judge unparseable
+21:18:31 mechanic: patched=False gate=fail why=backend files=[]
+21:19:03 round 20260910-211832: backend after 5 turns, world v0 -> v0
+21:19:08 round 20260910-211832: 1 wishes, 3 defects, 0 gaps filed, judge unparseable
+21:19:08 mechanic: patched=False gate=fail why=backend files=[]
+21:19:08 GPU busy (19185 MB in use, threshold 8000) — waiting 5 minutes before the round
+21:26:13 round 20260910-212409: backend after 10 turns, world v0 -> v0
+21:26:21 round 20260910-212409: 3 wishes, 5 defects, 0 gaps filed, judge unparseable
+21:26:22 mechanic: patched=False gate=fail why=backend files=[]
+21:29:10 round 20260910-212622: turns after 14 turns, world v0 -> v0
+21:29:18 round 20260910-212622: 4 wishes, 4 defects, 0 gaps filed, judge backend
+21:29:19 mechanic: patched=False gate=fail why=backend files=[]
+21:33:56 round 20260910-212920: turns after 14 turns, world v0 -> v1
+21:34:03 round 20260910-212920: 4 wishes, 4 defects, 0 gaps filed, judge unparseable
+21:34:06 mechanic: patched=False gate=fail why=backend files=[]
+21:34:06 Sam Loop end: 12 rounds played
+11:37:14 REFUSING to start the sim Pick Board: port 8194 is John's own board — the sim board must never be :8194
+11:42:37 REFUSING to start the sim Pick Board: port 8194 is John's own board — the sim board must never be :8194

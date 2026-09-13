@@ -1,0 +1,21 @@
+21:15:12 round 20260910-211512 session sim-acedb94e3bb1 model gpt-oss:120b-cloud world v0
+21:15:15 turn 1 [vision] see: 'I see version 0, eight houses on the street, no changes.' type: 'Add a yellow house with a big porch on the empty lot near the garage.'
+21:15:17 turn 2 [vision] see: 'I see version 0, eight houses, nothing changed.' type: 'two floors'
+21:15:19 turn 3 [vision] see: 'I see: version 0, eight houses, unchanged, asked roof type: shingles, ' type: 'shingles'
+21:16:21 turn 4 [card] see: 'I see: version 0, eight houses, nothing changed.' type: 'Build it'
+21:16:22 turn 5: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:16:22 turn 5 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:17:58 turn 6 [card] see: 'I see: version 0, eight houses, a plan for a yellow two‑story house wi' type: 'Build it as planned.'
+21:18:00 turn 7: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood, 8 houses, and four identical yellow house pictures on the garage)
+21:18:00 turn 7 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood, 8 houses, and four identical yellow house pictures on the garage
+21:18:12 turn 8: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:18:12 turn 8 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:18:24 turn 9: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood, 8 houses, garage wall showing four yellow colonial house pictures.",
+  "i_ty)
+21:18:24 turn 9 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood, 8 houses, garage wall showing four yellow colonial house pictures.",
+  "i_ty
+21:18:24 round over: backend after 9 turns, world v0 -> v0

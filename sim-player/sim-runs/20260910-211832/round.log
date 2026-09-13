@@ -1,0 +1,12 @@
+21:18:32 round 20260910-211832 session sim-ed16d2d16dc8 model gpt-oss:120b-cloud world v0
+21:18:35 turn 1 [vision] see: 'I see: version 0, eight houses on the street, nothing changed.' type: 'a blue house with a big porch on the empty lot'
+21:18:37 turn 2 [vision] see: 'I see: version 0, eight houses, unchanged, a blue house with a big por' type: 'two floors'
+21:18:39 turn 3: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:18:39 turn 3 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:18:51 turn 4: Sam's model failed (ollama gpt-oss:120b-cloud: empty reply (done_reason='length'))
+21:18:51 turn 4 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: empty reply (done_reason='length')
+21:19:03 turn 5: Sam's model failed (sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood)
+21:19:03 turn 5 [idle] see: '' type: '' ERROR backend: sam gpt-oss:120b-cloud: reply was not the decision JSON: {
+  "i_see": "I see version 0 neighborhood
+21:19:03 round over: backend after 5 turns, world v0 -> v0
