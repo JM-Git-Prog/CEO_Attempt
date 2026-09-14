@@ -1,0 +1,38 @@
+{
+  "id": "house-20260914-141656",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T19:17:22.718Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "red siding farmhouse — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141656\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "red siding cottage — changed: style (cottage, not farmhouse)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141656\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "red brick farmhouse — changed: walls (brick, not siding), roof (metal, not shing",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141656\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "red siding farmhouse — changed: floors (two floors, not one floor), garage (gara",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141656\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "choose",
+    "tag": "c1",
+    "at": "2026-09-14T19:17:32.281Z"
+  }
+}

@@ -73,3 +73,431 @@
 21:34:06 Sam Loop end: 12 rounds played
 11:37:14 REFUSING to start the sim Pick Board: port 8194 is John's own board — the sim board must never be :8194
 11:42:37 REFUSING to start the sim Pick Board: port 8194 is John's own board — the sim board must never be :8194
+06:37:37 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+06:37:37 the sim Pick Board is up after 0 s
+06:37:37 stopping the sim Pick Board
+07:11:23 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+07:11:23 the sim Pick Board is up after 0 s
+07:11:23 stopping the sim Pick Board
+07:14:36 Sam Loop start: rounds=12 depth=C factory=False turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+07:14:38 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+07:14:38 the sim Pick Board is up after 0 s
+07:14:38 GPU busy (13580 MB in use, threshold 8000) — waiting 5 minutes before the round
+07:19:41 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+07:19:48 the sim Living Room :8001 is up after 7 s
+07:19:48 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:27:12 Sam Loop start: rounds=12 depth=C factory=False turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+07:27:12 :8294 is held by pid 41580 that is not a Living Room ('') — leaving it alone
+07:27:12 something is already listening on :8294 and it could not be freed
+07:27:12 the sim Pick Board did not come up — waiting 5 minutes
+07:29:51 Sam Loop start: rounds=12 depth=C factory=False turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+07:29:52 :8294 is held by a stale sim Pick Board (pid 41580) — killing its tree
+07:29:52 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+07:29:53 the sim Pick Board is up after 0 s
+07:29:53 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:29:54 :8001 is held by a stale Living Room (pid 38348) — killing its tree
+07:29:54 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+07:30:01 the sim Living Room :8001 is up after 7 s
+07:30:01 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:33:58 round 20260914-073001: turns after 14 turns, world v0 -> v1
+07:34:17 round 20260914-073001: 8 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:34:17 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:34:17 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:34:17 Sam has played 1 nights before: has 0 things, still chasing 7, gave up on 0
+07:37:43 round 20260914-073417: turns after 14 turns, world v0 -> v1
+07:37:58 round 20260914-073417: 9 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:37:58 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:37:58 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:37:58 Sam has played 2 nights before: has 0 things, still chasing 13, gave up on 0
+07:41:02 round 20260914-073758: turns after 14 turns, world v0 -> v1
+07:41:19 round 20260914-073758: 12 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:41:19 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:41:19 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:41:19 Sam has played 3 nights before: has 0 things, still chasing 22, gave up on 1
+07:44:39 round 20260914-074119: turns after 14 turns, world v0 -> v1
+07:44:48 round 20260914-074119: 7 wishes, 1 defects, 0 gaps filed, judge unparseable
+07:44:59 mechanic: patched=False gate=fail why=backend files=[]
+07:44:59 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:45:00 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:45:00 Sam has played 4 nights before: has 0 things, still chasing 27, gave up on 1
+07:48:26 round 20260914-074500: turns after 14 turns, world v0 -> v1
+07:48:37 round 20260914-074500: 7 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:48:37 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:48:37 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:48:37 Sam has played 5 nights before: has 0 things, still chasing 32, gave up on 1
+07:51:12 round 20260914-074837: turns after 14 turns, world v0 -> v1
+07:51:21 round 20260914-074837: 11 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:51:21 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:51:21 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:51:21 Sam has played 6 nights before: has 0 things, still chasing 41, gave up on 1
+07:54:08 round 20260914-075121: turns after 14 turns, world v0 -> v1
+07:54:16 round 20260914-075121: 4 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:54:16 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:54:16 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:54:16 Sam has played 7 nights before: has 0 things, still chasing 43, gave up on 1
+07:57:42 round 20260914-075416: turns after 14 turns, world v0 -> v1
+07:57:52 round 20260914-075416: 7 wishes, 0 defects, 0 gaps filed, judge unparseable
+07:57:52 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+07:57:52 reset sim-neighborhood: dropped 4 files from earlier rounds
+07:57:52 Sam has played 8 nights before: has 0 things, still chasing 47, gave up on 1
+08:00:45 round 20260914-075752: turns after 14 turns, world v0 -> v1
+08:00:56 round 20260914-075752: 10 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:00:56 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+08:00:57 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:00:57 Sam has played 9 nights before: has 0 things, still chasing 56, gave up on 1
+08:03:45 round 20260914-080056: turns after 14 turns, world v0 -> v1
+08:03:56 round 20260914-080056: 11 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:03:56 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+08:03:56 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:03:56 Sam has played 10 nights before: has 0 things, still chasing 59, gave up on 1
+08:06:40 round 20260914-080356: turns after 14 turns, world v0 -> v1
+08:06:59 round 20260914-080356: 12 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:06:59 no factory work this round — the 4090 is not needed, so the GPU gate is skipped
+08:06:59 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:06:59 Sam has played 11 nights before: has 0 things, still chasing 59, gave up on 1
+08:10:59 round 20260914-080659: turns after 14 turns, world v0 -> v1
+08:11:09 round 20260914-080659: 9 wishes, 0 defects, 2 gaps filed, judge unparseable
+08:11:12 gap router (dry): {'ran': True, 'live': False, 'rc': 1, 'tail': 'decided 3 (thing 0 pushed 0, ability 2, word 0 unpacked 0, undecidable 1), backend errors 0, mode dry-run\n', 'err': ''}
+08:11:12 stopping the sim Pick Board
+08:11:16 Sam Loop end: 12 rounds played
+08:27:54 Sam Loop start: rounds=12 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+08:27:56 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+08:27:56 the sim Pick Board is up after 0 s
+08:27:57 :8001 is held by a stale Living Room (pid 46612) — killing its tree
+08:27:58 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+08:28:00 the sim Living Room :8001 is up after 2 s
+08:28:00 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:28:00 Sam has played 12 nights before: has 1 things, still chasing 59, gave up on 0
+08:33:58 round 20260914-082800: turns after 14 turns, world v0 -> v1
+08:34:09 round 20260914-082800: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:34:09 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:34:09 Sam has played 13 nights before: has 1 things, still chasing 59, gave up on 0
+08:37:57 round 20260914-083409: turns after 14 turns, world v0 -> v1
+08:38:12 round 20260914-083409: 4 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:38:12 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:38:12 Sam has played 14 nights before: has 1 things, still chasing 59, gave up on 0
+08:41:06 round 20260914-083812: turns after 14 turns, world v0 -> v1
+08:41:38 round 20260914-083812: 12 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:41:38 reset sim-neighborhood: dropped 4 files from earlier rounds
+08:41:38 Sam has played 15 nights before: has 1 things, still chasing 59, gave up on 0
+08:46:44 round 20260914-084138: turns after 14 turns, world v0 -> v2
+08:47:10 round 20260914-084138: 9 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:47:11 reset sim-neighborhood: dropped 8 files from earlier rounds
+08:47:11 Sam has played 16 nights before: has 2 things, still chasing 57, gave up on 1
+08:47:24 round 20260914-084711: done after 5 turns, world v0 -> v0
+08:47:37 round 20260914-084711: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:47:38 Sam has played 17 nights before: has 2 things, still chasing 57, gave up on 1
+08:48:02 round 20260914-084738: streak after 8 turns, world v0 -> v0
+08:48:02 round 20260914-084738: 3 wishes, 0 defects, 3 gaps filed, judge skipped
+08:48:26 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'decided 7 (thing 1 pushed 1, ability 2, word 1 unpacked 0, undecidable 3), backend errors 0, mode live\n', 'err': ''}
+08:48:27 GPU busy (20388 MB in use, threshold 18000) — waiting 5 minutes before the round
+08:53:27 GPU busy (20566 MB in use, threshold 18000) — waiting 5 minutes before the round
+08:58:27 Sam has played 18 nights before: has 2 things, still chasing 57, gave up on 1
+08:58:57 round 20260914-085827: done after 7 turns, world v0 -> v0
+08:59:13 round 20260914-085827: 3 wishes, 0 defects, 0 gaps filed, judge unparseable
+08:59:13 Sam has played 19 nights before: has 2 things, still chasing 57, gave up on 1
+09:03:28 round 20260914-085913: turns after 14 turns, world v0 -> v1
+09:03:47 round 20260914-085913: 5 wishes, 0 defects, 0 gaps filed, judge unparseable
+09:03:47 GPU busy (22778 MB in use, threshold 18000) — waiting 5 minutes before the round
+09:08:47 GPU busy (20213 MB in use, threshold 18000) — waiting 5 minutes before the round
+09:14:59 Sam Loop start: rounds=12 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+09:14:59 :8294 is held by a stale sim Pick Board (pid 44624) — killing its tree
+09:15:00 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+09:15:00 the sim Pick Board is up after 0 s
+09:15:01 :8001 is held by a stale Living Room (pid 41292) — killing its tree
+09:15:04 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+09:15:11 the sim Living Room :8001 is up after 7 s
+09:15:11 reset sim-neighborhood: dropped 4 files from earlier rounds
+09:15:11 Sam has played 20 nights before: has 2 things, still chasing 57, gave up on 1
+09:21:37 round 20260914-091511: turns after 14 turns, world v0 -> v2
+09:21:43 round 20260914-091511: 4 wishes, 0 defects, 3 gaps filed, judge ok
+09:21:47 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'decided 3 (thing 0 pushed 0, ability 2, word 0 unpacked 0, undecidable 1), backend errors 0, mode live\n', 'err': ''}
+09:21:47 reset sim-neighborhood: dropped 8 files from earlier rounds
+09:21:47 Sam has played 21 nights before: has 2 things, still chasing 57, gave up on 1
+09:27:19 round 20260914-092147: turns after 14 turns, world v0 -> v2
+09:27:25 round 20260914-092147: 5 wishes, 0 defects, 3 gaps filed, judge ok
+09:27:52 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'decided 13 (thing 6 pushed 6, ability 4, word 1 unpacked 1, undecidable 2), backend errors 0, mode live\n', 'err': ''}
+09:27:53 reset sim-neighborhood: dropped 8 files from earlier rounds
+09:27:53 Sam has played 22 nights before: has 3 things, still chasing 56, gave up on 1
+09:30:37 round 20260914-092753: streak after 9 turns, world v0 -> v1
+09:30:37 round 20260914-092753: 3 wishes, 1 defects, 2 gaps filed, judge skipped
+09:30:47 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'decided 4 (thing 2 pushed 2, ability 0, word 0 unpacked 0, undecidable 2), backend errors 0, mode live\n', 'err': ''}
+09:31:09 mechanic: patched=False gate=rejected why=missing diagnosis files=[]
+09:31:09 reset sim-neighborhood: dropped 4 files from earlier rounds
+09:31:09 Sam has played 23 nights before: has 3 things, still chasing 56, gave up on 1
+09:31:27 round 20260914-093109: done after 5 turns, world v0 -> v0
+09:31:38 round 20260914-093109: 2 wishes, 0 defects, 2 gaps filed, judge ok
+09:31:41 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 1 (thing 0 pushed 0, ability 1, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:31:41 Sam has played 24 nights before: has 3 things, still chasing 56, gave up on 1
+09:32:02 round 20260914-093141: streak after 5 turns, world v0 -> v0
+09:32:02 round 20260914-093141: 2 wishes, 0 defects, 2 gaps filed, judge skipped
+09:32:06 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 1 (thing 1 pushed 1, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:32:07 Sam has played 25 nights before: has 3 things, still chasing 56, gave up on 1
+09:32:21 round 20260914-093207: done after 4 turns, world v0 -> v0
+09:32:28 round 20260914-093207: 1 wishes, 0 defects, 1 gaps filed, judge ok
+09:32:28 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 0 (thing 0 pushed 0, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:32:28 GPU busy (22138 MB in use, threshold 18000) — waiting 5 minutes before the round
+09:37:28 GPU busy (20366 MB in use, threshold 18000) — waiting 5 minutes before the round
+09:42:29 Sam has played 26 nights before: has 3 things, still chasing 56, gave up on 1
+09:42:40 round 20260914-094229: done after 4 turns, world v0 -> v0
+09:42:51 round 20260914-094229: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+09:42:52 Sam has played 27 nights before: has 3 things, still chasing 56, gave up on 1
+09:43:04 round 20260914-094252: streak after 5 turns, world v0 -> v0
+09:43:04 round 20260914-094252: 2 wishes, 0 defects, 2 gaps filed, judge skipped
+09:43:04 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 0 (thing 0 pushed 0, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:43:04 Sam has played 28 nights before: has 3 things, still chasing 56, gave up on 1
+09:43:23 round 20260914-094304: streak after 6 turns, world v0 -> v0
+09:43:23 round 20260914-094304: 3 wishes, 0 defects, 3 gaps filed, judge skipped
+09:43:27 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 2 (thing 1 pushed 1, ability 1, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:43:28 Sam has played 29 nights before: has 3 things, still chasing 56, gave up on 1
+09:43:43 round 20260914-094328: done after 6 turns, world v0 -> v0
+09:43:48 round 20260914-094328: 3 wishes, 0 defects, 3 gaps filed, judge ok
+09:43:53 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 2 (thing 1 pushed 1, ability 1, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:43:54 Sam has played 30 nights before: has 3 things, still chasing 56, gave up on 1
+09:44:09 round 20260914-094354: done after 5 turns, world v0 -> v0
+09:44:13 round 20260914-094354: 2 wishes, 0 defects, 2 gaps filed, judge ok
+09:44:16 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 1 (thing 1 pushed 1, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:44:16 Sam has played 31 nights before: has 3 things, still chasing 56, gave up on 1
+09:47:40 round 20260914-094416: turns after 14 turns, world v0 -> v1
+09:47:50 round 20260914-094416: 11 wishes, 0 defects, 8 gaps filed, judge ok
+09:48:59 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'decided 18 (thing 9 pushed 9, ability 1, word 7 unpacked 12, undecidable 1), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap cc08bb9c81f6: word answer produced no phrases to unpack | phrase: "room"\nexit 1 = 1 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+09:48:59 stopping the sim Pick Board
+09:49:03 Sam Loop end: 12 rounds played
+09:52:26 Sam Loop start: rounds=12 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+09:52:28 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+09:52:29 the sim Pick Board is up after 0 s
+09:52:30 :8001 is held by a stale Living Room (pid 10820) — killing its tree
+09:52:30 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+09:52:33 the sim Living Room :8001 is up after 2 s
+09:52:33 reset sim-neighborhood: dropped 4 files from earlier rounds
+09:52:33 Sam has played 32 nights before: has 4 things, still chasing 54, gave up on 2
+09:56:22 round 20260914-095233: turns after 14 turns, world v0 -> v1
+09:56:31 round 20260914-095233: 10 wishes, 0 defects, 2 gaps filed, judge ok
+09:56:43 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 6 (thing 6 pushed 6, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:56:43 reset sim-neighborhood: dropped 4 files from earlier rounds
+09:56:43 Sam has played 33 nights before: has 10 things, still chasing 48, gave up on 2
+09:56:57 round 20260914-095643: streak after 5 turns, world v0 -> v0
+09:56:57 round 20260914-095643: 2 wishes, 0 defects, 2 gaps filed, judge skipped
+09:57:03 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 2 (thing 1 pushed 1, ability 1, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+09:57:03 Sam has played 34 nights before: has 10 things, still chasing 48, gave up on 2
+10:03:44 round 20260914-095703: turns after 14 turns, world v0 -> v2
+10:04:45 round 20260914-095703: 5 wishes, 0 defects, 0 gaps filed, judge backend
+10:04:46 reset sim-neighborhood: dropped 8 files from earlier rounds
+10:04:46 Sam has played 35 nights before: has 10 things, still chasing 48, gave up on 2
+10:08:42 round 20260914-100446: turns after 14 turns, world v0 -> v1
+10:08:58 round 20260914-100446: 8 wishes, 1 defects, 7 gaps filed, judge ok
+10:10:02 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 20 (thing 13 pushed 10, ability 1, word 6 unpacked 26, undecidable 0), backend errors 3, mode live\n', 'err': ''}
+10:10:15 mechanic: patched=False gate=rejected why=missing diagnosis files=[]
+10:10:15 GPU busy (23034 MB in use, threshold 18000) — waiting 5 minutes before the round
+10:15:16 GPU busy (20420 MB in use, threshold 18000) — waiting 5 minutes before the round
+10:20:16 reset sim-neighborhood: dropped 4 files from earlier rounds
+10:20:16 Sam has played 36 nights before: has 10 things, still chasing 48, gave up on 2
+10:20:41 round 20260914-102016: done after 8 turns, world v0 -> v0
+10:20:50 round 20260914-102016: 5 wishes, 0 defects, 5 gaps filed, judge ok
+10:21:40 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 20 (thing 19 pushed 17, ability 1, word 0 unpacked 0, undecidable 0), backend errors 2, mode live\n', 'err': ''}
+10:21:40 Sam has played 37 nights before: has 10 things, still chasing 48, gave up on 2
+10:25:36 round 20260914-102140: turns after 14 turns, world v0 -> v1
+10:25:59 round 20260914-102140: 6 wishes, 0 defects, 0 gaps filed, judge unparseable
+10:25:59 reset sim-neighborhood: dropped 4 files from earlier rounds
+10:25:59 Sam has played 38 nights before: has 10 things, still chasing 48, gave up on 2
+10:29:49 round 20260914-102559: turns after 14 turns, world v0 -> v1
+10:30:01 round 20260914-102559: 11 wishes, 1 defects, 2 gaps filed, judge ok
+10:30:54 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 20 (thing 19 pushed 19, ability 0, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+10:31:03 mechanic: patched=False gate=rejected why=missing diagnosis files=[]
+10:31:03 GPU busy (22735 MB in use, threshold 18000) — waiting 5 minutes before the round
+10:36:03 GPU busy (20239 MB in use, threshold 18000) — waiting 5 minutes before the round
+10:41:03 reset sim-neighborhood: dropped 4 files from earlier rounds
+10:41:03 Sam has played 39 nights before: has 17 things, still chasing 41, gave up on 2
+10:44:33 round 20260914-104103: turns after 14 turns, world v0 -> v1
+10:45:00 round 20260914-104103: 7 wishes, 0 defects, 4 gaps filed, judge ok
+10:45:52 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'decided 20 (thing 15 pushed 15, ability 0, word 4 unpacked 12, undecidable 1), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap 6e1d3a979788: word answer produced no phrases to unpack | phrase: "room"\nexit 1 = 1 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+10:45:53 reset sim-neighborhood: dropped 4 files from earlier rounds
+10:45:53 Sam has played 40 nights before: has 19 things, still chasing 39, gave up on 2
+10:50:08 round 20260914-104553: turns after 14 turns, world v0 -> v1
+10:50:31 round 20260914-104553: 9 wishes, 0 defects, 5 gaps filed, judge ok
+10:50:50 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 9 (thing 4 pushed 3, ability 1, word 4 unpacked 18, undecidable 0), backend errors 1, mode live\n', 'err': ''}
+10:50:50 GPU busy (18790 MB in use, threshold 18000) — waiting 5 minutes before the round
+10:55:50 GPU busy (18793 MB in use, threshold 18000) — waiting 5 minutes before the round
+11:00:50 reset sim-neighborhood: dropped 4 files from earlier rounds
+11:00:50 Sam has played 41 nights before: has 20 things, still chasing 38, gave up on 2
+11:01:04 round 20260914-110050: streak after 4 turns, world v0 -> v0
+11:01:04 round 20260914-110050: 1 wishes, 0 defects, 1 gaps filed, judge skipped
+11:02:27 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 19 (thing 16 pushed 13, ability 1, word 2 unpacked 1, undecidable 0), backend errors 3, mode live\n', 'err': ''}
+11:02:27 Sam has played 42 nights before: has 20 things, still chasing 38, gave up on 2
+11:10:01 round 20260914-110227: turns after 14 turns, world v0 -> v2
+11:10:11 round 20260914-110227: 4 wishes, 0 defects, 1 gaps filed, judge ok
+11:10:42 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 14 (thing 12 pushed 12, ability 0, word 2 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+11:10:43 reset sim-neighborhood: dropped 8 files from earlier rounds
+11:10:43 Sam has played 43 nights before: has 22 things, still chasing 36, gave up on 2
+11:10:59 round 20260914-111043: done after 5 turns, world v0 -> v0
+11:11:07 round 20260914-111043: 2 wishes, 0 defects, 2 gaps filed, judge ok
+11:11:16 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 3 (thing 2 pushed 2, ability 0, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+11:11:16 stopping the sim Pick Board
+11:11:20 Sam Loop end: 12 rounds played
+13:47:30 Sam Loop start: rounds=200 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+13:47:32 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+13:47:33 the sim Pick Board is up after 0 s
+13:47:35 :8001 is held by a stale Living Room (pid 38692) — killing its tree
+13:47:35 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+13:49:42 the sim Living Room :8001 still not answering after 120 s
+13:49:42 the sim Living Room did not come up — waiting 2 minutes
+13:51:44 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+13:53:51 the sim Living Room :8001 still not answering after 120 s
+13:53:51 the sim Living Room did not come up — waiting 2 minutes
+13:55:51 STOP file found — ending between rounds
+13:55:51 stopping the sim Pick Board
+13:55:55 Sam Loop end: 0 rounds played
+14:00:52 Sam Loop start: rounds=200 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+14:00:55 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+14:00:55 the sim Pick Board is up after 0 s
+14:00:57 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+14:01:05 the sim Living Room :8001 is up after 7 s
+14:01:05 Sam has played 44 nights before: has 22 things, still chasing 36, gave up on 2
+14:08:12 round 20260914-140105: turns after 14 turns, world v0 -> v2
+14:08:19 round 20260914-140105: 7 wishes, 0 defects, 2 gaps filed, judge ok
+14:08:23 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 2 (thing 1 pushed 1, ability 0, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:08:23 reset sim-neighborhood: dropped 8 files from earlier rounds
+14:08:23 Sam has played 45 nights before: has 26 things, still chasing 32, gave up on 2
+14:08:35 round 20260914-140823: streak after 4 turns, world v0 -> v0
+14:08:35 round 20260914-140823: 1 wishes, 0 defects, 1 gaps filed, judge skipped
+14:08:41 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    crib  <- "crib"  5ms\nBUILT    crib  <- "crib"  2ms\ndecided 3 (thing 2 pushed 2, ability 0, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:08:41 Sam has played 46 nights before: has 26 things, still chasing 32, gave up on 2
+14:14:47 round 20260914-140841: turns after 14 turns, world v0 -> v2
+14:14:52 round 20260914-140841: 6 wishes, 0 defects, 2 gaps filed, judge ok
+14:14:52 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 0 (thing 0 pushed 0, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:14:52 reset sim-neighborhood: dropped 8 files from earlier rounds
+14:14:52 Sam has played 47 nights before: has 28 things, still chasing 29, gave up on 3
+14:15:06 round 20260914-141452: streak after 5 turns, world v0 -> v0
+14:15:06 round 20260914-141452: 2 wishes, 0 defects, 2 gaps filed, judge skipped
+14:15:08 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 2 (thing 0 pushed 0, ability 0, word 2 unpacked 4, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:15:09 Sam has played 48 nights before: has 28 things, still chasing 29, gave up on 3
+14:15:19 round 20260914-141509: done after 4 turns, world v0 -> v0
+14:15:31 round 20260914-141509: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+14:15:31 Sam has played 49 nights before: has 28 things, still chasing 29, gave up on 3
+14:15:54 round 20260914-141531: done after 5 turns, world v0 -> v0
+14:16:06 round 20260914-141531: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+14:16:07 Sam has played 50 nights before: has 28 things, still chasing 29, gave up on 3
+14:20:32 round 20260914-141607: turns after 14 turns, world v0 -> v1
+14:20:43 round 20260914-141607: 10 wishes, 0 defects, 9 gaps filed, judge ok
+14:21:33 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bathtub  <- "bathtub"  6ms\nBUILT    toilet  <- "toilet"  1ms\nBUILT    kitchen-sink-unit  <- "sink"  2ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  3ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    fridge  <- "fridge"  5ms\nBUILT    stove  <- "stove"  6ms\nBUILT    bathtub  <- "bathtub"  4ms\nBUILT    bathtub  <- "bathtub"  5ms\ndecided 20 (thing 14 pushed 14, ability 0, word 6 unpacked 6, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:21:33 reset sim-neighborhood: dropped 4 files from earlier rounds
+14:21:33 Sam has played 51 nights before: has 28 things, still chasing 30, gave up on 2
+14:26:45 round 20260914-142133: turns after 14 turns, world v0 -> v1
+14:26:52 round 20260914-142133: 7 wishes, 0 defects, 2 gaps filed, judge ok
+14:27:08 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 7 (thing 6 pushed 6, ability 0, word 1 unpacked 1, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:27:08 reset sim-neighborhood: dropped 4 files from earlier rounds
+14:27:08 Sam has played 52 nights before: has 31 things, still chasing 27, gave up on 2
+14:31:58 round 20260914-142708: turns after 14 turns, world v0 -> v1
+14:32:05 round 20260914-142708: 6 wishes, 0 defects, 3 gaps filed, judge ok
+14:32:14 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    changing-table  <- "changing table"  3ms\ndecided 5 (thing 5 pushed 5, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:32:15 reset sim-neighborhood: dropped 4 files from earlier rounds
+14:32:15 Sam has played 53 nights before: has 33 things, still chasing 26, gave up on 1
+14:35:30 round 20260914-143215: turns after 14 turns, world v0 -> v1
+14:35:40 round 20260914-143215: 11 wishes, 0 defects, 9 gaps filed, judge ok
+14:36:25 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'BUILT    floor-rug-plain  <- "rug"  3ms\nBUILT    dresser  <- "dresser"  2ms\nBUILT    nightstand  <- "nightstand"  1ms\nBUILT    washer  <- "washing machine"  3ms\ndecided 15 (thing 6 pushed 6, ability 1, word 6 unpacked 14, undecidable 2), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap e294d48c9cd2: word answer produced no phrases to unpack | phrase: "room"\nUNDECIDABLE  gap e294d48c9cd2: word answer produced no phrases to unpack | phrase: "room"\nexit 1 = 2 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+14:36:25 GPU busy (20181 MB in use, threshold 18000) — waiting 5 minutes before the round
+14:41:25 GPU busy (20181 MB in use, threshold 18000) — waiting 5 minutes before the round
+14:46:25 reset sim-neighborhood: dropped 4 files from earlier rounds
+14:46:25 Sam has played 54 nights before: has 28 things, still chasing 31, gave up on 1
+14:46:43 round 20260914-144625: streak after 6 turns, world v0 -> v0
+14:46:43 round 20260914-144625: 3 wishes, 0 defects, 3 gaps filed, judge skipped
+14:47:25 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  5ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  5ms\nBUILT    bathtub  <- "bath"  5ms\nBUILT    bed-double  <- "big bed"  2ms\nBUILT    bed-double  <- "big bed"  5ms\nBUILT    dryer  <- "dryer"  1ms\nBUILT    washer  <- "washing machine"  5ms\ndecided 17 (thing 13 pushed 13, ability 2, word 2 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:47:26 Sam has played 55 nights before: has 28 things, still chasing 31, gave up on 1
+14:47:38 round 20260914-144726: streak after 5 turns, world v0 -> v0
+14:47:38 round 20260914-144726: 2 wishes, 0 defects, 2 gaps filed, judge skipped
+14:47:47 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bed-double  <- "big bed"  3ms\nBUILT    bed-double  <- "big bed"  2ms\nBUILT    bed-single  <- "bed"  4ms\ndecided 4 (thing 3 pushed 3, ability 0, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:47:47 Sam has played 56 nights before: has 28 things, still chasing 31, gave up on 1
+14:56:25 round 20260914-144747: turns after 14 turns, world v0 -> v3
+14:56:31 round 20260914-144747: 7 wishes, 0 defects, 3 gaps filed, judge ok
+14:57:04 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bbq-grill  <- "grill"  3ms\nBUILT    bbq-grill  <- "grill"  5ms\nBUILT    bbq-grill  <- "grill"  1ms\nBUILT    bbq-grill  <- "grill"  2ms\nBUILT    bbq-grill  <- "grill"  5ms\nBUILT    bbq-grill  <- "grill"  1ms\nBUILT    floor-rug-plain  <- "area rug"  1ms\nBUILT    bbq-grill  <- "grill"  3ms\ndecided 13 (thing 9 pushed 9, ability 3, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+14:57:04 reset sim-neighborhood: dropped 12 files from earlier rounds
+14:57:04 Sam has played 57 nights before: has 27 things, still chasing 32, gave up on 1
+15:00:44 round 20260914-145704: turns after 14 turns, world v0 -> v1
+15:00:51 round 20260914-145704: 5 wishes, 0 defects, 2 gaps filed, judge ok
+15:01:27 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bathtub  <- "bathtub"  3ms\nBUILT    fridge  <- "fridge"  2ms\ndecided 14 (thing 8 pushed 7, ability 2, word 4 unpacked 16, undecidable 0), backend errors 1, mode live\n', 'err': ''}
+15:01:27 GPU busy (18008 MB in use, threshold 18000) — waiting 5 minutes before the round
+15:28:09 Sam Loop start: rounds=10 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+15:28:11 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+15:28:12 the sim Pick Board is up after 0 s
+15:28:14 the Living Room will run on C:\Program Files\Python313\python.exe
+15:28:14 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+15:28:21 the sim Living Room :8001 is up after 7 s
+15:28:22 reset sim-neighborhood: dropped 4 files from earlier rounds
+15:28:22 Sam has played 58 nights before: has 28 things, still chasing 31, gave up on 1
+15:33:56 round 20260914-152822: turns after 14 turns, world v0 -> v2
+15:34:50 round 20260914-152822: 10 wishes, 0 defects, 3 gaps filed, judge ok
+15:35:26 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'BUILT    dining-chair  <- "wooden chair"  3ms\nBUILT    kid-bookcase  <- "bookshelf"  2ms\nBUILT    bed-single  <- "bed"  2ms\nBUILT    nightstand  <- "nightstand"  2ms\nBUILT    dresser  <- "dresser"  2ms\nBUILT    wardrobe  <- "wardrobe"  1ms\nBUILT    toilet  <- "toilet"  1ms\nBUILT    kitchen-sink-unit  <- "sink"  1ms\nBUILT    bathtub  <- "bathtub"  2ms\nBUILT    dining-chair  <- "wooden chair"  2ms\ndecided 20 (thing 18 pushed 18, ability 0, word 1 unpacked 0, undecidable 1), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap 5e21534677f6: word answer produced no phrases to unpack | phrase: "1920s patternâ€‘book proportions"\nexit 1 = 1 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+15:35:26 reset sim-neighborhood: dropped 8 files from earlier rounds
+15:35:26 Sam has played 59 nights before: has 29 things, still chasing 30, gave up on 1
+15:35:39 round 20260914-153526: done after 4 turns, world v0 -> v0
+15:35:45 round 20260914-153526: 1 wishes, 0 defects, 1 gaps filed, judge ok
+15:35:56 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    floor-rug-plain  <- "rug"  2ms\nBUILT    dining-chair  <- "wooden chair"  4ms\ndecided 3 (thing 3 pushed 3, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+15:35:56 Sam has played 60 nights before: has 29 things, still chasing 30, gave up on 1
+15:40:45 round 20260914-153556: turns after 14 turns, world v0 -> v1
+15:40:52 round 20260914-153556: 2 wishes, 0 defects, 1 gaps filed, judge ok
+15:40:58 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bed-double  <- "big bed"  3ms\nBUILT    bed-double  <- "big bed"  3ms\ndecided 3 (thing 2 pushed 2, ability 0, word 1 unpacked 2, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+15:40:58 reset sim-neighborhood: dropped 4 files from earlier rounds
+15:40:59 Sam has played 61 nights before: has 28 things, still chasing 31, gave up on 1
+15:41:08 round 20260914-154058: streak after 4 turns, world v0 -> v0
+15:41:08 round 20260914-154058: 1 wishes, 0 defects, 1 gaps filed, judge skipped
+15:41:13 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'BUILT    bed-double  <- "big bed"  3ms\nBUILT    bed-double  <- "big bed"  3ms\ndecided 2 (thing 2 pushed 2, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+15:41:13 Sam has played 62 nights before: has 28 things, still chasing 31, gave up on 1
+15:41:28 round 20260914-154113: done after 5 turns, world v0 -> v0
+15:41:38 round 20260914-154113: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+15:41:38 Sam has played 63 nights before: has 28 things, still chasing 31, gave up on 1
+15:45:55 round 20260914-154138: turns after 14 turns, world v0 -> v1
+15:46:12 round 20260914-154138: 5 wishes, 0 defects, 0 gaps filed, judge unparseable
+15:46:12 reset sim-neighborhood: dropped 4 files from earlier rounds
+15:46:12 Sam has played 64 nights before: has 26 things, still chasing 33, gave up on 1
+15:46:31 round 20260914-154612: done after 5 turns, world v0 -> v0
+15:46:41 round 20260914-154612: 2 wishes, 0 defects, 0 gaps filed, judge unparseable
+15:46:41 Sam has played 65 nights before: has 26 things, still chasing 33, gave up on 1
+15:50:22 round 20260914-154641: turns after 14 turns, world v0 -> v1
+15:51:04 round 20260914-154641: 11 wishes, 0 defects, 7 gaps filed, judge ok
+15:51:58 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'BUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  3ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  3ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    stove  <- "stove"  2ms\ndecided 20 (thing 10 pushed 10, ability 2, word 7 unpacked 13, undecidable 1), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap 9409df5b74dd: model returned an unrecognised kind: "nothing" | phrase: "Can I see some pictures of houses first?"\nexit 1 = 1 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+15:51:58 reset sim-neighborhood: dropped 4 files from earlier rounds
+15:51:58 Sam has played 66 nights before: has 25 things, still chasing 34, gave up on 1
+15:52:19 round 20260914-155158: done after 6 turns, world v0 -> v0
+15:52:23 round 20260914-155158: 2 wishes, 0 defects, 2 gaps filed, judge ok
+15:53:05 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'BUILT    kitchen-sink-unit  <- "sink"  3ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  2ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  1ms\nBUILT    bathtub  <- "bath"  3ms\ndecided 17 (thing 13 pushed 13, ability 2, word 1 unpacked 0, undecidable 1), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap fe8a8cf04d85: word answer produced no phrases to unpack | phrase: "room"\nexit 1 = 1 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+15:53:06 Sam has played 67 nights before: has 25 things, still chasing 34, gave up on 1
+15:53:24 round 20260914-155306: done after 6 turns, world v0 -> v0
+15:53:28 round 20260914-155306: 3 wishes, 0 defects, 3 gaps filed, judge ok
+15:53:32 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 2 (thing 1 pushed 1, ability 1, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+15:53:32 — batch 1: 10 nights played, consolidating —
+15:53:32 batch 1: no lesson this time (no model answered, or it said nothing)
+15:53:32 batch 1: training corpus rebuilt in 0.3s
+15:53:32 what Sam wants: 25 he has, 34 still chasing, 1 gave up on -> sim-runs/WHAT-SAM-WANTS.md
+15:53:32   still chasing: a mirror, a sink, a stove, a toilet, put a big couch in here, where is the couch? put a big blue couch right here, I want a big bed with a blue blanket, a chair to sit at the desk, a red bike leaning by the door, a squishy rug under the table...
+15:53:32   gave up on:    a lamp on the nightstand
+15:53:32 stopping the sim Pick Board
+15:53:36 Sam Loop end: 10 rounds played
+16:09:18 Sam Loop start: rounds=10 depth=C factory=True turns=14 minutes=35 runs=C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-runs
+16:09:20 starting the sim Pick Board on :8294 (writes under C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\sim-player\sim-board)
+16:09:20 the sim Pick Board is up after 0 s
+16:09:21 :8001 is held by a stale Living Room (pid 30784) — killing its tree
+16:09:22 the Living Room will run on C:\Program Files\Python313\python.exe
+16:09:22 starting the sim Living Room on :8001 (events -> events-sim.jsonl)
+16:09:29 the sim Living Room :8001 is up after 7 s
+16:09:29 Sam has played 68 nights before: has 25 things, still chasing 34, gave up on 1
+16:13:22 round 20260914-160929: turns after 14 turns, world v0 -> v1
+16:14:00 round 20260914-160929: 12 wishes, 0 defects, 5 gaps filed, judge ok
+16:14:13 gap router (live): {'ran': True, 'live': True, 'rc': 0, 'tail': 'decided 6 (thing 6 pushed 6, ability 0, word 0 unpacked 0, undecidable 0), backend errors 0, mode live\n', 'err': ''}
+16:14:13 reset sim-neighborhood: dropped 4 files from earlier rounds
+16:14:13 Sam has played 69 nights before: has 26 things, still chasing 33, gave up on 1
+16:19:39 round 20260914-161413: turns after 14 turns, world v0 -> v1
+16:19:45 round 20260914-161413: 5 wishes, 0 defects, 0 gaps filed, judge ok
+16:19:45 reset sim-neighborhood: dropped 4 files from earlier rounds
+16:19:45 Sam has played 70 nights before: has 27 things, still chasing 33, gave up on 0
+16:23:23 round 20260914-161945: turns after 14 turns, world v0 -> v1
+16:24:16 round 20260914-161945: 11 wishes, 0 defects, 8 gaps filed, judge ok
+16:24:44 gap router (live): {'ran': True, 'live': True, 'rc': 1, 'tail': 'BUILT    toilet  <- "toilet"  5ms\nBUILT    kitchen-sink-unit  <- "sink"  2ms\nBUILT    bathtub  <- "bathtub"  2ms\nBUILT    floor-rug-plain  <- "rug"  2ms\nBUILT    washer  <- "washing machine"  2ms\nBUILT    bbq-grill  <- "grill"  5ms\ndecided 14 (thing 11 pushed 11, ability 0, word 1 unpacked 2, undecidable 2), backend errors 0, mode live\n', 'err': 'UNDECIDABLE  gap 539d5c3f6e32: word answer produced no phrases to unpack | phrase: "small footprint"\nUNDECIDABLE  gap df5090a3d5ca: word answer produced no phrases to unpack | phrase: "symmetrical faÃ§ade"\nexit 1 = 2 undecidable (a model answer had no usable kind). Not a crash; see UNDECIDABLE lines above.\n'}
+16:24:44 reset sim-neighborhood: dropped 4 files from earlier rounds
+16:24:44 Sam has played 71 nights before: has 25 things, still chasing 35, gave up on 0
+16:28:37 round 20260914-162444: turns after 14 turns, world v0 -> v1
+16:28:45 round 20260914-162444: 3 wishes, 0 defects, 0 gaps filed, judge ok
+16:28:46 reset sim-neighborhood: dropped 4 files from earlier rounds
+16:28:46 Sam has played 72 nights before: has 26 things, still chasing 34, gave up on 0
+16:28:55 round 20260914-162846: done after 3 turns, world v0 -> v0
+16:29:05 round 20260914-162846: 1 wishes, 0 defects, 0 gaps filed, judge unparseable
+16:29:05 Sam has played 73 nights before: has 26 things, still chasing 34, gave up on 0

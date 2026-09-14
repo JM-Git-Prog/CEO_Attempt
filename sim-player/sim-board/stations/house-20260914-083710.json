@@ -1,0 +1,39 @@
+{
+  "id": "house-20260914-083710",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T13:37:36.986Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "red siding colonial — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-083710\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "red siding ranch — changed: style (ranch, not colonial)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-083710\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "red siding colonial — changed: floors (three floors, not two floors)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-083710\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "red siding colonial — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-083710\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "withdraw",
+    "tag": null,
+    "at": "2026-09-14T13:38:59.424Z",
+    "reason": "superseded by house-20260914-083832"
+  }
+}

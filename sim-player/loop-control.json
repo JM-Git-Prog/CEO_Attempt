@@ -1,0 +1,7 @@
+{
+ "batch": 10,
+ "_what": "The Sam Loop reads this at the top of EVERY round. Change the number and the next round uses it - no restart, no window to find, nothing lost.",
+ "_batch": "consolidate and learn every N rounds. 0 = keep playing, never consolidate. Anything broken, negative, over 200 or not a whole number is ignored and the loop keeps the size it already had.",
+ "_set_by": "John, 2026-09-14: smaller and easier to control.",
+ "at": "2026-09-14T20:20:00Z"
+}

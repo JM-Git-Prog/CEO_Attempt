@@ -1,0 +1,18 @@
+08:59:14 round 20260914-085913 session sim-c6c8afba2b14 model kimi-k3:cloud world v0
+08:59:42 turn 1 [card] see: 'the street with houses and empty lots, nothing new yet' type: 'I want a little blue house with a pointy roof'
+09:00:21 turn 2 [card] see: 'A plan for a little blue house with a pointy roof, and it asks about a' type: 'no garage, build it'
+09:01:34 turn 3: Sam is in the home office; Maya (quiet) says ''; they want: a desk, a chair, a computer, a lamp, a bookshelf, a trash can
+09:01:34 turn 3 [wall] see: 'pictures on the garage wall and it says parts are coming' type: 'the first one, c1, it looks like a real house'
+09:01:37 turn 4 [vision] see: "I'm inside my blue house in the office room. It's empty in here." type: 'a desk and a computer on it'
+09:01:39 turn 5 [vision] see: "I'm inside my blue house in the office room, it has a desk and a compu" type: 'a chair to sit on'
+09:01:42 turn 6 [vision] see: "I'm inside my blue house, in the office. There's a desk, a computer, a" type: 'a lamp on the desk'
+09:02:01 turn 7: Sam is in the dining room; Maya (quiet) says ''; they want: a dining table, six chairs, a big light, a rug, a cabinet
+09:02:01 turn 7 [card] see: "I'm inside my house in the office room, it has my stuff in it." type: 'build it'
+09:02:36 turn 8 [card] see: 'a plan for a blue house with a pointy roof and a study. It asks lots o' type: 'separate room, two plugs, and the pointy roof is fine.'
+09:02:39 turn 9 [furnish] see: "I'm inside the dining room. It's mostly empty, just my desk stuff mayb" type: 'a dining table'
+09:02:43 turn 10 [furnish] see: "still waiting, it says it's making my dining table but I don't see it " type: 'where is my dining table?'
+09:02:46 turn 11 [furnish] see: "I'm in my house but I still don't see my dining table anywhere." type: 'six chairs to go around the table'
+09:03:04 turn 12 [card] see: "I'm inside my house in the dining room. The garage wall has pictures o" type: 'a big light hanging over the table'
+09:03:07 turn 13 [card] see: "I'm in my dining room. It says a plan for the big light over the table" type: 'yes, the big light over the table, but make the glass clear'
+09:03:28 turn 14 [card] see: 'I am inside my house in the dining room. I see a table, chairs, and a ' type: 'build it'
+09:03:28 round over: turns after 14 turns, world v0 -> v1

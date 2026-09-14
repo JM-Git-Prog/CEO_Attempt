@@ -1,0 +1,18 @@
+07:30:01 round 20260914-073001 session sim-351eec5ecbb4 model gpt-oss:120b-cloud world v0
+07:30:31 turn 1 [card] see: 'I see: version 0, 8 houses on the street, empty lots, garage, no new h' type: 'a house right here with a big porch'
+07:31:05 turn 2 [card] see: 'plan for a 2‑storey colonial house with big porch, white siding, slate' type: 'I want a detached garage at the back.'
+07:31:49 turn 3 [card] see: 'plan shows white 2‑storey house with garage, asks roof, setback, inter' type: 'wood shingles, 10 foot setback, add a mudroom'
+07:33:02 turn 4: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+07:33:02 turn 4 [wall] see: 'Version 0, eight houses, unchanged, garage wall shows four pictures c1' type: 'pick c1 picture'
+07:33:05 turn 5 [vision] see: 'I see: empty living room with plain walls and floor.' type: 'a big couch'
+07:33:08 turn 6 [vision] see: 'inside living room, big couch, empty space, no TV' type: 'a TV'
+07:33:11 turn 7 [vision] see: 'inside the house, living room with a big couch and a TV' type: 'I want a coffee table in front of the couch.'
+07:33:37 turn 8: Sam is in the primary bedroom; Maya (quiet) says ''; they want: a bed, a dresser, a nightstand, a lamp, a mirror, a beanbag
+07:33:37 turn 8 [card] see: 'I see: Inside living room, big couch and TV, floor empty.' type: 'build it'
+07:33:41 turn 9 [furnish] see: 'primary bedroom, empty, white walls, plain floor' type: 'I want a cozy bed with soft blankets.'
+07:33:44 turn 10 [furnish] see: 'I see the primary bedroom, white walls, wood floor, a bed already plac' type: 'I want a nightstand next to the bed.'
+07:33:50 turn 11 [card] see: 'I see the primary bedroom with a bed and nightstand, empty space besid' type: 'add a lamp on the nightstand.'
+07:33:53 turn 12 [furnish] see: 'I see a nightstand with a lamp, empty floor beside it.' type: 'add a cozy bed with soft blankets.'
+07:33:55 turn 13 [furnish] see: 'I see a primary bedroom with a cozy bed and soft blankets.' type: 'add a dresser against the wall'
+07:33:58 turn 14 [furnish] see: 'I see: primary bedroom with a cozy bed and a dresser.' type: 'add a nightstand next to the bed'
+07:33:58 round over: turns after 14 turns, world v0 -> v1

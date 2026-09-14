@@ -1,0 +1,122 @@
+{
+  "round": "20260914-074837",
+  "at": "2026-09-14T12:51:21Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 11,
+    "changes_seen": 2,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      69.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "a cozy cottage with blue roof and garden",
+      "verdict": "got",
+      "evidence": "order 20260914-074912 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "a cozy cottage with blue roof and garden"
+    },
+    {
+      "turn": 5,
+      "text": "a big couch in the living room",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a big couch in the living room"
+    },
+    {
+      "turn": 6,
+      "text": "build it",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "build it"
+    },
+    {
+      "turn": 7,
+      "text": "a TV on the wall.",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a TV on the wall."
+    },
+    {
+      "turn": 8,
+      "text": "a coffee table in front of the couch.",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a coffee table in front of the couch."
+    },
+    {
+      "turn": 9,
+      "text": "a cozy bed with fluffy pillows",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a cozy bed with fluffy pillows"
+    },
+    {
+      "turn": 10,
+      "text": "a nightstand next to the bed",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a nightstand next to the bed"
+    },
+    {
+      "turn": 11,
+      "text": "Add a lamp on the nightstand.",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "Add a lamp on the nightstand."
+    },
+    {
+      "turn": 12,
+      "text": "Add a mirror above the nightstand.",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "Add a mirror above the nightstand."
+    },
+    {
+      "turn": 13,
+      "text": "Add a fridge next to the sink.",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "Add a fridge next to the sink."
+    },
+    {
+      "turn": 14,
+      "text": "Add a stove next to the fridge.",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "Add a stove next to the fridge."
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [],
+  "judge_model": "gpt-oss:120b-cloud",
+  "judge_status": "unparseable"
+}

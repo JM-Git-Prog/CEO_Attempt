@@ -1,0 +1,18 @@
+07:54:16 round 20260914-075416 session sim-3027eae40e86 model gpt-oss:120b-cloud world v0
+07:54:32 turn 1 [card] see: 'I see version 0, eight houses on the street, empty lots, garage.' type: 'Add a blue house with a red door on the empty lot near the garage.'
+07:55:22 turn 2 [card] see: 'I see: version 0 neighborhood, eight houses, plan for blue bungalow wi' type: 'Attach garage, no extra interior finishes, normal roof pitch.'
+07:56:30 turn 3: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+07:56:30 turn 3 [wall] see: 'I see: version 0, eight houses, garage wall with four pictures, empty ' type: 'I pick the first picture.'
+07:56:33 turn 4 [vision] see: 'empty living room with plain walls and floor' type: 'a big couch near the window'
+07:56:37 turn 5 [vision] see: 'I see a living room with a big couch near the window.' type: 'add a TV on the wall opposite the couch'
+07:56:40 turn 6 [vision] see: 'living room with blue walls, big couch near window, TV opposite couch' type: 'add a coffee table in front of the couch'
+07:56:43 turn 7: Sam is in the primary bedroom; Maya (quiet) says ''; they want: a bed, a dresser, a nightstand, a lamp, a mirror, a beanbag
+07:56:43 turn 7 [vision] see: 'inside the living room with a big couch, TV, and coffee table' type: 'add a lamp next to the couch'
+07:56:45 turn 8 [vision] see: 'I see: primary bedroom with couch, TV, coffee table, lamp' type: 'Add a bed against the wall opposite the window.'
+07:57:07 turn 9 [card] see: 'I see: primary bedroom, couch, empty wall, no TV yet' type: 'build it'
+07:57:24 turn 10 [card] see: 'I see version 1 neighborhood, 8 houses, a plan, and my bedroom with a ' type: 'Garage on the east side, no side entry.'
+07:57:27 turn 11 [vision] see: 'I see a bedroom with a bed opposite the window.' type: 'Add a nightstand next to the bed.'
+07:57:31 turn 12 [vision] see: 'I see a bedroom with a bed opposite the window and a nightstand beside' type: 'Add a lamp on the nightstand.'
+07:57:34 turn 13 [vision] see: 'primary bedroom with bed, nightstand, lamp on nightstand, window' type: 'Add a mirror above the nightstand.'
+07:57:42 turn 14 [vision] see: 'I see: bedroom with bed, nightstand, lamp, and mirror.' type: 'Add a beanbag next to the lamp.'
+07:57:42 round over: turns after 14 turns, world v0 -> v1

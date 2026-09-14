@@ -1,0 +1,38 @@
+{
+  "id": "house-20260914-075148",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T12:52:10.056Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "blue siding colonial — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-075148\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "blue siding ranch — changed: style (ranch, not colonial)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-075148\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "blue brick colonial — changed: walls (brick, not siding)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-075148\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "blue siding colonial — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-075148\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "choose",
+    "tag": "c1",
+    "at": "2026-09-14T12:52:12.596Z"
+  }
+}

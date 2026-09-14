@@ -1,0 +1,19 @@
+07:41:19 round 20260914-074119 session sim-b0c3d0b21ecb model gpt-oss:120b-cloud world v0
+07:41:35 turn 1 [card] see: '8 houses on the street, version 0, nothing new' type: 'a cozy cottage with a garden and a red door'
+07:41:38 turn 2: Sam's model failed (ollama gpt-oss:120b-cloud: HTTP 503: upstream connect error or disconnect/reset before headers. reset reason: remote connection failure)
+07:41:38 turn 2 [idle] see: '' type: '' ERROR backend: ollama gpt-oss:120b-cloud: HTTP 503: upstream connect error or disconnect/reset before headers. reset reason: remote connection failure
+07:42:04 turn 3 [card] see: 'plan: white cottage, red door, porch, garden; asks about garage, garde' type: 'detached garage, add a vegetable patch, and put a fireplace.'
+07:42:35 turn 4 [card] see: 'I see a plan of a white cottage with red door, fireplace, garage, gard' type: 'Open‑plan kitchen, brick chimney, raised bed'
+07:43:43 turn 5: Sam is in the nursery; Maya (quiet) says ''; they want: a crib, a rocking chair, a changing table, a toy box, a nightlight
+07:43:43 turn 5 [wall] see: 'Version 0, 8 houses, unchanged; 4 cottage pictures on garage wall.' type: 'choose c1'
+07:43:46 turn 6 [vision] see: 'I see: a nursery with plain walls and empty floor.' type: 'add a wooden crib in the nursery'
+07:44:06 turn 7 [card] see: 'I see: inside the nursery, empty room with wooden floor and walls' type: 'build it'
+07:44:11 turn 8 [furnish] see: 'I see: the nursery room, a plan diagram, and three option questions.' type: 'standard ceiling, picket fence, gas fireplace'
+07:44:15 turn 9 [furnish] see: 'inside the nursery, a wooden crib, empty floor space' type: 'add a rocking chair in the nursery'
+07:44:19 turn 10 [card] see: 'I see a cottage plan with questions about ceiling, fence, and fireplac' type: 'add a nightlight on the nursery wall'
+07:44:21 turn 11 [furnish] see: 'nursery with wooden crib, empty floor, plain walls' type: 'add a changing table in the nursery'
+07:44:24 turn 12: Sam is in the entry foyer; Maya (quiet) says ''; they want: a coat rack, a bench, a mirror, a little table, a door mat
+07:44:24 turn 12 [furnish] see: 'I am inside the nursery with a wooden crib, changing table, standard c' type: 'add a rocking chair in the nursery'
+07:44:26 turn 13 [furnish] see: 'entry foyer with empty walls and a doorway' type: 'add a coat rack by the door'
+07:44:39 turn 14 [card] see: 'inside entry foyer, coat rack by the door, walls plain' type: 'add a bench next to the coat rack'
+07:44:39 round over: turns after 14 turns, world v0 -> v1

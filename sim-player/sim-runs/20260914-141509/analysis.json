@@ -1,0 +1,48 @@
+{
+  "round": "20260914-141509",
+  "at": "2026-09-14T19:15:31Z",
+  "counts": {
+    "turns": 4,
+    "wishes": 2,
+    "changes_seen": 0,
+    "nothing_streak_max": 2,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 0,
+    "walls_picked": 0,
+    "cards_shown": 0,
+    "cards_built": 0,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [],
+    "slow": 0,
+    "reason_ended": "done",
+    "world_versions": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a crib with blue blankets",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "I want a crib with blue blankets"
+    },
+    {
+      "turn": 2,
+      "text": "where is the crib?",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "where is the crib?"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "unparseable"
+}

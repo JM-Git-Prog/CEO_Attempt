@@ -1,0 +1,19 @@
+08:03:56 round 20260914-080356 session sim-5d234e290db7 model gpt-oss:120b-cloud world v0
+08:04:22 turn 1 [card] see: 'I see: version 0, eight houses, nothing new' type: 'Add a two‑story house with a red roof and a front garden here.'
+08:04:54 turn 2 [card] see: 'Version 0, eight houses, plan shown, asking garden, interior, sustaina' type: 'Add a stone pathway in the front garden, hardwood floors, no solar.'
+08:06:03 turn 3: Sam is in the nursery; Maya (quiet) says ''; they want: a crib, a rocking chair, a changing table, a toy box, a nightlight
+08:06:03 turn 3 [wall] see: "4 house pictures on garage wall, building house, front garden can't be" type: 'Make the roof red.'
+08:06:05 turn 4 [vision] see: 'I see: inside the nursery, empty floor, plain walls, no furniture.' type: 'a rocking chair in the corner'
+08:06:09 turn 5 [vision] see: 'I see: inside the nursery, a rocking chair in the corner, empty floor.' type: 'a crib beside the rocking chair'
+08:06:12 turn 6 [vision] see: 'I see: inside a nursery with a rocking chair and a crib.' type: 'a changing table next to the crib'
+08:06:15 turn 7: Sam is in the entry foyer; Maya (quiet) says ''; they want: a coat rack, a bench, a mirror, a little table, a door mat
+08:06:15 turn 7 [vision] see: 'nursery with rocking chair, crib, and changing table' type: 'add a toy box in the corner'
+08:06:18 turn 8 [vision] see: 'I see the entry foyer with a rocking chair, crib, changing table, and ' type: 'add a coat rack by the door'
+08:06:22 turn 9 [vision] see: 'I see: entry foyer, empty, door ahead, plain walls.' type: 'add a bench near the door'
+08:06:26 turn 10 [vision] see: 'I see: entry foyer with coat rack and bench near the door' type: 'add a mirror above the bench'
+08:06:30 turn 11: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+08:06:30 turn 11 [vision] see: 'entry foyer with coat rack, bench, mirror, toy box, rocking chair, cri' type: 'add a small welcome mat at the door'
+08:06:34 turn 12 [vision] see: 'I see: empty living room, door, walls, no furniture.' type: 'add a big couch in the living room'
+08:06:38 turn 13 [vision] see: 'I see version 1, eight houses, no interior changes yet' type: 'Add a TV on the wall'
+08:06:40 turn 14 [vision] see: 'living room with a big couch and a TV on the wall' type: 'add a coffee table in front of the couch'
+08:06:40 round over: turns after 14 turns, world v0 -> v1

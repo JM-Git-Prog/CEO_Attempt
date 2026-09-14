@@ -1,0 +1,17 @@
+07:51:21 round 20260914-075121 session sim-a9942d17ec5f model gpt-oss:120b-cloud world v0
+07:51:41 turn 1 [card] see: 'I see version 0 neighborhood, eight houses, unchanged.' type: 'add a blue house with a big porch on the empty lot'
+07:52:10 turn 2 [card] see: 'I see a plan for a two‑storey blue colonial house with a large front p' type: 'Medium roof pitch, bench on porch, kitchen near back wall.'
+07:53:18 turn 3: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+07:53:18 turn 3 [wall] see: 'I see eight houses, garage wall with four pictures, no new house yet' type: 'I choose picture c1'
+07:53:20 turn 4 [vision] see: 'I see: inside the blue house, living room, empty floor, walls, windows' type: 'add a big couch near the window'
+07:53:22 turn 5 [vision] see: 'I see a living room with a window and a big couch.' type: 'add a TV on the wall opposite the couch'
+07:53:40 turn 6 [card] see: 'I see the living room with a window, a couch, and a TV opposite it' type: 'build it'
+07:53:43 turn 7 [furnish] see: 'inside living room, plan displayed, asking about porch roof, bedrooms,' type: 'add a soft rug in front of the couch'
+07:53:47 turn 8 [furnish] see: 'inside living room, big couch, TV on wall, soft rug in front of couch' type: 'add a coffee table in front of the couch'
+07:53:50 turn 9 [furnish] see: 'inside living room, big couch, TV on wall, coffee table, rug, empty sp' type: 'add a floor lamp next to the couch'
+07:53:53 turn 10 [furnish] see: 'I see: living room with big couch, TV on wall, floor lamp, empty floor' type: 'add a bookshelf next to the TV'
+07:53:56 turn 11 [furnish] see: 'Blue two‑storey Dutch‑colonial plan, porch question, bedroom layout qu' type: 'Make the TV 55 inches and add built‑in speakers.'
+07:53:59 turn 12 [furnish] see: 'I see: living room with big couch and wall TV' type: 'Add a coffee table in front of the couch'
+07:54:03 turn 13 [furnish] see: 'Inside living room: big couch, TV, coffee table, floor lamp, bookshelf' type: 'Add a soft rug in front of the coffee table.'
+07:54:08 turn 14 [card] see: 'inside living room, plan shown with couch, TV, coffee table, rug' type: 'Make the TV 55 inches with built‑in speakers.'
+07:54:08 round over: turns after 14 turns, world v0 -> v1

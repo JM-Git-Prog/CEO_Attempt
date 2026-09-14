@@ -1,0 +1,122 @@
+{
+  "round": "20260914-080056",
+  "at": "2026-09-14T13:03:56Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 11,
+    "changes_seen": 2,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 2,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      68.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "a two‑story blue house with a red door and a front porch",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a two‑story blue house with a red door and a front porch"
+    },
+    {
+      "turn": 3,
+      "text": "build it",
+      "verdict": "got",
+      "evidence": "order 20260914-080151 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "build it"
+    },
+    {
+      "turn": 6,
+      "text": "a wooden desk with a green lamp on it",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a wooden desk with a green lamp on it"
+    },
+    {
+      "turn": 7,
+      "text": "a comfy chair next to the desk",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a comfy chair next to the desk"
+    },
+    {
+      "turn": 8,
+      "text": "add a computer on the desk",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a computer on the desk"
+    },
+    {
+      "turn": 9,
+      "text": "add a bookshelf in the corner",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a bookshelf in the corner"
+    },
+    {
+      "turn": 10,
+      "text": "add a wooden dining table in the center",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a wooden dining table in the center"
+    },
+    {
+      "turn": 11,
+      "text": "add six chairs around the dining table",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add six chairs around the dining table"
+    },
+    {
+      "turn": 12,
+      "text": "add a colorful rug under the dining table",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a colorful rug under the dining table"
+    },
+    {
+      "turn": 13,
+      "text": "add a bookshelf in the corner",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a bookshelf in the corner"
+    },
+    {
+      "turn": 14,
+      "text": "add a workbench against the far wall",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a workbench against the far wall"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [],
+  "judge_model": "gpt-oss:120b-cloud",
+  "judge_status": "unparseable"
+}

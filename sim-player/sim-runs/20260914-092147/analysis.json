@@ -1,0 +1,79 @@
+{
+  "round": "20260914-092147",
+  "at": "2026-09-14T14:27:25Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 5,
+    "changes_seen": 4,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 2,
+    "walls_picked": 2,
+    "cards_shown": 3,
+    "cards_built": 3,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      78.0,
+      80.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 2
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a new house with a pointy roof and a red door.",
+      "verdict": "got",
+      "evidence": "order 20260914-092207 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a new house with a pointy roof and a red door."
+    },
+    {
+      "turn": 4,
+      "text": "a fridge, a big silver one",
+      "verdict": "got",
+      "evidence": "order 20260914-092421 done at world version 2",
+      "judge": "deterministic",
+      "phrase": "a fridge, a big silver one"
+    },
+    {
+      "turn": 7,
+      "text": "where is the stove?",
+      "verdict": "nothing",
+      "evidence": "Turn 7 i_see states 'no stove yet' and the user only asked a question without receiving an item.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "where is the stove?"
+    },
+    {
+      "turn": 8,
+      "text": "I want a stove next to the fridge, and a sink too.",
+      "verdict": "nothing",
+      "evidence": "Turn 8 i_see states 'no stove yet' and Turn 9 i_see confirms 'nothing else yet' immediately after the request.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "I want a stove next to the fridge, and a sink too."
+    },
+    {
+      "turn": 9,
+      "text": "build it",
+      "verdict": "nothing",
+      "evidence": "Turn 10 i_see explicitly says 'no stove yet' despite the 'build it' command in Turn 9.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "0f57f090f496",
+    "bf35f2bbce30",
+    "ce16e9084e2d"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

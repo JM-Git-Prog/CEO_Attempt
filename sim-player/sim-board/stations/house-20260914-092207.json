@@ -1,0 +1,38 @@
+{
+  "id": "house-20260914-092207",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T14:22:34.227Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "white brick cottage — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092207\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "white brick colonial — changed: style (colonial, not cottage)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092207\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "white brick cottage — the same parts, drawn differently",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092207\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "white brick cottage — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092207\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "choose",
+    "tag": "c1",
+    "at": "2026-09-14T14:22:36.660Z"
+  }
+}

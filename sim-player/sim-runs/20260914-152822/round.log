@@ -1,0 +1,19 @@
+15:28:22 round 20260914-152822 session sim-5ec1208db9bd model kimi-k3:cloud world v0
+15:28:58 turn 1 [card] see: 'I see the neighborhood with 8 houses, just like before.' type: 'I want a red house with a big porch'
+15:29:26 turn 2 [card] see: 'A plan for a red brick house with a big porch. It has lots of parts an' type: 'build it'
+15:30:40 turn 3: Sam is in the home office; Maya (quiet) says ''; they want: a desk, a chair, a computer, a lamp, a bookshelf, a trash can
+15:30:40 turn 3 [wall] see: 'Four pictures of red houses on the garage wall, no real house yet.' type: 'the first one, it looks like a real house'
+15:30:44 turn 4 [vision] see: "I'm inside my house, in the home office. It's empty and needs stuff." type: 'a desk'
+15:30:48 turn 5 [vision] see: "I'm inside my red house, in the office room. There's a desk in here no" type: 'a chair to sit at the desk'
+15:30:51 turn 6 [vision] see: "I'm inside my house in the office room. It wants me to say build it bu" type: 'a computer on the desk'
+15:31:27 turn 7: Sam is in the dining room; Maya (quiet) says ''; they want: six chairs, a big light, a rug, a cabinet
+15:31:27 turn 7 [card] see: 'nothing new yet, the chat is waiting for me to say build it' type: 'build it'
+15:31:58 turn 8 [card] see: 'a plan for my red brick house with a porch, still waiting on the right' type: 'a big table for the dining room'
+15:33:14 turn 9 [wall] see: 'I am inside my house in the dining room. The garage wall has pictures ' type: 'six chairs around the table'
+15:33:18 turn 10 [furnish] see: "I'm inside my red house in the dining room. I see the desk, chair, com" type: 'six chairs around the table'
+15:33:24 turn 11 [furnish] see: "I'm in my dining room. It said it's making my chairs but I don't see t" type: 'a big light over the table'
+15:33:26 turn 12 [furnish] see: "I'm in my dining room. Table and chairs and a big light are coming." type: 'a squishy rug under the table'
+15:33:29 turn 13: Sam is in the garage; Maya (quiet) says ''; they want: a toolbox, a bike, shelves, a garbage can
+15:33:29 turn 13 [furnish] see: "The room is still being made, I don't see the rug or anything new yet." type: 'a tall cabinet for my dishes'
+15:33:56 turn 14 [card] see: "I'm in the garage. I see the tall cabinet for dishes I just asked for." type: 'a red bike leaning by the door'
+15:33:56 round over: turns after 14 turns, world v0 -> v2

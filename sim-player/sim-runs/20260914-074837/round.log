@@ -1,0 +1,19 @@
+07:48:37 round 20260914-074837 session sim-3a3bc3647e05 model gpt-oss:120b-cloud world v0
+07:48:54 turn 1 [card] see: '8 houses on the street, version 0, nothing new' type: 'a cozy cottage with blue roof and garden'
+07:48:57 turn 2 [vision] see: 'I see a cottage plan, blue roof, asks about dining room, roof type, an' type: 'Combine the dining room with the kitchen.'
+07:49:33 turn 3 [card] see: 'I see a plan for a blue‑roofed cottage with garden, combined kitchen/d' type: 'combine kitchen with dining, use asphalt shingles, and no extra outbuildings'
+07:50:42 turn 4: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+07:50:42 turn 4 [wall] see: 'Four picture options on garage wall, house still not built, version 0,' type: 'I pick the first picture.'
+07:50:46 turn 5 [vision] see: 'inside my living room, empty space' type: 'a big couch in the living room'
+07:50:52 turn 6 [vision] see: 'I see the living room inside the house, empty except a couch placehold' type: 'build it'
+07:50:55 turn 7 [furnish] see: 'I see: living room with big couch, empty space.' type: 'a TV on the wall.'
+07:50:58 turn 8: Sam is in the primary bedroom; Maya (quiet) says ''; they want: a bed, a dresser, a nightstand, a lamp, a mirror, a beanbag
+07:50:58 turn 8 [furnish] see: 'I see a living room with a big couch and a TV on the wall.' type: 'a coffee table in front of the couch.'
+07:51:01 turn 9 [furnish] see: 'I see the bedroom with a couch, coffee table, and empty walls.' type: 'a cozy bed with fluffy pillows'
+07:51:03 turn 10 [furnish] see: 'I see: a cozy bed with fluffy pillows, empty walls, plain floor.' type: 'a nightstand next to the bed'
+07:51:05 turn 11 [furnish] see: 'I see my bedroom with a cozy bed, fluffy pillows, and a nightstand.' type: 'Add a lamp on the nightstand.'
+07:51:07 turn 12: Sam is in the kitchen; Maya (quiet) says ''; they want: a fridge, a stove, a sink, a kitchen table, cupboards, a microwave
+07:51:07 turn 12 [furnish] see: 'inside primary bedroom with bed, nightstand and lamp' type: 'Add a mirror above the nightstand.'
+07:51:10 turn 13 [furnish] see: 'I see: kitchen, empty counters, no appliances, floor is bare.' type: 'Add a fridge next to the sink.'
+07:51:12 turn 14 [furnish] see: 'I see a kitchen with a fridge beside the sink, empty counters around.' type: 'Add a stove next to the fridge.'
+07:51:12 round over: turns after 14 turns, world v0 -> v1

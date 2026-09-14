@@ -1,0 +1,95 @@
+{
+  "round": "20260914-140105",
+  "at": "2026-09-14T19:08:19Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 7,
+    "changes_seen": 4,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 2,
+    "walls_picked": 2,
+    "cards_shown": 3,
+    "cards_built": 3,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      73.0,
+      125.0,
+      72.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 2
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a new house with a pointy roof and a red door.",
+      "verdict": "got",
+      "evidence": "order 20260914-140148 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a new house with a pointy roof and a red door."
+    },
+    {
+      "turn": 4,
+      "text": "a toy box shaped like a pirate chest",
+      "verdict": "got",
+      "evidence": "Turn 5 i_see: 'I'm inside my house in the nursery and it has my pirate chest toy box'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a toy box shaped like a pirate chest"
+    },
+    {
+      "turn": 5,
+      "text": "a rocking chair",
+      "verdict": "got",
+      "evidence": "Turn 7 i_see: 'in my house in the nursery. rocking chair and pirate chest are here maybe'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a rocking chair"
+    },
+    {
+      "turn": 6,
+      "text": "Build it!",
+      "verdict": "got",
+      "evidence": "Turn 6 receipt got includes 'a toy box shaped like a pirate chest; a rocking chair' and Turn 7 confirms they are present",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "Build it!"
+    },
+    {
+      "turn": 7,
+      "text": "a crib with blue blankets",
+      "verdict": "nothing",
+      "evidence": "Turn 8 states 'It's still making the crib' and session ends at turn 14 without confirmation of completion",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a crib with blue blankets"
+    },
+    {
+      "turn": 8,
+      "text": "a coat rack by the door",
+      "verdict": "got",
+      "evidence": "order 20260914-140611 done at world version 2",
+      "judge": "deterministic",
+      "phrase": "a coat rack by the door"
+    },
+    {
+      "turn": 14,
+      "text": "a mirror on the wall so I can see myself",
+      "verdict": "nothing",
+      "evidence": "Turn 14 receipt shows 'working on the grounds you described' but session ends immediately after with no confirmation of placement",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a mirror on the wall so I can see myself"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "f8ba9b9f5143",
+    "bb45df9a7ead"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

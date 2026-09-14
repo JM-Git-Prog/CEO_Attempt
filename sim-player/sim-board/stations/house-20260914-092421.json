@@ -1,0 +1,38 @@
+{
+  "id": "house-20260914-092421",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T14:24:48.326Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "white siding colonial — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092421\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "white siding georgian — changed: style (georgian, not colonial)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092421\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "white siding colonial — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092421\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "white siding colonial — changed: porch (a porch, not no porch), garage (garage o",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-092421\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "choose",
+    "tag": "c1",
+    "at": "2026-09-14T14:24:52.916Z"
+  }
+}

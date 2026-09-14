@@ -1,0 +1,19 @@
+07:37:58 round 20260914-073758 session sim-266501f24af3 model gpt-oss:120b-cloud world v0
+07:38:17 turn 1 [card] see: 'I see eight houses on the street, no new house.' type: 'I want a two‑story house with a blue roof and a front porch.'
+07:38:49 turn 2 [card] see: 'plan of two‑story blue‑roof house with full‑width porch' type: 'master suite upstairs, built‑in bench of wood, house faces east'
+07:39:57 turn 3: Sam is in the home office; Maya (quiet) says ''; they want: a desk, a chair, a computer, a lamp, a bookshelf, a trash can
+07:39:57 turn 3 [wall] see: '8 houses, garage wall shows pictures c1‑c4, my house still under const' type: 'I pick picture c1 because it matches my two‑story colonial house'
+07:39:59 turn 4 [vision] see: 'I see: home office, empty, walls, windows, floor, ceiling.' type: 'a wooden desk'
+07:40:28 turn 5 [vision] see: 'I see: inside home office, wooden desk placeholder, empty space' type: 'build it'
+07:40:30 turn 6 [furnish] see: 'I see: empty home office, plain walls and floor, no furniture yet.' type: 'I want a comfy chair next to the desk.'
+07:40:32 turn 7: Sam is in the dining room; Maya (quiet) says ''; they want: a dining table, six chairs, a big light, a rug, a cabinet
+07:40:32 turn 7 [furnish] see: 'I see a home office with a wooden desk and empty chair spot.' type: 'add a computer on the desk'
+07:40:35 turn 8 [furnish] see: 'I see: inside dining room, wooden desk with computer, empty floor.' type: 'add a dining table'
+07:40:37 turn 9 [furnish] see: 'I see: inside my house, dining room with a table being built.' type: 'add six chairs'
+07:40:39 turn 10 [furnish] see: 'inside dining room, empty, no table or chairs' type: 'change something in here'
+07:40:41 turn 11: Sam is in the garage; Maya (quiet) says ''; they want: a workbench, a toolbox, a bike, shelves, a garbage can
+07:40:41 turn 11 [furnish] see: 'inside the dining room, floor empty, no furniture yet' type: 'add a big light above the table'
+07:40:44 turn 12 [furnish] see: 'inside the garage, a table with chairs and a light being added' type: 'add a workbench against the wall'
+07:40:47 turn 13 [furnish] see: 'inside garage, workbench being built, empty floor' type: 'add a toolbox next to the workbench'
+07:41:02 turn 14 [card] see: 'I see my garage with a workbench and a toolbox on the concrete floor.' type: 'add a bike leaning against the wall'
+07:41:02 round over: turns after 14 turns, world v0 -> v1

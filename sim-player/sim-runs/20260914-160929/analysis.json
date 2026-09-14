@@ -1,0 +1,136 @@
+{
+  "round": "20260914-160929",
+  "at": "2026-09-14T21:14:00Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 12,
+    "changes_seen": 2,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      75.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a new house, round like a castle tower, with a pointy roof.",
+      "verdict": "got",
+      "evidence": "order 20260914-161006 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a new house, round like a castle tower, with a pointy roof."
+    },
+    {
+      "turn": 4,
+      "text": "a big bed with a blue blanket",
+      "verdict": "got",
+      "evidence": "Turn 5 i_see: 'My bed with the blue blanket is here.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big bed with a blue blanket"
+    },
+    {
+      "turn": 5,
+      "text": "a dresser for my clothes",
+      "verdict": "got",
+      "evidence": "Turn 6 i_see: 'My round bedroom with the big blue bed and the dresser.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a dresser for my clothes"
+    },
+    {
+      "turn": 6,
+      "text": "a nightstand next to the bed",
+      "verdict": "got",
+      "evidence": "Turn 7 receipt got includes 'a nightstand next to the bed' and order_stage is 'done'.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a nightstand next to the bed"
+    },
+    {
+      "turn": 7,
+      "text": "build it",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see confirms presence in dining room implying build completed, receipt in Turn 7 shows 'order_stage': 'done'.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    },
+    {
+      "turn": 8,
+      "text": "a rug that looks like a race track",
+      "verdict": "got",
+      "evidence": "Turn 10 i_see: 'I'm in my dining room with a race track rug...'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a rug that looks like a race track"
+    },
+    {
+      "turn": 9,
+      "text": "six chairs around the table",
+      "verdict": "got",
+      "evidence": "Turn 10 i_see: '...and six chairs around the table'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "six chairs around the table"
+    },
+    {
+      "turn": 10,
+      "text": "a big light hanging over the table",
+      "verdict": "nothing",
+      "evidence": "Turn 11 i_see: 'Still waiting for the big light to show up over the table.' Session ends without confirmation.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big light hanging over the table"
+    },
+    {
+      "turn": 11,
+      "text": "a tall cabinet for dishes",
+      "verdict": "nothing",
+      "evidence": "Turn 12 i_see: '...my cabinet is coming soon but not here yet.' Session ends without confirmation.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a tall cabinet for dishes"
+    },
+    {
+      "turn": 12,
+      "text": "a workbench for fixing things",
+      "verdict": "nothing",
+      "evidence": "Turn 13 i_see: '...waiting for the workbench to show up. Nothing new yet.' Session ends without confirmation.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a workbench for fixing things"
+    },
+    {
+      "turn": 13,
+      "text": "a red toolbox on the workbench",
+      "verdict": "nothing",
+      "evidence": "Turn 14 i_see: '...I don't see the toolbox yet.' Session ends without confirmation.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a red toolbox on the workbench"
+    },
+    {
+      "turn": 14,
+      "text": "a bike leaning by the door",
+      "verdict": "nothing",
+      "evidence": "Session ends at Turn 14 immediately after the request; no subsequent turn confirms the bike.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a bike leaning by the door"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "9d380d4bbf0e",
+    "80ae0703307a",
+    "bed3b96b7da7",
+    "a4deb0d40b78",
+    "5a18757bd7e0"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

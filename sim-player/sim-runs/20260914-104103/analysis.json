@@ -1,0 +1,95 @@
+{
+  "round": "20260914-104103",
+  "at": "2026-09-14T15:45:00Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 7,
+    "changes_seen": 2,
+    "nothing_streak_max": 1,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      77.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a crib",
+      "verdict": "nothing",
+      "evidence": "Turn 3 states 'Still just the same 8 houses. No crib anywhere.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "I want a crib"
+    },
+    {
+      "turn": 2,
+      "text": "where is my crib?",
+      "verdict": "nothing",
+      "evidence": "Turn 3 confirms 'No crib anywhere' after the user asked where it was.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "where is my crib?"
+    },
+    {
+      "turn": 4,
+      "text": "a blue house with a swing in the yard",
+      "verdict": "got",
+      "evidence": "order 20260914-104137 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "a blue house with a swing in the yard"
+    },
+    {
+      "turn": 8,
+      "text": "a bathtub with bubbles",
+      "verdict": "got",
+      "evidence": "Turn 10 i_see says 'It has a bubbly bathtub'.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a bathtub with bubbles"
+    },
+    {
+      "turn": 9,
+      "text": "a toilet next to the bathtub",
+      "verdict": "got",
+      "evidence": "Turn 10 i_see says 'It has ... and a toilet'.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a toilet next to the bathtub"
+    },
+    {
+      "turn": 10,
+      "text": "a sink next to the toilet",
+      "verdict": "nothing",
+      "evidence": "Turn 10 i_see lists bathtub and toilet but does not mention a sink; session ends before confirmation.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a sink next to the toilet"
+    },
+    {
+      "turn": 11,
+      "text": "build it",
+      "verdict": "nothing",
+      "evidence": "Turn 11 response says 'working on the house' but Turn 14 still shows an empty room with items missing, indicating construction/furnishing was not completed before session end.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "7f990331a0d7",
+    "4b57d396024a",
+    "7f3e9ca6656d",
+    "ce16e9084e2d"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

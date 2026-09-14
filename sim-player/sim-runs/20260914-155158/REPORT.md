@@ -1,0 +1,33 @@
+Round 20260914-155158: Sam made 2 wishes, got 0, the app said can't-yet to 0, 2 went nowhere; 0 defects.
+
+| Turn | Wish | Verdict | Evidence |
+|---|---|---|---|
+| 1 | I want a big couch in here | nothing | Turn 2 i_see: 'The street looks the same, no new room or couch yet.' |
+| 3 | It's still not here, can you make the couch now please? | nothing | Turn 4 i_see: 'the room is still empty, no couch anywhere' and final didnt_get includes 'a couch in the living room'. |
+
+## What went wrong
+- none
+
+## Sam's own words at the end
+- a couch in the living room
+- a chair next to the couch
+- a TV across from the couch
+
+## Counts
+- turns: 6
+- wishes: 2
+- changes_seen: 0
+- nothing_streak_max: 3
+- questions_asked: 0
+- questions_answered: 0
+- walls_posted: 0
+- walls_picked: 0
+- cards_shown: 0
+- cards_built: 0
+- http_errors: 0
+- http_5xx: 0
+- exceptions: 0
+- seconds_build_to_house: []
+- slow: 0
+- reason_ended: done
+- world_versions: {'start': 0, 'end': 0}

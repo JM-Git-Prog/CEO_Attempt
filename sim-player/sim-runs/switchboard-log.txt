@@ -1,0 +1,26 @@
+2026-09-14 15:48:27  --- starting, pid 47340, python C:\Program Files\Python313\python.exe
+2026-09-14 15:48:28  switchboard up
+2026-09-14 15:51:21  --- starting, pid 5812, python C:\Program Files\Python313\python.exe
+2026-09-14 15:51:25    :8777 is held by something that does not answer. Nothing was killed.
+2026-09-14 15:51:25  STOPPED: :8777 is taken and was not mine to take
+2026-09-14 15:54:30  --- starting, pid 42984, python C:\Program Files\Python313\python.exe
+2026-09-14 15:54:34    :8777 is held by something that does not answer. Nothing was killed.
+2026-09-14 15:54:34  STOPPED: :8777 is taken and was not mine to take
+2026-09-14 15:59:38  --- starting, pid 47452, python C:\Program Files\Python313\python.exe
+2026-09-14 15:59:42    :8777 is held by something that does not answer. Nothing was killed.
+2026-09-14 15:59:42  STOPPED: :8777 is taken and was not mine to take
+2026-09-14 16:06:21  --- starting, pid 44120, python C:\Program Files\Python313\python.exe
+2026-09-14 16:07:03    :8777 is held by a switchboard that stopped answering — replacing [33920, 28596, 44528, 47340]
+2026-09-14 16:07:07  switchboard up
+2026-09-14 16:08:55  line: :8099 is held by something that is not the-line-dashboard/1 — moving to :8100. Nothing was killed.
+2026-09-14 16:08:55  line: starting C:\Program Files\Python313\python.exe sim-player/dashboard.py --port...
+2026-09-14 16:08:56  line: up after 0s
+2026-09-14 16:09:17  loop: starting C:\Program Files\Python313\python.exe sim-player/sam_loop.py --rounds...
+2026-09-14 16:20:03  --- starting, pid 50752, python C:\Program Files\Python313\python.exe
+2026-09-14 16:20:46    :8777 is held by a switchboard that stopped answering — replacing [44120]
+2026-09-14 16:20:49  switchboard up
+2026-09-14 16:23:25    line: :8099 is held by an older dashboard.py (mute, not answering http://127.0.0.1:8099/api/whoami) — replacing [43768, 31804]
+2026-09-14 16:23:37  line: :8099 is held by something that is not the-line-dashboard/1 — moving to :8101. Nothing was killed.
+2026-09-14 16:23:37  line: starting C:\Program Files\Python313\python.exe sim-player/dashboard.py --port...
+2026-09-14 16:23:37  line: up after 0s
+2026-09-14 16:24:29  line: stopping pid 51392

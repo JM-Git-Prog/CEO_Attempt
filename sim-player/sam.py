@@ -213,7 +213,10 @@ class Round:
         # it over with a friend on John's own local model. The house phase is unchanged.
         self.furnishing = furnishing
         self.per_room = per_room
-        self.friend = furnish.Friend(ask=friend_ask if friend_ask is not None else self._ask_friend, room="house")
+        # A caller-supplied friend always wins (the self-test injects one). Otherwise Maya speaks
+        # only while she is un-paused; ask=None is furnish.Friend's own quiet mode, not a failure.
+        _friend = friend_ask if friend_ask is not None else (None if common.FRIEND_PAUSED else self._ask_friend)
+        self.friend = furnish.Friend(ask=_friend, room="house")
         self.phase = "house"
         self.room: str | None = None
         self.rooms_done: list[str] = []
@@ -272,7 +275,12 @@ class Round:
     def _ask_eyes(self, system: str, messages: list[dict], schema: dict | None) -> dict:
         """Sam looking at ONE picture. Small budget, low temperature: this is not a conversation."""
         return common.ask_lane("eyes", system, messages, schema=schema, temperature=0.2,
-                               num_predict=200, timeout=180,
+                               num_predict=2400,   # measured: qwen3-vl spends ~1900 tokens on one picture when
+                                      # it cannot switch thinking off (Ollama 400s the
+                                      # `think` flag and ollama_chat retries without it).
+                                      # At 200 every reply was cut off mid-answer and
+                                      # reached Sam as silence. 2400 clears the mark.
+                               timeout=180,
                                capture_to=self.calls, ledger=self.dir.parent / "lane-ledger.jsonl",
                                purpose=f"sam looks at a prop (turn {self.turn})")
 

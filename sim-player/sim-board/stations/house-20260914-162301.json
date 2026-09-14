@@ -1,0 +1,39 @@
+{
+  "id": "house-20260914-162301",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T21:23:22.989Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "grey brick modern — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-162301\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "grey brick colonial — changed: style (colonial, not modern), roof (metal, not fl",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-162301\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "grey stone modern — changed: walls (stone, not brick)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-162301\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "grey brick modern — the same parts, drawn differently",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-162301\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "withdraw",
+    "tag": null,
+    "at": "2026-09-14T21:25:42.596Z",
+    "reason": "superseded by house-20260914-162520"
+  }
+}

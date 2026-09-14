@@ -1,0 +1,124 @@
+{
+  "round": "20260914-141607",
+  "at": "2026-09-14T19:20:43Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 10,
+    "changes_seen": 2,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 2,
+    "cards_built": 2,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      79.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a new house, not modern this time, maybe a red barn house.",
+      "verdict": "got",
+      "evidence": "order 20260914-141656 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a new house, not modern this time, maybe a red barn house."
+    },
+    {
+      "turn": 4,
+      "text": "a big fridge",
+      "verdict": "nothing",
+      "evidence": "turn 5 i_see: 'Just the fridge we talked about' but turn 7 i_see: 'I asked for a fridge and table but I don't see them yet'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big fridge"
+    },
+    {
+      "turn": 5,
+      "text": "a big wooden table for eating",
+      "verdict": "nothing",
+      "evidence": "turn 7 i_see: 'I asked for a fridge and table but I don't see them yet'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big wooden table for eating"
+    },
+    {
+      "turn": 6,
+      "text": "build it",
+      "verdict": "nothing",
+      "evidence": "turn 7 i_see: 'I asked for a fridge and table but I don't see them yet' indicating the build command did not result in visible items",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    },
+    {
+      "turn": 7,
+      "text": "a stove to cook on",
+      "verdict": "nothing",
+      "evidence": "turn 8 i_see: 'no stove in the kitchen either'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a stove to cook on"
+    },
+    {
+      "turn": 8,
+      "text": "a bathtub with bubbles",
+      "verdict": "nothing",
+      "evidence": "turn 9 i_see: 'making my bathtub with bubbles but I don't see it yet'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a bathtub with bubbles"
+    },
+    {
+      "turn": 9,
+      "text": "a toilet next to the bathtub",
+      "verdict": "nothing",
+      "evidence": "turn 10 i_see: 'Still waiting for the toilet to show up next to the tub'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a toilet next to the bathtub"
+    },
+    {
+      "turn": 10,
+      "text": "a sink under a mirror",
+      "verdict": "nothing",
+      "evidence": "turn 11 i_see: 'still waiting to see the sink and mirror show up'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a sink under a mirror"
+    },
+    {
+      "turn": 11,
+      "text": "a towel rack with a fluffy towel",
+      "verdict": "nothing",
+      "evidence": "Session ends without confirmation of towel rack; previous turns show pattern of items not appearing",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a towel rack with a fluffy towel"
+    },
+    {
+      "turn": 12,
+      "text": "a lamp",
+      "verdict": "cant_yet",
+      "evidence": "turn 14 i_see: 'It couldn't make my lamp with the blue shade and pull string'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a lamp"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "6b73bd73d9a0",
+    "fb78d495c622",
+    "ce16e9084e2d",
+    "31f258c5030a",
+    "933fcee92939",
+    "425968f844ec",
+    "3c06e3c881f7",
+    "2afca7626b49",
+    "417ea15c5454"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

@@ -1,0 +1,19 @@
+08:06:59 round 20260914-080659 session sim-8cf2ceb808c6 model gpt-oss:120b-cloud world v0
+08:07:28 turn 1 [card] see: 'I see: version 0 neighborhood, 8 houses, unchanged.' type: 'a red house with a swing in the front yard'
+08:07:32 turn 2 [card] see: 'a red‑brick bungalow plan with porch, fence, swing, and interior detai' type: 'Make the front‑yard swing portable, not permanent.'
+08:07:56 turn 3 [card] see: 'I see: version 0 neighborhood, eight houses, nothing changed' type: 'build it'
+08:08:19 turn 4 [card] see: 'plan with red bungalow, porch swing options, interior colour, outbuild' type: 'add a dog in the front yard'
+08:08:24 turn 5: the answer was cut off — one retry at 2400 tokens (ollama gpt-oss:120b-cloud: the answer was cut off at 1200 tokens: 'ium golden retriever, static, no collision",\n  "pick": null,\n  "card": "change",')
+08:08:56 turn 5 [card] see: 'I see version 0, eight houses unchanged, and a dog plan asking details' type: 'Golden retriever, medium size, static, no collision.'
+08:10:04 turn 6: Sam is in the laundry room; Maya (quiet) says ''; they want: a washing machine, a dryer, a laundry basket, a shelf, an ironing board
+08:10:04 turn 6 [wall] see: 'four house pictures on garage wall, dog not yet placed' type: 'pick c1'
+08:10:07 turn 7 [vision] see: 'Inside the laundry room, empty, plain walls, floor, no appliances.' type: 'add a washing machine'
+08:10:09 turn 8 [vision] see: 'I see version 1 neighborhood, 8 houses, inside the laundry room.' type: 'add a dryer'
+08:10:12 turn 9 [vision] see: 'I see: inside laundry room, washing machine, dryer, empty space.' type: 'add a laundry basket'
+08:10:14 turn 10: Sam is in the patio; Maya (quiet) says ''; they want: a picnic table, chairs, an umbrella, a grill, a plant pot
+08:10:14 turn 10 [vision] see: 'I see the laundry room with a washing machine and dryer.' type: 'add a shelf in the laundry room'
+08:10:16 turn 11 [vision] see: 'I see patio inside house, empty, no grill.' type: 'Add a grill in the patio.'
+08:10:20 turn 12 [vision] see: 'inside patio, empty, no items' type: 'add a picnic table'
+08:10:47 turn 13 [card] see: 'Patio with a grill and a picnic table, empty space.' type: 'build it'
+08:10:59 turn 14 [card] see: 'I see the house plan, patio view, and three option questions.' type: 'I want a charcoal grill.'
+08:10:59 round over: turns after 14 turns, world v0 -> v1

@@ -1,0 +1,18 @@
+14:47:47 round 20260914-144747 session sim-31ca1106b323 model kimi-k3:cloud world v0
+14:48:26 turn 1 [card] see: 'I see a street with 8 houses. I am at the gate.' type: 'I want a blue house with a round tower'
+14:48:29 turn 2 [card] see: "It has a plan for my blue house with a round tower. It's asking lots o" type: 'both floors, and a mailbox'
+14:49:07 turn 3 [card] see: 'Same street, 8 houses, nothing new yet. Chat says my blue house is rea' type: 'build it'
+14:49:40 turn 4 [card] see: 'a plan for my blue house with the round tower and it asks questions' type: 'tower for looking out, mailbox on a stick, build it'
+14:50:57 turn 5: Sam is in the patio; Maya (quiet) says ''; they want: a picnic table, an umbrella, a grill, a plant pot
+14:50:57 turn 5 [wall] see: 'Same street as before, nothing new yet. But the garage wall has four p' type: 'the first one, it looks like a real house with shingles'
+14:51:01 turn 6 [furnish] see: "I'm inside my new blue house on the patio, it's empty in here" type: 'put a picnic table in here'
+14:51:03 turn 7 [furnish] see: "I'm inside on the patio. It's empty in here. The chat is confused abou" type: 'change something in here'
+14:52:00 turn 8 [card] see: "I'm inside on the patio, it's still empty, no picnic table yet" type: 'where is the picnic table, put a big umbrella over it'
+14:52:51 turn 9 [card] see: 'The street looks the same. The plan says a big white house with a porc' type: 'the side with the most sun, and the umbrella should be red'
+14:54:04 turn 10 [wall] see: 'still no picnic table or umbrella in the patio, just empty space' type: 'put a grill next to where the picnic table goes'
+14:54:07 turn 11: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a coffee table, a lamp, a rug
+14:54:07 turn 11 [vision] see: 'Still waiting in the patio. Nothing new showed up yet.' type: 'where is the grill, I said put it next to the picnic table'
+14:54:38 turn 12 [card] see: 'It is asking me if I want to build the grill and umbrella outside.' type: 'build it'
+14:55:12 turn 13 [card] see: "A plan for a cream brick house with a porch. I'm inside in the living " type: 'a big couch, the soft kind'
+14:56:25 turn 14 [wall] see: "I'm inside my house now! The living room is empty, and there are 4 pic" type: 'a big couch, the soft kind, right here in the living room'
+14:56:25 round over: turns after 14 turns, world v0 -> v3

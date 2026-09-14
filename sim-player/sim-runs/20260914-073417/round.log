@@ -1,0 +1,18 @@
+07:34:17 round 20260914-073417 session sim-fdd49dd32dbb model gpt-oss:120b-cloud world v0
+07:34:36 turn 1 [idle] see: 'version 0, eight houses on the street, nothing changed' type: 'Add a new house here with a big porch and a blue door.'
+07:34:53 turn 2 [card] see: 'Version 0, 8 houses, no change, building new house with big porch and ' type: 'add a red roof to the new house'
+07:35:23 turn 3 [card] see: 'plan for a two‑storey cream‑brick house with porch, blue door, red roo' type: 'Build it as planned'
+07:36:32 turn 4: Sam is in the kitchen; Maya (quiet) says ''; they want: a fridge, a stove, a sink, a kitchen table, cupboards, a microwave
+07:36:32 turn 4 [wall] see: 'I see version 0, 8 houses, garage wall with four pictures, house parts' type: 'I pick picture c1 because it matches my request.'
+07:36:36 turn 5 [vision] see: 'I see an empty kitchen with walls and a window' type: 'add a fridge in the kitchen'
+07:36:39 turn 6 [vision] see: 'inside kitchen, fridge, empty counters' type: 'add a stove in the kitchen'
+07:36:43 turn 7 [vision] see: 'I see version 1 neighborhood, eight houses, unchanged.' type: 'add a sink in the kitchen'
+07:36:46 turn 8: Sam is in the bathroom; Maya (quiet) says ''; they want: a bathtub, a toilet, a sink, a mirror, a towel rack, a bath mat
+07:36:46 turn 8 [vision] see: 'I see: kitchen with fridge, stove, sink, empty floor.' type: 'add a kitchen table'
+07:36:48 turn 9 [vision] see: 'I see: empty bathroom inside my house, walls and floor, no fixtures ye' type: 'add a bathtub in the bathroom'
+07:36:51 turn 10 [vision] see: 'I see a bathroom with a bathtub, empty walls.' type: 'add a toilet in the bathroom'
+07:37:12 turn 11 [card] see: 'I see: my bathroom inside the house, empty, version 1 unchanged' type: 'build it'
+07:37:15 turn 12 [furnish] see: 'I see: empty bathroom, walls plain, no sink yet' type: 'add a sink in the bathroom'
+07:37:18 turn 13 [furnish] see: 'I see: bathroom interior, empty walls, sink being added.' type: 'add a mirror in the bathroom'
+07:37:43 turn 14 [card] see: 'plan displayed, inside bathroom, waiting for answer' type: 'the porch should be eight feet wide and five feet deep'
+07:37:43 round over: turns after 14 turns, world v0 -> v1

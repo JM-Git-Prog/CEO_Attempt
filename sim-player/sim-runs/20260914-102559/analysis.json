@@ -1,0 +1,133 @@
+{
+  "round": "20260914-102559",
+  "at": "2026-09-14T15:30:01Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 11,
+    "changes_seen": 2,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 1,
+    "http_5xx": 0,
+    "exceptions": 1,
+    "seconds_build_to_house": [
+      79.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a little house with a pointy roof and a red door.",
+      "verdict": "got",
+      "evidence": "order 20260914-102649 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a little house with a pointy roof and a red door."
+    },
+    {
+      "turn": 4,
+      "text": "put a rug on the floor",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see: 'I see my house with a rug and a TV'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a rug on the floor"
+    },
+    {
+      "turn": 5,
+      "text": "ok build it",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see confirms the rug requested in turn 4 and built after turn 5 is present.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "ok build it"
+    },
+    {
+      "turn": 7,
+      "text": "put a TV in here",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see: 'I see my house with a rug and a TV'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a TV in here"
+    },
+    {
+      "turn": 8,
+      "text": "put a coffee table in here",
+      "verdict": "got",
+      "evidence": "Turn 9 i_see: 'It has my rug and TV and coffee table.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a coffee table in here"
+    },
+    {
+      "turn": 9,
+      "text": "put a bed in here",
+      "verdict": "got",
+      "evidence": "Turn 10 i_see: 'There's a bed in here now.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a bed in here"
+    },
+    {
+      "turn": 10,
+      "text": "put a dresser in here",
+      "verdict": "got",
+      "evidence": "Turn 11 i_see: 'it has a bed and dresser now.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a dresser in here"
+    },
+    {
+      "turn": 11,
+      "text": "put a nightstand next to the bed",
+      "verdict": "got",
+      "evidence": "Turn 13 i_see lists 'nightstand' among items present in the house.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a nightstand next to the bed"
+    },
+    {
+      "turn": 12,
+      "text": "build it",
+      "verdict": "got",
+      "evidence": "Turn 13 i_see confirms all previously requested items including the nightstand are present.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    },
+    {
+      "turn": 13,
+      "text": "put a fridge in here",
+      "verdict": "nothing",
+      "evidence": "Turn 14 i_see: 'it's still empty, no fridge yet.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a fridge in here"
+    },
+    {
+      "turn": 14,
+      "text": "change something in here",
+      "verdict": "nothing",
+      "evidence": "Session ended at turn 14 with receipt showing 'working on the room' but no result described.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "change something in here"
+    }
+  ],
+  "defects": [
+    {
+      "kind": "exception",
+      "turn": 6,
+      "detail": "backend: ollama kimi-k3:cloud: HTTP 503: upstream connect error or disconnect/reset before headers. reset reason: connection termination",
+      "route": "/api/v17/say",
+      "excerpt": "null"
+    }
+  ],
+  "gaps_filed": [
+    "d7bc4a7e9d69",
+    "79f5fed6eb67"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

@@ -1,0 +1,86 @@
+{
+  "round": "20260914-140841",
+  "at": "2026-09-14T19:14:52Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 6,
+    "changes_seen": 4,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 2,
+    "walls_picked": 2,
+    "cards_shown": 4,
+    "cards_built": 2,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      78.0,
+      72.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 2
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a little house with a pointy roof and a red door",
+      "verdict": "got",
+      "evidence": "order 20260914-140920 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a little house with a pointy roof and a red door"
+    },
+    {
+      "turn": 4,
+      "text": "a TV",
+      "verdict": "got",
+      "evidence": "Turn 5 i_see: 'It has a TV now'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a TV"
+    },
+    {
+      "turn": 5,
+      "text": "a rug, a fuzzy blue one",
+      "verdict": "got",
+      "evidence": "order 20260914-141146 done at world version 2",
+      "judge": "deterministic",
+      "phrase": "a rug, a fuzzy blue one"
+    },
+    {
+      "turn": 8,
+      "text": "a big lamp in the corner",
+      "verdict": "got",
+      "evidence": "Turn 9 i_see: 'the room has a tv and rug and lamp planned'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big lamp in the corner"
+    },
+    {
+      "turn": 9,
+      "text": "build it",
+      "verdict": "cant_yet",
+      "evidence": "Turn 9 i_see: 'nothing built yet' despite the command to build",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    },
+    {
+      "turn": 14,
+      "text": "a lamp on the nightstand",
+      "verdict": "nothing",
+      "evidence": "Session ended at turn 14 with no subsequent confirmation of the lamp",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a lamp on the nightstand"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "ce16e9084e2d",
+    "2cc5b9a64ebd"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

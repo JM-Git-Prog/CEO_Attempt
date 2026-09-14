@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -43,23 +44,61 @@ SIM_PREFIX = "sim-"                                    # every Sam session id st
 # job commits to it. Evidence from the first real night (2026-09-10):
 #   gpt-oss:120b-cloud    ANSWERED every call — proven live, so it is the net at the end of each ladder
 #   qwen3-coder:480b-cloud HTTP 410 on all 36 mechanic calls (retired) — kept last, never first again
+# 2026-09-14, John: "sam can use cloud lanes, any of them ... to train himself faster and better
+# and more accurate." Every ladder below is CLOUD from top to bottom, with a local tag only as the
+# last net. Every rung was censused live that morning; the two known-retired tags stay last.
+#
+# This is not only about speed. The 4090 is the thing that BLOCKED Sam: the loop refuses to start a
+# round while the card holds more than 8 GB, and the old friend rung (qwen3.8:27b, 17.7 GB) put it
+# over that line by itself — so every round Sam played made the next round wait five minutes for
+# Sam. Cloud ladders end that, and the eyes become the only local model in a round.
 LANES = {
-    "sam":      [os.getenv("SAM_MODEL", "gpt-oss:120b-cloud"), "qwen3.5:397b-cloud", "qwen3.8:27b"],
-    "judge":    [os.getenv("SAM_JUDGE_MODEL", "gpt-oss:120b-cloud"), "gemma4:26b"],
-    "mechanic": [os.getenv("SAM_MECHANIC_MODEL", "kimi-k2.7-code:cloud"), "glm-5.2:cloud",
-                 "gpt-oss:120b-cloud", "qwen3-coder:480b-cloud"],
-    # Maya, Sam's friend (John, 2026-09-11: "ideally the local model would be capable of having deeper
-    # conversations with Sam"). LOCAL first, which reads like an inversion of the cloud-first law and is
-    # not: V17's architect is `qwen3.8:27b` and it is already resident with a 10-minute keep-alive while
-    # Sam plays, so the friend on that tag costs no extra VRAM — the cheapest rung, measured honestly.
-    # The loop already waits for a free 4090 before a round, so a local friend never fights a paint.
-    "friend":   [os.getenv("SAM_FRIEND_MODEL", "qwen3.8:27b"), "gpt-oss:20b", "gemma4:26b", "gpt-oss:120b-cloud"],
+    # 2026-09-14, John: "you dont need to use only gptOSS we have super advanced models available
+    # through ollamma use them." The frontier tags lead each ladder now and gpt-oss:120b-cloud is
+    # demoted to the net at the end — it keeps that place because it is the ONE tag proven live
+    # across several nights, and a ladder needs a rung that has never failed. Every tag below was
+    # censused live this morning. ask_lane still proves each one before a job commits to it.
+    #
+    # ONLY :cloud AND -cloud TAGS. Corrected 2026-09-14, hours after I wrote the bare ones in.
+    # The garage census lists two kinds of cloud tag and they are NOT the same door:
+    #   "kimi-k3:cloud"  goes through the local daemon, which is signed in  -> works
+    #   "glm-5.3"        goes direct to https://ollama.com/api/chat with no key -> HTTP 401
+    # I put glm-5.3, minimax-m3, deepseek-v4-pro:0813, nemotron-3-ultra and mistral-large-3:675b on
+    # these ladders because the census advertised them, and every one of them 401s. That is the
+    # verified-backend law catching me doing exactly what it exists to prevent: reading a listing
+    # instead of proving a rung. Both tags I actually tested - kimi-k3:cloud and qwen3.5:397b-cloud -
+    # answered in seconds. Every rung below is one of those two kinds.
+    "sam":      [os.getenv("SAM_MODEL", "kimi-k3:cloud"), "qwen3.5:397b-cloud", "glm-5.2:cloud",
+                 "deepseek-v4-flash:cloud", "gpt-oss:120b-cloud", "gpt-oss:20b"],
+    # The judge reasons over a whole transcript and has to be right about what actually happened,
+    # so it gets the biggest thinkers on the plan.
+    "judge":    [os.getenv("SAM_JUDGE_MODEL", "qwen3.5:397b-cloud"), "kimi-k3:cloud",
+                 "glm-5.2:cloud", "deepseek-v4-flash:cloud", "gpt-oss:120b-cloud", "gemma4:26b"],
+    # The mechanic writes real patches into real files, so a code-trained tag leads.
+    "mechanic": [os.getenv("SAM_MECHANIC_MODEL", "kimi-k2.7-code:cloud"), "kimi-k3:cloud",
+                 "glm-5.2:cloud", "gpt-oss:120b-cloud", "qwen3.5:397b-cloud",
+                 "qwen3-coder:480b-cloud"],
+    # Maya, Sam's friend. PAUSED by John on 2026-09-14 ("sams friend can be paused until further
+    # notice") — see FRIEND_PAUSED below, which is what actually silences her. The ladder is kept,
+    # and moved to cloud, so turning her back on is one environment variable and no code change.
+    "friend":   [os.getenv("SAM_FRIEND_MODEL", "gpt-oss:120b-cloud"), "glm-5.2:cloud", "gpt-oss:20b"],
     # Sam's EYES (2026-09-11). A prop wall is four PNGs; a chooser who cannot see them is rolling a
-    # die, and a die's answer in a preferences file teaches a style model that taste is random. Local
-    # and small on purpose — these are cheap, they answer in seconds, and they release the card after.
-    "eyes":     [os.getenv("SAM_EYES_MODEL", "qwen3-vl:8b"), "qwen2.5vl:7b", "minicpm-v:latest",
-                 "ibm/granite3.3-vision:2b"],
+    # die, and a die's answer in a preferences file teaches a style model that taste is random.
+    #
+    # CLOUD FIRST, as of 2026-09-14 — and this is a correction I owe the ledger. I read the garage
+    # census, saw no tag advertising vision, and wrote in this file that seeing had to cost the 4090.
+    # John said "send the cloud models pictures if you need to", so I sent one: kimi-k3:cloud named
+    # the building in the picture in 2.1 s and the card was never touched. The census was stale, and
+    # the verified-backend law exists precisely because it always is — PROVE the rung, never read
+    # about it. The local vision models stay as the rungs below, which is where they belong.
+    "eyes":     [os.getenv("SAM_EYES_MODEL", "kimi-k3:cloud"), "qwen3.5:397b-cloud",
+                 "qwen3-vl:8b", "qwen2.5vl:7b", "minicpm-v:latest", "ibm/granite3.3-vision:2b"],
 }
+
+# Maya is off until John says otherwise. furnish.Friend with ask=None goes quiet by design — it
+# returns "" and reports its model as "quiet" — so pausing her costs the loop nothing and breaks
+# nothing. To bring her back: set SAM_FRIEND=on.
+FRIEND_PAUSED = os.getenv("SAM_FRIEND", "paused").strip().lower() not in ("on", "1", "yes", "true")
 
 
 class Backend(Exception):
@@ -147,7 +186,19 @@ def ask_lane(kind: str, system: str, messages: list[dict], *, schema: dict | Non
     """Ask the cheapest rung of `kind` that is actually alive. Falls through a retired/unauthorised
     tag (TagGone) to the next; raises the last Backend when every rung is dead. Truncated is NOT a
     ladder failure — it belongs to the caller, who knows how big its answer should be."""
-    ladder = lanes or LANES[kind]
+    # `lanes` is a LADDER: a list of model tags, cheapest first. Handing it the whole
+    # {lane: [tags]} table iterates the table's KEYS, so the LANE'S OWN NAME goes to Ollama as a
+    # model name. That is what happened on 2026-09-14 to both lanes added that day, at once:
+    #     ollama curious: HTTP 404 — {'error': "model 'curious' not found"}
+    #     ollama coach:   HTTP 404 — {'error': "model 'coach' not found"}
+    # Ten nights played, not one question asked, no lesson learned, and the batch report said only
+    # "no model answered". Accept either shape, and refuse a ladder that is not model tags rather
+    # than discovering it one 404 at a time.
+    if isinstance(lanes, dict):
+        lanes = lanes.get(kind)
+    ladder = list(lanes or LANES[kind])
+    if not ladder or any(not isinstance(t, str) or not t.strip() for t in ladder):
+        raise Backend(f"lane {kind}: that is not a ladder of model tags — {ladder!r}")
     winner = _lane_winner.get(kind)
     if winner:
         ladder = [winner] + [t for t in ladder if t != winner]
@@ -173,9 +224,91 @@ def ask_lane(kind: str, system: str, messages: list[dict], *, schema: dict | Non
     raise Backend(f"lane {kind}: every rung is dead ({', '.join(ladder)}) — last: {last}")
 
 
+# THE CLOUD TAGS IGNORE `format`. Proven 2026-09-14: the judge's exact schema and payload sent to
+# gpt-oss:120b-cloud came back as markdown prose with bolded verdicts — no JSON at all — while the
+# same shape on a local tag obeys the schema exactly. Grammar-constrained decoding happens in the
+# local runner; a `:cloud` tag is proxied and the constraint is dropped on the way. Nothing warns
+# you: HTTP 200, done_reason "stop", a perfectly good answer in the wrong shape.
+#
+# That one fact is why the judge has read `unparseable` on EVERY round since 2026-09-10 — the night
+# the judge lane was moved to a cloud tag. Nothing scored a single night for four days.
+#
+# So a schema is a REQUEST, never a guarantee, and the parse has to survive prose. Three steps, in
+# order of how much they assume: the whole reply is JSON; a fenced ```json block; the first balanced
+# object in the text. Only if all three fail does the caller hear "unparseable" — and by then it is
+# true.
+_FENCE = re.compile(r"```(?:json)?\s*(.+?)```", re.S)
+
+
+def extract_json(text: str):
+    """The first JSON object in `text`, however it is wrapped. None when there isn't one."""
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except ValueError:
+        pass
+    for body in _FENCE.findall(text):
+        try:
+            return json.loads(body.strip())
+        except ValueError:
+            continue
+    start = text.find("{")
+    while start != -1:
+        depth, in_str, esc = 0, False, False
+        for i in range(start, len(text)):
+            c = text[i]
+            if esc:
+                esc = False
+                continue
+            if c == "\\" and in_str:
+                esc = True
+                continue
+            if c == '"':
+                in_str = not in_str
+                continue
+            if in_str:
+                continue
+            if c == "{":
+                depth += 1
+            elif c == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        return json.loads(text[start:i + 1])
+                    except ValueError:
+                        break
+        start = text.find("{", start + 1)
+    return None
+
+
+# Numeric bounds in a `format` schema stall Ollama's local grammar compiler - proven 2026-09-14 on
+# qwen3-vl:8b, where the identical call answered in 2.3 s without them and had not returned after
+# 60 s with them. It cost the eyes lane its whole ladder for three days, misdiagnosed as "every rung
+# is dead". Ollama never enforced these keywords, so nothing is lost by dropping them, and every
+# caller already has to range-check the number itself. Stripped here, at the one door every model
+# call goes through, so the next schema anyone writes cannot lose a lane the same way.
+_BOUNDS = ("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "multipleOf")
+
+# Appended to the system prompt on the one retry after a cloud tag answered in prose.
+JSON_ONLY = ("\n\nAnswer with a single raw JSON object and NOTHING else: no prose, no explanation, "
+             "no markdown fences, no bullet points. The first character of your reply must be '{' "
+             "and the last must be '}'.")
+
+
+def grammar_safe(node):
+    """A copy of `node` with numeric bounds removed at every depth. Never mutates the original."""
+    if isinstance(node, dict):
+        return {k: grammar_safe(v) for k, v in node.items() if k not in _BOUNDS}
+    if isinstance(node, list):
+        return [grammar_safe(v) for v in node]
+    return node
+
+
 def ollama_chat(model: str, system: str, messages: list[dict], *, schema: dict | None = None,
                 temperature: float = 0.4, num_predict: int = 700, timeout: float = 120.0,
-                capture_to: Path | None = None, purpose: str = "", think: bool | None = False) -> dict:
+                capture_to: Path | None = None, purpose: str = "", think: bool | None = False,
+                _retried_as_json: bool = False) -> dict:
     """POST /api/chat, no streaming. With `schema`, the reply is parsed as JSON (format=schema).
     Returns {"text": str, "json": obj|None, "latency_s": float, "model": model}.
 
@@ -192,7 +325,7 @@ def ollama_chat(model: str, system: str, messages: list[dict], *, schema: dict |
         "options": {"temperature": temperature, "num_predict": num_predict},
     }
     if schema:
-        body["format"] = schema
+        body["format"] = grammar_safe(schema)
     if think is not None:
         body["think"] = think
     t0 = time.monotonic()
@@ -213,12 +346,18 @@ def ollama_chat(model: str, system: str, messages: list[dict], *, schema: dict |
         raise Backend(f"ollama {model}: empty reply (done_reason={done!r})")
     parsed = None
     if schema:
-        try:
-            parsed = json.loads(text)
-        except ValueError:
-            parsed = None
+        parsed = extract_json(text)
+        if parsed is None:
             if done == "length":
                 raise Truncated(f"ollama {model}: the answer was cut off at {num_predict} tokens: {text[-80:]!r}")
+            # A cloud tag that ignored the schema and answered in prose. One more try, this time
+            # SAYING the shape out loud in the prompt, because that is all a cloud tag listens to.
+            if not _retried_as_json:
+                log(f"ollama {model}: answered outside the schema — asking again in words")
+                return ollama_chat(model, system + JSON_ONLY, messages, schema=schema,
+                                   temperature=temperature, num_predict=num_predict, timeout=timeout,
+                                   capture_to=capture_to, purpose=purpose, think=think,
+                                   _retried_as_json=True)
     out = {"text": text, "json": parsed, "latency_s": latency, "model": model, "done_reason": done,
            "eval_count": data.get("eval_count"), "prompt_eval_count": data.get("prompt_eval_count")}
     if capture_to:

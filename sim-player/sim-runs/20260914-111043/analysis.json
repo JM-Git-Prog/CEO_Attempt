@@ -1,0 +1,51 @@
+{
+  "round": "20260914-111043",
+  "at": "2026-09-14T16:11:07Z",
+  "counts": {
+    "turns": 5,
+    "wishes": 2,
+    "changes_seen": 0,
+    "nothing_streak_max": 3,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 0,
+    "walls_picked": 0,
+    "cards_shown": 0,
+    "cards_built": 0,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [],
+    "slow": 0,
+    "reason_ended": "done",
+    "world_versions": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "can I see some pictures of lights for the ceiling?",
+      "verdict": "nothing",
+      "evidence": "Still just the street and houses, no pictures of lights yet.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "can I see some pictures of lights for the ceiling?"
+    },
+    {
+      "turn": 3,
+      "text": "where are the light pictures?",
+      "verdict": "nothing",
+      "evidence": "Same street, same houses. Nothing new showed up again.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "where are the light pictures?"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "21ab52548a56",
+    "26fc17e24033"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

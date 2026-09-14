@@ -1,0 +1,18 @@
+14:21:33 round 20260914-142133 session sim-410663e8736e model kimi-k3:cloud world v0
+14:22:05 turn 1 [card] see: 'Eight houses on the street, nothing new yet.' type: 'I want a house with a pointy roof and a big fridge inside.'
+14:22:41 turn 2 [card] see: 'A plan for a white brick house with a pointy roof and big fridge. It a' type: 'Build it as planned.'
+14:23:54 turn 3: Sam is in the dining room; Maya (quiet) says ''; they want: a dining table, six chairs, a big light, a rug, a cabinet
+14:23:54 turn 3 [wall] see: 'Still just 8 houses. Pictures on garage wall. Nothing built yet.' type: "the first one, it's what I asked for"
+14:23:56 turn 4 [vision] see: "I'm inside my new house in the dining room. It's empty. I want to put " type: 'a dining table'
+14:23:59 turn 5 [vision] see: "I'm inside my house in the dining room, there's a dining table but no " type: 'six chairs around the table'
+14:24:02 turn 6 [vision] see: 'A dining room with a table and six chairs around it' type: 'a big light hanging over the table'
+14:24:30 turn 7: Sam is in the garage; Maya (quiet) says ''; they want: a toolbox, a bike, shelves, a garbage can
+14:24:30 turn 7 [card] see: "I'm inside my house in the dining room, and it says my house is ready " type: 'build it'
+14:24:35 turn 8 [card] see: "A plan for a white house with a sun room and big fridge. It's asking m" type: 'Open to the dining area. And I want a big silver fridge with two doors.'
+14:24:37 turn 9 [furnish] see: 'I am in the garage. Nothing new showed up yet.' type: 'change something in here'
+14:25:07 turn 10 [card] see: "I'm in the garage, waiting for my room stuff to show up." type: 'a red bike leaning by the wall'
+14:25:43 turn 11 [card] see: 'A plan for a red bike that leans on the wall, and it asked me question' type: "the wall is brick and it's just for looking, build it"
+14:26:06 turn 12 [card] see: "no red bike yet, it's still making it. four pictures on the wall. the " type: 'put a big silver toolbox on the floor'
+14:26:09 turn 13 [vision] see: "I'm in the garage. There's a red bike by the wall and a big silver too" type: 'put shelves on the wall for toys'
+14:26:45 turn 14 [card] see: "I'm in the garage. It has my red bike and a silver toolbox and shelves" type: 'build it'
+14:26:45 round over: turns after 14 turns, world v0 -> v1

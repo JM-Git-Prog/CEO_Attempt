@@ -1,0 +1,19 @@
+07:57:52 round 20260914-075752 session sim-e89bbcd283f9 model gpt-oss:120b-cloud world v0
+07:58:06 turn 1 [card] see: '8 houses on the street, empty lots, garage, version 0' type: 'a cozy cottage with a porch and a red door'
+07:58:33 turn 2 [card] see: 'a plan of a white cottage with red door and front porch' type: 'open plan kitchen‑dining‑living, wood decking porch, no special energy features'
+07:59:42 turn 3: Sam is in the bathroom; Maya (quiet) says ''; they want: a bathtub, a toilet, a sink, a mirror, a towel rack, a bath mat
+07:59:42 turn 3 [wall] see: 'Version 0, 8 houses, garage shows 4 pictures of a cottage.' type: 'I want the cottage to have a red door.'
+07:59:44 turn 4 [vision] see: 'I see: bathroom interior, empty walls, plain floor, no fixtures' type: 'I want a bathtub'
+07:59:47 turn 5 [vision] see: 'I see: inside the bathroom, empty, no fixtures.' type: 'I want a toilet.'
+07:59:51 turn 6 [vision] see: 'I see: inside bathroom, red door, empty space where sink could go' type: 'I want a sink'
+07:59:54 turn 7: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+07:59:54 turn 7 [vision] see: 'I see: inside bathroom, tile floor, empty walls, no fixtures yet.' type: 'I want a mirror.'
+07:59:58 turn 8 [vision] see: 'inside living room, empty, plain walls, floor, no furniture' type: 'I want a big couch'
+08:00:02 turn 9 [vision] see: 'living room with a big couch, red door, empty walls' type: 'a TV on the wall'
+08:00:08 turn 10 [vision] see: 'inside living room with red door, couch, TV on wall, empty floor' type: 'I want a coffee table.'
+08:00:12 turn 11: Sam is in the primary bedroom; Maya (quiet) says ''; they want: a bed, a dresser, a nightstand, a lamp, a mirror, a beanbag
+08:00:12 turn 11 [vision] see: 'inside living room with couch, TV, coffee table, mirror, bathtub, toil' type: 'I want a lamp on the side table'
+08:00:36 turn 12 [card] see: 'I see: primary bedroom, empty floor, window, plain walls.' type: 'I want a bed with a blue blanket.'
+08:00:40 turn 13 [vision] see: 'primary bedroom with blue blanket bed, TV, coffee table, lamp, empty w' type: 'I want a nightstand next to the bed.'
+08:00:45 turn 14 [vision] see: 'I see the bedroom plan and three question prompts on the screen.' type: 'I want a dresser next to the bed.'
+08:00:45 round over: turns after 14 turns, world v0 -> v1

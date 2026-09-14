@@ -1,0 +1,119 @@
+{
+  "round": "20260914-152822",
+  "at": "2026-09-14T20:34:50Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 10,
+    "changes_seen": 4,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 2,
+    "walls_picked": 2,
+    "cards_shown": 2,
+    "cards_built": 2,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      74.0,
+      76.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 2
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a red house with a big porch",
+      "verdict": "got",
+      "evidence": "order 20260914-152904 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a red house with a big porch"
+    },
+    {
+      "turn": 4,
+      "text": "a desk",
+      "verdict": "got",
+      "evidence": "Turn 5 i_see: 'There's a desk in here now.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a desk"
+    },
+    {
+      "turn": 5,
+      "text": "a chair to sit at the desk",
+      "verdict": "nothing",
+      "evidence": "Turn 6 i_see mentions desk but not chair; session ends at turn 14 without confirmation of chair placement.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a chair to sit at the desk"
+    },
+    {
+      "turn": 6,
+      "text": "a computer on the desk",
+      "verdict": "got",
+      "evidence": "Turn 10 i_see: 'I see the desk, chair, computer...'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a computer on the desk"
+    },
+    {
+      "turn": 7,
+      "text": "build it",
+      "verdict": "got",
+      "evidence": "order 20260914-153136 done at world version 2",
+      "judge": "deterministic",
+      "phrase": "build it"
+    },
+    {
+      "turn": 10,
+      "text": "six chairs around the table",
+      "verdict": "got",
+      "evidence": "Turn 11 i_see: 'Table and chairs... are coming' implies fulfillment after request in Turn 10.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "six chairs around the table"
+    },
+    {
+      "turn": 11,
+      "text": "a big light over the table",
+      "verdict": "got",
+      "evidence": "Turn 12 i_see: 'Table and chairs and a big light are coming.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big light over the table"
+    },
+    {
+      "turn": 12,
+      "text": "a squishy rug under the table",
+      "verdict": "nothing",
+      "evidence": "Turn 13 i_see: 'I don't see the rug or anything new yet'; session ends before rug appears.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a squishy rug under the table"
+    },
+    {
+      "turn": 13,
+      "text": "a tall cabinet for my dishes",
+      "verdict": "got",
+      "evidence": "Turn 14 i_see: 'I see the tall cabinet for dishes I just asked for.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a tall cabinet for my dishes"
+    },
+    {
+      "turn": 14,
+      "text": "a red bike leaning by the door",
+      "verdict": "cant_yet",
+      "evidence": "Turn 14 response_kind is 'grounds' with card_name 'Red Bike Leaning by the Door' but no confirmation it is placed; app typically says 'working on' implying not done yet.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a red bike leaning by the door"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "018df5aface9",
+    "61b73403f2fe",
+    "1a3b74103148"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

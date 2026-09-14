@@ -1,0 +1,18 @@
+14:01:05 round 20260914-140105 session sim-fd3e50c1dfc6 model kimi-k3:cloud world v0
+14:01:41 turn 1 [card] see: 'The street with 8 houses. I want to start a new one.' type: 'I want a new house with a pointy roof and a red door.'
+14:02:52 turn 2 [card] see: 'The architect drew a plan for a big white house with a red door and a ' type: 'Build it as planned.'
+14:04:05 turn 3: Sam is in the nursery; Maya (quiet) says ''; they want: a crib, a rocking chair, a changing table, a toy box, a nightlight
+14:04:05 turn 3 [wall] see: 'nothing changed yet, but there are pictures on the garage wall' type: 'ok going to the garage'
+14:04:08 turn 4 [vision] see: "I'm inside my new house in the nursery. It's empty and waiting for toy" type: 'a toy box shaped like a pirate chest'
+14:04:11 turn 5 [vision] see: "I'm inside my house in the nursery and it has my pirate chest toy box" type: 'a rocking chair'
+14:04:35 turn 6 [vision] see: 'The street looks the same, but the chat says my house is ready to buil' type: 'Build it!'
+14:04:38 turn 7: Sam is in the entry foyer; Maya (quiet) says ''; they want: a coat rack, a bench, a mirror, a little table, a door mat
+14:04:38 turn 7 [furnish] see: 'in my house in the nursery. rocking chair and pirate chest are here ma' type: 'a crib with blue blankets'
+14:05:00 turn 8 [card] see: "I'm inside the foyer. It says it's still making the crib. I don't see " type: 'a coat rack by the door'
+14:05:40 turn 9 [card] see: "I'm inside by the door. There's a plan for the house. It's asking abou" type: 'wall one with five hooks. and a porch swing'
+14:05:43 turn 10 [vision] see: "I'm inside my house in the foyer. Pictures of brick houses on the gara" type: 'a bench to sit on and take shoes off'
+14:06:06 turn 11 [card] see: 'Inside my house, in the entry. Coat rack and bench are here.' type: 'build it'
+14:06:33 turn 12 [card] see: "I'm inside by the door. The plan says bench and coat rack. It asks woo" type: 'build it. The bench goes on the porch too.'
+14:07:45 turn 13 [wall] see: "I'm inside my house in the entry. Four pictures of my house are on the" type: "the first one, c1, it's the one I asked for"
+14:08:12 turn 14 [card] see: 'I am inside my house in the entry room. It still looks empty in here.' type: 'a mirror on the wall so I can see myself'
+14:08:12 round over: turns after 14 turns, world v0 -> v2

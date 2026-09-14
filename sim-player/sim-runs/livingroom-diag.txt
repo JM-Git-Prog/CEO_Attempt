@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\Users\JohnM\My Applications\Kiro\CEO_Kiro\CEO_Attempt\run.py", line 4, in <module>
+    import uvicorn
+ModuleNotFoundError: No module named 'uvicorn'

@@ -1,0 +1,18 @@
+07:45:00 round 20260914-074500 session sim-80d0ce35f8b3 model gpt-oss:120b-cloud world v0
+07:45:16 turn 1 [card] see: 'I see version 0 neighborhood with eight houses, street, no new house.' type: 'Add a small blue cottage with a garden and a white fence here.'
+07:45:37 turn 2 [card] see: 'I see a plan for a blue cottage with porch, garden, and white fence.' type: 'Add a pantry, matte blue paint, and a stone path in the garden.'
+07:46:07 turn 3 [card] see: 'I see a plan for a matte‑blue cottage with porch, pantry, white fence,' type: 'garden 3m long L‑shaped, pantry recessed in kitchen, basic electric heating.'
+07:47:16 turn 4: Sam is in the laundry room; Maya (quiet) says ''; they want: a washing machine, a dryer, a laundry basket, a shelf, an ironing board
+07:47:16 turn 4 [wall] see: 'I see 8 houses, version 0, four cottage pictures on garage wall, work ' type: 'Pick c1'
+07:47:19 turn 5 [vision] see: 'inside the blue cottage, standing in the laundry room' type: 'a washing machine'
+07:47:21 turn 6 [vision] see: 'I see version 1 neighborhood, eight houses, unchanged.' type: 'a dryer in the laundry room'
+07:47:24 turn 7 [vision] see: 'inside laundry room, washing machine, empty spot for dryer' type: 'add a laundry basket'
+07:47:26 turn 8: Sam is in the patio; Maya (quiet) says ''; they want: a picnic table, chairs, an umbrella, a grill, a plant pot
+07:47:26 turn 8 [vision] see: 'I see a washing machine, a dryer, and a laundry basket in the laundry ' type: 'Add a shelf in the laundry room.'
+07:47:28 turn 9 [vision] see: 'I see patio with garden, white fence, empty space.' type: 'add a picnic table in the patio'
+07:47:56 turn 10 [card] see: 'I see the patio, empty, no picnic table' type: 'build it'
+07:48:16 turn 11 [card] see: 'I see: the patio inside the blue cottage, plan displayed, no furniture' type: 'add a grill in the patio'
+07:48:19 turn 12 [vision] see: 'I see: patio plan, grill question, build button, change button' type: 'portable propane grill'
+07:48:23 turn 13 [vision] see: 'I see a patio plan with grill option and pergola question.' type: 'Add a pergola over the patio.'
+07:48:26 turn 14 [card] see: 'inside patio, plan with grill, pergola and bedroom questions' type: 'Portable propane grill, please add pergola, and make two bedrooms.'
+07:48:26 round over: turns after 14 turns, world v0 -> v1

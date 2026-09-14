@@ -1,0 +1,38 @@
+{
+  "id": "house-20260914-110801",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T16:08:28.207Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "beige brick ranch — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-110801\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "beige brick cottage — changed: style (cottage, not ranch)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-110801\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "beige stone ranch — changed: walls (stone, not brick)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-110801\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "beige brick ranch — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-110801\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "choose",
+    "tag": "c1",
+    "at": "2026-09-14T16:08:35.952Z"
+  }
+}

@@ -1,0 +1,12 @@
+09:27:53 round 20260914-092753 session sim-abf09a10c49c model kimi-k3:cloud world v0
+09:28:09 turn 1 [card] see: 'The neighborhood with 8 houses, same as before. No changes yet.' type: 'I want a treehouse in the big oak tree by the park.'
+09:28:43 turn 2 [card] see: 'A plan for my treehouse with lots of parts, and questions about the tr' type: "Pitched roof, glass walls, and I don't know about the tree, just build it."
+09:29:56 turn 3: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+09:29:56 turn 3 [wall] see: 'The street looks the same, but there are four pictures of my house on ' type: 'The first one, it looks the most like a real house.'
+09:30:00 turn 4 [vision] see: "I'm inside my house in the living room, it's empty." type: 'I want a big couch'
+09:30:25 turn 5 [card] see: "The same street and houses. My treehouse isn't here yet." type: 'Build it.'
+09:30:27 turn 6 [card] see: 'I am inside my house, in the living room. I see a big couch.' type: 'I want a TV.'
+09:30:30 turn 7 [furnish] see: "I'm inside my house but I don't see the couch yet" type: "nothing happened, where's my couch?"
+09:30:33 turn 8 [furnish] see: 'still my empty living room, no couch, nothing moved' type: 'nothing happened!'
+09:30:37 turn 9 [furnish] see: 'Still no couch in the living room, it looks empty and nothing changed.' type: "nothing happened, where's my couch and my TV?"
+09:30:37 round over: streak after 9 turns, world v0 -> v1

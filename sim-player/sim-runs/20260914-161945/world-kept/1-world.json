@@ -1,0 +1,581 @@
+{
+  "_note": "Composed by the Neighbourhood Builder (UPBGE 0.50 headless, run-brief.py) from the sentence in brief.json - mesh only, the Starlite Diner shape: the dev server's worlds plugin binds the NEWEST indexed world manifest and its matching GLB - NOT 0-world.glb by filename convention (see app/vite.config.ts, readWorldManifest -> latestIndexedFile); no splat exists, so the GLB's own materials render (showRealMaterial). Origin is on the road looking toward the bulb; ground top is y=0. [Corrected 2026-09-05: this note claimed the viewer binds 0-world.glb by filename convention. That was false, and because it is stamped into EVERY generated world.json it had already misled a reader into believing John had been looking at version 0 of his neighbourhood while versions 1-3 sat beside it. It was stale Starlite boilerplate that nobody had ever checked against the viewer code.]",
+  "display_name": "Mr. John's Neighborhood",
+  "world_id": "neighbourhood-sim-neighborhood-v1",
+  "model": "neighbourhood-builder",
+  "version": 1,
+  "brief": {
+    "name": "Mr. John's Neighborhood",
+    "layout": "cul-de-sac",
+    "trees": "many",
+    "sky": "clear",
+    "houses": [
+      {
+        "style": "modern",
+        "stories": 2,
+        "wall": "brick",
+        "wall_color": "white",
+        "roof": "flat",
+        "garage": "right",
+        "porch": false,
+        "features": []
+      },
+      {
+        "style": "cottage",
+        "stories": 1,
+        "wall": "brick",
+        "wall_color": "beige",
+        "roof": "shingle",
+        "garage": "right",
+        "porch": true,
+        "features": []
+      },
+      {
+        "style": "colonial",
+        "stories": 2,
+        "wall": "brick",
+        "wall_color": "red",
+        "roof": "shingle",
+        "garage": "right",
+        "porch": false,
+        "features": []
+      },
+      {
+        "style": "ranch",
+        "stories": 1,
+        "wall": "brick",
+        "wall_color": "grey",
+        "roof": "flat",
+        "garage": "right",
+        "porch": false,
+        "features": []
+      },
+      {
+        "style": "colonial",
+        "stories": 2,
+        "wall": "brick",
+        "wall_color": "red",
+        "roof": "clay",
+        "garage": "right",
+        "porch": false,
+        "features": []
+      },
+      {
+        "style": "farmhouse",
+        "stories": 3,
+        "wall": "brick",
+        "wall_color": "red",
+        "roof": "metal",
+        "garage": "right",
+        "porch": true,
+        "features": [
+          "white columns",
+          "stately",
+          "larger than other homes"
+        ]
+      },
+      {
+        "style": "georgian",
+        "stories": 2,
+        "wall": "siding",
+        "wall_color": "white",
+        "roof": "clay",
+        "garage": "none",
+        "porch": false,
+        "features": [
+          "white columns across full-width front porch",
+          "black shutters",
+          "central front door",
+          "hipped roof"
+        ]
+      },
+      {
+        "style": "colonial",
+        "stories": 2,
+        "wall": "siding",
+        "wall_color": "white",
+        "roof": "shingle",
+        "garage": "none",
+        "porch": true,
+        "features": [
+          "white columns across a full-width front porch",
+          "black shutters",
+          "central front door",
+          "hipped roof"
+        ]
+      }
+    ],
+    "other_features": [],
+    "house_count": 8,
+    "swapped": [],
+    "source": "chosen on the garage wall",
+    "request": "I want a house with a big porch on the empty lot.",
+    "revised_from": "Put a two-storey colonial on the block: white columns across a full-width front porch, white clapboard walls, black shutters, a central front door, hipped shingle roof."
+  },
+  "houses": [
+    {
+      "name": "H1",
+      "style": "modern",
+      "stories": 2,
+      "wall": "brick",
+      "color": "white",
+      "roof": "flat",
+      "garage": "R",
+      "porch": false,
+      "features_built": []
+    },
+    {
+      "name": "H2",
+      "style": "cottage",
+      "stories": 1,
+      "wall": "brick",
+      "color": "beige",
+      "roof": "shingle",
+      "garage": "R",
+      "porch": true,
+      "features_built": []
+    },
+    {
+      "name": "H3",
+      "style": "colonial",
+      "stories": 2,
+      "wall": "brick",
+      "color": "red",
+      "roof": "shingle",
+      "garage": "R",
+      "porch": false,
+      "features_built": []
+    },
+    {
+      "name": "H4",
+      "style": "ranch",
+      "stories": 1,
+      "wall": "brick",
+      "color": "grey",
+      "roof": "flat",
+      "garage": "R",
+      "porch": false,
+      "features_built": []
+    },
+    {
+      "name": "H5",
+      "style": "colonial",
+      "stories": 2,
+      "wall": "brick",
+      "color": "red",
+      "roof": "clay",
+      "garage": "R",
+      "porch": false,
+      "features_built": []
+    },
+    {
+      "name": "H6",
+      "style": "farmhouse",
+      "stories": 3,
+      "wall": "brick",
+      "color": "red",
+      "roof": "metal",
+      "garage": "R",
+      "porch": true,
+      "features_built": [
+        "white columns"
+      ]
+    },
+    {
+      "name": "H7",
+      "style": "georgian",
+      "stories": 2,
+      "wall": "siding",
+      "color": "white",
+      "roof": "clay",
+      "garage": "none",
+      "porch": false,
+      "features_built": [
+        "white columns across full-width front porch",
+        "black shutters"
+      ]
+    },
+    {
+      "name": "H8",
+      "style": "colonial",
+      "stories": 2,
+      "wall": "siding",
+      "color": "white",
+      "roof": "shingle",
+      "garage": "none",
+      "porch": true,
+      "features_built": [
+        "white columns across a full-width front porch",
+        "black shutters"
+      ]
+    }
+  ],
+  "environment": {
+    "kind": "outdoor",
+    "sky": "clear",
+    "sky_url": "/worlds/sim-neighborhood/output/world/1-world-sky.hdr",
+    "sun": {
+      "position": [
+        -39.39,
+        51.42,
+        46.95
+      ],
+      "intensity": 3.2,
+      "color": "#fff3df"
+    },
+    "spawn": [
+      0.0,
+      1.7,
+      0.0
+    ],
+    "look_at": [
+      0.0,
+      1.6,
+      -10.0
+    ],
+    "controller": "walk",
+    "_note": "DATA the chat writes: sky/sun/spawn/controls. Read by app/src/modules/environment/outdoor.ts."
+  },
+  "lots": {
+    "frame": "builder Z-up (x,y); glb Y-up, glb.z = -y",
+    "phase": 1,
+    "lots": [
+      {
+        "id": "L1",
+        "x": -22.0,
+        "y": -22.0,
+        "yaw_deg": 90.0,
+        "side": "west",
+        "house": "H5",
+        "sign": null,
+        "glb": [
+          -22.0,
+          0.0,
+          22.0
+        ],
+        "sign_glb": null
+      },
+      {
+        "id": "L2",
+        "x": 22.0,
+        "y": -22.0,
+        "yaw_deg": 270.0,
+        "side": "east",
+        "house": "H6",
+        "sign": null,
+        "glb": [
+          22.0,
+          0.0,
+          22.0
+        ],
+        "sign_glb": null
+      },
+      {
+        "id": "L3",
+        "x": -22.0,
+        "y": -40.0,
+        "yaw_deg": 90.0,
+        "side": "west",
+        "house": "H7",
+        "sign": null,
+        "glb": [
+          -22.0,
+          0.0,
+          40.0
+        ],
+        "sign_glb": null
+      },
+      {
+        "id": "L4",
+        "x": 22.0,
+        "y": -40.0,
+        "yaw_deg": 270.0,
+        "side": "east",
+        "house": "H8",
+        "sign": null,
+        "glb": [
+          22.0,
+          0.0,
+          40.0
+        ],
+        "sign_glb": null
+      },
+      {
+        "id": "L5",
+        "x": -22.0,
+        "y": -58.0,
+        "yaw_deg": 90.0,
+        "side": "west",
+        "house": null,
+        "sign": "Lot L5 Sign Board",
+        "glb": [
+          -22.0,
+          0.0,
+          58.0
+        ],
+        "sign_glb": [
+          -15.0,
+          0.0,
+          58.0
+        ]
+      },
+      {
+        "id": "L6",
+        "x": 22.0,
+        "y": -58.0,
+        "yaw_deg": 270.0,
+        "side": "east",
+        "house": null,
+        "sign": "Lot L6 Sign Board",
+        "glb": [
+          22.0,
+          0.0,
+          58.0
+        ],
+        "sign_glb": [
+          15.0,
+          0.0,
+          58.0
+        ]
+      },
+      {
+        "id": "L7",
+        "x": -44.0,
+        "y": -66.0,
+        "yaw_deg": 0.0,
+        "side": "north",
+        "house": null,
+        "sign": "Lot L7 Sign Board",
+        "glb": [
+          -44.0,
+          0.0,
+          66.0
+        ],
+        "sign_glb": [
+          -44.0,
+          0.0,
+          73.0
+        ]
+      },
+      {
+        "id": "L8",
+        "x": 44.0,
+        "y": -66.0,
+        "yaw_deg": 0.0,
+        "side": "north",
+        "house": null,
+        "sign": "Lot L8 Sign Board",
+        "glb": [
+          44.0,
+          0.0,
+          66.0
+        ],
+        "sign_glb": [
+          44.0,
+          0.0,
+          73.0
+        ]
+      },
+      {
+        "id": "L9",
+        "x": -66.0,
+        "y": -66.0,
+        "yaw_deg": 0.0,
+        "side": "north",
+        "house": null,
+        "sign": "Lot L9 Sign Board",
+        "glb": [
+          -66.0,
+          0.0,
+          66.0
+        ],
+        "sign_glb": [
+          -66.0,
+          0.0,
+          73.0
+        ]
+      },
+      {
+        "id": "L10",
+        "x": 66.0,
+        "y": -66.0,
+        "yaw_deg": 0.0,
+        "side": "north",
+        "house": null,
+        "sign": "Lot L10 Sign Board",
+        "glb": [
+          66.0,
+          0.0,
+          66.0
+        ],
+        "sign_glb": [
+          66.0,
+          0.0,
+          73.0
+        ]
+      },
+      {
+        "id": "L11",
+        "x": -22.0,
+        "y": -94.0,
+        "yaw_deg": 180.0,
+        "side": "south",
+        "house": null,
+        "sign": "Lot L11 Sign Board",
+        "glb": [
+          -22.0,
+          0.0,
+          94.0
+        ],
+        "sign_glb": [
+          -22.0,
+          0.0,
+          87.0
+        ]
+      },
+      {
+        "id": "L12",
+        "x": 22.0,
+        "y": -94.0,
+        "yaw_deg": 180.0,
+        "side": "south",
+        "house": null,
+        "sign": "Lot L12 Sign Board",
+        "glb": [
+          22.0,
+          0.0,
+          94.0
+        ],
+        "sign_glb": [
+          22.0,
+          0.0,
+          87.0
+        ]
+      },
+      {
+        "id": "L13",
+        "x": -44.0,
+        "y": -94.0,
+        "yaw_deg": 180.0,
+        "side": "south",
+        "house": null,
+        "sign": "Lot L13 Sign Board",
+        "glb": [
+          -44.0,
+          0.0,
+          94.0
+        ],
+        "sign_glb": [
+          -44.0,
+          0.0,
+          87.0
+        ]
+      },
+      {
+        "id": "L14",
+        "x": 44.0,
+        "y": -94.0,
+        "yaw_deg": 180.0,
+        "side": "south",
+        "house": null,
+        "sign": "Lot L14 Sign Board",
+        "glb": [
+          44.0,
+          0.0,
+          94.0
+        ],
+        "sign_glb": [
+          44.0,
+          0.0,
+          87.0
+        ]
+      },
+      {
+        "id": "L15",
+        "x": -66.0,
+        "y": -94.0,
+        "yaw_deg": 180.0,
+        "side": "south",
+        "house": null,
+        "sign": "Lot L15 Sign Board",
+        "glb": [
+          -66.0,
+          0.0,
+          94.0
+        ],
+        "sign_glb": [
+          -66.0,
+          0.0,
+          87.0
+        ]
+      },
+      {
+        "id": "L16",
+        "x": 66.0,
+        "y": -94.0,
+        "yaw_deg": 180.0,
+        "side": "south",
+        "house": null,
+        "sign": "Lot L16 Sign Board",
+        "glb": [
+          66.0,
+          0.0,
+          94.0
+        ],
+        "sign_glb": [
+          66.0,
+          0.0,
+          87.0
+        ]
+      }
+    ],
+    "next": {
+      "id": "L5",
+      "x": -22.0,
+      "y": -58.0,
+      "yaw_deg": 90.0,
+      "side": "west",
+      "house": null,
+      "sign": "Lot L5 Sign Board",
+      "glb": [
+        -22.0,
+        0.0,
+        58.0
+      ],
+      "sign_glb": [
+        -15.0,
+        0.0,
+        58.0
+      ]
+    },
+    "empty": 12,
+    "road_y": [
+      -83.5,
+      1.0
+    ],
+    "cross_street": {
+      "y": -80.0,
+      "x": [
+        -80.0,
+        80.0
+      ]
+    }
+  },
+  "assets": {
+    "splats": {
+      "spz_urls": {},
+      "semantics_metadata": {
+        "metric_scale_factor": 1,
+        "ground_plane_offset": 0,
+        "flip_y": false
+      }
+    },
+    "mesh": {
+      "collider_mesh_url": "local: 1-world.glb (36.3 MB, visible geometry AND walkable collider)"
+    },
+    "imagery": {
+      "pano_url": ""
+    },
+    "thumbnail_url": ""
+  }
+}

@@ -36,10 +36,19 @@ MAX_BYTES = 6 * 1024 * 1024          # a prop variant is ~1 MB; anything this bi
 DENY_AT = 2                          # 1–2 is "no, that is wrong", 3+ is "fine, just not my favourite"
 MIN_WIN = 3                          # Sam never picks a winner he would have denied
 
+# 2026-09-14, THE BUG THAT BLINDED SAM. No "minimum"/"maximum" here, ever. Ollama compiles a
+# `format` schema into a decoding grammar in-process, and numeric bounds make that compile stall.
+# Measured live on the 4090 - same model, same picture, same prompt:
+#     with    "minimum": 1, "maximum": 5   ->  still no reply after 60 s
+#     without                              ->  answered in 2.3 s
+# That one line is the whole reason every rung of the eyes ladder reported "dead or unreachable" on
+# 2026-09-14. The models were fine and the GPU was idle. Ollama never enforced the bounds anyway, so
+# the range check has always had to live in Python - it is in score_one below, which is the only
+# place that can refuse an answer.
 SCORE_SCHEMA = {
     "type": "object",
     "properties": {
-        "score": {"type": "integer", "minimum": 1, "maximum": 5},
+        "score": {"type": "integer"},
         "why": {"type": "string"},
     },
     "required": ["score", "why"],

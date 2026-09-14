@@ -1,0 +1,507 @@
+{
+ "nights": 73,
+ "wants": {
+  "big tv on the wall": {
+   "thing": "a big TV on the wall",
+   "room": "living room",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 72
+  },
+  "build it": {
+   "thing": "build it",
+   "room": "living room",
+   "asked": 34,
+   "missed": 0,
+   "got": true,
+   "last_night": 72
+  },
+  "big couch": {
+   "thing": "a big couch",
+   "room": "living room",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 71
+  },
+  "coffee table in front of the couch": {
+   "thing": "a coffee table in front of the couch",
+   "room": "living room",
+   "asked": 2,
+   "missed": 2,
+   "got": false,
+   "last_night": 71
+  },
+  "dryer next to the washing machine": {
+   "thing": "a dryer next to the washing machine",
+   "room": "laundry room",
+   "asked": 2,
+   "missed": 2,
+   "got": false,
+   "last_night": 71
+  },
+  "grill for hot dog": {
+   "thing": "a grill for hot dogs",
+   "room": "patio",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 71
+  },
+  "laundry basket with socks in it": {
+   "thing": "a laundry basket with socks in it",
+   "room": "laundry room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 71
+  },
+  "rug under the couch, a red one": {
+   "thing": "a rug under the couch, a red one",
+   "room": "living room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 71
+  },
+  "shelf above the washing machine": {
+   "thing": "a shelf above the washing machine",
+   "room": "laundry room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 71
+  },
+  "washing machine": {
+   "thing": "a washing machine",
+   "room": "laundry room",
+   "asked": 2,
+   "missed": 2,
+   "got": false,
+   "last_night": 71
+  },
+  "change something in here": {
+   "thing": "change something in here",
+   "room": "kitchen",
+   "asked": 5,
+   "missed": 0,
+   "got": true,
+   "last_night": 71
+  },
+  "put a changing table in here": {
+   "thing": "put a changing table in here",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 70
+  },
+  "put a nightlight in here": {
+   "thing": "put a nightlight in here",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 70
+  },
+  "put a rocking chair in here": {
+   "thing": "put a rocking chair in here",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 70
+  },
+  "big bed with a blue blanket": {
+   "thing": "a big bed with a blue blanket",
+   "room": "primary bedroom",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 69
+  },
+  "big light hanging over the table": {
+   "thing": "a big light hanging over the table",
+   "room": "dining room",
+   "asked": 2,
+   "missed": 2,
+   "got": false,
+   "last_night": 69
+  },
+  "bike leaning by the door": {
+   "thing": "a bike leaning by the door",
+   "room": "garage",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 69
+  },
+  "dresser for my clothe": {
+   "thing": "a dresser for my clothes",
+   "room": "primary bedroom",
+   "asked": 2,
+   "missed": 0,
+   "got": true,
+   "last_night": 69
+  },
+  "nightstand next to the bed": {
+   "thing": "a nightstand next to the bed",
+   "room": "primary bedroom",
+   "asked": 2,
+   "missed": 0,
+   "got": true,
+   "last_night": 69
+  },
+  "red toolbox on the workbench": {
+   "thing": "a red toolbox on the workbench",
+   "room": "garage",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 69
+  },
+  "rug that looks like a race track": {
+   "thing": "a rug that looks like a race track",
+   "room": "dining room",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 69
+  },
+  "tall cabinet for dishe": {
+   "thing": "a tall cabinet for dishes",
+   "room": "dining room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 69
+  },
+  "workbench for fixing thing": {
+   "thing": "a workbench for fixing things",
+   "room": "garage",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 69
+  },
+  "six chairs around the table": {
+   "thing": "six chairs around the table",
+   "room": "dining room",
+   "asked": 3,
+   "missed": 0,
+   "got": true,
+   "last_night": 69
+  },
+  "bathtub": {
+   "thing": "a bathtub",
+   "room": "bathroom",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 66
+  },
+  "fridge": {
+   "thing": "a fridge",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 66
+  },
+  "kitchen table": {
+   "thing": "a kitchen table",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 66
+  },
+  "mirror": {
+   "thing": "a mirror",
+   "room": "bathroom",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 66
+  },
+  "sink": {
+   "thing": "a sink",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 66
+  },
+  "stove": {
+   "thing": "a stove",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 66
+  },
+  "toilet": {
+   "thing": "a toilet",
+   "room": "bathroom",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 66
+  },
+  "put a big couch in here": {
+   "thing": "put a big couch in here",
+   "room": "living room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 64
+  },
+  "where is the couch? put a big blue couch right here": {
+   "thing": "where is the couch? put a big blue couch right here",
+   "room": "living room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 64
+  },
+  "i want a big bed with a blue blanket": {
+   "thing": "I want a big bed with a blue blanket",
+   "room": "primary bedroom",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 61
+  },
+  "big light over the table": {
+   "thing": "a big light over the table",
+   "room": "dining room",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 59
+  },
+  "chair to sit at the desk": {
+   "thing": "a chair to sit at the desk",
+   "room": "home office",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 59
+  },
+  "computer on the desk": {
+   "thing": "a computer on the desk",
+   "room": "home office",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 59
+  },
+  "desk": {
+   "thing": "a desk",
+   "room": "home office",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 59
+  },
+  "red bike leaning by the door": {
+   "thing": "a red bike leaning by the door",
+   "room": "garage",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 59
+  },
+  "squishy rug under the table": {
+   "thing": "a squishy rug under the table",
+   "room": "dining room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 59
+  },
+  "tall cabinet for my dishe": {
+   "thing": "a tall cabinet for my dishes",
+   "room": "dining room",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 59
+  },
+  "put a fridge in the kitchen": {
+   "thing": "put a fridge in the kitchen",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 58
+  },
+  "put a stove next to the fridge": {
+   "thing": "put a stove next to the fridge",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 58
+  },
+  "put a picnic table in here": {
+   "thing": "put a picnic table in here",
+   "room": "patio",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 57
+  },
+  "where is the grill, i said put it next to the picnic table": {
+   "thing": "where is the grill, I said put it next to the picnic table",
+   "room": "patio",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 57
+  },
+  "where is the picnic table, put a big umbrella over it": {
+   "thing": "where is the picnic table, put a big umbrella over it",
+   "room": "patio",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 57
+  },
+  "big bed with blue blanket": {
+   "thing": "a big bed with blue blankets",
+   "room": "primary bedroom",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 54
+  },
+  "big soft rug, red like the door": {
+   "thing": "a big soft rug, red like the door",
+   "room": "living room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 54
+  },
+  "lamp next to the couch": {
+   "thing": "a lamp next to the couch",
+   "room": "living room",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 54
+  },
+  "lamp on the nightstand so i can read": {
+   "thing": "a lamp on the nightstand so I can read",
+   "room": "primary bedroom",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 54
+  },
+  "changing table": {
+   "thing": "a changing table",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 53
+  },
+  "crib": {
+   "thing": "a crib",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 53
+  },
+  "nightlight": {
+   "thing": "a nightlight",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 53
+  },
+  "toy box": {
+   "thing": "a toy box",
+   "room": "nursery",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 53
+  },
+  "dining table": {
+   "thing": "a dining table",
+   "room": "dining room",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 52
+  },
+  "red bike leaning by the wall": {
+   "thing": "a red bike leaning by the wall",
+   "room": "garage",
+   "asked": 1,
+   "missed": 0,
+   "got": true,
+   "last_night": 52
+  },
+  "bathtub with bubble": {
+   "thing": "a bathtub with bubbles",
+   "room": "bathroom",
+   "asked": 3,
+   "missed": 0,
+   "got": true,
+   "last_night": 51
+  },
+  "big fridge": {
+   "thing": "a big fridge",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 51
+  },
+  "big wooden table for eating": {
+   "thing": "a big wooden table for eating",
+   "room": "kitchen",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 51
+  },
+  "lamp": {
+   "thing": "a lamp",
+   "room": "home office",
+   "asked": 1,
+   "missed": 1,
+   "got": false,
+   "last_night": 51
+  }
+ },
+ "rooms": {
+  "living room": 72,
+  "primary bedroom": 69,
+  "kitchen": 66,
+  "bathroom": 66,
+  "home office": 66,
+  "dining room": 69,
+  "garage": 69,
+  "nursery": 70,
+  "entry foyer": 70,
+  "laundry room": 71,
+  "patio": 71
+ },
+ "houses": [
+  "modern, 2, flat",
+  "modern, 2, flat",
+  "modern, 2, flat",
+  "modern, 2, flat",
+  "modern, 2, flat"
+ ],
+ "lessons": [],
+ "version": 1
+}

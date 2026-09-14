@@ -1,0 +1,114 @@
+{
+  "round": "20260914-100446",
+  "at": "2026-09-14T15:08:58Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 8,
+    "changes_seen": 2,
+    "nothing_streak_max": 2,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 2,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      73.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a red toolbox on the workbench.",
+      "verdict": "cant_yet",
+      "evidence": "Turn 6 receipt needs: 'red toolbox — noted for the workshop, it can't build that yet'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "I want a red toolbox on the workbench."
+    },
+    {
+      "turn": 4,
+      "text": "can I see pictures of toolboxes instead?",
+      "verdict": "nothing",
+      "evidence": "Turn 5 i_see: 'no pictures' and Turn 6 i_see: 'no pictures'; session moved on without showing them",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "can I see pictures of toolboxes instead?"
+    },
+    {
+      "turn": 5,
+      "text": "where are the toolbox pictures?",
+      "verdict": "cant_yet",
+      "evidence": "the app said it can't make that yet: red toolbox — noted for the workshop, it can't build that yet",
+      "judge": "deterministic",
+      "phrase": "red toolbox — noted for the workshop, it can't build that yet"
+    },
+    {
+      "turn": 7,
+      "text": "fine, forget the toolbox, I want a yellow house with a big porch",
+      "verdict": "got",
+      "evidence": "order 20260914-100551 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "fine, forget the toolbox, I want a yellow house with a big porch"
+    },
+    {
+      "turn": 10,
+      "text": "I want a crib",
+      "verdict": "nothing",
+      "evidence": "Turn 11 i_see: 'I asked for a crib but I don't see it yet' and Turn 12 i_see: 'still don't see the crib anywhere'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "I want a crib"
+    },
+    {
+      "turn": 11,
+      "text": "where is the crib?",
+      "verdict": "nothing",
+      "evidence": "Turn 12 i_see confirms crib still missing; no resolution provided before topic changed",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "where is the crib?"
+    },
+    {
+      "turn": 12,
+      "text": "can I have a rocking chair",
+      "verdict": "nothing",
+      "evidence": "Turn 13 shifts to building the house plan; no mention of rocking chair being placed or denied",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "can I have a rocking chair"
+    },
+    {
+      "turn": 13,
+      "text": "build it",
+      "verdict": "nothing",
+      "evidence": "Turn 14 shows house plan exists but furniture (crib/rocking chair) not mentioned as built; session ends in 'furnish' phase without completion",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    }
+  ],
+  "defects": [
+    {
+      "kind": "no_card_plan",
+      "turn": 13,
+      "detail": "card 530b8bf0cf91 missing plan/summary",
+      "route": "/api/v17/say",
+      "excerpt": "{\"kind\": \"house\", \"confidence\": 0.85, \"reason\": \"The primary request is for a new yellow house with a big porch, which is a house-level request. The additional interior items are secondary, and the sentence is not merely a question or a command.\", \"command\": null, \"picture\": null, \"order_hint\": null, \"receipt\": {\"got\": \"\\\"fine, forget the toolbox, I want a yellow house with a big porch; also: I want a crib; where is the crib?; can I have a rocking chair\\\"\", \"making\": \"working on the house you described\", \"needs\": null}, \"gaps_filed\": [], \"models\": {\"picture\": null, \"route\": \"gpt-oss:120b-cloud"
+    }
+  ],
+  "gaps_filed": [
+    "9111b7530686",
+    "41ad46fcd9a2",
+    "745d62272523",
+    "7f990331a0d7",
+    "69b1f0c1c869",
+    "0b3b9e1d09f7",
+    "ce16e9084e2d"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

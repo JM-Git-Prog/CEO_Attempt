@@ -1,0 +1,18 @@
+14:27:08 round 20260914-142708 session sim-dd22fae99447 model kimi-k3:cloud world v0
+14:27:45 turn 1 [card] see: "The street with 8 houses, same as before. I'm at the gate." type: 'I want a new house, blue, with a pointy roof'
+14:27:48 turn 2 [vision] see: 'The plan has a blue house with a pointy roof and a front porch. It ask' type: 'I want a basement for games.'
+14:28:22 turn 3 [card] see: 'It still shows the same street with eight houses. The chat has a plan ' type: 'Build it'
+14:29:35 turn 4: Sam is in the nursery; Maya (quiet) says ''; they want: a crib, a changing table, a toy box, a nightlight
+14:29:35 turn 4 [wall] see: 'Four pictures of blue houses on the garage wall, but no real house yet' type: "the first one, it's the one I asked for"
+14:29:37 turn 5 [vision] see: "I'm inside my house in the nursery, it's empty so far" type: 'a crib'
+14:29:40 turn 6 [vision] see: "I'm inside the nursery and it has my crib." type: 'a toy box'
+14:29:42 turn 7 [vision] see: 'I am inside my new blue house in the nursery room. It has a crib and a' type: 'a changing table'
+14:29:44 turn 8: Sam is in the entry foyer; Maya (quiet) says ''; they want: a coat rack, a bench, a mirror, a little table, a door mat
+14:29:44 turn 8 [vision] see: "I'm in the nursery with my crib and toy box. The chat says my house is" type: 'a nightlight'
+14:30:18 turn 9 [card] see: 'still the same street, no new house yet, waiting for it to change' type: 'build it'
+14:30:50 turn 10 [card] see: "I'm inside my house in the entry foyer. There's a plan for a blue two-" type: 'build it'
+14:30:54 turn 11 [furnish] see: "I'm inside my house in the entry foyer, and it's still empty." type: 'a mirror'
+14:30:56 turn 12 [furnish] see: 'It asked if I want the mirror inside or outside. I want it in my house' type: 'change something in here, a mirror on the wall'
+14:31:21 turn 13 [card] see: "I'm inside my house in the entry. It says my mirror is coming but I do" type: 'a little table next to the door'
+14:31:58 turn 14 [card] see: "I'm inside by the door. There's a plan for a little table with a drawe" type: "brass handle, and it's just for keys so skinny legs are fine"
+14:31:58 round over: turns after 14 turns, world v0 -> v1

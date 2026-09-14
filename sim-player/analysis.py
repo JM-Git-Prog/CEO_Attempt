@@ -26,6 +26,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common  # noqa: E402  (path must be set up first)
+try:
+    import curiosity  # noqa: E402  — Sam asking the models about his own wish before it is filed
+except Exception:     # noqa: BLE001 — the loop must run whether or not curiosity is installed
+    curiosity = None
 
 SLOW_SECONDS = 240
 WISH_VERDICTS = ("got", "other", "nothing", "cant_yet")
@@ -313,6 +317,52 @@ def _compact_transcript(rows: list[dict]) -> list[dict]:
         })
     return out
 
+def _coerce_verdicts(parsed) -> list[dict]:
+    """Whatever shape the judge answered in, as [{turn, verdict, evidence}, ...].
+
+    The schema asks for {"verdicts": [ ... ]} and a LOCAL tag obeys it, because the grammar is
+    compiled in the local runner. A cloud tag does not: the `format` constraint is dropped in the
+    proxy (see common.extract_json), so it answers in whatever shape reads well to it. Measured
+    2026-09-14 on qwen3.5:397b-cloud, three calls in a row, all of them this:
+
+        {"4": {"verdict": "nothing", "evidence": "Turn 5 i_see states 'no bathtub yet'"},
+         "5": {"verdict": "got",     "evidence": "Turn 13 i_see confirms 'There's a couch'"}}
+
+    A turn-keyed map. Correct grades, real quotes from the transcript, one entry per wish — and it
+    was thrown away for four days because the container was a dict where the code wanted a list.
+    Be generous about the SHAPE and strict about the CONTENT: that is the only division that holds
+    when the model on the other end is one you do not control. The content check has not moved an
+    inch — _run_judge still refuses any verdict that is not one of WISH_VERDICTS.
+    """
+    def one(entry, turn=None):
+        if not isinstance(entry, dict):
+            return None
+        v = dict(entry)
+        if turn is not None and "turn" not in v:
+            v["turn"] = turn
+        try:
+            v["turn"] = int(v.get("turn"))
+        except (TypeError, ValueError):
+            return None
+        return v if v.get("verdict") else None
+
+    if isinstance(parsed, list):                                  # a bare array
+        return [x for x in (one(e) for e in parsed) if x]
+    if not isinstance(parsed, dict):
+        return []
+    inner = parsed.get("verdicts", parsed)                        # wrapped, or the map itself
+    if isinstance(inner, list):
+        return [x for x in (one(e) for e in inner) if x]
+    if isinstance(inner, dict):
+        out = []
+        for k, e in inner.items():
+            got = one(e, turn=k)
+            if got:
+                out.append(got)
+        return out
+    return []
+
+
 def _call_judge(ask_fn, schema) -> tuple[dict | None, str | None]:
     fail_kind = "backend"
     for _ in range(3):
@@ -321,9 +371,9 @@ def _call_judge(ask_fn, schema) -> tuple[dict | None, str | None]:
         except common.Backend:
             fail_kind = "backend"
             continue
-        parsed = result.get("json") if isinstance(result, dict) else None
-        if isinstance(parsed, dict) and isinstance(parsed.get("verdicts"), list):
-            return parsed, None
+        verdicts = _coerce_verdicts(result.get("json") if isinstance(result, dict) else None)
+        if verdicts:
+            return {"verdicts": verdicts}, None
         fail_kind = "unparseable"
     return None, fail_kind
 
@@ -354,7 +404,18 @@ def _run_judge(ask_fn, model: str, undecided: list[dict], rows: list[dict], fina
             e["verdict"], e["evidence"], e["judge"] = "unjudged", "judge did not return a verdict for this wish", "unjudged"
     return "ok"
 
-def _file_gaps(wishes: list[dict], rows_by_turn: dict, round_id: str, ledger: Path) -> list[str]:
+def _file_gaps(wishes: list[dict], rows_by_turn: dict, round_id: str, ledger: Path,
+               round_dir: Path | None = None) -> list[str]:
+    """Every wish the game could not grant, filed as a gap the router can act on.
+
+    2026-09-14: before a gap is filed, Sam gets to ASK ABOUT IT. curiosity.wonder() sends his wish
+    to the model ladder and comes back with the one question a ten-year-old would ask and the
+    answer in millimetres, materials and parts. That note is appended to `request`, which is the
+    field the gap router reads, so the builder is told what Sam MEANT and not only what he typed.
+
+    The wish itself is never rewritten. `phrase` stays exactly as Sam said it, because that is what
+    de-duplicates gaps across rounds and what the corpus trains on. The brief rides underneath.
+    """
     seen, filed = set(), []
     for w in wishes:
         if w["verdict"] not in ("cant_yet", "nothing"):
@@ -369,11 +430,21 @@ def _file_gaps(wishes: list[dict], rows_by_turn: dict, round_id: str, ledger: Pa
             filed.append(gid)
             continue
         seen.add(gid)
+        target = _infer_target(wish_text)
+        # Sam asks about his own wish. None if the models could not be reached or the answer was
+        # about the wrong thing — the gap is then filed exactly as it always was.
+        brief = None
+        if curiosity is not None:
+            brief = curiosity.wonder(wish_text, context={"target": target, "world": common.SIM_SLUG},
+                                     round_dir=round_dir,
+                                     ledger=(round_dir.parent / "lane-ledger.jsonl") if round_dir else None)
+        note = curiosity.as_note(brief) if (curiosity and brief) else ""
         row_obj = {
             "id": gid, "at": common.now_iso(), "source": "sim-user", "session": session,
-            "request": wish_text, "phrase": phrase, "model": None,
-            "context": {"target": _infer_target(wish_text), "world": common.SIM_SLUG,
-                        "round": round_id, "loop": "sam-loop", "verdict": w["verdict"]},
+            "request": wish_text + ("\n\n" + note if note else ""), "phrase": phrase, "model": None,
+            "context": {"target": target, "world": common.SIM_SLUG,
+                        "round": round_id, "loop": "sam-loop", "verdict": w["verdict"],
+                        **({"brief": brief} if brief else {})},
             "status": "new",
         }
         common.capture(ledger, row_obj)  # append-only, creates the file if missing — never read-modify-write
@@ -476,7 +547,7 @@ def analyze(round_dir: Path, *, ask=None, ledger: Path | None = None, judge_mode
         judge_status = _run_judge(ask_fn, used_model, undecided, rows, final_row)
 
     defects = _defects(rows, completions)
-    gaps_filed = _file_gaps(wishes, rows_by_turn, round_dir.name, ledger)
+    gaps_filed = _file_gaps(wishes, rows_by_turn, round_dir.name, ledger, round_dir)
 
     analysis = {
         "round": round_dir.name, "at": common.now_iso(), "counts": counts,

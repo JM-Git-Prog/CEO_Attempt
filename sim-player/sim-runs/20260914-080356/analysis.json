@@ -1,0 +1,130 @@
+{
+  "round": "20260914-080356",
+  "at": "2026-09-14T13:06:59Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 12,
+    "changes_seen": 2,
+    "nothing_streak_max": 0,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      69.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "Add a two‑story house with a red roof and a front garden here.",
+      "verdict": "got",
+      "evidence": "order 20260914-080432 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "Add a two‑story house with a red roof and a front garden here."
+    },
+    {
+      "turn": 4,
+      "text": "a rocking chair in the corner",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a rocking chair in the corner"
+    },
+    {
+      "turn": 5,
+      "text": "a crib beside the rocking chair",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a crib beside the rocking chair"
+    },
+    {
+      "turn": 6,
+      "text": "a changing table next to the crib",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "a changing table next to the crib"
+    },
+    {
+      "turn": 7,
+      "text": "add a toy box in the corner",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a toy box in the corner"
+    },
+    {
+      "turn": 8,
+      "text": "add a coat rack by the door",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a coat rack by the door"
+    },
+    {
+      "turn": 9,
+      "text": "add a bench near the door",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a bench near the door"
+    },
+    {
+      "turn": 10,
+      "text": "add a mirror above the bench",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a mirror above the bench"
+    },
+    {
+      "turn": 11,
+      "text": "add a small welcome mat at the door",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a small welcome mat at the door"
+    },
+    {
+      "turn": 12,
+      "text": "add a big couch in the living room",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a big couch in the living room"
+    },
+    {
+      "turn": 13,
+      "text": "Add a TV on the wall",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "Add a TV on the wall"
+    },
+    {
+      "turn": 14,
+      "text": "add a coffee table in front of the couch",
+      "verdict": "unjudged",
+      "evidence": "judge unparseable",
+      "judge": "unjudged",
+      "phrase": "add a coffee table in front of the couch"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [],
+  "judge_model": "gpt-oss:120b-cloud",
+  "judge_status": "unparseable"
+}

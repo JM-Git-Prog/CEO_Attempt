@@ -185,6 +185,99 @@ def _for_chat(refs: list[dict]) -> list[dict]:
     return out
 
 
+# ─── THE TAPE MEASURE ────────────────────────────────────────────────────────────────────────
+# 2026-09-14. Sam, asked what to fix first about his house, picked: "it comes out the wrong size."
+# He was right, and the number was worse than it felt. Every build card the loop has ever written,
+# run through the parametric wall builder that morning: 12 of 34 did not describe a building.
+#
+#   1280 x 991 x 244 cm over 2 storeys   ->  1.22 m per floor. Two storeys you cannot stand up in.
+#   1280 x 991 x 2440 cm over 1 storey   ->  24.4 m tall. The same house, decimal slipped one place.
+#   732 x 914 x 15 cm                    ->  a cottage 15 cm high.
+#
+# Three faults, not one: per-storey height written as if it were the whole building, a 10x unit
+# slip, and a card whose own name says "two-storey" while its storeys field says 1. None of them
+# was caught anywhere. The builder accepted all of them without a word, which is how a 24-metre
+# cottage ends up standing in a child's world with nobody the wiser.
+#
+# So the measuring happens HERE, where the card is written, before anything downstream inherits it.
+# A card that fails is not dropped and it is not quietly corrected — it is handed back to the
+# architect WITH THE COMPLAINT, once, to rewrite. If the rewrite still fails, the card ships with
+# the complaints stapled to it under `_tape`, so the failure is visible to the receipt, the gates,
+# the dashboard and the training set. Never a silence: a bad card we can see is worth ten we cannot.
+
+TAPE_MIN_STOREY_MM = 2000     # a room a person stands up in
+TAPE_MAX_STOREY_MM = 6000     # above this it is a hall, not a storey
+TAPE_MIN_PLAN_MM = 2000       # narrower than this is furniture, whatever the card calls it
+TAPE_MAX_PLAN_MM = 60000      # a 60 m house is a decimal slip, not a mansion
+
+
+def _num(v):
+    try:
+        n = float(v)
+        return n if n > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+def looks_like_building(card: dict) -> bool:
+    """Only judge cards that claim to BE a building. A card for a bicycle is not wrong for being
+    60 cm long; it is only wrong if something routes it down the house path, and that is a
+    different bug in a different file."""
+    home = card.get("home")
+    if isinstance(home, dict) and home:
+        return True
+    return str(card.get("level") or "").strip().lower() in ("home", "house", "building", "dwelling")
+
+
+def tape_measure(card: dict) -> list[str]:
+    """Everything wrong with this card's dimensions, in plain sentences. Empty means it measures up."""
+    if not isinstance(card, dict) or not looks_like_building(card):
+        return []
+    bad = []
+    w, d, h = _num(card.get("width_cm")), _num(card.get("depth_cm")), _num(card.get("height_cm"))
+    if w is None or d is None:
+        bad.append("the footprint is missing: width_cm and depth_cm must both be real numbers in centimetres")
+    if h is None:
+        bad.append("height_cm is missing: it must be a real number in centimetres")
+    if w and (w * 10 < TAPE_MIN_PLAN_MM or w * 10 > TAPE_MAX_PLAN_MM):
+        bad.append(f"a width of {w:g} cm is not a house — it must be between "
+                   f"{TAPE_MIN_PLAN_MM // 10} and {TAPE_MAX_PLAN_MM // 10} cm")
+    if d and (d * 10 < TAPE_MIN_PLAN_MM or d * 10 > TAPE_MAX_PLAN_MM):
+        bad.append(f"a depth of {d:g} cm is not a house — it must be between "
+                   f"{TAPE_MIN_PLAN_MM // 10} and {TAPE_MAX_PLAN_MM // 10} cm")
+
+    home = card.get("home") if isinstance(card.get("home"), dict) else {}
+    storeys = _num(home.get("stories")) or 1.0
+    if h:
+        per = (h * 10) / storeys
+        if per < TAPE_MIN_STOREY_MM or per > TAPE_MAX_STOREY_MM:
+            bad.append(
+                f"height_cm {h:g} over {storeys:g} storey(s) is {per / 10:.0f} cm per floor. "
+                f"height_cm is the WHOLE building, floor to roofline, and each floor must land "
+                f"between {TAPE_MIN_STOREY_MM // 10} and {TAPE_MAX_STOREY_MM // 10} cm. "
+                f"For {storeys:g} storey(s) that means roughly "
+                f"{int(storeys * TAPE_MIN_STOREY_MM // 10)}-{int(storeys * TAPE_MAX_STOREY_MM // 10)} cm.")
+
+    # The card's own words against its own numbers. "A two-storey colonial" with stories: 1 is how
+    # a 244 cm house and a 2440 cm house get written on the same afternoon.
+    said = f"{card.get('name') or ''} {card.get('summary') or ''}".lower().replace("\u2011", "-")
+    for word, n in (("two-storey", 2), ("two storey", 2), ("two-story", 2), ("two story", 2),
+                    ("2-storey", 2), ("2 storey", 2), ("three-storey", 3), ("three storey", 3),
+                    ("three-story", 3), ("three story", 3), ("single-storey", 1), ("single storey", 1),
+                    ("single-story", 1), ("one-storey", 1)):
+        if word in said and int(storeys) != n:
+            bad.append(f"the card calls this a {word} home but home.stories says {storeys:g} — "
+                       f"they must agree, and the storeys field is what gets built")
+            break
+    return bad
+
+
+def _tape_complaint_block(bad: list[str]) -> str:
+    return ("\n\nYour last card did not measure up. Fix EXACTLY these and write the card again:\n"
+            + "\n".join(f"  - {b}" for b in bad)
+            + "\nKeep everything else about the design the same. Only the measurements are wrong.")
+
+
 def write_card(brief: str, standing: str = "") -> dict | None:
     """Blocking: the architect writes the card, nuextract reads it back. Raises on a backend
     failure (the caller decides what a failed card costs); returns None when the bench is absent
@@ -206,6 +299,14 @@ def write_card(brief: str, standing: str = "") -> dict | None:
             card["_model"] = f"catalog:{row['slug']}"
             card["_seconds"] = round(time.monotonic() - t0, 1)
             card["_gates"] = gates(card)
+            # An approved catalog card gets measured too. There is nobody to ask for a rewrite, so
+            # a failure here is recorded and surfaced rather than retried — and a shelf card that
+            # fails the tape is a finding about the shelf worth somebody's afternoon.
+            bad = tape_measure(card)
+            if bad:
+                card["_tape"] = bad
+                card["_gates"]["tape"] = "; ".join(bad)[:300]
+                _log.warning("  ARCHITECT shelf card %r does not measure up: %s", row.get("slug"), "; ".join(bad))
             _cards[card["_id"]] = card
             return card
         except Exception as e:
@@ -224,10 +325,39 @@ def write_card(brief: str, standing: str = "") -> dict | None:
     card, raw, latency, evals, dur = A.ask_architect(MODEL, text, opts)
     if not isinstance(card, dict):
         return None
+
+    # Measure it, and if it does not measure up, hand it back ONCE with the complaint named. This
+    # is the whole point: the architect can fix its own arithmetic in four seconds if somebody
+    # tells it what is wrong, and nobody ever did.
+    bad = tape_measure(card)
+    tries = 1
+    if bad:
+        _log.warning("  ARCHITECT card does not measure up (%s) — asking it to measure again", "; ".join(bad))
+        try:
+            again, _raw2, _lat2, _ev2, _dur2 = A.ask_architect(MODEL, text + _tape_complaint_block(bad), opts)
+            tries = 2
+            if isinstance(again, dict):
+                still = tape_measure(again)
+                if not still:
+                    _log.info("  ARCHITECT measured again and got it right")
+                    card, bad = again, []
+                elif len(still) < len(bad):
+                    card, bad = again, still           # closer is better; keep the better card
+        except Exception as e:                          # a rewrite is best-effort, never fatal
+            _log.warning("  ARCHITECT could not be asked to measure again (%s) — keeping the first card", e)
+
     card["_id"] = uuid.uuid4().hex[:12]
+    card["_tape_tries"] = tries
+    if bad:
+        # It still does not measure up. Ship it WITH the complaints attached rather than silently,
+        # so the receipt, the gates, the dashboard and the training set all see what is wrong.
+        card["_tape"] = bad
+        _log.warning("  ARCHITECT card still does not measure up after a rewrite: %s", "; ".join(bad))
     card["_model"] = MODEL
     card["_seconds"] = round(time.monotonic() - t0, 1)
     card["_gates"] = gates(card)
+    if bad:
+        card["_gates"]["tape"] = "; ".join(bad)[:300]
     card["_references"] = _for_chat(refs)
     _cards[card["_id"]] = card
     return card

@@ -1,0 +1,131 @@
+{
+  "round": "20260914-094416",
+  "at": "2026-09-14T14:47:50Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 11,
+    "changes_seen": 2,
+    "nothing_streak_max": 1,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      72.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a big couch",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see states: 'I'm inside my yellow house and it has my big couch'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "I want a big couch"
+    },
+    {
+      "turn": 2,
+      "text": "where is my couch?",
+      "verdict": "nothing",
+      "evidence": "Turns 2-6 show the user asking where the couch is with no success; the couch only appears later in Turn 8 after a new request in Turn 7",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "where is my couch?"
+    },
+    {
+      "turn": 4,
+      "text": "I want a yellow house with a big porch right here",
+      "verdict": "got",
+      "evidence": "order 20260914-094459 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a yellow house with a big porch right here"
+    },
+    {
+      "turn": 7,
+      "text": "a big couch",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see confirms: 'it has my big couch'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big couch"
+    },
+    {
+      "turn": 8,
+      "text": "a big TV on the wall to watch cartoons",
+      "verdict": "nothing",
+      "evidence": "Turn 9 and subsequent turns describe the room as empty or waiting; the TV is never confirmed as visible in the transcript",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big TV on the wall to watch cartoons"
+    },
+    {
+      "turn": 9,
+      "text": "Build it",
+      "verdict": "nothing",
+      "evidence": "The command 'Build it' was issued, but Turn 10 i_see states 'I am inside my house and it is empty, just walls', indicating nothing was built yet",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "Build it"
+    },
+    {
+      "turn": 10,
+      "text": "a big soft rug for the floor",
+      "verdict": "nothing",
+      "evidence": "Turn 11 i_see states: 'it says it's making my rug but I don't see it'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big soft rug for the floor"
+    },
+    {
+      "turn": 11,
+      "text": "a big bed with a blue blanket",
+      "verdict": "nothing",
+      "evidence": "Turn 12 i_see states: 'Still waiting for my bed to show up'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big bed with a blue blanket"
+    },
+    {
+      "turn": 12,
+      "text": "a nightstand next to the bed",
+      "verdict": "nothing",
+      "evidence": "Turn 13 i_see states: 'It says it's making the nightstand but I haven't seen it yet'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a nightstand next to the bed"
+    },
+    {
+      "turn": 13,
+      "text": "a lamp on the nightstand",
+      "verdict": "nothing",
+      "evidence": "Turn 14 i_see states: 'I don't see it yet but it's working' regarding the lamp",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a lamp on the nightstand"
+    },
+    {
+      "turn": 14,
+      "text": "a beanbag chair in the corner",
+      "verdict": "nothing",
+      "evidence": "Session ended at Turn 14 immediately after the request; no response or visibility confirmation occurred",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a beanbag chair in the corner"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "0245444290c8",
+    "f6f873aa08b6",
+    "6b28884a8c0b",
+    "7b491e93c7c2",
+    "bb499224a798",
+    "98fb2eac43e3",
+    "2cc5b9a64ebd",
+    "cd47c051bf65"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

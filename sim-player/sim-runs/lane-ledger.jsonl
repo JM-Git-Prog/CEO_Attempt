@@ -1,0 +1,19 @@
+{"at": "2026-09-14T12:19:49Z", "lane": "sam", "tag": "gpt-oss:120b-cloud", "result": "winner"}
+{"at": "2026-09-14T12:30:03Z", "lane": "sam", "tag": "gpt-oss:120b-cloud", "result": "winner"}
+{"at": "2026-09-14T12:34:07Z", "lane": "judge", "tag": "gpt-oss:120b-cloud", "result": "winner"}
+{"at": "2026-09-14T13:28:02Z", "lane": "sam", "tag": "kimi-k3:cloud", "result": "winner"}
+{"at": "2026-09-14T13:34:02Z", "lane": "judge", "tag": "qwen3.5:397b-cloud", "result": "winner"}
+{"at": "2026-09-14T14:15:16Z", "lane": "sam", "tag": "kimi-k3:cloud", "result": "winner"}
+{"at": "2026-09-14T14:21:43Z", "lane": "judge", "tag": "qwen3.5:397b-cloud", "result": "winner"}
+{"at": "2026-09-14T14:52:35Z", "lane": "sam", "tag": "kimi-k3:cloud", "result": "winner"}
+{"at": "2026-09-14T14:56:31Z", "lane": "judge", "tag": "qwen3.5:397b-cloud", "result": "winner"}
+{"at": "2026-09-14T19:01:06Z", "lane": "sam", "tag": "kimi-k3:cloud", "result": "winner"}
+{"at": "2026-09-14T19:08:19Z", "lane": "judge", "tag": "qwen3.5:397b-cloud", "result": "winner"}
+{"at": "2026-09-14T19:08:19Z", "lane": "curious", "tag": "curious", "result": "gone", "why": "ollama curious: HTTP 404 — the tag is retired or unauthorised: {'error': \"model 'curious' not found\"}"}
+{"at": "2026-09-14T20:28:28Z", "lane": "sam", "tag": "kimi-k3:cloud", "result": "winner"}
+{"at": "2026-09-14T20:34:35Z", "lane": "judge", "tag": "qwen3.5:397b-cloud", "result": "winner"}
+{"at": "2026-09-14T20:34:50Z", "lane": "curious", "tag": "curious", "result": "gone", "why": "ollama curious: HTTP 404 — the tag is retired or unauthorised: {'error': \"model 'curious' not found\"}"}
+{"at": "2026-09-14T20:53:32Z", "lane": "coach", "tag": "coach", "result": "gone", "why": "ollama coach: HTTP 404 — the tag is retired or unauthorised: {'error': \"model 'coach' not found\"}"}
+{"at": "2026-09-14T21:09:32Z", "lane": "sam", "tag": "kimi-k3:cloud", "result": "winner"}
+{"at": "2026-09-14T21:13:33Z", "lane": "judge", "tag": "qwen3.5:397b-cloud", "result": "winner"}
+{"at": "2026-09-14T21:13:36Z", "lane": "curious", "tag": "glm-5.2:cloud", "result": "winner"}

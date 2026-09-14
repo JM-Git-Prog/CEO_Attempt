@@ -1,0 +1,17 @@
+10:45:53 round 20260914-104553 session sim-2645ae306eb6 model kimi-k3:cloud world v0
+10:45:56 turn 1 [idle] see: 'The neighborhood with 8 houses, same as before.' type: 'I want a crib in the bedroom.'
+10:45:59 turn 2 [idle] see: 'still just the street and houses, no bedroom yet' type: 'where is the crib?'
+10:46:03 turn 3 [idle] see: "it's still just the same houses. no crib. nothing changed." type: 'hello? the baby bed. in the bedroom. now.'
+10:46:08 turn 4 [idle] see: 'Still the same street and houses. No crib, no bedroom, nothing new sho' type: 'nothing happened. I want a crib in the bedroom, please show it'
+10:46:12 turn 5 [idle] see: "the street and houses. no crib anywhere. it's the same as before." type: 'nothing happened again. put the crib in the bedroom.'
+10:46:24 turn 6 [idle] see: "Same street, same houses. No crib. It's still not listening." type: 'I want a blue house with a red door'
+10:46:28 turn 7 [vision] see: "The same 8 houses. Nothing new yet. It says it's working on my house." type: 'Is the blue house with the red door done yet?'
+10:46:59 turn 8 [card] see: 'still the same street, no blue house anywhere' type: 'build it'
+10:47:05 turn 9 [idle] see: 'A plan for a blue house with red door, asking about bedrooms and color' type: 'two bedrooms and one bathroom please'
+10:48:45 turn 10 [card] see: 'The street still looks the same. The plan card is still up asking more' type: 'hardwood floors and a big porch please'
+10:49:59 turn 11: Sam is in the dining room; Maya (quiet) says ''; they want: a dining table, six chairs, a big light, a rug, a cabinet
+10:49:59 turn 11 [wall] see: 'Still waiting for the house to be built, but there are 4 pictures on t' type: "I pick c1, the blue siding colonial - that's the one I wanted!"
+10:50:02 turn 12 [furnish] see: "I'm in the dining room of my house, it's empty so far." type: 'a big dining table with six chairs'
+10:50:05 turn 13 [furnish] see: 'Still waiting for the table to appear in the dining room, nothing new ' type: 'can I see some pictures of lights for the ceiling?'
+10:50:08 turn 14 [furnish] see: "I'm in my dining room and I see my table and chairs but no light pictu" type: 'where are the light pictures? I want to go see them in the garage'
+10:50:08 round over: turns after 14 turns, world v0 -> v1

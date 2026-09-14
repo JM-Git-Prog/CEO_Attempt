@@ -35,7 +35,11 @@ import seed_world  # noqa: E402
 import analysis  # noqa: E402
 import mechanic  # noqa: E402
 import remember  # noqa: E402
-import sim_board  # noqa: E402
+import sim_board
+try:
+    import consolidate
+except Exception:   # the loop runs with or without it
+    consolidate = None  # noqa: E402
 
 CEO_DIR = Path(r"C:\Users\JohnM\Artificial Intelligence\Projects\CEO-of-My-Life-Inc")
 # 2026-09-11: the loop used to START JOHN'S OWN Pick Board if it was down. It no longer touches it —
@@ -50,10 +54,55 @@ EVENTS_SIM = CEO_DIR / "training-data" / "events-sim.jsonl"
 OLLAMA_APPS = [os.path.join(os.environ.get("LOCALAPPDATA", ""), "Programs", "Ollama", "ollama app.exe"),
                os.path.join(os.environ.get("LOCALAPPDATA", ""), "Programs", "Ollama", "ollama.exe")]
 STOP = common.HERE / "STOP"
+# ── THE DIAL ────────────────────────────────────────────────────────────────
+# 2026-09-14, John: "make the next batch smaller and easier to control."
+#
+# --batch sets where it STARTS. This file is what it listens to, and it is read fresh at the top of
+# every round, so changing the number takes effect on the next round with no restart, no window to
+# find and no work lost. That matters because the right batch size is not knowable in advance: too
+# big and a bad lesson poisons forty nights, too small and every lesson is noise from six rounds.
+# It should be adjustable while watching, which means adjustable without stopping.
+#
+#   {"batch": 10}      consolidate every 10 rounds
+#   {"batch": 0}       keep playing, never consolidate
+#
+# A missing file, a broken file or a silly number all mean "leave it as it is" — this dial can slow
+# the learning down but it can never stop the night.
+CONTROL = common.HERE / "loop-control.json"
+BATCH_MAX = 200
+
+
+def batch_size(current: int) -> int:
+    """The batch size right now. `current` is returned unchanged if the file says nothing usable."""
+    try:
+        want = json.loads(CONTROL.read_text(encoding="utf-8")).get("batch")
+    except Exception:                       # noqa: BLE001 — no file, bad JSON, locked file: all the same
+        return current
+    if not isinstance(want, int) or isinstance(want, bool) or not (0 <= want <= BATCH_MAX):
+        return current
+    return want
+
+
+def set_batch(n: int, why: str = "") -> int:
+    """Write the dial. Used by the dashboard and the dev server; safe to call while the loop runs."""
+    n = max(0, min(BATCH_MAX, int(n)))
+    try:
+        CONTROL.write_text(json.dumps({"batch": n, "at": common.now_iso(), "why": why}, indent=1),
+                           encoding="utf-8")
+    except OSError:
+        pass
+    return n
 PAUSE_WINDOWS = common.HERE / "pause-windows.txt"
 SIM_PORT = int(os.getenv("SAM_PORT", "8001"))
 MAX_GAPS_ROUTED = 5                       # the factory gets at most this many new things per round
 DETACHED = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | getattr(subprocess, "CREATE_NO_WINDOW", 0)
+# 2026-09-14: EVERY SHORT-LIVED CHILD GETS THIS TOO, and here is why it started mattering today.
+# When the loop runs from a .bat it owns a console window, and netstat, nvidia-smi, taskkill and the
+# rest inherit it silently. Started headless — which is how it is started now, from the dev server —
+# the loop has NO console, so Windows CREATES ONE for each child that does not say otherwise, and
+# John watches a terminal window flash open and shut every few seconds all night. It is cosmetic and
+# it is unbearable, and it is entirely our doing. CREATE_NO_WINDOW on every one of them.
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
 def log(msg: str) -> None:
@@ -99,6 +148,55 @@ def _up(url: str, timeout: float = 5.0) -> bool:
     except common.Backend:
         return False
     return st == 200
+
+
+# ── WHICH PYTHON RUNS THE LIVING ROOM ───────────────────────────────────────
+# 2026-09-14. The loop was started by something whose PATH resolves a different `python` than the
+# .bat files do, and Sam's Living Room died on `import uvicorn` every two minutes for eleven
+# minutes straight. The heartbeat kept writing, `alive` kept saying true, and zero rounds were
+# played: a loop wedged this way looks perfectly healthy from outside.
+#
+# So the interpreter for run.py is CHOSEN, not inherited. sys.executable first, because when the
+# loop is started from a .bat that is already the right answer; then the py launcher; then PATH;
+# then the usual install roots. The test is the only one that matters — can it import uvicorn.
+# Cached for the life of the process, and logged, so the answer is never a mystery again.
+_LIVING_ROOM_PY: str | None = None
+
+
+def living_room_python() -> str | None:
+    """A python on this machine that can actually run run.py, or None if there is not one."""
+    global _LIVING_ROOM_PY
+    if _LIVING_ROOM_PY:
+        return _LIVING_ROOM_PY
+    seen, cands = set(), [sys.executable, "py", "python", "python3"]
+    for root in (os.path.join(os.environ.get("LOCALAPPDATA", ""), "Programs", "Python"),
+                 r"C:\Program Files", "C:\\"):
+        try:
+            for name in sorted(os.listdir(root), reverse=True):     # newest version first
+                if name.lower().startswith("python"):
+                    cands.append(os.path.join(root, name, "python.exe"))
+        except OSError:
+            continue
+    tried = []
+    for exe in cands:
+        if not exe or exe in seen:
+            continue
+        seen.add(exe)
+        if exe.endswith(".exe") and not os.path.isfile(exe):
+            continue
+        try:
+            p = subprocess.run([exe, "-c", "import uvicorn,sys;print(sys.executable)"],
+                               capture_output=True, text=True, timeout=30, creationflags=NO_WINDOW)
+            tried.append((exe, p.returncode))
+            if p.returncode == 0:
+                _LIVING_ROOM_PY = exe
+                log(f"the Living Room will run on {p.stdout.strip() or exe}")
+                return exe
+        except Exception as e:                  # noqa: BLE001 — a candidate that explodes is just a no
+            tried.append((exe, str(e)[:40]))
+    log("NO python on this machine can import uvicorn — the Living Room cannot start. Tried: "
+        + ", ".join(f"{e}({r})" for e, r in tried[:8]))
+    return None
 
 
 def _spawn(cmd: list[str], cwd: Path | None = None, env: dict | None = None) -> subprocess.Popen | None:
@@ -150,7 +248,8 @@ def ensure_bat_service(url: str, bat: Path, what: str, wait_s: float) -> bool:
 def _port_owner(port: int) -> int | None:
     """PID listening on the port (Windows netstat), or None."""
     try:
-        out = subprocess.run(["netstat", "-aon"], capture_output=True, text=True, timeout=20).stdout
+        out = subprocess.run(["netstat", "-aon"], capture_output=True, text=True, timeout=20,
+                             creationflags=NO_WINDOW).stdout
     except Exception:
         return None
     for line in out.splitlines():
@@ -166,8 +265,24 @@ def _port_owner(port: int) -> int | None:
 def _cmdline(pid: int) -> str:
     try:
         out = subprocess.run(["wmic", "process", "where", f"processid={pid}", "get", "CommandLine", "/value"],
+                             creationflags=NO_WINDOW,
                              capture_output=True, text=True, timeout=20).stdout
-        return out.strip()
+        if out.strip():
+            return out.strip()
+    except Exception:
+        pass
+    # wmic has been REMOVED from current Windows builds. It returned "" here, silently, and because
+    # every guard below is "kill only what I can prove is mine", a blind reader means nothing is ever
+    # provable and nothing is ever freed. On 2026-09-14 that printed
+    #     :8294 is held by pid 41580 that is not a Living Room ('')
+    # about the loop's OWN board, started by the loop eleven minutes earlier. A guard that cannot see
+    # does not fail safe, it fails shut. PowerShell's CIM query is the supported replacement.
+    try:
+        ps = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command",
+             f"(Get-CimInstance Win32_Process -Filter 'ProcessId={int(pid)}').CommandLine"],
+            capture_output=True, text=True, timeout=25, creationflags=NO_WINDOW).stdout
+        return ps.strip()
     except Exception:
         return ""
 
@@ -175,22 +290,37 @@ def _cmdline(pid: int) -> str:
 def _kill_tree(pid: int) -> None:
     """The house kill rule: only THIS pid (captured by us), the whole tree so no spawn-worker outlives it."""
     try:
-        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, text=True, timeout=30)
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, text=True, timeout=30,
+                       creationflags=NO_WINDOW)
     except Exception:
         pass
 
 
+# The only processes this loop is ever allowed to kill, by what their command line says they are.
+# `pick-server.mjs` was missing until 2026-09-14, and this function is what the loop hands to
+# SimBoard.start() — so the board's port could never be freed by design, only by accident.
+OURS = ("run.py", "pick-server.mjs")
+
+# Ports that belong to John. Never killed, whatever a command line claims, whatever is passed in.
+JOHNS_PORTS = (8000, 8194, 8196, 5173, 8188, 8190, 8183, 8191)
+
+
 def free_sim_port(port: int, wait_s: float = 30) -> bool:
-    """Free :port if a Living Room (run.py) still holds it — ours from an earlier run, or a spawn-worker that
-    outlived its parent. Anything else on the port is NOT ours and is never killed. Re-checks afterwards."""
+    """Free :port if one of OUR processes still holds it — a Living Room or a sim Pick Board from an
+    earlier run, or a spawn-worker that outlived its parent. Anything else is never killed, and
+    John's own ports are never touched even if something of ours is sitting on one. Re-checks after."""
+    if int(port) in JOHNS_PORTS:
+        log(f":{port} is one of John's own ports — this loop does not kill anything there")
+        return False
     pid = _port_owner(port)
     if pid is None:
         return True
     cmd = _cmdline(pid)
-    if "run.py" not in cmd:
-        log(f":{port} is held by pid {pid} that is not a Living Room ({cmd[:120]!r}) — leaving it alone")
+    if not any(marker in cmd for marker in OURS):
+        log(f":{port} is held by pid {pid} which is not ours ({cmd[:120]!r}) — leaving it alone")
         return False
-    log(f":{port} is held by a stale Living Room (pid {pid}) — killing its tree")
+    log(f":{port} is held by a stale {'Living Room' if 'run.py' in cmd else 'sim Pick Board'} "
+        f"(pid {pid}) — killing its tree")
     _kill_tree(pid)
     t0 = time.time()
     while time.time() - t0 < wait_s:
@@ -205,18 +335,34 @@ def gpu_used_mb() -> int | None:
     """What the 4090 holds right now (nvidia-smi), or None when it cannot be read."""
     try:
         out = subprocess.run(["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
+                             creationflags=NO_WINDOW,
                              capture_output=True, text=True, timeout=20).stdout.strip().splitlines()
         return int(out[0]) if out else None
     except Exception:
         return None
 
 
-GPU_BUSY_MB = int(os.getenv("SAM_GPU_BUSY_MB", "8000"))   # above this, another job (training, a paint) owns the card
+# 2026-09-14: was 8000, which is below what Sam's OWN eyes weigh (qwen3-vl:8b sits at ~10 GB) —
+# so the moment he looked at a picture he locked himself out of the next round. The number has to
+# mean "SOMEBODY ELSE has a real job on the card": a Hunyuan3D mesh or a Hunyuan 2.1 paint runs
+# 16-20 GB, the Night Shift's QLoRA more. 18 GB sits above Sam's own footprint and below anyone
+# else's, which is the only place it was ever supposed to sit.
+GPU_BUSY_MB = int(os.getenv("SAM_GPU_BUSY_MB", "18000"))
 
 
-def wait_for_gpu(max_wait_s: float = 3600) -> None:
-    """A round loads V17's architect (qwen3.8:27b, ~18 GB) and runs UPBGE. Never start one onto a busy 4090 —
-    the Night Shift's training or a paint would spill to system memory and crawl. An outage is a wait."""
+def wait_for_gpu(max_wait_s: float = 3600, *, needed: bool = True) -> None:
+    """Never start FACTORY work onto a busy 4090 — the Night Shift's training or a paint would spill to
+    system memory and crawl. An outage is a wait.
+
+    2026-09-14: `needed` is what stopped this gate from eating the night. It was written when a round
+    loaded V17's architect locally (qwen3.8:27b, ~18 GB). The architect and every one of Sam's lanes
+    are cloud now, so a --factory-off round asks the card for nothing but the eyes — and the eyes are
+    Sam's own 10 GB model, which put the reading OVER the 8 GB threshold and made Sam queue behind
+    himself, five minutes at a time, for a card nobody else wanted. A gate that blocks a job on that
+    job's own footprint is not a gate, it is a deadlock."""
+    if not needed:
+        log("no factory work this round — the 4090 is not needed, so the GPU gate is skipped")
+        return
     t0 = time.time()
     while time.time() - t0 < max_wait_s:
         used = gpu_used_mb()
@@ -250,8 +396,19 @@ class SimLivingRoom:
         env["V17_PORT"] = str(self.port)
         env["V17_EVENT_LOG"] = str(EVENTS_SIM)
         env["PICKBOARD"] = common.PICKBOARD          # its walls hang on Sam's board, never John's
+        # 2026-09-14, John: "sam can use any cloud lane to train himself faster and better and more
+        # accurate." The architect writes the plan on Sam's FIRST sentence, so its speed IS the
+        # round's speed: measured on the same sentence, qwen3.8:27b on the 4090 took 70 s and
+        # answered in paragraphs, gpt-oss:120b-cloud took 4.3 s and answered in short parts
+        # (decision 32). John's own :8000 has been on the cloud tag since 09-11; the sim was still
+        # on the local one, which is both the slow half and the 18 GB that jammed the GPU gate.
+        # This env dict is a private copy handed to _spawn, so John's :8000 is untouched.
+        env["V17_ARCHITECT_MODEL"] = os.getenv("SAM_ARCHITECT_MODEL", "gpt-oss:120b-cloud")
+        py = living_room_python()
+        if py is None:
+            return False                        # the caller waits and retries; the log says why
         log(f"starting the sim Living Room on :{self.port} (events -> {EVENTS_SIM.name})")
-        self.proc = _spawn([sys.executable, "run.py"], cwd=self.repo, env=env)
+        self.proc = _spawn([py, "run.py"], cwd=self.repo, env=env)
         if self.proc is None:
             return False
         ok = _wait(self.url + "/api/v17/pipeline", wait_s, f"the sim Living Room :{self.port}")
@@ -312,8 +469,50 @@ def _house_line(world) -> str | None:
     return ", ".join(bits)[:120] or None
 
 
+WORLD_SHOTS = common.RUNS / "world-shots"
+
+
+def snap_world(rid: str, started: float) -> None:
+    """Keep a picture of the world at the end of every round.
+
+    2026-09-14, John chose "snap it every round" for THE LINE's ASKED vs BUILT card. The builder
+    writes ONE thumbnail and overwrites it in place, so without this there is no history: the card
+    could only ever show the world as it is now, which answers a different question than "was the
+    thing I asked for at 08:41 standing at 08:44".
+
+    It does NOT re-render - the loop has no renderer, and pretending otherwise would put a stale
+    picture under a fresh timestamp, which is worse than no picture. It copies what the builder
+    last wrote and records, honestly, whether the world actually changed during this round. The
+    card reads that flag and says "the world has not been rebuilt since 08:41" when it has not.
+
+    Never fatal: a round must never fail over a screenshot.
+    """
+    try:
+        d = common.WORLDS / common.SIM_SLUG / "output" / "world"
+        shot = next(iter(sorted(d.glob("*thumbnail*.png"))), None) if d.is_dir() else None
+        if shot is None:
+            return
+        WORLD_SHOTS.mkdir(parents=True, exist_ok=True)
+        src_m = shot.stat().st_mtime
+        name = f"{int(time.time())}.png"
+        (WORLD_SHOTS / name).write_bytes(shot.read_bytes())
+        common.capture(WORLD_SHOTS / "index.jsonl", {
+            "shot": name, "taken": time.time(), "round": rid,
+            "world_mtime": src_m, "rebuilt_this_round": src_m >= started,
+            "source": str(shot),
+        })
+        for old in sorted(WORLD_SHOTS.glob("*.png"))[:-60]:      # keep the last sixty, quietly
+            try:
+                old.unlink()
+            except OSError:
+                pass
+    except Exception as exc:                                     # a screenshot never fails a round
+        log(f"world snapshot skipped: {type(exc).__name__}: {exc}")
+
+
 def one_round(lr: SimLivingRoom, *, depth: str, max_turns: int, minutes: float, model: str | None, factory: bool = False) -> dict:
     rid = time.strftime("%Y%m%d-%H%M%S")
+    round_started = time.time()            # so the world snapshot can say whether anything was rebuilt
     rd = common.RUNS / rid
     rd.mkdir(parents=True, exist_ok=True)
     heartbeat(round=rid, phase="seeding")
@@ -334,6 +533,7 @@ def one_round(lr: SimLivingRoom, *, depth: str, max_turns: int, minutes: float, 
     final = sam.play_round(rd, v17=sam.V17(lr.url), world=world, max_turns=max_turns, minutes=minutes,
                            model=model, mem=mem)
     (rd / "world-after.json").write_text(json.dumps(world.manifest(common.SIM_SLUG) or {}, ensure_ascii=False)[:200000], encoding="utf-8")
+    snap_world(rid, round_started)
     log(f"round {rid}: {final['reason_ended']} after {final['turns']} turns, world v{final['world_version_start']} -> v{final['world_version_end']}")
 
     heartbeat(round=rid, phase="analyzing")
@@ -379,6 +579,13 @@ def main() -> int:
     ap.add_argument("--minutes", type=float, default=35)
     ap.add_argument("--model", default=None)
     ap.add_argument("--factory", action="store_true", help="at depth B/C, push Sam's unmet things to the factory (GPU work); default: decide only")
+    # 2026-09-14, John: "make the loops shorter like 20 runs before consolidation and learning and
+    # before moving on to the next 20, this should accelerate the learning." Twenty nights is the
+    # smallest run where the SHAPE of Sam's play is visible - which wishes were refused the same way
+    # every time, which door each thing went out of - and it is about an hour, so the training
+    # corpus is never more than an hour behind. --batch 0 turns it off and the loop runs as before.
+    ap.add_argument("--batch", type=int, default=20,
+                    help="consolidate and learn every N rounds (0 = never)")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
@@ -392,10 +599,19 @@ def main() -> int:
     lr = SimLivingRoom()
     board = sim_board.SimBoard()
     played = 0
+    batch = batch_size(a.batch)             # --batch is where it starts; loop-control.json steers it
+    since_batch, batches = 0, 0
+    if batch != a.batch:
+        log(f"loop-control.json says batch={batch} (--batch was {a.batch})")
     try:
         for i in range(rounds):
             if STOP.exists():
                 log("STOP file found — ending between rounds"); break
+            asked = batch_size(batch)
+            if asked != batch:
+                log(f"batch size changed: every {batch} rounds -> "
+                    + (f"every {asked} rounds" if asked else "never (consolidation off)"))
+                batch = asked
             wait_if_paused()
             heartbeat(phase="dependencies", round_index=i)
             if not ensure_ollama():
@@ -404,17 +620,49 @@ def main() -> int:
                 log("the sim Pick Board did not come up — waiting 5 minutes"); time.sleep(300); continue
             if not ensure_bat_service(common.BUILDER + "/api/health", BUILDER_BAT, "the Neighbourhood Builder :8196", 180):
                 log("Builder not available — waiting 5 minutes"); time.sleep(300); continue
-            wait_for_gpu()
+            wait_for_gpu(needed=a.factory)
             if not lr.start():
+                if living_room_python() is None:
+                    log("STOPPING: there is no python here that can run the Living Room, so no round "
+                        "will ever play. Install uvicorn, or start the loop with the python that has it.")
+                    heartbeat(phase="stopped", rounds_played=played, error="no python can import uvicorn")
+                    break
                 log("the sim Living Room did not come up — waiting 2 minutes"); time.sleep(120); continue
             try:
                 one_round(lr, depth=depth, max_turns=a.max_turns, minutes=a.minutes, model=a.model, factory=a.factory)
                 played += 1
+                # THE BATCH BOUNDARY. Read the last N nights, learn one thing from them, put it in
+                # Sam's head, and rebuild the training corpus. It never raises: a batch that cannot
+                # reach a model still files its data, and Sam starts the next twenty with the head
+                # he already had.
+                # `since_batch` counts rounds since the last consolidation rather than dividing the
+                # total, so changing the dial mid-run does exactly what it looks like it does: set it
+                # to 10 after 7 rounds and the next batch lands 3 rounds later, not immediately and
+                # not at some multiple of the old number.
+                since_batch += 1
+                if consolidate is not None and batch > 0 and since_batch >= batch:
+                    batches += 1
+                    heartbeat(phase=f"consolidating batch {batches}", round_index=i)
+                    log(f"— batch {batches}: {since_batch} nights played, consolidating —")
+                    rounds_in_batch, since_batch = since_batch, 0
+                    try:
+                        consolidate.consolidate(common.RUNS, batch_no=batches, rounds=rounds_in_batch,
+                                                head_path=sam_head(), log=log)
+                    except Exception as e:      # noqa: BLE001
+                        log(f"batch {batches}: consolidation failed, the loop carries on: {type(e).__name__}: {e}")
             except Exception as e:                      # a round must never kill the loop; the next one starts clean
                 log(f"round failed: {type(e).__name__}: {e}")
                 heartbeat(phase="round failed", error=str(e)[:300])
                 time.sleep(30)
     finally:
+        # A run that ends with "stopped" tells John nothing. End with what Sam WANTS - what he got,
+        # what he is still chasing, and what he gave up on, which is the list the factory has never
+        # been able to make. John, 2026-09-14: "he ends with what he wants."
+        if consolidate is not None:
+            try:
+                consolidate.wants_report(sam_head(), common.RUNS, log=log)
+            except Exception as e:      # noqa: BLE001 — the last line of a run never raises
+                log(f"could not write what Sam wants: {type(e).__name__}: {e}")
         heartbeat(phase="stopped", rounds_played=played)
         if a.once:
             lr.stop()
@@ -484,7 +732,32 @@ def selftest() -> int:
             common.WORLDS, common.RUNS, common.GAP_LEDGER = old
             sam.play_round = orig
             analysis.analyze = orig_an
-    print(f"\n{'ALL GREEN' if not fails else 'FAILED: ' + ', '.join(fails)} — {len(fails)} of 8 checks failed")
+
+    # THE DIAL. The only thing that matters here is that a bad value can never stop the night, and
+    # that a good one takes effect without a restart.
+    global CONTROL
+    _saved = CONTROL
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            CONTROL = Path(td) / "loop-control.json"
+            check("with no control file, the dial stays where it was", batch_size(20) == 20)
+            check("a written dial is read back", set_batch(10) == 10 and batch_size(20) == 10)
+            check("zero is a real setting: keep playing, never consolidate", set_batch(0) == 0 and batch_size(20) == 0)
+            CONTROL.write_text("{not json", encoding="utf-8")
+            check("a broken control file leaves the dial alone", batch_size(20) == 20)
+            CONTROL.write_text('{"batch": "ten"}', encoding="utf-8")
+            check("a dial that is not a number leaves it alone", batch_size(20) == 20)
+            CONTROL.write_text('{"batch": true}', encoding="utf-8")
+            check("true is not 1 — a boolean leaves it alone", batch_size(20) == 20)
+            CONTROL.write_text('{"batch": -5}', encoding="utf-8")
+            check("a negative dial leaves it alone", batch_size(20) == 20)
+            CONTROL.write_text('{"batch": 99999}', encoding="utf-8")
+            check("a silly-large dial leaves it alone", batch_size(20) == 20)
+            check("set_batch clamps rather than refusing", set_batch(99999) == BATCH_MAX and set_batch(-3) == 0)
+    finally:
+        CONTROL = _saved
+
+    print(f"\n{'ALL GREEN' if not fails else 'FAILED: ' + ', '.join(fails)} — {len(fails)} failed")
     return 1 if fails else 0
 
 

@@ -1,0 +1,18 @@
+09:21:47 round 20260914-092147 session sim-75ca250d5752 model kimi-k3:cloud world v0
+09:22:01 turn 1 [card] see: 'A street with 8 houses. Nothing looks different yet.' type: 'I want a new house with a pointy roof and a red door.'
+09:22:34 turn 2 [card] see: 'The architect drew a plan for my house with a pointy roof and red door' type: 'shingles'
+09:23:52 turn 3: Sam is in the kitchen; Maya (quiet) says ''; they want: a fridge, a stove, a sink, a kitchen table, cupboards, a microwave
+09:23:52 turn 3 [wall] see: 'Four pictures on the garage wall, all white brick houses. My house isn' type: 'the first one'
+09:24:14 turn 4 [card] see: "I'm inside my new house in the kitchen. It's empty. The chat says my h" type: 'a fridge, a big silver one'
+09:24:48 turn 5 [card] see: "a plan with a red door and a fridge, and I'm inside my kitchen" type: 'build it, and I want a stove next to the fridge'
+09:26:08 turn 6 [wall] see: 'still just the neighborhood, no new house yet, but pictures are on the' type: 'the first one, it looks like my house'
+09:26:11 turn 7 [vision] see: "I'm inside my new house in the kitchen. I see my big silver fridge, bu" type: 'where is the stove?'
+09:26:13 turn 8 [vision] see: "I'm inside my house, in the kitchen. I see the fridge but no stove yet" type: 'I want a stove next to the fridge, and a sink too.'
+09:26:31 turn 9: Sam is in the nursery; Maya (quiet) says ''; they want: a crib, a rocking chair, a changing table, a toy box, a nightlight
+09:26:31 turn 9 [card] see: "I'm in the kitchen and I see the big silver fridge but nothing else ye" type: 'build it'
+09:26:34 turn 10 [furnish] see: "the plan again but no stove yet, and I'm in the nursery with nothing i" type: 'put a crib in here'
+09:27:08 turn 11 [card] see: "I'm inside my house in the nursery, but the chat is confused about the" type: 'put a crib in this room'
+09:27:14 turn 12 [furnish] see: "I'm inside my house in the nursery. Pictures of my house are on the ga" type: 'put a rocking chair in here'
+09:27:18 turn 13 [furnish] see: "I'm inside my house in the nursery. There's a crib here now. The wall " type: 'put a rocking chair in here'
+09:27:19 turn 14 [furnish] see: "I'm inside my house in the nursery. There's picture choices on the gar" type: 'change something in here'
+09:27:19 round over: turns after 14 turns, world v0 -> v2

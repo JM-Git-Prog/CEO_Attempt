@@ -39,7 +39,12 @@ def _key(s: str) -> str:
 
 
 def blank() -> dict:
-    return {"nights": 0, "wants": {}, "rooms": {}, "houses": [], "version": 1}
+    # `lessons` arrived 2026-09-14 with the 20-round batch. Everything else in this head is a LIST
+    # OF THINGS - what he has, what he is chasing, what he gave up on - and a list of things cannot
+    # explain why he keeps missing. A lesson is the one sentence consolidate.py boils twenty nights
+    # down to, and it is the only part of his head that is about HOW he asks rather than WHAT he
+    # wants. It must be listed here or load() drops it on the next read.
+    return {"nights": 0, "wants": {}, "rooms": {}, "houses": [], "lessons": [], "version": 1}
 
 
 def load(path: Path) -> dict:
@@ -138,6 +143,11 @@ def opening_line(mem: dict) -> str:
         bits.append("You gave up on: " + ", ".join(gone[:5]) + ". Do not ask for those again.")
     if mem.get("houses"):
         bits.append(f"Last time you built: {mem['houses'][-1]}. Build something different this time.")
+    # The last lesson, last — it is the thing he should be holding as he starts, and the closest
+    # line to the top of his head is the one he reads first.
+    lessons = mem.get("lessons") or []
+    if lessons and str(lessons[-1].get("lesson") or "").strip():
+        bits.append("Last time you worked something out: " + str(lessons[-1]["lesson"]).strip())
     return " ".join(bits)
 
 

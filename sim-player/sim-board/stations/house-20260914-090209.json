@@ -1,0 +1,39 @@
+{
+  "id": "house-20260914-090209",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T14:02:35.755Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "blue plaster cottage — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-090209\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "blue plaster ranch — changed: style (ranch, not cottage)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-090209\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "blue plaster cottage — changed: floors (two floors, not one floor)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-090209\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "blue plaster cottage — changed: roof (metal, not shingle), garage (garage on the",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-090209\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "withdraw",
+    "tag": null,
+    "at": "2026-09-14T14:17:04.828Z",
+    "reason": "superseded by house-20260914-091600"
+  }
+}

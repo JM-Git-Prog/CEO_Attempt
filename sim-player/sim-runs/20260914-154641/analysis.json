@@ -1,0 +1,130 @@
+{
+  "round": "20260914-154641",
+  "at": "2026-09-14T20:51:04Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 11,
+    "changes_seen": 2,
+    "nothing_streak_max": 1,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      74.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "Can I see some pictures of houses first?",
+      "verdict": "nothing",
+      "evidence": "Turn 2 response: 'Just the same street with 8 houses. No pictures popped up yet.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "Can I see some pictures of houses first?"
+    },
+    {
+      "turn": 2,
+      "text": "Where are the pictures? I want to see them.",
+      "verdict": "nothing",
+      "evidence": "Turn 3 response: 'Still just the street and houses. No pictures anywhere yet.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "Where are the pictures? I want to see them."
+    },
+    {
+      "turn": 4,
+      "text": "I want a yellow house with a big porch right here",
+      "verdict": "got",
+      "evidence": "order 20260914-154736 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a yellow house with a big porch right here"
+    },
+    {
+      "turn": 7,
+      "text": "a fridge",
+      "verdict": "got",
+      "evidence": "Turn 8 i_see: '...mostly empty except for the fridge.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a fridge"
+    },
+    {
+      "turn": 8,
+      "text": "a kitchen table",
+      "verdict": "got",
+      "evidence": "Turn 9 i_see: '...kitchen with a fridge and table now'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a kitchen table"
+    },
+    {
+      "turn": 9,
+      "text": "a stove",
+      "verdict": "nothing",
+      "evidence": "Turn 10 i_see mentions fridge and table but omits stove; Turn 14 receipt lists all items including stove as part of a new 'making' phase, implying they were not individually placed before.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a stove"
+    },
+    {
+      "turn": 10,
+      "text": "a sink",
+      "verdict": "nothing",
+      "evidence": "Turn 11 i_see moves to bathroom without confirming sink placement in kitchen; Turn 14 receipt groups sink into a new build order.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a sink"
+    },
+    {
+      "turn": 11,
+      "text": "a bathtub",
+      "verdict": "got",
+      "evidence": "Turn 12 i_see: 'There's a bathtub but no toilet yet.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a bathtub"
+    },
+    {
+      "turn": 12,
+      "text": "a toilet",
+      "verdict": "nothing",
+      "evidence": "Turn 13 i_see reverts to 'still the same street and houses', and Turn 14 groups toilet into a new build order rather than confirming placement.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a toilet"
+    },
+    {
+      "turn": 13,
+      "text": "a mirror",
+      "verdict": "nothing",
+      "evidence": "Turn 14 i_see says 'The chat is asking me to say build it' and the receipt shows a new combined order being made, indicating the mirror was not placed individually.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a mirror"
+    },
+    {
+      "turn": 14,
+      "text": "build it",
+      "verdict": "cant_yet",
+      "evidence": "Turn 14 receipt shows 'making': 'working on the house you described' with a combined list, indicating the app is processing the request but has not completed the build within the session turns.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "9409df5b74dd",
+    "962a93b66425",
+    "150562495f2d",
+    "db3e4d88723a",
+    "31f505ed6d29",
+    "a5fff11d0e74",
+    "ce16e9084e2d"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

@@ -35,14 +35,16 @@ echo   Python: %PY%      Folder: %CEO%
 echo   Sam plays on :8001 (your :8000 is not touched). Patches the mechanic
 echo   makes are backed up under sim-player\sim-runs\ROUND\patches and listed
 echo   in sim-player\sim-runs\mechanic-ledger.jsonl. REVERT-SAM-PATCHES.bat undoes them all.
-echo   The factory push (renders, meshes, paints on the 4090) is OFF: the router only
-echo   decides and drafts cards. To turn it on later, add --factory to the line below.
+echo   The factory push is ON (John, 2026-09-14: "so start the factory"). Sam asks for a
+echo   thing, the gap router pushes it to the board, the 4090 renders and meshes it, and he
+echo   SEES it next round - which is the half of the loop that was missing. $0: local GPU,
+echo   no credits. To go back to decide-only, remove --factory from the line below.
 echo   Before every round the loop waits while the 4090 is busy (training, a paint).
 echo   Pause windows: sim-player\pause-windows.txt (lines like 02:00-03:30).
 echo   To stop between rounds: STOP-SAM-LOOP.bat
 echo  ============================================================
 echo.
-start "Sam Loop" cmd /k %PY% sim-player\sam_loop.py --rounds 12 --depth C
+start "Sam Loop" cmd /k %PY% sim-player\sam_loop.py --rounds 12 --depth C --factory
 echo   A second window titled "Sam Loop" opened - LEAVE IT OPEN, that window IS the loop.
 echo   Heartbeat: sim-player\sim-runs\heartbeat.json      Log: sim-player\sim-runs\loop-log.txt
 echo.

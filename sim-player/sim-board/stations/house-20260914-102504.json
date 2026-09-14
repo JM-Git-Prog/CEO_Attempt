@@ -1,0 +1,39 @@
+{
+  "id": "house-20260914-102504",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T15:25:25.765Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "white brick colonial — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-102504\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "white brick ranch — changed: style (ranch, not colonial)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-102504\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "white stone colonial — changed: walls (stone, not brick)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-102504\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "white brick colonial — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-102504\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "withdraw",
+    "tag": null,
+    "at": "2026-09-14T15:27:11.220Z",
+    "reason": "superseded by house-20260914-102649"
+  }
+}

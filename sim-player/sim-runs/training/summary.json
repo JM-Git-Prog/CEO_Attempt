@@ -1,0 +1,27 @@
+{
+ "at": "2026-09-14T14:54:58Z",
+ "read": {
+  "events-sim.jsonl": 403,
+  "events.jsonl": "not read"
+ },
+ "kept": 108,
+ "train": 87,
+ "holdout": 21,
+ "by": {
+  "sim": 108
+ },
+ "teachers": {
+  "qwen3.8:27b": 19,
+  "gpt-oss:120b-cloud": 89
+ },
+ "refused": {
+  "no card \u2014 the architect never answered": 295
+ },
+ "train_file": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\sim-player\\sim-runs\\training\\sam-cards-v1.jsonl",
+ "holdout_file": "C:\\Users\\JohnM\\My Applications\\Kiro\\CEO_Kiro\\CEO_Attempt\\sim-player\\sim-runs\\training\\sam-cards-v1-holdout.jsonl",
+ "ready_to_train": false,
+ "rows_still_needed": 113,
+ "gate": 2000,
+ "rows_to_gate": 1913,
+ "past_gate": false
+}

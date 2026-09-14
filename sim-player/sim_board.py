@@ -129,8 +129,16 @@ class SimBoard:
         if self.proc is not None and self.proc.poll() is None and self.up():
             return True
         if self.up() and self.proc is None:
-            # something is already on :8294 — either a board we lost the handle to, or a stranger.
-            # A board we did not start writes who-knows-where, so it is freed, never adopted.
+            # Something is already on :8294 — either a board we lost the handle to (the last loop's,
+            # which outlives the window that started it: it is spawned DETACHED on purpose) or a
+            # stranger. A board we did not start writes who-knows-where, so it must be freed or
+            # PROVED before it is used. is_mine() is the proof, and it is a real one: it makes a file
+            # appear in Sam's own stations folder and asks the server whether it can see it. A server
+            # reading any other folder cannot.
+            if self.is_mine():
+                log(f"the board already on :{self.port} serves Sam's own stations folder "
+                    f"({self.home}) — adopting it instead of killing it")
+                return True
             if free_port is None or not free_port(self.port):
                 log(f"something is already listening on :{self.port} and it could not be freed")
                 return False
@@ -188,6 +196,30 @@ class SimBoard:
             time.sleep(2)
         if self.up() and free_port is not None:
             free_port(self.port)
+
+    def is_mine(self) -> bool:
+        """Does the server on this port read SAM'S stations folder? Proved, not assumed: drop a file
+        into that folder and ask the server whether its station list grew. A board serving John's
+        folder — or any other — cannot see it, so a false answer is impossible in the dangerous
+        direction. Any failure at all reads as "not mine", so the caller falls back to freeing it."""
+        import json as _json
+        import uuid as _uuid
+        d = self.home / "stations"
+        try:
+            d.mkdir(parents=True, exist_ok=True)
+            before = len(self.stations())
+            marker = d / f"_whoami-{_uuid.uuid4().hex[:10]}.json"
+            marker.write_text(_json.dumps({"id": marker.stem, "kind": "whoami", "options": []}),
+                              encoding="utf-8")
+            try:
+                return len(self.stations()) > before
+            finally:
+                try:
+                    marker.unlink()
+                except OSError:
+                    pass
+        except Exception:
+            return False
 
     def stations(self) -> list[dict]:
         try:

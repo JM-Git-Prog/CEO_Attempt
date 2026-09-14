@@ -1,0 +1,38 @@
+{
+  "id": "house-20260914-141146",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T19:12:12.609Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "white siding cottage — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141146\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "white siding ranch — changed: style (ranch, not cottage)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141146\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "white brick cottage — changed: walls (brick, not siding)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141146\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "white siding cottage — changed: roof (metal, not shingle), porch (no porch, not ",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-141146\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "choose",
+    "tag": "c1",
+    "at": "2026-09-14T19:12:15.106Z"
+  }
+}

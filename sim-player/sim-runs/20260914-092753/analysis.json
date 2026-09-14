@@ -1,0 +1,70 @@
+{
+  "round": "20260914-092753",
+  "at": "2026-09-14T14:30:37Z",
+  "counts": {
+    "turns": 9,
+    "wishes": 3,
+    "changes_seen": 2,
+    "nothing_streak_max": 3,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 2,
+    "cards_built": 2,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      73.0,
+      3.0
+    ],
+    "slow": 0,
+    "reason_ended": "streak",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a treehouse in the big oak tree by the park.",
+      "verdict": "got",
+      "evidence": "order 20260914-092816 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a treehouse in the big oak tree by the park."
+    },
+    {
+      "turn": 4,
+      "text": "I want a big couch",
+      "verdict": "nothing",
+      "evidence": "session ended on a nothing-happened streak",
+      "judge": "deterministic",
+      "phrase": "I want a big couch"
+    },
+    {
+      "turn": 5,
+      "text": "Build it.",
+      "verdict": "nothing",
+      "evidence": "session ended on a nothing-happened streak",
+      "judge": "deterministic",
+      "phrase": "Build it."
+    }
+  ],
+  "defects": [
+    {
+      "kind": "no_card_plan",
+      "turn": 5,
+      "detail": "card 46a061065be8 missing plan/summary",
+      "route": "/api/v17/say",
+      "excerpt": "{\"kind\": \"house\", \"confidence\": 1.0, \"reason\": \"John said build it on his vision — his word, not a classifier guess\", \"command\": null, \"picture\": null, \"order_hint\": null, \"receipt\": {\"got\": \"\\\"I want a treehouse in the big oak tree by the park.; also: I want a big couch\\\"\", \"making\": \"working on the house you described\", \"needs\": null}, \"gaps_filed\": [], \"models\": {\"picture\": null, \"route\": \"gpt-oss:120b-cloud\", \"order\": null, \"order_note\": null, \"architect\": \"gpt-oss:120b-cloud\"}, \"clarify\": null, \"card\": {\"id\": \"46a061065be8\", \"question\": \"Here is the architect's plan. Build it as planned, "
+    }
+  ],
+  "gaps_filed": [
+    "954a1a02549c",
+    "28fe18f248e3"
+  ],
+  "judge_model": null,
+  "judge_status": "skipped"
+}

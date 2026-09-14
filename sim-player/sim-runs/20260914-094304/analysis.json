@@ -1,0 +1,60 @@
+{
+  "round": "20260914-094304",
+  "at": "2026-09-14T14:43:23Z",
+  "counts": {
+    "turns": 6,
+    "wishes": 3,
+    "changes_seen": 0,
+    "nothing_streak_max": 3,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 0,
+    "walls_picked": 0,
+    "cards_shown": 0,
+    "cards_built": 0,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [],
+    "slow": 0,
+    "reason_ended": "streak",
+    "world_versions": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a big couch.",
+      "verdict": "nothing",
+      "evidence": "session ended on a nothing-happened streak",
+      "judge": "deterministic",
+      "phrase": "I want a big couch."
+    },
+    {
+      "turn": 2,
+      "text": "where is my couch?",
+      "verdict": "nothing",
+      "evidence": "session ended on a nothing-happened streak",
+      "judge": "deterministic",
+      "phrase": "where is my couch?"
+    },
+    {
+      "turn": 3,
+      "text": "can I go inside a house to see my couch?",
+      "verdict": "nothing",
+      "evidence": "session ended on a nothing-happened streak",
+      "judge": "deterministic",
+      "phrase": "can I go inside a house to see my couch?"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "7c87e25af4fb",
+    "0245444290c8",
+    "f81721bc8d06"
+  ],
+  "judge_model": null,
+  "judge_status": "skipped"
+}

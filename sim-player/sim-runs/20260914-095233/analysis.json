@@ -1,0 +1,117 @@
+{
+  "round": "20260914-095233",
+  "at": "2026-09-14T14:56:31Z",
+  "counts": {
+    "turns": 14,
+    "wishes": 10,
+    "changes_seen": 2,
+    "nothing_streak_max": 2,
+    "questions_asked": 0,
+    "questions_answered": 0,
+    "walls_posted": 1,
+    "walls_picked": 1,
+    "cards_shown": 1,
+    "cards_built": 1,
+    "http_errors": 0,
+    "http_5xx": 0,
+    "exceptions": 0,
+    "seconds_build_to_house": [
+      79.0
+    ],
+    "slow": 0,
+    "reason_ended": "turns",
+    "world_versions": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "wishes": [
+    {
+      "turn": 1,
+      "text": "I want a house with a red door and a swing on the porch.",
+      "verdict": "got",
+      "evidence": "order 20260914-095259 done at world version 1",
+      "judge": "deterministic",
+      "phrase": "I want a house with a red door and a swing on the porch."
+    },
+    {
+      "turn": 4,
+      "text": "put a bathtub with bubbles in it",
+      "verdict": "got",
+      "evidence": "Turn 6: 'my house! I'm in the bathroom and there's a tub with bubbles'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "put a bathtub with bubbles in it"
+    },
+    {
+      "turn": 5,
+      "text": "build it",
+      "verdict": "got",
+      "evidence": "Turn 6 confirms the house is built: 'my house!'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "build it"
+    },
+    {
+      "turn": 6,
+      "text": "a rubber ducky in the bathtub",
+      "verdict": "got",
+      "evidence": "Turn 9: 'I see a bathtub with bubbles and a rubber ducky.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a rubber ducky in the bathtub"
+    },
+    {
+      "turn": 9,
+      "text": "a toilet",
+      "verdict": "nothing",
+      "evidence": "Session ends at turn 14; no subsequent turn confirms the toilet appeared.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a toilet"
+    },
+    {
+      "turn": 10,
+      "text": "a desk",
+      "verdict": "got",
+      "evidence": "Turn 12: 'It has a desk and a computer now.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a desk"
+    },
+    {
+      "turn": 11,
+      "text": "a computer",
+      "verdict": "got",
+      "evidence": "Turn 12: 'It has a desk and a computer now.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a computer"
+    },
+    {
+      "turn": 12,
+      "text": "a chair",
+      "verdict": "got",
+      "evidence": "Turn 13: 'I'm in the home office with my desk and computer and chair.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a chair"
+    },
+    {
+      "turn": 13,
+      "text": "a bookshelf",
+      "verdict": "got",
+      "evidence": "Turn 14: 'I see a desk, computer, chair, and bookshelf.'",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a bookshelf"
+    },
+    {
+      "turn": 14,
+      "text": "a big dining table",
+      "verdict": "nothing",
+      "evidence": "Session ends at turn 14 immediately after the request; no confirmation of the table appearing.",
+      "judge": "draft:qwen3.5:397b-cloud",
+      "phrase": "a big dining table"
+    }
+  ],
+  "defects": [],
+  "gaps_filed": [
+    "31f505ed6d29",
+    "c26f84fa281c"
+  ],
+  "judge_model": "qwen3.5:397b-cloud",
+  "judge_status": "ok"
+}

@@ -1,0 +1,19 @@
+08:38:12 round 20260914-083812 session sim-25adabe17781 model kimi-k3:cloud world v0
+08:38:27 turn 1 [card] see: 'The same street with 8 houses and empty lots, nothing new yet.' type: 'I want a little blue house with a pointy roof on the empty lot.'
+08:38:59 turn 2 [card] see: "A plan for my blue house, but it's still just an empty lot." type: 'wood shingles, build it!'
+08:40:12 turn 3: Sam is in the living room; Maya (quiet) says ''; they want: a big couch, a TV, a coffee table, a lamp, a rug, a bookshelf
+08:40:12 turn 3 [wall] see: 'Four pictures of blue houses on the garage wall. One is exactly what I' type: "the first one, it's the little blue house I asked for"
+08:40:15 turn 4 [vision] see: "I'm inside my new blue house, in the living room. It's empty." type: 'a big comfy couch'
+08:40:18 turn 5 [vision] see: "I'm inside my little blue house in the living room. There's a big comf" type: 'a TV on the wall across from the couch'
+08:40:20 turn 6 [vision] see: "I'm inside my little blue house with a couch and a TV." type: 'a coffee table in front of the couch'
+08:40:45 turn 7: Sam is in the primary bedroom; Maya (quiet) says ''; they want: a bed, a dresser, a nightstand, a lamp, a mirror, a beanbag
+08:40:45 turn 7 [vision] see: 'The chat says my house with the couch, TV, and coffee table is ready t' type: 'build it'
+08:40:48 turn 8 [furnish] see: "I'm in the bedroom now. It's empty in here. Where's my couch and TV?" type: 'a big bed with a blue blanket'
+08:40:50 turn 9 [furnish] see: "I'm in my bedroom, it's making my bed now. Still empty in here." type: 'a dresser with lots of drawers'
+08:40:53 turn 10 [furnish] see: 'Still inside my house in the bedroom. Right side looks the same, no ne' type: 'a nightstand next to the bed'
+08:40:56 turn 11: Sam is in the kitchen; Maya (quiet) says ''; they want: a fridge, a stove, a sink, a kitchen table, cupboards, a microwave
+08:40:56 turn 11 [furnish] see: "Inside my house, in the bedroom. It says it's working on the nightstan" type: 'a lamp on the nightstand'
+08:40:58 turn 12 [furnish] see: "I'm in the kitchen. The room is still empty while it works on the lamp" type: 'a fridge'
+08:41:01 turn 13 [furnish] see: "I'm in my kitchen and there's a fridge now but nothing else yet" type: 'a stove next to the fridge'
+08:41:06 turn 14 [furnish] see: "I'm in the kitchen. It says it's making the stove. I don't see it yet." type: 'a sink under the window'
+08:41:06 round over: turns after 14 turns, world v0 -> v1

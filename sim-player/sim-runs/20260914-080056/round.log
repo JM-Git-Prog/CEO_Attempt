@@ -1,0 +1,19 @@
+08:00:57 round 20260914-080056 session sim-eded255eec83 model gpt-oss:120b-cloud world v0
+08:01:17 turn 1 [card] see: 'version 0 neighborhood, eight houses, unchanged' type: 'a two‑story blue house with a red door and a front porch'
+08:01:20 turn 2 [card] see: 'I see a plan for a blue two‑story house with red door and front porch.' type: 'Make the ceiling 2.5 m, hardwood floors, and add a porch railing.'
+08:01:41 turn 3 [card] see: 'version 0, eight houses, unchanged' type: 'build it'
+08:02:12 turn 4 [card] see: 'I see a plan for a two‑story blue house with red door and porch, askin' type: 'six‑twelve roof, .5 m overhang; stairs .9 m wide, tread .25m; 3 bedrooms, bath by'
+08:03:20 turn 5: Sam is in the home office; Maya (quiet) says ''; they want: a desk, a chair, a computer, a lamp, a bookshelf, a trash can
+08:03:20 turn 5 [wall] see: 'I see eight houses and four house pictures on the garage wall' type: 'pick c1'
+08:03:24 turn 6 [furnish] see: 'I see: my home office, empty, hardwood floor, ceiling, walls' type: 'a wooden desk with a green lamp on it'
+08:03:26 turn 7 [furnish] see: 'I see: inside my home office, a wooden desk with a green lamp.' type: 'a comfy chair next to the desk'
+08:03:29 turn 8 [furnish] see: 'inside home office with wooden desk, green lamp, comfy chair' type: 'add a computer on the desk'
+08:03:32 turn 9: Sam is in the dining room; Maya (quiet) says ''; they want: a dining table, six chairs, a big light, a rug, a cabinet
+08:03:32 turn 9 [furnish] see: 'I see a wooden desk with green lamp, a comfy chair, and a computer on ' type: 'add a bookshelf in the corner'
+08:03:35 turn 10 [furnish] see: 'I see: dining room with desk, green lamp, chair, computer, bookshelf i' type: 'add a wooden dining table in the center'
+08:03:38 turn 11 [furnish] see: 'I see a wooden dining table in the center of the dining room.' type: 'add six chairs around the dining table'
+08:03:41 turn 12 [furnish] see: 'I see: wooden dining table, chairs being added, empty floor' type: 'add a colorful rug under the dining table'
+08:03:43 turn 13: Sam is in the garage; Maya (quiet) says ''; they want: a workbench, a toolbox, a bike, shelves, a garbage can
+08:03:43 turn 13 [furnish] see: 'inside dining room, wooden table, six chairs, colorful rug, empty corn' type: 'add a bookshelf in the corner'
+08:03:45 turn 14 [furnish] see: 'I see a garage with a wooden table, chairs, rug, and a bookshelf corne' type: 'add a workbench against the far wall'
+08:03:45 round over: turns after 14 turns, world v0 -> v1

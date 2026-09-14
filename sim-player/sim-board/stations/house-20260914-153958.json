@@ -1,0 +1,39 @@
+{
+  "id": "house-20260914-153958",
+  "kind": "wall",
+  "question": "Which one is your favorite?",
+  "made_by": "v17-neighbourhood",
+  "created_at": "2026-09-14T20:40:19.892Z",
+  "items": [
+    {
+      "tag": "c1",
+      "label": "white brick georgian — what you asked for",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-153958\\candidate-1.png"
+    },
+    {
+      "tag": "c2",
+      "label": "white brick colonial — changed: style (colonial, not georgian)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-153958\\candidate-2.png"
+    },
+    {
+      "tag": "c3",
+      "label": "white brick georgian — changed: roof (metal, not shingle)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-153958\\candidate-3.png"
+    },
+    {
+      "tag": "c4",
+      "label": "white brick georgian — changed: floors (two floors, not one floor)",
+      "image": "E:\\Software Development\\Video Game Development\\03 Projects\\Cul-de-sac\\jobs\\20260914-153958\\candidate-4.png"
+    }
+  ],
+  "actions": {
+    "left": "choose",
+    "right": "more"
+  },
+  "answer": {
+    "action": "withdraw",
+    "tag": null,
+    "at": "2026-09-14T20:42:47.903Z",
+    "reason": "superseded by house-20260914-154226"
+  }
+}

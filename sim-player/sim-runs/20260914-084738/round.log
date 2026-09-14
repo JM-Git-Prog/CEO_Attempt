@@ -1,0 +1,10 @@
+08:47:38 round 20260914-084738 session sim-68fd2b7f6563 model kimi-k3:cloud world v0
+08:47:41 turn 1 [idle] see: 'The whole neighborhood from the gate. I want to go inside my house.' type: 'I want to go inside my house with the rug.'
+08:47:44 turn 2 [idle] see: 'the street and houses, nothing changed, still outside' type: 'go to the house with the rug'
+08:47:46 turn 3 [idle] see: 'The chat is confused about the rug house. Nothing changed on the right' type: 'change something in here'
+08:47:49 turn 4 [idle] see: 'Still the same street with 8 houses, nothing new showed up yet' type: 'nothing happened, where is the room?'
+08:47:53 turn 5 [idle] see: 'The same street with 8 houses. My room never appeared inside.' type: "it's still just the outside, I want to see the rug room"
+08:47:55 turn 6 [idle] see: "The outside of the house. It's still not the rug room." type: 'nothing happened'
+08:47:59 turn 7 [idle] see: 'still just the street and houses, no rug room, nothing new' type: 'nothing happened again, where is my rug room?'
+08:48:02 turn 8 [idle] see: 'still just the outside of houses, no rug room anywhere' type: 'nothing happened again, I want to see the rug room'
+08:48:02 round over: streak after 8 turns, world v0 -> v0

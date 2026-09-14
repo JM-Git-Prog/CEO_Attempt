@@ -1,0 +1,20 @@
+10:25:59 round 20260914-102559 session sim-ab33347dd188 model kimi-k3:cloud world v0
+10:26:41 turn 1 [card] see: 'I see 8 houses on a street and none of them are mine yet.' type: 'I want a little house with a pointy roof and a red door.'
+10:27:11 turn 2 [card] see: "A plan for my house with a pointy roof and red door, but it's not buil" type: 'build it'
+10:28:30 turn 3: Sam is in the living room; Maya (quiet) says ''; they want: a TV, a coffee table, a lamp, a rug
+10:28:30 turn 3 [wall] see: 'still no house, but there are 4 pictures on the garage wall' type: "the first one, it's the cottage I asked for"
+10:28:37 turn 4 [vision] see: "I'm inside my house now, in the living room. It's empty." type: 'put a rug on the floor'
+10:28:46 turn 5 [vision] see: "I'm inside my house in the living room. I asked for a rug but the chat" type: 'ok build it'
+10:29:06 turn 6: Sam's model failed (ollama kimi-k3:cloud: HTTP 503: upstream connect error or disconnect/reset before headers. reset reason: connection termination)
+10:29:06 turn 6 [idle] see: '' type: '' ERROR backend: ollama kimi-k3:cloud: HTTP 503: upstream connect error or disconnect/reset before headers. reset reason: connection termination
+10:29:19 turn 7 [vision] see: "I'm inside my house in the living room. I want to see if the rug is th" type: 'put a TV in here'
+10:29:27 turn 8: Sam is in the primary bedroom; Maya (quiet) says ''; they want: a bed, a dresser, a nightstand, a lamp, a mirror, a beanbag
+10:29:27 turn 8 [vision] see: 'I see my house with a rug and a TV, but no coffee table or lamp yet.' type: 'put a coffee table in here'
+10:29:30 turn 9 [vision] see: "I'm inside my house in the bedroom. It has my rug and TV and coffee ta" type: 'put a bed in here'
+10:29:33 turn 10 [vision] see: "I'm inside my house in the bedroom. There's a bed in here now. The cha" type: 'put a dresser in here'
+10:29:36 turn 11 [vision] see: "I'm in my bedroom and it has a bed and dresser now. The chat is asking" type: 'put a nightstand next to the bed'
+10:29:43 turn 12: Sam is in the kitchen; Maya (quiet) says ''; they want: a fridge, a stove, a sink, a kitchen table, cupboards, a microwave
+10:29:43 turn 12 [vision] see: 'Inside my house in the bedroom. Chat says say build it when ready.' type: 'build it'
+10:29:47 turn 13 [furnish] see: "I'm inside my house in the kitchen. It has a rug, TV, coffee table, be" type: 'put a fridge in here'
+10:29:49 turn 14 [furnish] see: "I'm in my kitchen and it's still empty, no fridge yet." type: 'change something in here'
+10:29:49 round over: turns after 14 turns, world v0 -> v1
